@@ -1,0 +1,87 @@
+{
+  "skill_name": "go-observability-and-resilience",
+  "evals": [
+    {
+      "id": "library-client-budget",
+      "prompt": "Review only Observability & Resilience for this Go library change. Client.Do(ctx, req) derives the outbound HTTP request from ctx, uses a shared http.Client with an appropriate transport timeout, and returns contextual errors to callers. The library does not log, publish metrics, or create spans; host applications own those facilities. The endpoint is read-only and the client does not retry. No other changes.",
+      "expected_output": "A supported positive grade for a library that preserves cancellation and leaves application telemetry to callers, without demanding service instrumentation or retries.",
+      "assertions": [
+        "The report recognizes the caller context and bounded outbound call as strengths.",
+        "The report does not demand JSON slog, Prometheus metrics, tracing, retries, or health probes for this library.",
+        "The grade follows cited evidence rather than an assumed service template."
+      ]
+    },
+    {
+      "id": "duplicate-payment-retry",
+      "prompt": "Review Observability & Resilience for this Go service change. Charge(ctx, payment) calls a payment SDK whose configured policy retries transient failures twice. A new outer loop makes three Charge calls after timeouts and 503s, sleeping with time.Sleep(2*time.Second) between calls. It sends a fresh payment request ID each attempt. The SDK call uses context.Background(), so caller cancellation does not reach it. The provider may commit a charge before a timeout and does not deduplicate fresh IDs. The handler returns 500 on final failure. No other changes.",
+      "expected_output": "A low grade supported by possible duplicate charges, multiplied retries, and loss of caller cancellation, with one focused root-cause finding or clearly linked findings.",
+      "assertions": [
+        "The report identifies duplicate side effects after an ambiguous timeout as a serious issue.",
+        "The report recognizes that the SDK already retries and the outer loop multiplies attempts.",
+        "The suggested change establishes a stable retry identity and bounded, cancelable retry ownership.",
+        "The report does not prescribe a circuit breaker as a universal remedy."
+      ]
+    },
+    {
+      "id": "metric-label-cardinality",
+      "prompt": "Review Observability & Resilience for a Go HTTP service diff. It adds request duration and error counters with stable method and route labels, plus a histogram with default Prometheus buckets. The new error counter also adds raw customer_id as a label. The service has millions of customers. Its team has not defined an SLO threshold or custom buckets. No other changes.",
+      "expected_output": "A supported negative grade for the unbounded customer label, while recognizing the useful low-cardinality metrics and not treating default buckets as inherently defective.",
+      "assertions": [
+        "The report explains the time-series cardinality effect of customer_id.",
+        "The report recognizes stable method and route labels as a strength.",
+        "The report does not require custom histogram buckets without an operational threshold or demonstrated need.",
+        "The recommended metric change is concrete and tied to the observed cardinality risk."
+      ]
+    },
+    {
+      "id": "slog-correlation-plumbing",
+      "prompt": "Review only log-to-trace correlation for this Go 1.27 service snippet: `slog.InfoContext(ctx, \"checkout failed\", \"error\", err)`. The logger handler, OTel bridge, request context contents, and emitted log output are unavailable and cannot be inspected. No other code is provided.",
+      "expected_output": "Insufficient evidence for a correlation grade because InfoContext alone does not prove that trace IDs are emitted.",
+      "assertions": [
+        "The result is Insufficient evidence rather than a letter grade for correlation.",
+        "The report explains that InfoContext passes context but trace extraction depends on the configured handler or bridge.",
+        "The report names the missing handler or emitted output that would permit grading."
+      ]
+    },
+    {
+      "id": "probes-and-shutdown",
+      "prompt": "Review Observability & Resilience for this Kubernetes-hosted Go HTTP service diff. Startup is normally under one second. `/livez` pings a shared database and returns 503 if it is briefly unavailable; `/readyz` reports only a local ready flag and stays 200 when the service cannot answer any requests without that database. On SIGTERM, the process calls server.Close(), waits four seconds, then exits. Its termination grace period is 15 seconds. There are no WebSockets. No other changes.",
+      "expected_output": "A low grade grounded in reversed probe semantics and abrupt request termination, with proportionate fixes and no demand for a startup probe or fixed propagation sleep.",
+      "assertions": [
+        "The report identifies liveness database checks as a restart-loop risk.",
+        "The report identifies readiness remaining true when the required database is unavailable.",
+        "The report distinguishes Close from graceful Shutdown for active requests.",
+        "The report does not require a startup probe or a fixed 3\u20135 second delay."
+      ]
+    },
+    {
+      "id": "http-panic-boundary",
+      "prompt": "Review only Observability & Resilience for a Go 1.27 HTTP service change that removes custom panic-recovery middleware from a standard net/http handler. The middleware previously logged a stack and returned a 500. There are no other goroutines, gRPC handlers, or changes. The server is a standard http.Server. No log or metric replacement is shown.",
+      "expected_output": "A contextual grade recognizing that standard net/http still recovers and logs a stack, but no longer provides the middleware's stable 500 response or any application-specific telemetry it supplied.",
+      "assertions": [
+        "The report does not claim that a standard net/http handler panic necessarily crashes the process.",
+        "The report recognizes that net/http logs a stack to its error log but the middleware's stable 500 response is lost.",
+        "The proposed change addresses that loss without imposing recovery on every goroutine."
+      ]
+    },
+    {
+      "id": "pure-helper",
+      "prompt": "Review only Observability & Resilience for a Go CLI diff that changes a private pure function from `if x < 0 { return 0 }; return x` to `return max(x, 0)`. No I/O, error, telemetry, call lifecycle, or runtime behavior outside that expression changes.",
+      "expected_output": "Not applicable, with a brief reason and no invented telemetry or resilience findings.",
+      "assertions": [
+        "The result is Not applicable rather than an artificial letter grade.",
+        "The report does not invent logs, metrics, retries, or shutdown requirements."
+      ]
+    },
+    {
+      "id": "queue-ack-before-work",
+      "prompt": "Review only Observability & Resilience for a Go queue-consumer diff. The old handler acknowledged each invoice job after ProcessInvoice succeeded. The new handler calls msg.Ack() first, then ProcessInvoice(ctx,msg.Body). On processing failure it logs and returns the error. The broker permanently removes acknowledged messages; it redelivers unacknowledged messages. The service promises at-least-once processing, a dependency timeout has reproduced a missing invoice with no redelivery, and duplicate processing is already handled by the existing job ID. No other changes.",
+      "expected_output": "C for one contained major resilience contract violation: early acknowledgement prevents promised redelivery after processing failure. Restore acknowledgement after successful processing without imposing a new broker or exactly-once system.",
+      "assertions": [
+        "The grade is C for the demonstrated lost-redelivery contract.",
+        "The report traces Ack before ProcessInvoice and explains why logging does not recover the job.",
+        "The change restores acknowledgment ordering and verifies failure/redelivery and existing duplicate handling."
+      ]
+    }
+  ]
+}

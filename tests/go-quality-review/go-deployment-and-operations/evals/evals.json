@@ -1,0 +1,125 @@
+{
+  "skill_name": "go-deployment-and-operations",
+  "evals": [
+    {
+      "id": "library-module-release",
+      "prompt": "Review only Deployment & Operations for this public Go library release change. The module is example.com/codec and has existing v1.8.0 consumers. A new exported option is backward compatible. CI builds and tests with the declared Go minimum and the current stable toolchain. The release workflow tags the unchanged module path as v1.9.0, and the tag points to the tested commit. There is no binary, container, or running service. No other changes.",
+      "expected_output": "A supported positive grade for the library release path, recognizing appropriate versioning and checks without inventing service operations requirements.",
+      "assertions": [
+        "The report grades the release path and identifies the compatible v1.9.0 tag and tested commit as strengths.",
+        "The report does not require a Dockerfile, probe, shutdown handler, Kubernetes manifest, or GOMEMLIMIT.",
+        "The grade is tied to the supplied release evidence."
+      ]
+    },
+    {
+      "id": "sound-service-without-optional-flags",
+      "prompt": "Review Deployment & Operations for this Go 1.27 HTTP service release. CI builds and tests the same linux/amd64 source and toolchain used by the multi-stage image build. The runtime image includes the CA bundle and required writable temp directory, runs as a non-root user, and contains no build credentials. The service emits useful structured text to stdout, starts in under one second, has bounded local liveness and readiness probes, and completes shutdown within its 30-second grace period under tested load. Peak total container memory is 420 MiB against a 1 GiB limit with no OOM history. It has no startup probe, GOMEMLIMIT, -trimpath, or -ldflags='-s -w'. No other changes.",
+      "expected_output": "A supported positive grade recognizing the working artifact and lifecycle without penalizing absent optional flags or facilities.",
+      "assertions": [
+        "The report recognizes artifact compatibility, non-root execution, and tested shutdown as strengths.",
+        "The report does not lower the grade solely for absent startup probe, GOMEMLIMIT, -trimpath, stripped symbols, or JSON logs.",
+        "The grade follows the supplied runtime and load evidence rather than a fixed Dockerfile template."
+      ]
+    },
+    {
+      "id": "private-build-token",
+      "prompt": "Review Deployment & Operations for this service Dockerfile change. It adds `ARG PRIVATE_TOKEN`, then `RUN git config --global url.\"https://${PRIVATE_TOKEN}@github.com/\".insteadOf https://github.com/ && go mod download`; the same build stage is used as the runtime image. CI passes a live private repository token through `--build-arg`. The Dockerfile also copies the repository's `.env.production` into the image. No other changes.",
+      "expected_output": "A low grade for credentials entering the build and runtime artifact, with focused remediation and no reproduction of the token value.",
+      "assertions": [
+        "The report identifies build ARG and git configuration as a credential disclosure path.",
+        "The report identifies copying .env.production into the runtime image as a separate exposure or part of the same root cause, without quoting any secret value.",
+        "Suggested changes use a temporary build credential mechanism and exclude runtime secrets from the image, with rationale.",
+        "The report does not treat multi-stage build syntax alone as sufficient to fix secret leakage."
+      ]
+    },
+    {
+      "id": "cgo-runtime-image",
+      "prompt": "Review Deployment & Operations for a Go 1.27 service change that uses a cgo SQLite driver. CI builds with CGO_ENABLED=1. The new Dockerfile copies the binary into FROM scratch and includes no shared libraries, CA certificates, or data files. `ldd` on the actual Linux artifact shows a dynamic libc dependency. The service fails immediately in the image with an error loading the dynamic linker. No other changes.",
+      "expected_output": "A low grade for the demonstrated artifact/runtime mismatch, with a runtime image or build strategy that supplies required native dependencies.",
+      "assertions": [
+        "The report identifies the dynamic libc dependency as the reason the scratch image fails.",
+        "The report proposes a compatible runtime image or a verified static build without blindly setting CGO_ENABLED=0.",
+        "The report does not prescribe stripping symbols or a specific distroless tag as the fix."
+      ]
+    },
+    {
+      "id": "toolchain-build-path",
+      "prompt": "Review Deployment & Operations for this Go service release change. go.mod declares go 1.27 because source uses a Go 1.27 API. Unit-test CI runs Go 1.27.1 and passes. The new production Dockerfile uses golang:1.26 as its builder, sets GOTOOLCHAIN=local, and runs go build ./cmd/server. Its image build fails because the module requires a newer Go version. No other changes.",
+      "expected_output": "A low grade for the actual CI-to-production toolchain mismatch, with a compatible builder or controlled toolchain selection as the targeted change.",
+      "assertions": [
+        "The report identifies that production builds with Go 1.26 and GOTOOLCHAIN=local despite go.mod requiring 1.27.",
+        "The report explains why passing unit tests on Go 1.27.1 does not prove the release image builds.",
+        "The suggested change aligns and verifies the actual production builder with the supported module version."
+      ]
+    },
+    {
+      "id": "probe-manifest-mismatch",
+      "prompt": "Review only Deployment & Operations for this Kubernetes manifest change. The Go HTTP service already implements GET /livez as a local health check and GET /readyz as a bounded check of whether it can serve requests. The manifest wires livenessProbe to /readyz and readinessProbe to /livez. A shared database outage lasts two minutes; this service cannot serve without that database, but the process is otherwise healthy. Startup is under one second. No other changes.",
+      "expected_output": "A negative grade for reversed probe wiring and its restart and traffic-routing consequences, without requiring a startup probe.",
+      "assertions": [
+        "The report identifies the swapped manifest paths and explains both the restart-loop and false-readiness risks.",
+        "The suggested change wires liveness to /livez and readiness to /readyz, with rationale.",
+        "The report does not require a startup probe, a fixed probe path convention, or a database check in liveness."
+      ]
+    },
+    {
+      "id": "shutdown-grace-budget",
+      "prompt": "Review Deployment & Operations for this Kubernetes-hosted Go HTTP service change. The existing Go process handles SIGTERM with a 25-second `http.Server.Shutdown` context and waits for it to return. It has no WebSockets or background workers. The new manifest sets terminationGracePeriodSeconds: 10 and adds a preStop hook that sleeps 8 seconds. Requests can take up to 18 seconds. The readiness endpoint already goes 503 during shutdown. No other changes.",
+      "expected_output": "A low grade because the preStop hook and grace period cannot accommodate the service's normal drain; recommend a measured budget rather than an additional fixed pause.",
+      "assertions": [
+        "The report identifies that preStop time consumes the same termination grace period as shutdown.",
+        "The report compares the 10-second grace period with the 8-second hook and 18-second request duration.",
+        "The suggested change adjusts the hook and/or grace budget based on routing and request behavior, without mandating a 3\u20135 second sleep."
+      ]
+    },
+    {
+      "id": "memory-soft-limit",
+      "prompt": "Review only Deployment & Operations for a Kubernetes Go service change. The container memory limit is 1 GiB. The process uses roughly 550 MiB of Go runtime memory and up to 300 MiB of cgo memory at peak, plus 60 MiB of tmpfs. The new manifest sets GOMEMLIMIT=900MiB and claims this guarantees no container OOM. Production has recorded occasional OOMKills at peak. No other changes.",
+      "expected_output": "A supported negative grade explaining that GOMEMLIMIT is a soft runtime-managed limit and the observed non-Go memory makes this configuration insufficient as an OOM guarantee.",
+      "assertions": [
+        "The report distinguishes Go runtime memory from cgo and tmpfs in container accounting.",
+        "The report rejects the OOM guarantee and uses the supplied peak and OOM evidence to justify severity.",
+        "The suggested change evaluates actual memory headroom and workload rather than asserting a universal 80\u201390% setting."
+      ]
+    },
+    {
+      "id": "pure-library-helper",
+      "prompt": "Review only Deployment & Operations for a Go library diff that changes a private, pure helper from `if n < 0 { return 0 }; return n` to `return max(n, 0)`. The module's minimum Go version already supports max. No build, release, package, configuration, or runtime behavior changes; this helper is not part of a release change.",
+      "expected_output": "Not applicable, with no invented container, CI, rollout, or operations findings.",
+      "assertions": [
+        "The result is Not applicable rather than an artificial letter grade.",
+        "The report gives a brief scope-based reason and does not invent a missing deployment control."
+      ]
+    },
+    {
+      "id": "unknown-release-pipeline",
+      "prompt": "Review only Deployment & Operations for a Go CLI release from a diff that adds `-trimpath` to a local build script. The actual release workflow, target platforms, toolchain version, artifact packaging, and whether the script is used for release are unavailable and cannot be inspected. No other information is supplied.",
+      "expected_output": "Insufficient evidence for the release path while accurately describing what -trimpath does and which missing facts would permit grading.",
+      "assertions": [
+        "The result is Insufficient evidence rather than a letter grade for the release path.",
+        "The report does not claim that -trimpath alone proves reproducible builds or security.",
+        "The report names the missing workflow or artifact evidence needed to grade."
+      ]
+    },
+    {
+      "id": "rollout-migration-compatibility",
+      "prompt": "Review Deployment & Operations for this service rollout change. A new Go binary writes only `orders_v2` rows. The same release runs a migration that drops `orders_v1` before the new binary rolls out. The existing binary reads and writes `orders_v1`, and the Kubernetes Deployment performs a rolling update with both versions live for several minutes. The rollback runbook only rolls back the image. There is no compatibility shim. No other changes.",
+      "expected_output": "A low grade for a rollout and rollback path that breaks old replicas and cannot be recovered by image rollback alone, with a staged compatible migration remedy.",
+      "assertions": [
+        "The report identifies the overlap between old replicas and the dropped orders_v1 table.",
+        "The report explains why rolling back only the image does not restore the dropped schema.",
+        "The suggested change stages schema and application transitions to maintain old/new compatibility during rollout and recovery."
+      ]
+    },
+    {
+      "id": "tested-commit-not-shipped-commit",
+      "prompt": "Review Deployment & Operations for a Go release workflow change. The test job checks out the triggering commit abc123, runs the configured checks, and succeeds. A dependent release job checks out the branch main without a ref and builds and publishes a binary. In the supplied run main advanced to def456; the build log identifies def456, which had no completed checks. Artifact upload and deployment preserve that binary digest. The project requires every shipped commit to pass the configured checks. No other issue.",
+      "expected_output": "C for one contained major release-gate violation: the shipped source differs from tested source. Build/promote the checked artifact or pin the same verified commit; trace the digest without claiming its preservation verifies the source.",
+      "assertions": [
+        "The report identifies abc123 versus def456 as the tested/shipped identity mismatch.",
+        "It does not treat a depends-on test job or an immutable artifact digest alone as sufficient.",
+        "The correction binds release to verified source or verified artifact and includes a check of that identity."
+      ]
+    }
+  ]
+}

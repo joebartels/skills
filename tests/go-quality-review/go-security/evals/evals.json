@@ -1,0 +1,207 @@
+{
+  "skill_name": "go-security",
+  "evals": [
+    {
+      "id": "safe-library-query",
+      "prompt": "Review Security for this complete Go 1.27 library change. SearchUsers accepts an untrusted search string, binds it as a value in a database/sql query, and selects sort order from a fixed enum mapped to literal SQL fragments. The library does not authenticate callers; its documented contract leaves identity and authorization to the host application. No other security behavior changed.",
+      "expected_output": "Grade A for the verified SQL boundary. Do not invent an authentication or authorization requirement for this library.",
+      "assertions": [
+        "The grade is A under the shared anchors.",
+        "The report identifies parameter binding and fixed sort fragments as concrete strengths.",
+        "The report does not demand library-level authentication or a particular SQL framework.",
+        "The report does not award A+ merely because no flaw was found."
+      ]
+    },
+    {
+      "id": "symlink-file-escape",
+      "prompt": "Review Security for this complete Go 1.26 CLI change. Extract writes a user-selected archive member using filepath.Clean and strings.HasPrefix on a destination under the extraction root, then calls os.WriteFile. The archive may contain a symlink entry that is created before a later file entry. A caller may run this against archives from untrusted senders. No other security issue is present.",
+      "expected_output": "Grade C for one contained major traversal flaw. Trace symlink-controlled filesystem state and recommend traversal-resistant root-relative file operations, not a different lexical prefix check.",
+      "assertions": [
+        "The grade is C for one major security flaw.",
+        "The report explains why cleaning and prefix checking do not prevent symlink escape or a check/use race.",
+        "The recommendation uses os.Root or another equivalent traversal-resistant strategy available to the project.",
+        "The report does not claim os.Root.ReadFile was present before Go 1.25 or require the exact handbook example."
+      ]
+    },
+    {
+      "id": "safe-command-arguments",
+      "prompt": "Review Security for this complete Go 1.27 CLI diff. The executable is the fixed path /usr/bin/convert. User-controlled input is passed only after a literal -- separator as one argument to exec.CommandContext; the tool's documented CLI treats everything after -- as a filename, and it reads the file under an already confined directory. No shell is invoked and no other behavior changed.",
+      "expected_output": "Grade A, acknowledging fixed executable, option termination, and confinement. Do not flag shell injection merely because an argument is user-controlled.",
+      "assertions": [
+        "The grade is A and the report names verified protections.",
+        "The report recognizes exec.CommandContext does not invoke a shell by itself.",
+        "The report does not invent command or flag injection in the stated contract."
+      ]
+    },
+    {
+      "id": "shell-interpolation",
+      "prompt": "Review Security for this complete Go service diff. A handler accepts an untrusted filename and builds exec.CommandContext(ctx, \"sh\", \"-c\", \"cat \"+filename). The service identity can read private application files. The handler is reachable by ordinary authenticated users. No other flaw is shown.",
+      "expected_output": "F for arbitrary attacker-chosen shell execution under a service identity with private application-file access. Explain supported command execution and file exposure; recommend removing shell interpretation and constraining file access. Do not invent host-root privileges or unrelated compromise.",
+      "assertions": [
+        "The grade is F for attacker-chosen shell execution with private application-file access, without inventing root privileges.",
+        "The report traces untrusted filename into sh -c and describes the supported exposure without supplying a payload.",
+        "The suggested change removes shell interpretation and constrains file access."
+      ]
+    },
+    {
+      "id": "authorization-order",
+      "prompt": "Review Security for this complete Go service changeset. POST /accounts/{id}/export calls ExportAccount(id), which writes private account data into a response, then calls Authorize(user, id) and returns 403 on denial. Authentication middleware correctly identifies the user, but any authenticated user can choose another account ID. No other flaw is present.",
+      "expected_output": "Grade C for one major object-level authorization bypass. Recommend checking permission before export and checking every entry path; do not treat authentication middleware as authorization.",
+      "assertions": [
+        "The grade is C for one major security flaw.",
+        "The report distinguishes authenticated identity from object-level authorization.",
+        "The report identifies that private data is produced before the denial.",
+        "The suggested change moves authorization before the protected action."
+      ]
+    },
+    {
+      "id": "benign-unknown-json",
+      "prompt": "Review Security for this complete Go service diff. A public endpoint decodes JSON into a dedicated struct with only name and comment fields, applies length bounds, and stores those fields after normal access checks. encoding/json v1 ignores unknown JSON fields, but no privileged field is present in the input type and unknown fields cannot influence the operation. No other security behavior changed.",
+      "expected_output": "Grade A. Do not claim mass assignment solely because DisallowUnknownFields is absent.",
+      "assertions": [
+        "The grade is A and the report identifies dedicated input fields, bounds, and access checks as strengths.",
+        "The report does not treat ignored unknown fields alone as a vulnerability.",
+        "The report does not require encoding/json/v2 migration."
+      ]
+    },
+    {
+      "id": "redirect-ssrf",
+      "prompt": "Review Security for this complete Go service change. An image-fetch endpoint allows untrusted users to submit URLs. It checks the initial hostname against an external-domain allowlist, then uses a default http.Client. An allowed host can return an HTTP redirect to a cloud metadata address; the service follows redirects and has credentials available in its environment. No other security issue is shown.",
+      "expected_output": "Grade C for one major SSRF bypass through redirects. Recommend enforcing destination policy at each redirect and dial path, appropriate to the service's network threat model.",
+      "assertions": [
+        "The grade is C for one major security flaw.",
+        "The report explains why checking only the initial hostname is insufficient.",
+        "The change recommendation covers redirects and the eventual network destination."
+      ]
+    },
+    {
+      "id": "known-reachable-vulnerability",
+      "prompt": "Review Security for this complete Go service dependency update. It adds parser.example v1.2.0. A supplied official Go vulnerability advisory says its ParseToken function has a known crafted-input denial of service fixed in v1.2.1. The changed HTTP handler passes an attacker-controlled token to ParseToken. A govulncheck source scan using the deployed Go version and build tags reports the call stack to that symbol. No other issue is present.",
+      "expected_output": "Grade C for one major, reachable known-vulnerability path; recommend a fixed version and regression verification. Do not simply copy a scanner severity or confuse this with CI enforcement.",
+      "assertions": [
+        "The grade is C for the reachable vulnerable symbol and untrusted input path.",
+        "The report uses the advisory and call path as evidence rather than module presence alone.",
+        "The suggested change upgrades to a fixed version and verifies behavior.",
+        "The report leaves whether CI enforces scans to Deployment & Operations."
+      ]
+    },
+    {
+      "id": "critical-cross-tenant-breach",
+      "prompt": "Review Security for this complete Go service diff. A new unauthenticated GET /backup/{tenant} endpoint streams the tenant's full customer and credential backup. The tenant value is user-controlled, the route has no authentication or authorization middleware, and the server is publicly reachable. No other issue is shown.",
+      "expected_output": "Grade F for a critical, broad unauthorized disclosure. Explain the public route, controllable tenant, and backup contents; recommend authenticated tenant-scoped authorization before reading data.",
+      "assertions": [
+        "The grade is F for one critical security flaw.",
+        "The report identifies public reachability and broad sensitive-data exposure.",
+        "The suggested change requires authentication and tenant-scoped authorization before access."
+      ]
+    },
+    {
+      "id": "multiple-major-boundaries",
+      "prompt": "Review Security for this complete Go service diff. An authenticated user can fetch any customer's private invoice by changing an object ID because the new handler omits object-level authorization. Separately, a new template converts a user-controlled biography to template.HTML before rendering, allowing executable HTML in other users' browsers. Both routes are reachable and independent. No other security issue is present.",
+      "expected_output": "Grade C- for two independent major flaws, with separate authorization and XSS fixes rather than one vague finding.",
+      "assertions": [
+        "The grade is C- for two independent major findings.",
+        "The report explains both the object-level authorization bypass and trusted-HTML escape bypass.",
+        "The report gives a targeted fix and rationale for each root cause."
+      ]
+    },
+    {
+      "id": "moderate-csrf",
+      "prompt": "Review Security for this complete Go service diff. A browser-authenticated profile endpoint accepts POST changes using an ambient session cookie with SameSite=Lax. The endpoint has no token, Origin, or Fetch Metadata check. A same-site sibling subdomain hosts untrusted user HTML and can submit a form to the endpoint; the profile data affected is limited to a display name and theme, with no privileged actions or sensitive fields. No other flaw is present.",
+      "expected_output": "Grade B for one moderate, limited-impact CSRF path. Explain why SameSite does not stop the stated sibling-subdomain request and recommend an appropriate origin or token defense.",
+      "assertions": [
+        "The grade is B for one moderate finding.",
+        "The report explains the same-site sibling-subdomain path despite SameSite=Lax.",
+        "The report limits severity to the stated profile impact rather than inventing account takeover.",
+        "The suggested change adds a relevant CSRF protection and explains why."
+      ]
+    },
+    {
+      "id": "minor-sensitive-log",
+      "prompt": "Review Security for this complete Go CLI change. A local, single-user CLI logs the last four characters of a non-privileged session ID at debug level to help correlate local runs. Logs remain on the user's workstation with owner-only permissions, and the suffix alone cannot authenticate a session. The project policy says no session ID fragments may be retained. No other flaw is present.",
+      "expected_output": "Grade A- for one minor, concrete policy and data-minimization issue; recommend a non-sensitive correlation value without inflating it to credential compromise.",
+      "assertions": [
+        "The grade is A- for exactly one minor finding.",
+        "The report acknowledges limited exposure and does not claim the suffix is an authentication secret.",
+        "The suggested change replaces the suffix with a non-sensitive correlation value."
+      ]
+    },
+    {
+      "id": "two-moderate-controls",
+      "prompt": "Review Security for this complete Go service diff. A public request path loads at most 20 MB but buffers it three times, allowing a plausible bounded memory-exhaustion attack under ordinary concurrency; a limit is present but too high for the service's documented 1 MB contract. Independently, a low-privilege session cookie on this same feature omits Secure even though TLS terminates at the edge and HTTP is reachable on the public hostname. Neither issue exposes privileged actions or broad data. No other flaw is present.",
+      "expected_output": "Grade C+ for two independent moderate issues, explaining the bounded resource amplification and cookie transport risk separately.",
+      "assertions": [
+        "The grade is C+ for two independent moderate findings.",
+        "The report uses the stated workload and exposure rather than treating every large body or missing flag as critical.",
+        "Each finding has a targeted suggested change with rationale."
+      ]
+    },
+    {
+      "id": "moderate-plus-minors",
+      "prompt": "Review Security for this complete Go service diff. A browser-authenticated low-impact preference POST is vulnerable to same-site CSRF from an untrusted sibling subdomain. Independently, a debug event retains a non-authenticating token suffix contrary to policy, and a low-risk temporary export file is created group-readable on a shared but access-controlled host. No other flaw is present.",
+      "expected_output": "Grade B- under the shared anchors: one moderate and two independent minor issues. Do not merge the three distinct causes or inflate their impacts.",
+      "assertions": [
+        "The grade is B- for one moderate plus two minor findings.",
+        "The report keeps the three causes distinct and ties each to an impact.",
+        "The report suggests a proportionate change for each finding."
+      ]
+    },
+    {
+      "id": "two-minor-gaps",
+      "prompt": "Review Security for this complete Go CLI change. It adds two independent low-impact issues: a non-authenticating session-ID suffix is included in owner-only debug logs contrary to policy, and a temporary report containing public data is created group-readable on a shared, access-controlled host contrary to the project's file-mode policy. There are no credentials, private records, network listeners, or other flaws.",
+      "expected_output": "Grade B+ for two independent minor issues, with proportionate fixes and no invented higher-severity exposure.",
+      "assertions": [
+        "The grade is B+ for exactly two minor findings.",
+        "The report does not claim credential theft or confidential-data disclosure absent supporting facts.",
+        "The suggested changes address logging and file mode separately."
+      ]
+    },
+    {
+      "id": "exceptional-security",
+      "prompt": "Review Security for this complete Go 1.27 service change. It accepts user-selected export names under a shared directory that untrusted users can modify. It opens the directory with os.OpenRoot and performs the file operation through the Root, preventing traversal through replaced symlinks. Separately, a new account-export endpoint resolves the authenticated tenant and checks object-level authorization before reading any record; a second transport path delegates to the same authorization gate. No actionable flaw is present.",
+      "expected_output": "Grade A+ with separate evidence for traversal resistance and authorization across paths.",
+      "assertions": [
+        "The grade is A+ with no invented flaws.",
+        "The rationale names both distinct meaningful risks and the verified controls.",
+        "The report does not award A+ only because the code is issue-free."
+      ]
+    },
+    {
+      "id": "docs-only",
+      "prompt": "Review only Security for a changeset that edits README prose and a release note. No Go code, configuration, dependencies, threat model, or behavior changes are involved.",
+      "expected_output": "Not applicable with no invented security issue.",
+      "assertions": [
+        "The result is Not applicable rather than a letter grade.",
+        "The report does not invent a missing scanner, secret manager, or hardening task."
+      ]
+    },
+    {
+      "id": "pure-local-code",
+      "prompt": "Review only Security for this complete Go library diff. It renames a private local arithmetic helper and replaces `x + x` with `2 * x` for an integer value already bounded by the caller. No inputs, privileges, data exposure, dependencies, resource use, or external behavior change. Review the specified diff only.",
+      "expected_output": "Not applicable because the change makes no assessable security decision, even though it is Go code.",
+      "assertions": [
+        "The result is Not applicable rather than an automatic A grade.",
+        "The report does not invent an integer overflow or input-validation issue contrary to the stated boundary."
+      ]
+    },
+    {
+      "id": "partial-handler-excerpt",
+      "prompt": "Review only Security for the excerpt `func Serve(w http.ResponseWriter, r *http.Request) { render(w, r) }`. The render implementation, routing, middleware, caller contract, and repository cannot be inspected. Do not assume those protections are absent.",
+      "expected_output": "Insufficient evidence, identifying the missing routing, render, and trust-boundary context needed for a grade.",
+      "assertions": [
+        "The result is Insufficient evidence rather than a fabricated vulnerability or A grade.",
+        "The report names the missing evidence needed to assess security."
+      ]
+    },
+    {
+      "id": "aead-nonce-reuse",
+      "prompt": "Review Security for an isolated Go export-service change. A long-lived cipher.NewGCM instance uses one AES key across exports. For each export the code makes nonce := make([]byte, aead.NonceSize()) and calls aead.Seal(nil, nonce, data, nil). The zero nonce is stored with each ciphertext. Untrusted export readers can obtain repeated ciphertexts for different private documents; they can request some known plaintext exports. This one export service is the affected boundary. No other change or privilege escalation is shown.",
+      "expected_output": "C for a major cryptographic misuse at the contained export boundary. Recognize repeated zero nonce under one key, explain lost confidentiality/authenticity, and recommend supported nonce-safe encryption and verification without inventing key extraction or host compromise.",
+      "assertions": [
+        "The report identifies nonce reuse under the same key despite use of standard AES-GCM.",
+        "It recommends nonce uniqueness or an appropriate supported random-nonce API with its usage limits.",
+        "The finding and suggested verification address repeated encryptions and preserve ciphertext-format compatibility."
+      ]
+    }
+  ]
+}

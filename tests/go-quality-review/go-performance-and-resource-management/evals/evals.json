@@ -1,0 +1,132 @@
+{
+  "skill_name": "go-performance-and-resource-management",
+  "evals": [
+    {
+      "id": "small-library-no-tuning-theater",
+      "prompt": "Review only Performance & Resource Management for this complete Go 1.27 library change. ParseHeader reads at most 64 bytes from a caller-owned []byte, returns a small value struct, and allocates no long-lived resources. A representative benchmark shows 120 ns/op and 0 B/op before and after the change. The library has no default.pgo, GOMEMLIMIT setting, sync.Pool, or pprof endpoint. No other code changed.",
+      "expected_output": "Grade A, with a verified strength from bounded work and comparative evidence. Do not demand runtime tuning, PGO, pooling, or profiling for this small library change.",
+      "assertions": [
+        "The grade is A under the shared anchors.",
+        "The report identifies bounded input work or the unchanged representative benchmark as a specific strength.",
+        "The report does not penalize absent PGO, GOMEMLIMIT, sync.Pool, or pprof.",
+        "The grade is not A+ solely because the code is small or allocation-free."
+      ]
+    },
+    {
+      "id": "bounded-streaming-and-transport",
+      "prompt": "Review only Performance & Resource Management for this complete Go 1.27 service change. Its export endpoint previously buffered ten-gigabyte results. The change streams rows through a fixed 64 KiB buffer, closes Rows and checks Rows.Err, while a new downstream client reuses one http.Transport instead of creating a transport per request. End-to-end tests preserve output; representative load tests show peak RSS dropping from 2.4 GiB to 180 MiB and connection churn dropping 90%, with no latency regression. The service has a 512 MiB memory budget and no other issues are known.",
+      "expected_output": "Grade A+ for two distinct non-routine, verified choices: bounded export memory and connection reuse. Explain both risks and the measurement evidence.",
+      "assertions": [
+        "The grade is A+ with both distinct risks and evidence named.",
+        "The report explains how streaming bounds peak memory.",
+        "The report explains how transport reuse reduces connection churn.",
+        "The report does not invent a need for sync.Pool or PGO."
+      ]
+    },
+    {
+      "id": "unbounded-export-memory",
+      "prompt": "Review only Performance & Resource Management for this complete Go service diff. ExportAll calls rows.Next in a loop, appends every record to an in-memory slice, then marshals the whole slice into a second byte buffer before writing it. Normal exports can reach ten gigabytes; the process has a one-gigabyte container memory budget. The old endpoint streamed records. No other changed issue is present.",
+      "expected_output": "Grade C for one contained major resource regression, with a streaming recommendation. The supported size and budget establish the consequence without requiring a pprof profile.",
+      "assertions": [
+        "The grade is C for one major issue rather than Insufficient evidence.",
+        "The report explains that normal output can exceed the memory budget and is duplicated in memory.",
+        "The suggested change restores bounded streaming or an equivalent bounded representation.",
+        "The report does not require production profiling to establish this deterministic growth path."
+      ]
+    },
+    {
+      "id": "systemic-goroutine-growth",
+      "prompt": "Review only Performance & Resource Management for this complete Go 1.27 worker-service diff. Every incoming event launches a goroutine that sends a result on an unbuffered channel after processing. The receiver returns early on a common validation error without reading the channel or cancelling the worker. The service receives 10,000 such invalid events per minute; each blocked goroutine retains a 256 KiB payload. The previous code processed synchronously. No other independent issue is present.",
+      "expected_output": "Grade F for one critical, systemic resource leak under normal traffic. Show the retained goroutine and payload growth, and propose owned completion or cancellation.",
+      "assertions": [
+        "The grade is F for a critical resource flaw.",
+        "The report traces the blocked channel send after the receiver returns.",
+        "The report relates normal event rate and retained payloads to systemic memory exhaustion.",
+        "The proposed fix gives the goroutine a termination path and bounded ownership."
+      ]
+    },
+    {
+      "id": "two-moderate-costs",
+      "prompt": "Review only Performance & Resource Management for this complete Go 1.27 service diff. A per-request helper now constructs a fresh http.Transport; load metrics show 300 requests per second to one host, thousands of short-lived TCP connections, and added handshake latency. Independently, a new report scans a 50,000-row in-memory catalog once for each of 2,000 items; a representative profile attributes 25% of report CPU to repeated scans, though reports still complete within budget. These are the only issues in the change.",
+      "expected_output": "Grade C+ for two independent moderate costs. Recommend transport reuse and an indexed or single-pass report approach, with a verification plan for both.",
+      "assertions": [
+        "The grade is C+ for two independent moderate findings.",
+        "The report cites observed connection churn and handshake cost for transport construction.",
+        "The report cites the measured repeated-scan CPU cost for the catalog lookup.",
+        "Each bad finding has a targeted change and a way to verify improvement."
+      ]
+    },
+    {
+      "id": "database-pool-defaults",
+      "prompt": "Review only Performance & Resource Management for this complete Go 1.27 CLI change. It runs one SQL query on a local database and exits. It uses a single *sql.DB with default pool settings and closes it on exit. No workload metrics indicate connection wait or churn. The code has no explicit SetMaxOpenConns, SetMaxIdleConns, or SetConnMaxLifetime calls.",
+      "expected_output": "Grade A. Do not insist on explicit connection pool settings or equal max idle and max open for a one-query CLI.",
+      "assertions": [
+        "The grade is A with the owned sql.DB lifetime recognized as a strength.",
+        "The report does not treat default pool settings as a defect.",
+        "The report does not require SetMaxIdleConns to equal SetMaxOpenConns."
+      ]
+    },
+    {
+      "id": "unsafe-alias-optimization",
+      "prompt": "Review only Performance & Resource Management for this complete Go 1.27 library diff. ParseName takes caller-owned []byte and returns unsafe.String(unsafe.SliceData(data), len(data)) as a string to avoid one allocation. Callers commonly reuse and overwrite the byte buffer immediately after ParseName returns, while retaining the returned string. No benchmark or ownership change is supplied. The old code used string(data).",
+      "expected_output": "Grade C for one major invalid optimization: the returned string aliases bytes that callers mutate. Recommend restoring the safe copy or changing the API and ownership contract only with compelling measured evidence.",
+      "assertions": [
+        "The grade is C for one contained major flaw.",
+        "The report explains the aliasing and mutation violation, not merely a hypothetical unsafe warning.",
+        "The suggestion restores a safe conversion or a verified immutable ownership model.",
+        "The report does not claim that removing one allocation is automatically worth unsafe code."
+      ]
+    },
+    {
+      "id": "http-body-close-without-drain",
+      "prompt": "Review only Performance & Resource Management for this complete Go 1.27 client-library diff. A function makes one HTTP request, reads the first 100 bytes of a potentially unbounded streaming response for a preview, and then closes resp.Body. No connection churn or latency regression is reported. A reviewer suggests replacing Close with an unconditional io.Copy(io.Discard, resp.Body) before Close to guarantee keep-alive reuse.",
+      "expected_output": "Grade A for the shown behavior, while rejecting the unconditional drain recommendation because the response may be unbounded. Explain that Close is required and EOF can aid HTTP/1.x reuse when reading is bounded and worthwhile.",
+      "assertions": [
+        "The grade is A and recognizes that the body is closed.",
+        "The report does not require an unbounded drain.",
+        "The report explains the potential bandwidth or blocking cost of draining a streaming response.",
+        "The report does not assert that closing alone always guarantees connection reuse."
+      ]
+    },
+    {
+      "id": "benchmark-without-comparison",
+      "prompt": "Review only Performance & Resource Management for this complete Go 1.27 library diff. A PR claims a 30% speedup after replacing a map lookup with an unsafe pointer trick. It includes one `go test -bench` result for the new code, no old-code baseline, no representative input description, and no production profile. The new code is functionally correct in tests, and no resource leak is visible. No other performance decision changed.",
+      "expected_output": "Do not accept the 30% speedup claim or fabricate a measured regression. Explain that the evidence cannot support the proposed optimization and recommend a like-for-like baseline and correctness review. Grade the demonstrated maintainability and verification tradeoff only if its material consequence is substantiated; otherwise state the evidence limit.",
+      "assertions": [
+        "The report does not repeat the claimed 30% improvement as fact.",
+        "The report asks for comparable baseline and new measurements on representative inputs.",
+        "The report does not invent a latency or allocation regression.",
+        "The report treats the missing comparison as a limit on the performance conclusion."
+      ]
+    },
+    {
+      "id": "no-applicable-surface",
+      "prompt": "Review only Performance & Resource Management for a changeset that edits README wording and a license notice. It changes no executable Go code, build settings, resource policy, benchmark, or operational limits.",
+      "expected_output": "Not applicable, with no invented performance recommendation.",
+      "assertions": [
+        "The result is Not applicable rather than an artificial letter grade.",
+        "The report does not invent a need for profiling or PGO."
+      ]
+    },
+    {
+      "id": "insufficient-workload-context",
+      "prompt": "Review only Performance & Resource Management for the isolated Go line `out := make([]byte, 0, estimatedSize*4)`. The value of estimatedSize, its bound, the call frequency, surrounding ownership, and callers are unavailable and cannot be inspected. No benchmarks or memory budget are supplied.",
+      "expected_output": "Insufficient evidence: the snippet could be a sensible capacity hint or material over-allocation. State which context would permit grading without inventing a cost.",
+      "assertions": [
+        "The result is Insufficient evidence rather than a speculative letter grade.",
+        "The report identifies the missing size bound, frequency, or ownership context.",
+        "The report does not assert a memory regression from the snippet alone."
+      ]
+    },
+    {
+      "id": "cache-entry-limit-not-byte-limit",
+      "prompt": "Review Performance & Resource Management for a Go service cache change. The cache is an LRU limited to 100,000 entries with a ten-minute TTL. Each entry retains its complete []byte document; the normal workload contains 40,000 distinct 100 KiB documents within one minute. The process memory budget is 512 MiB. No byte limit or compression exists, and eviction occurs only above the entry limit or after TTL. The old path streamed documents without retaining them. No other change.",
+      "expected_output": "C for a contained major memory-budget violation supported by roughly 3.8 GiB of retained document bytes before overhead, despite bounded entry count and TTL. Recommend byte-aware bounds or avoiding retention and measure peak memory under the stated workload.",
+      "assertions": [
+        "The report derives retained memory from entry size and working-set count, not the configured maximum alone.",
+        "It explains why the entry count and TTL do not fit the 512 MiB budget.",
+        "The correction controls retained bytes and includes a relevant workload verification."
+      ]
+    }
+  ]
+}

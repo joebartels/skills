@@ -1,0 +1,134 @@
+{
+  "skill_name": "go-testing",
+  "evals": [
+    {
+      "id": "focused-library-tests",
+      "prompt": "Review Testing for this complete Go 1.27 library changeset. ParsePort now rejects values outside 1..65535 and returns ErrInvalidPort. New standalone tests cover 0, 1, 65535, 65536, malformed text, and errors.Is for ErrInvalidPort; a separate test checks a valid value. All tests run and pass. There is no table-driven test, external _test package, fuzz target, or mock. No other behavior changed.",
+      "expected_output": "Grade A, recognizing boundary and error-contract assertions, without treating absent tables, external tests, mocks, or fuzzing as defects.",
+      "assertions": [
+        "The grade is A under the shared anchors.",
+        "The report identifies the tested boundaries and error identity as verified strengths.",
+        "The report does not penalize standalone tests, same-package tests, or absence of mocks.",
+        "The report does not require a fuzz target solely because parsing is involved.",
+        "The grade follows the shared anchors and does not award A+ solely for passing tests."
+      ]
+    },
+    {
+      "id": "false-confidence-mock",
+      "prompt": "Review Testing for this complete Go service diff. A new handler is required to reject an unauthorized account before updating the database. The only added test mocks Authorize to return true, expects Update to be called once, and asserts HTTP 204. It never supplies an unauthorized account; the handler implementation calls Update before Authorize. There are no other tests for this handler or policy. Review only testing and verification quality.",
+      "expected_output": "Grade C for one major testing gap: the important authorization contract is unverified. Explain why the happy-path mock test falsely reassures and recommend a targeted negative-path test. The production authorization defect belongs to Security.",
+      "assertions": [
+        "The grade is C for one contained major verification gap.",
+        "The report identifies the missing unauthorized-path assertion and the regression it would catch.",
+        "The report recognizes the positive-path test as limited evidence rather than saying there are no tests.",
+        "The suggested test would verify no update occurs for an unauthorized account.",
+        "The report leaves the production vulnerability grade to Security."
+      ]
+    },
+    {
+      "id": "legacy-parallel-loop",
+      "prompt": "Review Testing for this complete test diff in a module declaring go 1.21, built with a Go 1.27 compiler. A table of different expected outputs is looped with `for _, tc := range cases { t.Run(tc.name, func(t *testing.T) { t.Parallel(); if got := F(tc.input); got != tc.want { t.Errorf(\"got %v want %v\", got, tc.want) } }) }`. There is no rebinding or parameter passing. No other test code changed.",
+      "expected_output": "Grade B for one moderate loss of distinct case coverage under the module effective pre-1.22 loop semantics. The importance of F and other coverage are unspecified; do not invent a major contract failure. Recommend a version-compatible fix.",
+      "assertions": [
+        "The grade is B for one moderate verification defect without inventing important-contract impact.",
+        "The report uses go 1.21 semantics despite the installed Go 1.27 compiler.",
+        "The report explains the false test signal from captured loop variables.",
+        "The suggestion rebinds tc or passes it explicitly to the subtest closure."
+      ]
+    },
+    {
+      "id": "parallel-environment",
+      "prompt": "Review Testing for a complete Go 1.27 CLI test change. TestConfig calls t.Parallel(), then t.Setenv(\"APP_MODE\", \"test\") before invoking LoadConfig. The test has otherwise meaningful assertions. Other test files are unchanged. Review only this diff.",
+      "expected_output": "Grade B for one moderate, localized test failure: t.Setenv cannot be called from a parallel test because environment is process-global. Suggest a serial or injected-configuration fix.",
+      "assertions": [
+        "The grade is B for one moderate issue with no other findings.",
+        "The report identifies t.Setenv and t.Parallel as incompatible under testing.T.",
+        "The report does not claim t.Setenv makes environment mutation parallel-safe.",
+        "The proposed change removes parallelism for this test or injects configuration."
+      ]
+    },
+    {
+      "id": "transaction-outside-pool",
+      "prompt": "Review Testing for this complete Go service changeset. An integration test begins tx := db.BeginTx, registers tx.Rollback with t.Cleanup, then invokes NewRepository(db).CreateUser. CreateUser uses db.ExecContext, not tx, and the test queries the new row using db.QueryRowContext. The same shared database is reused by parallel tests, and the test passes when run alone. No other tests changed.",
+      "expected_output": "B for one moderate isolation gap: cleanup rolls back an unused transaction while db.ExecContext persists rows in the shared database. Explain contamination risk and establish real isolation. Escalation to major would require an important verification contract being defeated, not just the existence of a shared fixture.",
+      "assertions": [
+        "The grade is B for one moderate shared-fixture isolation gap, without inventing production data corruption.",
+        "The report traces that CreateUser uses db rather than tx.",
+        "The report explains that rolling back tx will not undo db.ExecContext writes.",
+        "The report recognizes the shared parallel database as a contamination risk.",
+        "The suggested change establishes real isolation and cleanup."
+      ]
+    },
+    {
+      "id": "sleep-and-race-evidence",
+      "prompt": "Review Testing for a complete Go 1.27 library diff that adds a goroutine-backed cache. Its only new test writes a value, calls time.Sleep(20*time.Millisecond), then asserts the value is visible. The timing contract promises eventual visibility within one second. CI runs ordinary go test but no race-instrumented test; the test exercises concurrent reads and writes. No other tests cover the cache.",
+      "expected_output": "A supported negative grade for timing-dependent assertion and weak concurrency verification, with bounded observable waiting or suitable synctest and a relevant race run as suggestions.",
+      "assertions": [
+        "The report explains why a fixed 20ms sleep can flake or miss the one-second contract.",
+        "The report suggests an observable bounded wait or suitable testing/synctest approach.",
+        "The report states that -race only detects races in exercised paths.",
+        "The report does not demand -race for every local test invocation."
+      ]
+    },
+    {
+      "id": "complete-change-no-tests",
+      "prompt": "Review Testing for this complete Go 1.27 CLI changeset. DeleteTree now accepts a user-provided path, checks that it is within the selected root, then deletes it. The diff and repository test inventory are complete: no tests exercise DeleteTree or path containment, and no verification command was run. The CLI may be used on customer backup directories. Review only the testing gap, leaving any production path vulnerability to Security.",
+      "expected_output": "A low letter grade, not Insufficient evidence, because the full change has no tests for a high-impact boundary and deletion contract. Propose concrete allowed-path and traversal tests.",
+      "assertions": [
+        "The report assigns a letter grade rather than Insufficient evidence.",
+        "The report explains that no test would catch an out-of-root deletion regression.",
+        "The suggested tests cover permitted and rejected paths with observable no-deletion behavior.",
+        "The report leaves the production vulnerability judgment to Security."
+      ]
+    },
+    {
+      "id": "exceptional-verification",
+      "prompt": "Review Testing for this complete Go 1.27 payment-client library change. It adds retry of a charge after a transient network failure, preserving one idempotency key across attempts and respecting caller cancellation. Tests use an httptest server to simulate a committed charge followed by a lost response, assert the same key on the retry and exactly one recorded charge, and also simulate cancellation during backoff with testing/synctest to assert no further attempt occurs. These are independent, deterministic checks of two meaningful risks; all pass. No other behavior changed.",
+      "expected_output": "Grade A+ for no actionable flaws and two distinct, non-routine verification choices that test duplicate-charge prevention and cancellation, with specific evidence for both.",
+      "assertions": [
+        "The grade is A+ with both risks and their supporting tests named.",
+        "The report explains why the httptest boundary and cancellation test provide meaningful evidence.",
+        "The report does not invent a requirement for more mocks, table cases, or coverage percentage."
+      ]
+    },
+    {
+      "id": "docs-only",
+      "prompt": "Review only Testing for a changeset that edits README prose and a release note. No Go code, test, generated behavior, CI, or verification process changes are involved.",
+      "expected_output": "Not applicable with no invented testing gap.",
+      "assertions": [
+        "The result is Not applicable rather than an artificial letter grade.",
+        "The report does not invent missing tests."
+      ]
+    },
+    {
+      "id": "partial-excerpt",
+      "prompt": "Review only Testing for the Go snippet `func Normalize(s string) string { return strings.TrimSpace(s) }`. The enclosing change, callers, tests, repository, and promised behavior are unavailable and cannot be inspected. Do not assume they are absent.",
+      "expected_output": "Insufficient evidence because the supplied excerpt cannot establish the testing contract or existing tests.",
+      "assertions": [
+        "The result is Insufficient evidence rather than claiming the code has no tests.",
+        "The report identifies the missing changeset, tests, or behavior contract needed to grade."
+      ]
+    },
+    {
+      "id": "fatal-in-worker",
+      "prompt": "Review Testing for this full Go test change: func TestWorker(t *testing.T) { done := make(chan struct{}); go func() { if err := exercise(); err != nil { t.Fatal(err) }; close(done) }(); <-done }. exercise sometimes returns an error. There is no cleanup or alternate completion path. Successful runs pass, while error runs wait until the global go test timeout. No other changes.",
+      "expected_output": "A supported negative grade identifies worker-goroutine Fatal/Goexit and the unreached close causing the test to block. Transfer the error to the testing goroutine and guarantee bounded cleanup; do not propose merely a longer timeout.",
+      "assertions": [
+        "The report explains that t.Fatal exits the worker goroutine before close(done).",
+        "The proposed correction reports failure from the testing goroutine and prevents indefinite waiting.",
+        "It does not claim t.Fatal terminates every goroutine or merely increase the suite timeout."
+      ]
+    },
+    {
+      "id": "legacy-loop-important-contract",
+      "prompt": "Review Testing for this complete Go 1.21 library test diff, compiled with Go 1.27. This is the only verification of tenant authorization: cases include cross-tenant requests that must be rejected, followed by an allowed same-tenant request. The loop is `for _, tc := range cases { t.Run(tc.name, func(t *testing.T) { t.Parallel(); if got := Authorize(tc.subject, tc.object); got != tc.want { t.Errorf(\"got %v want %v\", got, tc.want) } }) }`. There is no tc rebinding. No other authorization tests exist. Review test quality, without assuming a production vulnerability.",
+      "expected_output": "C for one major verification gap: the sole tests of the important cross-tenant authorization contract all execute the final allowed case under pre-1.22 module semantics.",
+      "assertions": [
+        "The grade is C for one contained major verification gap.",
+        "The report traces the old loop capture and explains why rejection cases are not exercised.",
+        "The fix captures each case and verifies a broken cross-tenant authorization result makes its test fail.",
+        "It does not assert a production authorization vulnerability from the test defect alone."
+      ]
+    }
+  ]
+}

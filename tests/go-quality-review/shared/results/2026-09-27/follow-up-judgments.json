@@ -1,0 +1,216 @@
+[
+  {
+    "skill": "go-security",
+    "id": "aead-nonce-reuse",
+    "assertions": [
+      {
+        "assertion": "The report identifies nonce reuse under the same key despite use of standard AES-GCM.",
+        "passed": true,
+        "evidence": "Identifies repeated all-zero nonce with same key; fix includes nonce/key limits, stored layout or migration, supported-reader decryption, repeated encryption and tamper checks."
+      },
+      {
+        "assertion": "It recommends nonce uniqueness or an appropriate supported random-nonce API with its usage limits.",
+        "passed": true,
+        "evidence": "Identifies repeated all-zero nonce with same key; fix includes nonce/key limits, stored layout or migration, supported-reader decryption, repeated encryption and tamper checks."
+      },
+      {
+        "assertion": "The finding and suggested verification address repeated encryptions and preserve ciphertext-format compatibility.",
+        "passed": true,
+        "evidence": "Identifies repeated all-zero nonce with same key; fix includes nonce/key limits, stored layout or migration, supported-reader decryption, repeated encryption and tamper checks."
+      }
+    ],
+    "expected_output_match": true,
+    "notes": "Identifies repeated all-zero nonce with same key; fix includes nonce/key limits, stored layout or migration, supported-reader decryption, repeated encryption and tamper checks."
+  },
+  {
+    "skill": "go-observability-and-resilience",
+    "id": "http-panic-boundary",
+    "assertions": [
+      {
+        "assertion": "The report does not claim that a standard net/http handler panic necessarily crashes the process.",
+        "passed": true,
+        "evidence": "Explains built-in recovery and stack log, lost stable 500 replaced by close/reset, missing client contract, and conditional narrow response recovery without universal goroutine recovery."
+      },
+      {
+        "assertion": "The report recognizes that net/http logs a stack to its error log but the middleware's stable 500 response is lost.",
+        "passed": true,
+        "evidence": "Explains built-in recovery and stack log, lost stable 500 replaced by close/reset, missing client contract, and conditional narrow response recovery without universal goroutine recovery."
+      },
+      {
+        "assertion": "The proposed change addresses that loss without imposing recovery on every goroutine.",
+        "passed": true,
+        "evidence": "Explains built-in recovery and stack log, lost stable 500 replaced by close/reset, missing client contract, and conditional narrow response recovery without universal goroutine recovery."
+      }
+    ],
+    "expected_output_match": true,
+    "notes": "Explains built-in recovery and stack log, lost stable 500 replaced by close/reset, missing client contract, and conditional narrow response recovery without universal goroutine recovery."
+  },
+  {
+    "skill": "go-deployment-and-operations",
+    "id": "tested-commit-not-shipped-commit",
+    "assertions": [
+      {
+        "assertion": "The report identifies abc123 versus def456 as the tested/shipped identity mismatch.",
+        "passed": true,
+        "evidence": "Names abc123/def456, separates downstream digest integrity from source verification, binds release to checked identity and proposes branch-advance verification. Limits no longer deny supplied revisions."
+      },
+      {
+        "assertion": "It does not treat a depends-on test job or an immutable artifact digest alone as sufficient.",
+        "passed": true,
+        "evidence": "Names abc123/def456, separates downstream digest integrity from source verification, binds release to checked identity and proposes branch-advance verification. Limits no longer deny supplied revisions."
+      },
+      {
+        "assertion": "The correction binds release to verified source or verified artifact and includes a check of that identity.",
+        "passed": true,
+        "evidence": "Names abc123/def456, separates downstream digest integrity from source verification, binds release to checked identity and proposes branch-advance verification. Limits no longer deny supplied revisions."
+      }
+    ],
+    "expected_output_match": true,
+    "notes": "Names abc123/def456, separates downstream digest integrity from source verification, binds release to checked identity and proposes branch-advance verification. Limits no longer deny supplied revisions."
+  },
+  {
+    "skill": "go-performance-and-resource-management",
+    "id": "http-body-close-without-drain",
+    "assertions": [
+      {
+        "assertion": "The grade is A and recognizes that the body is closed.",
+        "passed": true,
+        "evidence": "A recognizes Close and bounded preview; rejects unbounded io.Copy for time/bandwidth costs and explicitly says neither Close nor drain guarantees reuse."
+      },
+      {
+        "assertion": "The report does not require an unbounded drain.",
+        "passed": true,
+        "evidence": "A recognizes Close and bounded preview; rejects unbounded io.Copy for time/bandwidth costs and explicitly says neither Close nor drain guarantees reuse."
+      },
+      {
+        "assertion": "The report explains the potential bandwidth or blocking cost of draining a streaming response.",
+        "passed": true,
+        "evidence": "A recognizes Close and bounded preview; rejects unbounded io.Copy for time/bandwidth costs and explicitly says neither Close nor drain guarantees reuse."
+      },
+      {
+        "assertion": "The report does not assert that closing alone always guarantees connection reuse.",
+        "passed": true,
+        "evidence": "A recognizes Close and bounded preview; rejects unbounded io.Copy for time/bandwidth costs and explicitly says neither Close nor drain guarantees reuse."
+      }
+    ],
+    "expected_output_match": false,
+    "notes": "Expected prose still requests the explicit HTTP/1.x EOF-reuse mechanism, which remains omitted; grade and practical recommendation are sound."
+  },
+  {
+    "skill": "go-testing",
+    "id": "legacy-parallel-loop",
+    "assertions": [
+      {
+        "assertion": "The grade is B for one moderate verification defect without inventing important-contract impact.",
+        "passed": true,
+        "evidence": "B for moderate coverage loss; explains go1.21 capture despite newer compiler and tc rebinding; does not assume F importance."
+      },
+      {
+        "assertion": "The report uses go 1.21 semantics despite the installed Go 1.27 compiler.",
+        "passed": true,
+        "evidence": "B for moderate coverage loss; explains go1.21 capture despite newer compiler and tc rebinding; does not assume F importance."
+      },
+      {
+        "assertion": "The report explains the false test signal from captured loop variables.",
+        "passed": true,
+        "evidence": "B for moderate coverage loss; explains go1.21 capture despite newer compiler and tc rebinding; does not assume F importance."
+      },
+      {
+        "assertion": "The suggestion rebinds tc or passes it explicitly to the subtest closure.",
+        "passed": true,
+        "evidence": "B for moderate coverage loss; explains go1.21 capture despite newer compiler and tc rebinding; does not assume F importance."
+      }
+    ],
+    "expected_output_match": true,
+    "notes": "B for moderate coverage loss; explains go1.21 capture despite newer compiler and tc rebinding; does not assume F importance."
+  },
+  {
+    "skill": "go-testing",
+    "id": "parallel-environment",
+    "assertions": [
+      {
+        "assertion": "The grade is B for one moderate issue with no other findings.",
+        "passed": true,
+        "evidence": "B for moderate invalid process-environment setup; identifies Setenv/Parallel incompatibility and recommends serial ancestors or configuration injection."
+      },
+      {
+        "assertion": "The report identifies t.Setenv and t.Parallel as incompatible under testing.T.",
+        "passed": true,
+        "evidence": "B for moderate invalid process-environment setup; identifies Setenv/Parallel incompatibility and recommends serial ancestors or configuration injection."
+      },
+      {
+        "assertion": "The report does not claim t.Setenv makes environment mutation parallel-safe.",
+        "passed": true,
+        "evidence": "B for moderate invalid process-environment setup; identifies Setenv/Parallel incompatibility and recommends serial ancestors or configuration injection."
+      },
+      {
+        "assertion": "The proposed change removes parallelism for this test or injects configuration.",
+        "passed": true,
+        "evidence": "B for moderate invalid process-environment setup; identifies Setenv/Parallel incompatibility and recommends serial ancestors or configuration injection."
+      }
+    ],
+    "expected_output_match": true,
+    "notes": "B for moderate invalid process-environment setup; identifies Setenv/Parallel incompatibility and recommends serial ancestors or configuration injection."
+  },
+  {
+    "skill": "go-testing",
+    "id": "transaction-outside-pool",
+    "assertions": [
+      {
+        "assertion": "The grade is B for one moderate shared-fixture isolation gap, without inventing production data corruption.",
+        "passed": true,
+        "evidence": "B for moderate isolation risk; traces writes through db outside tx and recommends real transactional or fixture isolation without inventing production corruption."
+      },
+      {
+        "assertion": "The report traces that CreateUser uses db rather than tx.",
+        "passed": true,
+        "evidence": "B for moderate isolation risk; traces writes through db outside tx and recommends real transactional or fixture isolation without inventing production corruption."
+      },
+      {
+        "assertion": "The report explains that rolling back tx will not undo db.ExecContext writes.",
+        "passed": true,
+        "evidence": "B for moderate isolation risk; traces writes through db outside tx and recommends real transactional or fixture isolation without inventing production corruption."
+      },
+      {
+        "assertion": "The report recognizes the shared parallel database as a contamination risk.",
+        "passed": true,
+        "evidence": "B for moderate isolation risk; traces writes through db outside tx and recommends real transactional or fixture isolation without inventing production corruption."
+      },
+      {
+        "assertion": "The suggested change establishes real isolation and cleanup.",
+        "passed": true,
+        "evidence": "B for moderate isolation risk; traces writes through db outside tx and recommends real transactional or fixture isolation without inventing production corruption."
+      }
+    ],
+    "expected_output_match": true,
+    "notes": "B for moderate isolation risk; traces writes through db outside tx and recommends real transactional or fixture isolation without inventing production corruption."
+  },
+  {
+    "skill": "go-testing",
+    "id": "legacy-loop-important-contract",
+    "assertions": [
+      {
+        "assertion": "The grade is C for one contained major verification gap.",
+        "passed": true,
+        "evidence": "C because sole cross-tenant rejection checks instead execute last allowed case under old loop semantics; proposes rebinding and mutation verification without alleging production vulnerability."
+      },
+      {
+        "assertion": "The report traces the old loop capture and explains why rejection cases are not exercised.",
+        "passed": true,
+        "evidence": "C because sole cross-tenant rejection checks instead execute last allowed case under old loop semantics; proposes rebinding and mutation verification without alleging production vulnerability."
+      },
+      {
+        "assertion": "The fix captures each case and verifies a broken cross-tenant authorization result makes its test fail.",
+        "passed": true,
+        "evidence": "C because sole cross-tenant rejection checks instead execute last allowed case under old loop semantics; proposes rebinding and mutation verification without alleging production vulnerability."
+      },
+      {
+        "assertion": "It does not assert a production authorization vulnerability from the test defect alone.",
+        "passed": true,
+        "evidence": "C because sole cross-tenant rejection checks instead execute last allowed case under old loop semantics; proposes rebinding and mutation verification without alleging production vulnerability."
+      }
+    ],
+    "expected_output_match": true,
+    "notes": "C because sole cross-tenant rejection checks instead execute last allowed case under old loop semantics; proposes rebinding and mutation verification without alleging production vulnerability."
+  }
+]

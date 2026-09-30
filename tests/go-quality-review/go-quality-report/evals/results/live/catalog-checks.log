@@ -1,0 +1,21 @@
+Snapshot SHA256 verification: all six files match manifest.
+cwd=/tmp/go-umbrella-eval/live/catalog-check
+env overrides: GOWORK=off GOTOOLCHAIN=local GOCACHE=/tmp/go-umbrella-eval/live/go-cache GOPROXY=off GOSUMDB=off
+$ rtk proxy go env GOVERSION GOOS GOARCH GOMOD GOWORK
+exit=0
+go1.26.5
+darwin
+arm64
+/private/tmp/go-umbrella-eval/live/catalog-check/go.mod
+off
+
+$ rtk proxy go list -m all
+exit=0
+example.com/catalog-export
+
+$ rtk proxy go build -mod=readonly ./...
+exit=0
+
+$ rtk proxy go test -mod=readonly -count=1 ./catalog
+exit=0
+ok  	example.com/catalog-export/catalog	0.181s

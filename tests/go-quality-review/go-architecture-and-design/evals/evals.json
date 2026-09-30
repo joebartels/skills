@@ -1,0 +1,55 @@
+{
+  "skill_name": "go-architecture-and-design",
+  "evals": [
+    {
+      "id": "producer-protocol",
+      "prompt": "Review Architecture & Design for this Go library changeset. New package blob defines Store with Get(ctx, key) ([]byte, error) and Put(ctx, key, []byte) error. Its documentation requires concurrent safety, cancellation, and ErrNotFound for absent keys. Copy(ctx, dst, src Store, key) reads from src and writes to dst, propagating ctx. Existing memory and S3 implementations are used by external clients. No other changes.",
+      "expected_output": "A supported positive grade that recognizes a producer-owned protocol interface as appropriate and does not invent a performance or layering defect.",
+      "assertions": [
+        "The report uses a letter grade and identifies evidence of a coherent public protocol.",
+        "The report does not treat producer ownership of Store as a defect.",
+        "The report does not demand streaming, DTOs, or new package layers without evidence."
+      ]
+    },
+    {
+      "id": "service-ownership",
+      "prompt": "Review Architecture & Design for this Go HTTP service change. Package orders adds `var db *sql.DB`; `init` assigns `db,_=sql.Open(\"postgres\",os.Getenv(\"DB_URL\"))`. Complete uses `db.Exec` to update an order by ID; on error it calls `http.Error(w,err.Error(),500)`; on success it launches `go email.SendReceipt(id)` and returns 204. SendReceipt can block and returns an error. The small service has one orders package and no separate domain, app, or adapter packages. No other changes.",
+      "expected_output": "A low grade supported by hidden database ownership, unowned asynchronous work, and raw infrastructure errors crossing the HTTP boundary, with proportionate remedies.",
+      "assertions": [
+        "The report finds the hidden database dependency and discarded construction error.",
+        "The report finds unowned receipt work and its misleading success or error contract.",
+        "The report identifies raw database errors in the HTTP response.",
+        "The report does not require a new package hierarchy or a durable queue without a demonstrated need.",
+        "The report does not assume that a zero-row update must be an error."
+      ]
+    },
+    {
+      "id": "local-expression",
+      "prompt": "Review only Architecture & Design for a Go CLI diff that replaces `if n > 0 { return n } else { return 0 }` with `return max(n, 0)` inside an unexported pure helper. No API, package, dependency, lifecycle, or caller changes.",
+      "expected_output": "Not applicable, with a brief reason tied to the absence of an architectural decision.",
+      "assertions": [
+        "The result is Not applicable rather than an artificial letter grade.",
+        "The report does not invent design findings."
+      ]
+    },
+    {
+      "id": "public-api-missing-context",
+      "prompt": "Review only Architecture & Design for a public Go library change from `func NewClient() Client` to `func NewClient() *Client`, changing Client from an interface to a concrete struct. Callers, implementation, module version, compatibility policy, and release context are unavailable, and the repository cannot be inspected.",
+      "expected_output": "Insufficient evidence for the requested API design judgment without callers, implementation, or purpose; direct consumer breakage is owned by Correctness & Compatibility in a combined review.",
+      "assertions": [
+        "The result is Insufficient evidence rather than an unsupported letter grade.",
+        "The report explains which missing facts would permit judging the API design."
+      ]
+    },
+    {
+      "id": "library-process-ownership",
+      "prompt": "Review only Architecture & Design for a library constructor added in worker.go. NewWorker starts a signal.NotifyContext for SIGTERM and launches a goroutine that calls os.Exit(0) as soon as that context is canceled. The library is embedded in a host that owns signal handling and must flush pending application writes before exiting; the library docs promise Close only stops its own workers. The host has observed its flush being cut off on SIGTERM after adopting this constructor. No other changes. Assess this skill on its own.",
+      "expected_output": "C for one contained major ownership-contract break: the library terminates its host before host-owned shutdown completes. Expose cancellation/Close and leave process exit to the host; do not defer the finding to another skill.",
+      "assertions": [
+        "The report grades the demonstrated host-lifecycle violation in this standalone Architecture review.",
+        "It identifies the library-owned signal/exit path as one root cause rather than multiple independent defects.",
+        "The suggested change restores host ownership without demanding a DI framework or package hierarchy."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+name: Validate skills
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+      - run: python3 -m pip install -r requirements-dev.txt
+      - run: python3 scripts/validate.py
+      - run: python3 -m unittest discover -s tests -p 'test*.py'
+      - run: python3 tests/go-quality-review/test_layout.py
+      - run: python3 tests/go-quality-review/go-quality-report/evals/test_grade.py

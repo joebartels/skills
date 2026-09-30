@@ -1,0 +1,49 @@
+{
+  "F1": {
+    "severity": "major",
+    "systemic": false,
+    "cause": "Snapshot returns shared element storage despite an independently mutable result contract",
+    "evidence": [
+      "catalog/catalog.go:9",
+      "export/export.go:10-12",
+      "catalog-repro.log",
+      "boundary-check.log",
+      "boundary-corrected-check.log"
+    ],
+    "sources": [
+      "catalog/architecture-and-design/F1",
+      "catalog/correctness-and-compatibility/F1",
+      "export/code-quality-and-idioms/F1",
+      "export/correctness-and-compatibility/F1"
+    ],
+    "owner": "catalog.Catalog.Snapshot",
+    "correction": "Return copied slice; add element-mutation and export preservation assertions",
+    "reconciliation": "One producer fix makes both consumer and direct mutation regressions pass. Repeated package/topic symptoms are not independently actionable production defects. Ordinary library mutation is contained major, without critical/security/systemic evidence.",
+    "topic_severities": {
+      "architecture-and-design": "major",
+      "correctness-and-compatibility": "major",
+      "code-quality-and-idioms": "major"
+    }
+  },
+  "F2": {
+    "severity": "major",
+    "systemic": false,
+    "cause": "Supplied tests never assert the explicitly important stored-element mutation-isolation contract",
+    "evidence": [
+      "catalog/catalog_test.go:5-15",
+      "export/export_test.go:8-13",
+      "baseline-check.log",
+      "boundary-check.log",
+      "export-check/evidence/original.txt"
+    ],
+    "sources": [
+      "export/testing/F1"
+    ],
+    "owner": "catalog and export regression tests",
+    "correction": "Add direct Snapshot element-write isolation and Uppercase before/after preservation assertions",
+    "topic_severities": {
+      "testing": "major"
+    },
+    "reconciliation": "Independent test correction remains necessary after production repair. Both test files omit the same invariant, counted once. Worker challenged on major versus localized moderate; go-testing rubric explicitly grades important effectively-unverified contract major, and REVIEW explicitly identifies this public promise. No systemic multiplier."
+  }
+}

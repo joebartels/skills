@@ -1,0 +1,173 @@
+{
+  "purpose": "Test rubric application independently of defect discovery. These are confirmed, deduplicated severity inventories, not a substitute for real code review. All cases have sufficient evidence, at least one verified ordinary strength, and no unassessed material risk. A systemic major has demonstrated reach across distinct important workflows; safeguards address distinct meaningful risks beyond routine setup.",
+  "cases": [
+    {
+      "id": "critical-dominates",
+      "counts": {
+        "critical": 1,
+        "major": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "systemic_major": false,
+      "verified_nonroutine_safeguards": 0,
+      "expected_grade": "F"
+    },
+    {
+      "id": "multiple-major",
+      "counts": {
+        "critical": 0,
+        "major": 2,
+        "moderate": 0,
+        "minor": 0
+      },
+      "systemic_major": false,
+      "verified_nonroutine_safeguards": 0,
+      "expected_grade": "C-"
+    },
+    {
+      "id": "major-and-two-moderate",
+      "counts": {
+        "critical": 0,
+        "major": 1,
+        "moderate": 2,
+        "minor": 0
+      },
+      "systemic_major": false,
+      "verified_nonroutine_safeguards": 0,
+      "expected_grade": "C-"
+    },
+    {
+      "id": "systemic-major",
+      "counts": {
+        "critical": 0,
+        "major": 1,
+        "moderate": 0,
+        "minor": 0
+      },
+      "systemic_major": true,
+      "verified_nonroutine_safeguards": 0,
+      "expected_grade": "C-"
+    },
+    {
+      "id": "contained-major",
+      "counts": {
+        "critical": 0,
+        "major": 1,
+        "moderate": 1,
+        "minor": 3
+      },
+      "systemic_major": false,
+      "verified_nonroutine_safeguards": 0,
+      "expected_grade": "C"
+    },
+    {
+      "id": "two-moderate",
+      "counts": {
+        "critical": 0,
+        "major": 0,
+        "moderate": 2,
+        "minor": 0
+      },
+      "systemic_major": false,
+      "verified_nonroutine_safeguards": 0,
+      "expected_grade": "C+"
+    },
+    {
+      "id": "moderate-two-minor",
+      "counts": {
+        "critical": 0,
+        "major": 0,
+        "moderate": 1,
+        "minor": 2
+      },
+      "systemic_major": false,
+      "verified_nonroutine_safeguards": 0,
+      "expected_grade": "B-"
+    },
+    {
+      "id": "moderate-one-minor",
+      "counts": {
+        "critical": 0,
+        "major": 0,
+        "moderate": 1,
+        "minor": 1
+      },
+      "systemic_major": false,
+      "verified_nonroutine_safeguards": 0,
+      "expected_grade": "B"
+    },
+    {
+      "id": "two-minor",
+      "counts": {
+        "critical": 0,
+        "major": 0,
+        "moderate": 0,
+        "minor": 2
+      },
+      "systemic_major": false,
+      "verified_nonroutine_safeguards": 0,
+      "expected_grade": "B+"
+    },
+    {
+      "id": "one-minor",
+      "counts": {
+        "critical": 0,
+        "major": 0,
+        "moderate": 0,
+        "minor": 1
+      },
+      "systemic_major": false,
+      "verified_nonroutine_safeguards": 0,
+      "expected_grade": "A-"
+    },
+    {
+      "id": "routine-sound",
+      "counts": {
+        "critical": 0,
+        "major": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "systemic_major": false,
+      "verified_nonroutine_safeguards": 0,
+      "expected_grade": "A"
+    },
+    {
+      "id": "one-extra-safeguard",
+      "counts": {
+        "critical": 0,
+        "major": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "systemic_major": false,
+      "verified_nonroutine_safeguards": 1,
+      "expected_grade": "A"
+    },
+    {
+      "id": "two-extra-safeguards",
+      "counts": {
+        "critical": 0,
+        "major": 0,
+        "moderate": 0,
+        "minor": 0
+      },
+      "systemic_major": false,
+      "verified_nonroutine_safeguards": 2,
+      "expected_grade": "A+"
+    },
+    {
+      "id": "strengths-do-not-offset",
+      "counts": {
+        "critical": 0,
+        "major": 0,
+        "moderate": 1,
+        "minor": 0
+      },
+      "systemic_major": false,
+      "verified_nonroutine_safeguards": 2,
+      "expected_grade": "B"
+    }
+  ]
+}

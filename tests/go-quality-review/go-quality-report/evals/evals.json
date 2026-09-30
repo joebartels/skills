@@ -1,0 +1,221 @@
+{
+  "skill_name": "go-quality-report",
+  "evals": [
+    {
+      "id": "ambiguous-target",
+      "prompt": "Use the umbrella review workflow. A repository is available; user says review my changes. Inventory shows staged changes to auth.go, unstaged changes to cli.go, and a branch with three commits beyond main. No previous scope discussion. State the next action only; do not invent a user reply.",
+      "expected_output": "Ask which target to review, offering concrete observed choices; no grading yet.",
+      "assertions": [
+        "Clarifies staged/working-tree/branch ambiguity with concrete choices.",
+        "Does not choose an unstated base or grade before scope is established."
+      ]
+    },
+    {
+      "id": "explicit-diff",
+      "prompt": "User requests review of supplied base abc123 to head def456, including tests and release configuration. A checkout is available and clean. Explain scope discovery and dispatch, not an actual code review.",
+      "expected_output": "Use exact revisions; inspect inventory and applicable topics; no unnecessary clarification.",
+      "assertions": [
+        "Preserves exact base/head and does not substitute main or working tree.",
+        "Routes tests and release configuration by actual risks.",
+        "Does not request confirmation of an already explicit scope."
+      ]
+    },
+    {
+      "id": "large-codebase",
+      "prompt": "Plan a full-codebase review: 600 Go files across billing, accounts, reporting, cmd, shared storage and internal transport, plus go.mod, CI, and migrations. Available worker contexts are moderate, concurrency two; no specific models can be selected. No code contents yet. Return a concrete discovery/chunking/routing plan without fabricating grades.",
+      "expected_output": "Progressive discovery then bounded semantic packets, waves of two, dependency and boundary obligations; host default.",
+      "assertions": [
+        "Does not assign the entire repository independently to nine agents.",
+        "Uses domains or contracts and splits oversized work further.",
+        "Assigns cross-boundary and repository-wide obligations without redundant full scans.",
+        "Preserves unavailable model selection and concurrency limits.",
+        "Does not call unseen code clean."
+      ]
+    },
+    {
+      "id": "small-library",
+      "prompt": "Plan review of a complete six-line library change to pure integer normalization plus boundary tests. No dependency, I/O, lifecycle, API compatibility, or release changes. Available agents support delegation.",
+      "expected_output": "One bounded worker may combine relevant topics; justify other omissions.",
+      "assertions": [
+        "Combines related skills rather than mandates one worker per topic.",
+        "Accounts for all nine topics with applicability reasons.",
+        "Does not require service probes, telemetry, containers, or nine workers."
+      ]
+    },
+    {
+      "id": "no-go-impact",
+      "prompt": "User requests Go quality review of a change solely translating marketing prose; no Go code, behavior, tests, CI, dependency or operations changes.",
+      "expected_output": "Not applicable; reason, no unnecessary agents or letter grade.",
+      "assertions": [
+        "Returns Not applicable.",
+        "Does not invent code defects or launch irrelevant reviews."
+      ]
+    },
+    {
+      "id": "missing-skill",
+      "prompt": "An explicit service diff is ready. Security applies because it changes object authorization, but the Security skill cannot be discovered. All other needed skills are available. User wants a full quality report.",
+      "expected_output": "Complete feasible work, disclose blocked Security coverage, no certified full-scope grade.",
+      "assertions": [
+        "Does not silently substitute generic review as invocation of the absent skill.",
+        "Distinguishes applicable/unavailable from Not applicable.",
+        "Explains the full-scope coverage limit and continues independent work."
+      ]
+    },
+    {
+      "id": "unavailable-workers",
+      "prompt": "Review a supplied Go library area. The host has no subagent capability, but all topic skills and local file tools are available. Explain execution and reporting.",
+      "expected_output": "Sequential bounded topic review with artifacts and disclosed lack of independent agents.",
+      "assertions": [
+        "Uses available skills sequentially without pretending agents ran.",
+        "Preserves bounded work and overall evidence/grade rules."
+      ]
+    },
+    {
+      "id": "worker-timeout",
+      "prompt": "Synthesize full-codebase review: transport and domain have complete A report cards. Storage worker timed out before reading any files; storage has important persistence behavior. No confirmed defects.",
+      "expected_output": "Overall Insufficient evidence; pending storage stays a gap, no A.",
+      "assertions": [
+        "Returns full-scope Insufficient evidence.",
+        "Does not classify storage as irrelevant or average completed A cards.",
+        "Proposes bounded retry or reassignment and states remaining coverage."
+      ]
+    },
+    {
+      "id": "duplicate-cause",
+      "prompt": "Synthesize complete review. Correctness card in chunk transport has local F1 major: update precedes tenant authorization. Security card same chunk has local F1 critical: same statement order causes demonstrated broad cross-tenant private-data modification. Testing card also local F1 major: sole tests stub Authorize true, never assert rejection without writes, requiring an independent negative test. All evidence is confirmed; complete coverage; one unrelated A card and one unrelated A+ card.",
+      "expected_output": "F, one critical production cause and one independent major test gap, namespaced IDs resolved.",
+      "assertions": [
+        "Overall F, strengths do not offset.",
+        "Deduplicates production cause across Security and Correctness.",
+        "Retains separately actionable test gap.",
+        "Does not merge every local F1 merely by ID."
+      ]
+    },
+    {
+      "id": "partition-invariance",
+      "prompt": "Compute overall grade for the same fully reviewed code under two layouts: one card reports two independent moderate findings, or two cards each report one of those same moderate findings. Twelve other chunks have A. All findings substantiated and coverage complete.",
+      "expected_output": "C+ both layouts.",
+      "assertions": [
+        "Gives C+ in both layouts.",
+        "Counts two unique moderate causes without averaging or clean-chunk dilution."
+      ]
+    },
+    {
+      "id": "distinct-same-message",
+      "prompt": "Two fully reviewed unrelated components each have a moderate finding called missing cancellation. One is a background export job missing ctx in a remote call; the other is a CLI local subprocess using exec.Command instead of CommandContext. Independent fixes, separate sources. Complete coverage.",
+      "expected_output": "C+; similar wording does not deduplicate distinct causes.",
+      "assertions": [
+        "Retains both independent moderate causes.",
+        "Overall C+ with two unique moderates."
+      ]
+    },
+    {
+      "id": "severity-dispute",
+      "prompt": "One topic labels a buffer alias critical because it says data race. Another supplies code showing only sequential reuse violating documented independent-result ownership, with an observed overwritten result; no concurrent access, irreversible loss or wider consumers demonstrated. Both identify same cause. Complete relevant coverage.",
+      "expected_output": "Validate evidence; one contained major C; no automatic maximum of unsupported labels.",
+      "assertions": [
+        "Rejects unsupported critical reach.",
+        "Uses one contained major and C on supplied evidence.",
+        "Preserves the reason for reconciliation and related topic correction."
+      ]
+    },
+    {
+      "id": "same-safeguard",
+      "prompt": "All material coverage complete and no defects. Two topic cards both award A+ by counting the same tested cancellation path and same timer cancellation as two controls for the same cancellation risk. No other nonroutine safeguards are demonstrated; one ordinary strength verified.",
+      "expected_output": "A; duplicated descriptions are not independent safeguards.",
+      "assertions": [
+        "Overall A rather than inheriting A+.",
+        "Deduplicates safeguard identity and risk, not just finding IDs."
+      ]
+    },
+    {
+      "id": "distinct-safeguards",
+      "prompt": "All applicable coverage complete; no actionable defects. Payment-client tests demonstrate lost-response retry preserves one key and causes one charge; separate cancellation-during-backoff test proves no later attempt. These independent nonroutine safeguards address duplicate charge and work after cancellation. Ordinary strengths verified.",
+      "expected_output": "A+.",
+      "assertions": [
+        "Overall A+ with both distinct risks and evidence.",
+        "Does not require every topic or chunk to earn A+."
+      ]
+    },
+    {
+      "id": "partial-with-defect",
+      "prompt": "Full service review requested. Reviewed handler has a confirmed contained major error (C); persistence review lacks source and remains unassessed. Produce final headline and assessed finding treatment.",
+      "expected_output": "Overall Insufficient evidence; may show assessed-scope C separately and report defect.",
+      "assertions": [
+        "Does not hide the confirmed defect behind missing evidence.",
+        "Does not present C as a complete full-service grade.",
+        "Separates reviewed-scope finding grade from overall coverage state."
+      ]
+    },
+    {
+      "id": "related-files",
+      "prompt": "User requests diff review of new HTTP handler; handler delegates authorization to unchanged middleware and writes through unchanged repository. Worker wants to inspect both, but user requested only changed-code grading. Explain scope handling.",
+      "expected_output": "Permit relevant context inspection; grade introduced/worsened consequences, not unrelated old debt.",
+      "assertions": [
+        "Allows reading middleware/repository to verify the changed path.",
+        "Keeps diff grading to introduced/worsened or newly exposed defects.",
+        "Records additional context without expanding target silently."
+      ]
+    },
+    {
+      "id": "boundary-handoff",
+      "prompt": "Large changeset has separate report cards: transport validates caller identity; domain performs a tenant update; persistence stores the row. Each worker reports A after looking only inside its own layer. No one checked whether authorized tenant identity is passed correctly across calls.",
+      "expected_output": "Boundary obligation unreviewed; targeted trace before overall grade.",
+      "assertions": [
+        "Does not accept local A cards as complete integration evidence.",
+        "Assigns a bounded end-to-end tenant/identity handoff review.",
+        "Marks material coverage incomplete until resolved."
+      ]
+    },
+    {
+      "id": "model-policy",
+      "prompt": "Plan worker assignment on a provider-neutral host. User has pinned a balanced model, no permission to change it. Tasks include file inventory, complex goroutine shutdown ownership and high-impact authorization review. Host exposes reasoning effort but no model family selection.",
+      "expected_output": "Respect pinned model, adjust permitted effort and packet size, use targeted independent check if needed; no hardcoded vendors.",
+      "assertions": [
+        "Does not override pinned model or invent unavailable models.",
+        "Allocates deeper permitted reasoning to complex/high-impact work.",
+        "Uses bounded work and verification instead of promising capability unavailable to host."
+      ]
+    },
+    {
+      "id": "stale-report",
+      "prompt": "A diff review is underway. Worker report scope says head abc123; current requested head is def456 and affected handler changed between them. It has a convincing C finding and source references at abc123.",
+      "expected_output": "Do not reuse as current verified card; revalidate affected code and preserve version lineage.",
+      "assertions": [
+        "Detects mismatched reviewed revision.",
+        "Revalidates affected findings/coverage before counting them for def456."
+      ]
+    },
+    {
+      "id": "budget-does-not-shrink-scope",
+      "prompt": "User requests full repository review with a short time budget. Only a risk-selected subset can be inspected. Explain plan and final grading semantics.",
+      "expected_output": "Prioritize within budget, explicit partial coverage, no claim of full review or A from sampling.",
+      "assertions": [
+        "Preserves original requested scope and names sampled subset.",
+        "Does not silently call sampling complete coverage.",
+        "Offers explicit narrower review or incomplete full-scope result without treating budget as permission to certify."
+      ]
+    },
+    {
+      "id": "delegated-catalog-export",
+      "prompt": "Use go-quality-report to review the complete library code area in the supplied catalog-export fixture. Read REVIEW.md for scope and contracts. Use two bounded review packets for catalog and export, invoke the relevant available topic skills through workers, and assess their boundary. Keep the orchestrator context lean with saved cards. Use disposable copies for any new reproductions. Produce the final overall report, manifest and reconciled ledger. No source edits.",
+      "files": [
+        "evals/files/catalog-export/REVIEW.md",
+        "evals/files/catalog-export/go.mod",
+        "evals/files/catalog-export/catalog/catalog.go",
+        "evals/files/catalog-export/catalog/catalog_test.go",
+        "evals/files/catalog-export/export/export.go",
+        "evals/files/catalog-export/export/export_test.go"
+      ],
+      "expected_output": "An actual delegated review with relevant topic cards, canonical ownership finding and independent testing gap if supported, stable scope, no inferred races, complete routing/applicability and reproducible overall arithmetic.",
+      "assertions": [
+        "Delegates two bounded packets and records which topic skills workers actually read.",
+        "Finds element aliasing despite the full-slice capacity limit and traces Uppercase mutation into the catalog.",
+        "Deduplicates the shared production ownership cause across packets/topics.",
+        "Distinguishes append-test success from independent element mutation and records exact checks without false execution claims.",
+        "Considers all nine topics and does not invent service requirements or concurrent races.",
+        "Final counts and grade follow reconciled causes, with links to cards, suggested fixes and verification."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "skill_name": "go-dependencies-and-reproducibility",
+  "evals": [
+    {
+      "id": "workspace-hides-missing-requirement",
+      "prompt": "Review only Dependencies & Reproducibility for the Go changeset described in evals/files/workspace-hidden-dependency/CHANGESET.md. Inspect the modules and run focused, non-mutating commands if useful. Grade the change with file locations and distinguish the local workspace result from the standalone release build.",
+      "files": [
+        "evals/files/workspace-hidden-dependency"
+      ],
+      "expected_output": "C for one contained major flaw: workspace mode supplies the imported sibling module but service/go.mod does not require it, so the documented standalone build fails. The fix declares a versioned dependency or changes the documented release boundary to include a valid workspace, with a rationale for the actual release path.",
+      "assertions": [
+        "The review checks or correctly reasons about both workspace and standalone module resolution.",
+        "It identifies the missing requirement as the dependency cause, not a defect in the sibling package's Go code.",
+        "It grades one contained major flaw C rather than assuming every possible target fails.",
+        "It gives a change that makes the standalone release dependency resolvable."
+      ]
+    },
+    {
+      "id": "supported-toolchain-raise",
+      "prompt": "Review only Dependencies & Reproducibility for a Go CLI v1.7 changeset. The published support policy and release test matrix include Go 1.21 and Go 1.24. The change adds a test-only generator module whose own go.mod requires Go 1.24, and go mod tidy changes the CLI module's `go 1.21` line to `go 1.24.0` plus `toolchain go1.24.2`. The Go 1.21 job sets GOTOOLCHAIN=local and now fails before compiling; the Go 1.24 job passes. No CLI source uses newer language features. No other change is shown.",
+      "expected_output": "C for a contained major dependency/toolchain compatibility break of one supported release target. The toolchain hint does not restore Go 1.21 support. Recommend a compatible generator/version or an explicit support-policy change with verification, without calling this F solely because one job fails.",
+      "assertions": [
+        "The report identifies the go directive as a minimum version constraint and the Go 1.21 local job as affected.",
+        "It does not claim the toolchain directive makes the Go 1.21 local job pass.",
+        "The grade is C for one contained major flaw, with a targeted version or policy remedy."
+      ]
+    },
+    {
+      "id": "missing-sums-readonly",
+      "prompt": "Review only Dependencies & Reproducibility for a complete Go service changeset. It adds a new imported public module at an explicit version in go.mod but does not commit the newly needed go.sum entries. CI checks out source with an empty module cache and runs `go build -mod=readonly ./cmd/service`; that command fails with a missing go.sum entry. The developer's warm local cache build passes. No other issue is shown.",
+      "expected_output": "C for one contained major fresh-checkout build failure. It suggests adding the needed verified checksums through an appropriate module command and rerunning the readonly clean build, without calling go.sum a lockfile or treating the warm cache as proof.",
+      "assertions": [
+        "The report distinguishes a warm-cache pass from the failing clean, readonly CI build.",
+        "It identifies needed go.sum entries but does not claim go.sum locks the selected graph.",
+        "The grade is C and the suggested change restores the documented build path."
+      ]
+    },
+    {
+      "id": "no-dependency-no-sum",
+      "prompt": "Review only Dependencies & Reproducibility for a small Go library module with a complete repository available. Its go.mod has `module example.com/strings`, `go 1.22`, and no require or replace directives. It imports only the standard library, has no code-generation step or cgo, and the supported Go 1.22 and 1.24 clean-checkout builds pass with GOWORK=off and -mod=readonly. It has no go.sum file. No other build-input change is shown.",
+      "expected_output": "A, recognizing the verified clean builds and that go.sum can legitimately be absent when there are no external dependencies. No invented requirement to add a lockfile or vendor directory.",
+      "assertions": [
+        "The report does not penalize the absence of go.sum when no checksum entries are needed.",
+        "It cites the supported clean builds as positive evidence and does not invent a flaw.",
+        "It uses the common Good, Bad, Suggested changes report shape."
+      ]
+    },
+    {
+      "id": "private-module-checksum-exception",
+      "prompt": "Review only Dependencies & Reproducibility for a Go service that adds a private module corp.example.com/payments at v1.6.2. CI has a documented authenticated internal module proxy, GOPRIVATE=corp.example.com, and a fresh-checkout readonly build passes on each supported target. The private module has no public checksum-database entry. No replace, generated source, or other build-input change is shown.",
+      "expected_output": "A, because the private-module authentication exception is expected and the provided fresh-checkout build verifies availability. It does not require a public sumdb entry or insist on vendor as a universal rule.",
+      "assertions": [
+        "The report recognizes GOPRIVATE's effect on public checksum-database lookups.",
+        "It does not treat lack of a public sumdb entry as a defect.",
+        "It uses the standard report fields with evidence-based positive findings."
+      ]
+    },
+    {
+      "id": "floating-generator-moderate",
+      "prompt": "Review only Dependencies & Reproducibility for a Go library changeset. A committed generated parser and its schema are both present. Developers regenerate it before releases with a newly added script `go run example.com/tools/parsergen@latest -in schema.yaml -out parser_gen.go`. The release build compiles the committed file and does not run the generator. The generator is not otherwise versioned or recorded. There is no evidence of a present parser mismatch or production behavior defect.",
+      "expected_output": "B for one moderate reproducibility gap in future regeneration: @latest can select a different generator later, although current builds use committed code. Recommend a recorded explicit generator version and document verification of regenerated output. Do not escalate to a present release build failure.",
+      "assertions": [
+        "The report separates regeneration drift from the current build, which uses committed generated code.",
+        "It grades one moderate gap B rather than claiming current production is broken.",
+        "It recommends a fixed generator version or equivalent controlled input."
+      ]
+    },
+    {
+      "id": "bulk-upgrade-with-evidence",
+      "prompt": "Review only Dependencies & Reproducibility for a Go CLI module change. It updates one direct and two transitive public modules to explicit versions. go.mod and the needed go.sum entries are committed. `GOWORK=off go list -m all` reports the intended selected versions, and clean-cache, readonly builds pass for every documented GOOS/GOARCH and Go version. The module has no code generation or cgo. No changed dependency is known to be vulnerable in the provided evidence. No other changes are shown.",
+      "expected_output": "A: do not penalize an upgrade just because transitive versions moved, demand the latest releases, or imply go.sum is a lockfile. Security and functional regressions are separate topics unless evidence is provided.",
+      "assertions": [
+        "The report identifies the resolved graph and clean target builds as relevant strengths.",
+        "It does not invent a dependency defect from transitive churn or missing use of the latest version.",
+        "It does not turn an unperformed vulnerability scan into a bad finding."
+      ]
+    },
+    {
+      "id": "exceptional-rebuild-controls",
+      "prompt": "Review only Dependencies & Reproducibility for a Go CLI with a documented requirement that release binaries be reproducible byte for byte by external auditors. The changeset replaces an unversioned code generator with a generator pinned by immutable module version and verified checksum, and CI confirms a clean regeneration exactly matches committed generated Go files. Separately, the release job records the exact Go toolchain, build flags, target, and VCS revision, removes variable timestamps and paths from packaging, and two isolated builders produce identical artifact hashes for the same target. All documented target builds pass; no dependency or build-input issue is shown.",
+      "expected_output": "A+ for two distinct, non-routine verified safeguards: controlled regeneration and independent artifact identity verification under an explicit audit requirement. It names evidence for each and does not confuse ordinary module pinning alone with A+.",
+      "assertions": [
+        "The report gives A+ with two distinct, evidence-backed safeguards beyond routine successful builds.",
+        "It explains how controlled regeneration and independent artifact hash comparison address the project's audit requirement.",
+        "It does not invent a defect or require an unrelated deployment or security control."
+      ]
+    },
+    {
+      "id": "critical-mutable-core-generator",
+      "prompt": "Review only Dependencies & Reproducibility for a Go payment service changeset. Every production build regenerates the core fee rules from a generator with `go run example.com/company/payrules/cmd/gen@latest`; the previously fixed generator version is removed, and the generated Go file is not committed. These rules determine fees for every transaction. Two production builds from the same service commit, before and after a new generator release, produced different fee-rule source and binaries. Release metadata records only the service commit, not the generator version or generated file, and no saved build inputs can reconstruct which rules were shipped. No other issue is shown.",
+      "expected_output": "F for a demonstrated critical, system-wide loss of production build provenance: mutable @latest changes core fee rules for all releases from the same service commit. Recommend a controlled generator input and recorded/generated artifact evidence; avoid grading the fee-calculation algorithm itself in this topic.",
+      "assertions": [
+        "The grade is F based on observed broad, untraceable production build input, not merely the presence of @latest.",
+        "The report cites the two different builds from one service commit and the effect on core fee rules.",
+        "The proposed correction pins and records the generator and verifies generated output in the release build."
+      ]
+    },
+    {
+      "id": "two-independent-build-breaks",
+      "prompt": "Review only Dependencies & Reproducibility for a Go repository with two independently released artifacts. A CLI module adds `replace example.com/parser => /Users/maintainer/parser`; the CLI release checkout contains no such path, so its clean build fails. Separately, a service module raises its go directive from 1.21 to 1.24 because of a new tool dependency, while its published matrix includes Go 1.21 with GOTOOLCHAIN=local and Go 1.24; only its Go 1.21 job fails. The CLI issue and service issue have unrelated causes; other release paths pass. No other changes are shown.",
+      "expected_output": "C- for two independent contained major flaws, with separate fixes and consequences. Neither issue alone is critical and other release paths pass.",
+      "assertions": [
+        "The report identifies the unshipped absolute replace path and the incompatible Go 1.21 target as separate root causes.",
+        "The grade is C- for two independent major flaws, not F solely because two builds fail.",
+        "It gives a targeted correction and rationale for each finding."
+      ]
+    },
+    {
+      "id": "unrelated-document-edit",
+      "prompt": "Review only Dependencies & Reproducibility for a changeset that corrects punctuation in a contributor guide. It changes no module, import, workspace, toolchain, generation, build input, or release instruction.",
+      "expected_output": "Not applicable, with a concise rationale and no invented grade or findings.",
+      "assertions": [
+        "The result is Not applicable rather than a letter grade.",
+        "The report does not invent dependency or build-input findings."
+      ]
+    },
+    {
+      "id": "partial-build-snippet",
+      "prompt": "Review only Dependencies & Reproducibility for a pasted build snippet `go build ./cmd/tool` from an unknown Go repository. No go.mod, go.sum, go.work, imports, generated source, CI environment, supported targets, or build result is provided, and the repository cannot be inspected. The user asks whether dependencies and builds are reproducible.",
+      "expected_output": "Insufficient evidence, naming the missing module/build inputs and clean-build result needed to judge reproducibility without assuming the repository is defective.",
+      "assertions": [
+        "The result is Insufficient evidence rather than a forced grade.",
+        "It identifies concrete missing evidence without treating absent supplied files as absent repository files."
+      ]
+    },
+    {
+      "id": "vendor-build-mode-preservation",
+      "prompt": "Review Dependencies & Reproducibility for a Go module dependency bump. go.mod now requires example.com/lib v1.4.0; checked-in vendor/modules.txt and vendored sources still identify v1.3.0. The release intentionally builds with -mod=vendor and its supplied log fails with inconsistent vendoring. A developer reports go build -mod=readonly passes using the module cache. Public fetching works, and no other issue is shown.",
+      "expected_output": "C for one contained major supported-build failure. Respect the release vendor mode, synchronize the intended vendored inputs, and rerun that build. Do not use readonly success as proof that vendor works.",
+      "assertions": [
+        "The grade is C for the demonstrated release-mode inconsistency.",
+        "The report explains that readonly bypasses vendor and its success does not validate the shipped build mode.",
+        "The correction updates matching vendor metadata/content and verifies -mod=vendor without silently changing the release contract."
+      ]
+    }
+  ]
+}
