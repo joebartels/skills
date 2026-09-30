@@ -1,0 +1,108 @@
+{
+  "skill_name": "go-correctness-and-compatibility",
+  "evals": [
+    {
+      "id": "slice-ownership-break",
+      "prompt": "Review only Correctness & Compatibility for this Go 1.26 library changeset. The module is at v1.4.0. Catalog.IDs is documented: 'IDs returns catalog IDs in stable order. Callers may modify the returned slice without affecting the Catalog.' Before this change it returned slices.Clone(c.ids). The change replaces its body with `return c.ids[:len(c.ids):len(c.ids)]`. The Catalog may be shared among goroutines; callers sometimes sort or redact the returned slice. No other changes.",
+      "expected_output": "A C grade for one contained major contract break: the returned slice still aliases elements despite capped capacity. It identifies the affected caller behavior and a real copy as the fix without inflating the issue to F solely because a race is possible.",
+      "assertions": [
+        "The report says the full-slice expression still shares existing elements and violates the documented independent-slice contract.",
+        "The grade is C for one contained major flaw, not F without evidence of severe systemic failure.",
+        "The suggested change restores an actual copy and explains why capacity limiting is insufficient.",
+        "The report retains Good, Bad, and Suggested changes without fabricating unrelated findings."
+      ]
+    },
+    {
+      "id": "file-backed-slice-ownership",
+      "prompt": "Review only Correctness & Compatibility for the Go changeset described in evals/files/catalog-change/CHANGESET.md. Inspect the code and tests in that module. You may run focused tests. Give a grade with code locations and distinguish what the tests verify from the behavior they miss.",
+      "files": [
+        "evals/files/catalog-change"
+      ],
+      "expected_output": "A C grade identifying that capped capacity does not isolate existing elements, despite the passing append test. The report cites catalog.go and suggests a real copy.",
+      "assertions": [
+        "The report identifies a documented ownership break in catalog.go with a concrete caller effect.",
+        "The report does not use a passing TestIDsCanBeAppendedTo as proof that element mutation is safe.",
+        "The grade is C for one contained major flaw rather than F based on an unspecified catastrophic impact.",
+        "The suggested change returns an independent slice and explains why."
+      ]
+    },
+    {
+      "id": "function-value-compatibility",
+      "prompt": "Review Correctness & Compatibility for a public Go module v1.8 changeset intended for the next minor release. It changes exported `func Run(name string) error` to `func Run(name string, opts ...Option) error`. Existing calls of `Run(\"job\")` still compile, but a documented extension example and two downstream packages use `var start func(string) error = task.Run`. No new function is provided. No other behavior changes.",
+      "expected_output": "A C grade for a demonstrated source compatibility break in a supported minor release, with a compatible additive API suggestion. It does not conclude compatibility solely from old call syntax.",
+      "assertions": [
+        "The report recognizes that the function value assignment no longer compiles.",
+        "The grade is C for one contained major flaw, with the consumer and release policy cited.",
+        "The suggested change keeps Run's old signature and introduces a separately named option-taking function or an equivalent compatible path."
+      ]
+    },
+    {
+      "id": "intentional-v0-break",
+      "prompt": "Review Correctness & Compatibility for a v0.3 experimental Go library changeset. Its published policy says v0 minor releases may break APIs. The release notes announce that Parse now returns a typed Result instead of a string and include a migration example. The repository's three known callers are updated and compile. The parser behavior for supported inputs is unchanged and focused tests pass. Review only the shown change; no external compatibility promise is supplied.",
+      "expected_output": "A positive grade that recognizes the documented, policy-compliant migration and does not impose v1 stability on a v0 module or invent outside consumers.",
+      "assertions": [
+        "The report does not grade the announced v0 API change as an automatic compatibility flaw.",
+        "The report cites the policy, release notes, and migrated callers as relevant positive evidence.",
+        "The report does not invent defects or unprovided external consumers."
+      ]
+    },
+    {
+      "id": "service-partial-transfer",
+      "prompt": "Review only Correctness & Compatibility for this Go service change. The documented Transfer(ctx, from, to, amount) contract says each attempt either changes both balances or leaves both unchanged, including when an error is returned. The change executes an UPDATE that debits from, then a second independent UPDATE that credits to, without a transaction or compensation. If the second UPDATE returns an error, Transfer returns that error and the debit remains committed. The database uses autocommit for each statement. No other paths change.",
+      "expected_output": "A low grade grounded in the demonstrated partial-commit path and a recommendation that makes the two updates atomic. It does not impose exactly-once delivery or an unrelated architecture pattern.",
+      "assertions": [
+        "The report identifies the failed-credit path that leaves a committed debit in violation of the explicit contract.",
+        "The report recommends a transaction or equivalent atomic mechanism and explains how it prevents the partial update.",
+        "The report does not invent a security exploit, exactly-once requirement, or new package hierarchy."
+      ]
+    },
+    {
+      "id": "cli-empty-array-contract",
+      "prompt": "Review only Correctness & Compatibility for a v1 Go CLI changeset. The documented `list --json` output always includes `items` as an array, and a known automation validates that field with an array schema. The change initializes `Items []string` to nil when the result set is empty, then passes it to encoding/json; non-empty results are unchanged. No other paths change. The empty case is common and the automation rejects `items: null` without changing data.",
+      "expected_output": "A B grade for one contained moderate compatibility defect affecting a common empty-result case, with a suggestion to preserve the array encoding.",
+      "assertions": [
+        "The report identifies that a nil slice encodes as null and breaks the documented array contract on empty results.",
+        "The grade is B for one moderate flaw, rather than F or C without wider impact.",
+        "The suggested change preserves a non-nil empty slice or equivalent array encoding."
+      ]
+    },
+    {
+      "id": "core-save-noop",
+      "prompt": "Review only Correctness & Compatibility for a Go service changeset. Save is the only persistence path for all accepted customer orders. The production configuration sets DryRun=false. A new branch says `if !cfg.DryRun { return nil }` before the database write, while the request handler acknowledges the order after Save returns nil. Therefore every production order is acknowledged but never persisted. There is no retry or secondary write path. No other changes.",
+      "expected_output": "An F grade for a demonstrated critical failure across the core order workflow, with a targeted correction and rationale.",
+      "assertions": [
+        "The report identifies that all production orders are acknowledged without persistence.",
+        "The grade is F because the failure is broad across the core workflow, not merely because one function has a bug.",
+        "The suggested change corrects the branch or restores the write before success is reported."
+      ]
+    },
+    {
+      "id": "no-behavior-decision",
+      "prompt": "Review only Correctness & Compatibility for a changeset that reformats Markdown headings in a contributor guide. It changes no instructions, Go code, generated source, API docs, build configuration, or user-visible program output.",
+      "expected_output": "Not applicable, tied to the absence of a behavior or consumer-contract decision.",
+      "assertions": [
+        "The result is Not applicable instead of a forced letter grade.",
+        "The report does not invent correctness findings."
+      ]
+    },
+    {
+      "id": "missing-contract",
+      "prompt": "Review only Correctness & Compatibility for a partial snippet `func Normalize(v string) string { return strings.TrimSpace(strings.ToLower(v)) }`. The caller, prior implementation, intended normalization rules, data format, and tests are unavailable and the repository cannot be inspected. The request specifically asks whether this preserves an existing compatibility contract, with no contract supplied.",
+      "expected_output": "Insufficient evidence for the requested compatibility judgment, explaining which contract and prior-behavior facts are missing rather than inventing a break.",
+      "assertions": [
+        "The result is Insufficient evidence for compatibility rather than an unsupported letter grade.",
+        "The report identifies prior behavior and supported caller or format expectations needed to grade."
+      ]
+    },
+    {
+      "id": "iteration-error-masquerades-as-success",
+      "prompt": "Review Correctness & Compatibility for a Go catalog-service diff. ListAll opens sql.Rows, defers rows.Close, scans inside for rows.Next() with Scan errors checked, and then returns items,nil without rows.Err(). Its documented contract returns a complete snapshot or an error. A supplied driver trace shows 20 rows returned then a connection error during iteration; the caller receives the 20-row prefix with nil error and replaces its previous full snapshot. Other DB operations and data remain available. No other change.",
+      "expected_output": "C for one contained major completion-contract defect. Explain Rows.Next false due to an error, the nil-error partial snapshot, and the caller effect; check Rows.Err before returning successful results.",
+      "assertions": [
+        "The report distinguishes an iteration error from successful exhaustion.",
+        "It links the missing Rows.Err check to the caller replacing a full snapshot with partial results.",
+        "The fix verifies a mid-stream failure and does not demand unrelated transaction or architecture changes."
+      ]
+    }
+  ]
+}

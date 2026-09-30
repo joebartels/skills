@@ -1,0 +1,2293 @@
+[
+  {
+    "skill": "go-architecture-and-design",
+    "cases": [
+      {
+        "id": "producer-protocol",
+        "assertions": [
+          {
+            "assertion": "The report uses a letter grade and identifies evidence of a coherent public protocol.",
+            "passed": true,
+            "evidence": "Header A; Store documented Get/Put semantics and memory/S3 external implementations establish coherent protocol."
+          },
+          {
+            "assertion": "The report does not treat producer ownership of Store as a defect.",
+            "passed": true,
+            "evidence": "Rationale explicitly says producer ownership is appropriate."
+          },
+          {
+            "assertion": "The report does not demand streaming, DTOs, or new package layers without evidence.",
+            "passed": true,
+            "evidence": "No streaming, DTO or new-layer requirement; Limits rejects unsupported unlimited-blob and durability assumptions."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "service-ownership",
+        "assertions": [
+          {
+            "assertion": "The report finds the hidden database dependency and discarded construction error.",
+            "passed": true,
+            "evidence": "F1 names package init hiding DB configuration and discarding sql.Open errors."
+          },
+          {
+            "assertion": "The report finds unowned receipt work and its misleading success or error contract.",
+            "passed": true,
+            "evidence": "F3 names no completion/error owner, disappearing errors and no drain/cancellation contract for potentially blocking receipt work."
+          },
+          {
+            "assertion": "The report identifies raw database errors in the HTTP response.",
+            "passed": true,
+            "evidence": "F2 identifies err.Error() exposing raw SQL implementation errors in HTTP responses."
+          },
+          {
+            "assertion": "The report does not require a new package hierarchy or a durable queue without a demonstrated need.",
+            "passed": true,
+            "evidence": "Suggests explicit handler dependency and synchronous or owned async work; explicitly requires defining 204 before durability machinery."
+          },
+          {
+            "assertion": "The report does not assume that a zero-row update must be an error.",
+            "passed": true,
+            "evidence": "Limits explicitly declines assuming zero updated rows are erroneous."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Assertions pass. Three moderate findings support C+. F1 combines initialization ownership and request-context propagation, whose concrete fixes are somewhat separable; this does not change the grade here but merits root-cause calibration. The report correctly avoids claiming 204 promises durable receipt delivery."
+      },
+      {
+        "id": "local-expression",
+        "assertions": [
+          {
+            "assertion": "The result is Not applicable rather than an artificial letter grade.",
+            "passed": true,
+            "evidence": "Header Not applicable."
+          },
+          {
+            "assertion": "The report does not invent design findings.",
+            "passed": true,
+            "evidence": "Rationale ties absence of design decision to purely local expression; no invented findings."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "public-api-missing-context",
+        "assertions": [
+          {
+            "assertion": "The result is Insufficient evidence rather than an unsupported letter grade.",
+            "passed": true,
+            "evidence": "Header Insufficient evidence."
+          },
+          {
+            "assertion": "The report explains which missing facts would permit judging the API design.",
+            "passed": true,
+            "evidence": "Requests old/new types, representative callers, invariants/lifecycle, module version and compatibility policy."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "library-process-ownership",
+        "assertions": [
+          {
+            "assertion": "The report grades the demonstrated host-lifecycle violation in this standalone Architecture review.",
+            "passed": true,
+            "evidence": "Header C directly grades observed cutoff of host flush in solo Architecture."
+          },
+          {
+            "assertion": "It identifies the library-owned signal/exit path as one root cause rather than multiple independent defects.",
+            "passed": true,
+            "evidence": "One F1/major count groups signal installation and process exit into library/host ownership violation."
+          },
+          {
+            "assertion": "The suggested change restores host ownership without demanding a DI framework or package hierarchy.",
+            "passed": true,
+            "evidence": "Requires removing process exit/signal ownership, accepting host cancellation and exposing Close stop/wait; no framework/layer mandate."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      }
+    ]
+  },
+  {
+    "skill": "go-code-quality-and-idioms",
+    "cases": [
+      {
+        "id": "public-errors",
+        "assertions": [
+          {
+            "assertion": "The report identifies logging the same failure twice as a consequence of the shown caller behavior.",
+            "passed": true,
+            "evidence": "F2 links duplicate logging to supplied callers already logging returned failures."
+          },
+          {
+            "assertion": "The report explains that %w exposes the internal error for errors.Is or errors.As.",
+            "passed": true,
+            "evidence": "F1 explains %w exposes unintended inspectable internal cause; fix explicitly preserves intended errors.Is behavior."
+          },
+          {
+            "assertion": "The report does not claim that %v sanitizes SQL error text.",
+            "passed": true,
+            "evidence": "Fix says using %v alone retains SQL text and does not fix translation."
+          },
+          {
+            "assertion": "Each bad finding has a targeted change and rationale.",
+            "passed": true,
+            "evidence": "F1 translation/identity checks and F2 logging ownership/removal each correspond to the numbered finding."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "slice-contract",
+        "assertions": [
+          {
+            "assertion": "The report treats the empty slice as correct for the documented JSON contract.",
+            "passed": true,
+            "evidence": "G1 says non-nil empty Items gives required JSON array."
+          },
+          {
+            "assertion": "The report recognizes the supported readability improvement.",
+            "passed": true,
+            "evidence": "G2 says early returns simplify supplied long nested ordinary path."
+          },
+          {
+            "assertion": "The report does not claim []string{} necessarily causes a heap allocation.",
+            "passed": true,
+            "evidence": "Limits explicitly disclaims necessary heap allocation from empty literal."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "legacy-loop-version",
+        "assertions": [
+          {
+            "assertion": "The report identifies a loop capture risk because the module declares go 1.21.",
+            "passed": true,
+            "evidence": "F1 uses go 1.21 shared tt semantics and delayed parallel subtests to establish final-value capture."
+          },
+          {
+            "assertion": "The report does not assume the Go 1.27 toolchain gives the module Go 1.27 language semantics.",
+            "passed": true,
+            "evidence": "Explicitly says installed compiler does not itself change semantics."
+          },
+          {
+            "assertion": "The suggestion fixes the capture with a version-compatible binding or explicit parameter.",
+            "passed": true,
+            "evidence": "Suggests rebinding tt inside loop before t.Run, valid under the old version."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "B is supported under the expectation, which deliberately requires a supported negative grade rather than exact C. It limits severity to the supplied local test behavior."
+      },
+      {
+        "id": "no-go-code",
+        "assertions": [
+          {
+            "assertion": "The result is Not applicable rather than an artificial letter grade.",
+            "passed": true,
+            "evidence": "Header Not applicable."
+          },
+          {
+            "assertion": "The report does not invent code-quality findings.",
+            "passed": true,
+            "evidence": "No Go finding; YAML context treated as outside supplied code-quality surface."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "unknown-language-version",
+        "assertions": [
+          {
+            "assertion": "The result is Insufficient evidence rather than assuming pre- or post-1.22 semantics.",
+            "passed": true,
+            "evidence": "Header Insufficient evidence; describes both possible semantics without selecting one."
+          },
+          {
+            "assertion": "The report names the go directive or effective file language version as missing evidence.",
+            "passed": true,
+            "evidence": "Requests go.mod and relevant build constraints/effective language context."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "go127-generics",
+        "assertions": [
+          {
+            "assertion": "The report does not claim that generic methods on concrete types are unsupported in Go 1.27.",
+            "passed": true,
+            "evidence": "Header A accepts supplied compiled concrete generic method for Go 1.27."
+          },
+          {
+            "assertion": "The report does not apply the restriction on generic interface methods to the concrete method in this change.",
+            "passed": true,
+            "evidence": "Coverage explicitly says no generic interface-method issue applies."
+          },
+          {
+            "assertion": "Any suggested change is tied to an observed consequence, not a preference against generics.",
+            "passed": true,
+            "evidence": "Suggested changes None needed; no stylistic opposition to generics invented."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "file-backed-typed-nil",
+        "assertions": [
+          {
+            "assertion": "The report explains why a typed nil *LimitError returned as error is non-nil.",
+            "passed": true,
+            "evidence": "F1 explains nil *LimitError becomes non-nil error interface, causing valid configurations to be rejected."
+          },
+          {
+            "assertion": "The solo Code Quality grade reflects that defect and cites the actual fixture.",
+            "passed": true,
+            "evidence": "Header C, one major; cites actual limit.go:8\u201312 and TestValidLimit."
+          },
+          {
+            "assertion": "The proposed change returns nil on success and verifies the valid-input test.",
+            "passed": true,
+            "evidence": "Fix returns literal nil on valid path and asks to recheck current test plus valid/invalid boundaries."
+          },
+          {
+            "assertion": "Any executed check is reported accurately without claiming unrun verification.",
+            "passed": true,
+            "evidence": "Limits names exact focused go test command, disposable directory and failing TestValidLimit result; inspected fixture matches this outcome. No broader integration or successful fix verification claimed."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "The inspected disposable fixture matches reported local semantics and expected failing test. Historical command execution is reported by the reviewer; this judging pass inspected source and did not independently rerun the command."
+      }
+    ]
+  },
+  {
+    "skill": "go-correctness-and-compatibility",
+    "cases": [
+      {
+        "id": "slice-ownership-break",
+        "assertions": [
+          {
+            "assertion": "The report says the full-slice expression still shares existing elements and violates the documented independent-slice contract.",
+            "passed": true,
+            "evidence": "F1 names returned backing storage and caller sorting/redaction changing catalog despite independent-mutation docs."
+          },
+          {
+            "assertion": "The grade is C for one contained major flaw, not F without evidence of severe systemic failure.",
+            "passed": true,
+            "evidence": "Header C with one major; explicitly rejects automatic critical treatment of race risk."
+          },
+          {
+            "assertion": "The suggested change restores an actual copy and explains why capacity limiting is insufficient.",
+            "passed": true,
+            "evidence": "Restore slices.Clone; Good explains capacity protection does not establish element ownership."
+          },
+          {
+            "assertion": "The report retains Good, Bad, and Suggested changes without fabricating unrelated findings.",
+            "passed": true,
+            "evidence": "All three sections retained; no unrelated defects."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "file-backed-slice-ownership",
+        "assertions": [
+          {
+            "assertion": "The report identifies a documented ownership break in catalog.go with a concrete caller effect.",
+            "passed": true,
+            "evidence": "F1 cites catalog.go:19 and docs at 14\u201315; mutation changes later snapshot."
+          },
+          {
+            "assertion": "The report does not use a passing TestIDsCanBeAppendedTo as proof that element mutation is safe.",
+            "passed": true,
+            "evidence": "G2 explicitly says passing append test does not exercise existing-element mutation."
+          },
+          {
+            "assertion": "The grade is C for one contained major flaw rather than F based on an unspecified catastrophic impact.",
+            "passed": true,
+            "evidence": "Header C, one contained major aliasing flaw."
+          },
+          {
+            "assertion": "The suggested change returns an independent slice and explains why.",
+            "passed": true,
+            "evidence": "Restore slices.Clone inside lock and verify later snapshots after mutation/sort."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Report differentiates append test from mutation reproduction, and inspected disposable source matches the ownership defect. No race-detector result is fabricated."
+      },
+      {
+        "id": "function-value-compatibility",
+        "assertions": [
+          {
+            "assertion": "The report recognizes that the function value assignment no longer compiles.",
+            "passed": true,
+            "evidence": "F1 explains func(string,...Option) error no longer assigns to func(string) error, identifying documented var start and downstreams."
+          },
+          {
+            "assertion": "The grade is C for one contained major flaw, with the consumer and release policy cited.",
+            "passed": true,
+            "evidence": "Header C/one major; scope and finding cite intended minor release and supported downstream assignments."
+          },
+          {
+            "assertion": "The suggested change keeps Run's old signature and introduces a separately named option-taking function or an equivalent compatible path.",
+            "passed": true,
+            "evidence": "Keep old Run wrapper and add separately named options-capable function."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "intentional-v0-break",
+        "assertions": [
+          {
+            "assertion": "The report does not grade the announced v0 API change as an automatic compatibility flaw.",
+            "passed": true,
+            "evidence": "Header A; explicitly respects published unstable v0 policy."
+          },
+          {
+            "assertion": "The report cites the policy, release notes, and migrated callers as relevant positive evidence.",
+            "passed": true,
+            "evidence": "G1 cites release notes/migration/policy; G2 cites three compiling migrated callers."
+          },
+          {
+            "assertion": "The report does not invent defects or unprovided external consumers.",
+            "passed": true,
+            "evidence": "Bad None found; Limits declines inventing external stability promise or additional supported consumers."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "service-partial-transfer",
+        "assertions": [
+          {
+            "assertion": "The report identifies the failed-credit path that leaves a committed debit in violation of the explicit contract.",
+            "passed": true,
+            "evidence": "F1 traces failed credit with already committed debit contrary to unchanged-balances error contract."
+          },
+          {
+            "assertion": "The report recommends a transaction or equivalent atomic mechanism and explains how it prevents the partial update.",
+            "passed": true,
+            "evidence": "Requires one transaction with commit/rollback and verifies second-write failure leaves both balances unchanged."
+          },
+          {
+            "assertion": "The report does not invent a security exploit, exactly-once requirement, or new package hierarchy.",
+            "passed": true,
+            "evidence": "No exploit, exactly-once or package-hierarchy requirement; unspecified concurrency/retry semantics are not additional findings."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "cli-empty-array-contract",
+        "assertions": [
+          {
+            "assertion": "The report identifies that a nil slice encodes as null and breaks the documented array contract on empty results.",
+            "passed": true,
+            "evidence": "F1 says nil emits items:null instead of promised array and known consumer rejects it."
+          },
+          {
+            "assertion": "The grade is B for one moderate flaw, rather than F or C without wider impact.",
+            "passed": true,
+            "evidence": "Header B; exactly one moderate and no wider impact invented."
+          },
+          {
+            "assertion": "The suggested change preserves a non-nil empty slice or equivalent array encoding.",
+            "passed": true,
+            "evidence": "Requires non-nil empty slice or equivalent array encoding, with empty/schema verification."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "core-save-noop",
+        "assertions": [
+          {
+            "assertion": "The report identifies that all production orders are acknowledged without persistence.",
+            "passed": true,
+            "evidence": "F1 says production branch skips only database write and every accepted order is falsely acknowledged."
+          },
+          {
+            "assertion": "The grade is F because the failure is broad across the core workflow, not merely because one function has a bug.",
+            "passed": true,
+            "evidence": "Header F; rationale explicitly relies on all-orders reach and sole-write-path facts."
+          },
+          {
+            "assertion": "The suggested change corrects the branch or restores the write before success is reported.",
+            "passed": true,
+            "evidence": "Correct branch so only enabled dry run skips persistence; verify production writes and failure propagation before acknowledgement."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "no-behavior-decision",
+        "assertions": [
+          {
+            "assertion": "The result is Not applicable instead of a forced letter grade.",
+            "passed": true,
+            "evidence": "Header Not applicable."
+          },
+          {
+            "assertion": "The report does not invent correctness findings.",
+            "passed": true,
+            "evidence": "No correctness finding; scope explicitly contains no behavior/contract change."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "missing-contract",
+        "assertions": [
+          {
+            "assertion": "The result is Insufficient evidence for compatibility rather than an unsupported letter grade.",
+            "passed": true,
+            "evidence": "Header Insufficient evidence for compatibility."
+          },
+          {
+            "assertion": "The report identifies prior behavior and supported caller or format expectations needed to grade.",
+            "passed": true,
+            "evidence": "Requests prior implementation, normalization rules, supported data/callers and relevant tests."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      },
+      {
+        "id": "iteration-error-masquerades-as-success",
+        "assertions": [
+          {
+            "assertion": "The report distinguishes an iteration error from successful exhaustion.",
+            "passed": true,
+            "evidence": "F1 explains rows.Next termination after driver connection error becomes false success without rows.Err."
+          },
+          {
+            "assertion": "It links the missing Rows.Err check to the caller replacing a full snapshot with partial results.",
+            "passed": true,
+            "evidence": "Links returned 20-row prefix to replacement of previous full snapshot."
+          },
+          {
+            "assertion": "The fix verifies a mid-stream failure and does not demand unrelated transaction or architecture changes.",
+            "passed": true,
+            "evidence": "Requires rows.Err and injected after-20-row failure verifying caller preserves snapshot; explicitly no transaction requirement."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantively matches the expectation on supplied evidence; no unsupported grading requirement identified."
+      }
+    ]
+  },
+  {
+    "skill": "go-dependencies-and-reproducibility",
+    "cases": [
+      {
+        "id": "workspace-hides-missing-requirement",
+        "assertions": [
+          {
+            "assertion": "The review checks or correctly reasons about both workspace and standalone module resolution.",
+            "passed": true,
+            "evidence": "Good: - [G1] go.work:3 includes service and shared, making the sibling import resolvable in development. | Limits: In disposable /tmp/go-skills-audit-20260927/revised-workspace-repro/service, `rtk proxy env GOCACHE=/tmp/go-skills-audit-20260927/revised-gocache GOMODCACHE=/tmp/go-skills-audit-20260927/revised-gomodcache GOTOOLCHAIN=local GOPROXY=off go build -o /tmp/go-skills-audit-20260927/revised-workspace-service .` passed. `rtk proxy env GOWORK=off GOCACHE=/tmp/go-skills-audit-20260927/revised-gocache GOMODCACHE=/tmp/go-skills-audit-20260927/revised-gomodcache GOTOOLCHAIN=local GOPROXY=off go build -mod=readonly -o /tmp/go-skills-audit-20260927/revised-standalone-service .` failed: import lookup disabled by -mod=readonly at main.go:6. Original fixture preserved; no byte-identity or public-fetch claim."
+          },
+          {
+            "assertion": "It identifies the missing requirement as the dependency cause, not a defect in the sibling package's Go code.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] service/main.go:6 imports example.com/checkout/shared/format while service/go.mod has no requirement. go.work:5 supplies it locally, but CHANGESET.md:5 releases only service, disables workspace mode and states shared is unpublished. The standalone build fails."
+          },
+          {
+            "assertion": "It grades one contained major flaw C rather than assuming every possible target fails.",
+            "passed": true,
+            "evidence": "## Dependencies & Reproducibility \u2014 C | Rationale: One contained major dependency-resolution failure breaks the only affected standalone target. Local workspace success does not establish release success; there is no evidence of broader critical release loss."
+          },
+          {
+            "assertion": "It gives a change that makes the standalone release dependency resolvable.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Make shared available to the release: publish a version and require it, or include its code in the intended deliverable with a valid documented build layout. A require alone cannot fetch an unpublished module. Verify a fresh service-only readonly build with GOWORK=off."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "The report distinguishes an actual disposable workspace build from the standalone failure with exact commands and source locations, and preserves original fixture. Judging did not rerun those commands; correctness of the described module cause and release repair is supported by the supplied fixture scenario."
+      },
+      {
+        "id": "supported-toolchain-raise",
+        "assertions": [
+          {
+            "assertion": "The report identifies the go directive as a minimum version constraint and the Go 1.21 local job as affected.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] The new generator requirement forces go 1.24.0 in the CLI module. Go 1.21 with GOTOOLCHAIN=local cannot switch toolchains and now fails before compilation. Test-only use does not negate module minimum requirements."
+          },
+          {
+            "assertion": "It does not claim the toolchain directive makes the Go 1.21 local job pass.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] The new generator requirement forces go 1.24.0 in the CLI module. Go 1.21 with GOTOOLCHAIN=local cannot switch toolchains and now fails before compilation. Test-only use does not negate module minimum requirements. | Suggested changes: - [F1] Required: Keep tooling in an appropriately isolated module or select a compatible generator version and restore the supported directive. If support is deliberately dropped, first establish an explicit policy/release change. Verify both documented jobs; the toolchain suggestion alone is insufficient."
+          },
+          {
+            "assertion": "The grade is C for one contained major flaw, with a targeted version or policy remedy.",
+            "passed": true,
+            "evidence": "## Dependencies & Reproducibility \u2014 C | Rationale: One major supported-target break selects C. The newer target passing does not offset removal of the promised older build. | Suggested changes: - [F1] Required: Keep tooling in an appropriately isolated module or select a compatible generator version and restore the supported directive. If support is deliberately dropped, first establish an explicit policy/release change. Verify both documented jobs; the toolchain suggestion alone is insufficient."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "missing-sums-readonly",
+        "assertions": [
+          {
+            "assertion": "The report distinguishes a warm-cache pass from the failing clean, readonly CI build.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] New imported module lacks required committed go.sum entries; the supplied empty-cache go build -mod=readonly ./cmd/service fails. Warm local success does not validate the committed build inputs."
+          },
+          {
+            "assertion": "It identifies needed go.sum entries but does not claim go.sum locks the selected graph.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] New imported module lacks required committed go.sum entries; the supplied empty-cache go build -mod=readonly ./cmd/service fails. Warm local success does not validate the committed build inputs."
+          },
+          {
+            "assertion": "The grade is C and the suggested change restores the documented build path.",
+            "passed": true,
+            "evidence": "## Dependencies & Reproducibility \u2014 C | Suggested changes: - [F1] Required: Generate and review the required checksums in an editing workflow, commit them, and rerun the documented readonly build with a fresh cache. Preserve readonly CI enforcement rather than weakening it to hide missing committed inputs."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "no-dependency-no-sum",
+        "assertions": [
+          {
+            "assertion": "The report does not penalize the absence of go.sum when no checksum entries are needed.",
+            "passed": true,
+            "evidence": "Rationale: No dependency defect is established; supported clean builds and a graph needing no external hashes verify ordinary sound setup. Missing go.sum is expected here and does not justify a finding. | Good: - [G1] go.mod has no require/replace directives and all imports are standard library; no external-module hashes are needed.\n- [G2] Supplied GOWORK=off readonly clean-checkout builds pass on both supported versions, addressing hidden workspace state."
+          },
+          {
+            "assertion": "It cites the supported clean builds as positive evidence and does not invent a flaw.",
+            "passed": true,
+            "evidence": "Good: - [G1] go.mod has no require/replace directives and all imports are standard library; no external-module hashes are needed.\n- [G2] Supplied GOWORK=off readonly clean-checkout builds pass on both supported versions, addressing hidden workspace state."
+          },
+          {
+            "assertion": "It uses the common Good, Bad, Suggested changes report shape.",
+            "passed": true,
+            "evidence": "Good: - [G1] go.mod has no require/replace directives and all imports are standard library; no external-module hashes are needed.\n- [G2] Supplied GOWORK=off readonly clean-checkout builds pass on both supported versions, addressing hidden workspace state. | Bad: - None found | Suggested changes: - None needed"
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "private-module-checksum-exception",
+        "assertions": [
+          {
+            "assertion": "The report recognizes GOPRIVATE's effect on public checksum-database lookups.",
+            "passed": true,
+            "evidence": "Rationale: No actionable issue is shown. Private modules intentionally outside the public checksum database can resolve reproducibly through the documented authenticated path; normal access controls support A, not exceptional A+. | Good: - [G1] Explicit v1.6.2 and documented authenticated internal proxy identify the dependency and access path.\n- [G2] Supplied fresh-checkout readonly builds pass on every supported target with GOPRIVATE configured; a public checksum entry is not required for this private module."
+          },
+          {
+            "assertion": "It does not treat lack of a public sumdb entry as a defect.",
+            "passed": true,
+            "evidence": "Rationale: No actionable issue is shown. Private modules intentionally outside the public checksum database can resolve reproducibly through the documented authenticated path; normal access controls support A, not exceptional A+. | Good: - [G1] Explicit v1.6.2 and documented authenticated internal proxy identify the dependency and access path.\n- [G2] Supplied fresh-checkout readonly builds pass on every supported target with GOPRIVATE configured; a public checksum entry is not required for this private module."
+          },
+          {
+            "assertion": "It uses the standard report fields with evidence-based positive findings.",
+            "passed": true,
+            "evidence": "Good: - [G1] Explicit v1.6.2 and documented authenticated internal proxy identify the dependency and access path.\n- [G2] Supplied fresh-checkout readonly builds pass on every supported target with GOPRIVATE configured; a public checksum entry is not required for this private module. | Bad: - None found | Suggested changes: - None needed"
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "The report conveys the private public-sumdb exception through its rationale and GOPRIVATE-configured clean builds, though it does not describe GONOSUMDB defaulting mechanics. This is sufficient substance for the assertion; no public checksum registration is required."
+      },
+      {
+        "id": "floating-generator-moderate",
+        "assertions": [
+          {
+            "assertion": "The report separates regeneration drift from the current build, which uses committed generated code.",
+            "passed": true,
+            "evidence": "Rationale: One moderate regeneration drift issue selects B. Current release builds use committed generated code, so no present production or release-build failure is inferred. | Good: - [G1] Committed parser and schema allow the stated release build to compile existing source without fetching the generator."
+          },
+          {
+            "assertion": "It grades one moderate gap B rather than claiming current production is broken.",
+            "passed": true,
+            "evidence": "## Dependencies & Reproducibility \u2014 B | Rationale: One moderate regeneration drift issue selects B. Current release builds use committed generated code, so no present production or release-build failure is inferred."
+          },
+          {
+            "assertion": "It recommends a fixed generator version or equivalent controlled input.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Pin an immutable generator version and record the regeneration command; regenerate in a disposable checkout and compare output. Keep the current committed artifact strategy if desired; no universal generator execution during builds is needed."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "bulk-upgrade-with-evidence",
+        "assertions": [
+          {
+            "assertion": "The report identifies the resolved graph and clean target builds as relevant strengths.",
+            "passed": true,
+            "evidence": "Good: - [G1] GOWORK=off go list -m all reports intended effective versions, addressing transitive selection rather than merely reading require lines.\n- [G2] Needed hashes are committed and all supplied clean readonly builds pass, supporting the documented rebuild path."
+          },
+          {
+            "assertion": "It does not invent a dependency defect from transitive churn or missing use of the latest version.",
+            "passed": true,
+            "evidence": "Rationale: No actionable dependency flaw is established. Explicit versions plus actual graph/build evidence support A; the number of upgraded modules is not itself risk evidence and routine correct setup does not earn A+. | Bad: - None found"
+          },
+          {
+            "assertion": "It does not turn an unperformed vulnerability scan into a bad finding.",
+            "passed": true,
+            "evidence": "Bad: - None found"
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "exceptional-rebuild-controls",
+        "assertions": [
+          {
+            "assertion": "The report gives A+ with two distinct, evidence-backed safeguards beyond routine successful builds.",
+            "passed": true,
+            "evidence": "## Dependencies & Reproducibility \u2014 A+ | Rationale: No defects and two independent verified safeguards justify A+: regeneration integrity controls source drift, while independent artifact equality controls environment/packaging drift. | Good: - [G1] Immutable generator version plus verified checksum and exact clean-regeneration match establish which tool recreates the committed generated source.\n- [G2] Exact toolchain/flags/target/revision, normalized timestamps/paths and identical hashes from two isolated builders substantiate the claimed binary identity, beyond ordinary build success.\n- [G3] All documented target builds pass according to the scenario."
+          },
+          {
+            "assertion": "It explains how controlled regeneration and independent artifact hash comparison address the project's audit requirement.",
+            "passed": true,
+            "evidence": "Rationale: No defects and two independent verified safeguards justify A+: regeneration integrity controls source drift, while independent artifact equality controls environment/packaging drift. | Good: - [G1] Immutable generator version plus verified checksum and exact clean-regeneration match establish which tool recreates the committed generated source.\n- [G2] Exact toolchain/flags/target/revision, normalized timestamps/paths and identical hashes from two isolated builders substantiate the claimed binary identity, beyond ordinary build success.\n- [G3] All documented target builds pass according to the scenario."
+          },
+          {
+            "assertion": "It does not invent a defect or require an unrelated deployment or security control.",
+            "passed": true,
+            "evidence": "Bad: - None found | Suggested changes: - None needed"
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "critical-mutable-core-generator",
+        "assertions": [
+          {
+            "assertion": "The grade is F based on observed broad, untraceable production build input, not merely the presence of @latest.",
+            "passed": true,
+            "evidence": "## Dependencies & Reproducibility \u2014 F | Rationale: One critical issue makes essential fee-rule contents untraceable across the entire production release path. Every transaction depends on these rules; two actual builds diverged and recorded inputs cannot reconstruct either. This establishes broad critical reach beyond a single failed target."
+          },
+          {
+            "assertion": "The report cites the two different builds from one service commit and the effect on core fee rules.",
+            "passed": true,
+            "evidence": "Bad: - [F1][critical][introduced] Every build runs payrules/cmd/gen@latest and discards generated-source identity. Supplied builds at the same service commit produced different rules/binaries; metadata records neither generator nor output and no saved inputs reconstruct shipped rules."
+          },
+          {
+            "assertion": "The proposed correction pins and records the generator and verifies generated output in the release build.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Pin and retain the generator identity and other required inputs, preserve generated source or its reproducible provenance, and attach those identities to each release. Verify isolated same-input regeneration/artifact comparison and reconstruct a known release before claiming restored auditability."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "two-independent-build-breaks",
+        "assertions": [
+          {
+            "assertion": "The report identifies the unshipped absolute replace path and the incompatible Go 1.21 target as separate root causes.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] CLI replace points to /Users/maintainer/parser, absent from its release checkout, so clean release resolution fails.\n- [F2][major][introduced] Service go directive rises to 1.24 while the supported Go 1.21 job uses GOTOOLCHAIN=local and fails."
+          },
+          {
+            "assertion": "The grade is C- for two independent major flaws, not F solely because two builds fail.",
+            "passed": true,
+            "evidence": "## Dependencies & Reproducibility \u2014 C- | Rationale: Two independent contained major failures select C-. Different corrections are necessary: distribute the CLI dependency and restore the service supported-toolchain path. Other passing builds do not cancel them."
+          },
+          {
+            "assertion": "It gives a targeted correction and rationale for each finding.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Use a published replacement/version or a path actually included in the distribution; verify a clean CLI release build without the maintainer checkout.\n- [F2] Required: Isolate/select compatible tooling to retain Go 1.21, or explicitly revise the support contract before release; verify the complete supported service matrix."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All substantive assertions pass. Coverage says supplied failing logs even though the prompt supplies failure descriptions, not literal logs. Limits correctly calls them supplied scenario facts. This is an evidence-labeling imprecision, not an invented independently run check."
+      },
+      {
+        "id": "unrelated-document-edit",
+        "assertions": [
+          {
+            "assertion": "The result is Not applicable rather than a letter grade.",
+            "passed": true,
+            "evidence": "## Dependencies & Reproducibility \u2014 Not applicable | Rationale: No dependency or rebuild decision is implicated. A letter grade would imply evaluation of a build path this diff does not affect."
+          },
+          {
+            "assertion": "The report does not invent dependency or build-input findings.",
+            "passed": true,
+            "evidence": "Rationale: No dependency or rebuild decision is implicated. A letter grade would imply evaluation of a build path this diff does not affect."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "partial-build-snippet",
+        "assertions": [
+          {
+            "assertion": "The result is Insufficient evidence rather than a forced grade.",
+            "passed": true,
+            "evidence": "## Dependencies & Reproducibility \u2014 Insufficient evidence | Rationale: The command cannot establish reproducibility or even successful resolution. Need module/workspace files, supported matrix, actual release environment and relevant generated/native inputs plus build evidence. Absence from this excerpt is not absence from the repository."
+          },
+          {
+            "assertion": "It identifies concrete missing evidence without treating absent supplied files as absent repository files.",
+            "passed": true,
+            "evidence": "Coverage: Only the invocation is visible; module graph, workspace, toolchain, target inputs, generation and actual build result are unavailable. | Rationale: The command cannot establish reproducibility or even successful resolution. Need module/workspace files, supported matrix, actual release environment and relevant generated/native inputs plus build evidence. Absence from this excerpt is not absence from the repository."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "vendor-build-mode-preservation",
+        "assertions": [
+          {
+            "assertion": "The grade is C for the demonstrated release-mode inconsistency.",
+            "passed": true,
+            "evidence": "## Dependencies & Reproducibility \u2014 C | Rationale: One major failure breaks the intended release build. The readonly pass uses another resolution mode and therefore cannot verify the shipped vendor path."
+          },
+          {
+            "assertion": "The report explains that readonly bypasses vendor and its success does not validate the shipped build mode.",
+            "passed": true,
+            "evidence": "Rationale: One major failure breaks the intended release build. The readonly pass uses another resolution mode and therefore cannot verify the shipped vendor path. | Suggested changes: - [F1] Required: Regenerate and review the vendor tree for the intended graph, commit matching metadata/source, then execute the actual -mod=vendor release command in a clean disposable checkout. Do not substitute -mod=readonly as evidence of vendor correctness."
+          },
+          {
+            "assertion": "The correction updates matching vendor metadata/content and verifies -mod=vendor without silently changing the release contract.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Regenerate and review the vendor tree for the intended graph, commit matching metadata/source, then execute the actual -mod=vendor release command in a clean disposable checkout. Do not substitute -mod=readonly as evidence of vendor correctness."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      }
+    ]
+  },
+  {
+    "skill": "go-deployment-and-operations",
+    "cases": [
+      {
+        "id": "library-module-release",
+        "assertions": [
+          {
+            "assertion": "The report grades the release path and identifies the compatible v1.9.0 tag and tested commit as strengths.",
+            "passed": true,
+            "evidence": "## Deployment & Operations \u2014 A | Good: - [G1] v1.9.0 retains the v1 module path for the backward-compatible option addition.\n- [G2] The tag points to the commit built and tested at the declared Go minimum and current toolchain, preserving the supplied release gate."
+          },
+          {
+            "assertion": "The report does not require a Dockerfile, probe, shutdown handler, Kubernetes manifest, or GOMEMLIMIT.",
+            "passed": true,
+            "evidence": "Rationale: No actionable release flaw is shown; appropriate v1 tagging and checked source provenance support A. A library release does not need containers, probes or service instrumentation. | Bad: - None found | Suggested changes: - None needed"
+          },
+          {
+            "assertion": "The grade is tied to the supplied release evidence.",
+            "passed": true,
+            "evidence": "Rationale: No actionable release flaw is shown; appropriate v1 tagging and checked source provenance support A. A library release does not need containers, probes or service instrumentation. | Good: - [G1] v1.9.0 retains the v1 module path for the backward-compatible option addition.\n- [G2] The tag points to the commit built and tested at the declared Go minimum and current toolchain, preserving the supplied release gate."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "sound-service-without-optional-flags",
+        "assertions": [
+          {
+            "assertion": "The report recognizes artifact compatibility, non-root execution, and tested shutdown as strengths.",
+            "passed": true,
+            "evidence": "Good: - [G1] Tests and image build use matching source, target and toolchain; runtime includes needed CA/temp files, non-root execution and no build credentials.\n- [G2] Useful stdout logging, bounded local probes and shutdown within the tested 30-second budget support operation.\n- [G3] 420 MiB peak total memory fits the 1 GiB limit with no reported OOM history; GOMEMLIMIT is not mandatory."
+          },
+          {
+            "assertion": "The report does not lower the grade solely for absent startup probe, GOMEMLIMIT, -trimpath, stripped symbols, or JSON logs.",
+            "passed": true,
+            "evidence": "Rationale: No actionable deployment issue is supported. Verified ordinary controls cover the applicable risks; absent optional flags or runtime tuning do not establish defects. These routine controls support A rather than exceptional A+. | Limits: All checks/measurements are supplied facts, not independently run. No evidence requires a startup probe for subsecond startup, JSON logs, stripped symbols or -trimpath. No deployments executed."
+          },
+          {
+            "assertion": "The grade follows the supplied runtime and load evidence rather than a fixed Dockerfile template.",
+            "passed": true,
+            "evidence": "Rationale: No actionable deployment issue is supported. Verified ordinary controls cover the applicable risks; absent optional flags or runtime tuning do not establish defects. These routine controls support A rather than exceptional A+. | Good: - [G1] Tests and image build use matching source, target and toolchain; runtime includes needed CA/temp files, non-root execution and no build credentials.\n- [G2] Useful stdout logging, bounded local probes and shutdown within the tested 30-second budget support operation.\n- [G3] 420 MiB peak total memory fits the 1 GiB limit with no reported OOM history; GOMEMLIMIT is not mandatory."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "private-build-token",
+        "assertions": [
+          {
+            "assertion": "The report identifies build ARG and git configuration as a credential disclosure path.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] RUN git config writes the token-bearing URL into global Git configuration, and the same stage ships at runtime. Passing PRIVATE_TOKEN as ARG also uses a credential-unsafe input channel; these are parts of the same build-secret containment failure."
+          },
+          {
+            "assertion": "The report identifies copying .env.production into the runtime image as a separate exposure or part of the same root cause, without quoting any secret value.",
+            "passed": true,
+            "evidence": "Coverage: Assessed credential flow into git configuration and runtime image. .env.production is copied, but its contents and sensitivity are unavailable. | Rationale: One contained major credential-packaging flaw is confirmed. Persisting the live repository token exposes it to runtime image access. The filename alone cannot establish a second independent secret leak. | Limits: Scenario supplies a live token but no value; none reproduced. Source, built image and .env.production contents were unavailable; inspect that file before deciding whether it must be removed or replaced with runtime delivery. No Docker command run."
+          },
+          {
+            "assertion": "Suggested changes use a temporary build credential mechanism and exclude runtime secrets from the image, with rationale.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Use an ephemeral secret/SSH mount with commands that do not persist credentials, and ship only required runtime content. Remove secret-bearing configuration from the artifact, verify image/layers/metadata without printing token values, and revoke/rotate the exposed token through its owner."
+          },
+          {
+            "assertion": "The report does not treat multi-stage build syntax alone as sufficient to fix secret leakage.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Use an ephemeral secret/SSH mount with commands that do not persist credentials, and ship only required runtime content. Remove secret-bearing configuration from the artifact, verify image/layers/metadata without printing token values, and revoke/rotate the exposed token through its owner."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "The report flags .env.production copying in Coverage but does not falsely call its unknown contents a confirmed secret. This satisfies identifying the packaging exposure/inspection limit; any reading of the gold demanding a second actual credential leak is unsupported by the filename alone. Confirmed token persistence supports C. Suggested ephemeral credential handling and required exclusion of secret-bearing runtime configuration are substantive."
+      },
+      {
+        "id": "cgo-runtime-image",
+        "assertions": [
+          {
+            "assertion": "The report identifies the dynamic libc dependency as the reason the scratch image fails.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] scratch image contains no required dynamic linker/libc despite ldd showing libc dependency; startup fails loading the linker."
+          },
+          {
+            "assertion": "The report proposes a compatible runtime image or a verified static build without blindly setting CGO_ENABLED=0.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Use a runtime base or explicitly supplied runtime files compatible with the artifact, or deliberately produce and verify a supported static build. Preserve required SQLite functionality; simply disabling cgo may break the driver. Verify startup and a representative query in the final image."
+          },
+          {
+            "assertion": "The report does not prescribe stripping symbols or a specific distroless tag as the fix.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Use a runtime base or explicitly supplied runtime files compatible with the artifact, or deliberately produce and verify a supported static build. Preserve required SQLite functionality; simply disabling cgo may break the driver. Verify startup and a representative query in the final image."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "toolchain-build-path",
+        "assertions": [
+          {
+            "assertion": "The report identifies that production builds with Go 1.26 and GOTOOLCHAIN=local despite go.mod requiring 1.27.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] Dockerfile uses golang:1.26 with GOTOOLCHAIN=local for a module requiring Go 1.27; production image build fails before it can ship the service."
+          },
+          {
+            "assertion": "The report explains why passing unit tests on Go 1.27.1 does not prove the release image builds.",
+            "passed": true,
+            "evidence": "Rationale: One major release-build failure selects C. Correct unit-test tooling does not make the separate production compiler compatible, and local-only selection disables automatic switching."
+          },
+          {
+            "assertion": "The suggested change aligns and verifies the actual production builder with the supported module version.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Align the production builder with a supported Go 1.27 toolchain and record it alongside CI. Run the actual image build and final artifact smoke test; another unit-test pass alone does not exercise this path."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "probe-manifest-mismatch",
+        "assertions": [
+          {
+            "assertion": "The report identifies the swapped manifest paths and explains both the restart-loop and false-readiness risks.",
+            "passed": true,
+            "evidence": "Bad: - [F1][moderate][introduced] Manifest swaps the probe routes: liveness queries /readyz, so database loss can restart a healthy process; readiness queries /livez, keeping unusable instances eligible for traffic. Both effects share the swapped wiring cause."
+          },
+          {
+            "assertion": "The suggested change wires liveness to /livez and readiness to /readyz, with rationale.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Wire livenessProbe to /livez and readinessProbe to /readyz. Simulate dependency loss and verify readiness withdrawal without unnecessary restarts, respecting actual probe thresholds. Subsecond startup supplies no need for a startup probe."
+          },
+          {
+            "assertion": "The report does not require a startup probe, a fixed probe path convention, or a database check in liveness.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Wire livenessProbe to /livez and readinessProbe to /readyz. Simulate dependency loss and verify readiness withdrawal without unnecessary restarts, respecting actual probe thresholds. Subsecond startup supplies no need for a startup probe."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "B is defensible from supported bad routing and potential restarts, with actual thresholds/outcomes unspecified. Gold requests a negative grade, not a fixed major classification; report correctly groups both symptoms under swapped wiring."
+      },
+      {
+        "id": "shutdown-grace-budget",
+        "assertions": [
+          {
+            "assertion": "The report identifies that preStop time consumes the same termination grace period as shutdown.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] terminationGracePeriodSeconds:10 includes preStop sleep of 8 seconds, leaving roughly two seconds of normal grace for shutdown. The configured 25-second drain and normal 18-second requests exceed that remaining budget."
+          },
+          {
+            "assertion": "The report compares the 10-second grace period with the 8-second hook and 18-second request duration.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] terminationGracePeriodSeconds:10 includes preStop sleep of 8 seconds, leaving roughly two seconds of normal grace for shutdown. The configured 25-second drain and normal 18-second requests exceed that remaining budget."
+          },
+          {
+            "assertion": "The suggested change adjusts the hook and/or grace budget based on routing and request behavior, without mandating a 3\u20135 second sleep.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Remove or justify the hook delay and size total platform grace for hook, bounded application drain and margin. Verify termination with maximum-duration active requests and confirm completion before forced termination; do not add a universal propagation sleep."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "memory-soft-limit",
+        "assertions": [
+          {
+            "assertion": "The report distinguishes Go runtime memory from cgo and tmpfs in container accounting.",
+            "passed": true,
+            "evidence": "Good: - [G1] Supplied observations distinguish roughly 550 MiB Go memory, up to 300 MiB cgo and 60 MiB tmpfs, useful inputs to sizing. | Bad: - [F1][moderate][introduced] 900 MiB soft Go-runtime limit leaves only 124 MiB under the container cap for up to 360 MiB of stated external memory plus overhead. It neither accounts for cgo/tmpfs nor guarantees runtime memory stays below its own limit."
+          },
+          {
+            "assertion": "The report rejects the OOM guarantee and uses the supplied peak and OOM evidence to justify severity.",
+            "passed": true,
+            "evidence": "Rationale: One moderate newly introduced resource-policy error: the configured soft limit is presented as protection for a total-memory budget it cannot enforce. Existing OOM history supports need for validation, but is not counted as a new independent defect. | Coverage: Assessed Go/cgo/tmpfs accounting and supplied historical peak/OOM evidence. Attribution of individual existing OOMKills to this change is unavailable. | Bad: - [F1][moderate][introduced] 900 MiB soft Go-runtime limit leaves only 124 MiB under the container cap for up to 360 MiB of stated external memory plus overhead. It neither accounts for cgo/tmpfs nor guarantees runtime memory stays below its own limit."
+          },
+          {
+            "assertion": "The suggested change evaluates actual memory headroom and workload rather than asserting a universal 80\u201390% setting.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Remove the guarantee and size runtime target, total cap and workload together with external-memory headroom. Measure peak total usage and GC/CPU tradeoffs under load; reduce retention/concurrency or raise resources if the live working set cannot fit safely."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "B is defensible for an introduced false runtime-budget guarantee. Historical OOMs are correctly contextual evidence, not automatically new failures caused by this setting. It distinguishes runtime memory from live heap and avoids the earlier unsupported live-memory characterization. Gold asks only for a supported negative grade."
+      },
+      {
+        "id": "pure-library-helper",
+        "assertions": [
+          {
+            "assertion": "The result is Not applicable rather than an artificial letter grade.",
+            "passed": true,
+            "evidence": "## Deployment & Operations \u2014 Not applicable"
+          },
+          {
+            "assertion": "The report gives a brief scope-based reason and does not invent a missing deployment control.",
+            "passed": true,
+            "evidence": "Coverage: Assessed supplied change boundary; no build, release, packaging, configuration or lifecycle decision changes. | Rationale: No Deployment & Operations decision is implicated. Requiring deployment controls for this local expression would exceed the stated scope."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "unknown-release-pipeline",
+        "assertions": [
+          {
+            "assertion": "The result is Insufficient evidence rather than a letter grade for the release path.",
+            "passed": true,
+            "evidence": "## Deployment & Operations \u2014 Insufficient evidence"
+          },
+          {
+            "assertion": "The report does not claim that -trimpath alone proves reproducible builds or security.",
+            "passed": true,
+            "evidence": "Rationale: Removing filesystem paths from build metadata alone does not establish release correctness, provenance or reproducibility. Essential artifact-path evidence is missing, so a positive release grade is unsupported. Supply the actual release job and resulting artifact configuration to assess the relevant path."
+          },
+          {
+            "assertion": "The report names the missing workflow or artifact evidence needed to grade.",
+            "passed": true,
+            "evidence": "Coverage: Can assess the flag\u2019s local purpose; actual release workflow, targets, compiler, packaging and whether it invokes this script are unavailable. | Rationale: Removing filesystem paths from build metadata alone does not establish release correctness, provenance or reproducibility. Essential artifact-path evidence is missing, so a positive release grade is unsupported. Supply the actual release job and resulting artifact configuration to assess the relevant path."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "rollout-migration-compatibility",
+        "assertions": [
+          {
+            "assertion": "The report identifies the overlap between old replicas and the dropped orders_v1 table.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] Dropping orders_v1 before rolling replacement invalidates still-running old binaries. The rollback runbook restores that old image but cannot restore its required table. This shared compatibility violation breaks both upgrade availability and recovery."
+          },
+          {
+            "assertion": "The report explains why rolling back only the image does not restore the dropped schema.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] Dropping orders_v1 before rolling replacement invalidates still-running old binaries. The rollback runbook restores that old image but cannot restore its required table. This shared compatibility violation breaks both upgrade availability and recovery."
+          },
+          {
+            "assertion": "The suggested change stages schema and application transitions to maintain old/new compatibility during rollout and recovery.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Use an expand/migrate/contract sequence with a compatibility window for both binaries and explicit data transition. Drop old schema only after rollback no longer depends on it. Verify mixed-version traffic and an actual rollback against the staged database state."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "C- is defensible under the revised systemic-major anchor: one schema transition breaks both mixed-version rollout and rollback, explicitly described as distinct important workflows. The report does not infer missing migration/copy or irreversible data loss. Expected low grade is underspecified but supports this reasoned result; C could also be defensible if treating both as one release workflow."
+      },
+      {
+        "id": "tested-commit-not-shipped-commit",
+        "assertions": [
+          {
+            "assertion": "The report identifies abc123 versus def456 as the tested/shipped identity mismatch.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] Release job checks out main without the triggering ref; supplied log shows unchecked def456 shipped after abc123 passed. The project explicitly requires checks for every shipped commit."
+          },
+          {
+            "assertion": "It does not treat a depends-on test job or an immutable artifact digest alone as sufficient.",
+            "passed": true,
+            "evidence": "Rationale: One contained major release-gate failure selects C. Artifact integrity after upload cannot substitute for checking the source that produced it. | Suggested changes: - [F1] Required: Build from the verified immutable commit or promote the exact tested artifact, retaining source-to-digest provenance. Simulate a branch advance between jobs and verify release remains bound to checked source; merely retaining the current downstream digest does not repair the gate."
+          },
+          {
+            "assertion": "The correction binds release to verified source or verified artifact and includes a check of that identity.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Build from the verified immutable commit or promote the exact tested artifact, retaining source-to-digest provenance. Simulate a branch advance between jobs and verify release remains bound to checked source; merely retaining the current downstream digest does not repair the gate."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All substantive assertions and C grade pass. Minor contradictory boilerplate: Limits says no revision IDs were provided, while Scope/Bad correctly identify supplied abc123 and def456. This does not affect the identity analysis but should be removed from that case."
+      }
+    ]
+  },
+  {
+    "skill": "go-observability-and-resilience",
+    "cases": [
+      {
+        "id": "library-client-budget",
+        "assertions": [
+          {
+            "assertion": "The report recognizes the caller context and bounded outbound call as strengths.",
+            "passed": true,
+            "evidence": "G1 caller context and shared client transport timeout."
+          },
+          {
+            "assertion": "The report does not demand JSON slog, Prometheus metrics, tracing, retries, or health probes for this library.",
+            "passed": true,
+            "evidence": "G2 host diagnostic ownership; no service telemetry/retries demanded."
+          },
+          {
+            "assertion": "The grade follows cited evidence rather than an assumed service template.",
+            "passed": true,
+            "evidence": "A grounded in applicable bounded-call and error choices."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "duplicate-payment-retry",
+        "assertions": [
+          {
+            "assertion": "The report identifies duplicate side effects after an ambiguous timeout as a serious issue.",
+            "passed": true,
+            "evidence": "F1 recognizes possible committed charges after timeout and fresh-ID replay."
+          },
+          {
+            "assertion": "The report recognizes that the SDK already retries and the outer loop multiplies attempts.",
+            "passed": true,
+            "evidence": "F1 computes three outer calls \u00d7 SDK attempts up to nine."
+          },
+          {
+            "assertion": "The suggested change establishes a stable retry identity and bounded, cancelable retry ownership.",
+            "passed": true,
+            "evidence": "Change establishes stable provider-supported identity, one retry owner, caller deadline and cancelable backoff."
+          },
+          {
+            "assertion": "The report does not prescribe a circuit breaker as a universal remedy.",
+            "passed": true,
+            "evidence": "No universal breaker suggestion."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "metric-label-cardinality",
+        "assertions": [
+          {
+            "assertion": "The report explains the time-series cardinality effect of customer_id.",
+            "passed": true,
+            "evidence": "F1 ties millions of identities to series/ingestion/storage/query growth."
+          },
+          {
+            "assertion": "The report recognizes stable method and route labels as a strength.",
+            "passed": true,
+            "evidence": "G1 stable method/route and duration/error signals."
+          },
+          {
+            "assertion": "The report does not require custom histogram buckets without an operational threshold or demonstrated need.",
+            "passed": true,
+            "evidence": "Optional bucket changes require real objective; no invented defect."
+          },
+          {
+            "assertion": "The recommended metric change is concrete and tied to the observed cardinality risk.",
+            "passed": true,
+            "evidence": "Change removes customer identity and verifies representative cardinality."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "slog-correlation-plumbing",
+        "assertions": [
+          {
+            "assertion": "The result is Insufficient evidence rather than a letter grade for correlation.",
+            "passed": true,
+            "evidence": "Insufficient evidence heading."
+          },
+          {
+            "assertion": "The report explains that InfoContext passes context but trace extraction depends on the configured handler or bridge.",
+            "passed": true,
+            "evidence": "Rationale says InfoContext alone does not emit trace IDs; unseen handler may extract."
+          },
+          {
+            "assertion": "The report names the missing handler or emitted output that would permit grading.",
+            "passed": true,
+            "evidence": "Coverage and rationale request handler/OTel bridge/context and emitted logs."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "probes-and-shutdown",
+        "assertions": [
+          {
+            "assertion": "The report identifies liveness database checks as a restart-loop risk.",
+            "passed": true,
+            "evidence": "F1 says database outage can restart otherwise healthy process."
+          },
+          {
+            "assertion": "The report identifies readiness remaining true when the required database is unavailable.",
+            "passed": true,
+            "evidence": "F1 says readiness stays 200 while cannot serve requests."
+          },
+          {
+            "assertion": "The report distinguishes Close from graceful Shutdown for active requests.",
+            "passed": true,
+            "evidence": "F2 immediate Close interrupts connections; change uses bounded Shutdown and waits."
+          },
+          {
+            "assertion": "The report does not require a startup probe or a fixed 3\u20135 second delay.",
+            "passed": true,
+            "evidence": "Explicitly avoids mandatory startup probe; routing delay only from evidence."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "http-panic-boundary",
+        "assertions": [
+          {
+            "assertion": "The report does not claim that a standard net/http handler panic necessarily crashes the process.",
+            "passed": true,
+            "evidence": "G1/G2 explicitly say built-in handler recovery prevents whole-process termination."
+          },
+          {
+            "assertion": "The report recognizes that net/http logs a stack to its error log but the middleware's stable 500 response is lost.",
+            "passed": false,
+            "evidence": "Stack logging is acknowledged, but the already supplied prior 500 behavior is not clearly stated as lost; report reframes stable-500 handling as only a possible requirement."
+          },
+          {
+            "assertion": "The proposed change addresses that loss without imposing recovery on every goroutine.",
+            "passed": true,
+            "evidence": "Optional follow-up retains custom recovery for stable 500, confined to this HTTP boundary; it does not demand blanket goroutine recovery."
+          }
+        ],
+        "expected_output_match": false,
+        "notes": "Report correctly preserves built-in recovery/stack logging and describes close/reset. It underacknowledges the concrete loss of the middleware\u2019s prior 500 outcome by casting stable-500 behavior as a possible future requirement. A grade is not intrinsically disallowed by the contextual expected output; failure is incomplete before/after assessment."
+      },
+      {
+        "id": "pure-helper",
+        "assertions": [
+          {
+            "assertion": "The result is Not applicable rather than an artificial letter grade.",
+            "passed": true,
+            "evidence": "Not applicable heading."
+          },
+          {
+            "assertion": "The report does not invent logs, metrics, retries, or shutdown requirements.",
+            "passed": true,
+            "evidence": "No invented instrumentation or lifecycle requirement."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "queue-ack-before-work",
+        "assertions": [
+          {
+            "assertion": "The grade is C for the demonstrated lost-redelivery contract.",
+            "passed": true,
+            "evidence": "C with one major lost-redelivery flaw."
+          },
+          {
+            "assertion": "The report traces Ack before ProcessInvoice and explains why logging does not recover the job.",
+            "passed": true,
+            "evidence": "F1 traces permanent Ack removal before fallible ProcessInvoice and says logging cannot undo it."
+          },
+          {
+            "assertion": "The change restores acknowledgment ordering and verifies failure/redelivery and existing duplicate handling.",
+            "passed": true,
+            "evidence": "Change restores post-success Ack and verifies failure retry plus lost-ack deduplication."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      }
+    ]
+  },
+  {
+    "skill": "go-performance-and-resource-management",
+    "cases": [
+      {
+        "id": "small-library-no-tuning-theater",
+        "assertions": [
+          {
+            "assertion": "The grade is A under the shared anchors.",
+            "passed": true,
+            "evidence": "## Performance & Resource Management \u2014 A | Rationale: No actionable performance issue is established. Bounded 64-byte work and unchanged allocation/time measurements verify relevant strengths. Routine efficient behavior supports A; absence of optional tools does not count against it."
+          },
+          {
+            "assertion": "The report identifies bounded input work or the unchanged representative benchmark as a specific strength.",
+            "passed": true,
+            "evidence": "Good: - [G1] ParseHeader reads at most 64 bytes, returns a small value and owns no long-lived resources, bounding per-call work and retention.\n- [G2] Representative before/after results remain 120 ns/op and 0 B/op, supporting no regression for the stated workload."
+          },
+          {
+            "assertion": "The report does not penalize absent PGO, GOMEMLIMIT, sync.Pool, or pprof.",
+            "passed": true,
+            "evidence": "Limits: Benchmark values are supplied evidence, not measurements performed here. No source files or executable benchmark supplied. PGO, pooling, process memory settings or a pprof endpoint are not required for this bounded library operation."
+          },
+          {
+            "assertion": "The grade is not A+ solely because the code is small or allocation-free.",
+            "passed": true,
+            "evidence": "## Performance & Resource Management \u2014 A | Rationale: No actionable performance issue is established. Bounded 64-byte work and unchanged allocation/time measurements verify relevant strengths. Routine efficient behavior supports A; absence of optional tools does not count against it."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "bounded-streaming-and-transport",
+        "assertions": [
+          {
+            "assertion": "The grade is A+ with both distinct risks and evidence named.",
+            "passed": true,
+            "evidence": "## Performance & Resource Management \u2014 A+ | Rationale: Two independent verified safeguards justify A+: streaming controls ten-gigabyte export retention, while shared transport controls connection churn. Output and latency evidence show these address meaningful risks without a supplied regression. | Good: - [G1] Fixed 64 KiB streaming buffer plus Rows close/Err handling preserves resource ownership; supplied RSS falls from 2.4 GiB to 180 MiB, under the 512 MiB budget.\n- [G2] Reusing one transport independently reduces connection churn by 90%, controlling handshake and connection cost.\n- [G3] End-to-end output remains equivalent and representative load has no latency regression."
+          },
+          {
+            "assertion": "The report explains how streaming bounds peak memory.",
+            "passed": true,
+            "evidence": "Good: - [G1] Fixed 64 KiB streaming buffer plus Rows close/Err handling preserves resource ownership; supplied RSS falls from 2.4 GiB to 180 MiB, under the 512 MiB budget.\n- [G2] Reusing one transport independently reduces connection churn by 90%, controlling handshake and connection cost.\n- [G3] End-to-end output remains equivalent and representative load has no latency regression."
+          },
+          {
+            "assertion": "The report explains how transport reuse reduces connection churn.",
+            "passed": true,
+            "evidence": "Good: - [G1] Fixed 64 KiB streaming buffer plus Rows close/Err handling preserves resource ownership; supplied RSS falls from 2.4 GiB to 180 MiB, under the 512 MiB budget.\n- [G2] Reusing one transport independently reduces connection churn by 90%, controlling handshake and connection cost.\n- [G3] End-to-end output remains equivalent and representative load has no latency regression."
+          },
+          {
+            "assertion": "The report does not invent a need for sync.Pool or PGO.",
+            "passed": true,
+            "evidence": "Bad: - None found | Suggested changes: - None needed"
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "unbounded-export-memory",
+        "assertions": [
+          {
+            "assertion": "The grade is C for one major issue rather than Insufficient evidence.",
+            "passed": true,
+            "evidence": "## Performance & Resource Management \u2014 C | Rationale: One contained major resource-budget regression selects C. Normal input materially exceeds the process budget without needing a profile to establish the incompatibility; broader system-wide consequences are not supplied."
+          },
+          {
+            "assertion": "The report explains that normal output can exceed the memory budget and is duplicated in memory.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] ExportAll retains every record, then marshals the entire slice into a second live buffer before writing. Normal ten-gigabyte exports cannot fit a 1 GiB budget, and concurrent materializations can worsen pressure. The old path streamed."
+          },
+          {
+            "assertion": "The suggested change restores bounded streaming or an equivalent bounded representation.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Restore bounded streaming with proper ordering, error propagation and row cleanup; avoid full-record and full-output retention. Verify output equivalence and peak total memory on representative maximum exports, including concurrent request limits if supported."
+          },
+          {
+            "assertion": "The report does not require production profiling to establish this deterministic growth path.",
+            "passed": true,
+            "evidence": "Rationale: One contained major resource-budget regression selects C. Normal input materially exceeds the process budget without needing a profile to establish the incompatibility; broader system-wide consequences are not supplied."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "systemic-goroutine-growth",
+        "assertions": [
+          {
+            "assertion": "The grade is F for a critical resource flaw.",
+            "passed": true,
+            "evidence": "## Performance & Resource Management \u2014 F | Rationale: One critical unbounded leak causes severe service-wide exhaustion: 10,000 permanent retained payloads per minute at 256 KiB add about 2.44 GiB/minute before stack/other overhead. Continued common traffic grows without bound, not merely a slow isolated request."
+          },
+          {
+            "assertion": "The report traces the blocked channel send after the receiver returns.",
+            "passed": true,
+            "evidence": "Bad: - [F1][critical][introduced] The goroutine unconditionally sends on an unbuffered channel after its receiver returns on validation failure. With no cancellation or receiver, each such worker remains blocked retaining its payload; the supplied sustained invalid-event rate establishes process-wide accumulation."
+          },
+          {
+            "assertion": "The report relates normal event rate and retained payloads to systemic memory exhaustion.",
+            "passed": true,
+            "evidence": "Rationale: One critical unbounded leak causes severe service-wide exhaustion: 10,000 permanent retained payloads per minute at 256 KiB add about 2.44 GiB/minute before stack/other overhead. Continued common traffic grows without bound, not merely a slow isolated request."
+          },
+          {
+            "assertion": "The proposed fix gives the goroutine a termination path and bounded ownership.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Ensure early-return ownership terminates the worker: validate before spawn, keep synchronous flow, or use a cancel-aware send with cancellation on every receiver exit. Bound in-flight work as needed. Exercise repeated invalid events and verify goroutine count/retained memory return to a stable baseline; larger buffers alone do not prove completion."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "two-moderate-costs",
+        "assertions": [
+          {
+            "assertion": "The grade is C+ for two independent moderate findings.",
+            "passed": true,
+            "evidence": "## Performance & Resource Management \u2014 C+ | Rationale: Two independently actionable moderate costs select C+. Measured churn/latency and avoidable report CPU are material, while reports still meet budget and no major exhaustion is established."
+          },
+          {
+            "assertion": "The report cites observed connection churn and handshake cost for transport construction.",
+            "passed": true,
+            "evidence": "Bad: - [F1][moderate][introduced] Per-request http.Transport prevents normal cross-request pooling; supplied load shows thousands of short-lived connections and additional handshake latency.\n- [F2][moderate][introduced] Each of 2,000 report items scans the 50,000-row catalog, about 100 million row visits; supplied profile attributes 25% CPU to repeated scans."
+          },
+          {
+            "assertion": "The report cites the measured repeated-scan CPU cost for the catalog lookup.",
+            "passed": true,
+            "evidence": "Bad: - [F1][moderate][introduced] Per-request http.Transport prevents normal cross-request pooling; supplied load shows thousands of short-lived connections and additional handshake latency.\n- [F2][moderate][introduced] Each of 2,000 report items scans the 50,000-row catalog, about 100 million row visits; supplied profile attributes 25% CPU to repeated scans."
+          },
+          {
+            "assertion": "Each bad finding has a targeted change and a way to verify improvement.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Reuse an owned shared transport/client with suitable lifetime. Repeat the same load and compare connection churn and latency; tune limits only from demonstrated need.\n- [F2] Required: Build/reuse an index or process catalog once while preserving report semantics. Compare CPU/time and added index memory at representative sizes before accepting the change."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "database-pool-defaults",
+        "assertions": [
+          {
+            "assertion": "The grade is A with the owned sql.DB lifetime recognized as a strength.",
+            "passed": true,
+            "evidence": "## Performance & Resource Management \u2014 A | Good: - [G1] One sql.DB serves the query and is closed by the application on exit, providing a clear finite lifetime.\n- [G2] Single-query workload has no supplied connection wait or churn that would justify additional pool configuration."
+          },
+          {
+            "assertion": "The report does not treat default pool settings as a defect.",
+            "passed": true,
+            "evidence": "Rationale: No actionable pool issue is shown. Reusing one handle and closing it on exit fits this bounded CLI workload. Default limits are not defects without a capacity or lifetime consequence; routine correct ownership supports A."
+          },
+          {
+            "assertion": "The report does not require SetMaxIdleConns to equal SetMaxOpenConns.",
+            "passed": true,
+            "evidence": "Limits: Based on supplied scenario; no DB.Stats or execution was available or claimed. No fixed open/idle ratio or lifetime is required. A different sustained/concurrent workload would need its own capacity review."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "unsafe-alias-optimization",
+        "assertions": [
+          {
+            "assertion": "The grade is C for one contained major flaw.",
+            "passed": true,
+            "evidence": "## Performance & Resource Management \u2014 C | Rationale: One contained major invalid-optimization flaw selects C. Preserving ownership is part of validating performance changes: common caller reuse changes a retained string. No independent measured speed regression is invented."
+          },
+          {
+            "assertion": "The report explains the aliasing and mutation violation, not merely a hypothetical unsafe warning.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] unsafe.String(unsafe.SliceData(data), len(data)) aliases caller storage that is commonly overwritten while the string survives. The optimization violates required immutability and no longer provides the prior independent value; avoiding a copy cannot justify this ownership break."
+          },
+          {
+            "assertion": "The suggestion restores a safe conversion or a verified immutable ownership model.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Restore string(data), or deliberately redesign ownership with an enforceable consumer contract before sharing storage. Verify that overwriting the original bytes leaves the returned name unchanged and benchmark representative safe alternatives only if allocation cost matters."
+          },
+          {
+            "assertion": "The report does not claim that removing one allocation is automatically worth unsafe code.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] unsafe.String(unsafe.SliceData(data), len(data)) aliases caller storage that is commonly overwritten while the string survives. The optimization violates required immutability and no longer provides the prior independent value; avoiding a copy cannot justify this ownership break. | Suggested changes: - [F1] Required: Restore string(data), or deliberately redesign ownership with an enforceable consumer contract before sharing storage. Verify that overwriting the original bytes leaves the returned name unchanged and benchmark representative safe alternatives only if allocation cost matters."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "http-body-close-without-drain",
+        "assertions": [
+          {
+            "assertion": "The grade is A and recognizes that the body is closed.",
+            "passed": true,
+            "evidence": "## Performance & Resource Management \u2014 A | Good: - [G1] Reading only the preview and closing resp.Body avoids intentionally consuming the entire potentially endless response and relinquishes body ownership."
+          },
+          {
+            "assertion": "The report does not require an unbounded drain.",
+            "passed": true,
+            "evidence": "Rationale: No actionable resource defect is established. Closing the body is supported ownership behavior. Forcing an unbounded drain could destroy the preview\u2019s bounded consumption without guaranteeing a benefit for this workload. | Limits: No executable client, transport protocol or measured connection behavior supplied; no command run. Reuse is not guaranteed by Close, but that alone is not a demonstrated defect. Reject the suggested unconditional io.Copy; consider bounded draining only if observed reuse cost justifies it and cancellation/time bounds remain effective."
+          },
+          {
+            "assertion": "The report explains the potential bandwidth or blocking cost of draining a streaming response.",
+            "passed": true,
+            "evidence": "Rationale: No actionable resource defect is established. Closing the body is supported ownership behavior. Forcing an unbounded drain could destroy the preview\u2019s bounded consumption without guaranteeing a benefit for this workload. | Good: - [G1] Reading only the preview and closing resp.Body avoids intentionally consuming the entire potentially endless response and relinquishes body ownership."
+          },
+          {
+            "assertion": "The report does not assert that closing alone always guarantees connection reuse.",
+            "passed": true,
+            "evidence": "Limits: No executable client, transport protocol or measured connection behavior supplied; no command run. Reuse is not guaranteed by Close, but that alone is not a demonstrated defect. Reject the suggested unconditional io.Copy; consider bounded draining only if observed reuse cost justifies it and cancellation/time bounds remain effective."
+          }
+        ],
+        "expected_output_match": false,
+        "notes": "All listed assertions pass: the report recognizes closure, rejects unbounded reading, explains potentially endless consumption and explicitly denies guaranteed reuse. Strict expected_output_match is false only because the expected prose also requests an explicit explanation that EOF can aid HTTP/1.x connection reuse; that mechanism is omitted. A grade and practical recommendation are correct."
+      },
+      {
+        "id": "benchmark-without-comparison",
+        "assertions": [
+          {
+            "assertion": "The report does not repeat the claimed 30% improvement as fact.",
+            "passed": true,
+            "evidence": "Rationale: The 30% conclusion cannot be assessed from one new-code number. Passing tests do not establish performance benefit or all unsafe invariants. Missing measurements alone are not a proved slowdown or automatic negative finding, but the material optimization decision lacks evidence for a positive grade. Supply comparable before/after representative benchmarks and the ownership/lifetime justification for the unsafe operation."
+          },
+          {
+            "assertion": "The report asks for comparable baseline and new measurements on representative inputs.",
+            "passed": true,
+            "evidence": "Rationale: The 30% conclusion cannot be assessed from one new-code number. Passing tests do not establish performance benefit or all unsafe invariants. Missing measurements alone are not a proved slowdown or automatic negative finding, but the material optimization decision lacks evidence for a positive grade. Supply comparable before/after representative benchmarks and the ownership/lifetime justification for the unsafe operation."
+          },
+          {
+            "assertion": "The report does not invent a latency or allocation regression.",
+            "passed": true,
+            "evidence": "Rationale: The 30% conclusion cannot be assessed from one new-code number. Passing tests do not establish performance benefit or all unsafe invariants. Missing measurements alone are not a proved slowdown or automatic negative finding, but the material optimization decision lacks evidence for a positive grade. Supply comparable before/after representative benchmarks and the ownership/lifetime justification for the unsafe operation. | Limits: No benchmark or source was available to execute. No performance regression, production relevance or ownership bug is fabricated; the claim remains unverified rather than accepted."
+          },
+          {
+            "assertion": "The report treats the missing comparison as a limit on the performance conclusion.",
+            "passed": true,
+            "evidence": "Coverage: Inspected supplied evidence description: one new-code benchmark, passing functional tests and no visible leak. Baseline, representative workload and comparable environment are unavailable. | Rationale: The 30% conclusion cannot be assessed from one new-code number. Passing tests do not establish performance benefit or all unsafe invariants. Missing measurements alone are not a proved slowdown or automatic negative finding, but the material optimization decision lacks evidence for a positive grade. Supply comparable before/after representative benchmarks and the ownership/lifetime justification for the unsafe operation."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "no-applicable-surface",
+        "assertions": [
+          {
+            "assertion": "The result is Not applicable rather than an artificial letter grade.",
+            "passed": true,
+            "evidence": "## Performance & Resource Management \u2014 Not applicable"
+          },
+          {
+            "assertion": "The report does not invent a need for profiling or PGO.",
+            "passed": true,
+            "evidence": "Rationale: No performance or resource decision is implicated. A letter grade or tuning recommendation would exceed this non-executable change."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "insufficient-workload-context",
+        "assertions": [
+          {
+            "assertion": "The result is Insufficient evidence rather than a speculative letter grade.",
+            "passed": true,
+            "evidence": "## Performance & Resource Management \u2014 Insufficient evidence"
+          },
+          {
+            "assertion": "The report identifies the missing size bound, frequency, or ownership context.",
+            "passed": true,
+            "evidence": "Coverage: Visible capacity expression only; estimate bounds, frequency, ownership, consumers and memory budget unavailable. | Rationale: The expression reserves capacity, but cannot establish excessive retention or useful preallocation without its actual size and lifetime. Need bounded input values, call rate and ownership/budget context to distinguish waste from an appropriate capacity hint. No defect follows merely from a multiplication or allocation."
+          },
+          {
+            "assertion": "The report does not assert a memory regression from the snippet alone.",
+            "passed": true,
+            "evidence": "Rationale: The expression reserves capacity, but cannot establish excessive retention or useful preallocation without its actual size and lifetime. Need bounded input values, call rate and ownership/budget context to distinguish waste from an appropriate capacity hint. No defect follows merely from a multiplication or allocation. | Limits: No source context or measurements can be inspected; no commands run. Possible overflow or enormous allocation is not treated as demonstrated behavior without a reachable supported input."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      },
+      {
+        "id": "cache-entry-limit-not-byte-limit",
+        "assertions": [
+          {
+            "assertion": "The report derives retained memory from entry size and working-set count, not the configured maximum alone.",
+            "passed": true,
+            "evidence": "Rationale: One contained major cache-budget failure selects C. Forty thousand 100 KiB documents require about 3.81 GiB of payload alone, long before entry-count or TTL eviction. This directly violates the budget without assuming a separate attacker or broad systemic failure. | Bad: - [F1][major][introduced] The cache retains full document []byte values. Normal first-minute 40,000-entry load stays below the 100,000 cap and below the ten-minute expiry, yet payload bytes exceed memory budget by more than sevenfold before metadata and concurrent fills."
+          },
+          {
+            "assertion": "It explains why the entry count and TTL do not fit the 512 MiB budget.",
+            "passed": true,
+            "evidence": "Bad: - [F1][major][introduced] The cache retains full document []byte values. Normal first-minute 40,000-entry load stays below the 100,000 cap and below the ten-minute expiry, yet payload bytes exceed memory budget by more than sevenfold before metadata and concurrent fills."
+          },
+          {
+            "assertion": "The correction controls retained bytes and includes a relevant workload verification.",
+            "passed": true,
+            "evidence": "Suggested changes: - [F1] Required: Introduce an enforced byte budget with headroom and oversized-entry admission policy, or retain streaming instead. Include backing capacity, metadata and in-flight fills in accounting. Verify representative minute-scale peak memory and eviction behavior; lowering TTL without bounding peak bytes is insufficient."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "All listed assertions pass. The selected report passages substantiate the expected review behavior and grade; no additional severity is assumed from outside the supplied facts."
+      }
+    ]
+  },
+  {
+    "skill": "go-security",
+    "cases": [
+      {
+        "id": "safe-library-query",
+        "assertions": [
+          {
+            "assertion": "The grade is A under the shared anchors.",
+            "passed": true,
+            "evidence": "Heading is Security \u2014 A."
+          },
+          {
+            "assertion": "The report identifies parameter binding and fixed sort fragments as concrete strengths.",
+            "passed": true,
+            "evidence": "G1 binds search values; G2 maps fixed enum to literal fragments."
+          },
+          {
+            "assertion": "The report does not demand library-level authentication or a particular SQL framework.",
+            "passed": true,
+            "evidence": "G3 leaves identity/authorization to host; no SQL framework demanded."
+          },
+          {
+            "assertion": "The report does not award A+ merely because no flaw was found.",
+            "passed": true,
+            "evidence": "Rationale calls controls routine and awards A."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "symlink-file-escape",
+        "assertions": [
+          {
+            "assertion": "The grade is C for one major security flaw.",
+            "passed": true,
+            "evidence": "Heading C; counts one major."
+          },
+          {
+            "assertion": "The report explains why cleaning and prefix checking do not prevent symlink escape or a check/use race.",
+            "passed": true,
+            "evidence": "F1 distinguishes lexical checks from later writes following attacker-created symlinks."
+          },
+          {
+            "assertion": "The recommendation uses os.Root or another equivalent traversal-resistant strategy available to the project.",
+            "passed": true,
+            "evidence": "F1 change requires actual writes through a traversal-resistant root-relative API, an equivalent strategy."
+          },
+          {
+            "assertion": "The report does not claim os.Root.ReadFile was present before Go 1.25 or require the exact handbook example.",
+            "passed": true,
+            "evidence": "No unsupported ReadFile version or exact example requirement appears."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "safe-command-arguments",
+        "assertions": [
+          {
+            "assertion": "The grade is A and the report names verified protections.",
+            "passed": true,
+            "evidence": "A with fixed executable, option termination, confinement strengths."
+          },
+          {
+            "assertion": "The report recognizes exec.CommandContext does not invoke a shell by itself.",
+            "passed": true,
+            "evidence": "G1 explicitly says direct invocation without shell interpretation."
+          },
+          {
+            "assertion": "The report does not invent command or flag injection in the stated contract.",
+            "passed": true,
+            "evidence": "No invented injection finding; -- semantics are accepted from scenario."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "shell-interpolation",
+        "assertions": [
+          {
+            "assertion": "The grade is F for attacker-chosen shell execution with private application-file access, without inventing root privileges.",
+            "passed": true,
+            "evidence": "F and service private-file privileges; no root claim."
+          },
+          {
+            "assertion": "The report traces untrusted filename into sh -c and describes the supported exposure without supplying a payload.",
+            "passed": true,
+            "evidence": "F1 traces filename into sh -c cat concatenation without exploit payload."
+          },
+          {
+            "assertion": "The suggested change removes shell interpretation and constrains file access.",
+            "passed": true,
+            "evidence": "Change removes shell interpolation and confines authorized file access."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "authorization-order",
+        "assertions": [
+          {
+            "assertion": "The grade is C for one major security flaw.",
+            "passed": true,
+            "evidence": "C with one major."
+          },
+          {
+            "assertion": "The report distinguishes authenticated identity from object-level authorization.",
+            "passed": true,
+            "evidence": "G1 identifies authentication subject; F1 separately requires object permission."
+          },
+          {
+            "assertion": "The report identifies that private data is produced before the denial.",
+            "passed": true,
+            "evidence": "F1 states protected output is written before denial and cannot be retracted."
+          },
+          {
+            "assertion": "The suggested change moves authorization before the protected action.",
+            "passed": true,
+            "evidence": "Change authorizes selected account before reading/writing export data."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "benign-unknown-json",
+        "assertions": [
+          {
+            "assertion": "The grade is A and the report identifies dedicated input fields, bounds, and access checks as strengths.",
+            "passed": true,
+            "evidence": "A; G1 dedicated fields, G2 bounds/access checks."
+          },
+          {
+            "assertion": "The report does not treat ignored unknown fields alone as a vulnerability.",
+            "passed": true,
+            "evidence": "Unknown fields cannot set privileged fields; optional rejection only."
+          },
+          {
+            "assertion": "The report does not require encoding/json/v2 migration.",
+            "passed": true,
+            "evidence": "Optional follow-up explicitly rejects JSON package migration as necessary."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "redirect-ssrf",
+        "assertions": [
+          {
+            "assertion": "The grade is C for one major security flaw.",
+            "passed": true,
+            "evidence": "C, one major."
+          },
+          {
+            "assertion": "The report explains why checking only the initial hostname is insufficient.",
+            "passed": true,
+            "evidence": "F1 explains allowed first host redirects to disallowed metadata destination."
+          },
+          {
+            "assertion": "The change recommendation covers redirects and the eventual network destination.",
+            "passed": true,
+            "evidence": "Change covers every redirect and actual resolved/dialed addresses."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "known-reachable-vulnerability",
+        "assertions": [
+          {
+            "assertion": "The grade is C for the reachable vulnerable symbol and untrusted input path.",
+            "passed": true,
+            "evidence": "C based on attacker token path to vulnerable ParseToken."
+          },
+          {
+            "assertion": "The report uses the advisory and call path as evidence rather than module presence alone.",
+            "passed": true,
+            "evidence": "F1 cites official advisory and deployed-tags source-scan stack."
+          },
+          {
+            "assertion": "The suggested change upgrades to a fixed version and verifies behavior.",
+            "passed": true,
+            "evidence": "Change selects fixed v1.2.1 and repeats scan plus regression behavior check."
+          },
+          {
+            "assertion": "The report leaves whether CI enforces scans to Deployment & Operations.",
+            "passed": true,
+            "evidence": "No CI-enforcement defect is assigned; only relevant rescan verification is proposed."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "critical-cross-tenant-breach",
+        "assertions": [
+          {
+            "assertion": "The grade is F for one critical security flaw.",
+            "passed": true,
+            "evidence": "F with one critical."
+          },
+          {
+            "assertion": "The report identifies public reachability and broad sensitive-data exposure.",
+            "passed": true,
+            "evidence": "F1 names unauthenticated public user-selected tenant and entire customer/credential backup."
+          },
+          {
+            "assertion": "The suggested change requires authentication and tenant-scoped authorization before access.",
+            "passed": true,
+            "evidence": "Change requires authenticated tenant/object authorization before read/write."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "multiple-major-boundaries",
+        "assertions": [
+          {
+            "assertion": "The grade is C- for two independent major findings.",
+            "passed": true,
+            "evidence": "C- with two major IDs."
+          },
+          {
+            "assertion": "The report explains both the object-level authorization bypass and trusted-HTML escape bypass.",
+            "passed": true,
+            "evidence": "F1 object authorization; F2 template.HTML bypass with executable HTML."
+          },
+          {
+            "assertion": "The report gives a targeted fix and rationale for each root cause.",
+            "passed": true,
+            "evidence": "Separate ID-linked changes restore object access gate and contextual escaping."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "moderate-csrf",
+        "assertions": [
+          {
+            "assertion": "The grade is B for one moderate finding.",
+            "passed": true,
+            "evidence": "B with one moderate."
+          },
+          {
+            "assertion": "The report explains the same-site sibling-subdomain path despite SameSite=Lax.",
+            "passed": true,
+            "evidence": "F1 explicitly explains SameSite=Lax does not exclude sibling same-site origin."
+          },
+          {
+            "assertion": "The report limits severity to the stated profile impact rather than inventing account takeover.",
+            "passed": true,
+            "evidence": "Rationale limits impact to display/theme preferences and rejects takeover inference."
+          },
+          {
+            "assertion": "The suggested change adds a relevant CSRF protection and explains why.",
+            "passed": true,
+            "evidence": "Change enforces CSRF token or exact trusted-origin policy excluding sibling."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "minor-sensitive-log",
+        "assertions": [
+          {
+            "assertion": "The grade is A- for exactly one minor finding.",
+            "passed": true,
+            "evidence": "A- with one minor."
+          },
+          {
+            "assertion": "The report acknowledges limited exposure and does not claim the suffix is an authentication secret.",
+            "passed": true,
+            "evidence": "G1 says owner-only and suffix cannot authenticate."
+          },
+          {
+            "assertion": "The suggested change replaces the suffix with a non-sensitive correlation value.",
+            "passed": true,
+            "evidence": "Change replaces with permitted independent run identifier."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "two-moderate-controls",
+        "assertions": [
+          {
+            "assertion": "The grade is C+ for two independent moderate findings.",
+            "passed": true,
+            "evidence": "C+ with two moderate."
+          },
+          {
+            "assertion": "The report uses the stated workload and exposure rather than treating every large body or missing flag as critical.",
+            "passed": true,
+            "evidence": "F1 uses 20 MB \u00d7 3 buffering and ordinary concurrency; F2 low-privilege reachable HTTP."
+          },
+          {
+            "assertion": "Each finding has a targeted suggested change with rationale.",
+            "passed": true,
+            "evidence": "Independent changes cap input/remove copies and set Secure with verification."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "moderate-plus-minors",
+        "assertions": [
+          {
+            "assertion": "The grade is B- for one moderate plus two minor findings.",
+            "passed": true,
+            "evidence": "B- counts moderate=1, minor=2."
+          },
+          {
+            "assertion": "The report keeps the three causes distinct and ties each to an impact.",
+            "passed": true,
+            "evidence": "Separate IDs for preference CSRF, prohibited suffix, group-readable export."
+          },
+          {
+            "assertion": "The report suggests a proportionate change for each finding.",
+            "passed": true,
+            "evidence": "Each finding has ID-linked limited correction and inspection."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "two-minor-gaps",
+        "assertions": [
+          {
+            "assertion": "The grade is B+ for exactly two minor findings.",
+            "passed": true,
+            "evidence": "B+ counts minor=2."
+          },
+          {
+            "assertion": "The report does not claim credential theft or confidential-data disclosure absent supporting facts.",
+            "passed": true,
+            "evidence": "Rationale explicitly says no authentication capability/private record exposure."
+          },
+          {
+            "assertion": "The suggested changes address logging and file mode separately.",
+            "passed": true,
+            "evidence": "Separate F1 logging removal and F2 restrictive creation mode."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "exceptional-security",
+        "assertions": [
+          {
+            "assertion": "The grade is A+ with no invented flaws.",
+            "passed": true,
+            "evidence": "A+ with zero defects."
+          },
+          {
+            "assertion": "The rationale names both distinct meaningful risks and the verified controls.",
+            "passed": true,
+            "evidence": "Rationale identifies symlink replacement and alternate authorization path; G1 actual Root operation and G2 shared gate."
+          },
+          {
+            "assertion": "The report does not award A+ only because the code is issue-free.",
+            "passed": true,
+            "evidence": "Two independently described mechanisms justify A+, not absence alone."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "docs-only",
+        "assertions": [
+          {
+            "assertion": "The result is Not applicable rather than a letter grade.",
+            "passed": true,
+            "evidence": "Heading Not applicable."
+          },
+          {
+            "assertion": "The report does not invent a missing scanner, secret manager, or hardening task.",
+            "passed": true,
+            "evidence": "No invented hardening suggestions."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "pure-local-code",
+        "assertions": [
+          {
+            "assertion": "The result is Not applicable rather than an automatic A grade.",
+            "passed": true,
+            "evidence": "Heading Not applicable."
+          },
+          {
+            "assertion": "The report does not invent an integer overflow or input-validation issue contrary to the stated boundary.",
+            "passed": true,
+            "evidence": "No integer/input defect invented; unchanged bounded inputs acknowledged."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "partial-handler-excerpt",
+        "assertions": [
+          {
+            "assertion": "The result is Insufficient evidence rather than a fabricated vulnerability or A grade.",
+            "passed": true,
+            "evidence": "Heading Insufficient evidence."
+          },
+          {
+            "assertion": "The report names the missing evidence needed to assess security.",
+            "passed": true,
+            "evidence": "Coverage names rendering, routing, middleware, caller contract; rationale asks for surrounding controls."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "aead-nonce-reuse",
+        "assertions": [
+          {
+            "assertion": "The report identifies nonce reuse under the same key despite use of standard AES-GCM.",
+            "passed": true,
+            "evidence": "F1 identifies all-zero nonce every Seal under same key."
+          },
+          {
+            "assertion": "It recommends nonce uniqueness or an appropriate supported random-nonce API with its usage limits.",
+            "passed": true,
+            "evidence": "Change ensures uniqueness per key across exports/restarts with key/message limits."
+          },
+          {
+            "assertion": "The finding and suggested verification address repeated encryptions and preserve ciphertext-format compatibility.",
+            "passed": false,
+            "evidence": "Repeated-export/restart and decryption checks are proposed, but preserving existing ciphertext-format compatibility is not addressed."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Security diagnosis, C severity, and nonce fix match expected output. Strict assertion additionally requires ciphertext-format compatibility; decryption correctness alone does not explicitly preserve old/new stored-format compatibility."
+      }
+    ]
+  },
+  {
+    "skill": "go-testing",
+    "cases": [
+      {
+        "id": "focused-library-tests",
+        "assertions": [
+          {
+            "assertion": "The grade is A under the shared anchors.",
+            "passed": true,
+            "evidence": "Heading A."
+          },
+          {
+            "assertion": "The report identifies the tested boundaries and error identity as verified strengths.",
+            "passed": true,
+            "evidence": "G1 boundary values and G2 ErrInvalidPort identity checks."
+          },
+          {
+            "assertion": "The report does not penalize standalone tests, same-package tests, or absence of mocks.",
+            "passed": true,
+            "evidence": "Rationale accepts standalone tests; no external package or mocks demand."
+          },
+          {
+            "assertion": "The report does not require a fuzz target solely because parsing is involved.",
+            "passed": true,
+            "evidence": "Limits explicitly say fuzzing unnecessary merely to increase variety."
+          },
+          {
+            "assertion": "The grade follows the shared anchors and does not award A+ solely for passing tests.",
+            "passed": true,
+            "evidence": "A rather than A+; direct contract assertions ground grade."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "false-confidence-mock",
+        "assertions": [
+          {
+            "assertion": "The grade is C for one contained major verification gap.",
+            "passed": true,
+            "evidence": "C with one major verification gap."
+          },
+          {
+            "assertion": "The report identifies the missing unauthorized-path assertion and the regression it would catch.",
+            "passed": true,
+            "evidence": "F1 points to always-true Authorize and absent denial assertions accepting wrong ordering."
+          },
+          {
+            "assertion": "The report recognizes the positive-path test as limited evidence rather than saying there are no tests.",
+            "passed": true,
+            "evidence": "G1 recognizes Update/204 authorized test as limited happy-path evidence."
+          },
+          {
+            "assertion": "The suggested test would verify no update occurs for an unauthorized account.",
+            "passed": true,
+            "evidence": "Change requires denial plus zero update effects and verifies current implementation fails."
+          },
+          {
+            "assertion": "The report leaves the production vulnerability grade to Security.",
+            "passed": true,
+            "evidence": "Production ordering is a separate ungraded Security/Correctness finding."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "legacy-parallel-loop",
+        "assertions": [
+          {
+            "assertion": "The grade is C for a major false-confidence test defect.",
+            "passed": false,
+            "evidence": "Heading B and moderate=1, contrary to asserted C/major."
+          },
+          {
+            "assertion": "The report uses go 1.21 semantics despite the installed Go 1.27 compiler.",
+            "passed": true,
+            "evidence": "F1 applies go 1.21 despite newer compiler."
+          },
+          {
+            "assertion": "The report explains the false test signal from captured loop variables.",
+            "passed": true,
+            "evidence": "F1 explains differently named cases all exercise final input/expectation."
+          },
+          {
+            "assertion": "The suggestion rebinds tc or passes it explicitly to the subtest closure.",
+            "passed": true,
+            "evidence": "Change explicitly rebinds tc := tc or captures case."
+          }
+        ],
+        "expected_output_match": false,
+        "notes": "Grade mismatch: report gives B/moderate, expected C/major. The prompt supplies no importance/consumer impact for F, and revised anchors require material importance for major; this is a plausible calibration ambiguity rather than a missed capture bug. All mechanistic assertions pass."
+      },
+      {
+        "id": "parallel-environment",
+        "assertions": [
+          {
+            "assertion": "The grade is B for one moderate issue with no other findings.",
+            "passed": true,
+            "evidence": "B with one moderate and no other findings."
+          },
+          {
+            "assertion": "The report identifies t.Setenv and t.Parallel as incompatible under testing.T.",
+            "passed": true,
+            "evidence": "F1 says Setenv forbidden after Parallel or parallel ancestor."
+          },
+          {
+            "assertion": "The report does not claim t.Setenv makes environment mutation parallel-safe.",
+            "passed": true,
+            "evidence": "No parallel-safety claim; process-global nature explicit."
+          },
+          {
+            "assertion": "The proposed change removes parallelism for this test or injects configuration.",
+            "passed": true,
+            "evidence": "Change removes parallelism or injects configuration."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "transaction-outside-pool",
+        "assertions": [
+          {
+            "assertion": "The grade is B for one moderate shared-fixture isolation gap, without inventing production data corruption.",
+            "passed": true,
+            "evidence": "B with one moderate; no production corruption invented."
+          },
+          {
+            "assertion": "The report traces that CreateUser uses db rather than tx.",
+            "passed": true,
+            "evidence": "F1 says CreateUser calls db.ExecContext and query uses db.QueryRowContext."
+          },
+          {
+            "assertion": "The report explains that rolling back tx will not undo db.ExecContext writes.",
+            "passed": true,
+            "evidence": "F1 says those operations lie outside tx and leave committed rows."
+          },
+          {
+            "assertion": "The report recognizes the shared parallel database as a contamination risk.",
+            "passed": true,
+            "evidence": "F1 names parallel-test reuse and order-dependent contamination."
+          },
+          {
+            "assertion": "The suggested change establishes real isolation and cleanup.",
+            "passed": true,
+            "evidence": "Change isolates DB/schema with teardown or propagates transaction; tests overlap/shuffle cleanup."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "sleep-and-race-evidence",
+        "assertions": [
+          {
+            "assertion": "The report explains why a fixed 20ms sleep can flake or miss the one-second contract.",
+            "passed": true,
+            "evidence": "F1 explains overstrict 20ms assertion rejects allowed completion up to 1 second."
+          },
+          {
+            "assertion": "The report suggests an observable bounded wait or suitable testing/synctest approach.",
+            "passed": true,
+            "evidence": "Change uses observable wait with one-second bound or deterministic timing."
+          },
+          {
+            "assertion": "The report states that -race only detects races in exercised paths.",
+            "passed": true,
+            "evidence": "F2 verification says unexecuted paths/schedules remain outside race evidence."
+          },
+          {
+            "assertion": "The report does not demand -race for every local test invocation.",
+            "passed": true,
+            "evidence": "Only focused relevant instrumented run is required, not every invocation."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "complete-change-no-tests",
+        "assertions": [
+          {
+            "assertion": "The report assigns a letter grade rather than Insufficient evidence.",
+            "passed": true,
+            "evidence": "Heading C, not Insufficient evidence."
+          },
+          {
+            "assertion": "The report explains that no test would catch an out-of-root deletion regression.",
+            "passed": true,
+            "evidence": "F1 says no containment test can detect outside-root deletion regression."
+          },
+          {
+            "assertion": "The suggested tests cover permitted and rejected paths with observable no-deletion behavior.",
+            "passed": true,
+            "evidence": "Change tests allowed deletion, outside/boundary rejection, and outside-file preservation in temp directories."
+          },
+          {
+            "assertion": "The report leaves the production vulnerability judgment to Security.",
+            "passed": true,
+            "evidence": "Coverage explicitly assumes no production vulnerability and does not grade one."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "exceptional-verification",
+        "assertions": [
+          {
+            "assertion": "The grade is A+ with both risks and their supporting tests named.",
+            "passed": true,
+            "evidence": "A+ names duplicate charges and continued work after cancellation."
+          },
+          {
+            "assertion": "The report explains why the httptest boundary and cancellation test provide meaningful evidence.",
+            "passed": true,
+            "evidence": "G1 actual httptest lost response/exact one charge; G2 synctest cancellation/no later attempts."
+          },
+          {
+            "assertion": "The report does not invent a requirement for more mocks, table cases, or coverage percentage.",
+            "passed": true,
+            "evidence": "No mock/table/coverage demands."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "docs-only",
+        "assertions": [
+          {
+            "assertion": "The result is Not applicable rather than an artificial letter grade.",
+            "passed": true,
+            "evidence": "Not applicable heading."
+          },
+          {
+            "assertion": "The report does not invent missing tests.",
+            "passed": true,
+            "evidence": "No invented missing tests."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "partial-excerpt",
+        "assertions": [
+          {
+            "assertion": "The result is Insufficient evidence rather than claiming the code has no tests.",
+            "passed": true,
+            "evidence": "Insufficient evidence; explicitly distinguishes unavailable tests from absent tests."
+          },
+          {
+            "assertion": "The report identifies the missing changeset, tests, or behavior contract needed to grade.",
+            "passed": true,
+            "evidence": "Requests intended contract, prior behavior, and relevant tests."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      },
+      {
+        "id": "fatal-in-worker",
+        "assertions": [
+          {
+            "assertion": "The report explains that t.Fatal exits the worker goroutine before close(done).",
+            "passed": true,
+            "evidence": "F1 says Fatal stops worker, skips close(done), leaves receiver blocked."
+          },
+          {
+            "assertion": "The proposed correction reports failure from the testing goroutine and prevents indefinite waiting.",
+            "passed": true,
+            "evidence": "Change sends error to test goroutine, calls Fatal there, bounds every outcome."
+          },
+          {
+            "assertion": "It does not claim t.Fatal terminates every goroutine or merely increase the suite timeout.",
+            "passed": true,
+            "evidence": "No global-goroutine exit claim or longer-timeout workaround."
+          }
+        ],
+        "expected_output_match": true,
+        "notes": "Substantive expected outcome and all assertions satisfied; grade, supported impact, and recommendations align with supplied facts."
+      }
+    ]
+  }
+]

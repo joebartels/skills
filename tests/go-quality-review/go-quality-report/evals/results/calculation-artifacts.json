@@ -1,0 +1,283 @@
+{
+  "distinct-safeguards.calculation.json": {
+    "overall": "A+",
+    "assessed_scope_grade": null,
+    "unique_finding_counts": {
+      "critical": 0,
+      "major": 0,
+      "moderate": 0,
+      "minor": 0
+    },
+    "coverage_gaps": [],
+    "limits": "Arithmetic only: coverage completeness, root-cause identity, severity, evidence and safeguard independence require reviewer verification."
+  },
+  "distinct-safeguards.ledger.json": {
+    "scope": "Supplied bounded synthesis scenario: distinct-safeguards",
+    "coverage": [
+      {
+        "id": "requested-scope",
+        "status": "complete",
+        "reason": "Complete material/relevant coverage explicitly supplied by scenario."
+      }
+    ],
+    "findings": [],
+    "strengths": [
+      {
+        "id": "G1",
+        "evidence": "Prompt supplies verified ordinary strengths."
+      }
+    ],
+    "safeguards": [
+      {
+        "id": "S1",
+        "risk": "duplicate charge after lost response",
+        "evidence": "Supplied payment-client test preserves one key on lost-response retry and produces one charge.",
+        "nonroutine": true
+      },
+      {
+        "id": "S2",
+        "risk": "work after cancellation during backoff",
+        "evidence": "Separate supplied test cancels during backoff and proves no later attempt.",
+        "nonroutine": true
+      }
+    ]
+  },
+  "distinct-same-message.calculation.json": {
+    "overall": "C+",
+    "assessed_scope_grade": null,
+    "unique_finding_counts": {
+      "critical": 0,
+      "major": 0,
+      "moderate": 2,
+      "minor": 0
+    },
+    "coverage_gaps": [],
+    "limits": "Arithmetic only: coverage completeness, root-cause identity, severity, evidence and safeguard independence require reviewer verification."
+  },
+  "distinct-same-message.ledger.json": {
+    "scope": "Supplied bounded synthesis scenario: distinct-same-message",
+    "coverage": [
+      {
+        "id": "requested-scope",
+        "status": "complete",
+        "reason": "Complete material/relevant coverage explicitly supplied by scenario."
+      }
+    ],
+    "findings": [
+      {
+        "id": "F1",
+        "severity": "moderate",
+        "cause": "Background export remote call omits context",
+        "evidence": "Supplied export job has missing ctx in its remote call.",
+        "correction": "Pass the job context into the remote call."
+      },
+      {
+        "id": "F2",
+        "severity": "moderate",
+        "cause": "CLI subprocess is not tied to cancellation",
+        "evidence": "Supplied CLI uses exec.Command rather than CommandContext.",
+        "correction": "Create the subprocess with exec.CommandContext and the intended command context."
+      }
+    ],
+    "strengths": [],
+    "safeguards": []
+  },
+  "duplicate-cause.calculation.json": {
+    "overall": "F",
+    "assessed_scope_grade": null,
+    "unique_finding_counts": {
+      "critical": 1,
+      "major": 1,
+      "moderate": 0,
+      "minor": 0
+    },
+    "coverage_gaps": [],
+    "limits": "Arithmetic only: coverage completeness, root-cause identity, severity, evidence and safeguard independence require reviewer verification."
+  },
+  "duplicate-cause.ledger.json": {
+    "scope": "Supplied bounded synthesis scenario: duplicate-cause",
+    "coverage": [
+      {
+        "id": "requested-scope",
+        "status": "complete",
+        "reason": "Complete material/relevant coverage explicitly supplied by scenario."
+      }
+    ],
+    "findings": [
+      {
+        "id": "F1",
+        "severity": "critical",
+        "cause": "Update precedes tenant authorization",
+        "evidence": "Supplied correctness and security cards identify the same statement order; demonstrated broad cross-tenant private-data modification.",
+        "correction": "Authorize tenant access before any update.",
+        "sources": [
+          "transport/correctness/F1",
+          "transport/security/F1"
+        ],
+        "reach": "Demonstrated broad cross-tenant private-data modification."
+      },
+      {
+        "id": "F2",
+        "severity": "major",
+        "cause": "Tests never verify denied authorization without writes",
+        "evidence": "Supplied testing card: sole tests stub Authorize true; independent negative test required.",
+        "correction": "Add denied-authorization tests asserting rejection and zero writes.",
+        "sources": [
+          "transport/testing/F1"
+        ]
+      }
+    ],
+    "strengths": [],
+    "safeguards": []
+  },
+  "partial-with-defect.calculation.json": {
+    "overall": "Insufficient evidence",
+    "assessed_scope_grade": "C",
+    "unique_finding_counts": {
+      "critical": 0,
+      "major": 1,
+      "moderate": 0,
+      "minor": 0
+    },
+    "coverage_gaps": [
+      "persistence"
+    ],
+    "limits": "Arithmetic only: coverage completeness, root-cause identity, severity, evidence and safeguard independence require reviewer verification."
+  },
+  "partial-with-defect.ledger.json": {
+    "scope": "Supplied bounded synthesis scenario: partial-with-defect",
+    "coverage": [
+      {
+        "id": "handler",
+        "status": "complete",
+        "reason": "Supplied reviewed handler with confirmed defect."
+      },
+      {
+        "id": "persistence",
+        "status": "unavailable",
+        "reason": "Source unavailable; persistence remains unassessed."
+      }
+    ],
+    "findings": [
+      {
+        "id": "F1",
+        "severity": "major",
+        "cause": "Contained handler error",
+        "evidence": "Prompt supplies a confirmed contained major handler error, assessed C.",
+        "correction": "Correct the confirmed handler error; concrete implementation details are not supplied."
+      }
+    ],
+    "strengths": [],
+    "safeguards": []
+  },
+  "partition-invariance.calculation.json": {
+    "overall": "C+",
+    "assessed_scope_grade": null,
+    "unique_finding_counts": {
+      "critical": 0,
+      "major": 0,
+      "moderate": 2,
+      "minor": 0
+    },
+    "coverage_gaps": [],
+    "limits": "Arithmetic only: coverage completeness, root-cause identity, severity, evidence and safeguard independence require reviewer verification."
+  },
+  "partition-invariance.ledger.json": {
+    "scope": "Supplied bounded synthesis scenario: partition-invariance",
+    "coverage": [
+      {
+        "id": "requested-scope",
+        "status": "complete",
+        "reason": "Complete material/relevant coverage explicitly supplied by scenario."
+      }
+    ],
+    "findings": [
+      {
+        "id": "F1",
+        "severity": "moderate",
+        "cause": "Independent moderate cause 1",
+        "evidence": "Supplied substantiated finding, present in both layouts.",
+        "correction": "Resolve the first supplied cause."
+      },
+      {
+        "id": "F2",
+        "severity": "moderate",
+        "cause": "Independent moderate cause 2",
+        "evidence": "Supplied substantiated finding, present in both layouts.",
+        "correction": "Resolve the second supplied cause."
+      }
+    ],
+    "strengths": [],
+    "safeguards": []
+  },
+  "same-safeguard.calculation.json": {
+    "overall": "A",
+    "assessed_scope_grade": null,
+    "unique_finding_counts": {
+      "critical": 0,
+      "major": 0,
+      "moderate": 0,
+      "minor": 0
+    },
+    "coverage_gaps": [],
+    "limits": "Arithmetic only: coverage completeness, root-cause identity, severity, evidence and safeguard independence require reviewer verification."
+  },
+  "same-safeguard.ledger.json": {
+    "scope": "Supplied bounded synthesis scenario: same-safeguard",
+    "coverage": [
+      {
+        "id": "requested-scope",
+        "status": "complete",
+        "reason": "Complete material/relevant coverage explicitly supplied by scenario."
+      }
+    ],
+    "findings": [],
+    "strengths": [
+      {
+        "id": "G1",
+        "evidence": "Prompt supplies one verified ordinary strength; details unspecified."
+      }
+    ],
+    "safeguards": [
+      {
+        "id": "S1",
+        "risk": "cancellation",
+        "evidence": "Supplied tested cancellation path and timer cancellation protect the same cancellation risk.",
+        "nonroutine": true
+      }
+    ]
+  },
+  "severity-dispute.calculation.json": {
+    "overall": "C",
+    "assessed_scope_grade": null,
+    "unique_finding_counts": {
+      "critical": 0,
+      "major": 1,
+      "moderate": 0,
+      "minor": 0
+    },
+    "coverage_gaps": [],
+    "limits": "Arithmetic only: coverage completeness, root-cause identity, severity, evidence and safeguard independence require reviewer verification."
+  },
+  "severity-dispute.ledger.json": {
+    "scope": "Supplied bounded synthesis scenario: severity-dispute",
+    "coverage": [
+      {
+        "id": "requested-scope",
+        "status": "complete",
+        "reason": "Complete material/relevant coverage explicitly supplied by scenario."
+      }
+    ],
+    "findings": [
+      {
+        "id": "F1",
+        "severity": "major",
+        "cause": "Sequential buffer reuse overwrites independently owned results",
+        "evidence": "Supplied code establishes sequential reuse; an earlier result is observed overwritten despite documented independent-result ownership.",
+        "correction": "Return independently owned storage, copying the required data before reuse."
+      }
+    ],
+    "strengths": [],
+    "safeguards": []
+  }
+}

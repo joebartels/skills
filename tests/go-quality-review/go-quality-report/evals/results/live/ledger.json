@@ -1,0 +1,109 @@
+{
+  "scope": "Complete catalog-export library fixture; HEAD 28c092c44f4a0709c4132dac3b3947dabfae5a84 plus six immutable file hashes in manifest.json",
+  "coverage": [
+    {
+      "id": "architecture-and-design",
+      "status": "complete",
+      "reason": "complete: catalog ownership/package boundaries and export consumer trace"
+    },
+    {
+      "id": "code-quality-and-idioms",
+      "status": "complete",
+      "reason": "complete: all four Go files in export packet"
+    },
+    {
+      "id": "correctness-and-compatibility",
+      "status": "complete",
+      "reason": "complete: both packages plus independent boundary review"
+    },
+    {
+      "id": "testing",
+      "status": "complete",
+      "reason": "complete: all supplied tests and fail-before/pass-after ownership assertions"
+    },
+    {
+      "id": "security",
+      "status": "not_applicable",
+      "reason": "not_applicable: no established trust/privilege boundary, sensitive data policy or attack sink"
+    },
+    {
+      "id": "observability-and-resilience",
+      "status": "not_applicable",
+      "reason": "not_applicable: local synchronous library without fallible I/O, queues, retry or lifecycle boundaries"
+    },
+    {
+      "id": "performance-and-resource-management",
+      "status": "complete",
+      "reason": "complete: catalog and export cost/lifetime cards"
+    },
+    {
+      "id": "dependencies-and-reproducibility",
+      "status": "complete",
+      "reason": "complete: shared module, both build targets; source Go1.21 compatibility inspected"
+    },
+    {
+      "id": "deployment-and-operations",
+      "status": "not_applicable",
+      "reason": "not_applicable: REVIEW explicitly excludes pipeline/service/external I/O; pure library"
+    },
+    {
+      "id": "snapshot-export-boundary",
+      "status": "complete",
+      "reason": "Direct and Uppercase reproduction fail; producer-only clone makes both pass in disposable copy"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Snapshot returns shared element storage despite an independently mutable result contract",
+      "evidence": "catalog/catalog.go:9; export/export.go:10-12; catalog-repro.log; boundary-check.log; boundary-corrected-check.log",
+      "sources": [
+        "catalog/architecture-and-design/F1",
+        "catalog/correctness-and-compatibility/F1",
+        "export/code-quality-and-idioms/F1",
+        "export/correctness-and-compatibility/F1"
+      ],
+      "owner": "catalog.Catalog.Snapshot",
+      "correction": "Return copied slice; add element-mutation and export preservation assertions",
+      "reconciliation": "One producer fix makes both consumer and direct mutation regressions pass. Repeated package/topic symptoms are not independently actionable production defects. Ordinary library mutation is contained major, without critical/security/systemic evidence.",
+      "topic_severities": {
+        "architecture-and-design": "major",
+        "correctness-and-compatibility": "major",
+        "code-quality-and-idioms": "major"
+      }
+    },
+    {
+      "id": "F2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Supplied tests never assert the explicitly important stored-element mutation-isolation contract",
+      "evidence": "catalog/catalog_test.go:5-15; export/export_test.go:8-13; baseline-check.log; boundary-check.log; export-check/evidence/original.txt",
+      "sources": [
+        "export/testing/F1"
+      ],
+      "owner": "catalog and export regression tests",
+      "correction": "Add direct Snapshot element-write isolation and Uppercase before/after preservation assertions",
+      "topic_severities": {
+        "testing": "major"
+      },
+      "reconciliation": "Independent test correction remains necessary after production repair. Both test files omit the same invariant, counted once. Worker challenged on major versus localized moderate; go-testing rubric explicitly grades important effectively-unverified contract major, and REVIEW explicitly identifies this public promise. No systemic multiplier."
+    }
+  ],
+  "strengths": [
+    {
+      "id": "G1",
+      "evidence": "Constructor copies caller slice; direct isolation test passes in catalog-repro.log"
+    },
+    {
+      "id": "G2",
+      "evidence": "Standalone readonly build of both packages with workspace/proxy disabled passes; module graph only main module (catalog-checks.log)"
+    },
+    {
+      "id": "G3",
+      "evidence": "Export produces expected uppercase output/order; test assertions executed (export-check/evidence/original.txt), before mutation assertion failure"
+    }
+  ],
+  "safeguards": []
+}

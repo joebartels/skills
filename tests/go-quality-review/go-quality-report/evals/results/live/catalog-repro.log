@@ -1,0 +1,13 @@
+$ rtk proxy go test -mod=readonly -count=1 -v ./catalog -run TestReview
+exit=1
+=== RUN   TestReviewConstructorIsolation
+--- PASS: TestReviewConstructorIsolation (0.00s)
+=== RUN   TestReviewEmptyAndZero
+--- PASS: TestReviewEmptyAndZero (0.00s)
+=== RUN   TestReviewSnapshotIndependent
+    review_test.go:14: stored label mutated: got "changed" want alpha
+    review_test.go:15: second snapshot mutated: got "changed" want alpha
+--- FAIL: TestReviewSnapshotIndependent (0.00s)
+FAIL
+FAIL	example.com/catalog-export/catalog	0.181s
+FAIL

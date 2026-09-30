@@ -1,0 +1,78 @@
+{
+  "skill_name": "go-code-quality-and-idioms",
+  "evals": [
+    {
+      "id": "public-errors",
+      "prompt": "Review Code Quality & Go Idioms for this Go 1.27 library change. LookupUser(id) calls an internal SQL repository. On error it does `log.Printf(\"lookup: %v\", err); return User{}, fmt.Errorf(\"lookup user %q: %w\", id, err)`. The package promises callers only ErrNotFound and ErrUnavailable; callers already log returned failures. The error text can include SQL details. No other code changed.",
+      "expected_output": "A supported low grade identifying duplicate logging, an unintended unwrapping contract, and the fact that changing %w to %v alone would not remove sensitive error text. Suggestions should preserve a stable public error meaning.",
+      "assertions": [
+        "The report identifies logging the same failure twice as a consequence of the shown caller behavior.",
+        "The report explains that %w exposes the internal error for errors.Is or errors.As.",
+        "The report does not claim that %v sanitizes SQL error text.",
+        "Each bad finding has a targeted change and rationale."
+      ]
+    },
+    {
+      "id": "slice-contract",
+      "prompt": "Review Code Quality & Go Idioms for this Go 1.26 CLI change. An output struct has `Items []string` and is JSON encoded for clients whose documented contract requires `items: []` when no results exist. The new code sets `Items: []string{}`. The only other change replaces a long nested branch with early returns. Review only this diff.",
+      "expected_output": "A positive grade recognizing the clear control flow and required non-nil empty slice, without a fabricated allocation or style defect.",
+      "assertions": [
+        "The report treats the empty slice as correct for the documented JSON contract.",
+        "The report recognizes the supported readability improvement.",
+        "The report does not claim []string{} necessarily causes a heap allocation."
+      ]
+    },
+    {
+      "id": "legacy-loop-version",
+      "prompt": "Review Code Quality & Go Idioms for a Go module with `go 1.21` in go.mod, built using a Go 1.27 toolchain. A changed test loops over cases, uses `t.Run` with `t.Parallel()`, and closes over `tt` without rebinding. The test expectation differs per case. Review only this change.",
+      "expected_output": "A supported negative grade recognizing the pre-1.22 loop-variable semantics from go.mod, despite the newer installed toolchain.",
+      "assertions": [
+        "The report identifies a loop capture risk because the module declares go 1.21.",
+        "The report does not assume the Go 1.27 toolchain gives the module Go 1.27 language semantics.",
+        "The suggestion fixes the capture with a version-compatible binding or explicit parameter."
+      ]
+    },
+    {
+      "id": "no-go-code",
+      "prompt": "Review only Code Quality & Go Idioms for a changeset containing README wording and a deployment YAML timeout value. No Go source, generator, or Go API changes are involved.",
+      "expected_output": "Not applicable, with a brief reason and no invented Go findings.",
+      "assertions": [
+        "The result is Not applicable rather than an artificial letter grade.",
+        "The report does not invent code-quality findings."
+      ]
+    },
+    {
+      "id": "unknown-language-version",
+      "prompt": "Review only the correctness of a loop-variable capture idiom in a Go source snippet: `for _, item := range items { go func() { use(item) }() }`. The module go directive, build constraints, and enclosing files are unavailable and cannot be inspected. No other code is provided.",
+      "expected_output": "Insufficient evidence for a version-dependent judgment, explaining that the effective language version is required.",
+      "assertions": [
+        "The result is Insufficient evidence rather than assuming pre- or post-1.22 semantics.",
+        "The report names the go directive or effective file language version as missing evidence."
+      ]
+    },
+    {
+      "id": "go127-generics",
+      "prompt": "Review Code Quality & Go Idioms for a Go 1.27 library diff that replaces three near-identical methods on a concrete Rand type with `func (r *Rand) N[Int integer](n Int) Int`. The repository defines integer as a suitable constraint, the method compiles, and all callers use concrete *Rand. The public API has documentation and tests. No interface declares a generic method. No other changes.",
+      "expected_output": "A positive grade recognizing that generic methods are supported in Go 1.27 and the change removes demonstrated repetition without inventing an interface-method restriction.",
+      "assertions": [
+        "The report does not claim that generic methods on concrete types are unsupported in Go 1.27.",
+        "The report does not apply the restriction on generic interface methods to the concrete method in this change.",
+        "Any suggested change is tied to an observed consequence, not a preference against generics."
+      ]
+    },
+    {
+      "id": "file-backed-typed-nil",
+      "prompt": "Review only Code Quality & Go Idioms for the supplied limit-validator fixture. CHANGESET.md defines the change. Inspect the source and tests and assess the local error/value semantics using this skill alone. Run a focused check if feasible; preserve the fixture.",
+      "files": [
+        "evals/files/typed-nil"
+      ],
+      "expected_output": "A negative grade grounded in the nil pointer converted to a non-nil error interface. Report the failure branch on valid input, recommend a literal nil success return, and avoid deferring the local semantics finding solely to Correctness.",
+      "assertions": [
+        "The report explains why a typed nil *LimitError returned as error is non-nil.",
+        "The solo Code Quality grade reflects that defect and cites the actual fixture.",
+        "The proposed change returns nil on success and verifies the valid-input test.",
+        "Any executed check is reported accurately without claiming unrun verification."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "review": "umbrella-live",
+  "mode": "complete code area including existing issues",
+  "snapshot": {
+    "repository_HEAD": "28c092c44f4a0709c4132dac3b3947dabfae5a84",
+    "status": "golang/ untracked; exact reviewed files identified by SHA256",
+    "files": {
+      "go.mod": "61e0e14ddd40940937b841b0545bb9d7115c04328eae18ba000b33e93c623a1d",
+      "REVIEW.md": "51d35525f11b758aae508e0dc10e96a42d4e868e8c19cc68dbe53e0c5af58f30",
+      "catalog/catalog.go": "bc0c91837d82d95fdd00fd828a75ee74407d378491aa54a73b737d1a29b9d21e",
+      "catalog/catalog_test.go": "e3e778eabdd97a9bece65708cf8c5c742eed49bded310c1dcb4cd17444ab5f4f",
+      "export/export.go": "3b7bf2987d23140ec884f1c6b4bcd52d55cb076aff896b875a14e05e9360e457",
+      "export/export_test.go": "ac07ae09cb0c82ef56de98c2fbc14d9c80fe31158323040a83c589d0c9433c33"
+    }
+  },
+  "scope": "golang/go-quality-report/evals/files/catalog-export",
+  "exclusions": [],
+  "chunks": {
+    "catalog": {
+      "paths": [
+        "catalog/*",
+        "go.mod"
+      ],
+      "topics": [
+        "architecture-and-design",
+        "correctness-and-compatibility",
+        "performance-and-resource-management",
+        "dependencies-and-reproducibility",
+        "security"
+      ],
+      "status": "complete",
+      "worker": "/root/umbrella_live_eval/catalog",
+      "cards": "cards/catalog/"
+    },
+    "export": {
+      "paths": [
+        "export/*",
+        "catalog/* (idioms and all-library testing context)"
+      ],
+      "topics": [
+        "code-quality-and-idioms",
+        "correctness-and-compatibility",
+        "testing",
+        "observability-and-resilience",
+        "performance-and-resource-management"
+      ],
+      "status": "complete",
+      "worker": "/root/umbrella_live_eval/export",
+      "routing_note": "Added export cost coverage after catalog card explicitly scoped it to consumer packet; no optional benchmark.",
+      "cards": "cards/export/"
+    }
+  },
+  "boundaries": {
+    "snapshot_mutation_isolation": {
+      "owner": "orchestrator",
+      "status": "complete",
+      "contract": "Catalog.Snapshot independently mutable; export Uppercase must not mutate catalog",
+      "evidence": "boundary-evidence.md; failing assertions reproduced, disposable producer-only correction passes"
+    }
+  },
+  "topic_applicability": {
+    "architecture-and-design": "complete: catalog ownership/package boundaries and export consumer trace",
+    "code-quality-and-idioms": "complete: all four Go files in export packet",
+    "correctness-and-compatibility": "complete: both packages plus independent boundary review",
+    "testing": "complete: all supplied tests and fail-before/pass-after ownership assertions",
+    "security": "not_applicable: no established trust/privilege boundary, sensitive data policy or attack sink",
+    "observability-and-resilience": "not_applicable: local synchronous library without fallible I/O, queues, retry or lifecycle boundaries",
+    "performance-and-resource-management": "complete: catalog and export cost/lifetime cards",
+    "dependencies-and-reproducibility": "complete: shared module, both build targets; source Go1.21 compatibility inspected",
+    "deployment-and-operations": "not_applicable: REVIEW explicitly excludes pipeline/service/external I/O; pure library"
+  },
+  "checks": "Disposable copies only; all shell commands through rtk",
+  "final_hash_verification": "all six fixture SHA256 identities unchanged",
+  "delegation": "Two actual sequential workers; export follow-up only reconciles severity. No simulated delegation."
+}

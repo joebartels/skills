@@ -1,0 +1,456 @@
+{
+  "cases": [
+    {
+      "id": "ambiguous-target",
+      "assertions": [
+        {
+          "assertion": "Clarifies staged/working-tree/branch ambiguity with concrete choices.",
+          "passed": true,
+          "evidence": "the staged `auth.go` changes, the unstaged `cli.go` changes, both working-tree sets, the three branch commits beyond `main`, or a combination?"
+        },
+        {
+          "assertion": "Does not choose an unstated base or grade before scope is established.",
+          "passed": true,
+          "evidence": "Which changes should I review:"
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "Clarification offers only observed choices and assigns no grade."
+    },
+    {
+      "id": "explicit-diff",
+      "assertions": [
+        {
+          "assertion": "Preserves exact base/head and does not substitute main or working tree.",
+          "passed": true,
+          "evidence": "Use changeset scope `abc123..def456`"
+        },
+        {
+          "assertion": "Routes tests and release configuration by actual risks.",
+          "passed": true,
+          "evidence": "Assign shared build/toolchain/release obligations once"
+        },
+        {
+          "assertion": "Does not request confirmation of an already explicit scope.",
+          "passed": true,
+          "evidence": "First verify both supplied revisions resolve"
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "Planning task; preserving and verifying the supplied revisions is appropriate and is not an unnecessary clarification."
+    },
+    {
+      "id": "large-codebase",
+      "assertions": [
+        {
+          "assertion": "Does not assign the entire repository independently to nine agents.",
+          "passed": true,
+          "evidence": "initial packet families for billing behavior, accounts behavior, reporting behavior"
+        },
+        {
+          "assertion": "Uses domains or contracts and splits oversized work further.",
+          "passed": true,
+          "evidence": "split large packages by behavior or ownership"
+        },
+        {
+          "assertion": "Assigns cross-boundary and repository-wide obligations without redundant full scans.",
+          "passed": true,
+          "evidence": "Assign each to a packet inspecting both ends or a targeted follow-up"
+        },
+        {
+          "assertion": "Preserves unavailable model selection and concurrency limits.",
+          "passed": true,
+          "evidence": "Use at most two workers concurrently, with the host's configured capabilities. Do not invent selectable models."
+        },
+        {
+          "assertion": "Does not call unseen code clean.",
+          "passed": true,
+          "evidence": "No grades can be assigned from inventory alone."
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "Discovery precedes final packet sizing; no evidence or completed review is fabricated."
+    },
+    {
+      "id": "small-library",
+      "assertions": [
+        {
+          "assertion": "Combines related skills rather than mandates one worker per topic.",
+          "passed": true,
+          "evidence": "Assign go-code-quality-and-idioms, go-correctness-and-compatibility, and go-testing, with separate cards."
+        },
+        {
+          "assertion": "Accounts for all nine topics with applicability reasons.",
+          "passed": true,
+          "evidence": "Record all other topics as not applicable on the supplied facts:"
+        },
+        {
+          "assertion": "Does not require service probes, telemetry, containers, or nine workers.",
+          "passed": true,
+          "evidence": "There is no need for nine workers or a repository-wide audit."
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "All nine topics are accounted for. Non-applicability is provisional on the supplied narrow facts and explicitly revisited if inspection differs."
+    },
+    {
+      "id": "no-go-impact",
+      "assertions": [
+        {
+          "assertion": "Returns Not applicable.",
+          "passed": true,
+          "evidence": "Go Quality Report \u2014 Not applicable"
+        },
+        {
+          "assertion": "Does not invent code defects or launch irrelevant reviews.",
+          "passed": true,
+          "evidence": "No topic workers or letter grade are warranted."
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "Relies explicitly on supplied scope and reports no executed checks."
+    },
+    {
+      "id": "missing-skill",
+      "assertions": [
+        {
+          "assertion": "Does not silently substitute generic review as invocation of the absent skill.",
+          "passed": true,
+          "evidence": "Do not replace that skill with improvised security guidance"
+        },
+        {
+          "assertion": "Distinguishes applicable/unavailable from Not applicable.",
+          "passed": true,
+          "evidence": "Security is applicable and unavailable"
+        },
+        {
+          "assertion": "Explains the full-scope coverage limit and continues independent work.",
+          "passed": true,
+          "evidence": "Proceed with bounded review packets using all other applicable available skills"
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "The scenario supplies no actual code to inspect; an execution plan continuing feasible work is the appropriate response."
+    },
+    {
+      "id": "unavailable-workers",
+      "assertions": [
+        {
+          "assertion": "Uses available skills sequentially without pretending agents ran.",
+          "passed": true,
+          "evidence": "execute bounded packets sequentially with the same topic skills and their references"
+        },
+        {
+          "assertion": "Preserves bounded work and overall evidence/grade rules.",
+          "passed": true,
+          "evidence": "reconcile unique causes and close material integration obligations before grading"
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "Accurately distinguishes sequential execution from independent review without treating host limits alone as missing code coverage."
+    },
+    {
+      "id": "worker-timeout",
+      "assertions": [
+        {
+          "assertion": "Returns full-scope Insufficient evidence.",
+          "passed": true,
+          "evidence": "Go Quality Report \u2014 Insufficient evidence"
+        },
+        {
+          "assertion": "Does not classify storage as irrelevant or average completed A cards.",
+          "passed": true,
+          "evidence": "their grades cannot be averaged into or substituted for a whole-codebase grade"
+        },
+        {
+          "assertion": "Proposes bounded retry or reassignment and states remaining coverage.",
+          "passed": true,
+          "evidence": "partition it by persistence behavior/transaction ownership into smaller packets"
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "Storage and affected boundaries remain material gaps; retry changes packet sizing rather than repeating the failed request."
+    },
+    {
+      "id": "duplicate-cause",
+      "assertions": [
+        {
+          "assertion": "Overall F, strengths do not offset.",
+          "passed": true,
+          "evidence": "Any critical issue selects F. Unrelated A and A+ cards cannot offset defects."
+        },
+        {
+          "assertion": "Deduplicates production cause across Security and Correctness.",
+          "passed": true,
+          "evidence": "transport/correctness/F1 + transport/security/F1 \u2192 canonical F1"
+        },
+        {
+          "assertion": "Retains separately actionable test gap.",
+          "passed": true,
+          "evidence": "transport/testing/F1 \u2192 canonical F2"
+        },
+        {
+          "assertion": "Does not merge every local F1 merely by ID.",
+          "passed": true,
+          "evidence": "Local F1 labels do not collide."
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "Critical production cause and independent major testing correction remain distinct. Missing artifact details are acknowledged without rejecting the explicit complete-coverage premise."
+    },
+    {
+      "id": "partition-invariance",
+      "assertions": [
+        {
+          "assertion": "Gives C+ in both layouts.",
+          "passed": true,
+          "evidence": "Both layouts produce C+"
+        },
+        {
+          "assertion": "Counts two unique moderate causes without averaging or clean-chunk dilution.",
+          "passed": true,
+          "evidence": "exactly two independent moderate causes"
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "C+ in either partition; generic findings and fixes are clearly attributed to the synthetic count-only premise rather than invented code."
+    },
+    {
+      "id": "distinct-same-message",
+      "assertions": [
+        {
+          "assertion": "Retains both independent moderate causes.",
+          "passed": true,
+          "evidence": "Fixing either leaves the other defect actionable."
+        },
+        {
+          "assertion": "Overall C+ with two unique moderates.",
+          "passed": true,
+          "evidence": "Unique finding counts: critical=0, major=0, moderate=2, minor=0"
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "The two cancellation defects retain independent fixes and verification proposals."
+    },
+    {
+      "id": "severity-dispute",
+      "assertions": [
+        {
+          "assertion": "Rejects unsupported critical reach.",
+          "passed": true,
+          "evidence": "The critical \u201cdata race\u201d label is unsupported"
+        },
+        {
+          "assertion": "Uses one contained major and C on supplied evidence.",
+          "passed": true,
+          "evidence": "C: one contained major failure"
+        },
+        {
+          "assertion": "Preserves the reason for reconciliation and related topic correction.",
+          "passed": true,
+          "evidence": "Add a correction to the original critical card: remove the unsupported race/critical classification"
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "Uses the supplied sequential overwrite and ownership contract to establish major, rejects unsupported critical reach, and records a card correction."
+    },
+    {
+      "id": "same-safeguard",
+      "assertions": [
+        {
+          "assertion": "Overall A rather than inheriting A+.",
+          "passed": true,
+          "evidence": "# Go Quality Report \u2014 A"
+        },
+        {
+          "assertion": "Deduplicates safeguard identity and risk, not just finding IDs.",
+          "passed": true,
+          "evidence": "one canonical cancellation safeguard/risk"
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "A is supported by the supplied ordinary strength and complete coverage. No second risk is invented."
+    },
+    {
+      "id": "distinct-safeguards",
+      "assertions": [
+        {
+          "assertion": "Overall A+ with both distinct risks and evidence.",
+          "passed": true,
+          "evidence": "S1 \u2014 Lost-response retry retains one key and causes one charge, preventing duplicate charge. S2 \u2014 Cancellation during backoff causes no subsequent attempt, preventing work after cancellation."
+        },
+        {
+          "assertion": "Does not require every topic or chunk to earn A+.",
+          "passed": true,
+          "evidence": "each topic need not independently earn A+"
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "A+ rests on two supplied tested controls with distinct risks; no universal per-topic A+ requirement."
+    },
+    {
+      "id": "partial-with-defect",
+      "assertions": [
+        {
+          "assertion": "Does not hide the confirmed defect behind missing evidence.",
+          "passed": true,
+          "evidence": "Retain confirmed F1 and its major severity"
+        },
+        {
+          "assertion": "Does not present C as a complete full-service grade.",
+          "passed": true,
+          "evidence": "This is not a full-service C or a partial A."
+        },
+        {
+          "assertion": "Separates reviewed-scope finding grade from overall coverage state.",
+          "passed": true,
+          "evidence": "Assessed-scope defect grade: C (reviewed handler only)"
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "Headline and assessed-scope grade are unambiguously separated; the known defect is retained."
+    },
+    {
+      "id": "related-files",
+      "assertions": [
+        {
+          "assertion": "Allows reading middleware/repository to verify the changed path.",
+          "passed": true,
+          "evidence": "inspect the unchanged middleware and repository"
+        },
+        {
+          "assertion": "Keeps diff grading to introduced/worsened or newly exposed defects.",
+          "passed": true,
+          "evidence": "Count only defects introduced, worsened or newly exposed by the new handler"
+        },
+        {
+          "assertion": "Records additional context without expanding target silently.",
+          "passed": true,
+          "evidence": "Record those files as supporting context"
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "Context inspection and changed-code grading boundaries are both explicit."
+    },
+    {
+      "id": "boundary-handoff",
+      "assertions": [
+        {
+          "assertion": "Does not accept local A cards as complete integration evidence.",
+          "passed": true,
+          "evidence": "Three layer-local A cards do not verify"
+        },
+        {
+          "assertion": "Assigns a bounded end-to-end tenant/identity handoff review.",
+          "passed": true,
+          "evidence": "Create one targeted boundary packet owning the entire identity path"
+        },
+        {
+          "assertion": "Marks material coverage incomplete until resolved.",
+          "passed": true,
+          "evidence": "The current full changeset result is Insufficient evidence."
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "Missing integration evidence triggers targeted review rather than a presumed defect."
+    },
+    {
+      "id": "model-policy",
+      "assertions": [
+        {
+          "assertion": "Does not override pinned model or invent unavailable models.",
+          "passed": true,
+          "evidence": "Retain the user's pinned balanced model for every assignment."
+        },
+        {
+          "assertion": "Allocates deeper permitted reasoning to complex/high-impact work.",
+          "passed": true,
+          "evidence": "deeper effort for interacting goroutine shutdown ownership and high-impact authorization tracing"
+        },
+        {
+          "assertion": "Uses bounded work and verification instead of promising capability unavailable to host.",
+          "passed": true,
+          "evidence": "reduce packet size and use focused verification or an independent second look"
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "Only host-exposed reasoning controls are adjusted, while the explicit model pin persists."
+    },
+    {
+      "id": "stale-report",
+      "assertions": [
+        {
+          "assertion": "Detects mismatched reviewed revision.",
+          "passed": true,
+          "evidence": "Do not accept the abc123 card or its C grade as evidence for the requested def456 handler snapshot."
+        },
+        {
+          "assertion": "Revalidates affected findings/coverage before counting them for def456.",
+          "passed": true,
+          "evidence": "must not be counted as such without validation"
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "Preserves history but requires current-snapshot validation of the affected finding and coverage."
+    },
+    {
+      "id": "budget-does-not-shrink-scope",
+      "assertions": [
+        {
+          "assertion": "Preserves original requested scope and names sampled subset.",
+          "passed": true,
+          "evidence": "Keep the requested scope as the full repository at its recorded snapshot."
+        },
+        {
+          "assertion": "Does not silently call sampling complete coverage.",
+          "passed": true,
+          "evidence": "Sampling and a time budget do not redefine the user's requested scope."
+        },
+        {
+          "assertion": "Offers explicit narrower review or incomplete full-scope result without treating budget as permission to certify.",
+          "passed": true,
+          "evidence": "The final full-repository result is Insufficient evidence if only a risk-selected subset was assessed."
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "This is a planning prompt with no source inventory, so a concrete sampled-path list cannot yet be named. The response requires exact inspected paths/topics/boundaries in the manifest and preserves full scope."
+    },
+    {
+      "id": "delegated-catalog-export",
+      "assertions": [
+        {
+          "assertion": "Delegates two bounded packets and records which topic skills workers actually read.",
+          "passed": true,
+          "evidence": "Manifest names two actual worker IDs and bounded catalog/export packets; each card records the topic skill/reference paths read; ten topic cards saved."
+        },
+        {
+          "assertion": "Finds element aliasing despite the full-slice capacity limit and traces Uppercase mutation into the catalog.",
+          "passed": true,
+          "evidence": "Catalog direct-element reproduction and Uppercase before/after boundary tests fail on original; documented independent mutability is traced to catalog.go:9 and export.go:10-12."
+        },
+        {
+          "assertion": "Deduplicates the shared production ownership cause across packets/topics.",
+          "passed": true,
+          "evidence": "Canonical F1 maps architecture, correctness and idioms source findings from both packets; F2 is a separately actionable test gap. One producer-only fix resolves all production symptoms."
+        },
+        {
+          "assertion": "Distinguishes append-test success from independent element mutation and records exact checks without false execution claims.",
+          "passed": true,
+          "evidence": "Baseline tests pass; added element-write and export-preservation tests fail before producer copy and pass after it in disposable copies. Exact commands/results distinguish observed from proposed checks."
+        },
+        {
+          "assertion": "Considers all nine topics and does not invent service requirements or concurrent races.",
+          "passed": true,
+          "evidence": "Manifest and final report cover all nine topics: six complete and three justified not applicable. No races, service controls or security exposure invented."
+        },
+        {
+          "assertion": "Final counts and grade follow reconciled causes, with links to cards, suggested fixes and verification.",
+          "passed": true,
+          "evidence": "Final report C- and calculator both count two unique major causes; corrections, verification plans, ownership, cards and scope hashes are linked. All original fixture hashes unchanged."
+        }
+      ],
+      "expected_output_match": true,
+      "notes": "Live workflow recovered from sandbox default-cache failure and strict ledger evidence type mismatch; scope and findings did not change. Root highlighted the schema mismatch already documented by the calculator; final documentation now explicitly says evidence strings. Actual model family and synthetic-code limitations remain."
+    }
+  ]
+}

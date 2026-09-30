@@ -1,0 +1,13 @@
+COMMAND: rtk proxy go test ./...
+PHASE: original; disposable added contract tests
+GOCACHE=/tmp/go-umbrella-eval/live/go-cache GOWORK=off
+EXIT: 1
+--- FAIL: TestReviewSnapshotIndependent (0.00s)
+    review_contract_test.go:6: catalog mutated: "changed"
+FAIL
+FAIL	example.com/catalog-export/catalog	0.308s
+--- FAIL: TestReviewUppercasePreservesCatalog (0.00s)
+    review_contract_test.go:9: catalog mutated: ["ALPHA" "BETA"]
+FAIL
+FAIL	example.com/catalog-export/export	0.181s
+FAIL
