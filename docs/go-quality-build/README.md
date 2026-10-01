@@ -47,6 +47,12 @@ Upstream's [evaluation report](https://github.com/samber/cc-skills-golang/blob/m
 
 The upstream [MIT license](https://github.com/samber/cc-skills-golang/blob/main/LICENSE) permits copying and modification. Retain its copyright and permission notice when copying a skill or substantial portion, and record source revisions for future updates.
 
+## Authoring workflow
+
+Use the `superpowers:brainstorming` skill to settle a bounded design for the first build-skill group, then `superpowers:writing-plans` for its implementation plan. Use `skill-creator` to author each runtime skill and its references. Use `superpowers:writing-skills` for behavioral baseline and skill-on evaluations, adapting its test process to the multi-harness package. Apply `superpowers:verification-before-completion` before declaring a skill ready. Use the existing Go review skills as an independent outcome check; they do not replace behavioral evaluations of the writing skills.
+
+Complete one focused skill and its evaluation before expanding to the next. Keep a proposed skill out of the installable package until its trigger, guidance, links, and realistic behavior have been checked. Use the repository validator and the relevant harness validators for packaging. Record what was actually run and what remains unverified.
+
 ## Evaluation and promotion
 
 For each candidate, test skill selection and non-selection, then compare completed changes on unseen Go tasks with and without the skill. Include libraries, CLIs, and services where relevant; version and contract edge cases; and tasks where an attractive blanket rule would be wrong. Run applicable builds and meaningful tests. Have the existing review skills assess the changes independently, with scope and coverage recorded. Compare confirmed findings, regressions, unnecessary code or dependencies, and effort, not only letter grades or rule compliance.
@@ -55,10 +61,25 @@ Test combinations of neighboring skills on the same task. Resolve contradictory 
 
 ## Work status and next steps
 
-- **Completed:** Compared the local review approach with the upstream collection; proposed candidate boundaries and the reuse and evaluation policy in this record.
+- **Completed:** Compared the local review approach with the upstream collection; proposed candidate boundaries and the reuse and evaluation policy in this record. Added repository agent instructions and a continuation protocol so later workers maintain this record.
 - **Next:** Decide package placement. A peer `plugins/go-quality-build/` package is the working recommendation; this is not yet a settled choice.
 - **Next:** Pin and audit upstream source content against the review decisions, beginning with API and interface design, errors, values, concurrency, and behavioral testing.
 - **Next:** Turn the agreed boundaries into a reviewed design specification and implementation plan before authoring runtime skills.
 - **Next:** Build and evaluate a small first group, revise its boundaries, then expand to remaining topics that demonstrate value.
 
-When resuming this work, read this record, the current [review guide](../go-quality-review/README.md), and the latest upstream sources. Check the repository state and update this status section after each completed stage. Do not infer that candidates are implemented merely because they appear in the table.
+## Continuation protocol
+
+Every agent working on this effort, including one resuming after context loss, should first read this record and the current [review guide](../go-quality-review/README.md), then inspect the repository state. The candidate table is a proposal; verify files and evaluation artifacts before reporting a candidate as implemented or effective.
+
+After each meaningful stage and before finishing a task, update the status above and append a dated entry below. Each entry should name the work completed, exact files and upstream revision when applicable, checks run with their outcomes, decisions and reasons, remaining risks or open choices, and the next concrete action. Link detailed specs, plans, audit matrices, and evaluations rather than pasting them here. Preserve previous entries so a later worker can trace changes in direction. If work stops early, record the partial state and what would resume it.
+
+### Work log
+
+#### 2026-09-30 — Direction and tracking
+
+- Recorded the proposed skill map, upstream reuse policy, and evaluation standard in this file. The first version was committed as `3fd6ee5`.
+- Selected a workflow using brainstorming and planning for design, skill-creator and writing-skills for authoring and behavioral tests, and independent Go review for outcomes. This choice has not yet produced runtime build skills.
+- Added `AGENTS.md` and `CLAUDE.md` so future Codex, OpenCode, and Claude sessions maintain this record; updated this file with the continuation protocol.
+- Verification: `rtk python3 scripts/validate.py` passed with 10 review skills and 120 valid evaluation cases; all 10 local links in the three changed Markdown files resolved.
+- Open choice: whether the writing skills ship as a peer plugin or in another package arrangement. A peer plugin remains the recommendation.
+- Next action: settle the first skill group's design and package placement, then pin and audit the relevant upstream sources.
