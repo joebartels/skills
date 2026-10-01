@@ -1,0 +1,61 @@
+{
+  "stage": "first review-guided repair independently reviewed A/A/B; second test-only repair underway separately",
+  "case": "combined-evolution",
+  "provenance": "Controller supplied separate review-guided repair. Author saw first-pass reviews. This is not a fresh blind skill-on trial and does not establish blind skill uplift.",
+  "model": "not independently recorded in supplied repair report",
+  "first_pass": "../manifest.json",
+  "original_fixture": "tests/go-quality-build/combined/evals/files/combined-evolution",
+  "fixture_sha256": {
+    "README.md": "abfc48ed51b3169f42f4ecba8ba43fd8e71f60b42443bbab8ed96390f9ee7a93",
+    "cmd/server/main.go": "685220af9e1f0cb541e3ee3df8bcc44ab0778693697504e520d73e28586e8793",
+    "fielddesk.go": "30d0976653caff04cbf3afa12509eacfac76942c0af1df36d5c0562cc8b2756d",
+    "fielddesk_test.go": "357365937c0fe86e58233ad61a0f52a4918fedd43d4402444ef74798989bd2d1",
+    "go.mod": "4d2a01dd430a5b58229ac516d2a3a87432b755e8a3141c371a223db49fa0f29a"
+  },
+  "source_sha256": {
+    "README.md": "abfc48ed51b3169f42f4ecba8ba43fd8e71f60b42443bbab8ed96390f9ee7a93",
+    "cmd/import-checkins/main.go": "6969e4a1cab64772235c64f3823eb736dcead1341e5d44d3c925969a6583a2fe",
+    "cmd/import-checkins/main_test.go": "0219cf9ce1af78e29c31d2866bb5f36f26ad5e81acd5067762b373737357f782",
+    "cmd/server/main.go": "6b764468d955327d0db3da531b63d3bd2dd35cfb4c7fed1883a39e075aad8394",
+    "cmd/server/main_test.go": "0ef033772e5ce92d62434d47a16002cd5a720d6387bfd6e3c606dd4c408c9a31",
+    "fielddesk.go": "c70c2824b5c0fe14b8a633c549670bccf4988830e312e503b37c059a770d67c6",
+    "fielddesk_test.go": "87291d4726a9410c751c61ba3532305eb985216372b92c0fdf7886315c7096b8",
+    "go.mod": "4d2a01dd430a5b58229ac516d2a3a87432b755e8a3141c371a223db49fa0f29a"
+  },
+  "artifacts_sha256": {
+    "review-guided-report.md": "81d6ed5154b3171b38211ed05e6bd843fe717b3f5d5a8dc97d4a0d8e268c2d1a",
+    "source.patch": "ca4a9e65bd22bed97390ff22f3d9526cc47a307ef3aab69d45c2b0d829970282",
+    "verification.json": "b6b88e3385c5f67c9cfa04cb1c47fb2e82edd71ef6b9608fe7294897b2690104"
+  },
+  "review_status": "complete for this archived repair",
+  "go_version": "go version go1.26.5 darwin/arm64",
+  "limitations": [
+    "No successful live-listener signal shutdown verified by archive; fresh tests use submitted controlled seams.",
+    "Author-reported mutation checks were not rerun in this archive stage.",
+    "Publication regression uses concurrent observation of a large replacement; no deterministic publication failure injection or cross-platform filesystem verification claimed.",
+    "Go 1.22 execution unavailable; runner is Go 1.26.5 darwin/arm64."
+  ],
+  "architecture_grade": "A",
+  "correctness_grade": "A",
+  "testing_grade": "B",
+  "independent_reviews": [
+    {
+      "artifact": "review-repair-arch-correct.md",
+      "sha256": "0e5c6af5846ed4355b15aae3803601807257826a08b138ef1add05e569fe3167",
+      "scope": "Architecture and Design; Correctness and Compatibility",
+      "blind": false,
+      "provenance": "Independent repair review informed by first-pass reviews and repair report; not blind skill uplift."
+    },
+    {
+      "artifact": "review-repair-testing.md",
+      "sha256": "0e8f1e103ca13fab7c43dd0bd5fff7d0cb0af09f4806e4b5d93db914b9063709",
+      "scope": "Testing",
+      "blind": false,
+      "provenance": "Independent repair review informed by first-pass reviews and repair report; not blind skill uplift."
+    }
+  ],
+  "findings": [
+    "T4: moderate publication-test sensitivity gap; direct-write mutation survives 20/20 runs with GOMAXPROCS=1"
+  ],
+  "author_mutation_claim_limit": "Original author report claims four mutations fail. Independent recheck confirms three fail reliably but direct-write mutation passes intermittently by default and 20/20 with GOMAXPROCS=1; raw author report unchanged."
+}

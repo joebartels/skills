@@ -1,0 +1,695 @@
+--- /dev/null
++++ b/cmd/import-checkins/main.go
+@@ -0,0 +1,48 @@
++package main
++
++import (
++	"context"
++	"encoding/csv"
++	"fmt"
++	"io"
++	"os"
++
++	"example.com/fielddesk"
++)
++
++func main() {
++	if err := run(os.Args[1:]); err != nil {
++		fmt.Fprintln(os.Stderr, err)
++		os.Exit(1)
++	}
++}
++
++func run(args []string) error {
++	if len(args) != 1 {
++		return fmt.Errorf("usage: import-checkins <csv-file>")
++	}
++	file, err := os.Open(args[0])
++	if err != nil {
++		return fmt.Errorf("open CSV: %w", err)
++	}
++	defer file.Close()
++	root := os.Getenv("FIELDDESK_ROOT")
++	if root == "" {
++		root = "./data"
++	}
++	reader := csv.NewReader(file)
++	reader.FieldsPerRecord = 2
++	svc := fielddesk.New(root)
++	for row := 1; ; row++ {
++		record, err := reader.Read()
++		if err == io.EOF {
++			return nil
++		}
++		if err != nil {
++			return fmt.Errorf("row %d: %w", row, err)
++		}
++		if err := svc.SubmitCheckin(context.Background(), record[0], record[1]); err != nil {
++			return fmt.Errorf("row %d: %w", row, err)
++		}
++	}
++}
+--- /dev/null
++++ b/cmd/import-checkins/main_test.go
+@@ -0,0 +1,69 @@
++package main
++
++import (
++	"errors"
++	"os"
++	"os/exec"
++	"path/filepath"
++	"strings"
++	"testing"
++)
++
++func TestImportCheckinsStopsOnFirstInvalidRow(t *testing.T) {
++	root := t.TempDir()
++	csvPath := filepath.Join(t.TempDir(), "rows.csv")
++	if err := os.WriteFile(csvPath, []byte("crew-1,arrived\nbad/id,rejected\ncrew-3,later\n"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	t.Setenv("FIELDDESK_ROOT", root)
++	err := run([]string{csvPath})
++	if err == nil || !strings.Contains(err.Error(), "row 2") {
++		t.Fatalf("run error = %v", err)
++	}
++	if data, err := os.ReadFile(filepath.Join(root, "checkins", "crew-1.txt")); err != nil || string(data) != "arrived\n" {
++		t.Fatalf("first row = %q, %v", data, err)
++	}
++	if _, err := os.Stat(filepath.Join(root, "checkins", "crew-3.txt")); !os.IsNotExist(err) {
++		t.Fatalf("later row was processed: %v", err)
++	}
++}
++
++func TestImportCheckinsRejectsMalformedCSV(t *testing.T) {
++	path := filepath.Join(t.TempDir(), "rows.csv")
++	if err := os.WriteFile(path, []byte("crew-1,ok\nmalformed,row,extra\n"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	t.Setenv("FIELDDESK_ROOT", t.TempDir())
++	if err := run([]string{path}); err == nil {
++		t.Fatal("expected malformed row error")
++	}
++}
++
++func TestImportCheckinsProcessFailureStatusAndPrefix(t *testing.T) {
++	if os.Getenv("FIELDDESK_CLI_HELPER") == "1" {
++		os.Args = []string{"import-checkins", os.Getenv("FIELDDESK_CLI_FILE")}
++		main()
++		return
++	}
++	root := t.TempDir()
++	csvPath := filepath.Join(t.TempDir(), "rows.csv")
++	if err := os.WriteFile(csvPath, []byte("crew-1,arrived\nmalformed,row,extra\ncrew-3,later\n"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	cmd := exec.Command(os.Args[0], "-test.run=^TestImportCheckinsProcessFailureStatusAndPrefix$")
++	cmd.Env = append(os.Environ(), "FIELDDESK_CLI_HELPER=1", "FIELDDESK_CLI_FILE="+csvPath, "FIELDDESK_ROOT="+root)
++	output, err := cmd.CombinedOutput()
++	var exitErr *exec.ExitError
++	if !errors.As(err, &exitErr) || exitErr.ExitCode() != 1 {
++		t.Fatalf("CLI process error = %v, output %q; want exit 1", err, output)
++	}
++	if !strings.Contains(string(output), "row 2:") {
++		t.Fatalf("CLI error prefix missing from output %q", output)
++	}
++	if data, err := os.ReadFile(filepath.Join(root, "checkins", "crew-1.txt")); err != nil || string(data) != "arrived\n" {
++		t.Fatalf("accepted prefix = %q, %v", data, err)
++	}
++	if _, err := os.Stat(filepath.Join(root, "checkins", "crew-3.txt")); !os.IsNotExist(err) {
++		t.Fatalf("valid row after malformed row was processed: %v", err)
++	}
++}
+--- a/cmd/server/main.go
++++ b/cmd/server/main.go
+@@ -1,9 +1,14 @@
+ package main
+ 
+ import (
++	"context"
++	"errors"
+ 	"log"
+ 	"net/http"
+ 	"os"
++	"os/signal"
++	"syscall"
++	"time"
+ 
+ 	"example.com/fielddesk"
+ )
+@@ -13,5 +18,47 @@
+ 	if root == "" {
+ 		root = "./data"
+ 	}
+-	log.Fatal(http.ListenAndServe(":8080", fielddesk.New(root).Handler()))
++	svc := fielddesk.New(root)
++	interval := time.Minute
++	feedURL := os.Getenv("BULLETIN_FEED_URL")
++	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
++	server := &http.Server{Addr: ":8080", Handler: svc.Handler()}
++	err := runServer(ctx, server.ListenAndServe, server.Shutdown, func(workerCtx context.Context) {
++		_ = svc.RunBulletinSync(workerCtx, interval, http.DefaultClient, feedURL, func(err error) { log.Printf("bulletin sync: %v", err) })
++	})
++	stop()
++	if err != nil {
++		log.Printf("http server: %v", err)
++		os.Exit(1)
++	}
+ }
++
++// runServer owns worker startup and joins it before returning, including when
++// the listener fails. listen and shutdown are supplied by the process host.
++func runServer(ctx context.Context, listen func() error, shutdown func(context.Context) error, runWorker func(context.Context)) error {
++	workerCtx, cancelWorker := context.WithCancel(ctx)
++	workerDone := make(chan struct{})
++	go func() { defer close(workerDone); runWorker(workerCtx) }()
++	serverDone := make(chan error, 1)
++	go func() { serverDone <- listen() }()
++	var serveErr error
++	select {
++	case serveErr = <-serverDone:
++	case <-ctx.Done():
++	}
++	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
++	shutdownErr := shutdown(shutdownCtx)
++	shutdownCancel()
++	cancelWorker()
++	<-workerDone
++	if serveErr == nil && ctx.Err() != nil {
++		serveErr = <-serverDone
++	}
++	if errors.Is(serveErr, http.ErrServerClosed) {
++		serveErr = nil
++	}
++	if serveErr == nil && ctx.Err() == nil {
++		serveErr = errors.New("http server stopped unexpectedly")
++	}
++	return errors.Join(serveErr, shutdownErr)
++}
+--- /dev/null
++++ b/cmd/server/main_test.go
+@@ -0,0 +1,89 @@
++package main
++
++import (
++	"context"
++	"errors"
++	"net/http"
++	"sync"
++	"testing"
++	"time"
++)
++
++func TestRunServerSignalShutdownJoinsWorker(t *testing.T) {
++	ctx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++	workerStarted := make(chan struct{})
++	workerCanceled := make(chan struct{})
++	releaseWorker := make(chan struct{})
++	workerJoined := make(chan struct{})
++	listenStopped := make(chan struct{})
++	var shutdownOnce sync.Once
++	var releaseOnce sync.Once
++	t.Cleanup(func() { releaseOnce.Do(func() { close(releaseWorker) }) })
++	done := make(chan error, 1)
++	go func() {
++		done <- runServer(ctx,
++			func() error { <-listenStopped; return http.ErrServerClosed },
++			func(context.Context) error { shutdownOnce.Do(func() { close(listenStopped) }); return nil },
++			func(workerCtx context.Context) {
++				close(workerStarted)
++				<-workerCtx.Done()
++				close(workerCanceled)
++				<-releaseWorker
++				close(workerJoined)
++			},
++		)
++	}()
++	select {
++	case <-workerStarted:
++	case <-time.After(time.Second):
++		t.Fatal("worker did not start")
++	}
++	cancel()
++	select {
++	case <-workerCanceled:
++	case <-time.After(time.Second):
++		t.Fatal("worker was not canceled")
++	}
++	select {
++	case err := <-done:
++		t.Fatalf("server returned before worker joined: %v", err)
++	case <-time.After(20 * time.Millisecond):
++	}
++	releaseOnce.Do(func() { close(releaseWorker) })
++	select {
++	case err := <-done:
++		if err != nil {
++			t.Fatalf("normal signal shutdown returned %v", err)
++		}
++	case <-time.After(time.Second):
++		t.Fatal("server did not return after worker joined")
++	}
++	select {
++	case <-workerJoined:
++	default:
++		t.Fatal("worker cleanup did not finish before return")
++	}
++}
++
++func TestRunServerReturnsListenFailureAfterJoiningWorker(t *testing.T) {
++	want := errors.New("listen failed")
++	workerJoined := make(chan struct{})
++	shutdownCalled := false
++	err := runServer(context.Background(),
++		func() error { return want },
++		func(context.Context) error { shutdownCalled = true; return nil },
++		func(ctx context.Context) { <-ctx.Done(); close(workerJoined) },
++	)
++	if !errors.Is(err, want) {
++		t.Fatalf("runServer error = %v, want %v", err, want)
++	}
++	if !shutdownCalled {
++		t.Fatal("shutdown was not called after listen failure")
++	}
++	select {
++	case <-workerJoined:
++	default:
++		t.Fatal("worker was not joined")
++	}
++}
+--- a/fielddesk.go
++++ b/fielddesk.go
+@@ -5,10 +5,12 @@
+ 	"encoding/json"
+ 	"errors"
+ 	"fmt"
++	"io"
+ 	"net/http"
+ 	"os"
+ 	"path/filepath"
+ 	"strings"
++	"time"
+ )
+ 
+ type Bulletin struct {
+@@ -69,6 +71,102 @@
+ 		return []Bulletin{}, nil
+ 	}
+ 	return bulletins, nil
++}
++
++// SyncBulletins fetches and validates one feed response, then atomically replaces
++// the local snapshot. The caller owns the HTTP client and its lifetime.
++func (s *Service) SyncBulletins(ctx context.Context, client *http.Client, feedURL string) error {
++	if err := ctx.Err(); err != nil {
++		return err
++	}
++	if client == nil {
++		return errors.New("nil bulletin HTTP client")
++	}
++	req, err := http.NewRequestWithContext(ctx, http.MethodGet, feedURL, nil)
++	if err != nil {
++		return fmt.Errorf("create bulletin request: %w", err)
++	}
++	resp, err := client.Do(req)
++	if err != nil {
++		return fmt.Errorf("fetch bulletins: %w", err)
++	}
++	defer resp.Body.Close()
++	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
++		return fmt.Errorf("bulletin feed status: %s", resp.Status)
++	}
++	var bulletins []Bulletin
++	decoder := json.NewDecoder(resp.Body)
++	if err := decoder.Decode(&bulletins); err != nil {
++		return fmt.Errorf("decode bulletin feed: %w", err)
++	}
++	var trailing any
++	if err := decoder.Decode(&trailing); err != io.EOF {
++		if err == nil {
++			return errors.New("decode bulletin feed: multiple JSON values")
++		}
++		return fmt.Errorf("decode bulletin feed: %w", err)
++	}
++	if bulletins == nil {
++		return errors.New("decode bulletin feed: expected JSON array")
++	}
++	for i, b := range bulletins {
++		if strings.TrimSpace(b.ID) == "" || strings.TrimSpace(b.Text) == "" {
++			return fmt.Errorf("invalid bulletin at index %d: id and text must be nonblank", i)
++		}
++	}
++	data, err := json.Marshal(bulletins)
++	if err != nil {
++		return fmt.Errorf("encode bulletin snapshot: %w", err)
++	}
++	if err := os.MkdirAll(s.root, 0755); err != nil {
++		return err
++	}
++	tmp, err := os.CreateTemp(s.root, ".bulletins-*.tmp")
++	if err != nil {
++		return err
++	}
++	tmpName := tmp.Name()
++	defer os.Remove(tmpName)
++	if _, err := tmp.Write(data); err != nil {
++		_ = tmp.Close()
++		return err
++	}
++	if err := tmp.Close(); err != nil {
++		return err
++	}
++	if err := os.Rename(tmpName, filepath.Join(s.root, "bulletins.json")); err != nil {
++		return err
++	}
++	return nil
++}
++
++// RunBulletinSync performs an immediate sync and then one sync per interval.
++// It runs synchronously, so cycles cannot overlap. Cancellation stops and joins
++// the current request before this method returns.
++func (s *Service) RunBulletinSync(ctx context.Context, interval time.Duration, client *http.Client, feedURL string, report func(error)) error {
++	if interval <= 0 {
++		return errors.New("bulletin sync interval must be positive")
++	}
++	for {
++		if err := ctx.Err(); err != nil {
++			return nil
++		}
++		if err := s.SyncBulletins(ctx, client, feedURL); err != nil {
++			if ctx.Err() != nil {
++				return nil
++			}
++			if report != nil {
++				report(err)
++			}
++		}
++		timer := time.NewTimer(interval)
++		select {
++		case <-ctx.Done():
++			timer.Stop()
++			return nil
++		case <-timer.C:
++		}
++	}
+ }
+ 
+ func (s *Service) Handler() http.Handler {
+--- a/fielddesk_test.go
++++ b/fielddesk_test.go
+@@ -1,16 +1,48 @@
+ package fielddesk_test
+ 
+ import (
++	"bytes"
+ 	"context"
++	"io"
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"os"
+ 	"path/filepath"
++	"runtime"
+ 	"strings"
++	"sync"
++	"sync/atomic"
+ 	"testing"
++	"time"
+ 
+ 	"example.com/fielddesk"
+ )
++
++type roundTripFunc func(*http.Request) (*http.Response, error)
++
++func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
++
++func newResponse(status int, body string) *http.Response {
++	return &http.Response{StatusCode: status, Status: http.StatusText(status), Body: io.NopCloser(strings.NewReader(body)), Header: make(http.Header)}
++}
++
++type eofGateBody struct {
++	reader  *strings.Reader
++	eof     chan struct{}
++	release chan struct{}
++	once    sync.Once
++}
++
++func (b *eofGateBody) Read(p []byte) (int, error) {
++	n, err := b.reader.Read(p)
++	if err == io.EOF {
++		b.once.Do(func() { close(b.eof) })
++		<-b.release
++	}
++	return n, err
++}
++
++func (*eofGateBody) Close() error { return nil }
+ 
+ func TestCheckinCallerAndHTTPContract(t *testing.T) {
+ 	root := t.TempDir()
+@@ -33,6 +65,244 @@
+ 	s.Handler().ServeHTTP(response, request)
+ 	if response.Code != http.StatusBadRequest {
+ 		t.Fatalf("invalid check-in status = %d", response.Code)
++	}
++}
++
++func TestSyncBulletinsValidatesBeforeReplacingSnapshot(t *testing.T) {
++	root := t.TempDir()
++	s := fielddesk.New(root)
++	if err := os.WriteFile(filepath.Join(root, "bulletins.json"), []byte(`[{"id":"old","text":"keep"}]`), 0644); err != nil {
++		t.Fatal(err)
++	}
++	client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
++		if r.Method != http.MethodGet {
++			t.Errorf("method = %s", r.Method)
++		}
++		return newResponse(http.StatusOK, `[{"id":"new","text":"fresh"}]`), nil
++	})}
++	if err := s.SyncBulletins(context.Background(), client, "https://feed.invalid/bulletins"); err != nil {
++		t.Fatal(err)
++	}
++	got, err := s.Bulletins(context.Background())
++	if err != nil || len(got) != 1 || got[0].ID != "new" {
++		t.Fatalf("synced bulletins = %#v, %v", got, err)
++	}
++	for _, response := range []struct {
++		code int
++		body string
++	}{
++		{http.StatusBadGateway, `[]`},
++		{http.StatusOK, `[{"id":" ","text":"bad"}]`},
++		{http.StatusOK, `[{"id":"valid","text":""}]`},
++		{http.StatusOK, `[{"id":"valid","text":"  "}]`},
++		{http.StatusOK, `not json`},
++	} {
++		badClient := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) { return newResponse(response.code, response.body), nil })}
++		err := s.SyncBulletins(context.Background(), badClient, "https://feed.invalid/bulletins")
++		if err == nil {
++			t.Fatalf("response %d %s unexpectedly succeeded", response.code, response.body)
++		}
++		got, readErr := s.Bulletins(context.Background())
++		if readErr != nil || len(got) != 1 || got[0].ID != "new" {
++			t.Fatalf("failed sync replaced snapshot: %#v, %v", got, readErr)
++		}
++	}
++}
++
++func TestSyncBulletinsPublicationOnlyExposesCompleteSnapshots(t *testing.T) {
++	root := t.TempDir()
++	path := filepath.Join(root, "bulletins.json")
++	oldSnapshot := []byte(`[{"id":"old","text":"keep"}]`)
++	if err := os.WriteFile(path, oldSnapshot, 0600); err != nil {
++		t.Fatal(err)
++	}
++	largeText := strings.Repeat("n", 12<<20)
++	feedBody := `[{"id":"large","text":"` + largeText + `"}]`
++	newSnapshot := []byte(feedBody)
++	eof := make(chan struct{})
++	releaseEOF := make(chan struct{})
++	body := &eofGateBody{reader: strings.NewReader(feedBody), eof: eof, release: releaseEOF}
++	client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++		resp := newResponse(http.StatusOK, "")
++		resp.Body = body
++		return resp, nil
++	})}
++	ready := make(chan struct{})
++	stopReader := make(chan struct{})
++	readerDone := make(chan struct{})
++	violation := make(chan string, 1)
++	go func() {
++		defer close(readerDone)
++		readySent := false
++		for {
++			select {
++			case <-stopReader:
++				return
++			default:
++			}
++			got, err := os.ReadFile(path)
++			if err != nil || (!bytes.Equal(got, oldSnapshot) && !bytes.Equal(got, newSnapshot)) {
++				select {
++				case violation <- "reader observed missing or partial snapshot":
++				default:
++				}
++				return
++			}
++			if !readySent {
++				close(ready)
++				readySent = true
++			}
++			runtime.Gosched()
++		}
++	}()
++	select {
++	case <-ready:
++	case <-time.After(time.Second):
++		close(stopReader)
++		t.Fatal("snapshot observer did not start")
++	}
++	done := make(chan error, 1)
++	go func() {
++		done <- fielddesk.New(root).SyncBulletins(context.Background(), client, "https://feed.invalid/bulletins")
++	}()
++	select {
++	case <-eof:
++	case <-time.After(3 * time.Second):
++		close(releaseEOF)
++		t.Fatal("feed decoder did not reach its controlled EOF")
++	}
++	close(releaseEOF)
++	select {
++	case err := <-done:
++		if err != nil {
++			t.Fatalf("sync failed: %v", err)
++		}
++	case <-time.After(10 * time.Second):
++		t.Fatal("sync did not publish snapshot")
++	}
++	close(stopReader)
++	select {
++	case <-readerDone:
++	case <-time.After(time.Second):
++		t.Fatal("snapshot observer did not stop")
++	}
++	select {
++	case err := <-violation:
++		t.Fatal(err)
++	default:
++	}
++	got, err := os.ReadFile(path)
++	if err != nil || !bytes.Equal(got, newSnapshot) {
++		t.Fatalf("final snapshot differs from complete feed: %d bytes, %v", len(got), err)
++	}
++}
++
++func TestRunBulletinSyncCancellationJoinsRequest(t *testing.T) {
++	started := make(chan struct{})
++	var canceled atomic.Bool
++	client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
++		close(started)
++		<-r.Context().Done()
++		canceled.Store(true)
++		return nil, r.Context().Err()
++	})}
++	s := fielddesk.New(t.TempDir())
++	ctx, cancel := context.WithCancel(context.Background())
++	done := make(chan struct{})
++	go func() {
++		defer close(done)
++		_ = s.RunBulletinSync(ctx, time.Hour, client, "https://feed.invalid/bulletins", nil)
++	}()
++	select {
++	case <-started:
++	case <-time.After(time.Second):
++		t.Fatal("feed request did not start")
++	}
++	cancel()
++	select {
++	case <-done:
++	case <-time.After(time.Second):
++		t.Fatal("worker did not join canceled request")
++	}
++	if !canceled.Load() {
++		t.Fatal("feed request did not receive cancellation")
++	}
++}
++
++func TestSyncBulletinsUsesInstanceClientAndContext(t *testing.T) {
++	ctx, cancel := context.WithCancel(context.Background())
++	started := make(chan struct{})
++	client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
++		close(started)
++		<-r.Context().Done()
++		return nil, r.Context().Err()
++	})}
++	done := make(chan error, 1)
++	go func() {
++		done <- fielddesk.New(t.TempDir()).SyncBulletins(ctx, client, "https://feed.invalid/bulletins")
++	}()
++	select {
++	case <-started:
++	case <-time.After(time.Second):
++		t.Fatal("request did not start")
++	}
++	cancel()
++	select {
++	case err := <-done:
++		if err == nil {
++			t.Fatal("canceled sync returned nil")
++		}
++	case <-time.After(time.Second):
++		t.Fatal("sync did not stop")
++	}
++}
++
++func TestRunBulletinSyncReportsFailuresAndKeepsCyclesSerial(t *testing.T) {
++	var calls, active, maxActive atomic.Int32
++	second := make(chan struct{})
++	client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++		call := calls.Add(1)
++		current := active.Add(1)
++		for old := maxActive.Load(); current > old && !maxActive.CompareAndSwap(old, current); old = maxActive.Load() {
++		}
++		defer active.Add(-1)
++		if call == 1 {
++			return newResponse(http.StatusServiceUnavailable, `failure`), nil
++		}
++		if call == 2 {
++			close(second)
++		}
++		return newResponse(http.StatusOK, `[]`), nil
++	})}
++	ctx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++	reported := make(chan error, 1)
++	done := make(chan struct{})
++	go func() {
++		defer close(done)
++		_ = fielddesk.New(t.TempDir()).RunBulletinSync(ctx, time.Millisecond, client, "https://feed.invalid/bulletins", func(err error) { reported <- err })
++	}()
++	select {
++	case err := <-reported:
++		if err == nil {
++			t.Fatal("reported nil sync error")
++		}
++	case <-time.After(time.Second):
++		t.Fatal("cycle error was not reported")
++	}
++	select {
++	case <-second:
++	case <-time.After(time.Second):
++		t.Fatal("worker did not run the next cycle")
++	}
++	cancel()
++	select {
++	case <-done:
++	case <-time.After(time.Second):
++		t.Fatal("worker did not stop")
++	}
++	if calls.Load() < 2 || maxActive.Load() != 1 {
++		t.Fatalf("calls=%d maximum concurrent cycles=%d", calls.Load(), maxActive.Load())
+ 	}
+ }
+ 

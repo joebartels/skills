@@ -25,3 +25,9 @@ The first-pass candidate needs review-guided repair and verification before the 
 Review SHA-256 `review-arch.md`: `58f67615dc543806af6606c6274fe70c3cf93fd0157a206f9a4ea7b8583e1faf`.
 
 Review SHA-256 `review-correctness-testing.md`: `92896a69726646cd7d2ed4bad88b6297f26e564ad5d52690eb910ff9d9bc7c54`.
+
+## Final review-guided outcome
+
+The [second repair archive](review-guided-2/README.md) records **Architecture A / Correctness A / Testing A** after review-guided repairs. Architecture and Correctness are independently assessed on the first repair; production hashes are unchanged in the second, test-only repair. Its new independent [Testing addendum](review-guided-2/review-repair-testing-final.md) supplies the final Testing A. The old-file-handle publication check skips Windows, and successful live-listener signal shutdown, actual Go 1.22 and broader platform behavior remain unverified.
+
+The **blind first pass remains A/B/C-**. The assisted A/A/A outcome demonstrates that review-guided changes addressed the assessed defects; it is not blind skill uplift or proof that three supplied skills automatically produce A grades. No conflicting package/interface/API directions were observed. Earlier raw results remain intact, including the first repair's A/A/B and independently demonstrated scheduling-sensitive publication test. Refer to each stage's own manifest for exact source and review identity.
