@@ -1,0 +1,309 @@
+{
+  "run_id": "2026-10-01-interfaces-composition-skill-on",
+  "stage": "revision-3 lifecycle independently reviewed A/B; earlier results retained; zero-value blocked; no promotion",
+  "skill_revision": "c028b934a872cd61a522922092b8e8b48a7421e7",
+  "skill_snapshot": "skill-r1.md",
+  "skill_sha256": "7146c8fd3b70bdf1a7fd320bd991eec294de91885a77dcd63ced7aa77142dc57",
+  "harness": "Codex collaboration subagents",
+  "model": "gpt-6-luna",
+  "fork_turns": "none",
+  "reasoning_override": null,
+  "expected_judgments_withheld": true,
+  "dispatch_provenance": {
+    "full_wrapper_bytes_preserved": false,
+    "exact_case_prompts": "prompt.txt preserves the eval JSON prompt value without an appended newline",
+    "known_invariants": "Controller-attested fresh gpt-6-luna authors; three completed applicable cases explicitly supplied skill; control received routing description and did not open skill; zero-value blocked after two automatic approval rejections.",
+    "limit": "Exact full wrappers unavailable; no verbatim wrappers invented."
+  },
+  "go_version": "go version go1.26.5 darwin/arm64",
+  "cases": [
+    {
+      "id": "protocol-vs-mock",
+      "status": "completed; independently reviewed",
+      "prompt": "protocol-vs-mock/prompt.txt",
+      "trial_report": "protocol-vs-mock/trial-report.md",
+      "source_patch": "protocol-vs-mock/source.patch",
+      "verification": "protocol-vs-mock/verification.json",
+      "source_sha256": {
+        "README.md": "4cae21bb30add06052840aa7e884bf95c7d7726951006360b310a8cb24b6b57f",
+        "go.mod": "8024b54944d78b8a3b21b582ba9778d05500021953826f071d997365e308c1d6",
+        "report.go": "cc707ace71cb8fb12ca9fccb8775974f6300c099c05e3c1f7758655fafc85df0",
+        "report_test.go": "de04c0b3466e96c174c1b3282baa8c88b5c9ef1127c29d4d3e0e0d922ff8fc25"
+      },
+      "artifact_sha256": {
+        "prompt.txt": "750d31b7f2494c8f3a297dda78659babd509c47abbe973fa7a9798a4ff7081e9",
+        "trial-report.md": "600b65231830559eff4ee1adb307122760181bb4db9e15a0b6fef5f0eaf80d6e",
+        "source.patch": "20b2ce84c0ae1b95e35a93002643e23e7d1b419449c0ea6231238c0e53aa9b72",
+        "verification.json": "075a534c79d5e81af7a4718de5226b5012bff612400e9568cfccbe9d27773366"
+      },
+      "skill_explicitly_supplied": true,
+      "skill_opened": true,
+      "skill_selection_evidence": "controller-attested; control non-selection also documented in unedited trial report",
+      "review_status": "complete",
+      "review": "review-ab.md",
+      "architecture_grade": "A",
+      "testing_grade": "B",
+      "findings": [
+        "P-T1: moderate multi-record CSV coverage gap"
+      ]
+    },
+    {
+      "id": "visible-dependency",
+      "status": "completed; independently reviewed",
+      "prompt": "visible-dependency/prompt.txt",
+      "trial_report": "visible-dependency/trial-report.md",
+      "source_patch": "visible-dependency/source.patch",
+      "verification": "visible-dependency/verification.json",
+      "source_sha256": {
+        "README.md": "26db176b6cbcb2511ef15ef909b5c4a3289b27de4edec53c9069c7630d29eda0",
+        "go.mod": "c7d7b248942c0c660ea277376878560c0771167fb13cce2a500178122886dbb7",
+        "receipt.go": "85f4a0c8925d5a5fd8106bf7f55b4f44d2374b9e7ebd49d4fefa3b83534813bf",
+        "receipt_test.go": "29bd8ca7ecac5e8e5da7d797be52b032a9577ae506aba927b37bc197c28ede77"
+      },
+      "artifact_sha256": {
+        "prompt.txt": "42fee71f9eed82d0a9be4230def521be43d7119bf43fd89ebf673ec97fbff019",
+        "trial-report.md": "fb352c7127aa496cfc506396951e089f62d5e5a4d4155c8c11ec8649cff8438c",
+        "source.patch": "f7439e5283ca190f2b4630f5da661172f3781aa7d0cd08c8d16fd34b090e49e0",
+        "verification.json": "723d915a91d9b6ff03f065470aaa7d039c78c2d696ce7229977b749b699d6691"
+      },
+      "skill_explicitly_supplied": true,
+      "skill_opened": true,
+      "skill_selection_evidence": "controller-attested; control non-selection also documented in unedited trial report",
+      "review_status": "complete",
+      "dispatch_correction": "Initial supplied skill path did not exist; corrected before implementation. Author report discloses reading corrected path and socket-test sandbox adaptation.",
+      "review": "review-ab.md",
+      "architecture_grade": "A",
+      "testing_grade": "B",
+      "findings": [
+        "V-T1: moderate lost method/full-URL request assertions"
+      ]
+    },
+    {
+      "id": "zero-value",
+      "status": "blocked",
+      "result": null,
+      "source_sha256": {
+        "README.md": "5e45471edf11fcf766943b51bb74a1362a0d8f86608f8904ddf4669f82c053c1",
+        "bag.go": "c257b9cf692cdaac71e56585dffc55562cad3505414d4a9684a8357e7d7a4b94",
+        "bag_test.go": "a104431c5757f220b26543b155014fef91a51a8d0089e4221fb0950d898af6a2",
+        "go.mod": "d7351370ba8c981935b2284f481dc6d5f626c9fd7f7acbe8b0359e8e5922397b"
+      },
+      "identity_verification": "zero-value/identity-verification.json",
+      "rejection_evidence": "zero-value/blocked.md",
+      "review_status": "not applicable to an unimplemented trial",
+      "prompt": "zero-value/prompt.txt",
+      "artifact_sha256": {
+        "prompt.txt": "a3b002b5ed86637f4835d3d87c788c87e1a79ffd67f9f7b66b75f09bb4f10d49",
+        "blocked.md": "e38f59e2a9d3999568d8c89de48e65ad793286d5c5adb30cfaffd3da9445f3ba",
+        "identity-verification.json": "15e51f329e16c699132475ead8df4c82132ef8bc8cf70e3faea6d4962c08828c"
+      }
+    },
+    {
+      "id": "library-lifecycle",
+      "status": "completed; independently reviewed",
+      "prompt": "library-lifecycle/prompt.txt",
+      "trial_report": "library-lifecycle/trial-report.md",
+      "source_patch": "library-lifecycle/source.patch",
+      "verification": "library-lifecycle/verification.json",
+      "source_sha256": {
+        "README.md": "fd4199bc2000c6765199a26d58171eb3adcf143ef2d0bbb125bbfb6ed693cac9",
+        "go.mod": "d7f57aa5c8033a6df3753dbcc4a5bb15cba1bb3a9f973d69962f4e5e4da9d4e5",
+        "refresh.go": "1c86802f8972dc91b5f1a1149d9cbc1cb3ce12199d3d4422736c457687651398",
+        "refresh_test.go": "265a7baf134364a701309c29ccefa8ca258679cf29fca6296f4ed8b4d157e1de"
+      },
+      "artifact_sha256": {
+        "prompt.txt": "85ca50439dccd8048d92c9ae6d848c1484809cbb44bd415f13e885594e2d6ddb",
+        "trial-report.md": "6bfd00d5529f7cd6ceb77e8861c1775d2f7a5815a629d2860da7c545746d2efa",
+        "source.patch": "4aef1d89e6c31d20b35cdf54bddc9a0cdfc233bd8d1101423cedcb72acee1fcd",
+        "verification.json": "3a6d14f9c22581efdedb22e1b5d4644c41f2dbe9fe3412512ffc15fc1e595ab0"
+      },
+      "skill_explicitly_supplied": true,
+      "skill_opened": true,
+      "skill_selection_evidence": "controller-attested; control non-selection also documented in unedited trial report",
+      "review_status": "complete",
+      "review": "review-lifecycle.md",
+      "architecture_grade": "B",
+      "testing_grade": "C+",
+      "findings": [
+        "F1: moderate cancellation result versus callback-error precedence mismatch",
+        "F2: moderate completion-relative interval coverage gap",
+        "F3: moderate cancellation-result coverage gap",
+        "F4: moderate async test synchronization/cleanup gap"
+      ]
+    },
+    {
+      "id": "not-abstraction-work",
+      "status": "completed; independently reviewed",
+      "prompt": "not-abstraction-work/prompt.txt",
+      "trial_report": "not-abstraction-work/trial-report.md",
+      "source_patch": "not-abstraction-work/source.patch",
+      "verification": "not-abstraction-work/verification.json",
+      "source_sha256": {
+        "README.md": "bafea73bf1e0ac81e065953ee27977a56277ec78ce6ec8e2a2cc7fd90052aea6",
+        "batches.go": "30adb2c3a070bd44eae83bb8b14f05f1c8d4b1aa19d4f60e19b2b7d09e3f1123",
+        "batches_test.go": "4434dc29c0d0e0985bb25be5b6c66477a6ae3e0192f5f4f6d19f41e15de44d00",
+        "go.mod": "4f4b835600ae55325ff5cf9964edb3aa092082d4aa178e66830646cf5364178b"
+      },
+      "artifact_sha256": {
+        "prompt.txt": "462201c0f82bec3e0a8ef1f5537ea491119f40368b428e48a7d88a1ab49fcc2a",
+        "trial-report.md": "aeb60f01379a3f9ceaa7b90a12209be9a60df97448c63ad3b9ef63af0f52a124",
+        "source.patch": "7d3d563e42df7cc19ba627a3d3ee242e5b927d353fa5d733aab5da721f9c0515",
+        "verification.json": "4c9d06abfff0114e4f2fd79c88171eab70fe9c0605992fec3cedb68f3ab06f86"
+      },
+      "skill_explicitly_supplied": false,
+      "skill_opened": false,
+      "skill_selection_evidence": "controller-attested; control non-selection also documented in unedited trial report",
+      "review_status": "complete",
+      "review": "review-control.md",
+      "architecture_grade": "Not applicable",
+      "testing_grade": "A",
+      "findings": []
+    }
+  ],
+  "review_status": "complete for four implemented cases; zero-value blocked without outcome",
+  "promotion_status": "not promoted",
+  "independent_reviews": [
+    {
+      "artifact": "review-ab.md",
+      "sha256": "69511f0ec0bac00552d99b56d1226fac4b95d76bf945258f7a1cf543c94da26b",
+      "cases": [
+        "protocol-vs-mock",
+        "visible-dependency"
+      ],
+      "scope": "Architecture and Design; Testing",
+      "blind": true,
+      "reviewer_model": "not recorded in supplied report",
+      "provenance": "Controller supplied blind reviews; reports state no build skills, trial reports, expected assertions or other trials were read.",
+      "reproduction_limit": "Raw reviewer probe results are preserved in each report; archival stage did not rerun probes."
+    },
+    {
+      "artifact": "review-lifecycle.md",
+      "sha256": "ddf19a53b4cf9ded368236b817712337ac08f0a560f6350693f1a4a2a71db6f3",
+      "cases": [
+        "library-lifecycle"
+      ],
+      "scope": "Architecture and Design; Testing",
+      "blind": true,
+      "reviewer_model": "not recorded in supplied report",
+      "provenance": "Controller supplied blind reviews; reports state no build skills, trial reports, expected assertions or other trials were read.",
+      "reproduction_limit": "Raw reviewer probe results are preserved in each report; archival stage did not rerun probes."
+    },
+    {
+      "artifact": "review-control.md",
+      "sha256": "480daaf62b8cd93db55e9f5ac0a5205b7d573c3a131f8019e8e3b7587eb666a5",
+      "cases": [
+        "not-abstraction-work"
+      ],
+      "scope": "Architecture and Design; Testing",
+      "blind": true,
+      "reviewer_model": "not recorded in supplied report",
+      "provenance": "Controller supplied independent arithmetic review, preserved unedited."
+    }
+  ],
+  "revisions": [
+    {
+      "id": "revision-2",
+      "skill_revision": "b7bf3406e3386517d0aae17818b0741727e8fc87",
+      "skill_snapshot": "skill-r2.md",
+      "skill_sha256": "dcef5f5d5eb99f7b830421a5d9d84b9d2f131addc49103e6b8ecb00f5e06151a",
+      "status": "lifecycle independently reviewed; delivery omission and testing gap remain; no promotion",
+      "harness": "Codex collaboration subagents",
+      "model": "gpt-6-luna",
+      "fork_turns": "none",
+      "reasoning_override": null,
+      "dispatch_provenance": "Controller-attested fresh revision-2 lifecycle trial. Exact eval task prompt preserved; full dispatch-wrapper bytes unavailable.",
+      "cases": [
+        {
+          "id": "library-lifecycle",
+          "status": "completed; independently reviewed; delivery omission remains",
+          "prompt": "revision-2/library-lifecycle/prompt.txt",
+          "trial_report": "revision-2/library-lifecycle/trial-report.md",
+          "source_patch": "revision-2/library-lifecycle/source.patch",
+          "verification": "revision-2/library-lifecycle/verification.json",
+          "source_sha256": {
+            "README.md": "e128ab374e3f6e36c23843b511f8857983fedc4b0902028751ca158cd58205f1",
+            "go.mod": "d7f57aa5c8033a6df3753dbcc4a5bb15cba1bb3a9f973d69962f4e5e4da9d4e5",
+            "refresh.go": "91a0ae2424431a09dbd76c891f916ffb21df95db5e3e47c3b3a40b3b57e68519",
+            "refresh_test.go": "169b1ad455d65dbdeae2003abe8130bc8e98338605723f45841f2797334a1039"
+          },
+          "artifact_sha256": {
+            "prompt.txt": "85ca50439dccd8048d92c9ae6d848c1484809cbb44bd415f13e885594e2d6ddb",
+            "trial-report.md": "2b166fc0a0e7275938f56a5e6662e3a20d650f99210b0d549a4d17109a63d4af",
+            "source.patch": "574126ed647fe1a1ce6dcc4a8dbcb0954668cf1a56c4319a5f31c8ea361a0516",
+            "verification.json": "61824e3b95b4eb4edf5d792a208ba0251dff829d02057011a86e880911479d23"
+          },
+          "review_status": "complete",
+          "review": "review-lifecycle-r2.md",
+          "architecture_grade": "A",
+          "testing_grade": "B",
+          "findings": [
+            "T1: moderate host-context cancellation coverage gap; context-discarding mutation survives"
+          ],
+          "task_delivery_findings": [
+            "D1: moderate omission of requested runnable two-refresher shutdown example; not counted in architecture grade"
+          ]
+        }
+      ],
+      "independent_review": {
+        "artifact": "review-lifecycle-r2.md",
+        "sha256": "a3cef3f1f967a76dea5ba2b256d6f99fbdd0ec1e6e38f4adb6cca7473c99aa47",
+        "scope": "Architecture and Design; Testing; separate task-delivery finding",
+        "blind": true,
+        "reviewer_model": "not recorded in supplied report",
+        "limits": "Review probes preserved in raw report; archival stage did not rerun them."
+      }
+    },
+    {
+      "id": "revision-3",
+      "skill_revision": "66d52388ba7637544ae26cc44f4affc23face610",
+      "skill_snapshot": "skill-r3.md",
+      "skill_sha256": "41c9cd023682e006b84b37ddadf39bc37f0f01b2bfd8af7609272799906d9621",
+      "status": "lifecycle independently reviewed A/B; moderate timing-test gap remains; no promotion",
+      "harness": "Codex collaboration subagents",
+      "model": "gpt-6-luna",
+      "fork_turns": "none",
+      "reasoning_override": null,
+      "dispatch_provenance": "Controller-attested fresh revision-3 lifecycle trial. Exact eval task prompt preserved; full dispatch-wrapper bytes unavailable.",
+      "cases": [
+        {
+          "id": "library-lifecycle",
+          "status": "completed; independently reviewed",
+          "prompt": "revision-3/library-lifecycle/prompt.txt",
+          "trial_report": "revision-3/library-lifecycle/trial-report.md",
+          "source_patch": "revision-3/library-lifecycle/source.patch",
+          "verification": "revision-3/library-lifecycle/verification.json",
+          "source_sha256": {
+            "README.md": "6251b983610103e464c8113b81512c7db0661f4614281a0880b3e44eeda8fb8f",
+            "example_test.go": "aabe5876789daedebbbf6bbf8820168ab5c259dc966536f6c9666c61d6febd43",
+            "go.mod": "d7f57aa5c8033a6df3753dbcc4a5bb15cba1bb3a9f973d69962f4e5e4da9d4e5",
+            "refresh.go": "e5e71c8e0a44e4005ca347293e552932fffb1b53a9c7e58c1a4c62cc717be8cf",
+            "refresh_test.go": "2560d255aecff154469e87f0ab4630ec3c59b55a9fb8da099f1f2e7267828a46"
+          },
+          "artifact_sha256": {
+            "prompt.txt": "85ca50439dccd8048d92c9ae6d848c1484809cbb44bd415f13e885594e2d6ddb",
+            "trial-report.md": "669cd08a316bc4bf00ec58306cdc7ee088777ff4e3a89affa5336221f3ca4be7",
+            "source.patch": "bbc8c3b6e4c3a9f053371074e17a72b6479aee5280db97912391691e5d84a174",
+            "verification.json": "bf2a179c1facbac9d29176d48fe42addc1d3928bab0fcb9d97329f1764a082c4"
+          },
+          "review_status": "complete",
+          "review": "review-lifecycle-r3.md",
+          "architecture_grade": "A",
+          "testing_grade": "B",
+          "findings": [
+            "T1: moderate timing-test sensitivity gap; fixed-ticker mutation survives"
+          ],
+          "task_deliverables": "Reviewer verified runnable README main and tested two-refresher Go example."
+        }
+      ],
+      "independent_review": {
+        "artifact": "review-lifecycle-r3.md",
+        "sha256": "a03911c5d452f158a910180a3b934deae7ef6d1e92338c19995cb9984080d44c",
+        "scope": "Architecture and Design; Testing; task deliverable verification",
+        "blind": true,
+        "reviewer_model": "not recorded in supplied report",
+        "limits": "Reviewer executed README main and Go example plus scheduling mutation; archival stage preserves these results without claiming to rerun reviewer probes."
+      }
+    }
+  ],
+  "revision_coverage_limit": "Final skill revision 66d5238 has only the revision-3 lifecycle trial. Protocol, visible-dependency and arithmetic control results apply to c028b93, not to final revision. Zero-value remains blocked with no skill-on outcome."
+}

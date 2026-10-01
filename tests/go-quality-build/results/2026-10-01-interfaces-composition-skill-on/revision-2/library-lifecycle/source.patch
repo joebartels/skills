@@ -1,0 +1,294 @@
+--- a/README.md
++++ b/README.md
+@@ -5,3 +5,36 @@
+ Requested periodic behavior: the host decides when each run begins and ends. Perform the first refresh immediately, then wait the supplied positive interval after each successful completion. No overlapping callbacks for a single run. Stop a run on its first callback error and report that error. Stop requests must reach an active callback. The host must be able to wait for completion before freeing resources, and stopping one refresher must not stop another. Each instance has at most one periodic run at a time; concurrent starts/restarts need not be supported. A nonpositive interval is a caller error. The periodic cancellation result must be documented.
+ 
+ This library is one component among several inside the host process. The executable coordinates process termination and resource teardown. Go 1.22 is supported. The API is pre-1.0; add the periodic API while retaining New and Refresh.
++
++## Periodic lifecycle
++
++`Refresher.Start(ctx, interval)` starts an independent periodic run. The first
++callback starts immediately. After each successful callback, the run waits the
++full interval before starting another callback, so calls never overlap. A
++nonpositive interval returns an error. The host supplies a context to control
++the run; call `Stop` to request cancellation and `Wait` to join it. `Stop` does
++not wait. `Wait` returns the first callback error, if any; otherwise it returns
++the context error when the run is canceled (normally `context.Canceled`). A
++callback error wins if it returns an error while cancellation is in progress.
++Callback-captured resources remain host-owned and must stay available until
++`Wait` returns. Starting or restarting concurrent runs on the same Refresher is
++not supported.
++
++The executable should stop every run before waiting on any one run, then wait
++for all of them before releasing shared resources. This lets every active
++callback observe cancellation even when another run has already failed:
++
++```go
++func stopRefreshers(slowRun, fastRun *refreshkit.Run) error {
++	slowRun.Stop()
++	fastRun.Stop()
++	slowErr := slowRun.Wait()
++	fastErr := fastRun.Wait()
++	return errors.Join(slowErr, fastErr)
++}
++```
++
++The example assumes `errors` and the `refreshkit` import. If starting the
++second run fails, stop and wait for the first run before returning the startup
++error. In an executable, call this stop-and-join function from its shutdown
++path before closing any clients or files captured by either callback.
+--- a/refresh.go
++++ b/refresh.go
+@@ -3,6 +3,7 @@
+ import (
+ 	"context"
+ 	"errors"
++	"time"
+ )
+ 
+ type Refresher struct{ refresh func(context.Context) error }
+@@ -14,3 +15,65 @@
+ 	return &Refresher{refresh: refresh}, nil
+ }
+ func (r *Refresher) Refresh(ctx context.Context) error { return r.refresh(ctx) }
++
++// Start begins a periodic run. It calls the callback immediately and, after
++// each successful completion, waits interval before starting the next call.
++// At most one callback runs at a time. A nonpositive interval is an error.
++// The caller owns resources used by the callback and must wait for the returned
++// Run to finish before releasing them.
++func (r *Refresher) Start(ctx context.Context, interval time.Duration) (*Run, error) {
++	if interval <= 0 {
++		return nil, errors.New("refresh interval must be positive")
++	}
++	runCtx, cancel := context.WithCancel(ctx)
++	run := &Run{cancel: cancel, done: make(chan struct{})}
++	go run.loop(runCtx, r.refresh, interval)
++	return run, nil
++}
++
++// Run represents one periodic refresh operation.
++type Run struct {
++	cancel context.CancelFunc
++	done   chan struct{}
++	err    error
++}
++
++// Stop requests cancellation of the run. It does not wait for the active
++// callback to return; call Wait before releasing resources used by callbacks.
++func (run *Run) Stop() { run.cancel() }
++
++// Wait blocks until the run finishes and returns its result. Callback errors
++// take precedence over cancellation. If callbacks return nil after the run's
++// context is canceled, Wait returns the context cancellation error.
++func (run *Run) Wait() error {
++	<-run.done
++	return run.err
++}
++
++func (run *Run) loop(ctx context.Context, refresh func(context.Context) error, interval time.Duration) {
++	defer close(run.done)
++	defer run.cancel()
++	for {
++		if err := refresh(ctx); err != nil {
++			run.err = err
++			return
++		}
++		if err := ctx.Err(); err != nil {
++			run.err = err
++			return
++		}
++		timer := time.NewTimer(interval)
++		select {
++		case <-ctx.Done():
++			if !timer.Stop() {
++				select {
++				case <-timer.C:
++				default:
++				}
++			}
++			run.err = ctx.Err()
++			return
++		case <-timer.C:
++		}
++	}
++}
+--- a/refresh_test.go
++++ b/refresh_test.go
+@@ -4,7 +4,9 @@
+ 	"context"
+ 	"errors"
+ 	refreshkit "example.com/library-lifecycle"
++	"sync/atomic"
+ 	"testing"
++	"time"
+ )
+ 
+ func TestRefresh(t *testing.T) {
+@@ -37,3 +39,166 @@
+ 		t.Fatal("nil callback accepted")
+ 	}
+ }
++
++func TestStartWaitsAfterSuccessfulCompletion(t *testing.T) {
++	const interval = 80 * time.Millisecond
++	entered := make(chan time.Time, 3)
++	release := make(chan struct{})
++	firstFinished := make(chan time.Time, 1)
++	var calls atomic.Int32
++	r, _ := refreshkit.New(func(context.Context) error {
++		call := calls.Add(1)
++		entered <- time.Now()
++		if call == 1 {
++			<-release
++			firstFinished <- time.Now()
++		}
++		return nil
++	})
++	run, err := r.Start(context.Background(), interval)
++	if err != nil {
++		t.Fatal(err)
++	}
++	_ = receiveTime(t, entered)
++	time.Sleep(interval + 20*time.Millisecond)
++	close(release)
++	second := receiveTime(t, entered)
++	finished := receiveTime(t, firstFinished)
++	if elapsed := second.Sub(finished); elapsed < interval {
++		t.Fatalf("second callback started after %v, want at least %v after first completed", elapsed, interval)
++	}
++	run.Stop()
++	if err := run.Wait(); !errors.Is(err, context.Canceled) {
++		t.Fatalf("Wait error = %v, want context.Canceled", err)
++	}
++}
++
++func TestStopWaitsForActiveRefreshAndCallbackErrorWins(t *testing.T) {
++	callbackErr := errors.New("refresh failed")
++	started := make(chan struct{})
++	cleanup := make(chan struct{})
++	r, _ := refreshkit.New(func(ctx context.Context) error {
++		close(started)
++		<-ctx.Done()
++		<-cleanup
++		return callbackErr
++	})
++	run, err := r.Start(context.Background(), time.Hour)
++	if err != nil {
++		t.Fatal(err)
++	}
++	receive(t, started)
++	run.Stop()
++	waitReturned := make(chan error, 1)
++	go func() { waitReturned <- run.Wait() }()
++	select {
++	case err := <-waitReturned:
++		t.Fatalf("Wait returned before callback cleanup: %v", err)
++	case <-time.After(30 * time.Millisecond):
++	}
++	close(cleanup)
++	if err := receiveErr(t, waitReturned); err != callbackErr {
++		t.Fatalf("Wait error = %v, want callback error", err)
++	}
++}
++
++func TestRunsAreIndependent(t *testing.T) {
++	var callsA, callsB atomic.Int32
++	a, _ := refreshkit.New(func(context.Context) error { callsA.Add(1); return nil })
++	b, _ := refreshkit.New(func(context.Context) error { callsB.Add(1); return nil })
++	runA, err := a.Start(context.Background(), 20*time.Millisecond)
++	if err != nil {
++		t.Fatal(err)
++	}
++	runB, err := b.Start(context.Background(), 20*time.Millisecond)
++	if err != nil {
++		runA.Stop()
++		_ = runA.Wait()
++		t.Fatal(err)
++	}
++	defer func() { runA.Stop(); runB.Stop(); _ = runA.Wait(); _ = runB.Wait() }()
++	waitFor(t, func() bool { return callsA.Load() >= 2 && callsB.Load() >= 2 })
++	runA.Stop()
++	if err := runA.Wait(); !errors.Is(err, context.Canceled) {
++		t.Fatalf("A Wait error = %v", err)
++	}
++	afterA := callsA.Load()
++	before := callsB.Load()
++	waitFor(t, func() bool { return callsB.Load() > before })
++	if callsA.Load() != afterA {
++		t.Fatalf("A calls changed after join: from %d to %d", afterA, callsA.Load())
++	}
++}
++
++func TestStartRejectsNonpositiveInterval(t *testing.T) {
++	r, _ := refreshkit.New(func(context.Context) error { return nil })
++	for _, interval := range []time.Duration{0, -time.Second} {
++		if _, err := r.Start(context.Background(), interval); err == nil {
++			t.Fatalf("Start(%v) succeeded", interval)
++		}
++	}
++}
++
++func TestCallbackErrorStopsRun(t *testing.T) {
++	want := errors.New("refresh failed")
++	var calls atomic.Int32
++	r, _ := refreshkit.New(func(context.Context) error { calls.Add(1); return want })
++	run, err := r.Start(context.Background(), time.Millisecond)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err := receiveErr(t, errorWaiter(run)); err != want {
++		t.Fatalf("Wait error = %v, want callback error", err)
++	}
++	if calls.Load() != 1 {
++		t.Fatalf("calls = %d, want 1", calls.Load())
++	}
++}
++
++func receive(t *testing.T, ch <-chan struct{}) {
++	t.Helper()
++	select {
++	case <-ch:
++	case <-time.After(time.Second):
++		t.Fatal("timed out waiting")
++	}
++}
++
++func receiveTime(t *testing.T, ch <-chan time.Time) time.Time {
++	t.Helper()
++	select {
++	case value := <-ch:
++		return value
++	case <-time.After(time.Second):
++		t.Fatal("timed out waiting for refresh")
++		return time.Time{}
++	}
++}
++
++func receiveErr(t *testing.T, ch <-chan error) error {
++	t.Helper()
++	select {
++	case err := <-ch:
++		return err
++	case <-time.After(time.Second):
++		t.Fatal("timed out waiting for run")
++		return nil
++	}
++}
++
++func errorWaiter(run interface{ Wait() error }) <-chan error {
++	ch := make(chan error, 1)
++	go func() { ch <- run.Wait() }()
++	return ch
++}
++
++func waitFor(t *testing.T, ready func() bool) {
++	t.Helper()
++	deadline := time.Now().Add(time.Second)
++	for !ready() {
++		if time.Now().After(deadline) {
++			t.Fatal("timed out waiting for condition")
++		}
++		time.Sleep(time.Millisecond)
++	}
++}

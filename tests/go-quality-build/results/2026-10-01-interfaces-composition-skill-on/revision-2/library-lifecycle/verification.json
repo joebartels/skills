@@ -1,0 +1,71 @@
+{
+  "patch_reconstruction": "PASS: full output source tree byte-for-byte",
+  "commands": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "git",
+        "apply",
+        "/Users/jb/.codex/worktrees/go-quality-build/skills/tests/go-quality-build/results/2026-10-01-interfaces-composition-skill-on/revision-2/library-lifecycle/source.patch"
+      ],
+      "cwd": "/private/tmp/composition-r2-reconstruct.gsst3sjb/library-lifecycle",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "go",
+        "test",
+        "./..."
+      ],
+      "cwd": "/private/tmp/composition-r2-reconstruct.gsst3sjb/library-lifecycle",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "Go test: 7 passed in 1 packages\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-v",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/composition-r2-reconstruct.gsst3sjb/library-lifecycle",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "=== RUN   TestRefresh\n--- PASS: TestRefresh (0.00s)\n=== RUN   TestNilCallback\n--- PASS: TestNilCallback (0.00s)\n=== RUN   TestStartWaitsAfterSuccessfulCompletion\n--- PASS: TestStartWaitsAfterSuccessfulCompletion (0.18s)\n=== RUN   TestStopWaitsForActiveRefreshAndCallbackErrorWins\n--- PASS: TestStopWaitsForActiveRefreshAndCallbackErrorWins (0.03s)\n=== RUN   TestRunsAreIndependent\n--- PASS: TestRunsAreIndependent (0.04s)\n=== RUN   TestStartRejectsNonpositiveInterval\n--- PASS: TestStartRejectsNonpositiveInterval (0.00s)\n=== RUN   TestCallbackErrorStopsRun\n--- PASS: TestCallbackErrorStopsRun (0.00s)\nPASS\nok  \texample.com/library-lifecycle\t0.438s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/composition-r2-reconstruct.gsst3sjb/library-lifecycle",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

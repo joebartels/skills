@@ -1,0 +1,5 @@
+Implemented tenant-specific receipt senders. `NewSender(endpoint, client)` stores the endpoint and borrows the host-owned `*http.Client`; nil selects `http.DefaultClient`. `Send` uses the stored client and attaches the call context to its POST request. README usage shows two endpoints and independently configured clients. Tests exercise concurrent calls with separate auth transports, JSON escaping and headers, cancellation, and non-2xx handling using in-memory RoundTrippers only.
+
+The dispatch first named a nonexistent skill path; the coordinator corrected it to `/Users/jb/.codex/worktrees/go-quality-build/skills/plugins/go-quality-build/skills/go-interfaces-and-composition/SKILL.md`, which I read before implementation.
+
+Checks: `rtk gofmt -w receipt.go receipt_test.go`; `rtk env GOCACHE=/private/tmp/go-quality-build-composition-eval/skill-on-r1/visible-dependency/.gocache go test ./...` passed; the equivalent `go vet ./...` passed. Initial tests using `httptest` could not bind a local socket in the sandbox, so the tests were changed to use controlled RoundTrippers and then passed without network access.

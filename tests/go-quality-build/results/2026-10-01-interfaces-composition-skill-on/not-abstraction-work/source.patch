@@ -1,0 +1,33 @@
+--- a/batches.go
++++ b/batches.go
+@@ -1,3 +1,9 @@
+ package batches
+ 
+-func batchCount(items, size int) int { return items / size }
++func batchCount(items, size int) int {
++	count := items / size
++	if items%size != 0 {
++		count++
++	}
++	return count
++}
+--- a/batches_test.go
++++ b/batches_test.go
+@@ -3,9 +3,16 @@
+ import "testing"
+ 
+ func TestWholeBatches(t *testing.T) {
+-	for _, tc := range []struct{ items, size, want int }{{0, 4, 0}, {8, 4, 2}, {3, 1, 3}} {
++	for _, tc := range []struct{ items, size, want int }{{0, 4, 0}, {8, 4, 2}, {3, 1, 3}, {9, 4, 3}, {1, 2, 1}} {
+ 		if got := batchCount(tc.items, tc.size); got != tc.want {
+ 			t.Errorf("batchCount(%d, %d) = %d; want %d", tc.items, tc.size, got, tc.want)
+ 		}
+ 	}
+ }
++
++func TestBatchCountLargestInt(t *testing.T) {
++	maxInt := int(^uint(0) >> 1)
++	if got, want := batchCount(maxInt, maxInt-1), 2; got != want {
++		t.Errorf("batchCount(%d, %d) = %d; want %d", maxInt, maxInt-1, got, want)
++	}
++}
