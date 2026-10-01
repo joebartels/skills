@@ -1,0 +1,39 @@
+Workdir: /private/tmp/go-skill-repeat-archive-_imdbzfl
+go version go1.26.5 darwin/arm64
+GOWORK=off; disposable GOCACHE; approved local test listeners.
+Source reconstruction byte-for-byte verified.
+
+$ rtk proxy go test ./...
+ok  	example.com/dispatch	0.357s
+?   	example.com/dispatch/cmd/replay	[no test files]
+?   	example.com/dispatch/cmd/server	[no test files]
+?   	example.com/dispatch/internal/notify	[no test files]
+?   	example.com/dispatch/internal/operation	[no test files]
+?   	example.com/dispatch/internal/records	[no test files]
+ok  	example.com/dispatch/replay	0.208s
+Exit: 0
+
+$ rtk proxy go test -count=1 -v ./...
+=== RUN   TestSubmit
+--- PASS: TestSubmit (0.00s)
+=== RUN   TestNotificationFailureKeepsRecord
+--- PASS: TestNotificationFailureKeepsRecord (0.00s)
+PASS
+ok  	example.com/dispatch	0.301s
+?   	example.com/dispatch/cmd/replay	[no test files]
+?   	example.com/dispatch/cmd/server	[no test files]
+?   	example.com/dispatch/internal/notify	[no test files]
+?   	example.com/dispatch/internal/operation	[no test files]
+?   	example.com/dispatch/internal/records	[no test files]
+=== RUN   TestRunSequentialAndSkipsBlankLines
+--- PASS: TestRunSequentialAndSkipsBlankLines (0.00s)
+=== RUN   TestRunStopsOnInvalidID
+--- PASS: TestRunStopsOnInvalidID (0.00s)
+=== RUN   TestRunStopsOnNotificationFailure
+--- PASS: TestRunStopsOnNotificationFailure (0.00s)
+PASS
+ok  	example.com/dispatch/replay	0.176s
+Exit: 0
+
+$ rtk proxy go vet ./...
+Exit: 0

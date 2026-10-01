@@ -1,0 +1,310 @@
+--- /dev/null
++++ b/cmd/replay/main.go
+@@ -0,0 +1,49 @@
++package main
++
++import (
++	"bufio"
++	"context"
++	"fmt"
++	"log"
++	"net/http"
++	"os"
++	"strings"
++	"time"
++
++	"example.com/dispatch"
++)
++
++func main() {
++	if err := run(context.Background(), os.Args[1:], os.Getenv); err != nil {
++		log.Fatal(err)
++	}
++}
++
++func run(ctx context.Context, args []string, getenv func(string) string) error {
++	if len(args) != 1 {
++		return fmt.Errorf("usage: replay FILE")
++	}
++	f, err := os.Open(args[0])
++	if err != nil {
++		return err
++	}
++	defer f.Close()
++
++	s := &dispatch.Service{
++		Dir: getenv("RECORD_DIR"), NotifyURL: getenv("NOTIFY_URL"),
++		Client: &http.Client{Timeout: 5 * time.Second},
++	}
++	scanner := bufio.NewScanner(f)
++	lineNumber := 0
++	for scanner.Scan() {
++		lineNumber++
++		id := strings.TrimSpace(scanner.Text())
++		if id == "" {
++			continue
++		}
++		if err := s.Submit(ctx, id); err != nil {
++			return fmt.Errorf("line %d: %w", lineNumber, err)
++		}
++	}
++	return scanner.Err()
++}
+--- /dev/null
++++ b/cmd/replay/main_test.go
+@@ -0,0 +1,113 @@
++package main
++
++import (
++	"context"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"os"
++	"path/filepath"
++	"reflect"
++	"strings"
++	"testing"
++)
++
++func replayFile(t *testing.T, content string) string {
++	t.Helper()
++	path := filepath.Join(t.TempDir(), "batch.txt")
++	if err := os.WriteFile(path, []byte(content), 0600); err != nil {
++		t.Fatal(err)
++	}
++	return path
++}
++
++func replayEnv(dir, url string) func(string) string {
++	return func(name string) string {
++		switch name {
++		case "RECORD_DIR":
++			return dir
++		case "NOTIFY_URL":
++			return url
++		default:
++			return ""
++		}
++	}
++}
++
++func TestReplaySuccess(t *testing.T) {
++	var notified []string
++	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.Method != http.MethodPost {
++			t.Errorf("method = %s", r.Method)
++		}
++		body, err := io.ReadAll(r.Body)
++		if err != nil {
++			t.Error(err)
++		}
++		notified = append(notified, string(body))
++		w.WriteHeader(http.StatusNoContent)
++	}))
++	defer ts.Close()
++	dir := t.TempDir()
++	path := replayFile(t, "  first  \n\n second\t\n")
++	if err := run(context.Background(), []string{path}, replayEnv(dir, ts.URL)); err != nil {
++		t.Fatal(err)
++	}
++	if !reflect.DeepEqual(notified, []string{"first", "second"}) {
++		t.Fatalf("notified = %v", notified)
++	}
++	for _, id := range notified {
++		data, err := os.ReadFile(filepath.Join(dir, id))
++		if err != nil || string(data) != "queued\n" {
++			t.Fatalf("record %q = %q, %v", id, data, err)
++		}
++	}
++}
++
++func TestReplayStopsOnInvalidID(t *testing.T) {
++	var notified []string
++	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		body, _ := io.ReadAll(r.Body)
++		notified = append(notified, string(body))
++		w.WriteHeader(http.StatusNoContent)
++	}))
++	defer ts.Close()
++	dir := t.TempDir()
++	path := replayFile(t, "first\n../bad\nthird\n")
++	err := run(context.Background(), []string{path}, replayEnv(dir, ts.URL))
++	if err == nil || !strings.Contains(err.Error(), "line 2: invalid id") {
++		t.Fatalf("error = %v", err)
++	}
++	if !reflect.DeepEqual(notified, []string{"first"}) {
++		t.Fatalf("notified = %v", notified)
++	}
++	if _, err := os.Stat(filepath.Join(dir, "third")); !os.IsNotExist(err) {
++		t.Fatalf("third record exists or stat failed unexpectedly: %v", err)
++	}
++}
++
++func TestReplayStopsOnNotificationFailure(t *testing.T) {
++	var notified []string
++	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		body, _ := io.ReadAll(r.Body)
++		notified = append(notified, string(body))
++		w.WriteHeader(http.StatusServiceUnavailable)
++	}))
++	defer ts.Close()
++	dir := t.TempDir()
++	path := replayFile(t, "first\nsecond\n")
++	err := run(context.Background(), []string{path}, replayEnv(dir, ts.URL))
++	if err == nil || !strings.Contains(err.Error(), "line 1: notification status 503") {
++		t.Fatalf("error = %v", err)
++	}
++	if !reflect.DeepEqual(notified, []string{"first"}) {
++		t.Fatalf("notified = %v", notified)
++	}
++	data, err := os.ReadFile(filepath.Join(dir, "first"))
++	if err != nil || string(data) != "queued\n" {
++		t.Fatalf("failed notification record = %q, %v", data, err)
++	}
++	if _, err := os.Stat(filepath.Join(dir, "second")); !os.IsNotExist(err) {
++		t.Fatalf("second record exists or stat failed unexpectedly: %v", err)
++	}
++}
+--- a/dispatch.go
++++ b/dispatch.go
+@@ -5 +4,0 @@
+-	"fmt"
+@@ -7,3 +6,4 @@
+-	"os"
+-	"path/filepath"
+-	"strings"
++
++	"example.com/dispatch/internal/notification"
++	"example.com/dispatch/internal/recordstore"
++	"example.com/dispatch/internal/submit"
+@@ -21,19 +21,4 @@
+-	if id == "" || strings.ContainsAny(id, "/\\") || id == "." || id == ".." {
+-		return fmt.Errorf("invalid id")
+-	}
+-	if err := os.WriteFile(filepath.Join(s.Dir, id), []byte("queued\n"), 0600); err != nil {
+-		return err
+-	}
+-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.NotifyURL, strings.NewReader(id))
+-	if err != nil {
+-		return err
+-	}
+-	resp, err := s.Client.Do(req)
+-	if err != nil {
+-		return err
+-	}
+-	defer resp.Body.Close()
+-	if resp.StatusCode != http.StatusNoContent {
+-		return fmt.Errorf("notification status %d", resp.StatusCode)
+-	}
+-	return nil
++	return submit.Run(ctx, id,
++		recordstore.Store{Dir: s.Dir},
++		notification.Client{URL: s.NotifyURL, HTTPClient: s.Client},
++	)
+--- a/dispatch_test.go
++++ b/dispatch_test.go
+@@ -43,0 +44,23 @@
++
++func TestHTTPBehavior(t *testing.T) {
++	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.WriteHeader(http.StatusNoContent)
++	}))
++	defer ts.Close()
++	s := Service{Dir: t.TempDir(), NotifyURL: ts.URL, Client: ts.Client()}
++	for _, tc := range []struct {
++		method, target string
++		status         int
++		body           string
++	}{
++		{http.MethodGet, "/?id=ok", http.StatusMethodNotAllowed, ""},
++		{http.MethodPost, "/", http.StatusBadRequest, "submission failed\n"},
++		{http.MethodPost, "/?id=ok", http.StatusNoContent, ""},
++	} {
++		rec := httptest.NewRecorder()
++		s.ServeHTTP(rec, httptest.NewRequest(tc.method, tc.target, nil))
++		if rec.Code != tc.status || rec.Body.String() != tc.body {
++			t.Errorf("%s %s: status %d, body %q", tc.method, tc.target, rec.Code, rec.Body.String())
++		}
++	}
++}
+--- /dev/null
++++ b/internal/notification/http.go
+@@ -0,0 +1,30 @@
++package notification
++
++import (
++	"context"
++	"fmt"
++	"net/http"
++	"strings"
++)
++
++// Client sends one notification to an HTTP endpoint.
++type Client struct {
++	URL        string
++	HTTPClient *http.Client
++}
++
++func (c Client) Notify(ctx context.Context, id string) error {
++	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.URL, strings.NewReader(id))
++	if err != nil {
++		return err
++	}
++	resp, err := c.HTTPClient.Do(req)
++	if err != nil {
++		return err
++	}
++	defer resp.Body.Close()
++	if resp.StatusCode != http.StatusNoContent {
++		return fmt.Errorf("notification status %d", resp.StatusCode)
++	}
++	return nil
++}
+--- /dev/null
++++ b/internal/recordstore/file.go
+@@ -0,0 +1,13 @@
++package recordstore
++
++import (
++	"os"
++	"path/filepath"
++)
++
++// Store writes one record per ID in Dir.
++type Store struct{ Dir string }
++
++func (s Store) Save(id string) error {
++	return os.WriteFile(filepath.Join(s.Dir, id), []byte("queued\n"), 0600)
++}
+--- /dev/null
++++ b/internal/submit/submit.go
+@@ -0,0 +1,28 @@
++package submit
++
++import (
++	"context"
++	"fmt"
++	"strings"
++)
++
++// Store persists the record before notification.
++type Store interface {
++	Save(id string) error
++}
++
++// Notifier sends the outbound notification.
++type Notifier interface {
++	Notify(context.Context, string) error
++}
++
++// Run applies the validation and sequencing shared by all ingress paths.
++func Run(ctx context.Context, id string, store Store, notifier Notifier) error {
++	if id == "" || strings.ContainsAny(id, "/\\") || id == "." || id == ".." {
++		return fmt.Errorf("invalid id")
++	}
++	if err := store.Save(id); err != nil {
++		return err
++	}
++	return notifier.Notify(ctx, id)
++}

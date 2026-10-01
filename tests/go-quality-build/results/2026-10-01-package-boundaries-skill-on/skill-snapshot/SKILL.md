@@ -19,8 +19,6 @@ For new ingress, identify the reusable operation beneath HTTP, CLI, RPC, or work
 
 Keep concrete adapter imports out of the operation they implement. Commands or another existing composition root connect the operation and implementations. Put representation details with the code that owns that representation. Resolve cycles by reexamining responsibility or the actual consumer contract, rather than introducing an undifferentiated `common` package. A reusable technical capability is valid when actual consumers justify it.
 
-When preserving a public facade or legacy configuration path, let it wire or delegate to the same concrete implementations used by new callers. Check every supported path after a split: duplicated file formats, network protocols, or validation rules leave ownership divided even if the new path has clean interfaces.
-
 Read [package maps](references/package-maps.md) when choosing a split or comparing project shapes. Adapt the examples to the code; they are alternatives, not templates.
 
 Implement only the necessary movement. Preserve supported public imports, APIs, wire/file bytes, and failure ordering unless the task explicitly changes them. Run affected behavior tests and relevant build/import checks, respecting the supported Go version. Report the package decision, its evidence, resulting dependency direction, and verification limits.

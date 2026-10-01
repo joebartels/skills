@@ -1,0 +1,76 @@
+UTC: 2026-10-01T14:48:07.808925+00:00
+Workdir: /private/tmp/go-skill-on-archive-8xty4xd1/luna/large-features
+go version go1.26.5 darwin/arm64
+GOWORK=off; disposable GOCACHE; approved local httptest listeners.
+Patch reconstruction: byte-for-byte equal to all trial Go/module source.
+
+$ rtk proxy go test ./...
+?   	example.com/commerce/cmd/invoice	[no test files]
+ok  	example.com/commerce/cmd/settle	0.179s
+?   	example.com/commerce/cmd/shop	[no test files]
+ok  	example.com/commerce/internal/billing	0.313s
+?   	example.com/commerce/internal/catalog	[no test files]
+ok  	example.com/commerce/internal/gatewayhttp	0.448s
+ok  	example.com/commerce/internal/invoicecodec	0.566s
+Exit: 0
+
+$ rtk proxy go test -count=1 -v ./...
+?   	example.com/commerce/cmd/invoice	[no test files]
+=== RUN   TestSettleProcessesSequentiallyAndStopsOnMalformedRow
+--- PASS: TestSettleProcessesSequentiallyAndStopsOnMalformedRow (0.00s)
+=== RUN   TestSettleStopsOnFirstChargeFailure
+--- PASS: TestSettleStopsOnFirstChargeFailure (0.00s)
+PASS
+ok  	example.com/commerce/cmd/settle	0.157s
+?   	example.com/commerce/cmd/shop	[no test files]
+=== RUN   TestChargeWritesLedgerAfterGatewaySuccess
+--- PASS: TestChargeWritesLedgerAfterGatewaySuccess (0.00s)
+=== RUN   TestDeclineDoesNotWriteLedger
+--- PASS: TestDeclineDoesNotWriteLedger (0.00s)
+=== RUN   TestInvalidInvoiceDoesNotCallGateway
+--- PASS: TestInvalidInvoiceDoesNotCallGateway (0.00s)
+=== RUN   TestReadLedgerUsesInvoiceCodec
+--- PASS: TestReadLedgerUsesInvoiceCodec (0.00s)
+=== RUN   TestExportPreservesLedgerBytes
+--- PASS: TestExportPreservesLedgerBytes (0.00s)
+PASS
+ok  	example.com/commerce/internal/billing	0.256s
+?   	example.com/commerce/internal/catalog	[no test files]
+=== RUN   TestClientPreservesGatewayRequestBytes
+--- PASS: TestClientPreservesGatewayRequestBytes (0.00s)
+=== RUN   TestClientRejectsNon204
+--- PASS: TestClientRejectsNon204 (0.00s)
+PASS
+ok  	example.com/commerce/internal/gatewayhttp	0.361s
+=== RUN   TestEncodeDecodeRows
+--- PASS: TestEncodeDecodeRows (0.00s)
+=== RUN   TestDecodeRejectsMalformedRows
+=== RUN   TestDecodeRejectsMalformedRows/#00
+=== RUN   TestDecodeRejectsMalformedRows/no-cents
+=== RUN   TestDecodeRejectsMalformedRows/id,
+=== RUN   TestDecodeRejectsMalformedRows/id,0
+=== RUN   TestDecodeRejectsMalformedRows/id,-2
+=== RUN   TestDecodeRejectsMalformedRows/id,2x
+=== RUN   TestDecodeRejectsMalformedRows/id,2,extra
+=== RUN   TestDecodeRejectsMalformedRows/,2
+=== RUN   TestDecodeRejectsMalformedRows/id_,2
+--- PASS: TestDecodeRejectsMalformedRows (0.00s)
+    --- PASS: TestDecodeRejectsMalformedRows/#00 (0.00s)
+    --- PASS: TestDecodeRejectsMalformedRows/no-cents (0.00s)
+    --- PASS: TestDecodeRejectsMalformedRows/id, (0.00s)
+    --- PASS: TestDecodeRejectsMalformedRows/id,0 (0.00s)
+    --- PASS: TestDecodeRejectsMalformedRows/id,-2 (0.00s)
+    --- PASS: TestDecodeRejectsMalformedRows/id,2x (0.00s)
+    --- PASS: TestDecodeRejectsMalformedRows/id,2,extra (0.00s)
+    --- PASS: TestDecodeRejectsMalformedRows/,2 (0.00s)
+    --- PASS: TestDecodeRejectsMalformedRows/id_,2 (0.00s)
+=== RUN   TestValidateRejectsDelimiterAndNewlineIDs
+--- PASS: TestValidateRejectsDelimiterAndNewlineIDs (0.00s)
+=== RUN   TestReaderStopsAtMalformedRow
+--- PASS: TestReaderStopsAtMalformedRow (0.00s)
+PASS
+ok  	example.com/commerce/internal/invoicecodec	0.458s
+Exit: 0
+
+$ rtk proxy go vet ./...
+Exit: 0

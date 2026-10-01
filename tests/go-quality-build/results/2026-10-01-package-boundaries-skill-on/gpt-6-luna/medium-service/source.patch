@@ -1,0 +1,312 @@
+--- /dev/null
++++ b/cmd/replay/main.go
+@@ -0,0 +1,66 @@
++package main
++
++import (
++	"bufio"
++	"context"
++	"fmt"
++	"io"
++	"net/http"
++	"os"
++	"strings"
++	"time"
++
++	"example.com/dispatch"
++	"example.com/dispatch/internal/notifyclient"
++	"example.com/dispatch/internal/recordstore"
++)
++
++func main() {
++	if err := run(os.Args[1:], os.Stderr); err != nil {
++		os.Exit(1)
++	}
++}
++
++func run(args []string, stderr io.Writer) error {
++	if len(args) != 1 {
++		fmt.Fprintln(stderr, "usage: replay FILE")
++		return fmt.Errorf("expected one file argument")
++	}
++	f, err := os.Open(args[0])
++	if err != nil {
++		fmt.Fprintf(stderr, "open replay file: %v\n", err)
++		return err
++	}
++	defer f.Close()
++
++	s := &dispatch.Service{
++		Store: recordstore.Store{Dir: os.Getenv("RECORD_DIR")},
++		Notifier: notifyclient.Client{
++			URL: os.Getenv("NOTIFY_URL"), Client: &http.Client{Timeout: 5 * time.Second},
++		},
++	}
++	if err := process(f, s); err != nil {
++		fmt.Fprintf(stderr, "replay failed: %v\n", err)
++		return err
++	}
++	return nil
++}
++
++func process(r io.Reader, s *dispatch.Service) error {
++	scanner := bufio.NewScanner(r)
++	lineNo := 0
++	for scanner.Scan() {
++		lineNo++
++		id := strings.TrimSpace(scanner.Text())
++		if id == "" {
++			continue
++		}
++		if err := s.Submit(context.Background(), id); err != nil {
++			return fmt.Errorf("line %d: %w", lineNo, err)
++		}
++	}
++	if err := scanner.Err(); err != nil {
++		return err
++	}
++	return nil
++}
+--- /dev/null
++++ b/cmd/replay/main_test.go
+@@ -0,0 +1,74 @@
++package main
++
++import (
++	"context"
++	"errors"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++
++	"example.com/dispatch"
++	"example.com/dispatch/internal/recordstore"
++)
++
++type notifyFunc func(context.Context, string) error
++
++func (f notifyFunc) Notify(ctx context.Context, id string) error { return f(ctx, id) }
++
++func replayService(dir string, notify notifyFunc) *dispatch.Service {
++	return &dispatch.Service{Store: recordstore.Store{Dir: dir}, Notifier: notify}
++}
++
++func TestProcessSuccess(t *testing.T) {
++	var got []string
++	dir := t.TempDir()
++	notify := notifyFunc(func(_ context.Context, id string) error { got = append(got, id); return nil })
++	if err := process(strings.NewReader("  first  \n\n second\n"), replayService(dir, notify)); err != nil {
++		t.Fatal(err)
++	}
++	if strings.Join(got, ",") != "first,second" {
++		t.Fatalf("notifications = %v", got)
++	}
++	for _, id := range []string{"first", "second"} {
++		b, err := os.ReadFile(filepath.Join(dir, id))
++		if err != nil || string(b) != "queued\n" {
++			t.Fatalf("record %q = %q, error %v", id, b, err)
++		}
++	}
++}
++
++func TestProcessInvalidIDStops(t *testing.T) {
++	var got []string
++	dir := t.TempDir()
++	notify := notifyFunc(func(_ context.Context, id string) error { got = append(got, id); return nil })
++	err := process(strings.NewReader("first\n../bad\nlast\n"), replayService(dir, notify))
++	if err == nil || !strings.Contains(err.Error(), "line 2") {
++		t.Fatalf("process error = %v", err)
++	}
++	if strings.Join(got, ",") != "first" {
++		t.Fatalf("notifications before invalid ID = %v", got)
++	}
++	if _, err := os.Stat(filepath.Join(dir, "last")); !errors.Is(err, os.ErrNotExist) {
++		t.Fatalf("last record exists or unexpected stat error: %v", err)
++	}
++}
++
++func TestProcessNotificationFailureStops(t *testing.T) {
++	calls := 0
++	notify := notifyFunc(func(context.Context, string) error {
++		calls++
++		return errors.New("notification failed")
++	})
++	dir := t.TempDir()
++	err := process(strings.NewReader("first\nsecond\n"), replayService(dir, notify))
++	if err == nil || calls != 1 {
++		t.Fatalf("process error = %v, notifications = %d", err, calls)
++	}
++	if _, err := os.Stat(filepath.Join(dir, "first")); err != nil {
++		t.Fatalf("first record missing after notification failure: %v", err)
++	}
++	if _, err := os.Stat(filepath.Join(dir, "second")); !errors.Is(err, os.ErrNotExist) {
++		t.Fatalf("second record exists or unexpected stat error: %v", err)
++	}
++}
+--- a/cmd/server/main.go
++++ b/cmd/server/main.go
+@@ -4 +3,0 @@
+-	"example.com/dispatch"
+@@ -8,0 +8,4 @@
++
++	"example.com/dispatch"
++	"example.com/dispatch/internal/notifyclient"
++	"example.com/dispatch/internal/recordstore"
+@@ -12 +15,6 @@
+-	s := &dispatch.Service{Dir: os.Getenv("RECORD_DIR"), NotifyURL: os.Getenv("NOTIFY_URL"), Client: &http.Client{Timeout: 5 * time.Second}}
++	s := &dispatch.Service{
++		Store: recordstore.Store{Dir: os.Getenv("RECORD_DIR")},
++		Notifier: notifyclient.Client{
++			URL: os.Getenv("NOTIFY_URL"), Client: &http.Client{Timeout: 5 * time.Second},
++		},
++	}
+--- a/dispatch.go
++++ b/dispatch.go
+@@ -12 +12,12 @@
+-// Service processes one delivery request at a time. Callers serialize access.
++// Store persists a record for an ID.
++type Store interface {
++	Save(context.Context, string) error
++}
++
++// Notifier sends an outbound notification for an ID.
++type Notifier interface {
++	Notify(context.Context, string) error
++}
++
++// Service validates an ID, persists its record, then sends its notification.
++// A notification failure leaves the record in place; no retry is promised.
+@@ -13,0 +25,4 @@
++	Store    Store
++	Notifier Notifier
++
++	// Deprecated compatibility fields for callers that configure Service directly.
+@@ -18,2 +32,0 @@
+-// Submit validates an ID, writes its record, then notifies the external service.
+-// A notification failure leaves the record in place and returns an error; no retry is promised.
+@@ -24 +37,5 @@
+-	if err := os.WriteFile(filepath.Join(s.Dir, id), []byte("queued\n"), 0600); err != nil {
++	if s.Store != nil {
++		if err := s.Store.Save(ctx, id); err != nil {
++			return err
++		}
++	} else if err := os.WriteFile(filepath.Join(s.Dir, id), []byte("queued\n"), 0600); err != nil {
+@@ -25,0 +43,3 @@
++	}
++	if s.Notifier != nil {
++		return s.Notifier.Notify(ctx, id)
+@@ -40,0 +61,2 @@
++
++// ServeHTTP preserves the original HTTP contract for existing callers.
+--- a/dispatch_test.go
++++ b/dispatch_test.go
+@@ -5 +4,0 @@
+-	"io"
+@@ -8,2 +6,0 @@
+-	"os"
+-	"path/filepath"
+@@ -13,14 +10,13 @@
+-func TestSubmit(t *testing.T) {
+-	var notified string
+-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+-		b, err := io.ReadAll(r.Body)
+-		if err != nil {
+-			t.Error(err)
+-		}
+-		notified = string(b)
+-		w.WriteHeader(204)
+-	}))
+-	defer ts.Close()
+-	s := Service{Dir: t.TempDir(), NotifyURL: ts.URL, Client: ts.Client()}
+-	if err := s.Submit(context.Background(), "a"); err != nil {
+-		t.Fatal(err)
++type storeFunc func(context.Context, string) error
++
++func (f storeFunc) Save(ctx context.Context, id string) error { return f(ctx, id) }
++
++type notifierFunc func(context.Context, string) error
++
++func (f notifierFunc) Notify(ctx context.Context, id string) error { return f(ctx, id) }
++
++func TestSubmitValidatesBeforeDependencies(t *testing.T) {
++	called := false
++	s := Service{
++		Store:    storeFunc(func(context.Context, string) error { called = true; return nil }),
++		Notifier: notifierFunc(func(context.Context, string) error { called = true; return nil }),
+@@ -28,3 +24,2 @@
+-	b, err := os.ReadFile(filepath.Join(s.Dir, "a"))
+-	if err != nil || string(b) != "queued\n" || notified != "a" {
+-		t.Fatalf("record %q, notified %q, error %v", b, notified, err)
++	if err := s.Submit(context.Background(), "../bad"); err == nil || called {
++		t.Fatalf("Submit() = %v, dependencies called = %v", err, called)
+@@ -33,6 +28,5 @@
+-func TestNotificationFailureKeepsRecord(t *testing.T) {
+-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(503) }))
+-	defer ts.Close()
+-	s := Service{Dir: t.TempDir(), NotifyURL: ts.URL, Client: ts.Client()}
+-	if s.Submit(context.Background(), "a") == nil {
+-		t.Fatal("failure reported as success")
++
++func TestServeHTTPContract(t *testing.T) {
++	s := Service{
++		Store:    storeFunc(func(context.Context, string) error { return nil }),
++		Notifier: notifierFunc(func(context.Context, string) error { return nil }),
+@@ -40,2 +34,5 @@
+-	if _, err := os.Stat(filepath.Join(s.Dir, "a")); err != nil {
+-		t.Fatal(err)
++	r := httptest.NewRequest(http.MethodPost, "/?id=a", nil)
++	w := httptest.NewRecorder()
++	s.ServeHTTP(w, r)
++	if w.Code != http.StatusNoContent || w.Body.Len() != 0 {
++		t.Fatalf("response = %d %q", w.Code, w.Body.String())
+--- /dev/null
++++ b/internal/notifyclient/client.go
+@@ -0,0 +1,30 @@
++package notifyclient
++
++import (
++	"context"
++	"fmt"
++	"net/http"
++	"strings"
++)
++
++// Client owns the outbound notification HTTP protocol.
++type Client struct {
++	URL    string
++	Client *http.Client
++}
++
++func (c Client) Notify(ctx context.Context, id string) error {
++	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.URL, strings.NewReader(id))
++	if err != nil {
++		return err
++	}
++	resp, err := c.Client.Do(req)
++	if err != nil {
++		return err
++	}
++	defer resp.Body.Close()
++	if resp.StatusCode != http.StatusNoContent {
++		return fmt.Errorf("notification status %d", resp.StatusCode)
++	}
++	return nil
++}
+--- /dev/null
++++ b/internal/recordstore/store.go
+@@ -0,0 +1,14 @@
++package recordstore
++
++import (
++	"context"
++	"os"
++	"path/filepath"
++)
++
++// Store writes the dispatch record representation to disk.
++type Store struct{ Dir string }
++
++func (s Store) Save(_ context.Context, id string) error {
++	return os.WriteFile(filepath.Join(s.Dir, id), []byte("queued\n"), 0600)
++}

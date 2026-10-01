@@ -1,0 +1,290 @@
+--- /dev/null
++++ b/cmd/replay/main.go
+@@ -0,0 +1,51 @@
++package main
++
++import (
++	"bufio"
++	"context"
++	"fmt"
++	"net/http"
++	"os"
++	"strings"
++	"time"
++
++	"example.com/dispatch/internal/notifier"
++	"example.com/dispatch/internal/operation"
++	"example.com/dispatch/internal/recordstore"
++)
++
++func main() {
++	if len(os.Args) != 2 {
++		fmt.Fprintln(os.Stderr, "usage: replay <file>")
++		os.Exit(1)
++	}
++	file, err := os.Open(os.Args[1])
++	if err != nil {
++		fmt.Fprintln(os.Stderr, err)
++		os.Exit(1)
++	}
++	defer file.Close()
++
++	svc := &operation.Service{
++		Store:    recordstore.Files{Dir: os.Getenv("RECORD_DIR")},
++		Notifier: notifier.HTTP{URL: os.Getenv("NOTIFY_URL"), Client: &http.Client{Timeout: 5 * time.Second}},
++	}
++	if err := replay(context.Background(), file, svc); err != nil {
++		fmt.Fprintln(os.Stderr, err)
++		os.Exit(1)
++	}
++}
++
++func replay(ctx context.Context, input *os.File, svc *operation.Service) error {
++	scanner := bufio.NewScanner(input)
++	for scanner.Scan() {
++		id := strings.TrimSpace(scanner.Text())
++		if id == "" {
++			continue
++		}
++		if err := svc.Submit(ctx, id); err != nil {
++			return fmt.Errorf("replay %q: %w", id, err)
++		}
++	}
++	return scanner.Err()
++}
+--- /dev/null
++++ b/cmd/replay/main_test.go
+@@ -0,0 +1,98 @@
++package main
++
++import (
++	"context"
++	"io"
++	"net/http"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++
++	"example.com/dispatch/internal/notifier"
++	"example.com/dispatch/internal/operation"
++	"example.com/dispatch/internal/recordstore"
++)
++
++type roundTripFunc func(*http.Request) (*http.Response, error)
++
++func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
++
++func runReplay(t *testing.T, contents string, transport roundTripFunc) (string, error) {
++	t.Helper()
++	dir := t.TempDir()
++	input, err := os.CreateTemp(t.TempDir(), "ids")
++	if err != nil {
++		t.Fatal(err)
++	}
++	if _, err := input.WriteString(contents); err != nil {
++		t.Fatal(err)
++	}
++	if _, err := input.Seek(0, 0); err != nil {
++		t.Fatal(err)
++	}
++	client := &http.Client{Transport: transport}
++	svc := &operation.Service{Store: recordstore.Files{Dir: dir}, Notifier: notifier.HTTP{URL: "http://notify.invalid", Client: client}}
++	err = replay(context.Background(), input, svc)
++	input.Close()
++	return dir, err
++}
++
++func TestReplaySuccessTrimsAndSkipsBlankLines(t *testing.T) {
++	var notified []string
++	dir, err := runReplay(t, "  first \n\n second\n", func(r *http.Request) (*http.Response, error) {
++		b, _ := io.ReadAll(r.Body)
++		notified = append(notified, string(b))
++		return &http.Response{StatusCode: http.StatusNoContent, Body: io.NopCloser(strings.NewReader("")), Header: make(http.Header), Request: r}, nil
++	})
++	if err != nil {
++		t.Fatal(err)
++	}
++	if strings.Join(notified, ",") != "first,second" {
++		t.Fatalf("notifications = %v", notified)
++	}
++	for _, id := range []string{"first", "second"} {
++		b, err := os.ReadFile(filepath.Join(dir, id))
++		if err != nil || string(b) != "queued\n" {
++			t.Fatalf("record %q = %q, %v", id, b, err)
++		}
++	}
++}
++
++func TestReplayInvalidIDStops(t *testing.T) {
++	var notified []string
++	dir, err := runReplay(t, "first\n../bad\nafter\n", func(r *http.Request) (*http.Response, error) {
++		b, _ := io.ReadAll(r.Body)
++		notified = append(notified, string(b))
++		return &http.Response{StatusCode: http.StatusNoContent, Body: io.NopCloser(strings.NewReader("")), Header: make(http.Header), Request: r}, nil
++	})
++	if err == nil {
++		t.Fatal("expected invalid ID error")
++	}
++	if strings.Join(notified, ",") != "first" {
++		t.Fatalf("notifications after invalid ID = %v", notified)
++	}
++	if _, statErr := os.Stat(filepath.Join(dir, "after")); !os.IsNotExist(statErr) {
++		t.Fatalf("later record exists or stat failed unexpectedly: %v", statErr)
++	}
++}
++
++func TestReplayNotificationFailureStopsAndKeepsRecord(t *testing.T) {
++	var calls int
++	dir, err := runReplay(t, "first\nafter\n", func(r *http.Request) (*http.Response, error) {
++		calls++
++		return &http.Response{StatusCode: http.StatusServiceUnavailable, Body: io.NopCloser(strings.NewReader("")), Header: make(http.Header), Request: r}, nil
++	})
++	if err == nil {
++		t.Fatal("expected notification error")
++	}
++	if calls != 1 {
++		t.Fatalf("notification calls = %d", calls)
++	}
++	if b, readErr := os.ReadFile(filepath.Join(dir, "first")); readErr != nil || string(b) != "queued\n" {
++		t.Fatalf("failed notification record = %q, %v", b, readErr)
++	}
++	if _, statErr := os.Stat(filepath.Join(dir, "after")); !os.IsNotExist(statErr) {
++		t.Fatalf("later record exists or stat failed unexpectedly: %v", statErr)
++	}
++}
+--- a/dispatch.go
++++ b/dispatch.go
+@@ -5 +4,0 @@
+-	"fmt"
+@@ -7,3 +6,4 @@
+-	"os"
+-	"path/filepath"
+-	"strings"
++
++	"example.com/dispatch/internal/notifier"
++	"example.com/dispatch/internal/operation"
++	"example.com/dispatch/internal/recordstore"
+@@ -12 +12 @@
+-// Service processes one delivery request at a time. Callers serialize access.
++// Service preserves the original HTTP and direct Submit facade.
+@@ -18,2 +18,7 @@
+-// Submit validates an ID, writes its record, then notifies the external service.
+-// A notification failure leaves the record in place and returns an error; no retry is promised.
++func (s *Service) operation() *operation.Service {
++	return &operation.Service{
++		Store:    recordstore.Files{Dir: s.Dir},
++		Notifier: notifier.HTTP{URL: s.NotifyURL, Client: s.Client},
++	}
++}
++
+@@ -21,19 +26 @@
+-	if id == "" || strings.ContainsAny(id, "/\\") || id == "." || id == ".." {
+-		return fmt.Errorf("invalid id")
+-	}
+-	if err := os.WriteFile(filepath.Join(s.Dir, id), []byte("queued\n"), 0600); err != nil {
+-		return err
+-	}
+-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.NotifyURL, strings.NewReader(id))
+-	if err != nil {
+-		return err
+-	}
+-	resp, err := s.Client.Do(req)
+-	if err != nil {
+-		return err
+-	}
+-	defer resp.Body.Close()
+-	if resp.StatusCode != http.StatusNoContent {
+-		return fmt.Errorf("notification status %d", resp.StatusCode)
+-	}
+-	return nil
++	return s.operation().Submit(ctx, id)
+@@ -40,0 +28 @@
++
+--- /dev/null
++++ b/internal/notifier/http.go
+@@ -0,0 +1,30 @@
++// Package notifier owns the outbound notification HTTP protocol.
++package notifier
++
++import (
++	"context"
++	"fmt"
++	"net/http"
++	"strings"
++)
++
++type HTTP struct {
++	URL    string
++	Client *http.Client
++}
++
++func (n HTTP) Notify(ctx context.Context, id string) error {
++	req, err := http.NewRequestWithContext(ctx, http.MethodPost, n.URL, strings.NewReader(id))
++	if err != nil {
++		return err
++	}
++	resp, err := n.Client.Do(req)
++	if err != nil {
++		return err
++	}
++	defer resp.Body.Close()
++	if resp.StatusCode != http.StatusNoContent {
++		return fmt.Errorf("notification status %d", resp.StatusCode)
++	}
++	return nil
++}
+--- /dev/null
++++ b/internal/operation/operation.go
+@@ -0,0 +1,34 @@
++// Package operation owns dispatch validation and sequencing.
++package operation
++
++import (
++	"context"
++	"fmt"
++	"strings"
++)
++
++// Store persists a validated dispatch record.
++type Store interface {
++	Save(ctx context.Context, id string) error
++}
++
++// Notifier sends a dispatch notification.
++type Notifier interface {
++	Notify(ctx context.Context, id string) error
++}
++
++// Service validates an ID, persists it, and notifies in that order.
++type Service struct {
++	Store    Store
++	Notifier Notifier
++}
++
++func (s *Service) Submit(ctx context.Context, id string) error {
++	if id == "" || strings.ContainsAny(id, "/\\") || id == "." || id == ".." {
++		return fmt.Errorf("invalid id")
++	}
++	if err := s.Store.Save(ctx, id); err != nil {
++		return err
++	}
++	return s.Notifier.Notify(ctx, id)
++}
+--- /dev/null
++++ b/internal/recordstore/files.go
+@@ -0,0 +1,14 @@
++// Package recordstore owns the on-disk dispatch record representation.
++package recordstore
++
++import (
++	"context"
++	"os"
++	"path/filepath"
++)
++
++type Files struct{ Dir string }
++
++func (f Files) Save(_ context.Context, id string) error {
++	return os.WriteFile(filepath.Join(f.Dir, id), []byte("queued\n"), 0600)
++}

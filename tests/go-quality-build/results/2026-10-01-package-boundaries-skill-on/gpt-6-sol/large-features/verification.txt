@@ -1,0 +1,48 @@
+UTC: 2026-10-01T14:48:04.294902+00:00
+Workdir: /private/tmp/go-skill-on-archive-8xty4xd1/sol/large-features
+go version go1.26.5 darwin/arm64
+GOWORK=off; disposable GOCACHE; approved local httptest listeners.
+Patch reconstruction: byte-for-byte equal to all trial Go/module source.
+
+$ rtk proxy go test ./...
+?   	example.com/commerce/cmd/invoice	[no test files]
+ok  	example.com/commerce/cmd/settle	0.205s
+?   	example.com/commerce/cmd/shop	[no test files]
+ok  	example.com/commerce/internal/billing	0.321s
+?   	example.com/commerce/internal/catalog	[no test files]
+ok  	example.com/commerce/internal/invoicerow	0.609s
+ok  	example.com/commerce/internal/paymentgateway	0.468s
+Exit: 0
+
+$ rtk proxy go test -count=1 -v ./...
+?   	example.com/commerce/cmd/invoice	[no test files]
+=== RUN   TestRunStopsAtMalformedRow
+--- PASS: TestRunStopsAtMalformedRow (0.00s)
+=== RUN   TestRunStopsAtGatewayFailure
+--- PASS: TestRunStopsAtGatewayFailure (0.00s)
+PASS
+ok  	example.com/commerce/cmd/settle	0.166s
+?   	example.com/commerce/cmd/shop	[no test files]
+=== RUN   TestCharge
+--- PASS: TestCharge (0.00s)
+=== RUN   TestDeclineDoesNotWrite
+--- PASS: TestDeclineDoesNotWrite (0.00s)
+=== RUN   TestInvalidInvoiceDoesNotCharge
+--- PASS: TestInvalidInvoiceDoesNotCharge (0.00s)
+PASS
+ok  	example.com/commerce/internal/billing	0.355s
+?   	example.com/commerce/internal/catalog	[no test files]
+=== RUN   TestCodecAndReader
+--- PASS: TestCodecAndReader (0.00s)
+=== RUN   TestRejectMalformedRows
+--- PASS: TestRejectMalformedRows (0.00s)
+PASS
+ok  	example.com/commerce/internal/invoicerow	0.257s
+=== RUN   TestRequestBytesAndStatus
+--- PASS: TestRequestBytesAndStatus (0.00s)
+PASS
+ok  	example.com/commerce/internal/paymentgateway	0.478s
+Exit: 0
+
+$ rtk proxy go vet ./...
+Exit: 0
