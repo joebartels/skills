@@ -1,0 +1,105 @@
+{
+  "run_id": "2026-10-01-combined",
+  "stage": "first-pass combined reviewed; Architecture A, Correctness B, Testing C-; review-guided candidate repair needed",
+  "harness": "Codex collaboration subagents",
+  "model": "gpt-6-luna",
+  "fork_turns": "none",
+  "reasoning_override": null,
+  "provenance": "Controller-attested fresh author. All three skills supplied and selected/opened per unedited report, including package-maps reference. No automatic routing claim.",
+  "expected_judgments_withheld": true,
+  "dispatch_wrapper": "Full wrapper bytes unavailable; exact supplied prompt file preserved byte-for-byte.",
+  "skills": [
+    {
+      "id": "go-package-boundaries",
+      "source_revision": "0424a7892022e14d5338153da5d0181b22008381",
+      "files_sha256": {
+        "skills/go-package-boundaries/SKILL.md": "3245b2347309d6238950be43e269c05720dbcf5132548dd661955c9e428d3ca7",
+        "skills/go-package-boundaries/references/package-maps.md": "19c2e6f964486abe11028ba04e443fc76eb39236538ee5d9ef25400cc8ecfc7f"
+      }
+    },
+    {
+      "id": "go-api-contracts",
+      "source_revision": "0424a7892022e14d5338153da5d0181b22008381",
+      "files_sha256": {
+        "skills/go-api-contracts/SKILL.md": "c655df596414850f06c66ffcb34b5c5606aa73d3381051942dc45e99cd54a0ba"
+      }
+    },
+    {
+      "id": "go-interfaces-and-composition",
+      "source_revision": "0424a7892022e14d5338153da5d0181b22008381",
+      "files_sha256": {
+        "skills/go-interfaces-and-composition/SKILL.md": "41c9cd023682e006b84b37ddadf39bc37f0f01b2bfd8af7609272799906d9621"
+      }
+    }
+  ],
+  "fixture_sha256": {
+    "README.md": "abfc48ed51b3169f42f4ecba8ba43fd8e71f60b42443bbab8ed96390f9ee7a93",
+    "cmd/server/main.go": "685220af9e1f0cb541e3ee3df8bcc44ab0778693697504e520d73e28586e8793",
+    "fielddesk.go": "30d0976653caff04cbf3afa12509eacfac76942c0af1df36d5c0562cc8b2756d",
+    "fielddesk_test.go": "357365937c0fe86e58233ad61a0f52a4918fedd43d4402444ef74798989bd2d1",
+    "go.mod": "4d2a01dd430a5b58229ac516d2a3a87432b755e8a3141c371a223db49fa0f29a"
+  },
+  "preparation_readme_sha256": "0fa0ea1f427e8546bc2e658fcbf314a1a92932dd95c0934349b29f0b67cb12b5",
+  "case": {
+    "id": "combined-evolution",
+    "prompt": "combined-evolution/prompt.txt",
+    "trial_report": "combined-evolution/trial-report.md",
+    "source_patch": "combined-evolution/source.patch",
+    "verification": "combined-evolution/verification.json",
+    "source_sha256": {
+      "README.md": "abfc48ed51b3169f42f4ecba8ba43fd8e71f60b42443bbab8ed96390f9ee7a93",
+      "cmd/import-checkins/main.go": "6969e4a1cab64772235c64f3823eb736dcead1341e5d44d3c925969a6583a2fe",
+      "cmd/import-checkins/main_test.go": "b810e5c75fd6c1cc9b8242d1d49afad4f94abf15ba9adaf690055fb45702b2ec",
+      "cmd/server/main.go": "6d2972346444b291dbeeff41d19d4bf00fb9502b20648d587079059cb5f9e8a1",
+      "fielddesk.go": "c70c2824b5c0fe14b8a633c549670bccf4988830e312e503b37c059a770d67c6",
+      "fielddesk_test.go": "b9fa85132c5304bc234491d7ed4bbcef51f5cd15c9f8d8b34e24470326f8d32e",
+      "go.mod": "4d2a01dd430a5b58229ac516d2a3a87432b755e8a3141c371a223db49fa0f29a"
+    },
+    "artifact_sha256": {
+      "prompt.txt": "e25e473ccdc2180ae3bf44f44fc59206b3e212de1d07384f8cbb3a410b3e4e49",
+      "trial-report.md": "6c37021df9c6e3def1a930e3706ab98a095e8110f58c6eb74601489ae6439c97",
+      "source.patch": "8a1a25d1785dab67131e7611fbc3016db857a0b8da19840d7548ebc55e331c9c",
+      "verification.json": "17a8427045237d3bc47c8ab1e4a3f9cc5fe35420354f3dfc0ddd998db17cc098"
+    },
+    "review_status": "complete",
+    "architecture_grade": "A",
+    "correctness_grade": "B",
+    "testing_grade": "C-",
+    "findings": {
+      "correctness": [
+        "C1: moderate server startup/bind failure returns exit 0 after cleanup"
+      ],
+      "testing": [
+        "T1: major host join contract untested; no-worker-join mutation survives",
+        "T2: moderate CLI failure process-exit gap; exit-zero mutation survives",
+        "T3: moderate blank bulletin text validation gap; removed-text-validation mutation survives",
+        "T4: moderate publication atomicity/failure-preservation gap; direct-write mutation survives"
+      ]
+    }
+  },
+  "go_version": "go version go1.26.5 darwin/arm64",
+  "limitations": [
+    "No automatic routing, actual minimum-Go execution, cross-platform check or combined consistency conclusion.",
+    "Source-only patch includes project docs, CLI and tests, excludes author report and generated caches.",
+    "Author reports in-memory RoundTripper use because sandbox prevented listener binding."
+  ],
+  "independent_reviews": [
+    {
+      "artifact": "review-arch.md",
+      "sha256": "58f67615dc543806af6606c6274fe70c3cf93fd0157a206f9a4ea7b8583e1faf",
+      "scope": "Architecture and Design",
+      "blind": true,
+      "reviewer_model": "not recorded in supplied report",
+      "limits": "Unedited report preserves probes, mutations and sandbox limitations; archive stage does not rerun reviewer probes."
+    },
+    {
+      "artifact": "review-correctness-testing.md",
+      "sha256": "92896a69726646cd7d2ed4bad88b6297f26e564ad5d52690eb910ff9d9bc7c54",
+      "scope": "Correctness and Compatibility; Testing",
+      "blind": true,
+      "reviewer_model": "not recorded in supplied report",
+      "limits": "Unedited report preserves probes, mutations and sandbox limitations; archive stage does not rerun reviewer probes."
+    }
+  ],
+  "instruction_consistency": "No conflicting package/interface/API instructions observed; structural choices earned Architecture A. First-pass defects require candidate repair; this is not a clean combined gate."
+}
