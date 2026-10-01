@@ -1,0 +1,128 @@
+{
+  "run_id": "2026-10-01-package-boundaries-baseline",
+  "source_fixture_revision": "4ab6b82106b3b04a035203956606f7be0b328229",
+  "model": "gpt-6-sol",
+  "harness": "Codex collaboration subagent; fresh context per case",
+  "build_skill_loaded": false,
+  "expected_judgments_withheld": true,
+  "review_status": "complete",
+  "prompt_scope": "Exact case prompt in each prompt.txt; common dispatch wrapper below, substituting case-id, case-dir and exact prompt.",
+  "cases": [
+    {
+      "id": "small-cli",
+      "prompt": "small-cli/prompt.txt",
+      "source_patch": "small-cli/source.patch",
+      "trial_report": "small-cli/trial-report.md",
+      "verification": "small-cli/verification.txt",
+      "source_sha256": {
+        "go.mod": "3e55eb6ae100d608ef5369ffbcfaf0fe56d1f9fd7aabbb36e33a81981373f05b",
+        "main.go": "dfe0520e1e42fb4a0604e2246456a662bfc79dc47cdf44d57d8b4f6dcff27b3d",
+        "main_test.go": "d7da5e179be97d4ebd82e318e64a25f16130377dadb1e61571df7f1a1fbd823e"
+      },
+      "patch_reconstruction": "verified byte-for-byte",
+      "review": "baseline-review.md",
+      "architecture_grade": "A",
+      "correctness_grade": "A"
+    },
+    {
+      "id": "small-library",
+      "prompt": "small-library/prompt.txt",
+      "source_patch": "small-library/source.patch",
+      "trial_report": "small-library/trial-report.md",
+      "verification": "small-library/verification.txt",
+      "source_sha256": {
+        "go.mod": "c6bb359141b0738ffd90e06e7c7c65657a2a302803d4172c4186792ec79c93e4",
+        "span.go": "ba7a78f5c2c9a7eee4f28ba070b4a2c596c16d3c6fd675b2b1899f0dbb4f136f",
+        "span_test.go": "7a153c405f49b69607548f6df5e24ccf5f742d8e0f02862b61d1b72636ffb1db"
+      },
+      "patch_reconstruction": "verified byte-for-byte",
+      "review": "baseline-review.md",
+      "architecture_grade": "A",
+      "correctness_grade": "A"
+    },
+    {
+      "id": "medium-service",
+      "prompt": "medium-service/prompt.txt",
+      "source_patch": "medium-service/source.patch",
+      "trial_report": "medium-service/trial-report.md",
+      "verification": "medium-service/verification.txt",
+      "source_sha256": {
+        "cmd/replay/main.go": "fdb66a1cb1b14cb6ad46a5566975c71d30adcf69559ca4cd306ff6ec829b5158",
+        "cmd/replay/main_test.go": "88f67df9e40be7df07d866948e16da2cc2df590a92fc108260cb7c23d0a7e590",
+        "cmd/server/main.go": "47a5a1234eca05377fbccd27580fbb686bbec6cfff23f72f66588e657d5316d1",
+        "dispatch.go": "48e3ed07abdb09103a08933fd91365f774413ea7c7fb04189111c8dba3556510",
+        "dispatch_test.go": "d39fe7f7a0f42a8a8edc685d390692bef15f9937c4a1d45ac0b5353114df5e66",
+        "go.mod": "a26cbe71b559d6d8ce2b24c47bcac1de5df7295a3df33302998d55ea4d20123a",
+        "notify/http.go": "8162c48cb19497f6d2fad2f8b937cf714c4fba1b12d7cfab0e63043f03305ef1",
+        "store/file.go": "75054171f031e94402bbd29e1aeb93f8f0a62879aa7a608248dfab0ea8015776"
+      },
+      "patch_reconstruction": "verified byte-for-byte",
+      "review": "baseline-review.md",
+      "architecture_grade": "A",
+      "correctness_grade": "A-"
+    },
+    {
+      "id": "large-features",
+      "prompt": "large-features/prompt.txt",
+      "source_patch": "large-features/source.patch",
+      "trial_report": "large-features/trial-report.md",
+      "verification": "large-features/verification.txt",
+      "source_sha256": {
+        "cmd/invoice/main.go": "ef2d524566325e2ab129c8a597d4d9f38631b7df5288c09856b8932e22896f69",
+        "cmd/settle/main.go": "c14927062d678e49b4c9a1ced94ee5120573aeb35479ae7426375b09cd84379c",
+        "cmd/settle/main_test.go": "d6c9bd3dbdea718f4bb756460fbe220656c0f3b58c2903fea80d509ba278008e",
+        "cmd/shop/main.go": "56c5f50fa5a9132daaed281f5e12aad6226a26230aff905d3a529a53afbef7a9",
+        "go.mod": "00ba02cccbfd4ad2c0038b30f2ef859322cdf6f528e1cd66133541b13d5c2976",
+        "internal/billing/billing.go": "994e0a0231effd18fa46fa066eaccd729fd3e7fb84d5cb9ef0eefbf6b0b7e5bd",
+        "internal/billing/billing_test.go": "21aa0cb7d0901522b51916d440b93cb9d7d622a36561794da36636ec22f75879",
+        "internal/billing/row.go": "3cc81ee5979777ad71aed55dd7895e215a4d1e127e82ad6db0e614dbf9515691",
+        "internal/billing/row_test.go": "b844030ae00064d6cf73ab5a08b5ab641cb829737bcdadcbedfa23470ef6e34b",
+        "internal/catalog/catalog.go": "8abeb490132aced799e5e6772993bfa2fd67eddf723284630d6038c8ba18ac1c",
+        "internal/gateway/http.go": "5fdef93417ad51c2053fef7424d89d9ea52096125fef3b32b4a442458a88484b",
+        "internal/gateway/http_test.go": "d6c399c531a86a56e6a84906ac964d4104c85491b713f15486e463aec15ae3ee"
+      },
+      "patch_reconstruction": "verified byte-for-byte",
+      "review": "baseline-review.md",
+      "architecture_grade": "A",
+      "correctness_grade": "A"
+    },
+    {
+      "id": "not-package-work",
+      "prompt": "not-package-work/prompt.txt",
+      "source_patch": "not-package-work/source.patch",
+      "trial_report": "not-package-work/trial-report.md",
+      "verification": "not-package-work/verification.txt",
+      "source_sha256": {
+        "go.mod": "ed77974ffe7701d48263de9e59e7f8e19d9dae27c406f7830ac3b1e19ac612c2",
+        "round.go": "26b77b7fbaf7f93c0c21138e230e4ec0fbef62f19741465eea8af3b9ff9cc005",
+        "round_test.go": "b625260744ee53e87d40f755abd8ab5d3cdd2249a012fd106189c4a437611035"
+      },
+      "patch_reconstruction": "verified byte-for-byte",
+      "review": "baseline-review.md",
+      "architecture_grade": "Not applicable",
+      "correctness_grade": "A"
+    }
+  ],
+  "dispatch_wrapper": "Blind baseline Go implementation trial. Work only in /private/tmp/go-quality-build-eval.TijGDa/baseline/<case-id>, a disposable copy. User request: <exact evals.json prompt>. Do not read evaluation JSON, design record, planned Go build skills, or expected answers. Do not dispatch subagents. All shell commands must start with rtk. Write a concise report with commands/results and package decision to <case-dir>/trial-report.md. Return final status, changed files, tests, and report path.",
+  "fork_turns": "none",
+  "independent_review": {
+    "artifact": "baseline-review.md",
+    "scope": "Architecture and Design; Correctness and Compatibility",
+    "judgments_withheld": [
+      "evals.json",
+      "source-audit.md",
+      "proposed build skills",
+      "trial-report.md"
+    ],
+    "reviewer_model": "not recorded in supplied report",
+    "findings": [
+      {
+        "id": "MS-F1",
+        "case": "medium-service",
+        "severity": "minor",
+        "owner": "Correctness",
+        "summary": "Default Scanner token cap rejects long whitespace-only lines before trimming."
+      }
+    ]
+  }
+}

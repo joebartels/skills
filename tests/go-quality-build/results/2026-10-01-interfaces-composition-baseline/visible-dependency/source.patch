@@ -1,0 +1,207 @@
+--- a/README.md
++++ b/README.md
+@@ -1,5 +1,17 @@
+ # Receipts
+ 
+-This internal library sends one receipt per Send call. The current single-tenant host sets RECEIPT_URL and uses http.DefaultClient. The new host keeps multiple tenant accounts active simultaneously, with separate endpoints and HTTP policies (authentication transport and timeouts). It already creates and owns those clients. It cannot change process-wide settings between requests. This internal API may change together with its callers; no compatibility shim is required.
++This internal library sends one receipt per Send call. A `Sender` owns one endpoint and uses the HTTP client supplied by its host. Create one sender per tenant; each client may have its own authentication transport and timeout policy. A configured sender can be called concurrently.
+ 
+-The wire contract is POST to the configured URL, Content-Type application/json, body {"id":"..."}. JSON escaping must be correct. Any 2xx response succeeds; other statuses or transport failures are errors. Calls are synchronous, close response bodies, and respect the caller's context. No retry or background delivery is requested. Go 1.22 is supported.
++```go
++tenantAClient := &http.Client{Transport: tenantATransport, Timeout: 3 * time.Second}
++tenantBClient := &http.Client{Transport: tenantBTransport, Timeout: 8 * time.Second}
++
++tenantA := receipts.NewSender("https://tenant-a.example/receipts", tenantAClient)
++tenantB := receipts.NewSender("https://tenant-b.example/receipts", tenantBClient)
++
++// These can run at the same time; each call uses its sender's endpoint and client.
++go tenantA.Send(ctx, "receipt-a")
++go tenantB.Send(ctx, "receipt-b")
++```
++
++The wire contract is POST to the configured URL, Content-Type application/json, body {"id":"..."}. JSON escaping must be correct. Any 2xx response succeeds; other statuses or transport failures are errors. Calls are synchronous, close response bodies, and respect the caller's context, including cancellation during the HTTP request. No retry or background delivery is requested. Go 1.22 is supported. Tests use in-memory transports and require no remote service.
+--- a/receipt.go
++++ b/receipt.go
+@@ -6,24 +6,39 @@
+ 	"encoding/json"
+ 	"fmt"
+ 	"net/http"
+-	"os"
+ )
+ 
+-type Sender struct{}
++// Sender sends receipts to one configured endpoint using one configured client.
++// Configure it before sharing it between goroutines; its fields are immutable.
++type Sender struct {
++	endpoint string
++	client   *http.Client
++}
+ 
+-func (Sender) Send(ctx context.Context, id string) error {
++// NewSender creates a sender for endpoint using the host-owned client. The
++// client may carry tenant-specific authentication, transport, and timeout
++// policy, and may safely be used by concurrent calls.
++func NewSender(endpoint string, client *http.Client) Sender {
++	return Sender{endpoint: endpoint, client: client}
++}
++
++// Send synchronously sends one receipt and honors ctx for the HTTP request.
++func (s Sender) Send(ctx context.Context, id string) error {
++	if s.client == nil {
++		return fmt.Errorf("receipt HTTP client is nil")
++	}
+ 	body, err := json.Marshal(struct {
+ 		ID string `json:"id"`
+ 	}{id})
+ 	if err != nil {
+ 		return err
+ 	}
+-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, os.Getenv("RECEIPT_URL"), bytes.NewReader(body))
++	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.endpoint, bytes.NewReader(body))
+ 	if err != nil {
+ 		return err
+ 	}
+ 	req.Header.Set("Content-Type", "application/json")
+-	response, err := http.DefaultClient.Do(req)
++	response, err := s.client.Do(req)
+ 	if err != nil {
+ 		return err
+ 	}
+--- a/receipt_test.go
++++ b/receipt_test.go
+@@ -2,30 +2,119 @@
+ 
+ import (
+ 	"context"
++	"encoding/json"
+ 	"io"
+ 	"net/http"
+ 	"strings"
++	"sync"
+ 	"testing"
++	"time"
+ )
+ 
+ type transportFunc func(*http.Request) (*http.Response, error)
+ 
+ func (f transportFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+-func TestSend(t *testing.T) {
+-	t.Setenv("RECEIPT_URL", "https://receipts.invalid/send")
+-	original := http.DefaultClient
+-	t.Cleanup(func() { http.DefaultClient = original })
+-	http.DefaultClient = &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
+-		body, err := io.ReadAll(r.Body)
+-		if err != nil {
+-			return nil, err
+-		}
+-		if r.Method != "POST" || r.URL.String() != "https://receipts.invalid/send" || r.Header.Get("Content-Type") != "application/json" || string(body) != `{"id":"abc"}` {
+-			t.Errorf("unexpected request: %s %s %q", r.Method, r.URL, body)
+-		}
+-		return &http.Response{StatusCode: 204, Body: io.NopCloser(strings.NewReader("")), Header: make(http.Header)}, nil
+-	})}
+-	if err := (Sender{}).Send(context.Background(), "abc"); err != nil {
+-		t.Fatal(err)
++
++func TestTwoSendersCanSendConcurrently(t *testing.T) {
++	type received struct {
++		authorization string
++		id            string
++	}
++	requests := make(chan received, 2)
++	entered := make(chan struct{}, 2)
++	release := make(chan struct{})
++	newClient := func(token, endpoint string) *http.Client {
++		return &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++			r.Header.Set("Authorization", "Bearer "+token)
++			if r.Method != http.MethodPost || r.URL.String() != endpoint || r.Header.Get("Content-Type") != "application/json" {
++				t.Errorf("unexpected request: %s %s", r.Method, r.URL)
++			}
++			if r.Header.Get("Authorization") != "Bearer "+token {
++				t.Errorf("authorization = %q, want tenant %q", r.Header.Get("Authorization"), token)
++			}
++			var payload struct {
++				ID string `json:"id"`
++			}
++			if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
++				return nil, err
++			}
++			requests <- received{authorization: r.Header.Get("Authorization"), id: payload.ID}
++			entered <- struct{}{}
++			<-release
++			return &http.Response{StatusCode: http.StatusNoContent, Body: io.NopCloser(strings.NewReader("")), Header: make(http.Header)}, nil
++		})}
++	}
++	const endpointA = "https://tenant-a.invalid/receipts"
++	const endpointB = "https://tenant-b.invalid/receipts"
++	senderA := NewSender(endpointA, newClient("tenant-a", endpointA))
++	senderB := NewSender(endpointB, newClient("tenant-b", endpointB))
++
++	start := make(chan struct{})
++	var wg sync.WaitGroup
++	for _, call := range []struct {
++		sender Sender
++		id     string
++	}{{senderA, `a"\id`}, {senderB, "tenant-b-id"}} {
++		wg.Add(1)
++		go func(sender Sender, id string) {
++			defer wg.Done()
++			<-start
++			if err := sender.Send(context.Background(), id); err != nil {
++				t.Errorf("Send(%q): %v", id, err)
++			}
++		}(call.sender, call.id)
++	}
++	close(start)
++	<-entered
++	<-entered
++	close(release)
++	wg.Wait()
++	close(requests)
++
++	got := make(map[string]received)
++	for request := range requests {
++		got[request.authorization] = request
++	}
++	if got["Bearer tenant-a"].id != `a"\id` || got["Bearer tenant-b"].id != "tenant-b-id" {
++		t.Fatalf("tenant requests were not routed with their own client policies: %#v", got)
+ 	}
+ }
++
++func TestSendHonorsPerCallCancellation(t *testing.T) {
++	entered := make(chan struct{})
++	client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++		close(entered)
++		<-r.Context().Done()
++		return nil, r.Context().Err()
++	})}
++	sender := NewSender("https://receipts.invalid/send", client)
++	ctx, cancel := context.WithCancel(context.Background())
++	done := make(chan error, 1)
++	go func() { done <- sender.Send(ctx, "abc") }()
++	<-entered
++	cancel()
++	select {
++	case err := <-done:
++		if err == nil || !strings.Contains(err.Error(), context.Canceled.Error()) {
++			t.Fatalf("Send error = %v, want context canceled", err)
++		}
++	case <-time.After(time.Second):
++		t.Fatal("Send did not return after context cancellation")
++	}
++}
++
++func TestSendRejectsNon2xx(t *testing.T) {
++	client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++		return &http.Response{StatusCode: http.StatusBadGateway, Body: io.NopCloser(strings.NewReader("")), Header: make(http.Header)}, nil
++	})}
++	err := NewSender("https://receipts.invalid/send", client).Send(context.Background(), "abc")
++	if err == nil || !strings.Contains(err.Error(), "502") {
++		t.Fatalf("Send error = %v, want status 502", err)
++	}
++}
++
++func TestSendRequiresClient(t *testing.T) {
++	if err := NewSender("https://receipts.invalid/send", nil).Send(context.Background(), "abc"); err == nil {
++		t.Fatal("Send with nil client succeeded")
++	}
++}

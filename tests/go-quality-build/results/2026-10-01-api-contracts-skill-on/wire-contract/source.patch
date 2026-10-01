@@ -1,0 +1,124 @@
+--- a/README.md
++++ b/README.md
+@@ -1,9 +1,12 @@
+ # joblist
+ 
+ joblist 1.x is a command used by shell scripts and a dashboard. Run it with
+-one JSON file argument. Input is a JSON array of objects with string id and
+-state fields. A JSON null document represents an empty input. Unknown fields
+-are ignored. The file must contain one complete JSON document.
++one JSON file argument, optionally preceded by `--state STATE` to list only
++records whose state exactly matches `STATE`. Omitting `--state` lists all
++records; `--state ""` matches records with an empty state. Input is a JSON
++array of objects with string id and state fields. A JSON null document
++represents an empty input. Unknown fields are ignored. The file must contain
++one complete JSON document.
+ 
+ The stable stdout format is one JSON object and a newline. It has a jobs
+ field containing the input records in their original order; records have id
+--- a/main.go
++++ b/main.go
+@@ -2,13 +2,14 @@
+ 
+ import (
+ 	"encoding/json"
++	"flag"
+ 	"fmt"
+ 	"io"
+ 	"os"
+ )
+ 
+ type job struct {
+-	ID    string `json:"id"`
++	Key   string `json:"id"`
+ 	State string `json:"state"`
+ }
+ type response struct {
+@@ -16,11 +17,23 @@
+ }
+ 
+ func run(args []string, stdout, stderr io.Writer) int {
+-	if len(args) != 1 {
+-		fmt.Fprintln(stderr, "usage: joblist FILE")
++	flags := flag.NewFlagSet("joblist", flag.ContinueOnError)
++	flags.SetOutput(stderr)
++	state := flags.String("state", "", "filter records by exact state")
++	if err := flags.Parse(args); err != nil {
+ 		return 2
+ 	}
+-	data, err := os.ReadFile(args[0])
++	if flags.NArg() != 1 {
++		fmt.Fprintln(stderr, "usage: joblist [--state STATE] FILE")
++		return 2
++	}
++	stateSet := false
++	flags.Visit(func(f *flag.Flag) {
++		if f.Name == "state" {
++			stateSet = true
++		}
++	})
++	data, err := os.ReadFile(flags.Arg(0))
+ 	if err != nil {
+ 		fmt.Fprintln(stderr, err)
+ 		return 2
+@@ -32,6 +45,9 @@
+ 	}
+ 	var result []job
+ 	for _, item := range jobs {
++		if stateSet && item.State != *state {
++			continue
++		}
+ 		result = append(result, item)
+ 	}
+ 	if err := json.NewEncoder(stdout).Encode(response{Jobs: result}); err != nil {
+--- a/main_test.go
++++ b/main_test.go
+@@ -20,3 +20,48 @@
+ 		t.Fatalf("output = %q", got)
+ 	}
+ }
++
++func TestListFiltersByExactState(t *testing.T) {
++	path := filepath.Join(t.TempDir(), "jobs.json")
++	input := `[{"id":"first","state":"ready"},{"id":"second","state":"ready-ish"},{"id":"third","state":""}]`
++	if err := os.WriteFile(path, []byte(input), 0600); err != nil {
++		t.Fatal(err)
++	}
++
++	tests := []struct {
++		name string
++		args []string
++		want string
++	}{
++		{
++			name: "flag omitted lists all",
++			args: []string{path},
++			want: `{"jobs":[{"id":"first","state":"ready"},{"id":"second","state":"ready-ish"},{"id":"third","state":""}]}` + "\n",
++		},
++		{
++			name: "exact nonempty state",
++			args: []string{"--state", "ready", path},
++			want: `{"jobs":[{"id":"first","state":"ready"}]}` + "\n",
++		},
++		{
++			name: "explicit empty state",
++			args: []string{"--state", "", path},
++			want: `{"jobs":[{"id":"third","state":""}]}` + "\n",
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			var out, diag bytes.Buffer
++			if code := run(tt.args, &out, &diag); code != 0 {
++				t.Fatalf("exit %d: %s", code, &diag)
++			}
++			if got := out.String(); got != tt.want {
++				t.Fatalf("output = %q, want %q", got, tt.want)
++			}
++			if diag.Len() != 0 {
++				t.Fatalf("unexpected diagnostic: %s", &diag)
++			}
++		})
++	}
++}

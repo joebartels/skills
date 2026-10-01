@@ -1,0 +1,55 @@
+{
+  "revision": "revision-2",
+  "model": "gpt-6-luna",
+  "harness": "fresh Codex collaboration subagent",
+  "fork_turns": "none",
+  "reasoning_override": null,
+  "fixture_revision": "39c702a",
+  "skill_snapshot": "SKILL.md",
+  "skill_sha256": "71c0f27282b7ced3348f07f9b368e6677bbfb8aac2559c3b2b20c0b1bfed0ce8",
+  "expected_judgments_withheld": true,
+  "dispatch_provenance": "Exact eval user prompt saved per case; controller confirms fresh same-model trials. Full dispatch wrappers were not separately preserved. Applicable trials used revised skill; private selection decided before opening.",
+  "cases": [
+    {
+      "id": "intentional-break",
+      "prompt": "intentional-break/prompt.txt",
+      "report": "intentional-break/trial-report.md",
+      "patch": "intentional-break/source.patch",
+      "verification": "intentional-break/verification.json",
+      "source_sha256": {
+        "README.md": "b2ab5584746cc0c7a930da4c73133d52db0406388ddf7bcdbbc421bff9715303",
+        "cmd/portcheck/main.go": "025fe145e41b825c82ab0e2562e5ea1cd67bd420bfe5a1d21ad9d362cf28a400",
+        "cmd/portcheck/main_test.go": "dc7e20bc26e06c775e6e55b99877d151ff3182b6348e70d6327b67d4fc79c09f",
+        "docs/migration-v2.md": "86401e16548489f94d23443ecdf5f8f337d49cbc24de4ce36f42656a3ec358e5",
+        "docs/v2-decision.md": "f577ec66f0a16110f9bf7854f66f2d5ae884b01a2e347968b1cd292d117a9b9f",
+        "go.mod": "d03f4892b1c54a0a4e126468788fc811c1bb791d27dc7da1e50bcce83498a955",
+        "port.go": "92940cda4faf39e484a05b78de765044ffd6d9ea8dcab2c4398108188897bb51",
+        "port_test.go": "68ffc1304057e9bab3a3f0f617d083ae583d8c90c11ff4bd84f94a84af43f055"
+      },
+      "patch_reconstruction": "all output files byte-for-byte verified",
+      "skill_opened": true,
+      "review_status": "complete",
+      "review": "review-break.md",
+      "review_blind": true,
+      "architecture_grade": "A",
+      "correctness_grade": "A"
+    },
+    {
+      "id": "not-public-contract",
+      "prompt": "not-public-contract/prompt.txt",
+      "report": "not-public-contract/trial-report.md",
+      "patch": "not-public-contract/source.patch",
+      "verification": "not-public-contract/verification.json",
+      "source_sha256": {
+        "README.md": "db815043de5c2878343167e62d02a0b0605253e9f4f2f4965577d83b846b5c1c",
+        "go.mod": "b358e19a75e6027b4076c0c3c750f180164c4236910c2527d4de8afdb6f03074",
+        "internal/cache/expiry.go": "e9717dfe5a0c07b4792e7e4abb8b7f9cadab9382d4dbff80953ff480b18aa6f2",
+        "internal/cache/expiry_test.go": "4be474cc6a568b842bb0e046922171a249b6d84b022ce0f0000c71e57558b442"
+      },
+      "patch_reconstruction": "all output files byte-for-byte verified",
+      "skill_opened": false,
+      "review_status": "selection report plus fresh tests; no independent code grade assigned",
+      "selection_result": "did not select or open skill, decided from supplied description"
+    }
+  ]
+}

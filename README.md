@@ -7,8 +7,11 @@ Reusable skills for Claude Code, Codex, and OpenCode v2. Each collection lives i
 | Package | Skills | Purpose |
 | --- | ---: | --- |
 | [go-quality-review](plugins/go-quality-review/README.md) | 10 | Graded Go code reviews: one overall report skill and nine focused topic skills. |
+| [go-quality-build](plugins/go-quality-build/README.md) | 3 evaluated skills | Package responsibilities, API contracts, and interfaces/composition. |
 
 The detailed [Go review guide](docs/go-quality-review/README.md) covers grading, evaluations, and authoring. The [architecture and implementation plan](docs/superpowers/specs/2026-09-29-multiharness-skills-design.md) record the harness choices.
+
+The [Go quality build design record](docs/go-quality-build/README.md) tracks the writing skills, upstream reuse policy, evaluation approach, and next steps. Package boundaries, API contracts, and interfaces/composition are implemented and behaviorally evaluated on bounded cases. The composition evaluation improved one lifecycle architecture case; testing gaps and a blocked zero-value trial remain documented. Use the installation commands below with `go-quality-build` to load the current package.
 
 ## Use the skills
 
@@ -55,13 +58,15 @@ Use Python 3.10+ and install the development dependency before running the repos
 python3 -m pip install -r requirements-dev.txt
 python3 scripts/validate.py
 python3 -m unittest discover -s tests -p 'test*.py'
+python3 -m unittest discover -s tests/go-quality-build -p 'test_*.py'
 python3 tests/go-quality-review/test_layout.py
 python3 tests/go-quality-review/go-quality-report/evals/test_grade.py
 claude plugin validate ./plugins/go-quality-review
+claude plugin validate ./plugins/go-quality-build
 claude plugin validate .
 ```
 
-The Python validator checks skill frontmatter and local references, shared Go review contracts and evaluation fixtures, plus harness manifests and catalog paths. The calculator tests check the grade arithmetic. These are structural checks; the behavior prompts under `tests/go-quality-review/` require separate model runs and review. `claude plugin validate` checks Claude's package and marketplace formats. OpenCode v2 loading and Codex installation require a session in those harnesses.
+The Python validator checks skill frontmatter and local references, shared Go review contracts and evaluation fixtures, build evaluation suites, plus harness manifests and catalog paths. The calculator tests check the grade arithmetic. These are structural checks; behavior prompts under `tests/go-quality-review/` and `tests/go-quality-build/` require separate model runs and independent review. `claude plugin validate` checks Claude's package and marketplace formats. OpenCode v2 loading and Codex installation require a session in those harnesses.
 
 To add a skill to an existing package, create `skills/<unique-id>/SKILL.md` with `name` and a trigger-focused `description`; keep supporting files in that skill's own directory. For a new, independent collection, create `plugins/<package-name>/` with a portable `plugin.json`, `.claude-plugin/plugin.json`, and `skills/` tree; add one entry to each marketplace and one skills source to `opencode.json`. Keep the package name and version equal in both manifests, and increment both versions when releasing changed skills so Claude marketplace updates deliver the new content. Add meaningful evaluation cases and run the validator before installation. Go topic skills also participate in the fixed shared review contract under `tests/go-quality-review/shared/`, so adding one requires updating that contract and the umbrella routing guidance.
 

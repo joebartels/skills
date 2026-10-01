@@ -1,0 +1,48 @@
+--- a/span.go
++++ b/span.go
+@@ -18,0 +19,14 @@
++
++// Intersect returns the nonempty half-open overlap of r and other.
++func (r Range) Intersect(other Range) (Range, bool) {
++	if r.Start >= r.End || other.Start >= other.End {
++		return Range{}, false
++	}
++
++	start := max(r.Start, other.Start)
++	end := min(r.End, other.End)
++	if start >= end {
++		return Range{}, false
++	}
++	return Range{start, end}, true
++}
+--- a/span_test.go
++++ b/span_test.go
+@@ -24,0 +25,28 @@
++
++func TestRangeIntersect(t *testing.T) {
++	tests := []struct {
++		name  string
++		left  span.Range
++		right span.Range
++		want  span.Range
++		ok    bool
++	}{
++		{"partial overlap", span.Range{2, 6}, span.Range{4, 8}, span.Range{4, 6}, true},
++		{"contained range", span.Range{2, 8}, span.Range{4, 6}, span.Range{4, 6}, true},
++		{"touching endpoints", span.Range{2, 4}, span.Range{4, 6}, span.Range{}, false},
++		{"disjoint", span.Range{2, 4}, span.Range{6, 8}, span.Range{}, false},
++		{"empty left", span.Range{4, 4}, span.Range{2, 6}, span.Range{}, false},
++		{"empty right", span.Range{2, 6}, span.Range{4, 4}, span.Range{}, false},
++		{"reversed left", span.Range{6, 2}, span.Range{3, 5}, span.Range{}, false},
++		{"reversed right", span.Range{3, 5}, span.Range{6, 2}, span.Range{}, false},
++		{"zero value", span.Range{}, span.Range{-1, 1}, span.Range{}, false},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			got, ok := tt.left.Intersect(tt.right)
++			if got != tt.want || ok != tt.ok {
++				t.Fatalf("Intersect(%v, %v) = (%v, %v), want (%v, %v)", tt.left, tt.right, got, ok, tt.want, tt.ok)
++			}
++		})
++	}
++}

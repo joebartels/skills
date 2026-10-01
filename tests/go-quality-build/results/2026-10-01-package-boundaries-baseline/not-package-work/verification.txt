@@ -1,0 +1,35 @@
+Verification run in disposable copy reconstructed from original fixture + source.patch.
+Source patch application and byte-for-byte equality with trial Go source: PASS.
+
+$ rtk proxy go version
+exit=0
+stdout:
+go version go1.26.5 darwin/arm64
+stderr:
+
+$ rtk go test ./...
+exit=0
+stdout:
+Go test: 2 passed in 1 packages
+stderr:
+
+$ rtk proxy go test -count=1 -v ./...
+exit=0
+stdout:
+=== RUN   TestExactBuckets
+--- PASS: TestExactBuckets (0.00s)
+=== RUN   TestPartialBucket
+--- PASS: TestPartialBucket (0.00s)
+PASS
+ok  	example.com/mathutil	0.112s
+stderr:
+
+$ rtk proxy go vet ./...
+exit=0
+stdout:
+stderr:
+
+Final archive uses zero-context patch to avoid whitespace diagnostics on diff context.
+$ rtk proxy git apply --unidiff-zero source.patch
+exit=0
+Reconstructed bytes match previously tested source: PASS

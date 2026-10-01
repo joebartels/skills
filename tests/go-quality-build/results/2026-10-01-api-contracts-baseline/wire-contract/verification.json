@@ -1,0 +1,48 @@
+[
+  {
+    "command": [
+      "rtk",
+      "go",
+      "test",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache"
+    },
+    "exit_code": 0,
+    "stdout": "Go test: 3 passed in 1 packages\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache"
+    },
+    "exit_code": 0,
+    "stdout": "=== RUN   TestList\n--- PASS: TestList (0.00s)\n=== RUN   TestStateFilterIsExact\n--- PASS: TestStateFilterIsExact (0.00s)\n=== RUN   TestExplicitEmptyStateFilter\n--- PASS: TestExplicitEmptyStateFilter (0.00s)\nPASS\nok  \texample.com/joblist\t0.115s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache"
+    },
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

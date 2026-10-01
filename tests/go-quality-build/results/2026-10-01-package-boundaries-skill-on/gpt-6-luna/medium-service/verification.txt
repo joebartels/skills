@@ -1,0 +1,36 @@
+UTC: 2026-10-01T14:48:06.605572+00:00
+Workdir: /private/tmp/go-skill-on-archive-8xty4xd1/luna/medium-service
+go version go1.26.5 darwin/arm64
+GOWORK=off; disposable GOCACHE; approved local httptest listeners.
+Patch reconstruction: byte-for-byte equal to all trial Go/module source.
+
+$ rtk proxy go test ./...
+ok  	example.com/dispatch	0.352s
+ok  	example.com/dispatch/cmd/replay	0.200s
+?   	example.com/dispatch/cmd/server	[no test files]
+?   	example.com/dispatch/internal/notifyclient	[no test files]
+?   	example.com/dispatch/internal/recordstore	[no test files]
+Exit: 0
+
+$ rtk proxy go test -count=1 -v ./...
+=== RUN   TestSubmitValidatesBeforeDependencies
+--- PASS: TestSubmitValidatesBeforeDependencies (0.00s)
+=== RUN   TestServeHTTPContract
+--- PASS: TestServeHTTPContract (0.00s)
+PASS
+ok  	example.com/dispatch	0.170s
+=== RUN   TestProcessSuccess
+--- PASS: TestProcessSuccess (0.00s)
+=== RUN   TestProcessInvalidIDStops
+--- PASS: TestProcessInvalidIDStops (0.00s)
+=== RUN   TestProcessNotificationFailureStops
+--- PASS: TestProcessNotificationFailureStops (0.00s)
+PASS
+ok  	example.com/dispatch/cmd/replay	0.291s
+?   	example.com/dispatch/cmd/server	[no test files]
+?   	example.com/dispatch/internal/notifyclient	[no test files]
+?   	example.com/dispatch/internal/recordstore	[no test files]
+Exit: 0
+
+$ rtk proxy go vet ./...
+Exit: 0

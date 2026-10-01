@@ -1,0 +1,86 @@
+{
+  "skill_name": "go-package-boundaries",
+  "evals": [
+    {
+      "id": "small-cli",
+      "prompt": "Add --skip-comments to linesum: when enabled, ignore trimmed lines beginning with #. Without it preserve current parsing behavior. Keep the positional FILE argument, sum output, no output on parse failure, and exit behavior. This local single-binary tool has no external Go consumers. Implement and test the change; explain any package placement decision briefly.",
+      "expected_output": "A cohesive CLI implementation with optional file separation; comment parsing does not justify technical layers.",
+      "assertions": [
+        "With the flag, whitespace-prefixed comments are ignored; without it comments still fail.",
+        "Existing blank-line, signed integer, output, and failure behavior is preserved.",
+        "Parsing and local file work remain cohesive; any new package has an observed consumer/responsibility rationale, not a fixed layout rule."
+      ],
+      "files": [
+        "files/small-cli/go.mod",
+        "files/small-cli/main.go",
+        "files/small-cli/main_test.go"
+      ]
+    },
+    {
+      "id": "small-library",
+      "prompt": "Add Range.Intersect(other Range) (Range, bool) to example.com/span. Return the overlapping half-open range and true only for a nonempty overlap; otherwise return Range{} and false. Treat reversed ranges built by struct literal as empty. Preserve existing public import paths, symbols, signatures and zero-value behavior. Implement and test this library addition; explain placement briefly.",
+      "expected_output": "Keep the related range operation with Range; retain source compatibility.",
+      "assertions": [
+        "Tests cover overlap, touching endpoints, disjoint, empty and reversed ranges.",
+        "Intersect stays discoverable with the existing range API without needless model/operations packages.",
+        "Existing external consumer and constructor function assignment compile unchanged."
+      ],
+      "files": [
+        "files/small-library/go.mod",
+        "files/small-library/span.go",
+        "files/small-library/span_test.go"
+      ]
+    },
+    {
+      "id": "medium-service",
+      "prompt": "The dispatch service must also accept a batch file through a new cmd/replay binary. Each nonblank trimmed line is an ID. Process sequentially, stop on first error, and return a nonzero exit status on failure. Accept a file argument and the same RECORD_DIR/NOTIFY_URL environment variables as server. Both ingress paths must invoke the same validation, file persistence and outbound notification operation. Existing HTTP status/body behavior and stored record bytes must stay compatible. Storage and the notification API are maintained independently and both are expected to change next quarter. Implement the replay path and make package changes warranted by this new consumer; test successful replay, invalid IDs and notification failure. Do not add retries or an asynchronous queue.",
+      "expected_output": "Shared submission operation with ingress isolated from it; justified adapter boundaries permit independent changes without duplicated workflow.",
+      "assertions": [
+        "Replay invokes shared submission behavior rather than HTTP machinery or a copy of validation/persistence/notification.",
+        "Dependency direction allows replay and HTTP to depend on the operation; the operation does not depend on concrete ingress.",
+        "Persistence and outbound concerns have explicit ownership; concrete adapter separation or cohesive files are justified by observed change pressure.",
+        "Both paths preserve write-before-notify and error behavior; replay stops, returns failure, and does not process subsequent lines."
+      ],
+      "files": [
+        "files/medium-service/cmd/server/main.go",
+        "files/medium-service/dispatch.go",
+        "files/medium-service/dispatch_test.go",
+        "files/medium-service/go.mod"
+      ]
+    },
+    {
+      "id": "large-features",
+      "prompt": "This fixture is the affected slice of a large application: catalog and billing have separate owners, use one module, and release together. Add cmd/settle for an operations job. It reads invoice rows ID,CENTS from a file argument, charges each sequentially through the existing billing behavior, and stops on the first malformed row or charge failure with nonzero status. Reuse LEDGER/GATEWAY_URL configuration. Operations also needs a billing ledger reader for future exports, so use the same row codec for settlement input and ledger encoding/decoding; reject missing fields, invalid amounts and delimiter/newline-bearing IDs. Catalog uses unrelated JSON and must remain independently understandable. The gateway team now changes its HTTP protocol independently of billing rules. Refactor the affected boundaries as useful, preserving current invoice CLI, catalog HTTP behavior, ledger bytes and gateway request bytes. Add meaningful tests and explain package responsibilities/import direction.",
+      "expected_output": "Feature ownership remains clear; billing workflow reused by commands, independently changing gateway isolated where useful, ledger codec shared for actual billing consumers.",
+      "assertions": [
+        "Settlement and invoice share charge behavior and preserve gateway-before-ledger failure semantics.",
+        "Row parsing and formatting have one coherent owner and reject malformed input; no unrelated catalog dependency is introduced.",
+        "Catalog and billing remain separately owned rather than merged into central handler/service/repository buckets.",
+        "Dependency direction keeps ingress and concrete gateway protocol from controlling billing rules; composition remains visible.",
+        "No module split, DI framework, generic repository or cross-feature common package appears without an actual requirement."
+      ],
+      "files": [
+        "files/large-features/cmd/invoice/main.go",
+        "files/large-features/cmd/shop/main.go",
+        "files/large-features/go.mod",
+        "files/large-features/internal/billing/billing.go",
+        "files/large-features/internal/billing/billing_test.go",
+        "files/large-features/internal/catalog/catalog.go"
+      ]
+    },
+    {
+      "id": "not-package-work",
+      "prompt": "Fix buckets so a final partial bucket counts. Inputs satisfy n >= 0 and size > 0, including the largest representable int. Keep the function signature and package; add a regression test.",
+      "expected_output": "A local overflow-safe ceiling division fix; package-boundary skill should not be selected.",
+      "assertions": [
+        "Handles zero, exact divisions, partial buckets and maximum int without overflow.",
+        "No package/interface/dependency reorganization or architecture ritual for a local arithmetic edit."
+      ],
+      "files": [
+        "files/not-package-work/go.mod",
+        "files/not-package-work/round.go",
+        "files/not-package-work/round_test.go"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+{
+  "run_id": "2026-10-01-api-contracts-baseline",
+  "stage": "three blind baseline trials and one controller-completed control; independent reviews complete with CLI addendum",
+  "source_fixture_revision": null,
+  "source_fixture_identity": "Uncommitted Task 3 fixtures; exact inputs identified by fixture-manifest.json SHA-256 values",
+  "harness": "Codex collaboration subagents",
+  "model": "gpt-6-luna",
+  "fork_turns": "none",
+  "reasoning_override": null,
+  "build_skill_loaded": false,
+  "expected_judgments_withheld": true,
+  "dispatch_provenance": {
+    "exact_case_prompts": "Each case prompt.txt is copied from evals.json prompt",
+    "full_wrapper_bytes_preserved": false,
+    "known_prefix": "Blind baseline Go implementation trial. Work only in disposable /private/tmp/go-quality-build-api-eval/baseline-luna/<case>. Do not read any go-quality-build skill, evals.json, expected judgments/assertions, other case/trial dirs, or repo design records. User task: <exact eval prompt>.",
+    "additional_instructions_summary": "Read fixture project docs/source; run relevant Go tests/vet; write trial-report.md with choice/files/checks/limits; no repository edits.",
+    "limit": "Full dispatch wrapper bytes were not saved separately; summaries are controller-attested, not reconstructed exact prompts."
+  },
+  "go_version": "go version go1.26.5 darwin/arm64",
+  "review_status": "complete",
+  "cases": [
+    {
+      "id": "source-compatibility",
+      "implementation_provenance": "fresh blind gpt-6-luna subagent",
+      "prompt": "source-compatibility/prompt.txt",
+      "trial_report": "source-compatibility/trial-report.md",
+      "source_patch": "source-compatibility/source.patch",
+      "verification": "source-compatibility/verification.json",
+      "source_sha256": {
+        "README.md": "ec42d1ec6bbdad2725ae3afc5650122f9dd8d759958f5aefe34dd2e19459e588",
+        "format.go": "599196fc74e09e478a4b1152e3a1f3eeaf72f40b7430b592655b7e679244e142",
+        "format_test.go": "469c706674476289ebbf5c158ae59d84ac9a25626a4354f9cab2401165c827a2",
+        "go.mod": "928414924b407ab7f29d16982a603cc527951d1eb4dad2b1fe66c879ef986a50"
+      },
+      "patch_reconstruction": "verified byte-for-byte against entire output source tree",
+      "review_status": "complete",
+      "review": "review-library.md",
+      "architecture_grade": "B",
+      "correctness_grade": "B"
+    },
+    {
+      "id": "intentional-break",
+      "implementation_provenance": "fresh blind gpt-6-luna subagent",
+      "prompt": "intentional-break/prompt.txt",
+      "trial_report": "intentional-break/trial-report.md",
+      "source_patch": "intentional-break/source.patch",
+      "verification": "intentional-break/verification.json",
+      "source_sha256": {
+        "MIGRATING.md": "e2988e80d25fed92f75708c6ff9f784e6c14a50afcb352176bf7bb7455c34c14",
+        "README.md": "b2ab5584746cc0c7a930da4c73133d52db0406388ddf7bcdbbc421bff9715303",
+        "cmd/portcheck/main.go": "746d9f83592ce68a09f7a7a796a6d0804ab7cb2796149191d70414bac7913e18",
+        "docs/v2-decision.md": "f577ec66f0a16110f9bf7854f66f2d5ae884b01a2e347968b1cd292d117a9b9f",
+        "go.mod": "d03f4892b1c54a0a4e126468788fc811c1bb791d27dc7da1e50bcce83498a955",
+        "port.go": "29c4319aa21bc1f638b07090521f765a2b24ba749858034a3eab65ae83fe2e94",
+        "port_test.go": "ae3faf841ce3ee58a394b725fb59fc61c794e4ccfb637af7d62d18ab6d7c7c95"
+      },
+      "patch_reconstruction": "verified byte-for-byte against entire output source tree",
+      "review_status": "complete",
+      "review": "review-library.md",
+      "architecture_grade": "A",
+      "correctness_grade": "A"
+    },
+    {
+      "id": "wire-contract",
+      "implementation_provenance": "fresh blind gpt-6-luna subagent",
+      "prompt": "wire-contract/prompt.txt",
+      "trial_report": "wire-contract/trial-report.md",
+      "source_patch": "wire-contract/source.patch",
+      "verification": "wire-contract/verification.json",
+      "source_sha256": {
+        "README.md": "5e84fb1b89738bb228abde8fc5a47c279460e72e924defde778461050289967e",
+        "go.mod": "5ce67e902135f3a9ce5e524f037b08b54458cc5dfe2a26a4c8470dd4688a7320",
+        "main.go": "d7642086f019687903d3c9cf240f807df2a492ba99880f125f2dfb7baffb2c33",
+        "main_test.go": "4b7b292a965265a0d3be89bd297a01e3a0facaf884fe341a2270438ea3968185"
+      },
+      "patch_reconstruction": "verified byte-for-byte against entire output source tree",
+      "review_status": "complete",
+      "review": "review-cli.md",
+      "architecture_grade": "A",
+      "correctness_grade": "B",
+      "original_correctness_grade": "A",
+      "review_addendum": "review-cli-addendum.md"
+    },
+    {
+      "id": "not-public-contract",
+      "implementation_provenance": "controller-completed control; not an independent model baseline",
+      "prompt": "not-public-contract/prompt.txt",
+      "trial_report": "not-public-contract/trial-report.md",
+      "source_patch": "not-public-contract/source.patch",
+      "verification": "not-public-contract/verification.json",
+      "source_sha256": {
+        "README.md": "db815043de5c2878343167e62d02a0b0605253e9f4f2f4965577d83b846b5c1c",
+        "go.mod": "b358e19a75e6027b4076c0c3c750f180164c4236910c2527d4de8afdb6f03074",
+        "internal/cache/expiry.go": "e9717dfe5a0c07b4792e7e4abb8b7f9cadab9382d4dbff80953ff480b18aa6f2",
+        "internal/cache/expiry_test.go": "c92c26eb5f22d1c3b5b09db483c08bf7325fa157f875eff59a9b371755769ea2"
+      },
+      "patch_reconstruction": "verified byte-for-byte against entire output source tree",
+      "review_status": "complete",
+      "limitation": "Fresh gpt-6-luna author made no source changes: automatic approval review rejected disposable /private/tmp edit as unrelated temporary repository. Controller verified all four source files byte-for-byte against fixture, successfully retried direct apply_patch, changed > to >= and added equality regression. This result cannot establish blind model performance or skill non-selection.",
+      "review": "review-cli.md",
+      "architecture_grade": "Not applicable",
+      "correctness_grade": "A"
+    }
+  ],
+  "independent_reviews": [
+    {
+      "artifact": "review-cli.md",
+      "scope": "Architecture and Design; Correctness and Compatibility",
+      "cases": [
+        "wire-contract",
+        "not-public-contract"
+      ],
+      "reviewer_model": "not recorded in supplied report",
+      "judgments_withheld": [
+        "evals.json assertions/expected_output",
+        "author reports",
+        "condition labels"
+      ]
+    },
+    {
+      "artifact": "review-library.md",
+      "scope": "Architecture and Design; Correctness and Compatibility",
+      "cases": [
+        "source-compatibility",
+        "intentional-break"
+      ],
+      "reviewer_model": "not recorded in supplied report",
+      "judgments_withheld": [
+        "evals.json assertions/expected_output",
+        "author reports",
+        "condition labels"
+      ],
+      "findings": [
+        {
+          "id": "A1",
+          "case": "source-compatibility",
+          "severity": "moderate",
+          "primary_owner": "Correctness and Compatibility",
+          "shared_topics": [
+            "Architecture and Design",
+            "Correctness and Compatibility"
+          ],
+          "root_cause": "Zero string separator conflates unconfigured exported zero state with intentionally empty separator; minor-release zero-value formatting changes from key:value to keyvalue.",
+          "count_as_distinct_defects": 1,
+          "contract_limit": "No real downstream zero-value consumer supplied; review relies on previously usable exported state, no constructor-only precondition, and broad minor-release policy."
+        }
+      ]
+    }
+  ],
+  "review_addendum": {
+    "artifact": "review-cli-addendum.md",
+    "blind_to_skill_on": true,
+    "trigger": "newly surfaced filename compatibility evidence",
+    "finding": "C-F1: formerly accepted sole -jobs.json filename rejected",
+    "severity": "moderate",
+    "comparison": "Same root cause as first-pass skill-on minor C-F1; severity differs across reviewers, not behavior."
+  }
+}

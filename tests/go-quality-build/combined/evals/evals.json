@@ -1,0 +1,25 @@
+{
+  "skill_name": "combined",
+  "evals": [
+    {
+      "id": "combined-evolution",
+      "prompt": "Evolve Fielddesk's two-feature service. Add a cmd/import-checkins CLI accepting a CSV file argument with id,note rows and no header. It must call the same check-in operation as HTTP, process rows in order, stop on the first malformed or rejected row, and exit nonzero without processing later rows; use FIELDDESK_ROOT as the server does. Add a background bulletin-sync worker to cmd/server. On each cycle it GETs a configured BULLETIN_FEED_URL with a host-supplied HTTP client, reads a JSON array of {id,text} bulletins, and replaces the local snapshot only after a successful status, decode, and nonblank id/text validation. A failed cycle retains the last good snapshot and reports the error to the host; no overlapping cycles. The host chooses the interval, starts the worker, cancels it at shutdown, waits for it to finish, then releases resources. Per-instance configuration and request cancellation must reach the feed request; do not install signal or exit handlers in the library. Keep the documented Go and HTTP caller contracts, including New(root), current method signatures and response shapes. Add meaningful tests for CLI ingress, feed success and failure, cancellation and shutdown, and compatibility. Choose package boundaries and abstractions based on the new consumers and distinct change paths; explain the ownership/import direction and public API choices. Do not add a queue, database, DI framework or speculative extension points.",
+      "expected_output": "A runnable two-feature service with a reusable check-in operation, independently configurable bulletin feed adapter and host-owned worker lifecycle, without breaking supported Go or HTTP callers or creating speculative layers.",
+      "assertions": [
+        "The CLI and HTTP ingress share check-in validation and persistence; malformed CSV, invalid check-ins and later rows after failure are handled as specified without changing existing file bytes.",
+        "Existing external Go callers can still use New(root), SubmitCheckin, Bulletins and Handler with their documented signatures; HTTP method, status, content type and JSON behavior remain compatible.",
+        "The feed uses the configured URL and supplied HTTP client per worker instance; cancellation reaches an in-flight request, non-2xx/invalid payloads leave the last good bulletin snapshot intact, and successful sync is visible through the existing bulletin caller paths.",
+        "The server host owns worker start, cancellation and join; a failed or canceled run can be observed and cannot leave overlapping cycles or library-owned process control.",
+        "Package responsibilities and imports remain acyclic across check-ins, bulletins, ingress, outbound feed and composition; interfaces or constructors exist only for actual variation, protocol or invariant needs.",
+        "Tests exercise observable compatibility, ordered CLI behavior, successful and failing feed cycles, and bounded lifecycle events rather than only checking implementation structure."
+      ],
+      "files": [
+        "files/combined-evolution/README.md",
+        "files/combined-evolution/go.mod",
+        "files/combined-evolution/fielddesk.go",
+        "files/combined-evolution/fielddesk_test.go",
+        "files/combined-evolution/cmd/server/main.go"
+      ]
+    }
+  ]
+}

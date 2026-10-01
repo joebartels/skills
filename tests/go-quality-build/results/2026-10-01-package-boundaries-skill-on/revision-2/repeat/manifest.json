@@ -1,0 +1,54 @@
+{
+  "model": "gpt-6-luna",
+  "harness": "Codex collaboration subagent; separate fresh trial copy",
+  "fork_turns": "none",
+  "reasoning_effort": "No override supplied",
+  "skill_snapshot": "../skill-snapshot",
+  "skill_sha256": {
+    "SKILL.md": "3245b2347309d6238950be43e269c05720dbcf5132548dd661955c9e428d3ca7",
+    "references/package-maps.md": "19c2e6f964486abe11028ba04e443fc76eb39236538ee5d9ef25400cc8ecfc7f"
+  },
+  "prompt": "prompt.txt",
+  "source_patch": "source.patch",
+  "trial_report": "trial-report.md",
+  "verification": "verification.txt",
+  "source_sha256": {
+    "cmd/replay/main.go": "128f31e9fff62cf4a60594533075055e782b7c7ba930063096e969f0374aec74",
+    "cmd/server/main.go": "742edeee3a3e675db021f831495fa871d65dcd1f1d129205995dcea390a249f2",
+    "dispatch.go": "bb112e2849dcb9f3bd91d73e64002c55052feb108e443a00135c19b6e89c21e3",
+    "dispatch_test.go": "f56ef170b1f55951657b098a07508a904715d8a877d493911632dd6c98c586b3",
+    "go.mod": "a26cbe71b559d6d8ce2b24c47bcac1de5df7295a3df33302998d55ea4d20123a",
+    "internal/notify/client.go": "f7f715da630ad5f7e2ad0a29a297de03c6713eda8f6c8f5b69b15cf534e25cd3",
+    "internal/operation/operation.go": "4faad202520ff9e780e0fd16a5fcd174fdbaef280a5cc80989d6074d37bce991",
+    "internal/records/store.go": "0ebca6875a99133192584c5db2d7e4c8698e43da745ee9ca3a8d8136f4abc8f4",
+    "replay/replay.go": "2c82ef6d469b25ad9f2eb7bc4a9d9288475889fefbc3c08214f1e4c15e10228d",
+    "replay/replay_test.go": "a8d1065d2bcde2312eab012eb6e17c922ccb909d7a42940a711e0864463a7a84"
+  },
+  "checks": [
+    {
+      "command": "rtk proxy go test ./...",
+      "exit": 0
+    },
+    {
+      "command": "rtk proxy go test -count=1 -v ./...",
+      "exit": 0
+    },
+    {
+      "command": "rtk proxy go vet ./...",
+      "exit": 0
+    }
+  ],
+  "patch_reconstruction": "verified byte-for-byte",
+  "review_status": "complete",
+  "limits": [
+    "Same original task and revised skill; expected judgments withheld",
+    "Exact complete dispatch wrapper unavailable to archive worker",
+    "Go 1.26.5 darwin/arm64; no minimum-version, race, or platform matrix"
+  ],
+  "review": "independent-review.md",
+  "review_sha256": "3813b49c77285a5caec1e6251f39b89c4a388a94c92a88d95222164fb82b7171",
+  "review_candidate": "candidate-d",
+  "architecture": "A",
+  "correctness": "A-",
+  "comparison": "Second fresh revised luna trial reaches Architecture A versus supplemental baseline B and first skill-on pass B. Minor Scanner correctness finding persists; no correctness uplift."
+}

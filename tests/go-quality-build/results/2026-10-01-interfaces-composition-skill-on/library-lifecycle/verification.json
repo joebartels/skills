@@ -1,0 +1,71 @@
+{
+  "patch_reconstruction": "PASS: whole output source tree byte-for-byte",
+  "commands": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "git",
+        "apply",
+        "/Users/jb/.codex/worktrees/go-quality-build/skills/tests/go-quality-build/results/2026-10-01-interfaces-composition-skill-on/library-lifecycle/source.patch"
+      ],
+      "cwd": "/private/tmp/composition-r1-reconstruct.6_b6j7as/library-lifecycle",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "go",
+        "test",
+        "./..."
+      ],
+      "cwd": "/private/tmp/composition-r1-reconstruct.6_b6j7as/library-lifecycle",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "Go test: 6 passed in 1 packages\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-v",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/composition-r1-reconstruct.6_b6j7as/library-lifecycle",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "=== RUN   TestRefresh\n--- PASS: TestRefresh (0.00s)\n=== RUN   TestNilCallback\n--- PASS: TestNilCallback (0.00s)\n=== RUN   TestRunPeriodicStopsAfterActiveRefreshReturns\n--- PASS: TestRunPeriodicStopsAfterActiveRefreshReturns (0.00s)\n=== RUN   TestRunPeriodicInstancesAreIndependent\n--- PASS: TestRunPeriodicInstancesAreIndependent (0.01s)\n=== RUN   TestRunPeriodicReturnsRefreshError\n--- PASS: TestRunPeriodicReturnsRefreshError (0.00s)\n=== RUN   ExampleRefresher_RunPeriodic\n--- PASS: ExampleRefresher_RunPeriodic (0.00s)\nPASS\nok  \texample.com/library-lifecycle\t0.130s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/composition-r1-reconstruct.6_b6j7as/library-lifecycle",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

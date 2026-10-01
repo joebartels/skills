@@ -1,0 +1,30 @@
+--- a/round.go
++++ b/round.go
+@@ -5 +5,7 @@
+-func buckets(n, size int) int { return n / size }
++func buckets(n, size int) int {
++	count := n / size
++	if n%size != 0 {
++		count++
++	}
++	return count
++}
+--- a/round_test.go
++++ b/round_test.go
+@@ -9,0 +10,16 @@
++
++func TestPartialBucket(t *testing.T) {
++	maxInt := int(^uint(0) >> 1)
++	tests := []struct {
++		n, size, want int
++	}{
++		{n: 13, size: 4, want: 4},
++		{n: 1, size: maxInt, want: 1},
++		{n: maxInt, size: maxInt - 1, want: 2},
++	}
++	for _, tt := range tests {
++		if got := buckets(tt.n, tt.size); got != tt.want {
++			t.Errorf("buckets(%d, %d) = %d, want %d", tt.n, tt.size, got, tt.want)
++		}
++	}
++}

@@ -1,0 +1,63 @@
+--- a/README.md
++++ b/README.md
+@@ -7,5 +7,9 @@
+ factory tables as well as calling it directly.
+ 
+ New(prefix) creates a formatter. Format(key, value) returns
+-prefix + key + ":" + value. Empty strings are valid inputs.
++prefix + key + ":" + value. Empty strings are valid inputs. Use
++NewWithSeparator(prefix, separator) to choose another key/value separator;
++the separator may also be empty. For example,
++NewWithSeparator("report/", " = ") formats status/ready as
++report/status = ready.
+ A formatter may be reused; construction and formatting perform no I/O.
+--- a/format.go
++++ b/format.go
+@@ -1,11 +1,23 @@
+ // Package recordfmt formats records for text reports.
+ package recordfmt
+ 
+-// Formatter formats key/value records with a prefix.
+-type Formatter struct{ prefix string }
++// Formatter formats key/value records with a prefix and separator.
++type Formatter struct {
++	prefix    string
++	separator string
++}
+ 
+ // New creates a formatter with the supplied prefix.
+-func New(prefix string) *Formatter { return &Formatter{prefix: prefix} }
++// Records use ":" between the key and value.
++func New(prefix string) *Formatter { return NewWithSeparator(prefix, ":") }
++
++// NewWithSeparator creates a formatter with the supplied prefix and key/value
++// separator. The separator may be empty.
++func NewWithSeparator(prefix, separator string) *Formatter {
++	return &Formatter{prefix: prefix, separator: separator}
++}
+ 
+ // Format returns one record without a trailing newline.
+-func (f *Formatter) Format(key, value string) string { return f.prefix + key + ":" + value }
++func (f *Formatter) Format(key, value string) string {
++	return f.prefix + key + f.separator + value
++}
+--- a/format_test.go
++++ b/format_test.go
+@@ -11,3 +11,17 @@
+ 		t.Fatalf("Format = %q", got)
+ 	}
+ }
++
++func TestFormatWithSeparator(t *testing.T) {
++	f := recordfmt.NewWithSeparator("report/", " => ")
++	if got := f.Format("status", "ready"); got != "report/status => ready" {
++		t.Fatalf("Format = %q", got)
++	}
++}
++
++func TestFormatWithEmptySeparator(t *testing.T) {
++	f := recordfmt.NewWithSeparator("report/", "")
++	if got := f.Format("status", "ready"); got != "report/statusready" {
++		t.Fatalf("Format = %q", got)
++	}
++}

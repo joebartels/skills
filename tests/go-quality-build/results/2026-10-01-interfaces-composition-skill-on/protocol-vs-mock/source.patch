@@ -1,0 +1,129 @@
+--- a/report.go
++++ b/report.go
+@@ -2,6 +2,7 @@
+ 
+ import (
+ 	"bytes"
++	"encoding/csv"
+ 	"encoding/json"
+ 	"io"
+ )
+@@ -20,6 +21,23 @@
+ 
+ func (JSON) Encode(w io.Writer, records []Record) error { return json.NewEncoder(w).Encode(records) }
+ 
++// CSV writes records as name,value rows, preceded by a header.
++type CSV struct{}
++
++func (CSV) Encode(w io.Writer, records []Record) error {
++	writer := csv.NewWriter(w)
++	if err := writer.Write([]string{"name", "value"}); err != nil {
++		return err
++	}
++	for _, record := range records {
++		if err := writer.Write([]string{record.Name, record.Value}); err != nil {
++			return err
++		}
++	}
++	writer.Flush()
++	return writer.Error()
++}
++
+ type Report struct{ Encoder Encoder }
+ 
+ func (r Report) Render(records []Record) ([]byte, error) {
+--- a/report_test.go
++++ b/report_test.go
+@@ -1,8 +1,12 @@
+ package reportkit_test
+ 
+ import (
++	"errors"
++	"fmt"
++	"io"
++	"testing"
++
+ 	reportkit "example.com/protocol-vs-mock"
+-	"testing"
+ )
+ 
+ func TestJSONReport(t *testing.T) {
+@@ -15,3 +19,78 @@
+ 		t.Fatalf("report = %q", got)
+ 	}
+ }
++
++func TestCSVReportQuotesFields(t *testing.T) {
++	r := reportkit.Report{Encoder: reportkit.CSV{}}
++	got, err := r.Render([]reportkit.Record{{Name: "last, first", Value: "said \"hello\"\nagain"}})
++	if err != nil {
++		t.Fatal(err)
++	}
++	want := "name,value\n\"last, first\",\"said \"\"hello\"\"\nagain\"\n"
++	if string(got) != want {
++		t.Fatalf("report = %q, want %q", got, want)
++	}
++}
++
++func TestCSVReportEmptyInput(t *testing.T) {
++	r := reportkit.Report{Encoder: reportkit.CSV{}}
++	got, err := r.Render(nil)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if string(got) != "name,value\n" {
++		t.Fatalf("report = %q", got)
++	}
++}
++
++type failingWriter struct{ err error }
++
++func (w failingWriter) Write([]byte) (int, error) { return 0, w.err }
++
++func TestCSVEncodeFailure(t *testing.T) {
++	want := errors.New("write failed")
++	err := (reportkit.CSV{}).Encode(failingWriter{err: want}, nil)
++	if !errors.Is(err, want) {
++		t.Fatalf("error = %v, want %v", err, want)
++	}
++}
++
++func TestReportReturnsNoBytesOnEncodingFailure(t *testing.T) {
++	want := errors.New("encode failed")
++	r := reportkit.Report{Encoder: failingEncoder{err: want}}
++	got, err := r.Render(nil)
++	if !errors.Is(err, want) {
++		t.Fatalf("error = %v, want %v", err, want)
++	}
++	if got != nil {
++		t.Fatalf("bytes = %q, want nil", got)
++	}
++}
++
++type failingEncoder struct{ err error }
++
++func (e failingEncoder) Encode(w io.Writer, _ []reportkit.Record) error {
++	_, _ = w.Write([]byte("partial"))
++	return e.err
++}
++
++type tabEncoder struct{}
++
++func (tabEncoder) Encode(w io.Writer, records []reportkit.Record) error {
++	for _, record := range records {
++		if _, err := io.WriteString(w, record.Name+"\t"+record.Value+"\n"); err != nil {
++			return err
++		}
++	}
++	return nil
++}
++
++func Example_hostDefinedEncoder() {
++	report := reportkit.Report{Encoder: tabEncoder{}}
++	got, err := report.Render([]reportkit.Record{{Name: "total", Value: "7"}})
++	if err != nil {
++		panic(err)
++	}
++	fmt.Print(string(got))
++	// Output: total	7
++}

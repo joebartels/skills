@@ -1,0 +1,51 @@
+[
+  {
+    "command": [
+      "rtk",
+      "go",
+      "test",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache",
+      "GOWORK": "off"
+    },
+    "exit_code": 0,
+    "stdout": "Go test: 1 passed in 1 packages\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache",
+      "GOWORK": "off"
+    },
+    "exit_code": 0,
+    "stdout": "=== RUN   TestExpired\n--- PASS: TestExpired (0.00s)\nPASS\nok  \texample.com/cacheworker/internal/cache\t0.119s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache",
+      "GOWORK": "off"
+    },
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

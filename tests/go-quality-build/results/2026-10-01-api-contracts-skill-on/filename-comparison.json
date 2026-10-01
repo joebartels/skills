@@ -1,0 +1,26 @@
+[
+  {
+    "condition": "original",
+    "argument": "-jobs.json",
+    "input_bytes": "[]",
+    "exit_code": 0,
+    "stdout": "{\"jobs\":null}\n",
+    "stderr": ""
+  },
+  {
+    "condition": "baseline",
+    "argument": "-jobs.json",
+    "input_bytes": "[]",
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "flag provided but not defined: -jobs.json\nUsage of joblist:\n  -state value\n    \tinclude only records with this exact state\n\npanic calling String method on zero main.stateFlag for flag state: runtime error: invalid memory address or nil pointer dereference\n"
+  },
+  {
+    "condition": "skill-on",
+    "argument": "-jobs.json",
+    "input_bytes": "[]",
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "flag provided but not defined: -jobs.json\nUsage of joblist:\n  -state string\n    \tfilter records by exact state\n"
+  }
+]

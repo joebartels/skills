@@ -1,0 +1,51 @@
+[
+  {
+    "command": [
+      "rtk",
+      "go",
+      "test",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache",
+      "GOWORK": "off"
+    },
+    "exit_code": 0,
+    "stdout": "Go test: 5 passed in 1 packages\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache",
+      "GOWORK": "off"
+    },
+    "exit_code": 0,
+    "stdout": "=== RUN   TestList\n--- PASS: TestList (0.00s)\n=== RUN   TestListFiltersByExactState\n=== RUN   TestListFiltersByExactState/flag_omitted_lists_all\n=== RUN   TestListFiltersByExactState/exact_nonempty_state\n=== RUN   TestListFiltersByExactState/explicit_empty_state\n--- PASS: TestListFiltersByExactState (0.00s)\n    --- PASS: TestListFiltersByExactState/flag_omitted_lists_all (0.00s)\n    --- PASS: TestListFiltersByExactState/exact_nonempty_state (0.00s)\n    --- PASS: TestListFiltersByExactState/explicit_empty_state (0.00s)\nPASS\nok  \texample.com/joblist\t0.122s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache",
+      "GOWORK": "off"
+    },
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

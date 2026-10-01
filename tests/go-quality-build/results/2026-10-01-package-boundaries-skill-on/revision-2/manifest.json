@@ -1,0 +1,71 @@
+{
+  "revision": "2",
+  "base_skill_commit": "05a4e6095bd8130647c5570f94319b739105cd18",
+  "skill_revision": "uncommitted controller revision; exact bytes in skill-snapshot and diff in skill-change.patch",
+  "skill_sha256": {
+    "SKILL.md": "3245b2347309d6238950be43e269c05720dbcf5132548dd661955c9e428d3ca7",
+    "references/package-maps.md": "19c2e6f964486abe11028ba04e443fc76eb39236538ee5d9ef25400cc8ecfc7f"
+  },
+  "model": "gpt-6-luna",
+  "harness": "Codex collaboration subagent; fresh context",
+  "reasoning_effort": "No override supplied",
+  "prompt": "gpt-6-luna/medium-service/prompt.txt",
+  "wrapper_provenance": "Exact full dispatch bytes unavailable to archive worker; controller supplied fresh revised trial using changed skill and original task. Expected judgments withheld.",
+  "source_patch": "gpt-6-luna/medium-service/source.patch",
+  "source_sha256": {
+    "cmd/replay/main.go": "21b13cfc7a7572852bdd9152af3290f7d84e8b70b5e41a6639e2648bc11c8696",
+    "cmd/replay/main_test.go": "cb119f0c23d06dbecbb9184ba6d7d8f9110d1bfccb04101152f1d54c7fdc859d",
+    "cmd/server/main.go": "742edeee3a3e675db021f831495fa871d65dcd1f1d129205995dcea390a249f2",
+    "dispatch.go": "22376d76b5714cde8eee96d0fefa7dcdcbeb767f6785f425ddd65b64982eab04",
+    "dispatch_test.go": "f56ef170b1f55951657b098a07508a904715d8a877d493911632dd6c98c586b3",
+    "go.mod": "a26cbe71b559d6d8ce2b24c47bcac1de5df7295a3df33302998d55ea4d20123a",
+    "internal/notifier/http.go": "f896a092b2737824d262f7830c2a6dd68d1e295ece3cb9ff409b6fc5b074b444",
+    "internal/operation/operation.go": "c1b2bc43e0707f245f7d68add2304005e993cc4025bd35cf5503c2cab90720a6",
+    "internal/recordstore/files.go": "a3442c86b9c17c7cf97d9d569eda0912db388d2be19c3c5d8fdc52d3e6e11297"
+  },
+  "fixture_sha256": {
+    "cmd/server/main.go": "742edeee3a3e675db021f831495fa871d65dcd1f1d129205995dcea390a249f2",
+    "dispatch.go": "4f7b9c4fdb5ac700aab70ec926b97a3cb00e6ec1aa5e0bae662101ae3c01b08c",
+    "dispatch_test.go": "f56ef170b1f55951657b098a07508a904715d8a877d493911632dd6c98c586b3",
+    "go.mod": "a26cbe71b559d6d8ce2b24c47bcac1de5df7295a3df33302998d55ea4d20123a"
+  },
+  "trial_report": "gpt-6-luna/medium-service/trial-report.md",
+  "verification": "gpt-6-luna/medium-service/verification.txt",
+  "checks": [
+    {
+      "command": "rtk proxy go test ./...",
+      "exit": 0
+    },
+    {
+      "command": "rtk proxy go test -count=1 -v ./...",
+      "exit": 0
+    },
+    {
+      "command": "rtk proxy go vet ./...",
+      "exit": 0
+    }
+  ],
+  "review": "independent-review.md",
+  "review_sha256": "cc80d9b326d0646d5f4000b2faa8b9b2918b3aaac5719166ace7f37042ce40f3",
+  "baseline_architecture": "B",
+  "first_pass_architecture": "B",
+  "revised_architecture": "A",
+  "baseline_correctness": "A-",
+  "first_pass_correctness": "A-",
+  "revised_correctness": "A-",
+  "finding": "Revised output gives concrete persistence and notification a single owner; compatibility facade delegates. Scanner long-line correctness defect remains.",
+  "limits": [
+    "Single revised same-model medium case; no claim of broad reliability",
+    "Go 1.26.5 darwin/arm64; no minimum Go 1.22, race, or platform matrix",
+    "No causal attribution for unrelated correctness behavior",
+    "Unedited review contains independent reproduction details"
+  ],
+  "fork_turns": "none",
+  "reviewer": {
+    "model": "gpt-6-astra",
+    "fork_turns": "none",
+    "reasoning_effort": "No override supplied",
+    "harness": "Codex collaboration subagent; fresh context",
+    "expected_judgments_withheld": true
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "stage": "second review-guided repair independently assessed Architecture A / Correctness A / Testing A with platform limits",
+  "case": "combined-evolution",
+  "provenance": "Controller supplied second review-guided test-only repair after independent first-repair review. Author saw prior findings. This is not blind skill uplift.",
+  "model": "not independently recorded in supplied repair report",
+  "first_pass": "../manifest.json",
+  "original_fixture": "tests/go-quality-build/combined/evals/files/combined-evolution",
+  "fixture_sha256": {
+    "README.md": "abfc48ed51b3169f42f4ecba8ba43fd8e71f60b42443bbab8ed96390f9ee7a93",
+    "cmd/server/main.go": "685220af9e1f0cb541e3ee3df8bcc44ab0778693697504e520d73e28586e8793",
+    "fielddesk.go": "30d0976653caff04cbf3afa12509eacfac76942c0af1df36d5c0562cc8b2756d",
+    "fielddesk_test.go": "357365937c0fe86e58233ad61a0f52a4918fedd43d4402444ef74798989bd2d1",
+    "go.mod": "4d2a01dd430a5b58229ac516d2a3a87432b755e8a3141c371a223db49fa0f29a"
+  },
+  "source_sha256": {
+    "README.md": "abfc48ed51b3169f42f4ecba8ba43fd8e71f60b42443bbab8ed96390f9ee7a93",
+    "cmd/import-checkins/main.go": "6969e4a1cab64772235c64f3823eb736dcead1341e5d44d3c925969a6583a2fe",
+    "cmd/import-checkins/main_test.go": "0219cf9ce1af78e29c31d2866bb5f36f26ad5e81acd5067762b373737357f782",
+    "cmd/server/main.go": "6b764468d955327d0db3da531b63d3bd2dd35cfb4c7fed1883a39e075aad8394",
+    "cmd/server/main_test.go": "0ef033772e5ce92d62434d47a16002cd5a720d6387bfd6e3c606dd4c408c9a31",
+    "fielddesk.go": "c70c2824b5c0fe14b8a633c549670bccf4988830e312e503b37c059a770d67c6",
+    "fielddesk_test.go": "dd97bc88dd7077aa18c283007c168051ff7cfa5f1ae92f00c71976bfe5cb5a25",
+    "go.mod": "4d2a01dd430a5b58229ac516d2a3a87432b755e8a3141c371a223db49fa0f29a"
+  },
+  "artifacts_sha256": {
+    "review-guided-report.md": "5ab793b969ed6be289ecdfd41e830407135e60bc482a53cb8590d1711f595d33",
+    "source.patch": "6f44dadbca4e0f51c30fbcb15bfb5a80d44dc7ee89be7e0529959bdb61434278",
+    "verification.json": "577ef6e0fa43da000c2408f5fd46ac6280d4f37d16d2965d7ecfcda76989b246"
+  },
+  "review_status": "complete",
+  "go_version": "go version go1.26.5 darwin/arm64",
+  "limitations": [
+    "No successful live-listener signal shutdown verified by archive; fresh tests use submitted controlled seams.",
+    "Author-reported mutation checks were not rerun in this archive stage.",
+    "Added pre-opened old-file-handle check targets replacement identity on Unix; explicitly skipped on Windows. No filesystem failure injection or cross-platform verification claimed.",
+    "Go 1.22 execution unavailable; runner is Go 1.26.5 darwin/arm64."
+  ],
+  "changes_since_first_repair": [
+    "fielddesk_test.go"
+  ],
+  "production_identity": "PASS: only fielddesk_test.go differs from first repair source hashes",
+  "architecture_grade": "A",
+  "correctness_grade": "A",
+  "testing_grade": "A",
+  "independent_testing_review": {
+    "artifact": "review-repair-testing-final.md",
+    "sha256": "f97021608eeca665f4f16e8f09ab79790275bb0ddf014faca07dcc59c1e860f0",
+    "blind": false,
+    "provenance": "Final independent Testing review after review-guided repair; not blind skill uplift."
+  },
+  "architecture_correctness_basis": {
+    "review": "../review-guided/review-repair-arch-correct.md",
+    "sha256": "0e5c6af5846ed4355b15aae3803601807257826a08b138ef1add05e569fe3167",
+    "basis": "First repair independent Architecture/Correctness A/A; verified source hash comparison shows only fielddesk_test.go changed for second repair, so production is unchanged."
+  }
+}

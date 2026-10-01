@@ -1,0 +1,530 @@
+--- a/cmd/invoice/main.go
++++ b/cmd/invoice/main.go
+@@ -5 +4,0 @@
+-	"example.com/commerce/internal/billing"
+@@ -10,0 +10,3 @@
++
++	"example.com/commerce/internal/billing"
++	"example.com/commerce/internal/gatewayhttp"
+@@ -26 +28 @@
+-	s := billing.Service{Ledger: f, Client: &http.Client{Timeout: 5 * time.Second}, GatewayURL: os.Getenv("GATEWAY_URL")}
++	s := billing.Service{Ledger: f, Gateway: &gatewayhttp.Client{HTTP: &http.Client{Timeout: 5 * time.Second}, URL: os.Getenv("GATEWAY_URL")}}
+--- /dev/null
++++ b/cmd/settle/main.go
+@@ -0,0 +1,58 @@
++package main
++
++import (
++	"context"
++	"fmt"
++	"io"
++	"net/http"
++	"os"
++	"time"
++
++	"example.com/commerce/internal/billing"
++	"example.com/commerce/internal/gatewayhttp"
++	"example.com/commerce/internal/invoicecodec"
++)
++
++func run(args []string) error {
++	if len(args) != 1 {
++		return fmt.Errorf("usage: settle FILE")
++	}
++	input, err := os.Open(args[0])
++	if err != nil {
++		return err
++	}
++	defer input.Close()
++	ledger, err := os.OpenFile(os.Getenv("LEDGER"), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
++	if err != nil {
++		return err
++	}
++	defer ledger.Close()
++	service := billing.Service{
++		Ledger:  ledger,
++		Gateway: &gatewayhttp.Client{HTTP: &http.Client{Timeout: 5 * time.Second}, URL: os.Getenv("GATEWAY_URL")},
++	}
++	return settle(context.Background(), input, &service)
++}
++
++func settle(ctx context.Context, input io.Reader, service *billing.Service) error {
++	rows := invoicecodec.NewReader(input)
++	for {
++		invoice, err := rows.Next()
++		if err == io.EOF {
++			return nil
++		}
++		if err != nil {
++			return err
++		}
++		if err := service.Charge(ctx, invoice.ID, invoice.Cents); err != nil {
++			return fmt.Errorf("charge invoice %q: %w", invoice.ID, err)
++		}
++	}
++}
++
++func main() {
++	if err := run(os.Args[1:]); err != nil {
++		fmt.Fprintln(os.Stderr, err)
++		os.Exit(1)
++	}
++}
+--- /dev/null
++++ b/cmd/settle/main_test.go
+@@ -0,0 +1,52 @@
++package main
++
++import (
++	"bytes"
++	"context"
++	"errors"
++	"reflect"
++	"strings"
++	"testing"
++
++	"example.com/commerce/internal/billing"
++)
++
++type gatewayFunc func(context.Context, string, int) error
++
++func (f gatewayFunc) Charge(ctx context.Context, id string, cents int) error {
++	return f(ctx, id, cents)
++}
++
++func TestSettleProcessesSequentiallyAndStopsOnMalformedRow(t *testing.T) {
++	var ledger bytes.Buffer
++	var charged []string
++	service := billing.Service{Ledger: &ledger, Gateway: gatewayFunc(func(_ context.Context, id string, _ int) error {
++		charged = append(charged, id)
++		return nil
++	})}
++	err := settle(context.Background(), strings.NewReader("one,10\nbad\ntwo,20\n"), &service)
++	if err == nil {
++		t.Fatal("expected malformed row error")
++	}
++	if !reflect.DeepEqual(charged, []string{"one"}) || ledger.String() != "one,10\n" {
++		t.Fatalf("charged=%v ledger=%q", charged, ledger.String())
++	}
++}
++
++func TestSettleStopsOnFirstChargeFailure(t *testing.T) {
++	var ledger bytes.Buffer
++	var charged []string
++	service := billing.Service{Ledger: &ledger, Gateway: gatewayFunc(func(_ context.Context, id string, _ int) error {
++		charged = append(charged, id)
++		if id == "two" {
++			return errors.New("declined")
++		}
++		return nil
++	})}
++	if err := settle(context.Background(), strings.NewReader("one,10\ntwo,20\nthree,30\n"), &service); err == nil {
++		t.Fatal("expected charge error")
++	}
++	if !reflect.DeepEqual(charged, []string{"one", "two"}) || ledger.String() != "one,10\n" {
++		t.Fatalf("charged=%v ledger=%q", charged, ledger.String())
++	}
++}
+--- a/internal/billing/billing.go
++++ b/internal/billing/billing.go
+@@ -0,0 +1,3 @@
++// Package billing owns invoice validation, charge sequencing, and ledger
++// access. Concrete gateway protocols are supplied by the command that wires
++// the operation.
+@@ -5 +7,0 @@
+-	"fmt"
+@@ -7 +8,0 @@
+-	"net/http"
+@@ -9,2 +10,2 @@
+-	"strconv"
+-	"strings"
++
++	"example.com/commerce/internal/invoicecodec"
+@@ -13 +14,6 @@
+-// Service is used serially by the host. Invoices are append-only lines: ID,CENTS.
++// Gateway is the operation's narrow outbound contract.
++type Gateway interface {
++	Charge(context.Context, string, int) error
++}
++
++// Service charges valid invoices serially and records successful charges.
+@@ -15,3 +21,2 @@
+-	Ledger     io.Writer
+-	Client     *http.Client
+-	GatewayURL string
++	Ledger  io.Writer
++	Gateway Gateway
+@@ -21,5 +26,2 @@
+-	if id == "" || strings.ContainsAny(id, ",\r\n") || cents <= 0 {
+-		return fmt.Errorf("invalid invoice")
+-	}
+-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.GatewayURL, strings.NewReader(id+","+strconv.Itoa(cents)))
+-	if err != nil {
++	invoice := invoicecodec.Invoice{ID: id, Cents: cents}
++	if err := invoicecodec.Validate(invoice); err != nil {
+@@ -28,2 +30 @@
+-	resp, err := s.Client.Do(req)
+-	if err != nil {
++	if err := s.Gateway.Charge(ctx, id, cents); err != nil {
+@@ -32,3 +33,8 @@
+-	defer resp.Body.Close()
+-	if resp.StatusCode != 204 {
+-		return fmt.Errorf("gateway status %d", resp.StatusCode)
++	return invoicecodec.Encode(s.Ledger, invoice)
++}
++
++// ReadLedger decodes every row in a ledger for export consumers.
++func ReadLedger(path string) ([]invoicecodec.Invoice, error) {
++	f, err := os.Open(path)
++	if err != nil {
++		return nil, err
+@@ -36,2 +42,2 @@
+-	_, err = fmt.Fprintf(s.Ledger, "%s,%d\n", id, cents)
+-	return err
++	defer f.Close()
++	return invoicecodec.DecodeAll(f)
+--- a/internal/billing/billing_test.go
++++ b/internal/billing/billing_test.go
+@@ -6,2 +6,4 @@
+-	"net/http"
+-	"net/http/httptest"
++	"errors"
++	"os"
++	"path/filepath"
++	"reflect"
+@@ -11,3 +13,7 @@
+-func TestCharge(t *testing.T) {
+-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(204) }))
+-	defer ts.Close()
++type gatewayFunc func(context.Context, string, int) error
++
++func (f gatewayFunc) Charge(ctx context.Context, id string, cents int) error {
++	return f(ctx, id, cents)
++}
++
++func TestChargeWritesLedgerAfterGatewaySuccess(t *testing.T) {
+@@ -15 +21,8 @@
+-	s := Service{Ledger: &ledger, Client: ts.Client(), GatewayURL: ts.URL}
++	var charged []string
++	s := Service{Ledger: &ledger, Gateway: gatewayFunc(func(_ context.Context, id string, cents int) error {
++		charged = append(charged, id)
++		if cents != 250 {
++			t.Fatalf("gateway cents = %d, want 250", cents)
++		}
++		return nil
++	})}
+@@ -19,2 +32,2 @@
+-	if ledger.String() != "invoice-1,250\n" {
+-		t.Fatalf("got %q", ledger.String())
++	if ledger.String() != "invoice-1,250\n" || !reflect.DeepEqual(charged, []string{"invoice-1"}) {
++		t.Fatalf("ledger=%q charged=%v", ledger.String(), charged)
+@@ -23,3 +36,2 @@
+-func TestDeclineDoesNotWrite(t *testing.T) {
+-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(402) }))
+-	defer ts.Close()
++
++func TestDeclineDoesNotWriteLedger(t *testing.T) {
+@@ -27,3 +39,3 @@
+-	s := Service{Ledger: &ledger, Client: ts.Client(), GatewayURL: ts.URL}
+-	if s.Charge(context.Background(), "invoice-1", 250) == nil || ledger.Len() != 0 {
+-		t.Fatal("declined charge persisted or reported successful")
++	s := Service{Ledger: &ledger, Gateway: gatewayFunc(func(context.Context, string, int) error { return errors.New("declined") })}
++	if err := s.Charge(context.Background(), "invoice-1", 250); err == nil || ledger.Len() != 0 {
++		t.Fatalf("error=%v ledger=%q", err, ledger.String())
+@@ -31,0 +44,46 @@
++
++func TestInvalidInvoiceDoesNotCallGateway(t *testing.T) {
++	called := false
++	s := Service{Ledger: &bytes.Buffer{}, Gateway: gatewayFunc(func(context.Context, string, int) error { called = true; return nil })}
++	if err := s.Charge(context.Background(), "bad,id", 250); err == nil || called {
++		t.Fatalf("error=%v gateway called=%v", err, called)
++	}
++}
++
++func TestReadLedgerUsesInvoiceCodec(t *testing.T) {
++	path := filepath.Join(t.TempDir(), "ledger")
++	if err := os.WriteFile(path, []byte("one,25\ntwo,50\n"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	got, err := ReadLedger(path)
++	if err != nil {
++		t.Fatal(err)
++	}
++	want := []struct {
++		ID    string
++		Cents int
++	}{{"one", 25}, {"two", 50}}
++	if len(got) != len(want) {
++		t.Fatalf("got %#v", got)
++	}
++	for i := range want {
++		if got[i].ID != want[i].ID || got[i].Cents != want[i].Cents {
++			t.Fatalf("got %#v, want %#v", got, want)
++		}
++	}
++}
++
++func TestExportPreservesLedgerBytes(t *testing.T) {
++	path := filepath.Join(t.TempDir(), "ledger")
++	want := []byte("legacy-id,00025\r\n")
++	if err := os.WriteFile(path, want, 0600); err != nil {
++		t.Fatal(err)
++	}
++	var out bytes.Buffer
++	if err := Export(path, &out); err != nil {
++		t.Fatal(err)
++	}
++	if !bytes.Equal(out.Bytes(), want) {
++		t.Fatalf("exported %q, want exact bytes %q", out.Bytes(), want)
++	}
++}
+--- /dev/null
++++ b/internal/gatewayhttp/client.go
+@@ -0,0 +1,36 @@
++// Package gatewayhttp implements billing's outbound HTTP gateway protocol.
++package gatewayhttp
++
++import (
++	"context"
++	"fmt"
++	"net/http"
++	"strconv"
++	"strings"
++
++	"example.com/commerce/internal/billing"
++)
++
++// Client sends the existing gateway request format and accepts HTTP 204.
++type Client struct {
++	HTTP *http.Client
++	URL  string
++}
++
++func (c *Client) Charge(ctx context.Context, id string, cents int) error {
++	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.URL, strings.NewReader(id+","+strconv.Itoa(cents)))
++	if err != nil {
++		return err
++	}
++	resp, err := c.HTTP.Do(req)
++	if err != nil {
++		return err
++	}
++	defer resp.Body.Close()
++	if resp.StatusCode != http.StatusNoContent {
++		return fmt.Errorf("gateway status %d", resp.StatusCode)
++	}
++	return nil
++}
++
++var _ billing.Gateway = (*Client)(nil)
+--- /dev/null
++++ b/internal/gatewayhttp/client_test.go
+@@ -0,0 +1,41 @@
++package gatewayhttp
++
++import (
++	"context"
++	"io"
++	"net/http"
++	"strings"
++	"testing"
++)
++
++type roundTripFunc func(*http.Request) (*http.Response, error)
++
++func (f roundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) { return f(req) }
++
++func TestClientPreservesGatewayRequestBytes(t *testing.T) {
++	client := Client{HTTP: &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
++		if r.Method != http.MethodPost {
++			t.Errorf("method = %s", r.Method)
++		}
++		body, err := io.ReadAll(r.Body)
++		if err != nil {
++			t.Error(err)
++		}
++		if string(body) != "invoice-1,250" {
++			t.Errorf("body = %q", body)
++		}
++		return &http.Response{StatusCode: http.StatusNoContent, Body: io.NopCloser(strings.NewReader("")), Header: make(http.Header)}, nil
++	})}, URL: "http://gateway.test/charge"}
++	if err := client.Charge(context.Background(), "invoice-1", 250); err != nil {
++		t.Fatal(err)
++	}
++}
++
++func TestClientRejectsNon204(t *testing.T) {
++	client := Client{HTTP: &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++		return &http.Response{StatusCode: http.StatusPaymentRequired, Body: io.NopCloser(strings.NewReader("")), Header: make(http.Header)}, nil
++	})}, URL: "http://gateway.test/charge"}
++	if err := client.Charge(context.Background(), "invoice-1", 250); err == nil {
++		t.Fatal("expected gateway status error")
++	}
++}
+--- /dev/null
++++ b/internal/invoicecodec/codec.go
+@@ -0,0 +1,104 @@
++// Package invoicecodec reads and writes the ID,CENTS row format shared by
++// billing and operations.
++package invoicecodec
++
++import (
++	"bufio"
++	"fmt"
++	"io"
++	"strconv"
++	"strings"
++)
++
++// Invoice is one row in an invoice input file or billing ledger.
++type Invoice struct {
++	ID    string
++	Cents int
++}
++
++// Encode writes one canonical ledger row.
++func Encode(w io.Writer, invoice Invoice) error {
++	if err := Validate(invoice); err != nil {
++		return err
++	}
++	_, err := fmt.Fprintf(w, "%s,%d\n", invoice.ID, invoice.Cents)
++	return err
++}
++
++// Reader decodes one newline-terminated or final unterminated row at a time.
++type Reader struct {
++	scanner *bufio.Scanner
++	line    int
++}
++
++func NewReader(r io.Reader) *Reader {
++	s := bufio.NewScanner(r)
++	// Invoice rows are small in practice; report an error for rows over 1 MiB.
++	s.Buffer(make([]byte, 1024), 1024*1024)
++	return &Reader{scanner: s}
++}
++
++// Next returns the next invoice. It returns io.EOF after the last row.
++func (r *Reader) Next() (Invoice, error) {
++	if !r.scanner.Scan() {
++		if err := r.scanner.Err(); err != nil {
++			return Invoice{}, fmt.Errorf("read invoice row: %w", err)
++		}
++		return Invoice{}, io.EOF
++	}
++	r.line++
++	row, err := DecodeRow(r.scanner.Text())
++	if err != nil {
++		return Invoice{}, fmt.Errorf("invoice row %d: %w", r.line, err)
++	}
++	return row, nil
++}
++
++// DecodeAll reads every row using the same decoder used for settlement input.
++func DecodeAll(r io.Reader) ([]Invoice, error) {
++	rows := NewReader(r)
++	var invoices []Invoice
++	for {
++		invoice, err := rows.Next()
++		if err == io.EOF {
++			return invoices, nil
++		}
++		if err != nil {
++			return nil, err
++		}
++		invoices = append(invoices, invoice)
++	}
++}
++
++// DecodeRow parses one ID,CENTS row without its line ending.
++func DecodeRow(row string) (Invoice, error) {
++	if strings.ContainsAny(row, "\r\n") {
++		return Invoice{}, fmt.Errorf("invalid invoice row")
++	}
++	parts := strings.Split(row, ",")
++	if len(parts) != 2 || parts[1] == "" {
++		return Invoice{}, fmt.Errorf("expected ID,CENTS")
++	}
++	for _, digit := range parts[1] {
++		if digit < '0' || digit > '9' {
++			return Invoice{}, fmt.Errorf("invalid cents %q", parts[1])
++		}
++	}
++	cents, err := strconv.Atoi(parts[1])
++	if err != nil {
++		return Invoice{}, fmt.Errorf("invalid cents %q: %w", parts[1], err)
++	}
++	invoice := Invoice{ID: parts[0], Cents: cents}
++	if err := Validate(invoice); err != nil {
++		return Invoice{}, err
++	}
++	return invoice, nil
++}
++
++// Validate checks the constraints required by both the row format and billing.
++func Validate(invoice Invoice) error {
++	if invoice.ID == "" || strings.ContainsAny(invoice.ID, ",\r\n") || invoice.Cents <= 0 {
++		return fmt.Errorf("invalid invoice")
++	}
++	return nil
++}
+--- /dev/null
++++ b/internal/invoicecodec/codec_test.go
+@@ -0,0 +1,57 @@
++package invoicecodec
++
++import (
++	"bytes"
++	"io"
++	"reflect"
++	"strings"
++	"testing"
++)
++
++func TestEncodeDecodeRows(t *testing.T) {
++	var ledger bytes.Buffer
++	for _, invoice := range []Invoice{{ID: "one", Cents: 25}, {ID: "two", Cents: 50}} {
++		if err := Encode(&ledger, invoice); err != nil {
++			t.Fatal(err)
++		}
++	}
++	if got, want := ledger.String(), "one,25\ntwo,50\n"; got != want {
++		t.Fatalf("encoded %q, want %q", got, want)
++	}
++	got, err := DecodeAll(strings.NewReader(ledger.String()))
++	if err != nil {
++		t.Fatal(err)
++	}
++	want := []Invoice{{ID: "one", Cents: 25}, {ID: "two", Cents: 50}}
++	if !reflect.DeepEqual(got, want) {
++		t.Fatalf("decoded %#v, want %#v", got, want)
++	}
++}
++
++func TestDecodeRejectsMalformedRows(t *testing.T) {
++	for _, row := range []string{"", "no-cents", "id,", "id,0", "id,-2", "id,2x", "id,2,extra", ",2", "id\r,2"} {
++		t.Run(row, func(t *testing.T) {
++			if _, err := DecodeRow(row); err == nil {
++				t.Fatalf("DecodeRow(%q) succeeded", row)
++			}
++		})
++	}
++}
++
++func TestValidateRejectsDelimiterAndNewlineIDs(t *testing.T) {
++	for _, id := range []string{"", "a,b", "a\nb", "a\rb"} {
++		if err := Validate(Invoice{ID: id, Cents: 1}); err == nil {
++			t.Errorf("Validate(%q) succeeded", id)
++		}
++	}
++}
++
++func TestReaderStopsAtMalformedRow(t *testing.T) {
++	r := NewReader(strings.NewReader("one,25\nbad\ntwo,50\n"))
++	if got, err := r.Next(); err != nil || got.ID != "one" {
++		t.Fatalf("first row = %#v, %v", got, err)
++	}
++	if _, err := r.Next(); err == nil || err == io.EOF {
++		t.Fatalf("malformed row error = %v", err)
++	}
++}

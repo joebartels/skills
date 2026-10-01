@@ -1,0 +1,384 @@
+{
+  "run_id": "2026-10-01-package-boundaries-skill-on",
+  "created_utc": "2026-10-01T14:47:58.382543+00:00",
+  "skill_revision": "05a4e6095bd8130647c5570f94319b739105cd18",
+  "source_fixture_revision": "4ab6b82106b3b04a035203956606f7be0b328229",
+  "harness": "Codex collaboration subagent; fresh context per case",
+  "fork_turns": "none",
+  "reasoning_effort": "No override supplied",
+  "expected_judgments_withheld": true,
+  "dispatch_provenance": "Exact task prompts preserved from committed baseline prompt.txt. Exact full wrapper bytes were not retained in available context; known wrapper invariants recorded without inventing verbatim text.",
+  "applicable_wrapper_invariants": [
+    "Work only in disposable case copy",
+    "Read SKILL.md and linked package-maps",
+    "Implement exact user task",
+    "Do not read evals.json, expectations/assertions, or prior runs",
+    "Run relevant tests and write trial-report.md",
+    "Do not edit repository"
+  ],
+  "selection_control_wrapper": "Supplied skill path/frontmatter description; decide applicability before opening. Agent report states skill was not opened. This is explicit applicability evaluation, not automatic harness routing.",
+  "verification_root": "/private/tmp/go-skill-on-archive-8xty4xd1",
+  "go_version": "go version go1.26.5 darwin/arm64",
+  "verification_limits": [
+    "Fresh reconstruction tests/vet use installed Go, not a Go 1.22 binary",
+    "No race or cross-platform matrix",
+    "Tests passing do not negate independently reproduced Scanner defects",
+    "Approved local httptest listener access used"
+  ],
+  "cases": [
+    {
+      "id": "small-cli",
+      "model": "gpt-6-sol",
+      "path": "gpt-6-sol/small-cli",
+      "original_sha256": {
+        "go.mod": "3e55eb6ae100d608ef5369ffbcfaf0fe56d1f9fd7aabbb36e33a81981373f05b",
+        "main.go": "98c546a48aa8c90ebd42bcd576ace9b71e71a82181ab0e39392cb2af6916520a",
+        "main_test.go": "706db62442a0954501bd1764649999e1c65e780ae5216ac7d8dd914bbefc9e78"
+      },
+      "changed_sha256": {
+        "go.mod": "3e55eb6ae100d608ef5369ffbcfaf0fe56d1f9fd7aabbb36e33a81981373f05b",
+        "main.go": "cb2dc472c4e202442c6bbb2d2ba5f02c5be2d5df5a92a1ed820e52575683765c",
+        "main_test.go": "9b1aabd2c0128d462b7fafbb4c879af2ab889a49805526bae0db094e968ba318"
+      },
+      "source_patch": "source.patch",
+      "trial_report": "trial-report.md",
+      "prompt": "prompt.txt",
+      "verification": "verification.txt",
+      "checks": [
+        {
+          "command": "rtk proxy go test ./...",
+          "exit": 0
+        },
+        {
+          "command": "rtk proxy go test -count=1 -v ./...",
+          "exit": 0
+        },
+        {
+          "command": "rtk proxy go vet ./...",
+          "exit": 0
+        }
+      ],
+      "patch_reconstruction": "verified byte-for-byte",
+      "same_model_baseline": "2026-10-01-package-boundaries-baseline/small-cli",
+      "baseline_architecture": "A",
+      "baseline_correctness": "A",
+      "skill_on_architecture": "A",
+      "skill_on_correctness": "A",
+      "review": "reviews/small.md",
+      "review_candidate": "Candidate-1",
+      "architecture_uplift_demonstrated": false,
+      "skill_opened": true,
+      "comparison": "Architecture already A without skill and remains A; preserves an appropriate baseline outcome, no uplift."
+    },
+    {
+      "id": "small-library",
+      "model": "gpt-6-sol",
+      "path": "gpt-6-sol/small-library",
+      "original_sha256": {
+        "go.mod": "c6bb359141b0738ffd90e06e7c7c65657a2a302803d4172c4186792ec79c93e4",
+        "span.go": "8e6868f8880921534e74f31a06102abb28cd9cfce9738fe13f8a91f1ad19b04b",
+        "span_test.go": "bedd3a71a67f5665dcbc5a28d2013770fd6479c90f6b83b76b2e8454c3816570"
+      },
+      "changed_sha256": {
+        "go.mod": "c6bb359141b0738ffd90e06e7c7c65657a2a302803d4172c4186792ec79c93e4",
+        "span.go": "6cb46793c7e86c90f2a30755c56fb62338b523d6207cffcf287ccc1008821d07",
+        "span_test.go": "a9c2461707b0f90b15ba67e84bd3185b112466190068a8e53be7d7252f23d1e2"
+      },
+      "source_patch": "source.patch",
+      "trial_report": "trial-report.md",
+      "prompt": "prompt.txt",
+      "verification": "verification.txt",
+      "checks": [
+        {
+          "command": "rtk proxy go test ./...",
+          "exit": 0
+        },
+        {
+          "command": "rtk proxy go test -count=1 -v ./...",
+          "exit": 0
+        },
+        {
+          "command": "rtk proxy go vet ./...",
+          "exit": 0
+        }
+      ],
+      "patch_reconstruction": "verified byte-for-byte",
+      "same_model_baseline": "2026-10-01-package-boundaries-baseline/small-library",
+      "baseline_architecture": "A",
+      "baseline_correctness": "A",
+      "skill_on_architecture": "A",
+      "skill_on_correctness": "A",
+      "review": "reviews/small.md",
+      "review_candidate": "Candidate-2",
+      "architecture_uplift_demonstrated": false,
+      "skill_opened": true,
+      "comparison": "Architecture already A without skill and remains A; preserves an appropriate baseline outcome, no uplift."
+    },
+    {
+      "id": "medium-service",
+      "model": "gpt-6-sol",
+      "path": "gpt-6-sol/medium-service",
+      "original_sha256": {
+        "cmd/server/main.go": "742edeee3a3e675db021f831495fa871d65dcd1f1d129205995dcea390a249f2",
+        "dispatch.go": "4f7b9c4fdb5ac700aab70ec926b97a3cb00e6ec1aa5e0bae662101ae3c01b08c",
+        "dispatch_test.go": "f56ef170b1f55951657b098a07508a904715d8a877d493911632dd6c98c586b3",
+        "go.mod": "a26cbe71b559d6d8ce2b24c47bcac1de5df7295a3df33302998d55ea4d20123a"
+      },
+      "changed_sha256": {
+        "cmd/replay/main.go": "ce4ac56c89587cd57e5792f3da526969f5a931926deeedb4aea916662337b9c6",
+        "cmd/replay/main_test.go": "ee7c307b7daac8cf5da2534899c3c7d8cc5f8609b9c3283b8deac282d92ebfd7",
+        "cmd/server/main.go": "742edeee3a3e675db021f831495fa871d65dcd1f1d129205995dcea390a249f2",
+        "dispatch.go": "7dbeedc7e1aaf9bf87c32974193dd13a851c627222a20574fd820183488729c5",
+        "dispatch_test.go": "008b84972c3272f2da3b9ca0ddb41e23bb8ba66e1e1ac9655988c44750e80098",
+        "go.mod": "a26cbe71b559d6d8ce2b24c47bcac1de5df7295a3df33302998d55ea4d20123a",
+        "internal/notification/http.go": "affc25d98bed8db1c18b931902589e1242f5a2c0dff9bd66292967643f3aeec1",
+        "internal/recordstore/file.go": "aff3ee7843e1e73ebf55712577b26f634a1c3f0c2b940e2be4a35f4db99dba34",
+        "internal/submit/submit.go": "cf166960c6b27305cb7ba7fa1bf0472ef39de55528ed6ed8a3162bef5e65a921"
+      },
+      "source_patch": "source.patch",
+      "trial_report": "trial-report.md",
+      "prompt": "prompt.txt",
+      "verification": "verification.txt",
+      "checks": [
+        {
+          "command": "rtk proxy go test ./...",
+          "exit": 0
+        },
+        {
+          "command": "rtk proxy go test -count=1 -v ./...",
+          "exit": 0
+        },
+        {
+          "command": "rtk proxy go vet ./...",
+          "exit": 0
+        }
+      ],
+      "patch_reconstruction": "verified byte-for-byte",
+      "same_model_baseline": "2026-10-01-package-boundaries-baseline/medium-service",
+      "baseline_architecture": "A",
+      "baseline_correctness": "A-",
+      "skill_on_architecture": "A",
+      "skill_on_correctness": "A-",
+      "review": "reviews/medium.md",
+      "review_candidate": "Candidate B",
+      "architecture_uplift_demonstrated": false,
+      "skill_opened": true,
+      "comparison": "Architecture already A without skill and remains A; preserves an appropriate baseline outcome, no uplift."
+    },
+    {
+      "id": "large-features",
+      "model": "gpt-6-sol",
+      "path": "gpt-6-sol/large-features",
+      "original_sha256": {
+        "cmd/invoice/main.go": "d8466de59f2093911a2bb33861a8a9fde4490da43468f340cbda91c11f9e4219",
+        "cmd/shop/main.go": "56c5f50fa5a9132daaed281f5e12aad6226a26230aff905d3a529a53afbef7a9",
+        "go.mod": "00ba02cccbfd4ad2c0038b30f2ef859322cdf6f528e1cd66133541b13d5c2976",
+        "internal/billing/billing.go": "446186c7e24257fb2a02488eef8977a1883428af28683704025d4ba6f0821049",
+        "internal/billing/billing_test.go": "c7c88caea223c9a44c7462e8eadc95c3ade4c58e3486bdaa336bd3ae5951cc15",
+        "internal/catalog/catalog.go": "8abeb490132aced799e5e6772993bfa2fd67eddf723284630d6038c8ba18ac1c"
+      },
+      "changed_sha256": {
+        "cmd/invoice/main.go": "c233d51c8dd9064f974e322e6ab5c090f4e12fde244f253ea6e2094a8b1e6519",
+        "cmd/settle/main.go": "68f7d197b32edc6f2cbb56e106f0f9b1ba0fd1bdc619de429187188cebbd5bd9",
+        "cmd/settle/main_test.go": "dd153a27ca121d7aec227a09cfbf6a9683ab76ede506960623b30c1ccb99c5a9",
+        "cmd/shop/main.go": "56c5f50fa5a9132daaed281f5e12aad6226a26230aff905d3a529a53afbef7a9",
+        "go.mod": "00ba02cccbfd4ad2c0038b30f2ef859322cdf6f528e1cd66133541b13d5c2976",
+        "internal/billing/billing.go": "d90cb16bede17baea8bc5156c83fc85b6d26eac15e4112dc38cc9906f2dcf203",
+        "internal/billing/billing_test.go": "436dac3c53b99829fdbcd18dc6ca85dc78900df2297c8a1a281711589ec53a3b",
+        "internal/catalog/catalog.go": "8abeb490132aced799e5e6772993bfa2fd67eddf723284630d6038c8ba18ac1c",
+        "internal/invoicerow/row.go": "6b9d693bc4459154b2a88791665a9d94252195b31c0a22b02edac6b1e29aba18",
+        "internal/invoicerow/row_test.go": "b003ddc68b18b2b53fc22d0a3b511425914df167441918725f4dcefe41775422",
+        "internal/paymentgateway/client.go": "fb2411a66a34a1b4ccccbe0bd13b1c09ba4a1be8a20dddb12bc0cd6e67d5f66d",
+        "internal/paymentgateway/client_test.go": "90f959c633ec5f70d2422a298b6947278b990d0b38d3aeb8da0db902cd588323"
+      },
+      "source_patch": "source.patch",
+      "trial_report": "trial-report.md",
+      "prompt": "prompt.txt",
+      "verification": "verification.txt",
+      "checks": [
+        {
+          "command": "rtk proxy go test ./...",
+          "exit": 0
+        },
+        {
+          "command": "rtk proxy go test -count=1 -v ./...",
+          "exit": 0
+        },
+        {
+          "command": "rtk proxy go vet ./...",
+          "exit": 0
+        }
+      ],
+      "patch_reconstruction": "verified byte-for-byte",
+      "same_model_baseline": "2026-10-01-package-boundaries-baseline/large-features",
+      "baseline_architecture": "A",
+      "baseline_correctness": "A",
+      "skill_on_architecture": "A",
+      "skill_on_correctness": "A",
+      "review": "reviews/large.md",
+      "review_candidate": "Candidate B",
+      "architecture_uplift_demonstrated": false,
+      "skill_opened": true,
+      "comparison": "Architecture already A without skill and remains A; preserves an appropriate baseline outcome, no uplift."
+    },
+    {
+      "id": "not-package-work",
+      "model": "gpt-6-sol",
+      "path": "gpt-6-sol/not-package-work",
+      "original_sha256": {
+        "go.mod": "ed77974ffe7701d48263de9e59e7f8e19d9dae27c406f7830ac3b1e19ac612c2",
+        "round.go": "51686f2dfbfcdc73660d6a5c509b11be769da552b343e52e8f7d331d0800a484",
+        "round_test.go": "ed4f25a54e16bb602bd34f553f9af83a1eed4acfc6d646b6d82ed03d724fc404"
+      },
+      "changed_sha256": {
+        "go.mod": "ed77974ffe7701d48263de9e59e7f8e19d9dae27c406f7830ac3b1e19ac612c2",
+        "round.go": "26b77b7fbaf7f93c0c21138e230e4ec0fbef62f19741465eea8af3b9ff9cc005",
+        "round_test.go": "6445a4a1c495aa54e0a079addac76363a889128d9692889db5cea2f9947c119c"
+      },
+      "source_patch": "source.patch",
+      "trial_report": "trial-report.md",
+      "prompt": "prompt.txt",
+      "verification": "verification.txt",
+      "checks": [
+        {
+          "command": "rtk proxy go test ./...",
+          "exit": 0
+        },
+        {
+          "command": "rtk proxy go test -count=1 -v ./...",
+          "exit": 0
+        },
+        {
+          "command": "rtk proxy go vet ./...",
+          "exit": 0
+        }
+      ],
+      "patch_reconstruction": "verified byte-for-byte",
+      "same_model_baseline": "2026-10-01-package-boundaries-baseline/not-package-work",
+      "baseline_architecture": "Not applicable",
+      "baseline_correctness": "A",
+      "skill_on_architecture": "Not applicable",
+      "skill_on_correctness": "A",
+      "review": "reviews/small.md",
+      "review_candidate": "Candidate-3",
+      "architecture_uplift_demonstrated": false,
+      "skill_opened": false,
+      "comparison": "Architecture remains not applicable; arithmetic correct; explicit selection control reports no skill opening. Not automatic harness routing."
+    },
+    {
+      "id": "medium-service",
+      "model": "gpt-6-luna",
+      "path": "gpt-6-luna/medium-service",
+      "original_sha256": {
+        "cmd/server/main.go": "742edeee3a3e675db021f831495fa871d65dcd1f1d129205995dcea390a249f2",
+        "dispatch.go": "4f7b9c4fdb5ac700aab70ec926b97a3cb00e6ec1aa5e0bae662101ae3c01b08c",
+        "dispatch_test.go": "f56ef170b1f55951657b098a07508a904715d8a877d493911632dd6c98c586b3",
+        "go.mod": "a26cbe71b559d6d8ce2b24c47bcac1de5df7295a3df33302998d55ea4d20123a"
+      },
+      "changed_sha256": {
+        "cmd/replay/main.go": "b6cad0c3873e5d6a51965ff7fc728e61700a35cc10424e4272678ec0236b7ddf",
+        "cmd/replay/main_test.go": "14237be0c470474f1865c72ccdcc5ce390250e2519e7bbc2484c3ad27a6d0a98",
+        "cmd/server/main.go": "a4ce0927f6311e0085336086d67432aec19db1f70a9673903a12c134cdc50417",
+        "dispatch.go": "0e8ecfc92a5bd9a6f65f2d4fef3ddd2bf09afe36d282ff4b001572b87cf30e1d",
+        "dispatch_test.go": "0a557de1177e6ce99792da86fe2e48a29b724f5448b4d5256df7e57801f46c77",
+        "go.mod": "a26cbe71b559d6d8ce2b24c47bcac1de5df7295a3df33302998d55ea4d20123a",
+        "internal/notifyclient/client.go": "cd65c16438bc58ff6e3074bc0fe0707dbf1bce0013f95ed92a54aeea1131e289",
+        "internal/recordstore/store.go": "f9c7545fbbff3bc17d8a3ae6fd21ea1f991d5a2e26cebaaa782d7caa06333e19"
+      },
+      "source_patch": "source.patch",
+      "trial_report": "trial-report.md",
+      "prompt": "prompt.txt",
+      "verification": "verification.txt",
+      "checks": [
+        {
+          "command": "rtk proxy go test ./...",
+          "exit": 0
+        },
+        {
+          "command": "rtk proxy go test -count=1 -v ./...",
+          "exit": 0
+        },
+        {
+          "command": "rtk proxy go vet ./...",
+          "exit": 0
+        }
+      ],
+      "patch_reconstruction": "verified byte-for-byte",
+      "same_model_baseline": "2026-10-01-package-boundaries-baseline/supplemental-luna/source/medium-service",
+      "baseline_architecture": "B",
+      "baseline_correctness": "A-",
+      "skill_on_architecture": "B",
+      "skill_on_correctness": "A-",
+      "review": "reviews/medium.md",
+      "review_candidate": "Candidate A",
+      "architecture_uplift_demonstrated": false,
+      "skill_opened": true,
+      "comparison": "B to B: new adapters coexist with duplicated legacy implementations in the operation; ownership issue remains. No uplift."
+    },
+    {
+      "id": "large-features",
+      "model": "gpt-6-luna",
+      "path": "gpt-6-luna/large-features",
+      "original_sha256": {
+        "cmd/invoice/main.go": "d8466de59f2093911a2bb33861a8a9fde4490da43468f340cbda91c11f9e4219",
+        "cmd/shop/main.go": "56c5f50fa5a9132daaed281f5e12aad6226a26230aff905d3a529a53afbef7a9",
+        "go.mod": "00ba02cccbfd4ad2c0038b30f2ef859322cdf6f528e1cd66133541b13d5c2976",
+        "internal/billing/billing.go": "446186c7e24257fb2a02488eef8977a1883428af28683704025d4ba6f0821049",
+        "internal/billing/billing_test.go": "c7c88caea223c9a44c7462e8eadc95c3ade4c58e3486bdaa336bd3ae5951cc15",
+        "internal/catalog/catalog.go": "8abeb490132aced799e5e6772993bfa2fd67eddf723284630d6038c8ba18ac1c"
+      },
+      "changed_sha256": {
+        "cmd/invoice/main.go": "e5220d833c49e96b497ee855d91a7c76c3baccb447ddf818ae8ac98f2eb43ab1",
+        "cmd/settle/main.go": "aa77efbc4d1cf3280a68510c0d899300a0ba802a94036c02ee27b5302a5f11b2",
+        "cmd/settle/main_test.go": "1cf5b92a02d491e9144bec63163a402e9e6f2eddaaa780f4556a97537af1fecd",
+        "cmd/shop/main.go": "56c5f50fa5a9132daaed281f5e12aad6226a26230aff905d3a529a53afbef7a9",
+        "go.mod": "00ba02cccbfd4ad2c0038b30f2ef859322cdf6f528e1cd66133541b13d5c2976",
+        "internal/billing/billing.go": "17e43b1a82f564eeffa0855c9e8cb2f24b08ff4b60d7135421b3901138122d3c",
+        "internal/billing/billing_test.go": "632af06a398fc706fc6a43e17ca4e2696e74cead15abf8e3f461bf62fe6340d2",
+        "internal/catalog/catalog.go": "8abeb490132aced799e5e6772993bfa2fd67eddf723284630d6038c8ba18ac1c",
+        "internal/gatewayhttp/client.go": "4f1377d430dbf9c8ff2b05a4a342b786a19192bab9c4e24930141f0a362522cc",
+        "internal/gatewayhttp/client_test.go": "9aed3724340e1600851608445ae810eaf553e309a8b95ba4d32b9914b80b8eaa",
+        "internal/invoicecodec/codec.go": "dd00acf18fc20da421a9dada0c6febf819578cbea6af63de8d07aa57415facc9",
+        "internal/invoicecodec/codec_test.go": "c95aa6189fedc580195d88b5544217231f674bd4dae61499a9ba72f625c45be9"
+      },
+      "source_patch": "source.patch",
+      "trial_report": "trial-report.md",
+      "prompt": "prompt.txt",
+      "verification": "verification.txt",
+      "checks": [
+        {
+          "command": "rtk proxy go test ./...",
+          "exit": 0
+        },
+        {
+          "command": "rtk proxy go test -count=1 -v ./...",
+          "exit": 0
+        },
+        {
+          "command": "rtk proxy go vet ./...",
+          "exit": 0
+        }
+      ],
+      "patch_reconstruction": "verified byte-for-byte",
+      "same_model_baseline": "2026-10-01-package-boundaries-baseline/supplemental-luna/source/large-features",
+      "baseline_architecture": "A",
+      "baseline_correctness": "B",
+      "skill_on_architecture": "A",
+      "skill_on_correctness": "A-",
+      "review": "reviews/large.md",
+      "review_candidate": "Candidate A",
+      "architecture_uplift_demonstrated": false,
+      "skill_opened": true,
+      "comparison": "Architecture A to A, no uplift. Correctness B to A- reflects different observed Scanner thresholds/severity across independent reviews, not a package-boundary benefit."
+    }
+  ],
+  "review_sha256": {
+    "large.md": "07f24926c4b9072482a4bdc47df4866d730c9e9a9577ee2b6ad23b0afc20fc8c",
+    "medium.md": "4032dfd255eff0092c5db29a8b5a1c902d41d9188700a23e754fc29faa9a59a7",
+    "small.md": "c6f69938e02d6b25e138cfb1b8c262872a7e2009db6f6e81dbce6df1e80354e4"
+  },
+  "skill_snapshot_sha256": {
+    "SKILL.md": "495052192470a5bef41c5d66f8dce095944b44f240c6a89f91c60113dedd5104",
+    "references/package-maps.md": "19c2e6f964486abe11028ba04e443fc76eb39236538ee5d9ef25400cc8ecfc7f"
+  }
+}

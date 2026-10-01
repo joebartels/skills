@@ -1,0 +1,60 @@
+--- a/main.go
++++ b/main.go
+@@ -12,2 +12,15 @@
+-	if len(args) != 1 {
+-		return fmt.Errorf("usage: linesum FILE")
++	skipComments := false
++	file := ""
++	haveFile := false
++	for _, arg := range args {
++		if arg == "--skip-comments" {
++			if skipComments {
++				return fmt.Errorf("usage: linesum [--skip-comments] FILE")
++			}
++			skipComments = true
++			continue
++		}
++		if haveFile {
++			return fmt.Errorf("usage: linesum [--skip-comments] FILE")
++		}
++		file, haveFile = arg, true
+@@ -15 +28,4 @@
+-	data, err := os.ReadFile(args[0])
++	if !haveFile {
++		return fmt.Errorf("usage: linesum [--skip-comments] FILE")
++	}
++	data, err := os.ReadFile(file)
+@@ -22,0 +39,3 @@
++			continue
++		}
++		if skipComments && strings.HasPrefix(line, "#") {
+--- a/main_test.go
++++ b/main_test.go
+@@ -32,0 +33,27 @@
++
++func TestSkipComments(t *testing.T) {
++	p := filepath.Join(t.TempDir(), "numbers")
++	if err := os.WriteFile(p, []byte(" 2\n  # ignored\n-1\n"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	for _, args := range [][]string{{"--skip-comments", p}, {p, "--skip-comments"}} {
++		var b bytes.Buffer
++		if err := run(args, &b); err != nil {
++			t.Fatalf("run(%q): %v", args, err)
++		}
++		if b.String() != "1\n" {
++			t.Fatalf("run(%q) got %q", args, b.String())
++		}
++	}
++}
++
++func TestCommentsFailWithoutFlagAndWriteNothing(t *testing.T) {
++	p := filepath.Join(t.TempDir(), "numbers")
++	if err := os.WriteFile(p, []byte("2\n# comment\n"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	var b bytes.Buffer
++	if err := run([]string{p}, &b); err == nil || b.Len() != 0 {
++		t.Fatalf("comment accepted or output written: err=%v, output=%q", err, b.String())
++	}
++}

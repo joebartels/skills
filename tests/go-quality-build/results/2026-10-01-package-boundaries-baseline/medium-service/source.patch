@@ -1,0 +1,323 @@
+diff --git a/cmd/replay/main.go b/cmd/replay/main.go
+new file mode 100644
+--- /dev/null
++++ b/cmd/replay/main.go
+@@ -0,0 +1,53 @@
++package main
++
++import (
++	"bufio"
++	"context"
++	"errors"
++	"fmt"
++	"log"
++	"net/http"
++	"os"
++	"strings"
++	"time"
++
++	"example.com/dispatch"
++	"example.com/dispatch/notify"
++	"example.com/dispatch/store"
++)
++
++func main() {
++	if err := run(context.Background(), os.Args[1:], os.Getenv); err != nil {
++		log.Fatal(err)
++	}
++}
++
++func run(ctx context.Context, args []string, getenv func(string) string) error {
++	if len(args) != 1 {
++		return errors.New("usage: replay FILE")
++	}
++	f, err := os.Open(args[0])
++	if err != nil {
++		return fmt.Errorf("open batch: %w", err)
++	}
++	defer f.Close()
++
++	s := dispatch.Service{
++		Store:    store.File{Dir: getenv("RECORD_DIR")},
++		Notifier: notify.HTTP{URL: getenv("NOTIFY_URL"), Client: &http.Client{Timeout: 5 * time.Second}},
++	}
++	scan := bufio.NewScanner(f)
++	for line := 1; scan.Scan(); line++ {
++		id := strings.TrimSpace(scan.Text())
++		if id == "" {
++			continue
++		}
++		if err := s.Submit(ctx, id); err != nil {
++			return fmt.Errorf("line %d: %w", line, err)
++		}
++	}
++	if err := scan.Err(); err != nil {
++		return fmt.Errorf("read batch: %w", err)
++	}
++	return nil
++}
+diff --git a/cmd/replay/main_test.go b/cmd/replay/main_test.go
+new file mode 100644
+--- /dev/null
++++ b/cmd/replay/main_test.go
+@@ -0,0 +1,106 @@
++package main
++
++import (
++	"context"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"os"
++	"path/filepath"
++	"reflect"
++	"testing"
++)
++
++func TestReplayProcessesTrimmedLinesInOrder(t *testing.T) {
++	var ids []string
++	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		body, err := io.ReadAll(r.Body)
++		if err != nil {
++			t.Error(err)
++		}
++		ids = append(ids, string(body))
++		w.WriteHeader(http.StatusNoContent)
++	}))
++	defer ts.Close()
++	dir := t.TempDir()
++	file := filepath.Join(t.TempDir(), "batch.txt")
++	if err := os.WriteFile(file, []byte("  a  \n\n b\t\n"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	if err := run(context.Background(), []string{file}, env(dir, ts.URL)); err != nil {
++		t.Fatal(err)
++	}
++	if !reflect.DeepEqual(ids, []string{"a", "b"}) {
++		t.Fatalf("notifications = %q", ids)
++	}
++	for _, id := range ids {
++		body, err := os.ReadFile(filepath.Join(dir, id))
++		if err != nil || string(body) != "queued\n" {
++			t.Fatalf("record %s = %q, %v", id, body, err)
++		}
++	}
++}
++
++func TestReplayStopsOnInvalidID(t *testing.T) {
++	var ids []string
++	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		body, _ := io.ReadAll(r.Body)
++		ids = append(ids, string(body))
++		w.WriteHeader(http.StatusNoContent)
++	}))
++	defer ts.Close()
++	dir := t.TempDir()
++	file := filepath.Join(t.TempDir(), "batch.txt")
++	if err := os.WriteFile(file, []byte("a\n../bad\nb\n"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	if err := run(context.Background(), []string{file}, env(dir, ts.URL)); err == nil {
++		t.Fatal("invalid ID reported as success")
++	}
++	if !reflect.DeepEqual(ids, []string{"a"}) {
++		t.Fatalf("notifications = %q", ids)
++	}
++	if _, err := os.Stat(filepath.Join(dir, "b")); !os.IsNotExist(err) {
++		t.Fatalf("later record exists or stat failed: %v", err)
++	}
++}
++
++func TestReplayStopsOnNotificationFailure(t *testing.T) {
++	var ids []string
++	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		body, _ := io.ReadAll(r.Body)
++		ids = append(ids, string(body))
++		w.WriteHeader(http.StatusServiceUnavailable)
++	}))
++	defer ts.Close()
++	dir := t.TempDir()
++	file := filepath.Join(t.TempDir(), "batch.txt")
++	if err := os.WriteFile(file, []byte("a\nb\n"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	if err := run(context.Background(), []string{file}, env(dir, ts.URL)); err == nil {
++		t.Fatal("notification failure reported as success")
++	}
++	if !reflect.DeepEqual(ids, []string{"a"}) {
++		t.Fatalf("notifications = %q", ids)
++	}
++	if body, err := os.ReadFile(filepath.Join(dir, "a")); err != nil || string(body) != "queued\n" {
++		t.Fatalf("failed notification record = %q, %v", body, err)
++	}
++	if _, err := os.Stat(filepath.Join(dir, "b")); !os.IsNotExist(err) {
++		t.Fatalf("later record exists or stat failed: %v", err)
++	}
++}
++
++func env(dir, url string) func(string) string {
++	return func(key string) string {
++		switch key {
++		case "RECORD_DIR":
++			return dir
++		case "NOTIFY_URL":
++			return url
++		default:
++			return ""
++		}
++	}
++}
+diff --git a/cmd/server/main.go b/cmd/server/main.go
+--- a/cmd/server/main.go
++++ b/cmd/server/main.go
+@@ -4,0 +5,2 @@
++	"example.com/dispatch/notify"
++	"example.com/dispatch/store"
+@@ -12 +14,4 @@
+-	s := &dispatch.Service{Dir: os.Getenv("RECORD_DIR"), NotifyURL: os.Getenv("NOTIFY_URL"), Client: &http.Client{Timeout: 5 * time.Second}}
++	s := &dispatch.Service{
++		Store:    store.File{Dir: os.Getenv("RECORD_DIR")},
++		Notifier: notify.HTTP{URL: os.Getenv("NOTIFY_URL"), Client: &http.Client{Timeout: 5 * time.Second}},
++	}
+diff --git a/dispatch.go b/dispatch.go
+--- a/dispatch.go
++++ b/dispatch.go
+@@ -7,2 +6,0 @@
+-	"os"
+-	"path/filepath"
+@@ -11,0 +10,10 @@
++// RecordStore persists a queued record. It is consumed by Service.
++type RecordStore interface {
++	Save(context.Context, string) error
++}
++
++// Notifier sends an ID to the outbound notification API.
++type Notifier interface {
++	Notify(context.Context, string) error
++}
++
+@@ -14,2 +22,2 @@
+-	Dir, NotifyURL string
+-	Client         *http.Client
++	Store    RecordStore
++	Notifier Notifier
+@@ -24,2 +32,2 @@
+-	if err := os.WriteFile(filepath.Join(s.Dir, id), []byte("queued\n"), 0600); err != nil {
+-		return err
++	if err := s.Store.Save(ctx, id); err != nil {
++		return fmt.Errorf("save record: %w", err)
+@@ -27,11 +35,2 @@
+-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, s.NotifyURL, strings.NewReader(id))
+-	if err != nil {
+-		return err
+-	}
+-	resp, err := s.Client.Do(req)
+-	if err != nil {
+-		return err
+-	}
+-	defer resp.Body.Close()
+-	if resp.StatusCode != http.StatusNoContent {
+-		return fmt.Errorf("notification status %d", resp.StatusCode)
++	if err := s.Notifier.Notify(ctx, id); err != nil {
++		return fmt.Errorf("notify: %w", err)
+diff --git a/dispatch_test.go b/dispatch_test.go
+--- a/dispatch_test.go
++++ b/dispatch_test.go
+@@ -10,0 +11,3 @@
++
++	"example.com/dispatch/notify"
++	"example.com/dispatch/store"
+@@ -24 +27,2 @@
+-	s := Service{Dir: t.TempDir(), NotifyURL: ts.URL, Client: ts.Client()}
++	dir := t.TempDir()
++	s := Service{Store: store.File{Dir: dir}, Notifier: notify.HTTP{URL: ts.URL, Client: ts.Client()}}
+@@ -28 +32 @@
+-	b, err := os.ReadFile(filepath.Join(s.Dir, "a"))
++	b, err := os.ReadFile(filepath.Join(dir, "a"))
+@@ -36 +40,2 @@
+-	s := Service{Dir: t.TempDir(), NotifyURL: ts.URL, Client: ts.Client()}
++	dir := t.TempDir()
++	s := Service{Store: store.File{Dir: dir}, Notifier: notify.HTTP{URL: ts.URL, Client: ts.Client()}}
+@@ -40 +45 @@
+-	if _, err := os.Stat(filepath.Join(s.Dir, "a")); err != nil {
++	if _, err := os.Stat(filepath.Join(dir, "a")); err != nil {
+@@ -43,0 +49,23 @@
++
++func TestServeHTTPPreservesResponses(t *testing.T) {
++	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.WriteHeader(http.StatusNoContent)
++	}))
++	defer ts.Close()
++	s := Service{Store: store.File{Dir: t.TempDir()}, Notifier: notify.HTTP{URL: ts.URL, Client: ts.Client()}}
++	for _, tc := range []struct {
++		method, target string
++		status         int
++		body           string
++	}{
++		{"GET", "/?id=a", http.StatusMethodNotAllowed, ""},
++		{"POST", "/?id=../bad", http.StatusBadRequest, "submission failed\n"},
++		{"POST", "/?id=a", http.StatusNoContent, ""},
++	} {
++		rec := httptest.NewRecorder()
++		s.ServeHTTP(rec, httptest.NewRequest(tc.method, tc.target, nil))
++		if rec.Code != tc.status || rec.Body.String() != tc.body {
++			t.Fatalf("%s %s = %d %q, want %d %q", tc.method, tc.target, rec.Code, rec.Body.String(), tc.status, tc.body)
++		}
++	}
++}
+diff --git a/notify/http.go b/notify/http.go
+new file mode 100644
+--- /dev/null
++++ b/notify/http.go
+@@ -0,0 +1,30 @@
++package notify
++
++import (
++	"context"
++	"fmt"
++	"net/http"
++	"strings"
++)
++
++// HTTP sends IDs to the notification API.
++type HTTP struct {
++	URL    string
++	Client *http.Client
++}
++
++func (n HTTP) Notify(ctx context.Context, id string) error {
++	req, err := http.NewRequestWithContext(ctx, http.MethodPost, n.URL, strings.NewReader(id))
++	if err != nil {
++		return err
++	}
++	resp, err := n.Client.Do(req)
++	if err != nil {
++		return err
++	}
++	defer resp.Body.Close()
++	if resp.StatusCode != http.StatusNoContent {
++		return fmt.Errorf("notification status %d", resp.StatusCode)
++	}
++	return nil
++}
+diff --git a/store/file.go b/store/file.go
+new file mode 100644
+--- /dev/null
++++ b/store/file.go
+@@ -0,0 +1,16 @@
++package store
++
++import (
++	"context"
++	"os"
++	"path/filepath"
++)
++
++// File stores the existing queued record format in Dir.
++type File struct {
++	Dir string
++}
++
++func (f File) Save(_ context.Context, id string) error {
++	return os.WriteFile(filepath.Join(f.Dir, id), []byte("queued\n"), 0600)
++}

@@ -1,0 +1,162 @@
+[
+  {
+    "case": "source-compatibility",
+    "command": [
+      "rtk",
+      "go",
+      "test",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "Go test: 1 passed in 1 packages\n",
+    "stderr": ""
+  },
+  {
+    "case": "source-compatibility",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "=== RUN   TestFormat\n--- PASS: TestFormat (0.00s)\nPASS\nok  \texample.com/recordfmt\t0.124s\n",
+    "stderr": ""
+  },
+  {
+    "case": "source-compatibility",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "case": "intentional-break",
+    "command": [
+      "rtk",
+      "go",
+      "test",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "Go test: 1 passed in 2 packages\n",
+    "stderr": ""
+  },
+  {
+    "case": "intentional-break",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "=== RUN   TestParseDecimal\n--- PASS: TestParseDecimal (0.00s)\nPASS\nok  \texample.com/portnum\t0.118s\n?   \texample.com/portnum/cmd/portcheck\t[no test files]\n",
+    "stderr": ""
+  },
+  {
+    "case": "intentional-break",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "case": "wire-contract",
+    "command": [
+      "rtk",
+      "go",
+      "test",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "Go test: 1 passed in 1 packages\n",
+    "stderr": ""
+  },
+  {
+    "case": "wire-contract",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "=== RUN   TestList\n--- PASS: TestList (0.00s)\nPASS\nok  \texample.com/joblist\t0.162s\n",
+    "stderr": ""
+  },
+  {
+    "case": "wire-contract",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "case": "not-public-contract",
+    "command": [
+      "rtk",
+      "go",
+      "test",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "Go test: 1 passed in 1 packages\n",
+    "stderr": ""
+  },
+  {
+    "case": "not-public-contract",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "=== RUN   TestExpired\n--- PASS: TestExpired (0.00s)\nPASS\nok  \texample.com/cacheworker/internal/cache\t0.113s\n",
+    "stderr": ""
+  },
+  {
+    "case": "not-public-contract",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

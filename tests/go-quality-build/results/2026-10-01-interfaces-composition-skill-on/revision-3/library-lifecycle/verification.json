@@ -1,0 +1,71 @@
+{
+  "patch_reconstruction": "PASS: full output source tree byte-for-byte",
+  "commands": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "git",
+        "apply",
+        "/Users/jb/.codex/worktrees/go-quality-build/skills/tests/go-quality-build/results/2026-10-01-interfaces-composition-skill-on/revision-3/library-lifecycle/source.patch"
+      ],
+      "cwd": "/private/tmp/composition-r3-reconstruct.nbnh_k33/library-lifecycle",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "go",
+        "test",
+        "./..."
+      ],
+      "cwd": "/private/tmp/composition-r3-reconstruct.nbnh_k33/library-lifecycle",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "Go test: 7 passed in 1 packages\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-v",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/composition-r3-reconstruct.nbnh_k33/library-lifecycle",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "=== RUN   TestRefresh\n--- PASS: TestRefresh (0.00s)\n=== RUN   TestNilCallback\n--- PASS: TestNilCallback (0.00s)\n=== RUN   TestPeriodicStopWaitsForActiveRefresh\n--- PASS: TestPeriodicStopWaitsForActiveRefresh (0.03s)\n=== RUN   TestPeriodicInstancesAreIndependent\n--- PASS: TestPeriodicInstancesAreIndependent (0.04s)\n=== RUN   TestPeriodicRefreshError\n--- PASS: TestPeriodicRefreshError (0.00s)\n=== RUN   TestPeriodicWaitsIntervalAfterCompletion\n--- PASS: TestPeriodicWaitsIntervalAfterCompletion (0.10s)\n=== RUN   ExampleRefresher_Start\n--- PASS: ExampleRefresher_Start (0.00s)\nPASS\nok  \texample.com/library-lifecycle\t0.322s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/composition-r3-reconstruct.nbnh_k33/library-lifecycle",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

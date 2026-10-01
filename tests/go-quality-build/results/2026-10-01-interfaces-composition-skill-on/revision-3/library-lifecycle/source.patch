@@ -1,0 +1,351 @@
+--- a/README.md
++++ b/README.md
+@@ -5,3 +5,67 @@
+ Requested periodic behavior: the host decides when each run begins and ends. Perform the first refresh immediately, then wait the supplied positive interval after each successful completion. No overlapping callbacks for a single run. Stop a run on its first callback error and report that error. Stop requests must reach an active callback. The host must be able to wait for completion before freeing resources, and stopping one refresher must not stop another. Each instance has at most one periodic run at a time; concurrent starts/restarts need not be supported. A nonpositive interval is a caller error. The periodic cancellation result must be documented.
+ 
+ This library is one component among several inside the host process. The executable coordinates process termination and resource teardown. Go 1.22 is supported. The API is pre-1.0; add the periodic API while retaining New and Refresh.
++
++## Periodic lifecycle
++
++`Refresher.Start(ctx, interval)` starts one run immediately and returns its
++control handle. The interval must be positive. A successful callback is
++followed by a full interval delay before the next callback; callbacks from one
++run never overlap. The run ends on its first callback error or when `ctx` is
++canceled. `Stop` requests cancellation but does not wait. `Wait` joins the
++callback and returns its error unchanged, including `context.Canceled` when
++the callback returns that after a stop request. Call `Wait` before releasing
++resources the callback may use. A refresher cannot have two active runs.
++`Refresh(ctx)` remains the one-shot operation.
++
++This executable example shows the host starting two independent refreshers,
++requesting both stops, joining both, then releasing their shared resource:
++
++```go
++package main
++
++import (
++	"context"
++	"log"
++	"time"
++
++	"example.com/library-lifecycle"
++)
++
++func main() {
++	resource := new(struct{}) // Represents a host-owned client or file.
++	makeRefresher := func() *refreshkit.Refresher {
++		r, err := refreshkit.New(func(ctx context.Context) error {
++			select {
++			case <-ctx.Done():
++				return ctx.Err()
++			case <-time.After(100 * time.Millisecond):
++				_ = resource
++				return nil
++			}
++		})
++		if err != nil { log.Fatal(err) }
++		return r
++	}
++	first, second := makeRefresher(), makeRefresher()
++	ctx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++	firstRun, err := first.Start(ctx, time.Second)
++	if err != nil { log.Fatal(err) }
++	secondRun, err := second.Start(ctx, time.Second)
++	if err != nil {
++		firstRun.Stop()
++		_ = firstRun.Wait()
++		log.Fatal(err)
++	}
++
++	// The executable's shutdown path goes here.
++	firstRun.Stop()
++	secondRun.Stop()
++	firstErr := firstRun.Wait()
++	secondErr := secondRun.Wait()
++	_ = resource // Safe to release only after both waits complete.
++	if firstErr != nil && firstErr != context.Canceled { log.Print(firstErr) }
++	if secondErr != nil && secondErr != context.Canceled { log.Print(secondErr) }
++}
++```
+--- /dev/null
++++ b/example_test.go
+@@ -0,0 +1,33 @@
++package refreshkit_test
++
++import (
++	"context"
++	refreshkit "example.com/library-lifecycle"
++	"fmt"
++	"time"
++)
++
++func ExampleRefresher_Start() {
++	resource := new(struct{})
++	makeRefresher := func() *refreshkit.Refresher {
++		r, _ := refreshkit.New(func(ctx context.Context) error {
++			select {
++			case <-ctx.Done():
++				return ctx.Err()
++			case <-time.After(time.Millisecond):
++				_ = resource
++				return nil
++			}
++		})
++		return r
++	}
++	ctx := context.Background()
++	one, _ := makeRefresher().Start(ctx, time.Hour)
++	two, _ := makeRefresher().Start(ctx, time.Hour)
++	one.Stop()
++	two.Stop()
++	oneErr, twoErr := one.Wait(), two.Wait()
++	resource = nil // Both callbacks have returned, so release is safe.
++	fmt.Printf("joined both runs: %v %v; resource released\n", oneErr, twoErr)
++	// Output: joined both runs: context canceled context canceled; resource released
++}
+--- a/refresh.go
++++ b/refresh.go
+@@ -3,9 +3,15 @@
+ import (
+ 	"context"
+ 	"errors"
++	"sync"
++	"time"
+ )
+ 
+-type Refresher struct{ refresh func(context.Context) error }
++type Refresher struct {
++	refresh func(context.Context) error
++	mu      sync.Mutex
++	active  bool
++}
+ 
+ func New(refresh func(context.Context) error) (*Refresher, error) {
+ 	if refresh == nil {
+@@ -14,3 +20,73 @@
+ 	return &Refresher{refresh: refresh}, nil
+ }
+ func (r *Refresher) Refresh(ctx context.Context) error { return r.refresh(ctx) }
++
++// Start begins periodic refreshes. The first refresh begins immediately; later
++// refreshes begin interval after the previous refresh completes successfully.
++// The supplied context controls the run and is passed to every callback.
++// A run stops on its first callback error. Start rejects nonpositive intervals
++// and a second start while this Refresher already has an active run.
++func (r *Refresher) Start(ctx context.Context, interval time.Duration) (*Run, error) {
++	if interval <= 0 {
++		return nil, errors.New("refresh interval must be positive")
++	}
++	if ctx == nil {
++		return nil, errors.New("nil context")
++	}
++
++	r.mu.Lock()
++	defer r.mu.Unlock()
++	if r.active {
++		return nil, errors.New("periodic refresh already running")
++	}
++	r.active = true
++
++	ctx, cancel := context.WithCancel(ctx)
++	run := &Run{cancel: cancel, done: make(chan struct{})}
++	go func() {
++		defer close(run.done)
++		defer cancel()
++		defer func() {
++			r.mu.Lock()
++			r.active = false
++			r.mu.Unlock()
++		}()
++		run.err = r.loop(ctx, interval)
++	}()
++	return run, nil
++}
++
++// Run controls one periodic refresh run. Call Stop to request cancellation,
++// then Wait before releasing resources used by the callback. Wait returns the
++// first callback error unchanged, including context.Canceled if the callback
++// returns it in response to stopping. Parent-context cancellation also stops
++// the run; Wait returns the callback's resulting error, if any.
++type Run struct {
++	cancel context.CancelFunc
++	done   chan struct{}
++	err    error
++}
++
++// Stop requests cancellation and returns without waiting for callback cleanup.
++func (run *Run) Stop() { run.cancel() }
++
++// Wait blocks until the callback and periodic loop have fully stopped.
++func (run *Run) Wait() error {
++	<-run.done
++	return run.err
++}
++
++func (r *Refresher) loop(ctx context.Context, interval time.Duration) error {
++	for {
++		if err := r.refresh(ctx); err != nil {
++			return err
++		}
++		timer := time.NewTimer(interval)
++		select {
++		case <-ctx.Done():
++			timer.Stop()
++			return ctx.Err()
++		case <-timer.C:
++		}
++	}
++}
+--- a/refresh_test.go
++++ b/refresh_test.go
+@@ -4,7 +4,9 @@
+ 	"context"
+ 	"errors"
+ 	refreshkit "example.com/library-lifecycle"
++	"sync/atomic"
+ 	"testing"
++	"time"
+ )
+ 
+ func TestRefresh(t *testing.T) {
+@@ -37,3 +39,139 @@
+ 		t.Fatal("nil callback accepted")
+ 	}
+ }
++
++func TestPeriodicStopWaitsForActiveRefresh(t *testing.T) {
++	entered := make(chan struct{})
++	cleaning := make(chan struct{})
++	release := make(chan struct{})
++	r, _ := refreshkit.New(func(ctx context.Context) error {
++		close(entered)
++		<-ctx.Done()
++		close(cleaning)
++		<-release
++		return ctx.Err()
++	})
++	run, err := r.Start(context.Background(), time.Hour)
++	if err != nil {
++		t.Fatal(err)
++	}
++	select {
++	case <-entered:
++	case <-time.After(time.Second):
++		t.Fatal("refresh did not start")
++	}
++	run.Stop()
++	select {
++	case <-cleaning:
++	case <-time.After(time.Second):
++		t.Fatal("callback did not receive cancellation")
++	}
++	joined := make(chan error, 1)
++	go func() { joined <- run.Wait() }()
++	select {
++	case <-joined:
++		t.Fatal("Wait returned before callback cleanup")
++	case <-time.After(30 * time.Millisecond):
++	}
++	close(release)
++	if err := <-joined; !errors.Is(err, context.Canceled) {
++		t.Fatalf("Wait error = %v", err)
++	}
++}
++
++func TestPeriodicInstancesAreIndependent(t *testing.T) {
++	var aCalls, bCalls atomic.Int32
++	makeRefresher := func(calls *atomic.Int32) *refreshkit.Refresher {
++		r, err := refreshkit.New(func(context.Context) error { calls.Add(1); return nil })
++		if err != nil {
++			t.Fatal(err)
++		}
++		return r
++	}
++	a, b := makeRefresher(&aCalls), makeRefresher(&bCalls)
++	ar, err := a.Start(context.Background(), 20*time.Millisecond)
++	if err != nil {
++		t.Fatal(err)
++	}
++	br, err := b.Start(context.Background(), 20*time.Millisecond)
++	if err != nil {
++		ar.Stop()
++		_ = ar.Wait()
++		t.Fatal(err)
++	}
++	waitFor(t, func() bool { return aCalls.Load() >= 2 && bCalls.Load() >= 2 })
++	ar.Stop()
++	if err := ar.Wait(); !errors.Is(err, context.Canceled) {
++		t.Fatal(err)
++	}
++	before := bCalls.Load()
++	waitFor(t, func() bool { return bCalls.Load() > before })
++	br.Stop()
++	if err := br.Wait(); !errors.Is(err, context.Canceled) {
++		t.Fatal(err)
++	}
++}
++
++func TestPeriodicRefreshError(t *testing.T) {
++	want := errors.New("periodic refresh failed")
++	var calls atomic.Int32
++	r, _ := refreshkit.New(func(context.Context) error { calls.Add(1); return want })
++	run, err := r.Start(context.Background(), time.Millisecond)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if got := run.Wait(); got != want {
++		t.Fatalf("Wait error = %v", got)
++	}
++	if got := calls.Load(); got != 1 {
++		t.Fatalf("calls = %d", got)
++	}
++}
++
++func TestPeriodicWaitsIntervalAfterCompletion(t *testing.T) {
++	started := make(chan time.Time, 2)
++	release := make(chan struct{})
++	var calls atomic.Int32
++	r, _ := refreshkit.New(func(context.Context) error {
++		n := calls.Add(1)
++		started <- time.Now()
++		if n == 1 {
++			<-release
++		}
++		return nil
++	})
++	interval := 40 * time.Millisecond
++	run, err := r.Start(context.Background(), interval)
++	if err != nil {
++		t.Fatal(err)
++	}
++	first := <-started
++	time.Sleep(interval + 20*time.Millisecond)
++	select {
++	case <-started:
++		t.Fatal("overlapping/early refresh")
++	default:
++	}
++	close(release)
++	second := <-started
++	if elapsed := second.Sub(first); elapsed < interval+20*time.Millisecond {
++		t.Fatalf("second started too soon: %v", elapsed)
++	}
++	run.Stop()
++	if err := run.Wait(); !errors.Is(err, context.Canceled) {
++		t.Fatal(err)
++	}
++}
++
++func waitFor(t *testing.T, condition func() bool) {
++	t.Helper()
++	deadline := time.After(time.Second)
++	for !condition() {
++		select {
++		case <-deadline:
++			t.Fatal("condition not reached")
++		default:
++			time.Sleep(time.Millisecond)
++		}
++	}
++}

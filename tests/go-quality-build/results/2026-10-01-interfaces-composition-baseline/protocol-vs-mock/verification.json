@@ -1,0 +1,72 @@
+{
+  "patch_reconstruction": "PASS: complete source tree byte-for-byte match",
+  "review_candidate_identity": "PASS: author and blind reviewer candidate source hashes match",
+  "commands": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "git",
+        "apply",
+        "/Users/jb/.codex/worktrees/go-quality-build/skills/tests/go-quality-build/results/2026-10-01-interfaces-composition-baseline/protocol-vs-mock/source.patch"
+      ],
+      "cwd": "/private/tmp/composition-baseline-reconstruct.zhplgnh1/protocol-vs-mock",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "go",
+        "test",
+        "./..."
+      ],
+      "cwd": "/private/tmp/composition-baseline-reconstruct.zhplgnh1/protocol-vs-mock",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "Go test: 5 passed in 1 packages\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-v",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/composition-baseline-reconstruct.zhplgnh1/protocol-vs-mock",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "=== RUN   TestJSONReport\n--- PASS: TestJSONReport (0.00s)\n=== RUN   TestCSVQuoting\n--- PASS: TestCSVQuoting (0.00s)\n=== RUN   TestCSVEmptyInputHasHeader\n--- PASS: TestCSVEmptyInputHasHeader (0.00s)\n=== RUN   TestCSVEncodingFailure\n--- PASS: TestCSVEncodingFailure (0.00s)\n=== RUN   ExampleReport_hostEncoder\n--- PASS: ExampleReport_hostEncoder (0.00s)\nPASS\nok  \texample.com/protocol-vs-mock\t0.122s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/composition-baseline-reconstruct.zhplgnh1/protocol-vs-mock",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-composition-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "patch_reconstruction": "PASS: full repaired source tree byte-for-byte",
+  "commands": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "git",
+        "apply",
+        "/Users/jb/.codex/worktrees/go-quality-build/skills/tests/go-quality-build/results/2026-10-01-combined/review-guided-2/source.patch"
+      ],
+      "cwd": "/private/tmp/combined-repair2-reconstruct.z0al_4ib/combined-evolution",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-combined-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "go",
+        "test",
+        "./..."
+      ],
+      "cwd": "/private/tmp/combined-repair2-reconstruct.z0al_4ib/combined-evolution",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-combined-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "Go test: 12 passed in 3 packages\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-v",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/combined-repair2-reconstruct.z0al_4ib/combined-evolution",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-combined-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "=== RUN   TestCheckinCallerAndHTTPContract\n--- PASS: TestCheckinCallerAndHTTPContract (0.00s)\n=== RUN   TestSyncBulletinsValidatesBeforeReplacingSnapshot\n--- PASS: TestSyncBulletinsValidatesBeforeReplacingSnapshot (0.00s)\n=== RUN   TestSyncBulletinsPublicationPreservesOpenSnapshot\n--- PASS: TestSyncBulletinsPublicationPreservesOpenSnapshot (0.00s)\n=== RUN   TestRunBulletinSyncCancellationJoinsRequest\n--- PASS: TestRunBulletinSyncCancellationJoinsRequest (0.00s)\n=== RUN   TestSyncBulletinsUsesInstanceClientAndContext\n--- PASS: TestSyncBulletinsUsesInstanceClientAndContext (0.00s)\n=== RUN   TestRunBulletinSyncReportsFailuresAndKeepsCyclesSerial\n--- PASS: TestRunBulletinSyncReportsFailuresAndKeepsCyclesSerial (0.00s)\n=== RUN   TestBulletinCallerAndHTTPContract\n--- PASS: TestBulletinCallerAndHTTPContract (0.00s)\nPASS\nok  \texample.com/fielddesk\t0.174s\n=== RUN   TestImportCheckinsStopsOnFirstInvalidRow\n--- PASS: TestImportCheckinsStopsOnFirstInvalidRow (0.00s)\n=== RUN   TestImportCheckinsRejectsMalformedCSV\n--- PASS: TestImportCheckinsRejectsMalformedCSV (0.00s)\n=== RUN   TestImportCheckinsProcessFailureStatusAndPrefix\n--- PASS: TestImportCheckinsProcessFailureStatusAndPrefix (0.00s)\nPASS\nok  \texample.com/fielddesk/cmd/import-checkins\t0.388s\n=== RUN   TestRunServerSignalShutdownJoinsWorker\n--- PASS: TestRunServerSignalShutdownJoinsWorker (0.02s)\n=== RUN   TestRunServerReturnsListenFailureAfterJoiningWorker\n--- PASS: TestRunServerReturnsListenFailureAfterJoiningWorker (0.00s)\nPASS\nok  \texample.com/fielddesk/cmd/server\t0.295s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/combined-repair2-reconstruct.z0al_4ib/combined-evolution",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-combined-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "ok  \texample.com/fielddesk\t1.241s\nok  \texample.com/fielddesk/cmd/import-checkins\t1.528s\nok  \texample.com/fielddesk/cmd/server\t1.394s\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/combined-repair2-reconstruct.z0al_4ib/combined-evolution",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-build-combined-eval/archive-gocache"
+      },
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

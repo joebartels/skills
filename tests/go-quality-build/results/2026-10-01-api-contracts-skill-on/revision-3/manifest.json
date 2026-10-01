@@ -1,0 +1,60 @@
+{
+  "revision": "revision-3",
+  "model": "gpt-6-luna",
+  "harness": "fresh Codex collaboration subagent",
+  "fork_turns": "none",
+  "reasoning_override": null,
+  "fixture_revision": "39c702a",
+  "skill_snapshot": "SKILL.md",
+  "skill_sha256": "c655df596414850f06c66ffcb34b5c5606aa73d3381051942dc45e99cd54a0ba",
+  "expected_judgments_withheld": true,
+  "dispatch_provenance": "Exact eval user prompt saved per case; controller confirms fresh same-model trials. Full dispatch wrappers were not separately preserved. Applicable trials used revised skill; private selection decided before opening.",
+  "cases": [
+    {
+      "id": "wire-contract",
+      "prompt": "wire-contract/prompt.txt",
+      "report": "wire-contract/trial-report.md",
+      "patch": "wire-contract/source.patch",
+      "verification": "wire-contract/verification.json",
+      "source_sha256": {
+        "README.md": "1552c44f3dcc66c788db1e483831708ef28293dbe98d63b04b292a6902158bb2",
+        "go.mod": "5ce67e902135f3a9ce5e524f037b08b54458cc5dfe2a26a4c8470dd4688a7320",
+        "main.go": "d230f7f1bc7aa2b737104c01dd317777cd2586db8616ffad22d6071bb7362779",
+        "main_test.go": "030a1abbf1e7187e1260f61c18f5b61dcef5c8d3346be41e554fc06650736eaf"
+      },
+      "patch_reconstruction": "all output files byte-for-byte verified",
+      "skill_opened": true,
+      "review_status": "complete",
+      "review": "review-cli.md",
+      "review_blind": false,
+      "review_limit": "Targeted reassessment aware of prior finding; author report inadvertently exposed.",
+      "architecture_grade": "A",
+      "correctness_grade": "A"
+    },
+    {
+      "id": "intentional-break",
+      "prompt": "intentional-break/prompt.txt",
+      "report": "intentional-break/trial-report.md",
+      "patch": "intentional-break/source.patch",
+      "verification": "intentional-break/verification.json",
+      "source_sha256": {
+        "README.md": "53f666d208994ce8d0143044e54edb40f9522e931c0c5018c53eb12023b5515e",
+        "cmd/portcheck/main.go": "60c4d9e9f41882868e35c8192bd8d002462f1e67ba13a5f4c81446043eb23e8e",
+        "docs/migration-v2.md": "a5486801fecb5f4a5887009c98aadb5587a10ee06f80466271db2b9978d40782",
+        "docs/v2-decision.md": "f577ec66f0a16110f9bf7854f66f2d5ae884b01a2e347968b1cd292d117a9b9f",
+        "go.mod": "d03f4892b1c54a0a4e126468788fc811c1bb791d27dc7da1e50bcce83498a955",
+        "port.go": "cc439ed649b44d00d77850bdd624db0ea01eefb5c51421529fe3bf88c9453f29",
+        "port_test.go": "133da184e7cd2f1ad183b887eddb815bebefbf4528b1fbf28e597afad110cd75"
+      },
+      "patch_reconstruction": "all output files byte-for-byte verified",
+      "skill_opened": true,
+      "review_status": "complete",
+      "review": "review-break.md",
+      "review_blind": false,
+      "review_limit": "Targeted/nonblind follow-up after prior migration finding; independent grammar and CLI execution.",
+      "architecture_grade": "A",
+      "correctness_grade": "A"
+    }
+  ],
+  "coverage_limit": "Source-compatibility case was not repeated against revision 3 because agent-thread limit prevented another trial. First-pass source earned A/A+; subsequent instruction additions concern routing, migration and CLI. Final source behavior is not directly evaluated."
+}

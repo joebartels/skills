@@ -235,6 +235,65 @@ def validate(root):
     return errors, len(skills), case_count
 
 
+def validate_build_evals(root: Path) -> tuple[list[str], int]:
+    """Validate build cases independently of the fixed review contract."""
+    errors = []
+    case_count = 0
+    installed = {entry.parent.name for entry in
+                 (root / "plugins/go-quality-build/skills").glob("*/SKILL.md")}
+    candidates = {suite.parent.parent.name for suite in
+                  (root / "tests/go-quality-build").glob("*/evals/evals.json")}
+    if (root / "tests/go-quality-build/combined/evals").is_dir():
+        candidates.add("combined")
+    for skill in sorted(installed | candidates):
+        evaluation = root / "tests/go-quality-build" / skill / "evals"
+        try:
+            suite = json.loads((evaluation / "evals.json").read_text())
+        except (OSError, ValueError) as exc:
+            errors.append(f"{skill}: invalid evaluation file: {exc}")
+            continue
+        if not isinstance(suite, dict):
+            errors.append(f"{skill}: evaluation suite must be an object")
+            continue
+        if suite.get("skill_name") != skill:
+            errors.append(f"{skill}: evaluation skill_name mismatch")
+        cases = suite.get("evals")
+        if not isinstance(cases, list) or not cases:
+            errors.append(f"{skill}: evaluation cases must be a nonempty list")
+            continue
+        seen = set()
+        for case in cases:
+            if not isinstance(case, dict):
+                errors.append(f"{skill}: evaluation case must be an object")
+                continue
+            identifier = case.get("id")
+            if not isinstance(identifier, str) or not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", identifier):
+                errors.append(f"{skill}: invalid evaluation id {identifier!r}")
+                continue
+            if identifier in seen:
+                errors.append(f"{skill}: duplicate evaluation id {identifier}")
+            seen.add(identifier)
+            for key in ("prompt", "expected_output"):
+                if not isinstance(case.get(key), str) or not case[key].strip():
+                    errors.append(f"{skill}/{identifier}: missing {key}")
+            assertions = case.get("assertions")
+            if not isinstance(assertions, list) or not assertions or not all(isinstance(a, str) and a.strip() for a in assertions):
+                errors.append(f"{skill}/{identifier}: assertions must be nonempty strings")
+            files = case.get("files", [])
+            if not isinstance(files, list):
+                errors.append(f"{skill}/{identifier}: files must be a list")
+                continue
+            for item in files:
+                if not isinstance(item, str) or not item.strip():
+                    errors.append(f"{skill}/{identifier}: invalid fixture path")
+                    continue
+                destination = (evaluation / item).resolve()
+                if not destination.is_relative_to(evaluation.resolve()) or not destination.is_file():
+                    errors.append(f"{skill}/{identifier}: missing or non-portable fixture {item}")
+        case_count += len(cases)
+    return errors, case_count
+
+
 def check_reports(root, reports):
     """Check report shape and grade arithmetic; semantic assertions need a reviewer."""
     errors = []
@@ -313,6 +372,8 @@ def main():
     try:
         errors, skill_count, case_count = validate(args.root)
         errors.extend(validate_harnesses(args.root))
+        build_errors, build_case_count = validate_build_evals(args.root)
+        errors.extend(build_errors)
         report_count = None
         if args.reports:
             report_errors, report_count = check_reports(args.root, args.reports)
@@ -324,6 +385,7 @@ def main():
     if errors:
         parser.exit(1, f"{len(errors)} validation errors\n")
     print(f"PASS: {skill_count} skills; matching grading/report contracts; {case_count} valid evaluation cases")
+    print(f"PASS: {build_case_count} valid build evaluation cases")
     if report_count is not None:
         print(f"PASS: {report_count} report structures, severity tallies, grade arithmetic, and finding-to-change links")
         print("Factual findings, severity judgments, systemic-major explanations, and A+ evidence still require semantic review.")

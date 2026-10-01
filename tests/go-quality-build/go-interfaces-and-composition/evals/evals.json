@@ -1,0 +1,93 @@
+{
+  "skill_name": "go-interfaces-and-composition",
+  "evals": [
+    {
+      "id": "protocol-vs-mock",
+      "prompt": "Add CSV output to reportkit using the existing extension mechanism. Include an external-package example showing a host-defined encoder and tests for CSV quoting, empty input, and encoding failures. A teammate also suggested adding an Exporter interface matching Report's methods so report tests can use a mock Report. Assess that suggestion while implementing the feature, and briefly explain the API choices you actually make.",
+      "expected_output": "A working second encoding implementation and external extension preserve the package-owned encoding protocol without creating a redundant mock-only facade.",
+      "assertions": [
+        "The existing Encoder protocol remains available to host-defined implementations; JSON and CSV both work through Report.",
+        "CSV writes a name,value header even for empty input, preserves record order, and correctly quotes commas, quotes and newlines.",
+        "Encoding errors reach Report callers and partial output is not returned as success.",
+        "No mirrored Report/Exporter interface is introduced solely to mock the code under test; tests exercise real Report behavior and the protocol boundary.",
+        "No universal consumer-interface relocation, protocol fragmentation or required constructor/options machinery is introduced."
+      ],
+      "files": [
+        "files/protocol-vs-mock/README.md",
+        "files/protocol-vs-mock/go.mod",
+        "files/protocol-vs-mock/report.go",
+        "files/protocol-vs-mock/report_test.go"
+      ]
+    },
+    {
+      "id": "visible-dependency",
+      "prompt": "The receipt component must now support two tenants in the same process, each with its own receipt URL and HTTP client policy. Refactor it and update its tests/docs so the host can configure two independent instances and call them concurrently. Per-call cancellation must reach the HTTP request. Preserve the request/response behavior described in README.md. Show actual usage with distinct clients; tests must run without a remote service.",
+      "expected_output": "Explicit instance dependencies replace per-operation environment/default-client lookup; host configuration, transport policy and cancellation reach each request independently.",
+      "assertions": [
+        "Each instance uses its own endpoint and supplied client/transport policy without modifying environment or global HTTP defaults during operation.",
+        "The request retains POST, JSON id field and application/json content type; 2xx succeeds, non-2xx and transport failure return errors, and response bodies close.",
+        "Caller context cancellation reaches the actual HTTP operation.",
+        "Tests exercise two independent configurations including concurrent calls and distinguish their requests; they do not hide shared globals by serializing all behavior.",
+        "Concrete http.Client, a narrow consumer need or a function dependency are all acceptable; no full-client mock interface, DI framework or unrelated package hierarchy is required."
+      ],
+      "files": [
+        "files/visible-dependency/README.md",
+        "files/visible-dependency/go.mod",
+        "files/visible-dependency/receipt.go",
+        "files/visible-dependency/receipt_test.go"
+      ]
+    },
+    {
+      "id": "zero-value",
+      "prompt": "Add an optional maximum distinct-key count to Bag. The default remains unlimited. When at the limit, Add must reject a new key with an error without changing state, but adding an existing key still succeeds. Add a Clear operation that empties counts while retaining the configured limit. Choose a small configuration API, document it, and test the behavior. This is an internal package; you may change Add to return an error and update callers.",
+      "expected_output": "Optional capacity configuration and clear behavior retain the useful zero-value Bag without requiring every caller to construct or inject it.",
+      "assertions": [
+        "A freshly declared Bag works with Add, Count and Clear, remains unlimited, and never panics because its map was not constructed.",
+        "A configured positive limit counts distinct keys, rejects new keys atomically at capacity, and permits incrementing existing keys.",
+        "Clear removes counts, releases capacity and retains configured policy; separate bags retain independent state.",
+        "Tests cover zero-value usage as well as configured usage through the documented API.",
+        "No mock-only map interface or mandatory constructor for ordinary zero-value use is added; configuration need does not justify unrelated functional options or dependency injection."
+      ],
+      "files": [
+        "files/zero-value/README.md",
+        "files/zero-value/bag.go",
+        "files/zero-value/bag_test.go",
+        "files/zero-value/go.mod"
+      ]
+    },
+    {
+      "id": "library-lifecycle",
+      "prompt": "Add periodic refresh support to refreshkit alongside the existing one-shot Refresh method. The host needs the controls described in README.md and a runnable example of orderly shutdown for two refreshers. Choose and document the lifecycle API, implement it, and add tests for stopping during an active refresh, independent instances, and a refresh error. Keep the one-shot API working.",
+      "expected_output": "An explicit host-controlled periodic lifecycle forwards cancellation, surfaces failure and lets the host wait for owned work; the library does not take process control.",
+      "assertions": [
+        "Constructing a refresher does not start work or install process signal/exit/global handlers; the host chooses start and stop and owns its clients.",
+        "Stopping one instance cancels its in-flight callback and provides a way to wait until callbacks have returned; another instance continues independently.",
+        "Periodic callbacks for one instance do not overlap; errors stop that run and reach the host; invalid intervals return errors rather than panic.",
+        "The example owns shutdown at the application level and waits before releasing callback resources; no library os.Exit or hidden signal handler is used.",
+        "Tests synchronize observed callback events and completion with bounded waits, exercising cancellation and errors rather than relying only on sleeps or mocked scheduler call counts."
+      ],
+      "files": [
+        "files/library-lifecycle/README.md",
+        "files/library-lifecycle/go.mod",
+        "files/library-lifecycle/refresh.go",
+        "files/library-lifecycle/refresh_test.go"
+      ]
+    },
+    {
+      "id": "not-abstraction-work",
+      "prompt": "Fix batchCount so a nonempty partial final batch is counted. Keep zero items at zero batches, retain the private helper and its positive-size precondition, and add regression tests including the largest int input.",
+      "expected_output": "A local integer arithmetic fix and focused tests without selecting abstraction/composition guidance.",
+      "assertions": [
+        "Results are the mathematical ceiling of items/size for nonnegative items and positive size, including largest-int inputs without overflow.",
+        "The helper remains private with no new interface, constructor, injected dependency, context parameter or lifecycle machinery.",
+        "The composition skill is not selected for this unrelated calculation."
+      ],
+      "files": [
+        "files/not-abstraction-work/README.md",
+        "files/not-abstraction-work/batches.go",
+        "files/not-abstraction-work/batches_test.go",
+        "files/not-abstraction-work/go.mod"
+      ]
+    }
+  ]
+}

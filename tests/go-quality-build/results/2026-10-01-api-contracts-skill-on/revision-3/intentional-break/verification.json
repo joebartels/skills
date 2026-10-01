@@ -1,0 +1,51 @@
+[
+  {
+    "command": [
+      "rtk",
+      "go",
+      "test",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache",
+      "GOWORK": "off"
+    },
+    "exit_code": 0,
+    "stdout": "Go test: 16 passed in 2 packages\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache",
+      "GOWORK": "off"
+    },
+    "exit_code": 0,
+    "stdout": "=== RUN   TestParseAcceptedValues\n=== RUN   TestParseAcceptedValues/0\n=== RUN   TestParseAcceptedValues/00000\n=== RUN   TestParseAcceptedValues/00080\n=== RUN   TestParseAcceptedValues/8080\n=== RUN   TestParseAcceptedValues/65535\n--- PASS: TestParseAcceptedValues (0.00s)\n    --- PASS: TestParseAcceptedValues/0 (0.00s)\n    --- PASS: TestParseAcceptedValues/00000 (0.00s)\n    --- PASS: TestParseAcceptedValues/00080 (0.00s)\n    --- PASS: TestParseAcceptedValues/8080 (0.00s)\n    --- PASS: TestParseAcceptedValues/65535 (0.00s)\n=== RUN   TestParseRejectsInvalidValues\n=== RUN   TestParseRejectsInvalidValues/#00\n=== RUN   TestParseRejectsInvalidValues/+80\n=== RUN   TestParseRejectsInvalidValues/-1\n=== RUN   TestParseRejectsInvalidValues/_80\n=== RUN   TestParseRejectsInvalidValues/80_\n=== RUN   TestParseRejectsInvalidValues/1.0\n=== RUN   TestParseRejectsInvalidValues/\uff18\uff10\n=== RUN   TestParseRejectsInvalidValues/65536\n=== RUN   TestParseRejectsInvalidValues/999999999999999999999999999999999999999\n--- PASS: TestParseRejectsInvalidValues (0.00s)\n    --- PASS: TestParseRejectsInvalidValues/#00 (0.00s)\n    --- PASS: TestParseRejectsInvalidValues/+80 (0.00s)\n    --- PASS: TestParseRejectsInvalidValues/-1 (0.00s)\n    --- PASS: TestParseRejectsInvalidValues/_80 (0.00s)\n    --- PASS: TestParseRejectsInvalidValues/80_ (0.00s)\n    --- PASS: TestParseRejectsInvalidValues/1.0 (0.00s)\n    --- PASS: TestParseRejectsInvalidValues/\uff18\uff10 (0.00s)\n    --- PASS: TestParseRejectsInvalidValues/65536 (0.00s)\n    --- PASS: TestParseRejectsInvalidValues/999999999999999999999999999999999999999 (0.00s)\nPASS\nok  \texample.com/portnum/v2\t0.136s\n?   \texample.com/portnum/v2/cmd/portcheck\t[no test files]\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache",
+      "GOWORK": "off"
+    },
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]
