@@ -62,8 +62,8 @@ Test combinations of neighboring skills on the same task. Resolve contradictory 
 ## Work status and next steps
 
 - **Completed:** Compared the local review approach with the upstream collection; proposed candidate boundaries and the reuse and evaluation policy in this record. Added repository agent instructions and a continuation protocol so later workers maintain this record. Pinned the upstream revision for the first architecture-group audit.
-- **In design:** The proposed first group is `go-package-boundaries`, `go-api-contracts`, and `go-interfaces-and-composition` in a peer `plugins/go-quality-build/` package. Package placement and skill boundaries await review of the concrete group design.
-- **Next:** Finish the first group's source audit and behavioral case design, then write the reviewed design specification and implementation plan.
+- **Design approved:** The first group is `go-package-boundaries`, `go-api-contracts`, and `go-interfaces-and-composition` in a peer `plugins/go-quality-build/` package. The written [first-group design spec](../superpowers/specs/2026-09-30-go-quality-build-architecture-group-design.md) is ready for review; it has not yet been approved as a written spec.
+- **Next:** Review and approve or revise the written first-group spec. Then write the implementation plan and select its execution method before authoring runtime skills.
 - **Next:** Build and evaluate a small first group, revise its boundaries, then expand to remaining topics that demonstrate value.
 
 ## Continuation protocol
@@ -90,3 +90,11 @@ After each meaningful stage and before finishing a task, update the status above
 - Compared upstream project layout, design patterns, structs and interfaces, dependency injection, and naming skills with the local Architecture and Correctness decision references. Useful material includes call-site naming, right-sized packages, small consumer needs, and explicit dependency wiring. Rules requiring a fixed directory structure, consumer-owned interfaces in every case, constructors for all dependencies, or functional options by default conflict with the local context-based guidance and require adaptation or omission.
 - Inspected `scripts/validate.py`: harness packaging checks already enumerate every plugin directory; the current behavioral and review-contract validator remains specific to `go-quality-review`, so build-skill evaluation validation will need its own check or a targeted extension.
 - Next action: present the first group's concrete design for review, then write its specification and plan before authoring runtime skills.
+
+#### 2026-09-30 — First architecture group written spec
+
+- The user approved the concrete three-skill, peer-plugin group design. Wrote [the design spec](../superpowers/specs/2026-09-30-go-quality-build-architecture-group-design.md), defining each skill's trigger and decision owner, overlap rules, upstream reuse, packaging, evaluation, and promotion criteria.
+- The spec aligns with the existing Architecture and Correctness review decision references and the repository's multi-harness packaging design. It explicitly rejects mandatory package layers, consumer-owned interfaces in every case, universal constructors, and functional options as a default.
+- Verification: self-review found no placeholders, internal contradiction, or unresolved scope choice; `rtk git diff --check` passed and `rtk python3 scripts/validate.py` passed with the existing 10 review skills and 120 evaluation cases. No runtime build skill or behavioral evaluation has been created.
+- The spec and this record were committed for the written-spec review gate.
+- Next action: request review of the written spec before writing the implementation plan.
