@@ -1,0 +1,43 @@
+go version go1.26.5 darwin/arm64
+
+small-cli $ rtk go test ./...
+exit=0
+Go test: 2 passed in 1 packages
+
+small-cli $ rtk go vet ./...
+exit=0
+Go vet: No issues found
+
+small-library $ rtk go test ./...
+exit=0
+Go test: 1 passed in 1 packages
+
+small-library $ rtk go vet ./...
+exit=0
+Go vet: No issues found
+
+medium-service $ rtk go test ./...
+exit=0
+Go test: 2 passed in 2 packages
+
+medium-service $ rtk go vet ./...
+exit=0
+Go vet: No issues found
+
+large-features $ rtk go test ./...
+exit=0
+Go test: 2 passed in 4 packages
+
+large-features $ rtk go vet ./...
+exit=0
+Go vet: No issues found
+
+not-package-work $ rtk go test ./...
+exit=0
+Go test: 1 passed in 1 packages
+
+not-package-work $ rtk go vet ./...
+exit=0
+Go vet: No issues found
+
+All 19 fixture paths exist, match directory contents, and were read. Five IDs and required fields inspected.
