@@ -97,3 +97,4 @@ All local fixtures, probes, skill wording and examples will be original. General
 
 - 2026-10-01: Source audit complete before either testing draft. Behavior fixtures/baselines next. No testing writing skill promoted.
 - 2026-10-01: Five blind behavior baselines complete, with independent reviews confirming partial failed replacement and work-error/successful-cleanup assertion gaps. Original local drafting will adapt R1 failure-stage and error-combination observations; no upstream code/text copy is introduced.
+- 2026-10-01: Behavior draft/reference authored with original wording and one original runnable error-combination illustration. R1/R2 adaptation targets verified baseline gaps; os.WriteFile/io.Writer/errors primary documentation checked. Example regression counterexample fails and original passes on the host compiler. No substantial upstream copy, runtime promotion or measured skill benefit yet.
