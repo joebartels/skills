@@ -63,7 +63,8 @@ Test combinations of neighboring skills on the same task. Resolve contradictory 
 
 - **Completed:** Compared the local review approach with the upstream collection; proposed candidate boundaries and the reuse and evaluation policy in this record. Added repository agent instructions and a continuation protocol so later workers maintain this record. Pinned the upstream revision for the first architecture-group audit.
 - **Written spec reviewed:** The first group is `go-package-boundaries`, `go-api-contracts`, and `go-interfaces-and-composition` in a peer `plugins/go-quality-build/` package. The user approved the [first-group design spec](../superpowers/specs/2026-09-30-go-quality-build-architecture-group-design.md) with one requested addition: small, medium, and large package-boundary examples that show how transport and persistence boundaries emerge. That addition is incorporated.
-- **Next:** Write and review the implementation plan, then select its execution method before authoring runtime skills.
+- **Plan drafted:** The [first-group implementation plan](../superpowers/plans/2026-09-30-go-quality-build-architecture-group.md) defines source audit, baseline comparisons, one-skill-at-a-time promotion, multi-harness packaging, and combined consistency testing. It awaits user review and an execution method before runtime authoring.
+- **Next:** Review the implementation plan and select its execution method, then begin the package-boundary audit and baseline cases.
 - **Next:** Build and evaluate a small first group, revise its boundaries, then expand to remaining topics that demonstrate value.
 
 ## Continuation protocol
@@ -105,3 +106,11 @@ After each meaningful stage and before finishing a task, update the status above
 - Kept example paths illustrative rather than prescriptive. The spec distinguishes files from packages, ports from adapters, and larger projects from mandatory technical layers.
 - Verification: self-review found no placeholders or contradictions in the revised examples; `rtk git diff --check` and `rtk python3 scripts/validate.py` passed (10 review skills, 120 review cases). No runtime build skill has been authored or evaluated.
 - Next action: create a task-by-task implementation plan.
+
+#### 2026-09-30 — First-group implementation plan
+
+- Wrote [the implementation plan](../superpowers/plans/2026-09-30-go-quality-build-architecture-group.md) for the three approved skills. It starts with a pinned upstream audit and package-boundary baselines, promotes each skill only after behavior checks, and ends with a combined service case.
+- The plan includes small, medium, and large package-boundary fixtures; checks source compatibility and interface ownership; adds build-eval validation without changing the existing review contract; and records exact results and limits after each task.
+- Verification: plan self-review covered every spec section, each decision owner, five likely failure cases, task interfaces, and the one-skill-at-a-time gate; no placeholders remained. Plan/spec links resolved; `rtk git diff --check` and `rtk python3 scripts/validate.py` passed (10 review skills, 120 review cases). No runtime build skill has been authored or evaluated.
+- The plan and record are committed for review.
+- Next action: request plan review and execution-method selection.
