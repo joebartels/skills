@@ -1,0 +1,174 @@
+[
+  {
+    "name": "format",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "host.go",
+      "worker.go",
+      "host_test.go"
+    ],
+    "process_timeout_seconds": 60,
+    "expected_exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.007827416993677616
+  },
+  {
+    "name": "old implementation regression signal",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "TestInvalidIntervalHasNoEffects|TestAlreadyCanceledSkipsSweepAndReleases|TestWorkerAndReleaseErrorCombinations",
+      "./..."
+    ],
+    "process_timeout_seconds": 60,
+    "expected_exit_code": 1,
+    "stdout": "=== RUN   TestInvalidIntervalHasNoEffects\n=== RUN   TestInvalidIntervalHasNoEffects/0s\n    host_test.go:80: sweep calls = 1, want 0\n    host_test.go:83: release calls = 1, want 0\n=== RUN   TestInvalidIntervalHasNoEffects/-1ns\n    host_test.go:80: sweep calls = 1, want 0\n    host_test.go:83: release calls = 1, want 0\n--- FAIL: TestInvalidIntervalHasNoEffects (0.00s)\n    --- FAIL: TestInvalidIntervalHasNoEffects/0s (0.00s)\n    --- FAIL: TestInvalidIntervalHasNoEffects/-1ns (0.00s)\n=== RUN   TestAlreadyCanceledSkipsSweepAndReleases\n    host_test.go:101: Run = unexpected sweep, want nil\n    host_test.go:104: sweep calls = 1, want 0\n--- FAIL: TestAlreadyCanceledSkipsSweepAndReleases (0.00s)\n=== RUN   TestWorkerAndReleaseErrorCombinations\n=== RUN   TestWorkerAndReleaseErrorCombinations/normal_cancellation\n=== RUN   TestWorkerAndReleaseErrorCombinations/sweep_failure_releases\n    host_test.go:331: release calls = 1, release before cancel = true\n=== RUN   TestWorkerAndReleaseErrorCombinations/release_failure_after_cancellation\n=== RUN   TestWorkerAndReleaseErrorCombinations/both_fail\n    host_test.go:331: release calls = 1, release before cancel = true\n--- FAIL: TestWorkerAndReleaseErrorCombinations (0.00s)\n    --- PASS: TestWorkerAndReleaseErrorCombinations/normal_cancellation (0.00s)\n    --- FAIL: TestWorkerAndReleaseErrorCombinations/sweep_failure_releases (0.00s)\n    --- PASS: TestWorkerAndReleaseErrorCombinations/release_failure_after_cancellation (0.00s)\n    --- FAIL: TestWorkerAndReleaseErrorCombinations/both_fail (0.00s)\nFAIL\nFAIL\texample.com/sweeper\t0.222s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.36891420802567154
+  },
+  {
+    "name": "interval-before-completion counterexample",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "TestSuccessfulCyclesWaitAfterCompletionAndNeverOverlap",
+      "./..."
+    ],
+    "process_timeout_seconds": 60,
+    "expected_exit_code": 1,
+    "stdout": "=== RUN   TestSuccessfulCyclesWaitAfterCompletionAndNeverOverlap\n    host_test.go:201: cycle 2 started 5.875\u00b5s after completion, want at least 60ms\n--- FAIL: TestSuccessfulCyclesWaitAfterCompletionAndNeverOverlap (0.18s)\nFAIL\nFAIL\texample.com/sweeper\t0.350s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.5166392090031877
+  },
+  {
+    "name": "local toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "process_timeout_seconds": 60,
+    "expected_exit_code": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.020724916947074234
+  },
+  {
+    "name": "final race suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-count=1",
+      "-timeout=45s",
+      "./..."
+    ],
+    "process_timeout_seconds": 60,
+    "expected_exit_code": 0,
+    "stdout": "=== RUN   TestInvalidIntervalHasNoEffects\n=== RUN   TestInvalidIntervalHasNoEffects/0s\n=== RUN   TestInvalidIntervalHasNoEffects/-1ns\n--- PASS: TestInvalidIntervalHasNoEffects (0.00s)\n    --- PASS: TestInvalidIntervalHasNoEffects/0s (0.00s)\n    --- PASS: TestInvalidIntervalHasNoEffects/-1ns (0.00s)\n=== RUN   TestAlreadyCanceledSkipsSweepAndReleases\n--- PASS: TestAlreadyCanceledSkipsSweepAndReleases (0.00s)\n=== RUN   TestImmediateSweepAndCancellationDuringInterval\n--- PASS: TestImmediateSweepAndCancellationDuringInterval (0.00s)\n=== RUN   TestSuccessfulCyclesWaitAfterCompletionAndNeverOverlap\n--- PASS: TestSuccessfulCyclesWaitAfterCompletionAndNeverOverlap (0.24s)\n=== RUN   TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn\n=== RUN   TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/normal_cancellation\n=== RUN   TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/callback_error_during_cancellation\n--- PASS: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn (0.06s)\n    --- PASS: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/normal_cancellation (0.03s)\n    --- PASS: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/callback_error_during_cancellation (0.03s)\n=== RUN   TestWorkerAndReleaseErrorCombinations\n=== RUN   TestWorkerAndReleaseErrorCombinations/normal_cancellation\n=== RUN   TestWorkerAndReleaseErrorCombinations/sweep_failure_releases\n=== RUN   TestWorkerAndReleaseErrorCombinations/release_failure_after_cancellation\n=== RUN   TestWorkerAndReleaseErrorCombinations/both_fail\n--- PASS: TestWorkerAndReleaseErrorCombinations (0.00s)\n    --- PASS: TestWorkerAndReleaseErrorCombinations/normal_cancellation (0.00s)\n    --- PASS: TestWorkerAndReleaseErrorCombinations/sweep_failure_releases (0.00s)\n    --- PASS: TestWorkerAndReleaseErrorCombinations/release_failure_after_cancellation (0.00s)\n    --- PASS: TestWorkerAndReleaseErrorCombinations/both_fail (0.00s)\n=== RUN   TestRunWaitsForReleaseBeforeReturning\n--- PASS: TestRunWaitsForReleaseBeforeReturning (0.03s)\n=== RUN   TestRunsHaveIndependentLifetimes\n--- PASS: TestRunsHaveIndependentLifetimes (0.02s)\nPASS\nok  \texample.com/sweeper\t1.547s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.7306549170752987
+  },
+  {
+    "name": "repeat and shuffle with race detector",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-shuffle=on",
+      "-timeout=45s",
+      "./..."
+    ],
+    "process_timeout_seconds": 60,
+    "expected_exit_code": 0,
+    "stdout": "ok  \texample.com/sweeper\t4.751s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 4.89476408297196
+  },
+  {
+    "name": "vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "process_timeout_seconds": 60,
+    "expected_exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.08209533290937543
+  },
+  {
+    "name": "format verification",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "host.go",
+      "worker.go",
+      "host_test.go"
+    ],
+    "process_timeout_seconds": 60,
+    "expected_exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.007801459054462612
+  },
+  {
+    "name": "staticcheck",
+    "status": "skipped",
+    "reason": "not installed; dispatch forbids installing tools"
+  }
+]

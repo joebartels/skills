@@ -1,0 +1,233 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-wya6bd9e/verification",
+    "exit_code": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "duration_seconds": 0.011
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "go",
+      "env",
+      "GOVERSION",
+      "GOOS",
+      "GOARCH",
+      "CGO_ENABLED",
+      "GOMOD",
+      "GOWORK"
+    ],
+    "cwd": "/private/tmp/go-independent-review-wya6bd9e/verification",
+    "exit_code": 0,
+    "stdout": "go1.26.5\ndarwin\narm64\n1\n/private/tmp/go-independent-review-wya6bd9e/verification/go.mod\n\n",
+    "stderr": "",
+    "duration_seconds": 0.01
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-wya6bd9e/verification",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/sweeper\t0.581s\n",
+    "stderr": "",
+    "duration_seconds": 0.736
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-shuffle=on",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-wya6bd9e/verification",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/sweeper\t4.835s\n",
+    "stderr": "",
+    "duration_seconds": 5.023
+  },
+  {
+    "label": "minimum-version API vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-wya6bd9e/verification",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "duration_seconds": 0.068
+  },
+  {
+    "label": "legacy timer channel semantics",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GODEBUG=asynctimerchan=1",
+      "go",
+      "test",
+      "-count=3",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-wya6bd9e/verification",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/sweeper\t1.234s\n",
+    "stderr": "",
+    "duration_seconds": 1.349
+  },
+  {
+    "label": "mutation: ticker-from-start",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "go",
+      "test",
+      "-count=1",
+      "-run",
+      "^TestSuccessfulCyclesWaitAfterCompletionAndNeverOverlap$",
+      "-timeout=15s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-wya6bd9e/mutations/ticker-from-start",
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestSuccessfulCyclesWaitAfterCompletionAndNeverOverlap (0.18s)\n    host_test.go:201: cycle 2 started 2.708\u00b5s after completion, want at least 60ms\n    host_test.go:201: cycle 3 started 59.987375ms after completion, want at least 60ms\nFAIL\nFAIL\texample.com/sweeper\t0.359s\nFAIL\n",
+    "stderr": "",
+    "duration_seconds": 0.529
+  },
+  {
+    "label": "mutation: release-before-callback-cleanup",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "go",
+      "test",
+      "-count=1",
+      "-run",
+      "^TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn$",
+      "-timeout=15s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-wya6bd9e/mutations/release-before-callback-cleanup",
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn (0.00s)\n    --- FAIL: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/normal_cancellation (0.00s)\n        host_test.go:262: Run returned while callback cleanup was blocked\n    --- FAIL: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/callback_error_during_cancellation (0.00s)\n        host_test.go:259: release ran while callback cleanup was blocked\nFAIL\nFAIL\texample.com/sweeper\t0.174s\nFAIL\n",
+    "stderr": "",
+    "duration_seconds": 0.342
+  },
+  {
+    "label": "mutation: discard-callback-error",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "go",
+      "test",
+      "-count=1",
+      "-run",
+      "^TestWorkerAndReleaseErrorCombinations$",
+      "-timeout=15s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-wya6bd9e/mutations/discard-callback-error",
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestWorkerAndReleaseErrorCombinations (0.00s)\n    --- FAIL: TestWorkerAndReleaseErrorCombinations/sweep_failure_releases (0.00s)\n        host_test.go:321: Run = <nil>, want cause sweep failed\n    --- FAIL: TestWorkerAndReleaseErrorCombinations/both_fail (0.00s)\n        host_test.go:321: Run = release failed, want cause sweep failed\nFAIL\nFAIL\texample.com/sweeper\t0.167s\nFAIL\n",
+    "stderr": "",
+    "duration_seconds": 0.325
+  },
+  {
+    "label": "mutation: omit-child-cancellation",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "go",
+      "test",
+      "-count=1",
+      "-run",
+      "^TestWorkerAndReleaseErrorCombinations$",
+      "-timeout=15s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-wya6bd9e/mutations/omit-child-cancellation",
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestWorkerAndReleaseErrorCombinations (0.00s)\n    --- FAIL: TestWorkerAndReleaseErrorCombinations/sweep_failure_releases (0.00s)\n        host_test.go:331: release calls = 1, release before cancel = true\n    --- FAIL: TestWorkerAndReleaseErrorCombinations/both_fail (0.00s)\n        host_test.go:331: release calls = 1, release before cancel = true\nFAIL\nFAIL\texample.com/sweeper\t0.171s\nFAIL\n",
+    "stderr": "",
+    "duration_seconds": 0.328
+  },
+  {
+    "label": "candidate preservation against untouched verification copy",
+    "command": [
+      "rtk",
+      "proxy",
+      "diff",
+      "-ru",
+      "/private/tmp/go-independent-review-wya6bd9e/candidate",
+      "/private/tmp/go-independent-review-wya6bd9e/verification"
+    ],
+    "cwd": "/private/tmp/go-independent-review-wya6bd9e",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

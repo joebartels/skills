@@ -1,0 +1,59 @@
+{
+  "offered_guidance_names": [
+    "go-api-contracts",
+    "go-behavior-tests",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries"
+  ],
+  "selected_guidance_names": [
+    "go-api-contracts",
+    "go-behavior-tests",
+    "go-core-style",
+    "go-interfaces-and-composition"
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-behavior-tests/SKILL.md",
+    "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-interfaces-and-composition/SKILL.md"
+  ],
+  "opened_reference_paths": [
+    "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-behavior-tests/references/behavior-observations.md"
+  ],
+  "decisions": [
+    {
+      "name": "go-api-contracts",
+      "selected": true,
+      "reason": "Selected: exported Run behavior and error contract change; preserve the exact function signature, error identity, supported module version, and standard-library dependencies."
+    },
+    {
+      "name": "go-behavior-tests",
+      "selected": true,
+      "reason": "Selected: periodic recurrence and host cleanup behavior change, with explicit request for high-quality lifecycle tests. Read the behavior-observations reference to choose independent error cases and host-boundary assertions."
+    },
+    {
+      "name": "go-core-style",
+      "selected": true,
+      "reason": "Selected: implementation and tests are Go code; use explicit errors, small functions, standard-library contexts and timers, owned goroutine lifetime, and gofmt."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "selected": true,
+      "reason": "Selected: Run now owns a periodic worker and its child context; completion, cancellation, joining, and resource release need explicit ordering. Existing function dependencies suffice without new interfaces."
+    },
+    {
+      "name": "go-package-boundaries",
+      "selected": false,
+      "reason": "Not selected: the existing sweeper package already owns the host and worker. No new package, import direction, relocation, or distinct responsibility is introduced."
+    }
+  ],
+  "opened_task_files": [
+    "/private/tmp/go-testing-author-z3h6ca5c/worker-host/README.md",
+    "/private/tmp/go-testing-author-z3h6ca5c/worker-host/go.mod",
+    "/private/tmp/go-testing-author-z3h6ca5c/worker-host/host.go",
+    "/private/tmp/go-testing-author-z3h6ca5c/worker-host/worker.go",
+    "/private/tmp/go-testing-author-z3h6ca5c/worker-host/host_test.go"
+  ],
+  "additional_guidance_opened": []
+}

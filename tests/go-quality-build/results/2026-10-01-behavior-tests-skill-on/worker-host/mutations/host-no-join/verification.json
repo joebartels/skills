@@ -1,0 +1,87 @@
+{
+  "semantic_id": "host-no-join",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "332aab197b145702fe1894fb40d9e3b0005d2d207a3560999266efb133546ab2",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-g9d339iy/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.817s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.049
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/worker-host/mutations/host-no-join/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-g9d339iy/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-g9d339iy/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.334s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.505
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-g9d339iy/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn (0.00s)\n    --- FAIL: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/normal_cancellation (0.00s)\n        host_test.go:259: release ran while callback cleanup was blocked\n    --- FAIL: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/callback_error_during_cancellation (0.00s)\n        host_test.go:259: release ran while callback cleanup was blocked\nFAIL\nFAIL\texample.com/sweeper\t0.596s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.709
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "Blocked callback cleanup visibly precedes release; mutant releases early."
+}

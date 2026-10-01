@@ -1,0 +1,89 @@
+{
+  "semantic_id": "post-review-host-drop-error-successful-release",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "96d9a5763b55e29cb8316dc22c7c2f4696b6b76522743128fcf11cdc08a1dbcf",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-8qxxcfn5/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.571s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.804
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/worker-host/mutations/post-review-host-drop-error-successful-release/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-8qxxcfn5/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.022
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-8qxxcfn5/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.155s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.336
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-8qxxcfn5/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestSuccessfulCyclesWaitAfterCompletionAndNeverOverlap (0.25s)\n    host_test.go:208: Run = <nil>, want third cycle error\n--- FAIL: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn (0.06s)\n    --- FAIL: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/callback_error_during_cancellation (0.03s)\n        host_test.go:271: Run = <nil>, want callback cause cleanup failed\n--- FAIL: TestWorkerAndReleaseErrorCombinations (0.00s)\n    --- FAIL: TestWorkerAndReleaseErrorCombinations/sweep_failure_releases (0.00s)\n        host_test.go:321: Run = <nil>, want cause sweep failed\nFAIL\nFAIL\texample.com/sweeper\t0.728s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.871
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "Work-error/release-success loses promised callback cause; independent error combination and recurrence assertions fail.",
+  "post_review_diagnostic": true,
+  "pre_dispatch_frozen_probe": false
+}

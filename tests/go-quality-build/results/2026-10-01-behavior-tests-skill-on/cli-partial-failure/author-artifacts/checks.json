@@ -1,0 +1,120 @@
+[
+  {
+    "stage": "pre-implementation behavior regressions",
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go test -count=1 -timeout=60s ./...",
+    "chunk_id": "56e837",
+    "wall_time_seconds": 0.716870375,
+    "exit_code": 1,
+    "original_token_count": 901,
+    "capture_mode": "combined stdout/stderr from exec",
+    "combined_output": "--- FAIL: TestRunBatchSuccess (0.00s)\n    --- FAIL: TestRunBatchSuccess/ordered_records (0.00s)\n        main_test.go:41: entries = [- web], want records map[api:12\n             web:7\n             worker:3\n            ]\n    --- FAIL: TestRunBatchSuccess/duplicate_replaces (0.00s)\n        main_test.go:41: entries = [- web], want records map[api:12\n             web:9\n            ]\n    --- FAIL: TestRunBatchSuccess/CSV_and_normalization (0.00s)\n        main_test.go:41: entries = [- web], want records map[two,words:12\n             web:7\n            ]\n--- FAIL: TestRunStopsAtInvalidRow (0.01s)\n    --- FAIL: TestRunStopsAtInvalidRow/too_few_fields (0.00s)\n        main_test.go:72: run succeeded with invalid input\n    --- FAIL: TestRunStopsAtInvalidRow/too_many_fields (0.00s)\n        main_test.go:72: run succeeded with invalid input\n    --- FAIL: TestRunStopsAtInvalidRow/empty_ID (0.00s)\n        main_test.go:72: run succeeded with invalid input\n    --- FAIL: TestRunStopsAtInvalidRow/dot_ID (0.00s)\n        main_test.go:72: run succeeded with invalid input\n    --- FAIL: TestRunStopsAtInvalidRow/dot_dot_ID (0.00s)\n        main_test.go:72: run succeeded with invalid input\n    --- FAIL: TestRunStopsAtInvalidRow/slash_ID (0.00s)\n        main_test.go:72: run succeeded with invalid input\n    --- FAIL: TestRunStopsAtInvalidRow/backslash_ID (0.00s)\n        main_test.go:72: run succeeded with invalid input\n    --- FAIL: TestRunStopsAtInvalidRow/empty_quantity (0.00s)\n        main_test.go:72: run succeeded with invalid input\n    --- FAIL: TestRunStopsAtInvalidRow/zero_quantity (0.00s)\n        main_test.go:72: run succeeded with invalid input\n    --- FAIL: TestRunStopsAtInvalidRow/negative_duplicate (0.00s)\n        main_test.go:72: run succeeded with invalid input\n    --- FAIL: TestRunStopsAtInvalidRow/fractional_quantity (0.00s)\n        main_test.go:72: run succeeded with invalid input\n    --- FAIL: TestRunStopsAtInvalidRow/nondecimal_quantity (0.00s)\n        main_test.go:72: run succeeded with invalid input\n    --- FAIL: TestRunStopsAtInvalidRow/space_in_quantity (0.00s)\n        main_test.go:72: run succeeded with invalid input\n    --- FAIL: TestRunStopsAtInvalidRow/overflow_quantity (0.00s)\n        main_test.go:72: run succeeded with invalid input\n    --- FAIL: TestRunStopsAtInvalidRow/malformed_CSV (0.00s)\n        main_test.go:72: run succeeded with invalid input\n--- FAIL: TestRunStopsAtFileFailure (0.00s)\n    main_test.go:95: run succeeded writing over a directory\n--- FAIL: TestRunInputFailureRetainsPrefix (0.00s)\n    main_test.go:120: run error = <nil>, want useful input diagnostic\n--- FAIL: TestRunPublishesBeforeReadingNextRecord (0.00s)\n    main_test.go:144: did not read the second record\n--- FAIL: TestCLIProcessContract (0.30s)\n    --- FAIL: TestCLIProcessContract/batch_and_duplicate (0.00s)\n        main_test.go:175: entries = [- web], want records map[api:12\n             web:9\n            ]\n    --- FAIL: TestCLIProcessContract/invalid_duplicate (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/malformed_CSV_after_prefix (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/file_failure_after_prefix (0.00s)\n        main_test.go:184: process = exit 0, stdout \"\", stderr \"\"; want exit 2 and empty stdout\n--- FAIL: TestCLIPartialWriteRetainsAcceptedDuplicate (0.21s)\n    write_failure_unix_test.go:38: limited executable = <nil>; stderr \"\"\nFAIL\nFAIL\texample.com/ledgerload\t0.694s\nFAIL\n"
+  },
+  {
+    "stage": "initial implementation",
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go test -count=1 -timeout=60s ./...",
+    "chunk_id": "7356bf",
+    "wall_time_seconds": 0.838735875,
+    "exit_code": 0,
+    "original_token_count": 9,
+    "capture_mode": "combined stdout/stderr from exec",
+    "combined_output": "ok  \texample.com/ledgerload\t0.818s\n"
+  },
+  {
+    "stage": "temporary direct-write counterexample",
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go test -count=1 -timeout=60s -run '^TestCLIPartialWriteRetainsAcceptedDuplicate$' ./...",
+    "chunk_id": "c25582",
+    "wall_time_seconds": 0.494292709,
+    "exit_code": 1,
+    "original_token_count": 70,
+    "capture_mode": "combined stdout/stderr from exec",
+    "combined_output": "--- FAIL: TestCLIPartialWriteRetainsAcceptedDuplicate (0.26s)\n    write_failure_unix_test.go:41: /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIPartialWriteRetainsAcceptedDuplicate1217443523/002/keep = \"12\", <nil>; want \"1\\n\"\nFAIL\nFAIL\texample.com/ledgerload\t0.474s\nFAIL\n"
+  },
+  {
+    "stage": "format source and tests",
+    "command": "rtk proxy gofmt -s -w main.go main_test.go write_failure_unix_test.go",
+    "chunk_id": "bbb6c9",
+    "wall_time_seconds": 0.000007042,
+    "exit_code": 0,
+    "original_token_count": 0,
+    "capture_mode": "combined stdout/stderr from exec",
+    "combined_output": ""
+  },
+  {
+    "stage": "format verification",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "main.go",
+      "main_test.go",
+      "write_failure_unix_test.go"
+    ],
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "capture_mode": "stdout and stderr captured separately"
+  },
+  {
+    "stage": "supported toolchain evidence",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "capture_mode": "stdout and stderr captured separately"
+  },
+  {
+    "stage": "static analysis",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "capture_mode": "stdout and stderr captured separately"
+  },
+  {
+    "stage": "race and executable suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-count=1",
+      "-timeout=90s",
+      "./..."
+    ],
+    "stdout": "=== RUN   TestSingleRecord\n--- PASS: TestSingleRecord (0.00s)\n=== RUN   TestRunBatchSuccess\n=== RUN   TestRunBatchSuccess/empty\n=== RUN   TestRunBatchSuccess/ordered_records\n=== RUN   TestRunBatchSuccess/duplicate_replaces\n=== RUN   TestRunBatchSuccess/CSV_and_normalization\n--- PASS: TestRunBatchSuccess (0.00s)\n    --- PASS: TestRunBatchSuccess/empty (0.00s)\n    --- PASS: TestRunBatchSuccess/ordered_records (0.00s)\n    --- PASS: TestRunBatchSuccess/duplicate_replaces (0.00s)\n    --- PASS: TestRunBatchSuccess/CSV_and_normalization (0.00s)\n=== RUN   TestRunStopsAtInvalidRow\n=== RUN   TestRunStopsAtInvalidRow/too_few_fields\n=== RUN   TestRunStopsAtInvalidRow/too_many_fields\n=== RUN   TestRunStopsAtInvalidRow/empty_ID\n=== RUN   TestRunStopsAtInvalidRow/dot_ID\n=== RUN   TestRunStopsAtInvalidRow/dot_dot_ID\n=== RUN   TestRunStopsAtInvalidRow/slash_ID\n=== RUN   TestRunStopsAtInvalidRow/backslash_ID\n=== RUN   TestRunStopsAtInvalidRow/empty_quantity\n=== RUN   TestRunStopsAtInvalidRow/zero_quantity\n=== RUN   TestRunStopsAtInvalidRow/negative_duplicate\n=== RUN   TestRunStopsAtInvalidRow/fractional_quantity\n=== RUN   TestRunStopsAtInvalidRow/nondecimal_quantity\n=== RUN   TestRunStopsAtInvalidRow/space_in_quantity\n=== RUN   TestRunStopsAtInvalidRow/overflow_quantity\n=== RUN   TestRunStopsAtInvalidRow/malformed_CSV\n--- PASS: TestRunStopsAtInvalidRow (0.02s)\n    --- PASS: TestRunStopsAtInvalidRow/too_few_fields (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/too_many_fields (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/empty_ID (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/dot_ID (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/dot_dot_ID (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/slash_ID (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/backslash_ID (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/empty_quantity (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/zero_quantity (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/negative_duplicate (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/fractional_quantity (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/nondecimal_quantity (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/space_in_quantity (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/overflow_quantity (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/malformed_CSV (0.00s)\n=== RUN   TestRunRejectsFirstRowWithoutWrites\n--- PASS: TestRunRejectsFirstRowWithoutWrites (0.00s)\n=== RUN   TestRunStopsAtFileFailure\n--- PASS: TestRunStopsAtFileFailure (0.00s)\n=== RUN   TestRunDirectoryFailure\n--- PASS: TestRunDirectoryFailure (0.00s)\n=== RUN   TestRunInputFailureRetainsPrefix\n--- PASS: TestRunInputFailureRetainsPrefix (0.00s)\n=== RUN   TestRunPublishesBeforeReadingNextRecord\n--- PASS: TestRunPublishesBeforeReadingNextRecord (0.00s)\n=== RUN   TestCLIProcessContract\n=== RUN   TestCLIProcessContract/empty\n=== RUN   TestCLIProcessContract/single_record\n=== RUN   TestCLIProcessContract/batch_and_duplicate\n=== RUN   TestCLIProcessContract/invalid_first_row\n=== RUN   TestCLIProcessContract/invalid_duplicate\n=== RUN   TestCLIProcessContract/malformed_CSV_after_prefix\n=== RUN   TestCLIProcessContract/missing_directory\n=== RUN   TestCLIProcessContract/empty_directory_option\n=== RUN   TestCLIProcessContract/positional_argument\n=== RUN   TestCLIProcessContract/unknown_flag\n=== RUN   TestCLIProcessContract/missing_flag_value\n=== RUN   TestCLIProcessContract/file_failure_after_prefix\n=== RUN   TestCLIProcessContract/directory_creation_failure\n--- PASS: TestCLIProcessContract (0.26s)\n    --- PASS: TestCLIProcessContract/empty (0.12s)\n    --- PASS: TestCLIProcessContract/single_record (0.01s)\n    --- PASS: TestCLIProcessContract/batch_and_duplicate (0.00s)\n    --- PASS: TestCLIProcessContract/invalid_first_row (0.00s)\n    --- PASS: TestCLIProcessContract/invalid_duplicate (0.00s)\n    --- PASS: TestCLIProcessContract/malformed_CSV_after_prefix (0.00s)\n    --- PASS: TestCLIProcessContract/missing_directory (0.00s)\n    --- PASS: TestCLIProcessContract/empty_directory_option (0.00s)\n    --- PASS: TestCLIProcessContract/positional_argument (0.00s)\n    --- PASS: TestCLIProcessContract/unknown_flag (0.00s)\n    --- PASS: TestCLIProcessContract/missing_flag_value (0.00s)\n    --- PASS: TestCLIProcessContract/file_failure_after_prefix (0.00s)\n    --- PASS: TestCLIProcessContract/directory_creation_failure (0.00s)\n=== RUN   TestCLIPartialWriteRetainsAcceptedDuplicate\n--- PASS: TestCLIPartialWriteRetainsAcceptedDuplicate (0.22s)\n=== RUN   TestFileSizeLimitHelper\n--- PASS: TestFileSizeLimitHelper (0.00s)\nPASS\nok  \texample.com/ledgerload\t1.740s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "capture_mode": "stdout and stderr captured separately"
+  },
+  {
+    "stage": "optional staticcheck availability",
+    "command": "rtk proxy python3 - <<'PY'\nimport json, shutil\nprint(json.dumps({'staticcheck': shutil.which('staticcheck')}))\nPY",
+    "stdout": "{\"staticcheck\": null}\n",
+    "stderr": "",
+    "exit_code": 0,
+    "conclusion": "Staticcheck was not installed; no tools or dependencies were installed."
+  }
+]

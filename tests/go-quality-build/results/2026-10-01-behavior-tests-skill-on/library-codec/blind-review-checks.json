@@ -1,0 +1,388 @@
+[
+  {
+    "label": "toolchain",
+    "cwd": "/private/tmp/go-independent-review-138xcq3s",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOFLAGS=-mod=readonly",
+      "go",
+      "version"
+    ],
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.009836416924372315
+  },
+  {
+    "label": "platform",
+    "cwd": "/private/tmp/go-independent-review-138xcq3s",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOFLAGS=-mod=readonly",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION",
+      "CGO_ENABLED"
+    ],
+    "stdout": "darwin\narm64\ngo1.26.5\n1\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.00913012505043298
+  },
+  {
+    "label": "original-suite",
+    "cwd": "/private/tmp/go-independent-review-138xcq3s/original",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOFLAGS=-mod=readonly",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "stdout": "ok  \texample.com/keycodec\t0.166s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.2960668330779299
+  },
+  {
+    "label": "candidate-suite",
+    "cwd": "/private/tmp/go-independent-review-138xcq3s/verification-candidate",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOFLAGS=-mod=readonly",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "stdout": "ok  \texample.com/keycodec\t0.173s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.33596991701051593
+  },
+  {
+    "label": "candidate-bounded-fuzz",
+    "cwd": "/private/tmp/go-independent-review-138xcq3s/verification-candidate",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOFLAGS=-mod=readonly",
+      "go",
+      "test",
+      "-run=^$",
+      "-fuzz=^FuzzRoundTrip$",
+      "-fuzztime=3s",
+      "-parallel=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "stdout": "fuzz: elapsed: 0s, gathering baseline coverage: 0/33 completed\nfuzz: elapsed: 0s, gathering baseline coverage: 33/33 completed, now fuzzing with 1 workers\nfuzz: elapsed: 3s, execs: 350407 (116769/sec), new interesting: 0 (total: 33)\nfuzz: elapsed: 3s, execs: 350407 (0/sec), new interesting: 0 (total: 33)\nPASS\nok  \texample.com/keycodec\t3.203s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 3.3781472500413656
+  },
+  {
+    "label": "mutation-query-codec-mutation",
+    "file": "/private/tmp/go-independent-review-138xcq3s/mutation-query-codec/key.go",
+    "before": "url.PathEscape",
+    "after": "url.QueryEscape",
+    "additional_replacement": [
+      "url.PathUnescape",
+      "url.QueryUnescape"
+    ]
+  },
+  {
+    "label": "mutation-query-roundtrip-control",
+    "cwd": "/private/tmp/go-independent-review-138xcq3s/mutation-query-codec",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOFLAGS=-mod=readonly",
+      "go",
+      "test",
+      "-run=^(FuzzRoundTrip|TestSimpleRoundTrip)$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "stdout": "ok  \texample.com/keycodec\t0.197s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.35478879197034985
+  },
+  {
+    "label": "mutation-query-exact-tables",
+    "cwd": "/private/tmp/go-independent-review-138xcq3s/mutation-query-codec",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOFLAGS=-mod=readonly",
+      "go",
+      "test",
+      "-run=^(TestEncode|TestDecode)$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "stdout": "--- FAIL: TestEncode (0.00s)\n    --- FAIL: TestEncode/spaces (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"us west\", Name:\"web blue\"}) = \"us+west/web+blue\", want \"us%20west/web%20blue\"\n    --- FAIL: TestEncode/literal_plus (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"us+west\", Name:\"web+blue\"}) = \"us%2Bwest/web%2Bblue\", want \"us+west/web+blue\"\n    --- FAIL: TestEncode/whitespace-only_fields (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\" \", Name:\" \"}) = \"+/+\", want \"%20/%20\"\n    --- FAIL: TestEncode/README_example (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"us/west\", Name:\"web blue\"}) = \"us%2Fwest/web+blue\", want \"us%2Fwest/web%20blue\"\n--- FAIL: TestDecode (0.00s)\n    --- FAIL: TestDecode/literal_plus (0.00s)\n        key_test.go:94: Decode(\"us+west/web+blue\") = keycodec.Key{Region:\"us west\", Name:\"web blue\"}, want keycodec.Key{Region:\"us+west\", Name:\"web+blue\"}\nFAIL\nFAIL\texample.com/keycodec\t0.125s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.24915270798373967
+  },
+  {
+    "label": "mutation-sentinel-mutation",
+    "file": "/private/tmp/go-independent-review-138xcq3s/mutation-sentinel/key.go",
+    "before": "return \"\", ErrInvalidKey",
+    "after": "return \"\", errors.New(\"invalid key\")",
+    "additional_replacement": [
+      "return Key{}, ErrInvalidKey",
+      "return Key{}, errors.New(\"invalid key\")"
+    ]
+  },
+  {
+    "label": "mutation-error-identity",
+    "cwd": "/private/tmp/go-independent-review-138xcq3s/mutation-sentinel",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOFLAGS=-mod=readonly",
+      "go",
+      "test",
+      "-run=^(TestEncodeRejectsEmptyFields|TestDecodeRejectsInvalidWire)$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "stdout": "--- FAIL: TestEncodeRejectsEmptyFields (0.00s)\n    --- FAIL: TestEncodeRejectsEmptyFields/zero_value (0.00s)\n        key_test.go:59: Encode(keycodec.Key{Region:\"\", Name:\"\"}) error = invalid key, want ErrInvalidKey\n    --- FAIL: TestEncodeRejectsEmptyFields/empty_region (0.00s)\n        key_test.go:59: Encode(keycodec.Key{Region:\"\", Name:\"web\"}) error = invalid key, want ErrInvalidKey\n    --- FAIL: TestEncodeRejectsEmptyFields/empty_name (0.00s)\n        key_test.go:59: Encode(keycodec.Key{Region:\"east\", Name:\"\"}) error = invalid key, want ErrInvalidKey\n--- FAIL: TestDecodeRejectsInvalidWire (0.00s)\n    --- FAIL: TestDecodeRejectsInvalidWire/empty (0.00s)\n        key_test.go:126: Decode(\"\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/no_separator (0.00s)\n        key_test.go:126: Decode(\"east\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/only_escaped_separator (0.00s)\n        key_test.go:126: Decode(\"east%2Fweb\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/extra_segment (0.00s)\n        key_test.go:126: Decode(\"east/web/blue\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/empty_region (0.00s)\n        key_test.go:126: Decode(\"/web\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/empty_name (0.00s)\n        key_test.go:126: Decode(\"east/\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/both_empty (0.00s)\n        key_test.go:126: Decode(\"/\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/extra_leading_separator (0.00s)\n        key_test.go:126: Decode(\"/east/web\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/extra_trailing_separator (0.00s)\n        key_test.go:126: Decode(\"east/web/\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/incomplete_region_escape (0.00s)\n        key_test.go:126: Decode(\"east%/web\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/short_region_escape (0.00s)\n        key_test.go:126: Decode(\"east%2/web\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/nonhex_region_escape (0.00s)\n        key_test.go:126: Decode(\"east%GG/web\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/incomplete_name_escape (0.00s)\n        key_test.go:126: Decode(\"east/web%\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/short_name_escape (0.00s)\n        key_test.go:126: Decode(\"east/web%2\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/nonhex_name_escape (0.00s)\n        key_test.go:126: Decode(\"east/web%G0\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/nonhex_second_digit (0.00s)\n        key_test.go:126: Decode(\"east/web%0G\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/invalid_name_after_valid_region_escape (0.00s)\n        key_test.go:126: Decode(\"us%2Fwest/web%Q1\") error = invalid key, want ErrInvalidKey\nFAIL\nFAIL\texample.com/keycodec\t0.171s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.32867633306887
+  },
+  {
+    "label": "mutation-partial-key-mutation",
+    "file": "/private/tmp/go-independent-review-138xcq3s/mutation-partial-key/key.go",
+    "before": "name, err := url.PathUnescape(nameWire)\n\tif err != nil {\n\t\treturn Key{}, ErrInvalidKey",
+    "after": "name, err := url.PathUnescape(nameWire)\n\tif err != nil {\n\t\treturn Key{Region: region}, ErrInvalidKey"
+  },
+  {
+    "label": "mutation-zero-result",
+    "cwd": "/private/tmp/go-independent-review-138xcq3s/mutation-partial-key",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOFLAGS=-mod=readonly",
+      "go",
+      "test",
+      "-run=^TestDecodeRejectsInvalidWire/invalid_name_after_valid_region_escape$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "stdout": "--- FAIL: TestDecodeRejectsInvalidWire (0.00s)\n    --- FAIL: TestDecodeRejectsInvalidWire/invalid_name_after_valid_region_escape (0.00s)\n        key_test.go:129: Decode(\"us%2Fwest/web%Q1\") result = keycodec.Key{Region:\"us/west\", Name:\"\"}, want zero Key\nFAIL\nFAIL\texample.com/keycodec\t0.174s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.3333901660516858
+  },
+  {
+    "label": "mutation-invalid-utf8-mutation",
+    "file": "/private/tmp/go-independent-review-138xcq3s/mutation-invalid-utf8/key.go",
+    "before": "url.PathEscape(k.Region)",
+    "after": "url.PathEscape(strings.ToValidUTF8(k.Region, \"?\"))"
+  },
+  {
+    "label": "mutation-bytes-table-control",
+    "cwd": "/private/tmp/go-independent-review-138xcq3s/mutation-invalid-utf8",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOFLAGS=-mod=readonly",
+      "go",
+      "test",
+      "-run=^TestEncode$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "stdout": "ok  \texample.com/keycodec\t0.177s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.3372147079790011
+  },
+  {
+    "label": "mutation-bytes-fuzz-seed",
+    "cwd": "/private/tmp/go-independent-review-138xcq3s/mutation-invalid-utf8",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOFLAGS=-mod=readonly",
+      "go",
+      "test",
+      "-run=^FuzzRoundTrip$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "stdout": "--- FAIL: FuzzRoundTrip (0.00s)\n    --- FAIL: FuzzRoundTrip/seed#6 (0.00s)\n        key_test.go:189: Decode(Encode(keycodec.Key{Region:\"\\x00\\xff\", Name:\"\\x01+/%%\"})) = keycodec.Key{Region:\"\\x00?\", Name:\"\\x01+/%%\"}, <nil>\nFAIL\nFAIL\texample.com/keycodec\t0.126s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.2506438329583034
+  },
+  {
+    "label": "source-preservation",
+    "before_sha256": {
+      "original": {
+        "README.md": "e43d6fce2717ba0e2b06e6df46fd864104ff3cc1f63eb43c7dcdb110c75da158",
+        "go.mod": "a61f2ef6e6aa5b224eca8a2dd122a73b2c1d33b930975eecf6b3f70b7d54ef51",
+        "key.go": "3ccaaf4335c73eccaf601a756814ef04665194ae536f196ad4dc514e159f1584",
+        "key_test.go": "8e79056acef2529702e56e8ba9769d34381289cb30b730a455923b4c170f4689"
+      },
+      "candidate": {
+        "README.md": "c33020020e6d4400325fdac1d3a60f0b45a2ec6a687f9fc13fe76588158239df",
+        "go.mod": "a61f2ef6e6aa5b224eca8a2dd122a73b2c1d33b930975eecf6b3f70b7d54ef51",
+        "key.go": "91655912e0dd927c942c02b09a6199c966de3b9a0af020d649a7ecc34c52cdde",
+        "key_test.go": "7f51144a11a8f78af93a7fdd7cd04ba9079870439e75cc7b3a25fc9c8b4b1779"
+      }
+    },
+    "after_sha256": {
+      "original": {
+        "README.md": "e43d6fce2717ba0e2b06e6df46fd864104ff3cc1f63eb43c7dcdb110c75da158",
+        "go.mod": "a61f2ef6e6aa5b224eca8a2dd122a73b2c1d33b930975eecf6b3f70b7d54ef51",
+        "key.go": "3ccaaf4335c73eccaf601a756814ef04665194ae536f196ad4dc514e159f1584",
+        "key_test.go": "8e79056acef2529702e56e8ba9769d34381289cb30b730a455923b4c170f4689"
+      },
+      "candidate": {
+        "README.md": "c33020020e6d4400325fdac1d3a60f0b45a2ec6a687f9fc13fe76588158239df",
+        "go.mod": "a61f2ef6e6aa5b224eca8a2dd122a73b2c1d33b930975eecf6b3f70b7d54ef51",
+        "key.go": "91655912e0dd927c942c02b09a6199c966de3b9a0af020d649a7ecc34c52cdde",
+        "key_test.go": "7f51144a11a8f78af93a7fdd7cd04ba9079870439e75cc7b3a25fc9c8b4b1779"
+      }
+    },
+    "unchanged": true
+  },
+  {
+    "label": "mutation-repeated-percent-mutation",
+    "file": "/private/tmp/go-independent-review-138xcq3s/mutation-repeated-percent/key.go",
+    "before": "url.PathEscape(k.Name)",
+    "after": "url.PathEscape(strings.ReplaceAll(k.Name, \"%%\", \"%\"))"
+  },
+  {
+    "label": "mutation-repeated-percent-table-control",
+    "cwd": "/private/tmp/go-independent-review-138xcq3s/mutation-repeated-percent",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOFLAGS=-mod=readonly",
+      "go",
+      "test",
+      "-run=^(TestEncode|TestDecode)$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "stdout": "ok  \texample.com/keycodec\t0.183s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.33682666602544487
+  },
+  {
+    "label": "mutation-repeated-percent-fuzz-seed",
+    "cwd": "/private/tmp/go-independent-review-138xcq3s/mutation-repeated-percent",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOFLAGS=-mod=readonly",
+      "go",
+      "test",
+      "-run=^FuzzRoundTrip$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "stdout": "--- FAIL: FuzzRoundTrip (0.00s)\n    --- FAIL: FuzzRoundTrip/seed#6 (0.00s)\n        key_test.go:189: Decode(Encode(keycodec.Key{Region:\"\\x00\\xff\", Name:\"\\x01+/%%\"})) = keycodec.Key{Region:\"\\x00\\xff\", Name:\"\\x01+/%\"}, <nil>\nFAIL\nFAIL\texample.com/keycodec\t0.124s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.24804774997755885
+  },
+  {
+    "label": "final-artifact-validation",
+    "source_unchanged": true,
+    "executed_check_count": 13,
+    "report_path": "/private/tmp/go-independent-review-138xcq3s/output/review.md",
+    "report_bytes": 11533,
+    "report_sha256": "2a32423bb2377655028074a1fd96d170b6f8ee16f9f064982821322c4fe9692e"
+  }
+]

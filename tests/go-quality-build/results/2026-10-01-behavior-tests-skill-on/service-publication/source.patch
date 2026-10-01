@@ -1,0 +1,513 @@
+--- a/mirror.go
++++ b/mirror.go
+@@ -4,8 +4,12 @@
+ 	"context"
+ 	"encoding/json"
+ 	"errors"
++	"fmt"
++	"io"
+ 	"net/http"
+ 	"os"
++	"path/filepath"
++	"strings"
+ )
+ 
+ type Item struct {
+@@ -22,7 +26,60 @@
+ 	return os.WriteFile(path, data, 0o644)
+ }
+ 
+-// Refresh is reserved for the next minor release.
++// Refresh fetches and validates a remote snapshot before replacing path.
++// On supported Unix filesystems, existing open handles retain the old snapshot.
+ func Refresh(ctx context.Context, client *http.Client, endpoint, path string) error {
+-	return errors.New("remote refresh not implemented")
++	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
++	if err != nil {
++		return fmt.Errorf("create snapshot request: %w", err)
++	}
++	resp, err := client.Do(req)
++	if err != nil {
++		return fmt.Errorf("fetch snapshot: %w", err)
++	}
++	defer resp.Body.Close()
++	if resp.StatusCode != http.StatusOK {
++		return fmt.Errorf("fetch snapshot: HTTP status %d", resp.StatusCode)
++	}
++	data, err := io.ReadAll(resp.Body)
++	if err != nil {
++		return fmt.Errorf("read snapshot: %w", err)
++	}
++	var items []Item
++	if err := json.Unmarshal(data, &items); err != nil {
++		return fmt.Errorf("decode snapshot: %w", err)
++	}
++	if items == nil {
++		return errors.New("snapshot must be a JSON array")
++	}
++	for i, item := range items {
++		if strings.TrimSpace(item.Code) == "" || strings.TrimSpace(item.Label) == "" {
++			return fmt.Errorf("snapshot item %d has a blank code or label", i)
++		}
++	}
++	data, err = json.Marshal(items)
++	if err != nil {
++		return fmt.Errorf("encode snapshot: %w", err)
++	}
++	// Keep the temporary file in the destination directory so publication is
++	// a single filesystem rename, never a truncation of the previous file.
++	file, err := os.CreateTemp(filepath.Dir(path), "."+filepath.Base(path)+"-*")
++	if err != nil {
++		return fmt.Errorf("create snapshot file: %w", err)
++	}
++	defer os.Remove(file.Name())
++	defer file.Close()
++	if err := file.Chmod(0o644); err != nil {
++		return fmt.Errorf("set snapshot permissions: %w", err)
++	}
++	if _, err := file.Write(data); err != nil {
++		return fmt.Errorf("write snapshot: %w", err)
++	}
++	if err := file.Close(); err != nil {
++		return fmt.Errorf("close snapshot file: %w", err)
++	}
++	if err := os.Rename(file.Name(), path); err != nil {
++		return fmt.Errorf("publish snapshot: %w", err)
++	}
++	return nil
+ }
+--- /dev/null
++++ b/refresh_test.go
+@@ -0,0 +1,328 @@
++package mirror_test
++
++import (
++	"context"
++	"errors"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++	"time"
++
++	mirror "example.com/mirror"
++)
++
++// A function assignment protects the existing exported signature.
++var _ func(context.Context, *http.Client, string, string) error = mirror.Refresh
++
++type roundTripFunc func(*http.Request) (*http.Response, error)
++
++func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) {
++	return f(r)
++}
++
++type observedBody struct {
++	io.Reader
++	closes int
++}
++
++func (b *observedBody) Close() error {
++	b.closes++
++	return nil
++}
++
++func snapshotPath(t *testing.T, previous string) string {
++	t.Helper()
++	path := filepath.Join(t.TempDir(), "items.json")
++	if err := os.WriteFile(path, []byte(previous), 0o644); err != nil {
++		t.Fatal(err)
++	}
++	return path
++}
++
++func assertSnapshot(t *testing.T, path, want string) {
++	t.Helper()
++	got, err := os.ReadFile(path)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if string(got) != want {
++		t.Fatalf("snapshot = %q, want %q", got, want)
++	}
++}
++
++func assertOnlySnapshot(t *testing.T, path string) {
++	t.Helper()
++	entries, err := os.ReadDir(filepath.Dir(path))
++	if err != nil {
++		t.Fatal(err)
++	}
++	if len(entries) != 1 || entries[0].Name() != filepath.Base(path) {
++		t.Fatalf("snapshot directory entries = %v, want only %s", entries, filepath.Base(path))
++	}
++}
++
++func TestRefreshPublishesRemoteSnapshots(t *testing.T) {
++	responses := make(chan string, 3)
++	responses <- `[{"Code":" A ","Label":" Alpha "},{"code":"B","label":"Beta"}]`
++	responses <- `[]`
++	responses <- `[{"code":"C","label":"Gamma"}]` + "\n\t "
++	requests := make(chan string, 3)
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		requests <- r.Method + " " + r.URL.RequestURI() + " " + r.Header.Get("X-Snapshot-Client")
++		select {
++		case body := <-responses:
++			_, _ = io.WriteString(w, body)
++		default:
++			http.Error(w, "unexpected request", http.StatusInternalServerError)
++		}
++	}))
++	defer server.Close()
++	transport := server.Client().Transport
++	client := &http.Client{
++		Timeout: 3 * time.Second,
++		Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
++			r.Header.Set("X-Snapshot-Client", "supplied")
++			return transport.RoundTrip(r)
++		}),
++	}
++	path := snapshotPath(t, "previous snapshot\n")
++	for _, want := range []string{
++		`[{"code":" A ","label":" Alpha "},{"code":"B","label":"Beta"}]`,
++		`[]`,
++		`[{"code":"C","label":"Gamma"}]`,
++	} {
++		if err := mirror.Refresh(context.Background(), client, server.URL+"/items?version=2", path); err != nil {
++			t.Fatal(err)
++		}
++		assertSnapshot(t, path, want)
++		assertOnlySnapshot(t, path)
++		select {
++		case request := <-requests:
++			if request != "GET /items?version=2 supplied" {
++				t.Fatalf("request = %q", request)
++			}
++		default:
++			t.Fatal("supplied HTTP client did not make the request")
++		}
++	}
++}
++
++func TestRefreshRejectsResponsesAndRetainsExactBytes(t *testing.T) {
++	for _, tc := range []struct {
++		name   string
++		status int
++		body   string
++	}{
++		{"non-200", http.StatusServiceUnavailable, `[]`},
++		{"201", http.StatusCreated, `[]`},
++		{"204", http.StatusNoContent, `[]`},
++		{"empty body", http.StatusOK, ``},
++		{"malformed JSON", http.StatusOK, `[{"code":"new","label":"New"}`},
++		{"trailing JSON", http.StatusOK, `[{"code":"new","label":"New"}] []`},
++		{"trailing garbage", http.StatusOK, `[] garbage`},
++		{"null is not an array", http.StatusOK, `null`},
++		{"object is not an array", http.StatusOK, `{"code":"new","label":"New"}`},
++		{"wrong field type", http.StatusOK, `[{"code":12,"label":"New"}]`},
++		{"empty code", http.StatusOK, `[{"code":"","label":"New"}]`},
++		{"blank code", http.StatusOK, `[{"code":" \t\n\u2003","label":"New"}]`},
++		{"empty label", http.StatusOK, `[{"code":"new","label":""}]`},
++		{"blank label", http.StatusOK, `[{"code":"new","label":" \t\n\u2003"}]`},
++		{"invalid later item", http.StatusOK, `[{"code":"new","label":"New"},{"code":"bad"}]`},
++		{"null item", http.StatusOK, `[null]`},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			previous := "  previous bytes\nwith unusual formatting\t"
++			path := snapshotPath(t, previous)
++			body := &observedBody{Reader: strings.NewReader(tc.body)}
++			client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++				return &http.Response{StatusCode: tc.status, Body: body}, nil
++			})}
++			if err := mirror.Refresh(context.Background(), client, "http://snapshot.invalid/items", path); err == nil {
++				t.Fatal("Refresh accepted an invalid response")
++			}
++			assertSnapshot(t, path, previous)
++			assertOnlySnapshot(t, path)
++			if body.closes != 1 {
++				t.Fatalf("response body close calls = %d, want 1", body.closes)
++			}
++		})
++	}
++}
++
++type failingReader struct{}
++
++func (failingReader) Read([]byte) (int, error) {
++	return 0, errors.New("response stream interrupted")
++}
++
++func TestRefreshResponseReadFailure(t *testing.T) {
++	previous := "accepted snapshot\n"
++	path := snapshotPath(t, previous)
++	body := &observedBody{Reader: io.MultiReader(
++		strings.NewReader(`[{"code":"new","label":"New"}]`), failingReader{},
++	)}
++	client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++		return &http.Response{StatusCode: http.StatusOK, Body: body}, nil
++	})}
++	if err := mirror.Refresh(context.Background(), client, "http://snapshot.invalid/items", path); err == nil {
++		t.Fatal("Refresh accepted a response whose read failed after complete JSON")
++	}
++	assertSnapshot(t, path, previous)
++	assertOnlySnapshot(t, path)
++	if body.closes != 1 {
++		t.Fatalf("response body close calls = %d, want 1", body.closes)
++	}
++}
++
++func TestRefreshClosesSuccessfulResponse(t *testing.T) {
++	path := filepath.Join(t.TempDir(), "items.json")
++	body := &observedBody{Reader: strings.NewReader(`[]`)}
++	client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++		return &http.Response{StatusCode: http.StatusOK, Body: body}, nil
++	})}
++	if err := mirror.Refresh(context.Background(), client, "http://snapshot.invalid/items", path); err != nil {
++		t.Fatal(err)
++	}
++	assertSnapshot(t, path, `[]`)
++	if body.closes != 1 {
++		t.Fatalf("response body close calls = %d, want 1", body.closes)
++	}
++}
++
++func TestRefreshTransportFailure(t *testing.T) {
++	previous := "previous snapshot\n"
++	path := snapshotPath(t, previous)
++	calls := 0
++	client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++		calls++
++		return nil, errors.New("remote unavailable")
++	})}
++	if err := mirror.Refresh(context.Background(), client, "http://snapshot.invalid/items", path); err == nil {
++		t.Fatal("Refresh ignored the transport failure")
++	}
++	if calls != 1 {
++		t.Fatalf("transport calls = %d, want 1", calls)
++	}
++	assertSnapshot(t, path, previous)
++	assertOnlySnapshot(t, path)
++}
++
++func TestRefreshCancellationReachesHTTP(t *testing.T) {
++	started := make(chan struct{})
++	canceled := make(chan struct{})
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		close(started)
++		select {
++		case <-r.Context().Done():
++			close(canceled)
++		case <-time.After(4 * time.Second):
++			http.Error(w, "request did not cancel", http.StatusGatewayTimeout)
++		}
++	}))
++	defer server.Close()
++	client := server.Client()
++	client.Timeout = 3 * time.Second
++	previous := "previous snapshot\n"
++	path := snapshotPath(t, previous)
++	ctx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++	result := make(chan error, 1)
++	go func() { result <- mirror.Refresh(ctx, client, server.URL, path) }()
++	select {
++	case <-started:
++	case err := <-result:
++		t.Fatalf("Refresh returned before the request started: %v", err)
++	case <-time.After(time.Second):
++		t.Fatal("HTTP request did not start")
++	}
++	cancel()
++	select {
++	case err := <-result:
++		if err == nil {
++			t.Fatal("Refresh succeeded after cancellation")
++		}
++	case <-time.After(time.Second):
++		t.Fatal("Refresh did not return after cancellation")
++	}
++	select {
++	case <-canceled:
++	case <-time.After(time.Second):
++		t.Fatal("server did not observe cancellation")
++	}
++	assertSnapshot(t, path, previous)
++	assertOnlySnapshot(t, path)
++}
++
++func TestRefreshInvalidEndpoint(t *testing.T) {
++	previous := "previous snapshot\n"
++	path := snapshotPath(t, previous)
++	client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++		t.Fatal("invalid endpoint reached the transport")
++		return nil, nil
++	})}
++	if err := mirror.Refresh(context.Background(), client, "http://bad\nhost", path); err == nil {
++		t.Fatal("Refresh accepted an invalid endpoint")
++	}
++	assertSnapshot(t, path, previous)
++	assertOnlySnapshot(t, path)
++}
++
++func TestRefreshPublicationFailureCleansTemporaryFile(t *testing.T) {
++	dir := t.TempDir()
++	path := filepath.Join(dir, "items.json")
++	if err := os.Mkdir(path, 0o755); err != nil {
++		t.Fatal(err)
++	}
++	marker := filepath.Join(path, "retained")
++	if err := os.WriteFile(marker, []byte("old state"), 0o644); err != nil {
++		t.Fatal(err)
++	}
++	body := &observedBody{Reader: strings.NewReader(`[]`)}
++	client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++		return &http.Response{StatusCode: http.StatusOK, Body: body}, nil
++	})}
++	if err := mirror.Refresh(context.Background(), client, "http://snapshot.invalid/items", path); err == nil {
++		t.Fatal("Refresh replaced a nonempty directory")
++	}
++	assertSnapshot(t, marker, "old state")
++	assertOnlySnapshot(t, path)
++	if body.closes != 1 {
++		t.Fatalf("response body close calls = %d, want 1", body.closes)
++	}
++}
++
++func TestRefreshRetainsLastAcceptedSnapshot(t *testing.T) {
++	path := snapshotPath(t, "original snapshot")
++	responses := []string{
++		`[{"code":"accepted","label":"Accepted"}]`,
++		`[{"code":"valid","label":"Valid"},{"code":"invalid","label":" "}]`,
++		`[{"code":"valid","label":"Valid"}] []`,
++		`[{"code":"later","label":"Later"}]`,
++	}
++	calls := 0
++	client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++		body := io.NopCloser(strings.NewReader(responses[calls]))
++		calls++
++		return &http.Response{StatusCode: http.StatusOK, Body: body}, nil
++	})}
++	for i := range responses {
++		err := mirror.Refresh(context.Background(), client, "http://snapshot.invalid/items", path)
++		if i == 1 || i == 2 {
++			if err == nil {
++				t.Fatalf("replacement %d succeeded, want rejection", i)
++			}
++		} else if err != nil {
++			t.Fatal(err)
++		}
++		want := `[{"code":"accepted","label":"Accepted"}]`
++		if i == 3 {
++			want = `[{"code":"later","label":"Later"}]`
++		}
++		assertSnapshot(t, path, want)
++		assertOnlySnapshot(t, path)
++	}
++}
+--- /dev/null
++++ b/refresh_unix_test.go
+@@ -0,0 +1,101 @@
++//go:build linux || darwin
++
++package mirror_test
++
++import (
++	"context"
++	"fmt"
++	"io"
++	"net/http"
++	"os"
++	"os/exec"
++	"os/signal"
++	"path/filepath"
++	"strings"
++	"syscall"
++	"testing"
++	"time"
++
++	mirror "example.com/mirror"
++)
++
++func TestRefreshReplacesSnapshotWithoutTruncatingOldHandle(t *testing.T) {
++	previous := "old snapshot with exact bytes\n"
++	path := snapshotPath(t, previous)
++	old, err := os.Open(path)
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer old.Close()
++	body := &observedBody{Reader: strings.NewReader(`[{"code":"new","label":"New"}]`)}
++	client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++		return &http.Response{StatusCode: http.StatusOK, Body: body}, nil
++	})}
++	if err := mirror.Refresh(context.Background(), client, "http://snapshot.invalid/items", path); err != nil {
++		t.Fatal(err)
++	}
++	got, err := io.ReadAll(old)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if string(got) != previous {
++		t.Fatalf("already-open snapshot = %q, want %q", got, previous)
++	}
++	assertSnapshot(t, path, `[{"code":"new","label":"New"}]`)
++	assertOnlySnapshot(t, path)
++}
++
++func TestRefreshPartialWriteFailureRetainsPreviousSnapshot(t *testing.T) {
++	if path := os.Getenv("MIRROR_PARTIAL_WRITE_CHILD_PATH"); path != "" {
++		signal.Ignore(syscall.SIGXFSZ)
++		var limit syscall.Rlimit
++		if err := syscall.Getrlimit(syscall.RLIMIT_FSIZE, &limit); err != nil {
++			t.Fatal(err)
++		}
++		limit.Cur = 64
++		if err := syscall.Setrlimit(syscall.RLIMIT_FSIZE, &limit); err != nil {
++			t.Fatal(err)
++		}
++		// Confirm this process's filesystem boundary permits some progress and
++		// then fails. An open obstruction alone would not test partial writes.
++		probe, err := os.Create(filepath.Join(filepath.Dir(path), "limit-probe"))
++		if err != nil {
++			t.Fatal(err)
++		}
++		n, writeErr := probe.Write(make([]byte, 128))
++		closeErr := probe.Close()
++		if err := os.Remove(probe.Name()); err != nil {
++			t.Fatal(err)
++		}
++		if n != 64 || writeErr == nil || closeErr != nil {
++			t.Fatalf("partial-write probe = %d bytes, write error %v, close error %v", n, writeErr, closeErr)
++		}
++		body := &observedBody{Reader: strings.NewReader(`[{"code":"new","label":"` + strings.Repeat("x", 4096) + `"}]`)}
++		client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++			return &http.Response{StatusCode: http.StatusOK, Body: body}, nil
++		})}
++		if err := mirror.Refresh(context.Background(), client, "http://snapshot.invalid/items", path); err == nil {
++			t.Fatal("Refresh succeeded despite the partial-write limit")
++		}
++		if body.closes != 1 {
++			t.Fatalf("response body close calls = %d, want 1", body.closes)
++		}
++		fmt.Println("partial-write boundary exercised")
++		return
++	}
++	previous := "accepted snapshot\n"
++	path := snapshotPath(t, previous)
++	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
++	defer cancel()
++	cmd := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestRefreshPartialWriteFailureRetainsPreviousSnapshot$", "-test.timeout=8s")
++	cmd.Env = append(os.Environ(), "MIRROR_PARTIAL_WRITE_CHILD_PATH="+path)
++	output, err := cmd.CombinedOutput()
++	if err != nil {
++		t.Fatalf("partial-write subprocess failed: %v\n%s", err, output)
++	}
++	if !strings.Contains(string(output), "partial-write boundary exercised") {
++		t.Fatalf("partial-write subprocess did not exercise the limit:\n%s", output)
++	}
++	assertSnapshot(t, path, previous)
++	assertOnlySnapshot(t, path)
++}

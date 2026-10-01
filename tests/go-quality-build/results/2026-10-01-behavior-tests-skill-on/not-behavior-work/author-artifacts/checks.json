@@ -1,0 +1,112 @@
+{
+  "working_directory": "/private/tmp/go-testing-author-z3h6ca5c/not-behavior-work",
+  "checks": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-w",
+        "format.go"
+      ],
+      "timeout_seconds": 20,
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "timeout_seconds": 45,
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-l",
+        "format.go",
+        "format_test.go"
+      ],
+      "timeout_seconds": 15,
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "version"
+      ],
+      "timeout_seconds": 15,
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "preservation-check"
+      ],
+      "stdout": "{\"comment_only_change\": true, \"unchanged_files\": {\"README.md\": true, \"format_test.go\": true, \"go.mod\": true}}",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "staticcheck-availability"
+      ],
+      "stdout": "staticcheck is unavailable; no installation attempted.\n",
+      "stderr": "",
+      "exit_code": 0,
+      "staticcheck_executed": false
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-v",
+        "-race",
+        "-timeout=30s",
+        "./..."
+      ],
+      "timeout_seconds": 55,
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "=== RUN   TestFormat\n--- PASS: TestFormat (0.00s)\nPASS\nok  \texample.com/label\t1.198s\n",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+[
+  {
+    "name": "contract tests against pre-change implementation",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestEncode (0.00s)\n    --- FAIL: TestEncode/slashes (0.00s)\n        key_test.go:36: Encode(keycodec.Key{Region:\"us/west\", Name:\"web/blue\"}): invalid key\n    --- FAIL: TestEncode/spaces (0.00s)\n        key_test.go:39: Encode(keycodec.Key{Region:\"us west\", Name:\"web blue\"}) = \"us west/web blue\", want \"us%20west/web%20blue\"\n    --- FAIL: TestEncode/percent (0.00s)\n        key_test.go:36: Encode(keycodec.Key{Region:\"us%west\", Name:\"web%blue\"}): invalid key\n    --- FAIL: TestEncode/escaped-looking_values (0.00s)\n        key_test.go:36: Encode(keycodec.Key{Region:\"%2F\", Name:\"%20\"}): invalid key\n    --- FAIL: TestEncode/Unicode (0.00s)\n        key_test.go:39: Encode(keycodec.Key{Region:\"\u65e5\u672c\", Name:\"caf\u00e9\"}) = \"\u65e5\u672c/caf\u00e9\", want \"%E6%97%A5%E6%9C%AC/caf%C3%A9\"\n    --- FAIL: TestEncode/URL_punctuation (0.00s)\n        key_test.go:39: Encode(keycodec.Key{Region:\"us?west\", Name:\"web#blue\"}) = \"us?west/web#blue\", want \"us%3Fwest/web%23blue\"\n    --- FAIL: TestEncode/README_example (0.00s)\n        key_test.go:36: Encode(keycodec.Key{Region:\"us/west\", Name:\"web blue\"}): invalid key\n--- FAIL: TestDecode (0.00s)\n    --- FAIL: TestDecode/slashes (0.00s)\n        key_test.go:87: Decode(\"us%2Fwest/web%2Fblue\"): invalid key\n    --- FAIL: TestDecode/spaces (0.00s)\n        key_test.go:87: Decode(\"us%20west/web%20blue\"): invalid key\n    --- FAIL: TestDecode/percent (0.00s)\n        key_test.go:87: Decode(\"us%25west/web%25blue\"): invalid key\n    --- FAIL: TestDecode/one_unescape (0.00s)\n        key_test.go:87: Decode(\"%252F/%2520\"): invalid key\n    --- FAIL: TestDecode/Unicode (0.00s)\n        key_test.go:87: Decode(\"%E6%97%A5%E6%9C%AC/caf%C3%A9\"): invalid key\n    --- FAIL: TestDecode/escaped_plus (0.00s)\n        key_test.go:87: Decode(\"us%2Bwest/web%2Bblue\"): invalid key\n    --- FAIL: TestDecode/URL_punctuation (0.00s)\n        key_test.go:87: Decode(\"us%3Fwest/web%23blue\"): invalid key\n    --- FAIL: TestDecode/lowercase_escapes (0.00s)\n        key_test.go:87: Decode(\"us%2fwest/caf%c3%a9\"): invalid key\n    --- FAIL: TestDecode/escaped_fields_only (0.00s)\n        key_test.go:87: Decode(\"%2F/%25\"): invalid key\n--- FAIL: FuzzRoundTrip (0.00s)\n    --- FAIL: FuzzRoundTrip/seed#1 (0.00s)\n        key_test.go:180: Encode(keycodec.Key{Region:\"us/west\", Name:\"web blue\"}): invalid key\n    --- FAIL: FuzzRoundTrip/seed#2 (0.00s)\n        key_test.go:180: Encode(keycodec.Key{Region:\"%2F\", Name:\"%20\"}): invalid key\n    --- FAIL: FuzzRoundTrip/seed#6 (0.00s)\n        key_test.go:180: Encode(keycodec.Key{Region:\"\\x00\\xff\", Name:\"\\x01+/%%\"}): invalid key\n--- FAIL: ExampleEncode (0.00s)\ngot:\ninvalid key\nwant:\nus%2Fwest/web%20blue\n--- FAIL: ExampleDecode (0.00s)\ngot:\ninvalid key\nwant:\nRegion: \"us/west\", Name: \"web blue\"\nFAIL\nFAIL\texample.com/keycodec\t0.236s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "deadline_seconds": 60
+  },
+  {
+    "name": "format Go source",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-s",
+      "-w",
+      "key.go",
+      "key_test.go"
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "deadline_seconds": 15
+  },
+  {
+    "name": "local Go version",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "deadline_seconds": 15
+  },
+  {
+    "name": "contract suite and executable examples",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestEncode\n=== RUN   TestEncode/simple\n=== RUN   TestEncode/slashes\n=== RUN   TestEncode/spaces\n=== RUN   TestEncode/percent\n=== RUN   TestEncode/escaped-looking_values\n=== RUN   TestEncode/Unicode\n=== RUN   TestEncode/literal_plus\n=== RUN   TestEncode/URL_punctuation\n=== RUN   TestEncode/escaped_fields_only\n=== RUN   TestEncode/whitespace-only_fields\n=== RUN   TestEncode/README_example\n--- PASS: TestEncode (0.00s)\n    --- PASS: TestEncode/simple (0.00s)\n    --- PASS: TestEncode/slashes (0.00s)\n    --- PASS: TestEncode/spaces (0.00s)\n    --- PASS: TestEncode/percent (0.00s)\n    --- PASS: TestEncode/escaped-looking_values (0.00s)\n    --- PASS: TestEncode/Unicode (0.00s)\n    --- PASS: TestEncode/literal_plus (0.00s)\n    --- PASS: TestEncode/URL_punctuation (0.00s)\n    --- PASS: TestEncode/escaped_fields_only (0.00s)\n    --- PASS: TestEncode/whitespace-only_fields (0.00s)\n    --- PASS: TestEncode/README_example (0.00s)\n=== RUN   TestEncodeRejectsEmptyFields\n=== RUN   TestEncodeRejectsEmptyFields/zero_value\n=== RUN   TestEncodeRejectsEmptyFields/empty_region\n=== RUN   TestEncodeRejectsEmptyFields/empty_name\n--- PASS: TestEncodeRejectsEmptyFields (0.00s)\n    --- PASS: TestEncodeRejectsEmptyFields/zero_value (0.00s)\n    --- PASS: TestEncodeRejectsEmptyFields/empty_region (0.00s)\n    --- PASS: TestEncodeRejectsEmptyFields/empty_name (0.00s)\n=== RUN   TestDecode\n=== RUN   TestDecode/simple\n=== RUN   TestDecode/slashes\n=== RUN   TestDecode/spaces\n=== RUN   TestDecode/percent\n=== RUN   TestDecode/one_unescape\n=== RUN   TestDecode/Unicode\n=== RUN   TestDecode/literal_plus\n=== RUN   TestDecode/escaped_plus\n=== RUN   TestDecode/URL_punctuation\n=== RUN   TestDecode/lowercase_escapes\n=== RUN   TestDecode/escaped_fields_only\n=== RUN   TestDecode/whitespace-only_fields\n=== RUN   TestDecode/legacy_unescaped_values\n--- PASS: TestDecode (0.00s)\n    --- PASS: TestDecode/simple (0.00s)\n    --- PASS: TestDecode/slashes (0.00s)\n    --- PASS: TestDecode/spaces (0.00s)\n    --- PASS: TestDecode/percent (0.00s)\n    --- PASS: TestDecode/one_unescape (0.00s)\n    --- PASS: TestDecode/Unicode (0.00s)\n    --- PASS: TestDecode/literal_plus (0.00s)\n    --- PASS: TestDecode/escaped_plus (0.00s)\n    --- PASS: TestDecode/URL_punctuation (0.00s)\n    --- PASS: TestDecode/lowercase_escapes (0.00s)\n    --- PASS: TestDecode/escaped_fields_only (0.00s)\n    --- PASS: TestDecode/whitespace-only_fields (0.00s)\n    --- PASS: TestDecode/legacy_unescaped_values (0.00s)\n=== RUN   TestDecodeRejectsInvalidWire\n=== RUN   TestDecodeRejectsInvalidWire/empty\n=== RUN   TestDecodeRejectsInvalidWire/no_separator\n=== RUN   TestDecodeRejectsInvalidWire/only_escaped_separator\n=== RUN   TestDecodeRejectsInvalidWire/extra_segment\n=== RUN   TestDecodeRejectsInvalidWire/empty_region\n=== RUN   TestDecodeRejectsInvalidWire/empty_name\n=== RUN   TestDecodeRejectsInvalidWire/both_empty\n=== RUN   TestDecodeRejectsInvalidWire/extra_leading_separator\n=== RUN   TestDecodeRejectsInvalidWire/extra_trailing_separator\n=== RUN   TestDecodeRejectsInvalidWire/incomplete_region_escape\n=== RUN   TestDecodeRejectsInvalidWire/short_region_escape\n=== RUN   TestDecodeRejectsInvalidWire/nonhex_region_escape\n=== RUN   TestDecodeRejectsInvalidWire/incomplete_name_escape\n=== RUN   TestDecodeRejectsInvalidWire/short_name_escape\n=== RUN   TestDecodeRejectsInvalidWire/nonhex_name_escape\n=== RUN   TestDecodeRejectsInvalidWire/nonhex_second_digit\n=== RUN   TestDecodeRejectsInvalidWire/invalid_name_after_valid_region_escape\n--- PASS: TestDecodeRejectsInvalidWire (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/empty (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/no_separator (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/only_escaped_separator (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/extra_segment (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/empty_region (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/empty_name (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/both_empty (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/extra_leading_separator (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/extra_trailing_separator (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/incomplete_region_escape (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/short_region_escape (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/nonhex_region_escape (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/incomplete_name_escape (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/short_name_escape (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/nonhex_name_escape (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/nonhex_second_digit (0.00s)\n    --- PASS: TestDecodeRejectsInvalidWire/invalid_name_after_valid_region_escape (0.00s)\n=== RUN   TestSimpleRoundTrip\n--- PASS: TestSimpleRoundTrip (0.00s)\n=== RUN   FuzzRoundTrip\n=== RUN   FuzzRoundTrip/seed#0\n=== RUN   FuzzRoundTrip/seed#1\n=== RUN   FuzzRoundTrip/seed#2\n=== RUN   FuzzRoundTrip/seed#3\n=== RUN   FuzzRoundTrip/seed#4\n=== RUN   FuzzRoundTrip/seed#5\n=== RUN   FuzzRoundTrip/seed#6\n--- PASS: FuzzRoundTrip (0.00s)\n    --- PASS: FuzzRoundTrip/seed#0 (0.00s)\n    --- PASS: FuzzRoundTrip/seed#1 (0.00s)\n    --- PASS: FuzzRoundTrip/seed#2 (0.00s)\n    --- PASS: FuzzRoundTrip/seed#3 (0.00s)\n    --- PASS: FuzzRoundTrip/seed#4 (0.00s)\n    --- PASS: FuzzRoundTrip/seed#5 (0.00s)\n    --- PASS: FuzzRoundTrip/seed#6 (0.00s)\n=== RUN   ExampleEncode\n--- PASS: ExampleEncode (0.00s)\n=== RUN   ExampleDecode\n--- PASS: ExampleDecode (0.00s)\nPASS\nok  \texample.com/keycodec\t0.235s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "deadline_seconds": 60
+  },
+  {
+    "name": "staticcheck availability",
+    "skipped": true,
+    "reason": "staticcheck is not installed; task prohibits tool installation"
+  },
+  {
+    "name": "static analysis",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "deadline_seconds": 60
+  },
+  {
+    "name": "race contract suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/keycodec\t1.284s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "deadline_seconds": 60
+  },
+  {
+    "name": "bounded round-trip fuzzing",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^$",
+      "-fuzz=FuzzRoundTrip",
+      "-fuzztime=3s",
+      "-parallel=2",
+      "-timeout=20s"
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "fuzz: elapsed: 0s, gathering baseline coverage: 0/33 completed\nfuzz: elapsed: 0s, gathering baseline coverage: 33/33 completed, now fuzzing with 2 workers\nfuzz: elapsed: 3s, execs: 631014 (210210/sec), new interesting: 0 (total: 33)\nfuzz: elapsed: 3s, execs: 631014 (0/sec), new interesting: 0 (total: 33)\nPASS\nok  \texample.com/keycodec\t3.193s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "deadline_seconds": 60
+  },
+  {
+    "name": "formatting verification",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "key.go",
+      "key_test.go"
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "deadline_seconds": 60
+  }
+]

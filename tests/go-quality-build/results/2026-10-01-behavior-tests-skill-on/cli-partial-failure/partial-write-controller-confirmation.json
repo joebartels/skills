@@ -1,0 +1,40 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "build",
+      "-o",
+      "/private/tmp/go-partial-write-confirm-s5ditgd6/ledgerload",
+      "."
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/cli-partial-failure/candidate",
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.11026733298785985
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-partial-write-confirm-s5ditgd6/ledgerload",
+      "--dir",
+      "/private/tmp/go-partial-write-confirm-s5ditgd6/records"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/cli-partial-failure/candidate",
+    "stdin": "web,1\nweb,12345\nlater,9\n",
+    "stdout": "",
+    "stderr": "write record 2 (\"web\"): write /private/tmp/go-partial-write-confirm-s5ditgd6/records/.ledgerload-3095136218: file too large\n",
+    "exit_code": 2,
+    "setup": "child-only RLIMIT_FSIZE soft=hard=3, inherited SIGXFSZ ignored",
+    "contents": {
+      "web": "1\n"
+    },
+    "expected_accepted_prefix": {
+      "web": "1\n"
+    },
+    "result": "promised accepted-prefix retention verified; same post-review diagnostic as baseline"
+  }
+]

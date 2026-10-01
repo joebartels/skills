@@ -1,0 +1,87 @@
+{
+  "semantic_id": "worker-start-relative",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "b36b3cd5da8c21466a05a61d57cfa465e47ec67dc68a8fdb38093969a046ebb1",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-yy3fwz4l/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.695s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.927
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/worker-host/mutations/worker-start-relative/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-yy3fwz4l/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.014
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-yy3fwz4l/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.337s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.498
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-yy3fwz4l/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestSuccessfulCyclesWaitAfterCompletionAndNeverOverlap (0.18s)\n    host_test.go:201: cycle 2 started 2.834\u00b5s after completion, want at least 60ms\n    host_test.go:201: cycle 3 started 59.976375ms after completion, want at least 60ms\nFAIL\nFAIL\texample.com/sweeper\t0.626s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.734
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "Next start occurs too soon after blocked callback completion."
+}

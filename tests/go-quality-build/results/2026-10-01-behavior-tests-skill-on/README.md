@@ -1,0 +1,5 @@
+# Behavior-testing skill-on revision 1
+
+Frozen original draft at `3bf12e8ef0a4c9740e53e8fe5b39a1c08af94a2b`, outside the runtime package. All five task/module inputs and existing architecture/style guidance hashes match the baseline; author settings are inherited identically. Five fresh authors and five separate anonymized reviews are complete. The [comparison](comparison.md) records two closed baseline gaps, strong-case preservation and comment-only non-selection. Independent promotion review is pending; no runtime promotion yet.
+
+Exact launches/wrappers, skill snapshots, example verification, raw reports/checks, original/candidate sources, mutations and [manifest](manifest.json) are preserved. Other testing-writing guidance remained unavailable. Each source patch reconstructs byte-for-byte, and applicable checks/probes pass. Restricted listener failures and approved local-loopback reruns remain distinct. Inherited model IDs, minimum-toolchain execution and general effectiveness remain unverified.

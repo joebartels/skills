@@ -1,0 +1,89 @@
+{
+  "semantic_id": "post-review-cli-direct-partial-write",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "2d80cd65d5b29af98161f9953afaa01a8c262425a1abbf41201dd0fed95aa2a9",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-jnnna320/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t1.033s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.234
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/cli-partial-failure/mutations/post-review-cli-direct-partial-write/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-jnnna320/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.017
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-jnnna320/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.191s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.349
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-jnnna320/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCLIPartialWriteRetainsAcceptedDuplicate (0.28s)\n    write_failure_unix_test.go:41: /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIPartialWriteRetainsAcceptedDuplicate4162043246/002/keep = \"12\", <nil>; want \"1\\n\"\nFAIL\nFAIL\texample.com/ledgerload\t1.259s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.372
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "Child-local file-size limit causes partial failed duplicate write; exact retained earlier value assertion fails.",
+  "post_review_diagnostic": true,
+  "pre_dispatch_frozen_probe": false
+}
