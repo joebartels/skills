@@ -1,6 +1,6 @@
 {
   "run_id": "2026-10-01-interfaces-composition-skill-on",
-  "stage": "revision-3 lifecycle independently reviewed A/B; earlier results retained; zero-value blocked; no promotion",
+  "stage": "evidence reconciled by independent task review; final lifecycle Architecture A / Testing C+; controller promotion decision pending; zero-value blocked",
   "skill_revision": "c028b934a872cd61a522922092b8e8b48a7421e7",
   "skill_snapshot": "skill-r1.md",
   "skill_sha256": "7146c8fd3b70bdf1a7fd320bd991eec294de91885a77dcd63ced7aa77142dc57",
@@ -258,7 +258,7 @@
       "skill_revision": "66d52388ba7637544ae26cc44f4affc23face610",
       "skill_snapshot": "skill-r3.md",
       "skill_sha256": "41c9cd023682e006b84b37ddadf39bc37f0f01b2bfd8af7609272799906d9621",
-      "status": "lifecycle independently reviewed A/B; moderate timing-test gap remains; no promotion",
+      "status": "lifecycle reviewed; reconciled Architecture A / Testing C+; bounded promotion recommendation pending controller",
       "harness": "Codex collaboration subagents",
       "model": "gpt-6-luna",
       "fork_turns": "none",
@@ -288,11 +288,20 @@
           "review_status": "complete",
           "review": "review-lifecycle-r3.md",
           "architecture_grade": "A",
-          "testing_grade": "B",
+          "testing_grade": "C+",
           "findings": [
-            "T1: moderate timing-test sensitivity gap; fixed-ticker mutation survives"
+            "T1: moderate timing-test sensitivity gap; fixed-ticker mutation survives",
+            "Task review P2: second moderate gap; parent-context-discarding mutation survives final tests/example"
           ],
-          "task_deliverables": "Reviewer verified runnable README main and tested two-refresher Go example."
+          "task_deliverables": "Reviewer verified runnable README main and tested two-refresher Go example.",
+          "original_reported_testing_grade": "B",
+          "grade_reconciliation": {
+            "source": "task-review.md",
+            "original_blind_review": "Architecture A / Testing B",
+            "reconciled": "Architecture A / Testing C+",
+            "basis": "At least two independent moderate Testing gaps: completion-relative timing and parent-context cancellation. Original blind report preserved unchanged.",
+            "implementation_limit": "Actual implementation derives host context correctly; this is missing regression detection, not a demonstrated production cancellation bug."
+          }
         }
       ],
       "independent_review": {
@@ -305,5 +314,25 @@
       }
     }
   ],
-  "revision_coverage_limit": "Final skill revision 66d5238 has only the revision-3 lifecycle trial. Protocol, visible-dependency and arithmetic control results apply to c028b93, not to final revision. Zero-value remains blocked with no skill-on outcome."
+  "revision_coverage_limit": "Final skill revision 66d5238 has only the revision-3 lifecycle trial. Protocol, visible-dependency and arithmetic control results apply to c028b93, not to final revision. Zero-value remains blocked with no skill-on outcome.",
+  "task_review": {
+    "artifact": "task-review.md",
+    "sha256": "10f318d40006fd40e2f0702e92cd9488e3dbf7ac83b7d9d4051476426bfc576b",
+    "blind": false,
+    "range": "79e4633..284d0c0",
+    "verification_artifacts": [
+      {
+        "artifact": "task-review-verification.json",
+        "sha256": "013100a57f5ae86e13ff6abbe1e313f7b6363bb4d2726acde7461003d73d49f9",
+        "provenance": "Unedited independent task-review command outputs"
+      },
+      {
+        "artifact": "task-review-focused-checks.json",
+        "sha256": "0c1b0b0b3b9c7c0f3d1193d95521a5722e6d91c71047f4f5b984fcfb2bb38816",
+        "provenance": "Unedited independent task-review command outputs"
+      }
+    ],
+    "verification_summary": "11 complete patch reconstructions, 46 output source hashes, 44 implemented-case artifact hashes, 21 fixture/eval hashes, 4 blocked input hashes, 3 blocked artifact hashes; 22 fresh Go test/vet checks passed. See unedited task review for limits.",
+    "recommendation": "Bounded promotion defensible after evidence reconciliation and package status refresh; controller decision pending."
+  }
 }
