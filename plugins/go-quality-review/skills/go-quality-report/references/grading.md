@@ -31,7 +31,7 @@ A requires a relevant verified strength and assessment of all material risks. Th
 
 ## Reconciled ledger and calculator
 
-Use `python3 scripts/grade.py /path/to/ledger.json` from this skill directory, or invoke the script through its resolved absolute path. Python 3.10+; no extra packages. Its input is the orchestrator's **already reconciled** ledger. The calculator does not merge raw cards, discover missing obligations, verify evidence or assess whether two risk descriptions are semantically independent.
+Resolve [grade.py](../scripts/grade.py) relative to this skill's `SKILL.md` and invoke the script through its absolute path from any working directory: `python3 /absolute/path/to/go-quality-report/scripts/grade.py /path/to/ledger.json`. Python 3.10+; no extra packages. Its input is the orchestrator's **already reconciled** ledger. The calculator does not merge raw cards, discover missing obligations, verify evidence or assess whether two risk descriptions are semantically independent.
 
 ```json
 {
