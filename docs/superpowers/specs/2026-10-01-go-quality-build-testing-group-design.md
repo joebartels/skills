@@ -2,7 +2,7 @@
 
 ## Status and intent
 
-Approved by the user on 2026-10-01. Implementation-plan review and execution-method selection remain pending. This spec does not claim that either skill exists or is effective.
+Approved by the user on 2026-10-01. The implementation plan was subsequently accepted for native execution with independent behavioral authors/reviewers. This spec does not claim that either skill exists or is effective.
 
 Continue the multi-harness Go writing collection with `go-behavior-tests` and `go-test-isolation`. The intended user is an agent changing a Go library, CLI, service or worker. Success means its tests detect meaningful regressions and observe the promised behavior reliably, with less unnecessary setup, abstraction and dependency cost.
 

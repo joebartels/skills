@@ -1,0 +1,81 @@
+{
+  "skill_name": "go-behavior-tests",
+  "evals": [
+    {
+      "id": "library-codec",
+      "prompt": "Extend the key codec to escaped field values according to README.md. Implement the change, add high-quality tests for the supported contract, and document usage.",
+      "expected_output": "Independent encode/decode wire assertions and meaningful invalid-input errors.",
+      "assertions": [
+        "Fixed independent wire observations reject coordinated encoder/decoder field swaps.",
+        "Escaped slash/space/percent, empty fields, malformed escapes, segment counts and error identity are verified."
+      ],
+      "files": [
+        "files/library-codec/README.md",
+        "files/library-codec/go.mod",
+        "files/library-codec/key.go",
+        "files/library-codec/key_test.go"
+      ]
+    },
+    {
+      "id": "cli-partial-failure",
+      "prompt": "Extend ledgerload from one record to streamed ordered batches as described in README.md. Implement it and add high-quality tests for success and failure behavior.",
+      "expected_output": "Accepted prefix, stopped later effects and actual process status are covered.",
+      "assertions": [
+        "Good/bad/good and malformed CSV preserve the accepted prefix and skip later rows.",
+        "Actual process exits 2 on failure with stderr and no success stdout; successful batches and duplicate replacement are verified."
+      ],
+      "files": [
+        "files/cli-partial-failure/README.md",
+        "files/cli-partial-failure/go.mod",
+        "files/cli-partial-failure/main.go",
+        "files/cli-partial-failure/main_test.go"
+      ]
+    },
+    {
+      "id": "service-publication",
+      "prompt": "Implement Refresh according to README.md and add high-quality regression tests for this remote snapshot feature. Keep the public API and module minimum.",
+      "expected_output": "Complete independent item values, rejected-state retention and publication semantics.",
+      "assertions": [
+        "Code and Label validation are tested independently and retain exact old bytes.",
+        "Complete results and publication through replacement are observed; no forced storage interface."
+      ],
+      "files": [
+        "files/service-publication/README.md",
+        "files/service-publication/go.mod",
+        "files/service-publication/mirror.go",
+        "files/service-publication/mirror_test.go"
+      ]
+    },
+    {
+      "id": "worker-host",
+      "prompt": "Extend the one-shot host to the periodic worker behavior in README.md. Implement it and write high-quality tests of the changed lifecycle.",
+      "expected_output": "Host observation verifies worker completion before resource release and meaningful recurrence.",
+      "assertions": [
+        "Host cancellation joins callback cleanup before resource release.",
+        "Successful repeated cycles wait from callback completion; error identities and invalid intervals are verified."
+      ],
+      "files": [
+        "files/worker-host/README.md",
+        "files/worker-host/go.mod",
+        "files/worker-host/host.go",
+        "files/worker-host/host_test.go",
+        "files/worker-host/worker.go"
+      ]
+    },
+    {
+      "id": "not-behavior-work",
+      "prompt": "Improve Format's doc comment wording and apply gofmt if needed. This is a comment and formatting maintenance edit; keep behavior and existing tests unchanged.",
+      "expected_output": "Small documentation-only edit without opening a behavior-testing skill.",
+      "assertions": [
+        "No new tests, dependencies or runtime behavior.",
+        "Declines relevance-based behavior-testing skill selection."
+      ],
+      "files": [
+        "files/not-behavior-work/README.md",
+        "files/not-behavior-work/format.go",
+        "files/not-behavior-work/format_test.go",
+        "files/not-behavior-work/go.mod"
+      ]
+    }
+  ]
+}

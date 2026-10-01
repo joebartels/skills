@@ -8,7 +8,7 @@
 
 **Tech Stack:** Markdown, existing JSON eval schema, Python 3 repository validation, standard-library Go fixture modules, available Go toolchains and harness validators, independent author/reviewer contexts.
 
-**Spec:** [Approved testing-group design](../specs/2026-10-01-go-quality-build-testing-group-design.md), approved 2026-10-01. This plan awaits review and execution-method selection.
+**Spec:** [Approved testing-group design](../specs/2026-10-01-go-quality-build-testing-group-design.md), approved 2026-10-01. Plan accepted 2026-10-01; native implementation with independent behavioral authors/reviewers selected by the recommended handoff.
 
 ## Global Constraints
 
