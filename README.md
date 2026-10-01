@@ -10,6 +10,8 @@ Reusable skills for Claude Code, Codex, and OpenCode v2. Each collection lives i
 
 The detailed [Go review guide](docs/go-quality-review/README.md) covers grading, evaluations, and authoring. The [architecture and implementation plan](docs/superpowers/specs/2026-09-29-multiharness-skills-design.md) record the harness choices.
 
+The [Go quality build design record](docs/go-quality-build/README.md) tracks the proposed writing skills, upstream reuse policy, evaluation approach, and next steps. The build skills are still candidates.
+
 ## Use the skills
 
 ### Claude Code
