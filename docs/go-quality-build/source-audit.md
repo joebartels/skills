@@ -268,3 +268,18 @@ prose was copied. The upstream pin remains
 stage. [Preparation evidence](../../tests/go-quality-build/results/2026-10-01-interfaces-composition-baseline/README.md)
 and the [design record](README.md) distinguish runnable inputs from pending blind
 model results and independent Architecture/Testing review.
+
+## 2026-10-01 — Interfaces/composition runtime draft use
+
+`plugins/go-quality-build/skills/go-interfaces-and-composition/SKILL.md` is newly
+written from the approved IC scope, local Architecture A2/A3 decisions and the
+observed baseline D-A1 lifecycle failure. Existing IC adaptation decisions remain
+unchanged: concrete dependencies and genuine package-owned protocols are valid;
+construction/options require actual need; host lifecycle ownership is explicit.
+The join-all-outcomes guidance and narrowly scoped recurrence/termination checks
+address demonstrated composition risks. They do not import the omitted upstream
+resource-management recipes or turn this skill into general testing guidance.
+The upstream revision remains `19a0626ae8565d27a7b7bdf59d8d99d94d7e284c`. No upstream
+prose or example code was copied; no additional third-party notice is required
+for this original draft. Skill-on behavior and independent promotion review
+remain pending; see the [design record](README.md).
