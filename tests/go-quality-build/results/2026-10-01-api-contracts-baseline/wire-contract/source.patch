@@ -1,0 +1,103 @@
+--- a/main.go
++++ b/main.go
+@@ -2,13 +2,14 @@
+ 
+ import (
+ 	"encoding/json"
++	"flag"
+ 	"fmt"
+ 	"io"
+ 	"os"
+ )
+ 
+ type job struct {
+-	ID    string `json:"id"`
++	Key   string `json:"id"`
+ 	State string `json:"state"`
+ }
+ type response struct {
+@@ -16,11 +17,19 @@
+ }
+ 
+ func run(args []string, stdout, stderr io.Writer) int {
+-	if len(args) != 1 {
+-		fmt.Fprintln(stderr, "usage: joblist FILE")
++	var state string
++	stateSet := false
++	flags := flag.NewFlagSet("joblist", flag.ContinueOnError)
++	flags.SetOutput(stderr)
++	flags.Var(stateFlag{value: &state, set: &stateSet}, "state", "include only records with this exact state")
++	if err := flags.Parse(args); err != nil {
+ 		return 2
+ 	}
+-	data, err := os.ReadFile(args[0])
++	if flags.NArg() != 1 {
++		fmt.Fprintln(stderr, "usage: joblist [--state STATE] FILE")
++		return 2
++	}
++	data, err := os.ReadFile(flags.Arg(0))
+ 	if err != nil {
+ 		fmt.Fprintln(stderr, err)
+ 		return 2
+@@ -32,6 +41,9 @@
+ 	}
+ 	var result []job
+ 	for _, item := range jobs {
++		if stateSet && item.State != state {
++			continue
++		}
+ 		result = append(result, item)
+ 	}
+ 	if err := json.NewEncoder(stdout).Encode(response{Jobs: result}); err != nil {
+@@ -41,4 +53,17 @@
+ 	return 0
+ }
+ 
++type stateFlag struct {
++	value *string
++	set   *bool
++}
++
++func (f stateFlag) String() string { return *f.value }
++
++func (f stateFlag) Set(value string) error {
++	*f.value = value
++	*f.set = true
++	return nil
++}
++
+ func main() { os.Exit(run(os.Args[1:], os.Stdout, os.Stderr)) }
+--- a/main_test.go
++++ b/main_test.go
+@@ -20,3 +20,31 @@
+ 		t.Fatalf("output = %q", got)
+ 	}
+ }
++
++func TestStateFilterIsExact(t *testing.T) {
++	path := filepath.Join(t.TempDir(), "jobs.json")
++	if err := os.WriteFile(path, []byte(`[{"id":"a","state":"Ready"},{"id":"b","state":"ready"},{"id":"c","state":"ready-now"}]`), 0600); err != nil {
++		t.Fatal(err)
++	}
++	var out, diag bytes.Buffer
++	if code := run([]string{"--state", "ready", path}, &out, &diag); code != 0 {
++		t.Fatalf("exit %d: %s", code, &diag)
++	}
++	if got, want := out.String(), "{\"jobs\":[{\"id\":\"b\",\"state\":\"ready\"}]}\n"; got != want {
++		t.Fatalf("output = %q, want %q", got, want)
++	}
++}
++
++func TestExplicitEmptyStateFilter(t *testing.T) {
++	path := filepath.Join(t.TempDir(), "jobs.json")
++	if err := os.WriteFile(path, []byte(`[{"id":"a","state":""},{"id":"b","state":"ready"}]`), 0600); err != nil {
++		t.Fatal(err)
++	}
++	var out, diag bytes.Buffer
++	if code := run([]string{"--state", "", path}, &out, &diag); code != 0 {
++		t.Fatalf("exit %d: %s", code, &diag)
++	}
++	if got, want := out.String(), "{\"jobs\":[{\"id\":\"a\",\"state\":\"\"}]}\n"; got != want {
++		t.Fatalf("output = %q, want %q", got, want)
++	}
++}

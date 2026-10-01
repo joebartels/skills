@@ -1,0 +1,72 @@
+{
+  "skill_name": "go-api-contracts",
+  "evals": [
+    {
+      "id": "source-compatibility",
+      "prompt": "Add a way for callers of recordfmt to choose the separator between key and value when constructing a formatter. Existing defaults remain colon-separated; an explicitly empty separator is valid. This is for the next minor release. Keep the change small and convenient for callers. Implement and test it and document the new usage.",
+      "expected_output": "An additive constructor/configuration path preserves the published New function type and default behavior.",
+      "assertions": [
+        "Unmodified external assignment of New to func(string) *Formatter compiles, as well as ordinary calls.",
+        "Configured separators, including empty and multi-character strings, work without changing existing formatter defaults.",
+        "Release policy and supported consumers inform the API; no gratuitous major bump, breaking variadic conversion, or compatibility claim based only on direct calls."
+      ],
+      "files": [
+        "files/source-compatibility/README.md",
+        "files/source-compatibility/format.go",
+        "files/source-compatibility/format_test.go",
+        "files/source-compatibility/go.mod"
+      ]
+    },
+    {
+      "id": "intentional-break",
+      "prompt": "Implement the accepted v2 parsing change in docs/v2-decision.md, update the example consumer, and add tests and a short migration guide. This branch is the new major release.",
+      "expected_output": "An intentional breaking API and versioned import path with precise parse behavior and actionable migration.",
+      "assertions": [
+        "Module and internal imports use example.com/portnum/v2; Parse has the approved two-result signature without a v1 shim.",
+        "Parsing accepts zero, 65535 and leading zeros and rejects empty, signs, whitespace, non-digits, out-of-range values and overflow.",
+        "The example command handles errors with stderr/exit 2 and no success stdout; the guide shows compilable new imports and error handling.",
+        "The agent follows the deliberate release decision instead of blocking all breakage or preserving an unwanted legacy API."
+      ],
+      "files": [
+        "files/intentional-break/README.md",
+        "files/intentional-break/cmd/portcheck/main.go",
+        "files/intentional-break/docs/v2-decision.md",
+        "files/intentional-break/go.mod",
+        "files/intentional-break/port.go",
+        "files/intentional-break/port_test.go"
+      ]
+    },
+    {
+      "id": "wire-contract",
+      "prompt": "Add an optional --state STATE filter to joblist so operations can list only records whose state matches exactly. Omitting the flag lists all records; explicitly supplying an empty state matches records with an empty state. Keep this in the 1.x CLI release. While touching the code, rename the internal job.ID field to Key to match the rest of our codebase. Implement and test the change.",
+      "expected_output": "Filtering and an internal rename retain the JSON and process contracts consumed by scripts.",
+      "assertions": [
+        "The JSON record key remains id after the Go field rename; state and id remain present for empty strings.",
+        "No-match and empty-input output retain jobs:null, and nonempty output retains input order.",
+        "Omitted filtering differs from --state=; filtering is exact rather than substring/case-insensitive.",
+        "Existing file invocation and documented exit/stdout/stderr behavior remain correct for malformed JSON, missing files and usage errors."
+      ],
+      "files": [
+        "files/wire-contract/README.md",
+        "files/wire-contract/go.mod",
+        "files/wire-contract/main.go",
+        "files/wire-contract/main_test.go"
+      ]
+    },
+    {
+      "id": "not-public-contract",
+      "prompt": "Fix expired so a cache entry expires at its deadline, not one tick later. Zero still means never expires. Keep the helper private and add a regression test.",
+      "expected_output": "A local comparison fix without public API-contract skill selection or release/migration work.",
+      "assertions": [
+        "Equality expires for nonzero deadlines; zero never expires and existing before/after behavior is retained.",
+        "No exported API, version bump, compatibility wrapper or migration document is introduced for this private implementation change."
+      ],
+      "files": [
+        "files/not-public-contract/README.md",
+        "files/not-public-contract/go.mod",
+        "files/not-public-contract/internal/cache/expiry.go",
+        "files/not-public-contract/internal/cache/expiry_test.go"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+[
+  {
+    "command": [
+      "rtk",
+      "go",
+      "test",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache"
+    },
+    "exit_code": 0,
+    "stdout": "Go test: 13 passed in 2 packages\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache"
+    },
+    "exit_code": 0,
+    "stdout": "=== RUN   TestParse\n=== RUN   TestParse/0\n=== RUN   TestParse/00080\n=== RUN   TestParse/65535\n--- PASS: TestParse (0.00s)\n    --- PASS: TestParse/0 (0.00s)\n    --- PASS: TestParse/00080 (0.00s)\n    --- PASS: TestParse/65535 (0.00s)\n=== RUN   TestParseRejectsInvalidInput\n=== RUN   TestParseRejectsInvalidInput/#00\n=== RUN   TestParseRejectsInvalidInput/-1\n=== RUN   TestParseRejectsInvalidInput/+1\n=== RUN   TestParseRejectsInvalidInput/_1\n=== RUN   TestParseRejectsInvalidInput/1_\n=== RUN   TestParseRejectsInvalidInput/1x\n=== RUN   TestParseRejectsInvalidInput/65536\n=== RUN   TestParseRejectsInvalidInput/999999999999999999999999999999999999999999999999999999999\n--- PASS: TestParseRejectsInvalidInput (0.00s)\n    --- PASS: TestParseRejectsInvalidInput/#00 (0.00s)\n    --- PASS: TestParseRejectsInvalidInput/-1 (0.00s)\n    --- PASS: TestParseRejectsInvalidInput/+1 (0.00s)\n    --- PASS: TestParseRejectsInvalidInput/_1 (0.00s)\n    --- PASS: TestParseRejectsInvalidInput/1_ (0.00s)\n    --- PASS: TestParseRejectsInvalidInput/1x (0.00s)\n    --- PASS: TestParseRejectsInvalidInput/65536 (0.00s)\n    --- PASS: TestParseRejectsInvalidInput/999999999999999999999999999999999999999999999999999999999 (0.00s)\nPASS\nok  \texample.com/portnum/v2\t0.120s\n?   \texample.com/portnum/v2/cmd/portcheck\t[no test files]\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache"
+    },
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

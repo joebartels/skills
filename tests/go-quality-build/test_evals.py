@@ -40,6 +40,13 @@ class BuildEvalsTests(unittest.TestCase):
     def test_valid_suite(self):
         self.assertEqual(self.validate(), ([], 1))
 
+    def test_candidate_suite_without_runtime_skill(self):
+        self.validate()
+        (self.root / "plugins/go-quality-build/skills/go-example/SKILL.md").unlink()
+        self.assertEqual(validator.validate_build_evals(self.root), ([], 1))
+        self.suite["evals"][0]["assertions"] = []
+        self.assertTrue(self.validate()[0])
+
     def test_missing_suite(self):
         self.validate()
         (self.evals / "evals.json").unlink()

@@ -239,8 +239,11 @@ def validate_build_evals(root: Path) -> tuple[list[str], int]:
     """Validate build cases independently of the fixed review contract."""
     errors = []
     case_count = 0
-    for entry in sorted((root / "plugins/go-quality-build/skills").glob("*/SKILL.md")):
-        skill = entry.parent.name
+    installed = {entry.parent.name for entry in
+                 (root / "plugins/go-quality-build/skills").glob("*/SKILL.md")}
+    candidates = {suite.parent.parent.name for suite in
+                  (root / "tests/go-quality-build").glob("*/evals/evals.json")}
+    for skill in sorted(installed | candidates):
         evaluation = root / "tests/go-quality-build" / skill / "evals"
         try:
             suite = json.loads((evaluation / "evals.json").read_text())
