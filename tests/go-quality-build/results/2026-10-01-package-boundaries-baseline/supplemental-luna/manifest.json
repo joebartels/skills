@@ -1,0 +1,38 @@
+{
+  "model": "gpt-6-luna",
+  "reasoning_effort": "inherited; not independently recorded",
+  "harness": "Codex collaboration subagents",
+  "skill": "none (baseline)",
+  "provenance": "Supplemental controller-dispatched fresh medium and large cases; original temporary artifacts preserved without code correction. Exact dispatch wrapper not provided to archiving worker.",
+  "source_directory": "/private/tmp/go-quality-build-eval.TijGDa/baseline-luna",
+  "cases": [
+    {
+      "id": "medium-service",
+      "prompt": "The dispatch service must also accept a batch file through a new cmd/replay binary. Each nonblank trimmed line is an ID. Process sequentially, stop on first error, and return a nonzero exit status on failure. Accept a file argument and the same RECORD_DIR/NOTIFY_URL environment variables as server. Both ingress paths must invoke the same validation, file persistence and outbound notification operation. Existing HTTP status/body behavior and stored record bytes must stay compatible. Storage and the notification API are maintained independently and both are expected to change next quarter. Implement the replay path and make package changes warranted by this new consumer; test successful replay, invalid IDs and notification failure. Do not add retries or an asynchronous queue."
+    },
+    {
+      "id": "large-features",
+      "prompt": "This fixture is the affected slice of a large application: catalog and billing have separate owners, use one module, and release together. Add cmd/settle for an operations job. It reads invoice rows ID,CENTS from a file argument, charges each sequentially through the existing billing behavior, and stops on the first malformed row or charge failure with nonzero status. Reuse LEDGER/GATEWAY_URL configuration. Operations also needs a billing ledger reader for future exports, so use the same row codec for settlement input and ledger encoding/decoding; reject missing fields, invalid amounts and delimiter/newline-bearing IDs. Catalog uses unrelated JSON and must remain independently understandable. The gateway team now changes its HTTP protocol independently of billing rules. Refactor the affected boundaries as useful, preserving current invoice CLI, catalog HTTP behavior, ledger bytes and gateway request bytes. Add meaningful tests and explain package responsibilities/import direction."
+    }
+  ],
+  "sha256": {
+    "source/large-features/cmd/invoice/main.go": "129668ab30d329bc7e40c3807c38b315a627d1b827220212c5d019d2f6c2ed7f",
+    "source/large-features/cmd/settle/main.go": "8cac7883e32bb39e9f6ead9d6df272e7809259dfab163f54b59af0c100ec69e5",
+    "source/large-features/cmd/shop/main.go": "56c5f50fa5a9132daaed281f5e12aad6226a26230aff905d3a529a53afbef7a9",
+    "source/large-features/go.mod": "00ba02cccbfd4ad2c0038b30f2ef859322cdf6f528e1cd66133541b13d5c2976",
+    "source/large-features/internal/billing/billing.go": "fc3c35430fcdd3b5babd1d8fcb31e69434bd044b08edf4c7cea45407c170ebad",
+    "source/large-features/internal/billing/billing_test.go": "21d9246f53c4f9cc821f0681da854248235ab28fe4ffaef5c13e47ff29059817",
+    "source/large-features/internal/catalog/catalog.go": "8abeb490132aced799e5e6772993bfa2fd67eddf723284630d6038c8ba18ac1c",
+    "source/large-features/internal/gateway/http.go": "7e9b19347f24c725ee7612a69dda28c8e6ed4e6678132dfefd3f2ce7665927ad",
+    "source/large-features/internal/gateway/http_test.go": "1cf8ebcd235eb033c7c644c0fab05a85a2553330bd4168f1f5e27820ac3afd05",
+    "source/large-features/internal/invoice/row.go": "75a4aecc9ceb33bee3d9811f8345cf5e55b256d5abb8dcd30c75047ec55d0a7d",
+    "source/large-features/internal/invoice/row_test.go": "42a225b6eab9c17442f8545bd7ecd8de8be9076f025ad8dadaad59c8c9d403e6",
+    "source/large-features/trial-report.md": "3362b42eb56ed2ac7eed8774eb810272e1f35f40c2dd76e9776d06b80dd1ba93",
+    "source/medium-service/cmd/replay/main.go": "fd9d9c86f3597f9a1d87d2e637bacba6e460497590b917804feae87d5750029c",
+    "source/medium-service/cmd/server/main.go": "742edeee3a3e675db021f831495fa871d65dcd1f1d129205995dcea390a249f2",
+    "source/medium-service/dispatch.go": "edb2486b11a7db113c11d06ff4128bda1380bde0c1eaf81690a15d97421e43dc",
+    "source/medium-service/dispatch_test.go": "59f645120b73ea8aa2cf5d2a905db1223f75cf6525e0cd76c6b3f9002f0a6275",
+    "source/medium-service/go.mod": "a26cbe71b559d6d8ce2b24c47bcac1de5df7295a3df33302998d55ea4d20123a",
+    "source/medium-service/trial-report.md": "dd3f2d08b1ee3f8cfc2ef53ed41b6a1ed760f6886d31311cc3c3351825b13a88"
+  }
+}
