@@ -1,0 +1,208 @@
+{
+  "run_id": "2026-10-01-interfaces-composition-baseline",
+  "stage": "five blind baselines and independent Architecture/Testing reviews archived",
+  "source_fixture_identity": "Exact inputs identified by fixture-manifest.json; no separate fixture commit asserted",
+  "harness": "Codex collaboration subagents",
+  "model": "gpt-6-luna",
+  "fork_turns": "none",
+  "reasoning_override": null,
+  "build_skill_loaded": false,
+  "expected_judgments_withheld": true,
+  "dispatch_provenance": {
+    "exact_case_prompts": "Each prompt.txt is the exact evals.json prompt value, without an appended newline",
+    "full_wrapper_bytes_preserved": false,
+    "controller_attested_invariants": "Fresh author per case; confined to disposable case workdir; no build skills, evals.json, expected judgments, other trials or design records; read fixture README/source; run Go tests/vet; write trial-report; no repository edits. Control additionally byte-compared its copy to the fixture before editing.",
+    "limit": "Full wrapper bytes were not saved separately; no verbatim wrapper is reconstructed."
+  },
+  "cases": [
+    {
+      "id": "protocol-vs-mock",
+      "implementation_provenance": "fresh blind gpt-6-luna subagent",
+      "prompt": "protocol-vs-mock/prompt.txt",
+      "trial_report": "protocol-vs-mock/trial-report.md",
+      "source_patch": "protocol-vs-mock/source.patch",
+      "verification": "protocol-vs-mock/verification.json",
+      "source_sha256": {
+        "README.md": "4cae21bb30add06052840aa7e884bf95c7d7726951006360b310a8cb24b6b57f",
+        "go.mod": "8024b54944d78b8a3b21b582ba9778d05500021953826f071d997365e308c1d6",
+        "report.go": "e48c3fb67e366ca33a723f6d6faa3717dc2d09dca98b81283c3cf47da9b184f7",
+        "report_test.go": "c033e16306546ddc1bb98c92e43f5de0afafa6ff91dfb10ec4609e3dd0ad40ea"
+      },
+      "patch_reconstruction": "verified complete output source tree byte-for-byte",
+      "review": "review-ab.md",
+      "architecture_grade": "A",
+      "testing_grade": "B",
+      "artifact_sha256": {
+        "prompt.txt": "750d31b7f2494c8f3a297dda78659babd509c47abbe973fa7a9798a4ff7081e9",
+        "trial-report.md": "3af12f1183e91fd87d304b8104b4cb9f9541ceaf539badd6e5e45bdee0eeb41e",
+        "source.patch": "53db85c3eb3ee48b1e198c93561bf331a0fb6c878eba567360127d4e35a14793",
+        "verification.json": "456a2c52097ea6a738bba2ad0109f08761a3039f69c8ae9bf9ef2b732575c3d2"
+      }
+    },
+    {
+      "id": "visible-dependency",
+      "implementation_provenance": "fresh blind gpt-6-luna subagent",
+      "prompt": "visible-dependency/prompt.txt",
+      "trial_report": "visible-dependency/trial-report.md",
+      "source_patch": "visible-dependency/source.patch",
+      "verification": "visible-dependency/verification.json",
+      "source_sha256": {
+        "README.md": "60f0cff124879119d83debf1ac4dc8e4f4b0565303988f31b29a033f51d45227",
+        "go.mod": "c7d7b248942c0c660ea277376878560c0771167fb13cce2a500178122886dbb7",
+        "receipt.go": "c9f8801081a16a809dfba64f6b17290ba4cdee08734000e3c3632a172808227f",
+        "receipt_test.go": "5c912c73afa9dbb1ddc45694ec5dd9a2e3b88b0e3341ce5c85673558db3e1948"
+      },
+      "patch_reconstruction": "verified complete output source tree byte-for-byte",
+      "review": "review-ab.md",
+      "architecture_grade": "A",
+      "testing_grade": "B",
+      "artifact_sha256": {
+        "prompt.txt": "42fee71f9eed82d0a9be4230def521be43d7119bf43fd89ebf673ec97fbff019",
+        "trial-report.md": "03e609b5b32bb5bb84f51152933e24a047bfb1f40130fab67d3fd9a7a3008480",
+        "source.patch": "ec74ef491548f34a29ed08f72eb0fbe366d018e93b1cbbcb1992b32a893d8fa6",
+        "verification.json": "e47bb9128a5bbfa9f91e9c5f539da20fe4bb7ae84308542b4f547feed3054524"
+      }
+    },
+    {
+      "id": "zero-value",
+      "implementation_provenance": "fresh blind gpt-6-luna subagent",
+      "prompt": "zero-value/prompt.txt",
+      "trial_report": "zero-value/trial-report.md",
+      "source_patch": "zero-value/source.patch",
+      "verification": "zero-value/verification.json",
+      "source_sha256": {
+        "README.md": "a3750ee2e231cb720f1ed7fc3c1de6b2250832660fef4076274634e87756c3d2",
+        "bag.go": "5e92f995a75e9fb71b283f84c6db61ec949fd677166a0f9628128b96b4565e50",
+        "bag_test.go": "fde05639cede3ce3293bd29c3ec51e3fca0ebd0898b8a25cb27e5ce90f8c99b8",
+        "go.mod": "d7351370ba8c981935b2284f481dc6d5f626c9fd7f7acbe8b0359e8e5922397b"
+      },
+      "patch_reconstruction": "verified complete output source tree byte-for-byte",
+      "review": "review-cd.md",
+      "architecture_grade": "A",
+      "testing_grade": "B",
+      "artifact_sha256": {
+        "prompt.txt": "a3b002b5ed86637f4835d3d87c788c87e1a79ffd67f9f7b66b75f09bb4f10d49",
+        "trial-report.md": "bc8fafa5e6f4e2a409dde7653ff82876c71d8907eaed168b6a44474380128a85",
+        "source.patch": "f7f3485b7fa25edf33552484fbc21709851817ffc75456f93cd4b66f6a3b424e",
+        "verification.json": "d5f8ff91f79cc358bff78af20c482c50be27e21233709cbd22d774a401140908"
+      }
+    },
+    {
+      "id": "library-lifecycle",
+      "implementation_provenance": "fresh blind gpt-6-luna subagent",
+      "prompt": "library-lifecycle/prompt.txt",
+      "trial_report": "library-lifecycle/trial-report.md",
+      "source_patch": "library-lifecycle/source.patch",
+      "verification": "library-lifecycle/verification.json",
+      "source_sha256": {
+        "README.md": "49bd2ca4824a08c7c25ff3df8ef8bfe987b34fe0a3bb4d7c08558f43822f0716",
+        "example_test.go": "3a02a620d6c9231970e9aaa0a49c936063d8c719a83f87a214d76f0c192216a5",
+        "go.mod": "d7f57aa5c8033a6df3753dbcc4a5bb15cba1bb3a9f973d69962f4e5e4da9d4e5",
+        "refresh.go": "25b89b87517d92e04a1ff88e62db3d84d889b0f0265db7a45a969c5ccd7c17eb",
+        "refresh_test.go": "6f21def90b21c8dfcd5af313253e3d8abc8b23d736fd5914c6e596aa9012ac4b"
+      },
+      "patch_reconstruction": "verified complete output source tree byte-for-byte",
+      "review": "review-cd.md",
+      "architecture_grade": "B",
+      "testing_grade": "C",
+      "artifact_sha256": {
+        "prompt.txt": "85ca50439dccd8048d92c9ae6d848c1484809cbb44bd415f13e885594e2d6ddb",
+        "trial-report.md": "50bbe90243091dbd28abfe2245da44ada56de35bd4b187a3f9dab7319f890ece",
+        "source.patch": "03a0c9679595ed5c6f6b14e3d4da9f8e9ba639c6de06eeeac8fb9bd49df25754",
+        "verification.json": "85a5dab5ca61ca4cccf3e420ab0b7040e5af385e263278119d38f8a6ac58e492"
+      }
+    },
+    {
+      "id": "not-abstraction-work",
+      "implementation_provenance": "fresh blind gpt-6-luna subagent",
+      "prompt": "not-abstraction-work/prompt.txt",
+      "trial_report": "not-abstraction-work/trial-report.md",
+      "source_patch": "not-abstraction-work/source.patch",
+      "verification": "not-abstraction-work/verification.json",
+      "source_sha256": {
+        "README.md": "bafea73bf1e0ac81e065953ee27977a56277ec78ce6ec8e2a2cc7fd90052aea6",
+        "batches.go": "30adb2c3a070bd44eae83bb8b14f05f1c8d4b1aa19d4f60e19b2b7d09e3f1123",
+        "batches_test.go": "88878417c7ef4e4cb1949d0a9c017aca8b1ba7c5b5988a7803ab70cf06c03cd7",
+        "go.mod": "4f4b835600ae55325ff5cf9964edb3aa092082d4aa178e66830646cf5364178b"
+      },
+      "patch_reconstruction": "verified complete output source tree byte-for-byte",
+      "review": "review-control.md",
+      "architecture_grade": "Not applicable",
+      "testing_grade": "A",
+      "artifact_sha256": {
+        "prompt.txt": "462201c0f82bec3e0a8ef1f5537ea491119f40368b428e48a7d88a1ab49fcc2a",
+        "trial-report.md": "73b6681da7681b126b709356a56f83b6ab94068e7bac205ff27bf24d879200bf",
+        "source.patch": "03398de8b54fd450bec0197f86833e4db04989aa6939f1ce7221d86e8a0f043c",
+        "verification.json": "28dafb31eefc52470d57dbf1a043b33cf703d53b2614f5bc17fd2b9e1202e721"
+      }
+    }
+  ],
+  "independent_reviews": [
+    {
+      "artifact": "review-ab.md",
+      "sha256": "4f18a052c2f31c94be718ea660fd11364a1cbfee7989e83435deb7818d95afb7",
+      "model": "gpt-6-astra",
+      "harness": "Codex collaboration subagents",
+      "fork_turns": "none",
+      "reasoning_override": null,
+      "scope": "Architecture and Design; Testing",
+      "cases": [
+        "protocol-vs-mock",
+        "visible-dependency"
+      ],
+      "provenance": "Controller-attested; three fresh blind reviewers read originals/candidates and applicable review skills. Exact full wrappers unavailable.",
+      "judgments_withheld": [
+        "evals.json expectations/assertions",
+        "author reports",
+        "build skills",
+        "condition labels"
+      ]
+    },
+    {
+      "artifact": "review-cd.md",
+      "sha256": "68b0c4e0ddfee6616808151f1b7c9526503d39c0126012a13d63ffbe02071f43",
+      "model": "gpt-6-astra",
+      "harness": "Codex collaboration subagents",
+      "fork_turns": "none",
+      "reasoning_override": null,
+      "scope": "Architecture and Design; Testing",
+      "cases": [
+        "zero-value",
+        "library-lifecycle"
+      ],
+      "provenance": "Controller-attested; three fresh blind reviewers read originals/candidates and applicable review skills. Exact full wrappers unavailable.",
+      "judgments_withheld": [
+        "evals.json expectations/assertions",
+        "author reports",
+        "build skills",
+        "condition labels"
+      ]
+    },
+    {
+      "artifact": "review-control.md",
+      "sha256": "afab02dc99698c6d44668dc6bf29793bc22d7ba2297dd4184a836c09f083546a",
+      "model": "gpt-6-astra",
+      "harness": "Codex collaboration subagents",
+      "fork_turns": "none",
+      "reasoning_override": null,
+      "scope": "Architecture and Design; Testing",
+      "cases": [
+        "not-abstraction-work"
+      ],
+      "provenance": "Controller-attested; three fresh blind reviewers read originals/candidates and applicable review skills. Exact full wrappers unavailable.",
+      "judgments_withheld": [
+        "evals.json expectations/assertions",
+        "author reports",
+        "build skills",
+        "condition labels"
+      ]
+    }
+  ],
+  "go_version": "go version go1.26.5 darwin/arm64",
+  "archive_limitations": [
+    "Minimum Go 1.22, other platforms and automatic selection unverified.",
+    "Source includes project documentation and examples; trial reports, verification artifacts and the zero-value trial local .gocache are excluded from patches.",
+    "Reviewer probes and mutants described in unedited reviews were not authored baseline tests and are not credited as such.",
+    "Fresh archive verification runs original candidate tests and vet; it does not re-execute every reviewer probe."
+  ]
+}

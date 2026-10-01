@@ -256,3 +256,15 @@ The later independent Task 3 review approved bounded promotion; no upstream
 text was copied during the revisions. The [design record](README.md) and
 [skill-on evidence](../../tests/go-quality-build/results/2026-10-01-api-contracts-skill-on/README.md)
 record its current status and limits.
+
+## 2026-10-01 — Interfaces/composition fixture preparation
+
+The [five candidate cases](../../tests/go-quality-build/go-interfaces-and-composition/evals/evals.json)
+exercise the existing IC decisions on protocol ownership, fake-only abstractions,
+visible dependencies, optional construction and host lifecycle ownership. Fixtures
+are newly authored; no source inventory choice changed and no upstream code or
+prose was copied. The upstream pin remains
+`19a0626ae8565d27a7b7bdf59d8d99d94d7e284c`. No IC runtime skill is authored in this
+stage. [Preparation evidence](../../tests/go-quality-build/results/2026-10-01-interfaces-composition-baseline/README.md)
+and the [design record](README.md) distinguish runnable inputs from pending blind
+model results and independent Architecture/Testing review.

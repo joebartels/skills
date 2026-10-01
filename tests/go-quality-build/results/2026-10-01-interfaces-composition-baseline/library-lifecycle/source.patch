@@ -1,0 +1,340 @@
+--- a/README.md
++++ b/README.md
+@@ -5,3 +5,43 @@
+ Requested periodic behavior: the host decides when each run begins and ends. Perform the first refresh immediately, then wait the supplied positive interval after each successful completion. No overlapping callbacks for a single run. Stop a run on its first callback error and report that error. Stop requests must reach an active callback. The host must be able to wait for completion before freeing resources, and stopping one refresher must not stop another. Each instance has at most one periodic run at a time; concurrent starts/restarts need not be supported. A nonpositive interval is a caller error. The periodic cancellation result must be documented.
+ 
+ This library is one component among several inside the host process. The executable coordinates process termination and resource teardown. Go 1.22 is supported. The API is pre-1.0; add the periodic API while retaining New and Refresh.
++
++## Periodic lifecycle
++
++Call `StartPeriodic` once per refresher with the host context and a positive
++interval. The first callback starts immediately. After each successful callback,
++the library waits the full interval before starting the next one. A callback
++error ends the run and is returned unchanged by `Wait`. `Stop` cancels the run
++context, including an active callback; `Wait` then returns `context.Canceled`.
++Parent-context cancellation has the same result. The host must wait for each run
++to finish before releasing resources captured by its callback. Runs are
++independent across `Refresher` instances, and a single instance cannot run two
++periodic loops at once.
++
++```go
++ctx := context.Background()
++syncRun, err := syncRefresher.StartPeriodic(ctx, time.Minute)
++if err != nil {
++	return err
++}
++cleanupRun, err := cleanupRefresher.StartPeriodic(ctx, 5*time.Minute)
++if err != nil {
++	syncRun.Stop()
++	_ = syncRun.Wait()
++	return err
++}
++
++// During orderly host shutdown, stop both before waiting for either one.
++syncRun.Stop()
++cleanupRun.Stop()
++if err := syncRun.Wait(); err != nil && !errors.Is(err, context.Canceled) {
++	return err
++}
++if err := cleanupRun.Wait(); err != nil && !errors.Is(err, context.Canceled) {
++	return err
++}
++// Callback-owned resources can be released after both Wait calls return.
++```
++
++The snippet assumes `syncRefresher` and `cleanupRefresher` were constructed
++with `New`, and imports `context`, `errors`, and `time`.
+--- /dev/null
++++ b/example_test.go
+@@ -0,0 +1,45 @@
++package refreshkit_test
++
++import (
++	"context"
++	"errors"
++	refreshkit "example.com/library-lifecycle"
++	"fmt"
++	"time"
++)
++
++func ExamplePeriodicRun_orderlyShutdown() {
++	newRefresher := func() *refreshkit.Refresher {
++		r, err := refreshkit.New(func(ctx context.Context) error {
++			<-ctx.Done()
++			return ctx.Err()
++		})
++		if err != nil {
++			panic(err)
++		}
++		return r
++	}
++
++	first, err := newRefresher().StartPeriodic(context.Background(), time.Minute)
++	if err != nil {
++		panic(err)
++	}
++	second, err := newRefresher().StartPeriodic(context.Background(), 5*time.Minute)
++	if err != nil {
++		first.Stop()
++		_ = first.Wait()
++		panic(err)
++	}
++
++	first.Stop()
++	second.Stop()
++	if err := first.Wait(); !errors.Is(err, context.Canceled) {
++		panic(err)
++	}
++	if err := second.Wait(); !errors.Is(err, context.Canceled) {
++		panic(err)
++	}
++	fmt.Println("both refreshers stopped; callback resources can be released")
++
++	// Output: both refreshers stopped; callback resources can be released
++}
+--- a/refresh.go
++++ b/refresh.go
+@@ -3,9 +3,16 @@
+ import (
+ 	"context"
+ 	"errors"
++	"fmt"
++	"sync"
++	"time"
+ )
+ 
+-type Refresher struct{ refresh func(context.Context) error }
++type Refresher struct {
++	refresh func(context.Context) error
++	mu      sync.Mutex
++	running bool
++}
+ 
+ func New(refresh func(context.Context) error) (*Refresher, error) {
+ 	if refresh == nil {
+@@ -14,3 +21,81 @@
+ 	return &Refresher{refresh: refresh}, nil
+ }
+ func (r *Refresher) Refresh(ctx context.Context) error { return r.refresh(ctx) }
++
++// StartPeriodic starts one periodic refresh run. The first refresh begins
++// immediately; later refreshes begin interval after the preceding successful
++// refresh completes. A run never overlaps its own refresh callbacks.
++//
++// The caller should call Stop and then Wait before releasing resources used by
++// the callback. A Refresher can have only one active periodic run; starting a
++// second run before the first finishes returns an error. A run may be started
++// again after Wait has returned.
++func (r *Refresher) StartPeriodic(ctx context.Context, interval time.Duration) (*PeriodicRun, error) {
++	if interval <= 0 {
++		return nil, fmt.Errorf("periodic refresh interval must be positive")
++	}
++
++	r.mu.Lock()
++	if r.running {
++		r.mu.Unlock()
++		return nil, errors.New("periodic refresh already running")
++	}
++	r.running = true
++	r.mu.Unlock()
++
++	runCtx, cancel := context.WithCancel(ctx)
++	run := &PeriodicRun{cancel: cancel, done: make(chan struct{})}
++	go func() {
++		defer func() {
++			cancel()
++			r.mu.Lock()
++			r.running = false
++			r.mu.Unlock()
++			close(run.done)
++		}()
++
++		for {
++			if err := runCtx.Err(); err != nil {
++				run.err = context.Canceled
++				return
++			}
++			if err := r.refresh(runCtx); err != nil {
++				run.err = err
++				return
++			}
++
++			timer := time.NewTimer(interval)
++			select {
++			case <-runCtx.Done():
++				if !timer.Stop() {
++					<-timer.C
++				}
++				run.err = context.Canceled
++				return
++			case <-timer.C:
++			}
++		}
++	}()
++	return run, nil
++}
++
++// PeriodicRun controls and observes a periodic refresh started by
++// Refresher.StartPeriodic.
++type PeriodicRun struct {
++	cancel context.CancelFunc
++	done   chan struct{}
++	err    error
++}
++
++// Stop requests cancellation of the active refresh, if any. It is safe to call
++// Stop more than once. Stop does not wait for the callback to return; call Wait
++// before releasing callback resources.
++func (run *PeriodicRun) Stop() { run.cancel() }
++
++// Wait blocks until the periodic run finishes. It returns context.Canceled
++// when Stop or the parent context ends the run, the callback error unchanged
++// when a refresh fails, and nil only if the run were otherwise terminated.
++func (run *PeriodicRun) Wait() error {
++	<-run.done
++	return run.err
++}
+--- a/refresh_test.go
++++ b/refresh_test.go
+@@ -5,6 +5,7 @@
+ 	"errors"
+ 	refreshkit "example.com/library-lifecycle"
+ 	"testing"
++	"time"
+ )
+ 
+ func TestRefresh(t *testing.T) {
+@@ -37,3 +38,133 @@
+ 		t.Fatal("nil callback accepted")
+ 	}
+ }
++
++func TestPeriodicStopWaitsForActiveRefresh(t *testing.T) {
++	started := make(chan struct{})
++	finished := make(chan struct{})
++	r, err := refreshkit.New(func(ctx context.Context) error {
++		close(started)
++		<-ctx.Done()
++		close(finished)
++		return ctx.Err()
++	})
++	if err != nil {
++		t.Fatal(err)
++	}
++	run, err := r.StartPeriodic(context.Background(), time.Hour)
++	if err != nil {
++		t.Fatal(err)
++	}
++	<-started
++	run.Stop()
++	if err := run.Wait(); !errors.Is(err, context.Canceled) {
++		t.Fatalf("Wait error = %v, want context.Canceled", err)
++	}
++	select {
++	case <-finished:
++	default:
++		t.Fatal("Wait returned before active callback finished")
++	}
++}
++
++func TestPeriodicInstancesAreIndependent(t *testing.T) {
++	firstStarted := make(chan struct{})
++	secondStarted := make(chan struct{})
++	first, err := refreshkit.New(func(ctx context.Context) error {
++		close(firstStarted)
++		<-ctx.Done()
++		return ctx.Err()
++	})
++	if err != nil {
++		t.Fatal(err)
++	}
++	second, err := refreshkit.New(func(ctx context.Context) error {
++		close(secondStarted)
++		<-ctx.Done()
++		return ctx.Err()
++	})
++	if err != nil {
++		t.Fatal(err)
++	}
++	firstRun, err := first.StartPeriodic(context.Background(), time.Hour)
++	if err != nil {
++		t.Fatal(err)
++	}
++	secondRun, err := second.StartPeriodic(context.Background(), time.Hour)
++	if err != nil {
++		firstRun.Stop()
++		_ = firstRun.Wait()
++		t.Fatal(err)
++	}
++	<-firstStarted
++	<-secondStarted
++
++	firstRun.Stop()
++	if err := firstRun.Wait(); !errors.Is(err, context.Canceled) {
++		t.Fatalf("first Wait error = %v", err)
++	}
++	select {
++	case err := <-waitResult(secondRun):
++		t.Fatalf("second run stopped with first: %v", err)
++	default:
++	}
++
++	secondRun.Stop()
++	if err := secondRun.Wait(); !errors.Is(err, context.Canceled) {
++		t.Fatalf("second Wait error = %v", err)
++	}
++}
++
++func TestPeriodicRefreshError(t *testing.T) {
++	want := errors.New("periodic refresh failed")
++	calls := 0
++	r, err := refreshkit.New(func(context.Context) error {
++		calls++
++		return want
++	})
++	if err != nil {
++		t.Fatal(err)
++	}
++	run, err := r.StartPeriodic(context.Background(), time.Millisecond)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err := run.Wait(); err != want {
++		t.Fatalf("Wait error = %v, want original error %v", err, want)
++	}
++	if calls != 1 {
++		t.Fatalf("callback calls = %d, want 1", calls)
++	}
++}
++
++func TestPeriodicRejectsInvalidIntervalAndDuplicateRun(t *testing.T) {
++	r, err := refreshkit.New(func(ctx context.Context) error {
++		<-ctx.Done()
++		return ctx.Err()
++	})
++	if err != nil {
++		t.Fatal(err)
++	}
++	if _, err := r.StartPeriodic(context.Background(), 0); err == nil {
++		t.Fatal("zero interval accepted")
++	}
++	run, err := r.StartPeriodic(context.Background(), time.Hour)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if _, err := r.StartPeriodic(context.Background(), time.Hour); err == nil {
++		run.Stop()
++		_ = run.Wait()
++		t.Fatal("duplicate run accepted")
++	}
++	run.Stop()
++	if err := run.Wait(); !errors.Is(err, context.Canceled) {
++		t.Fatalf("Wait error = %v", err)
++	}
++}
++
++func waitResult(run *refreshkit.PeriodicRun) <-chan error {
++	result := make(chan error, 1)
++	go func() { result <- run.Wait() }()
++	return result
++}

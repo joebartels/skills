@@ -1,0 +1,326 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "report.go",
+      "report_test.go"
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/protocol-vs-mock",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "go",
+      "test",
+      "./..."
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/protocol-vs-mock",
+    "exit_code": 0,
+    "stdout": "Go test: 1 passed in 1 packages\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/protocol-vs-mock",
+    "exit_code": 0,
+    "stdout": "=== RUN   TestJSONReport\n--- PASS: TestJSONReport (0.00s)\nPASS\nok  \texample.com/protocol-vs-mock\t0.119s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/protocol-vs-mock",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "receipt.go",
+      "receipt_test.go"
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/visible-dependency",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "go",
+      "test",
+      "./..."
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/visible-dependency",
+    "exit_code": 0,
+    "stdout": "Go test: 1 passed in 1 packages\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/visible-dependency",
+    "exit_code": 0,
+    "stdout": "=== RUN   TestSend\n--- PASS: TestSend (0.00s)\nPASS\nok  \texample.com/visible-dependency\t0.165s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/visible-dependency",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "bag.go",
+      "bag_test.go"
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/zero-value",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "go",
+      "test",
+      "./..."
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/zero-value",
+    "exit_code": 0,
+    "stdout": "Go test: 1 passed in 1 packages\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/zero-value",
+    "exit_code": 0,
+    "stdout": "=== RUN   TestZeroBag\n--- PASS: TestZeroBag (0.00s)\nPASS\nok  \texample.com/zero-value\t0.118s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/zero-value",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "refresh.go",
+      "refresh_test.go"
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/library-lifecycle",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "go",
+      "test",
+      "./..."
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/library-lifecycle",
+    "exit_code": 0,
+    "stdout": "Go test: 2 passed in 1 packages\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/library-lifecycle",
+    "exit_code": 0,
+    "stdout": "=== RUN   TestRefresh\n--- PASS: TestRefresh (0.00s)\n=== RUN   TestNilCallback\n--- PASS: TestNilCallback (0.00s)\nPASS\nok  \texample.com/library-lifecycle\t0.116s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/library-lifecycle",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "batches.go",
+      "batches_test.go"
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/not-abstraction-work",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "go",
+      "test",
+      "./..."
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/not-abstraction-work",
+    "exit_code": 0,
+    "stdout": "Go test: 1 passed in 1 packages\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/not-abstraction-work",
+    "exit_code": 0,
+    "stdout": "=== RUN   TestWholeBatches\n--- PASS: TestWholeBatches (0.00s)\nPASS\nok  \texample.com/not-abstraction-work\t0.127s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "tests/go-quality-build/go-interfaces-and-composition/evals/files/not-abstraction-work",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/go-quality-build",
+      "-p",
+      "test_*.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ".........\n----------------------------------------------------------------------\nRan 9 tests in 0.013s\n\nOK\n"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "scripts/validate.py"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "stdout": "PASS: 10 skills; matching grading/report contracts; 120 valid evaluation cases\nPASS: 14 valid build evaluation cases\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "git",
+      "diff",
+      "--check"
+    ],
+    "cwd": ".",
+    "exit_code": 0,
+    "stdout": "\n",
+    "stderr": ""
+  }
+]

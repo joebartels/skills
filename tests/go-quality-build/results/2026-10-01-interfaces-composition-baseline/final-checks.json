@@ -1,0 +1,48 @@
+{
+  "commands": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test*.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.053s\n\nOK\n"
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "scripts/validate.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "PASS: 10 skills; matching grading/report contracts; 120 valid evaluation cases\nPASS: 14 valid build evaluation cases\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "rtk",
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "stdout": "\n",
+      "stderr": ""
+    }
+  ],
+  "inventory": "PASS: exactly 20 listed fixture files",
+  "hashes": "PASS: all 21 suite/input hashes match"
+}
