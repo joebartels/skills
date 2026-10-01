@@ -243,6 +243,8 @@ def validate_build_evals(root: Path) -> tuple[list[str], int]:
                  (root / "plugins/go-quality-build/skills").glob("*/SKILL.md")}
     candidates = {suite.parent.parent.name for suite in
                   (root / "tests/go-quality-build").glob("*/evals/evals.json")}
+    if (root / "tests/go-quality-build/combined/evals").is_dir():
+        candidates.add("combined")
     for skill in sorted(installed | candidates):
         evaluation = root / "tests/go-quality-build" / skill / "evals"
         try:

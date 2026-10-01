@@ -47,6 +47,26 @@ class BuildEvalsTests(unittest.TestCase):
         self.suite["evals"][0]["assertions"] = []
         self.assertTrue(self.validate()[0])
 
+    def test_combined_suite_is_required_and_uses_case_rules(self):
+        self.validate()
+        combined = self.root / "tests/go-quality-build/combined/evals"
+        combined.mkdir(parents=True)
+        errors, count = validator.validate_build_evals(self.root)
+        self.assertTrue(any("combined: invalid evaluation file" in error for error in errors))
+        self.assertEqual(count, 1)
+
+        (combined / "input.go").write_text("package combined\n")
+        suite = dict(self.suite, skill_name="combined")
+        (combined / "evals.json").write_text(json.dumps(suite))
+        self.assertEqual(validator.validate_build_evals(self.root), ([], 2))
+
+        suite["evals"][0]["files"] = ["../outside.go"]
+        (combined / "evals.json").write_text(json.dumps(suite))
+        errors, count = validator.validate_build_evals(self.root)
+        self.assertTrue(any("combined/case-one: missing or non-portable fixture" in error
+                            for error in errors))
+        self.assertEqual(count, 2)
+
     def test_missing_suite(self):
         self.validate()
         (self.evals / "evals.json").unlink()
