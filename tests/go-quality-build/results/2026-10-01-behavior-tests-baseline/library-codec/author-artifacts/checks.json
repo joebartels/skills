@@ -1,0 +1,165 @@
+[
+  {
+    "label": "baseline-contract-tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 120,
+    "stdout": "--- FAIL: TestEncode (0.00s)\n    --- FAIL: TestEncode/region_slash (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"us/west\", Name:\"web\"}) = \"\", invalid key; want \"us%2Fwest/web\", nil\n    --- FAIL: TestEncode/name_slash (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"east\", Name:\"web/blue\"}) = \"\", invalid key; want \"east/web%2Fblue\", nil\n    --- FAIL: TestEncode/both_slashes (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"/\", Name:\"/\"}) = \"\", invalid key; want \"%2F/%2F\", nil\n    --- FAIL: TestEncode/region_space (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"us west\", Name:\"web\"}) = \"us west/web\", <nil>; want \"us%20west/web\", nil\n    --- FAIL: TestEncode/name_space (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"east\", Name:\"web blue\"}) = \"east/web blue\", <nil>; want \"east/web%20blue\", nil\n    --- FAIL: TestEncode/percent (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"100%\", Name:\"%2F\"}) = \"\", invalid key; want \"100%25/%252F\", nil\n    --- FAIL: TestEncode/Unicode (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"\u65e5\u672c\", Name:\"caf\u00e9\"}) = \"\u65e5\u672c/caf\u00e9\", <nil>; want \"%E6%97%A5%E6%9C%AC/caf%C3%A9\", nil\n    --- FAIL: TestEncode/reserved (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"a?b\", Name:\"c#d\"}) = \"a?b/c#d\", <nil>; want \"a%3Fb/c%23d\", nil\n    --- FAIL: TestEncode/combined (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"us/west\", Name:\"web blue\"}) = \"\", invalid key; want \"us%2Fwest/web%20blue\", nil\n--- FAIL: TestDecode (0.00s)\n    --- FAIL: TestDecode/region_slash (0.00s)\n        codec_contract_test.go:68: Decode(\"us%2Fwest/web\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want keycodec.Key{Region:\"us/west\", Name:\"web\"}, nil\n    --- FAIL: TestDecode/name_slash (0.00s)\n        codec_contract_test.go:68: Decode(\"east/web%2Fblue\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want keycodec.Key{Region:\"east\", Name:\"web/blue\"}, nil\n    --- FAIL: TestDecode/both_slashes (0.00s)\n        codec_contract_test.go:68: Decode(\"%2F/%2F\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want keycodec.Key{Region:\"/\", Name:\"/\"}, nil\n    --- FAIL: TestDecode/spaces (0.00s)\n        codec_contract_test.go:68: Decode(\"%20west/web%20\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want keycodec.Key{Region:\" west\", Name:\"web \"}, nil\n    --- FAIL: TestDecode/percent (0.00s)\n        codec_contract_test.go:68: Decode(\"100%25/%252F\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want keycodec.Key{Region:\"100%\", Name:\"%2F\"}, nil\n    --- FAIL: TestDecode/Unicode (0.00s)\n        codec_contract_test.go:68: Decode(\"%E6%97%A5%E6%9C%AC/caf%C3%A9\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want keycodec.Key{Region:\"\u65e5\u672c\", Name:\"caf\u00e9\"}, nil\n    --- FAIL: TestDecode/escaped_plus (0.00s)\n        codec_contract_test.go:68: Decode(\"a%2Bb/c%2Bd\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want keycodec.Key{Region:\"a+b\", Name:\"c+d\"}, nil\n    --- FAIL: TestDecode/lowercase_hex (0.00s)\n        codec_contract_test.go:68: Decode(\"us%2fwest/caf%c3%a9\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want keycodec.Key{Region:\"us/west\", Name:\"caf\u00e9\"}, nil\n    --- FAIL: TestDecode/escaped_unreserved (0.00s)\n        codec_contract_test.go:68: Decode(\"%65ast/%77eb\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want keycodec.Key{Region:\"east\", Name:\"web\"}, nil\n    --- FAIL: TestDecode/reserved (0.00s)\n        codec_contract_test.go:68: Decode(\"a%3Fb/c%23d\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want keycodec.Key{Region:\"a?b\", Name:\"c#d\"}, nil\n--- FAIL: FuzzRoundTrip (0.00s)\n    --- FAIL: FuzzRoundTrip/seed#1 (0.00s)\n        codec_contract_test.go:137: Encode(keycodec.Key{Region:\"us/west\", Name:\"web blue\"}): invalid key\n    --- FAIL: FuzzRoundTrip/seed#2 (0.00s)\n        codec_contract_test.go:137: Encode(keycodec.Key{Region:\"\u65e5\u672c%\", Name:\"caf\u00e9+/%2F\"}): invalid key\n--- FAIL: Example (0.00s)\npanic: invalid key [recovered, repanicked]\n\ngoroutine 1 [running]:\ntesting.(*InternalExample).processRunResult(0x514869d9bd8, {0x0, 0x0}, 0xf?, 0x0, {0x105233100, 0x105291160})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/example.go:92 +0x4b0\ntesting.runExample.func2()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/run_example.go:59 +0xdc\npanic({0x105233100?, 0x105291160?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nexample.com/keycodec_test.Example()\n\t/private/tmp/go-testing-author-7r8p3riu/library-codec/codec_contract_test.go:105 +0x114\ntesting.runExample({{0x1050ad33c, 0x7}, 0x10526c280, {0x1050bb92e, 0x36}, 0x0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/run_example.go:63 +0x1f8\ntesting.runExamples(0x105271698?, {0x105293000, 0x1, 0x1?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/example.go:41 +0xf0\ntesting.(*M).Run(0x514868e06e0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2445 +0x60c\nmain.main()\n\t_testmain.go:60 +0x80\nFAIL\texample.com/keycodec\t0.267s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "timed_out": false
+  },
+  {
+    "label": "gofmt-write",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "key.go",
+      "codec_contract_test.go"
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 30,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false
+  },
+  {
+    "label": "race-and-coverage",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-cover",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 120,
+    "stdout": "ok  \texample.com/keycodec\t1.204s\tcoverage: 100.0% of statements\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false
+  },
+  {
+    "label": "vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 120,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false
+  },
+  {
+    "label": "formatting-check",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "key.go",
+      "key_test.go",
+      "codec_contract_test.go"
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 30,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false
+  },
+  {
+    "label": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 30,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false
+  },
+  {
+    "label": "staticcheck-availability",
+    "command": [
+      "rtk",
+      "proxy",
+      "which",
+      "staticcheck"
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 30,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 1,
+    "timed_out": false
+  },
+  {
+    "label": "fuzz-round-trip",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^$",
+      "-fuzz=^FuzzRoundTrip$",
+      "-fuzztime=5s",
+      "-parallel=2",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 60,
+    "stdout": "fuzz: elapsed: 0s, gathering baseline coverage: 0/4 completed\nfuzz: elapsed: 0s, gathering baseline coverage: 4/4 completed, now fuzzing with 2 workers\nfuzz: elapsed: 3s, execs: 573902 (191174/sec), new interesting: 26 (total: 30)\nfuzz: elapsed: 5s, execs: 1012843 (210945/sec), new interesting: 26 (total: 30)\nPASS\nok  \texample.com/keycodec\t5.270s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false
+  }
+]

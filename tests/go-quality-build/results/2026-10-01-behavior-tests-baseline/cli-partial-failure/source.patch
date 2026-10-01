@@ -1,0 +1,411 @@
+--- a/main.go
++++ b/main.go
+@@ -22,24 +22,34 @@
+ 		return fmt.Errorf("--dir required and no positional arguments allowed")
+ 	}
+ 	reader := csv.NewReader(input)
+-	row, err := reader.Read()
+-	if err == io.EOF {
+-		return nil
++	reader.FieldsPerRecord = 2
++	dirReady := false
++	for record := 1; ; record++ {
++		row, err := reader.Read()
++		if err == io.EOF {
++			return nil
++		}
++		if err != nil {
++			return fmt.Errorf("record %d: reading CSV: %w", record, err)
++		}
++		id := row[0]
++		if id == "" || strings.ContainsAny(id, "/\\") || id == "." || id == ".." {
++			return fmt.Errorf("record %d: invalid id %q", record, id)
++		}
++		qty, err := strconv.Atoi(row[1])
++		if err != nil || qty <= 0 {
++			return fmt.Errorf("record %d: invalid quantity %q", record, row[1])
++		}
++		if !dirReady {
++			if err := os.MkdirAll(*dir, 0o755); err != nil {
++				return fmt.Errorf("record %d: creating record directory: %w", record, err)
++			}
++			dirReady = true
++		}
++		if err := os.WriteFile(filepath.Join(*dir, id), []byte(strconv.Itoa(qty)+"\n"), 0o644); err != nil {
++			return fmt.Errorf("record %d: writing %q: %w", record, id, err)
++		}
+ 	}
+-	if err != nil {
+-		return err
+-	}
+-	if len(row) != 2 || row[0] == "" || strings.ContainsAny(row[0], "/\\") || row[0] == "." || row[0] == ".." {
+-		return fmt.Errorf("invalid record")
+-	}
+-	qty, err := strconv.Atoi(row[1])
+-	if err != nil || qty <= 0 {
+-		return fmt.Errorf("invalid quantity")
+-	}
+-	if err := os.MkdirAll(*dir, 0o755); err != nil {
+-		return err
+-	}
+-	return os.WriteFile(filepath.Join(*dir, row[0]), []byte(strconv.Itoa(qty)+"\n"), 0o644)
+ }
+ 
+ func main() {
+--- a/main_test.go
++++ b/main_test.go
+@@ -1,20 +1,345 @@
+ package main
+ 
+ import (
++	"bytes"
++	"context"
++	"errors"
+ 	"io"
+ 	"os"
++	"os/exec"
+ 	"path/filepath"
+ 	"strings"
+ 	"testing"
++	"time"
+ )
+ 
+-func TestSingleRecord(t *testing.T) {
++func TestRunSuccess(t *testing.T) {
++	for _, tc := range []struct {
++		name  string
++		input string
++		want  map[string]string
++	}{
++		{name: "empty", want: map[string]string{}},
++		{name: "single", input: "web,7\n", want: map[string]string{"web": "7\n"}},
++		{name: "batch", input: "web,007\napi,12\nweb,4\nlast,+03", want: map[string]string{"web": "4\n", "api": "12\n", "last": "3\n"}},
++		{name: "quoted and CRLF", input: "\"a,b\",9\r\nnext,2\r\n", want: map[string]string{"a,b": "9\n", "next": "2\n"}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			dir := t.TempDir()
++			var stderr bytes.Buffer
++			if err := run([]string{"--dir", dir}, strings.NewReader(tc.input), &stderr); err != nil {
++				t.Fatalf("run: %v", err)
++			}
++			if stderr.Len() != 0 {
++				t.Fatalf("success stderr = %q", stderr.String())
++			}
++			assertRecords(t, dir, tc.want)
++		})
++	}
++}
++
++func TestRunStopsAtInvalidRow(t *testing.T) {
++	for _, tc := range []struct {
++		name string
++		row  string
++	}{
++		{"missing field", "broken\n"},
++		{"extra field", "broken,1,extra\n"},
++		{"empty id", ",1\n"},
++		{"slash", "nested/name,1\n"},
++		{"backslash", "nested\\name,1\n"},
++		{"dot", ".,1\n"},
++		{"dot dot", "..,1\n"},
++		{"zero", "broken,0\n"},
++		{"negative", "broken,-1\n"},
++		{"empty quantity", "broken,\n"},
++		{"nondecimal", "broken,0x10\n"},
++		{"fraction", "broken,1.5\n"},
++		{"exponent", "broken,1e2\n"},
++		{"whitespace", "broken, 1\n"},
++		{"overflow", "broken,999999999999999999999999999999\n"},
++		{"unclosed quote", "\"broken,1\n"},
++		{"bare quote", "bro\"ken,1\n"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			dir := t.TempDir()
++			input := "web,7\napi,8\nweb,9\n" + tc.row + "later,2\nweb,99\n"
++			err := run([]string{"--dir", dir}, strings.NewReader(input), io.Discard)
++			if err == nil || err.Error() == "" {
++				t.Fatalf("expected useful error, got %v", err)
++			}
++			assertRecords(t, dir, map[string]string{"web": "9\n", "api": "8\n"})
++		})
++	}
++}
++
++func TestRunInvalidFirstRowCreatesNothing(t *testing.T) {
++	dir := filepath.Join(t.TempDir(), "not-created")
++	if err := run([]string{"--dir", dir}, strings.NewReader("bad,0\nlater,1\n"), io.Discard); err == nil {
++		t.Fatal("invalid first row succeeded")
++	}
++	if _, err := os.Stat(dir); !errors.Is(err, os.ErrNotExist) {
++		t.Fatalf("directory created before accepting a row: %v", err)
++	}
++}
++
++func TestRunCreatesDirectory(t *testing.T) {
++	dir := filepath.Join(t.TempDir(), "nested", "records")
++	if err := run([]string{"--dir", dir}, strings.NewReader("web,1\napi,2\n"), io.Discard); err != nil {
++		t.Fatal(err)
++	}
++	assertRecords(t, dir, map[string]string{"web": "1\n", "api": "2\n"})
++}
++
++func TestRunEmptyInputCreatesNothing(t *testing.T) {
++	dir := filepath.Join(t.TempDir(), "not-created")
++	if err := run([]string{"--dir", dir}, strings.NewReader(""), io.Discard); err != nil {
++		t.Fatal(err)
++	}
++	if _, err := os.Stat(dir); !errors.Is(err, os.ErrNotExist) {
++		t.Fatalf("empty input created directory: %v", err)
++	}
++}
++
++func TestRunFileFailureRetainsPrefix(t *testing.T) {
+ 	dir := t.TempDir()
+-	if err := run([]string{"--dir", dir}, strings.NewReader("web,7\n"), io.Discard); err != nil {
+-		t.Fatal(err)
+-	}
+-	got, err := os.ReadFile(filepath.Join(dir, "web"))
+-	if err != nil || string(got) != "7\n" {
+-		t.Fatalf("record = %q, %v", got, err)
+-	}
+-}
++	blocked := filepath.Join(dir, "blocked")
++	if err := os.Mkdir(blocked, 0o755); err != nil {
++		t.Fatal(err)
++	}
++	if err := os.WriteFile(filepath.Join(blocked, "keep"), []byte("unchanged\n"), 0o644); err != nil {
++		t.Fatal(err)
++	}
++	err := run([]string{"--dir", dir}, strings.NewReader("web,7\napi,8\nblocked,9\nlater,1\nweb,99\n"), io.Discard)
++	if err == nil || !strings.Contains(err.Error(), "blocked") {
++		t.Fatalf("expected error naming failed target, got %v", err)
++	}
++	assertRecords(t, dir, map[string]string{"web": "7\n", "api": "8\n", "blocked/keep": "unchanged\n"})
++}
++
++func TestRunDirectoryFailure(t *testing.T) {
++	dir := filepath.Join(t.TempDir(), "regular-file")
++	if err := os.WriteFile(dir, []byte("unchanged\n"), 0o644); err != nil {
++		t.Fatal(err)
++	}
++	if err := run([]string{"--dir", dir}, strings.NewReader("web,1\nlater,2\n"), io.Discard); err == nil {
++		t.Fatal("directory failure succeeded")
++	}
++	got, err := os.ReadFile(dir)
++	if err != nil || string(got) != "unchanged\n" {
++		t.Fatalf("directory obstruction changed: %q, %v", got, err)
++	}
++}
++
++func TestRunUsageDoesNotReadInput(t *testing.T) {
++	for _, tc := range []struct {
++		name string
++		args []string
++	}{
++		{"missing dir", nil},
++		{"empty dir", []string{"--dir", ""}},
++		{"missing value", []string{"--dir"}},
++		{"unknown flag", []string{"--unknown"}},
++		{"positional", []string{"--dir", t.TempDir(), "extra"}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			if err := run(tc.args, unreadableInput{t}, io.Discard); err == nil {
++				t.Fatal("usage error succeeded")
++			}
++		})
++	}
++}
++
++type unreadableInput struct{ t *testing.T }
++
++func (r unreadableInput) Read([]byte) (int, error) {
++	r.t.Fatal("read stdin after usage error")
++	return 0, io.EOF
++}
++
++// Each chunk is a complete row. The next Read inspects the filesystem before
++// making further input available, so collecting all rows before writing fails.
++type checkedInput struct {
++	t      *testing.T
++	dir    string
++	chunks []string
++	want   []map[string]string
++	index  int
++	endErr error
++}
++
++func (r *checkedInput) Read(p []byte) (int, error) {
++	r.t.Helper()
++	assertRecords(r.t, r.dir, r.want[r.index])
++	if r.index == len(r.chunks) {
++		return 0, r.endErr
++	}
++	chunk := r.chunks[r.index]
++	if len(p) < len(chunk) {
++		r.t.Fatalf("reader buffer too small for test row: %d", len(p))
++	}
++	r.index++
++	return copy(p, chunk), nil
++}
++
++func TestRunWritesBeforeReadingNextRow(t *testing.T) {
++	dir := t.TempDir()
++	input := &checkedInput{
++		t: t, dir: dir,
++		chunks: []string{"web,7\n", "api,2\n", "web,9\n"},
++		want: []map[string]string{
++			{},
++			{"web": "7\n"},
++			{"web": "7\n", "api": "2\n"},
++			{"web": "9\n", "api": "2\n"},
++		},
++		endErr: io.EOF,
++	}
++	if err := run([]string{"--dir", dir}, input, io.Discard); err != nil {
++		t.Fatal(err)
++	}
++	if input.index != len(input.chunks) {
++		t.Fatalf("read %d rows, want %d", input.index, len(input.chunks))
++	}
++}
++
++func TestRunInputFailureRetainsPrefix(t *testing.T) {
++	dir := t.TempDir()
++	readErr := errors.New("stdin interrupted")
++	input := &checkedInput{
++		t: t, dir: dir,
++		chunks: []string{"web,7\n", "api,8\n"},
++		want:   []map[string]string{{}, {"web": "7\n"}, {"web": "7\n", "api": "8\n"}},
++		endErr: readErr,
++	}
++	if err := run([]string{"--dir", dir}, input, io.Discard); !errors.Is(err, readErr) {
++		t.Fatalf("error = %v, want stdin failure", err)
++	}
++	assertRecords(t, dir, map[string]string{"web": "7\n", "api": "8\n"})
++}
++
++func TestRunStopsReadingAfterInvalidRow(t *testing.T) {
++	dir := t.TempDir()
++	input := &checkedInput{
++		t: t, dir: dir,
++		chunks: []string{"web,7\n", "bad,0\n", "later,1\n"},
++		want:   []map[string]string{{}, {"web": "7\n"}, {"web": "7\n"}, {"web": "7\n", "later": "1\n"}},
++		endErr: io.EOF,
++	}
++	if err := run([]string{"--dir", dir}, input, io.Discard); err == nil {
++		t.Fatal("invalid row succeeded")
++	}
++	if input.index != 2 {
++		t.Fatalf("read %d rows, want stop after row 2", input.index)
++	}
++	assertRecords(t, dir, map[string]string{"web": "7\n"})
++}
++
++func assertRecords(t *testing.T, dir string, want map[string]string) {
++	t.Helper()
++	got := make(map[string]string)
++	err := filepath.WalkDir(dir, func(path string, entry os.DirEntry, err error) error {
++		if err != nil {
++			return err
++		}
++		if entry.IsDir() {
++			return nil
++		}
++		data, err := os.ReadFile(path)
++		if err != nil {
++			return err
++		}
++		name, err := filepath.Rel(dir, path)
++		if err != nil {
++			return err
++		}
++		got[filepath.ToSlash(name)] = string(data)
++		return nil
++	})
++	if err != nil {
++		t.Fatal(err)
++	}
++	if len(got) != len(want) {
++		t.Fatalf("records = %v, want %v", got, want)
++	}
++	for name, data := range want {
++		if actual, ok := got[name]; !ok || actual != data {
++			t.Fatalf("record %q = %q (present %v), want %q", name, actual, ok, data)
++		}
++	}
++}
++
++func TestCLI(t *testing.T) {
++	binary := filepath.Join(t.TempDir(), "ledgerload")
++	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
++	defer cancel()
++	build := exec.CommandContext(ctx, "go", "build", "-o", binary, ".")
++	if output, err := build.CombinedOutput(); err != nil {
++		t.Fatalf("build: %v\n%s", err, output)
++	}
++
++	for _, tc := range []struct {
++		name       string
++		args       func(string) []string
++		input      string
++		setup      func(*testing.T, string)
++		exitCode   int
++		want       map[string]string
++		diagnostic string
++	}{
++		{name: "success", input: "web,007\napi,2\nweb,9\n", want: map[string]string{"web": "9\n", "api": "2\n"}},
++		{name: "empty", want: map[string]string{}},
++		{name: "invalid prefix", input: "web,7\nbad,0\nlater,1\nweb,99\n", exitCode: 2, want: map[string]string{"web": "7\n"}, diagnostic: "quantity"},
++		{name: "malformed CSV", input: "web,7\nbro\"ken,2\nlater,1\n", exitCode: 2, want: map[string]string{"web": "7\n"}, diagnostic: "quote"},
++		{name: "file failure", input: "web,7\nblocked,2\nlater,1\nweb,99\n", setup: func(t *testing.T, dir string) {
++			if err := os.Mkdir(filepath.Join(dir, "blocked"), 0o755); err != nil {
++				t.Fatal(err)
++			}
++		}, exitCode: 2, want: map[string]string{"web": "7\n"}, diagnostic: "blocked"},
++		{name: "missing dir", args: func(string) []string { return nil }, input: "web,7\n", exitCode: 2, want: map[string]string{}, diagnostic: "dir"},
++		{name: "positional", args: func(dir string) []string { return []string{"--dir", dir, "extra"} }, input: "web,7\n", exitCode: 2, want: map[string]string{}, diagnostic: "positional"},
++		{name: "unknown flag", args: func(string) []string { return []string{"--unknown"} }, input: "web,7\n", exitCode: 2, want: map[string]string{}, diagnostic: "flag"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			dir := t.TempDir()
++			if tc.setup != nil {
++				tc.setup(t, dir)
++			}
++			args := []string{"--dir", dir}
++			if tc.args != nil {
++				args = tc.args(dir)
++			}
++			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
++			defer cancel()
++			cmd := exec.CommandContext(ctx, binary, args...)
++			cmd.Stdin = strings.NewReader(tc.input)
++			var stdout, stderr bytes.Buffer
++			cmd.Stdout, cmd.Stderr = &stdout, &stderr
++			err := cmd.Run()
++			if ctx.Err() != nil {
++				t.Fatalf("process exceeded deadline: %v", ctx.Err())
++			}
++			gotCode := 0
++			if err != nil {
++				var exitErr *exec.ExitError
++				if !errors.As(err, &exitErr) {
++					t.Fatalf("launch: %v", err)
++				}
++				gotCode = exitErr.ExitCode()
++			}
++			if gotCode != tc.exitCode {
++				t.Fatalf("exit = %d, want %d; stderr = %q", gotCode, tc.exitCode, stderr.String())
++			}
++			if stdout.Len() != 0 {
++				t.Fatalf("stdout = %q, want empty", stdout.String())
++			}
++			if tc.exitCode == 0 && stderr.Len() != 0 {
++				t.Fatalf("success stderr = %q", stderr.String())
++			}
++			if tc.exitCode != 0 && !strings.Contains(stderr.String(), tc.diagnostic) {
++				t.Fatalf("stderr = %q, want useful %q diagnostic", stderr.String(), tc.diagnostic)
++			}
++			assertRecords(t, dir, tc.want)
++		})
++	}
++}

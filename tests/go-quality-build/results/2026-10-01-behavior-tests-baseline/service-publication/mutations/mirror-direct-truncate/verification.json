@@ -1,0 +1,87 @@
+{
+  "semantic_id": "mirror-direct-truncate",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "76efa7a155502bd7b686f1f6e140b5530e7e9837334fb03e56ae260326f74ee2",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-5ikr34wg/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.392s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.673
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/service-publication/mutations/mirror-direct-truncate/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-5ikr34wg/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-5ikr34wg/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.191s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.428
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-5ikr34wg/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshReplacesSnapshotForOpenReaders (0.00s)\n    refresh_test.go:220: already-open handle = \"[]\", want \"  [ {\\\"code\\\":\\\"old\\\",\\\"label\\\":\\\"Old\\\"} ]\\n\"\nFAIL\nFAIL\texample.com/mirror\t0.160s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.362
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "TestRefreshReplacesSnapshotForOpenReaders observes old bytes through a pre-opened handle; direct truncation replaces those bytes."
+}

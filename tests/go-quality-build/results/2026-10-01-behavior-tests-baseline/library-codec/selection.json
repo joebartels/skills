@@ -1,0 +1,46 @@
+{
+  "offered_guidance_names": [
+    "go-api-contracts",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries"
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-testing-author-7r8p3riu/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-testing-author-7r8p3riu/guidance/go-core-style/SKILL.md"
+  ],
+  "opened_reference_paths": [],
+  "decisions": [
+    {
+      "name": "go-api-contracts",
+      "selected": true,
+      "reason": "The requested minor release changes the supported wire format and accepted field values. Preserve consumer-visible function signatures, Key fields, legacy simple keys, error sentinel, and zero failure results; test encode and decode independently from an external consumer package."
+    },
+    {
+      "name": "go-core-style",
+      "selected": true,
+      "reason": "This is Go implementation work. Use the standard library, explicit error guards, clear exported documentation, formatting, vet, and bounded tests. No abstractions or dependencies are needed."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "selected": false,
+      "reason": "Pure string codec change with no interface, dependency construction, options, wiring, or resource lifecycle change. Its skill was not opened."
+    },
+    {
+      "name": "go-package-boundaries",
+      "selected": false,
+      "reason": "The existing codec package retains its responsibility and location; no package split, merge, relocation, or ownership change. Its skill was not opened."
+    }
+  ],
+  "task_input_read": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/library-codec/dispatch.txt",
+  "module_files_read": [
+    "/private/tmp/go-testing-author-7r8p3riu/library-codec/README.md",
+    "/private/tmp/go-testing-author-7r8p3riu/library-codec/go.mod",
+    "/private/tmp/go-testing-author-7r8p3riu/library-codec/key.go",
+    "/private/tmp/go-testing-author-7r8p3riu/library-codec/key_test.go"
+  ],
+  "standard_library_documentation_read": [
+    "go doc net/url.PathEscape"
+  ],
+  "other_writing_or_review_skills_opened": []
+}

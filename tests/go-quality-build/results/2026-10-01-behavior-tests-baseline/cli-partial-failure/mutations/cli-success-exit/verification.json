@@ -1,0 +1,87 @@
+{
+  "semantic_id": "cli-success-exit",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "0abd4e2120facdf7bef87ec661108c498f8ab7be3ef2e27aa6369bf87281dac2",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-oesjdfcx/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.861s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.054
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/cli-partial-failure/mutations/cli-success-exit/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-oesjdfcx/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-oesjdfcx/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.204s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.377
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-oesjdfcx/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCLI (0.27s)\n    --- FAIL: TestCLI/invalid_prefix (0.00s)\n        main_test.go:331: exit = 0, want 2; stderr = \"record 2: invalid quantity \\\"0\\\"\\n\"\n    --- FAIL: TestCLI/malformed_CSV (0.00s)\n        main_test.go:331: exit = 0, want 2; stderr = \"record 2: reading CSV: parse error on line 2, column 4: bare \\\" in non-quoted-field\\n\"\n    --- FAIL: TestCLI/file_failure (0.00s)\n        main_test.go:331: exit = 0, want 2; stderr = \"record 2: writing \\\"blocked\\\": open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIfile_failure1627648416/001/blocked: is a directory\\n\"\n    --- FAIL: TestCLI/missing_dir (0.00s)\n        main_test.go:331: exit = 0, want 2; stderr = \"--dir required and no positional arguments allowed\\n\"\n    --- FAIL: TestCLI/positional (0.00s)\n        main_test.go:331: exit = 0, want 2; stderr = \"--dir required and no positional arguments allowed\\n\"\n    --- FAIL: TestCLI/unknown_flag (0.00s)\n        main_test.go:331: exit = 0, want 2; stderr = \"flag provided but not defined: -unknown\\nUsage of ledgerload:\\n  -dir string\\n    \\trecord directory\\nflag provided but not defined: -unknown\\n\"\nFAIL\nFAIL\texample.com/ledgerload\t0.482s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.594
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "TestCLI asserts actual exit status 2 and fails for invalid-prefix, malformed CSV, file failure and usage."
+}

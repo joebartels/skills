@@ -96,3 +96,4 @@ All local fixtures, probes, skill wording and examples will be original. General
 ## Application record
 
 - 2026-10-01: Source audit complete before either testing draft. Behavior fixtures/baselines next. No testing writing skill promoted.
+- 2026-10-01: Five blind behavior baselines complete, with independent reviews confirming partial failed replacement and work-error/successful-cleanup assertion gaps. Original local drafting will adapt R1 failure-stage and error-combination observations; no upstream code/text copy is introduced.

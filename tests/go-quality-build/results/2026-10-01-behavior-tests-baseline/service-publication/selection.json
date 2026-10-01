@@ -1,0 +1,40 @@
+{
+  "offered_guidance_names": [
+    "go-api-contracts",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries"
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-testing-author-7r8p3riu/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-testing-author-7r8p3riu/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-testing-author-7r8p3riu/guidance/go-interfaces-and-composition/SKILL.md"
+  ],
+  "opened_reference_paths": [],
+  "selection_decisions": {
+    "go-core-style": {
+      "selected": true,
+      "reason": "Implementing Go code and regression tests; apply guard clauses, standard-library types, error wrapping, formatting and verification."
+    },
+    "go-api-contracts": {
+      "selected": true,
+      "reason": "Implementing the exported Refresh function and its documented HTTP/file behavior; preserve signature, Item literals, lowercase serialization and go 1.22 module minimum."
+    },
+    "go-interfaces-and-composition": {
+      "selected": true,
+      "reason": "New response-body and temporary-file lifetimes need explicit ownership and cleanup; use supplied HTTP client/context and its existing RoundTripper boundary without changing the public API."
+    },
+    "go-package-boundaries": {
+      "selected": false,
+      "reason": "The existing mirror package already owns the reserved Refresh API and snapshot persistence. Implementation stays within that established responsibility; no package placement, ownership split or inter-package dependency decision changes."
+    }
+  },
+  "opened_task_input_paths": [
+    "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/service-publication/dispatch.txt",
+    "/private/tmp/go-testing-author-7r8p3riu/service-publication/README.md",
+    "/private/tmp/go-testing-author-7r8p3riu/service-publication/go.mod",
+    "/private/tmp/go-testing-author-7r8p3riu/service-publication/mirror.go",
+    "/private/tmp/go-testing-author-7r8p3riu/service-publication/mirror_test.go"
+  ],
+  "unavailable_guidance": "The two testing-writing skills were unavailable and were not inspected."
+}

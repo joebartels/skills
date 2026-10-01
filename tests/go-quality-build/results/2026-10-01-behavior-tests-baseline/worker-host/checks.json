@@ -1,0 +1,149 @@
+[
+  {
+    "name": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "exit_code": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.010181582998484373
+  },
+  {
+    "name": "format-tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-s",
+      "-w",
+      "host_test.go"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.007111249957233667
+  },
+  {
+    "name": "before-implementation",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit_code": 1,
+    "stdout": "=== RUN   TestRunImmediateThenFullIntervalAfterCompletion\n    host_test.go:102: timed out waiting for second sweep\n--- FAIL: TestRunImmediateThenFullIntervalAfterCompletion (2.08s)\n=== RUN   TestRunStartsImmediatelyWithLongInterval\n--- PASS: TestRunStartsImmediatelyWithLongInterval (0.00s)\n=== RUN   TestRunCancellationWaitsForCallbackCleanupBeforeRelease\n--- PASS: TestRunCancellationWaitsForCallbackCleanupBeforeRelease (0.03s)\n=== RUN   TestRunAlreadyCanceledSkipsSweepAndReleasesOnce\n    host_test.go:185: Run = <nil>, calls = 1, releases = 1; want nil, 0, 1\n--- FAIL: TestRunAlreadyCanceledSkipsSweepAndReleasesOnce (0.00s)\n=== RUN   TestRunCancellationBetweenCycles\n--- PASS: TestRunCancellationBetweenCycles (0.00s)\n=== RUN   TestRunFailureStopsAndJoinsReleaseError\n=== RUN   TestRunFailureStopsAndJoinsReleaseError/immediate\n    host_test.go:245: calls = 1, releases = 1, saw cleanup = true, saw cancellation = false; want 1, 1, true, true\n=== RUN   TestRunFailureStopsAndJoinsReleaseError/after_successful_cycles\n    host_test.go:238: Run = release failed; want both callback and release errors\n--- FAIL: TestRunFailureStopsAndJoinsReleaseError (0.00s)\n    --- FAIL: TestRunFailureStopsAndJoinsReleaseError/immediate (0.00s)\n    --- FAIL: TestRunFailureStopsAndJoinsReleaseError/after_successful_cycles (0.00s)\n=== RUN   TestRunCanceledCallbackResult\n=== RUN   TestRunCanceledCallbackResult/normal_cancellation\n=== RUN   TestRunCanceledCallbackResult/context_error\n=== RUN   TestRunCanceledCallbackResult/independent_error\n--- PASS: TestRunCanceledCallbackResult (0.00s)\n    --- PASS: TestRunCanceledCallbackResult/normal_cancellation (0.00s)\n    --- PASS: TestRunCanceledCallbackResult/context_error (0.00s)\n    --- PASS: TestRunCanceledCallbackResult/independent_error (0.00s)\n=== RUN   TestRunRejectsNonpositiveIntervalsWithoutCallbacks\n=== RUN   TestRunRejectsNonpositiveIntervalsWithoutCallbacks/0s\n    host_test.go:298: Run = callback must not run\n        release must not run, calls = 1, releases = 1; want rejection, 0, 0\n=== RUN   TestRunRejectsNonpositiveIntervalsWithoutCallbacks/-1ns\n    host_test.go:298: Run = callback must not run\n        release must not run, calls = 1, releases = 1; want rejection, 0, 0\n=== RUN   TestRunRejectsNonpositiveIntervalsWithoutCallbacks/-1h0m0s\n    host_test.go:298: Run = callback must not run\n        release must not run, calls = 1, releases = 1; want rejection, 0, 0\n--- FAIL: TestRunRejectsNonpositiveIntervalsWithoutCallbacks (0.00s)\n    --- FAIL: TestRunRejectsNonpositiveIntervalsWithoutCallbacks/0s (0.00s)\n    --- FAIL: TestRunRejectsNonpositiveIntervalsWithoutCallbacks/-1ns (0.00s)\n    --- FAIL: TestRunRejectsNonpositiveIntervalsWithoutCallbacks/-1h0m0s (0.00s)\n=== RUN   TestRunInstancesHaveIndependentLifetimes\n    host_test.go:345: timed out waiting for second host recurrence after first host joined\n--- FAIL: TestRunInstancesHaveIndependentLifetimes (2.00s)\nFAIL\nFAIL\texample.com/sweeper\t4.339s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 4.480069167097099
+  },
+  {
+    "name": "format-implementation",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-s",
+      "-w",
+      "host.go",
+      "worker.go",
+      "host_test.go"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.007332333014346659
+  },
+  {
+    "name": "race-lifecycle",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "=== RUN   TestRunImmediateThenFullIntervalAfterCompletion\n--- PASS: TestRunImmediateThenFullIntervalAfterCompletion (0.12s)\n=== RUN   TestRunStartsImmediatelyWithLongInterval\n--- PASS: TestRunStartsImmediatelyWithLongInterval (0.00s)\n=== RUN   TestRunCancellationWaitsForCallbackCleanupBeforeRelease\n--- PASS: TestRunCancellationWaitsForCallbackCleanupBeforeRelease (0.03s)\n=== RUN   TestRunAlreadyCanceledSkipsSweepAndReleasesOnce\n--- PASS: TestRunAlreadyCanceledSkipsSweepAndReleasesOnce (0.00s)\n=== RUN   TestRunCancellationBetweenCycles\n--- PASS: TestRunCancellationBetweenCycles (0.00s)\n=== RUN   TestRunFailureStopsAndJoinsReleaseError\n=== RUN   TestRunFailureStopsAndJoinsReleaseError/immediate\n=== RUN   TestRunFailureStopsAndJoinsReleaseError/after_successful_cycles\n--- PASS: TestRunFailureStopsAndJoinsReleaseError (0.00s)\n    --- PASS: TestRunFailureStopsAndJoinsReleaseError/immediate (0.00s)\n    --- PASS: TestRunFailureStopsAndJoinsReleaseError/after_successful_cycles (0.00s)\n=== RUN   TestRunCanceledCallbackResult\n=== RUN   TestRunCanceledCallbackResult/normal_cancellation\n=== RUN   TestRunCanceledCallbackResult/context_error\n=== RUN   TestRunCanceledCallbackResult/independent_error\n--- PASS: TestRunCanceledCallbackResult (0.00s)\n    --- PASS: TestRunCanceledCallbackResult/normal_cancellation (0.00s)\n    --- PASS: TestRunCanceledCallbackResult/context_error (0.00s)\n    --- PASS: TestRunCanceledCallbackResult/independent_error (0.00s)\n=== RUN   TestRunRejectsNonpositiveIntervalsWithoutCallbacks\n=== RUN   TestRunRejectsNonpositiveIntervalsWithoutCallbacks/0s\n=== RUN   TestRunRejectsNonpositiveIntervalsWithoutCallbacks/-1ns\n=== RUN   TestRunRejectsNonpositiveIntervalsWithoutCallbacks/-1h0m0s\n--- PASS: TestRunRejectsNonpositiveIntervalsWithoutCallbacks (0.00s)\n    --- PASS: TestRunRejectsNonpositiveIntervalsWithoutCallbacks/0s (0.00s)\n    --- PASS: TestRunRejectsNonpositiveIntervalsWithoutCallbacks/-1ns (0.00s)\n    --- PASS: TestRunRejectsNonpositiveIntervalsWithoutCallbacks/-1h0m0s (0.00s)\n=== RUN   TestRunInstancesHaveIndependentLifetimes\n--- PASS: TestRunInstancesHaveIndependentLifetimes (0.00s)\nPASS\nok  \texample.com/sweeper\t1.397s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.5727310829097405
+  },
+  {
+    "name": "repeated-lifecycle",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-count=20",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/sweeper\t4.400s\n",
+    "stderr": "",
+    "elapsed_seconds": 4.544830165919848
+  },
+  {
+    "name": "vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.09623329201713204
+  },
+  {
+    "name": "format-verification",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "host.go",
+      "worker.go",
+      "host_test.go"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.007010166998952627
+  },
+  {
+    "name": "staticcheck-availability",
+    "exit_code": null,
+    "status": "unavailable",
+    "reason": "staticcheck is not on PATH; tool installation is prohibited for this task"
+  }
+]

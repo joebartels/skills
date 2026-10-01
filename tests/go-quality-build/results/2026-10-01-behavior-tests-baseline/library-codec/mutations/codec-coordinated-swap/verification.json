@@ -1,0 +1,87 @@
+{
+  "semantic_id": "codec-coordinated-swap",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "9d70d83167678ce3e1ac57ec213606073bba1377d3ec59c3cf12cf6757f55395",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-vbcao2kd/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/keycodec\t0.574s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.78
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/library-codec/mutations/codec-coordinated-swap/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-vbcao2kd/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-vbcao2kd/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/keycodec\t0.224s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.394
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-vbcao2kd/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestEncode (0.00s)\n    --- FAIL: TestEncode/legacy (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"east\", Name:\"web\"}) = \"web/east\", <nil>; want \"east/web\", nil\n    --- FAIL: TestEncode/region_slash (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"us/west\", Name:\"web\"}) = \"web/us%2Fwest\", <nil>; want \"us%2Fwest/web\", nil\n    --- FAIL: TestEncode/name_slash (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"east\", Name:\"web/blue\"}) = \"web%2Fblue/east\", <nil>; want \"east/web%2Fblue\", nil\n    --- FAIL: TestEncode/region_space (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"us west\", Name:\"web\"}) = \"web/us%20west\", <nil>; want \"us%20west/web\", nil\n    --- FAIL: TestEncode/name_space (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"east\", Name:\"web blue\"}) = \"web%20blue/east\", <nil>; want \"east/web%20blue\", nil\n    --- FAIL: TestEncode/percent (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"100%\", Name:\"%2F\"}) = \"%252F/100%25\", <nil>; want \"100%25/%252F\", nil\n    --- FAIL: TestEncode/Unicode (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"\u65e5\u672c\", Name:\"caf\u00e9\"}) = \"caf%C3%A9/%E6%97%A5%E6%9C%AC\", <nil>; want \"%E6%97%A5%E6%9C%AC/caf%C3%A9\", nil\n    --- FAIL: TestEncode/path_plus (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"a+b\", Name:\"c+d\"}) = \"c+d/a+b\", <nil>; want \"a+b/c+d\", nil\n    --- FAIL: TestEncode/reserved (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"a?b\", Name:\"c#d\"}) = \"c%23d/a%3Fb\", <nil>; want \"a%3Fb/c%23d\", nil\n    --- FAIL: TestEncode/combined (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"us/west\", Name:\"web blue\"}) = \"web%20blue/us%2Fwest\", <nil>; want \"us%2Fwest/web%20blue\", nil\n--- FAIL: TestDecode (0.00s)\n    --- FAIL: TestDecode/legacy (0.00s)\n        codec_contract_test.go:68: Decode(\"east/web\") = keycodec.Key{Region:\"web\", Name:\"east\"}, <nil>; want keycodec.Key{Region:\"east\", Name:\"web\"}, nil\n    --- FAIL: TestDecode/region_slash (0.00s)\n        codec_contract_test.go:68: Decode(\"us%2Fwest/web\") = keycodec.Key{Region:\"web\", Name:\"us/west\"}, <nil>; want keycodec.Key{Region:\"us/west\", Name:\"web\"}, nil\n    --- FAIL: TestDecode/name_slash (0.00s)\n        codec_contract_test.go:68: Decode(\"east/web%2Fblue\") = keycodec.Key{Region:\"web/blue\", Name:\"east\"}, <nil>; want keycodec.Key{Region:\"east\", Name:\"web/blue\"}, nil\n    --- FAIL: TestDecode/spaces (0.00s)\n        codec_contract_test.go:68: Decode(\"%20west/web%20\") = keycodec.Key{Region:\"web \", Name:\" west\"}, <nil>; want keycodec.Key{Region:\" west\", Name:\"web \"}, nil\n    --- FAIL: TestDecode/percent (0.00s)\n        codec_contract_test.go:68: Decode(\"100%25/%252F\") = keycodec.Key{Region:\"%2F\", Name:\"100%\"}, <nil>; want keycodec.Key{Region:\"100%\", Name:\"%2F\"}, nil\n    --- FAIL: TestDecode/Unicode (0.00s)\n        codec_contract_test.go:68: Decode(\"%E6%97%A5%E6%9C%AC/caf%C3%A9\") = keycodec.Key{Region:\"caf\u00e9\", Name:\"\u65e5\u672c\"}, <nil>; want keycodec.Key{Region:\"\u65e5\u672c\", Name:\"caf\u00e9\"}, nil\n    --- FAIL: TestDecode/literal_plus (0.00s)\n        codec_contract_test.go:68: Decode(\"a+b/c+d\") = keycodec.Key{Region:\"c+d\", Name:\"a+b\"}, <nil>; want keycodec.Key{Region:\"a+b\", Name:\"c+d\"}, nil\n    --- FAIL: TestDecode/escaped_plus (0.00s)\n        codec_contract_test.go:68: Decode(\"a%2Bb/c%2Bd\") = keycodec.Key{Region:\"c+d\", Name:\"a+b\"}, <nil>; want keycodec.Key{Region:\"a+b\", Name:\"c+d\"}, nil\n    --- FAIL: TestDecode/lowercase_hex (0.00s)\n        codec_contract_test.go:68: Decode(\"us%2fwest/caf%c3%a9\") = keycodec.Key{Region:\"caf\u00e9\", Name:\"us/west\"}, <nil>; want keycodec.Key{Region:\"us/west\", Name:\"caf\u00e9\"}, nil\n    --- FAIL: TestDecode/escaped_unreserved (0.00s)\n        codec_contract_test.go:68: Decode(\"%65ast/%77eb\") = keycodec.Key{Region:\"web\", Name:\"east\"}, <nil>; want keycodec.Key{Region:\"east\", Name:\"web\"}, nil\n    --- FAIL: TestDecode/reserved (0.00s)\n        codec_contract_test.go:68: Decode(\"a%3Fb/c%23d\") = keycodec.Key{Region:\"c#d\", Name:\"a?b\"}, <nil>; want keycodec.Key{Region:\"a?b\", Name:\"c#d\"}, nil\n--- FAIL: Example (0.00s)\ngot:\nweb%20blue/us%2Fwest\nregion=\"us/west\" name=\"web blue\"\nwant:\nus%2Fwest/web%20blue\nregion=\"us/west\" name=\"web blue\"\nFAIL\nFAIL\texample.com/keycodec\t0.239s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.363
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "TestEncode and TestDecode compare independent fixed wire bytes/fields; Example checks fixed representation."
+}

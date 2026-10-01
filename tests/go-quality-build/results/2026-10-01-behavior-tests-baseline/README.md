@@ -1,0 +1,9 @@
+# Behavior-testing blind baseline
+
+Completed five fresh author trials and five anonymized independent Testing/Correctness reviews, with Architecture where applicable. No new testing-writing skill was available. [Comparison](comparison.md) records strong controls plus two confirmed test gaps; no uplift or promotion is claimed.
+
+[Manifest](manifest.json) records frozen commit/inputs, exact allowed skill snapshots, inherited settings and unavailable metadata, completed source hashes, all raw artifacts and scope limits. [Preparation](preparation.json) preserves passing old tests and expected missing-feature probe failures. Per-case directories contain exact launch/wrapper/task text, selection evidence, unedited author/reviewer reports and checks, original/candidate source, reconstructable patches and semantic mutation records. Controller probes and post-review diagnostics remain separate from candidate-test-only regression sensitivity checks. [Checksums](checksums.sha256) cover every archived file except the checksum index itself; the canonical record anchors that index's digest.
+
+Inputs/probes are frozen at 716e779. All five candidates reconstruct byte-for-byte, pass clean checks and applicable race/repeat tests, and pass the four withheld probes. Seven frozen semantic mutations are detected; one additional post-review worker error-dropping mutation survives. The CLI post-review partial-write diagnostic confirms actual accepted-prefix data loss. Raw evidence is preserved.
+
+Go1.26.5 darwin/arm64 was used, with GOTOOLCHAIN=local and temporary GOCACHE. Actual Go1.22 and Windows execution remain unverified. Live local HTTP listeners were blocked; in-process transport/recorder assertions do not establish network behavior. The collaboration harness does not expose inherited model IDs/reasoning settings; within-session settings are held constant, without claiming comparability to prior luna results. No global installation or publication occurred.

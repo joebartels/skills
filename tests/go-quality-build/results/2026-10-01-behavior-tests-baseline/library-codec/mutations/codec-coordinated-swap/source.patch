@@ -1,0 +1,18 @@
+--- a/key.go
++++ b/key.go
+@@ -21,7 +21,7 @@
+ 	if k.Region == "" || k.Name == "" {
+ 		return "", ErrInvalidKey
+ 	}
+-	return url.PathEscape(k.Region) + "/" + url.PathEscape(k.Name), nil
++	return url.PathEscape(k.Name) + "/" + url.PathEscape(k.Region), nil
+ }
+ 
+ // Decode splits a wire key into two segments, then URL path-unescapes each once.
+@@ -39,5 +39,5 @@
+ 	if err != nil {
+ 		return Key{}, ErrInvalidKey
+ 	}
+-	return Key{Region: region, Name: name}, nil
++	return Key{Region: name, Name: region}, nil
+ }

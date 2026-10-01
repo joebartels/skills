@@ -1,0 +1,87 @@
+{
+  "semantic_id": "host-no-join",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "885704d34ba68bb7f656cad7a0957cf41c13d0281af8a0d77bbbe508fa3fcbe7",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-neceq77v/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.453s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.626
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/worker-host/mutations/host-no-join/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-neceq77v/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-neceq77v/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.190s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.337
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-neceq77v/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRunCancellationWaitsForCallbackCleanupBeforeRelease (0.00s)\n    host_test.go:162: release ran while callback cleanup was blocked\n--- FAIL: TestRunCanceledCallbackResult (0.00s)\n    --- FAIL: TestRunCanceledCallbackResult/context_error (0.00s)\n        host_test.go:276: Run = release failed; want callback result context canceled joined with release error\n    --- FAIL: TestRunCanceledCallbackResult/independent_error (0.00s)\n        host_test.go:276: Run = release failed; want callback result independent callback failure joined with release error\nFAIL\nFAIL\texample.com/sweeper\t0.237s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.35
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "TestRunCancellationWaitsForCallbackCleanupBeforeRelease detects resource release while cleanup is blocked, plus lost callback errors."
+}

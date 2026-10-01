@@ -1,0 +1,87 @@
+{
+  "semantic_id": "cli-discard-prefix",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "72e80e18689b452766af5f5a88371645a57588cc8045aa4e11a7099d00e6a983",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-09u8bjp1/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.732s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.925
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/cli-partial-failure/mutations/cli-discard-prefix/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-09u8bjp1/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-09u8bjp1/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.225s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.374
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-09u8bjp1/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRunStopsAtInvalidRow (0.01s)\n    --- FAIL: TestRunStopsAtInvalidRow/missing_field (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/extra_field (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/zero (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/negative (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/empty_quantity (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/nondecimal (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/fraction (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/exponent (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/whitespace (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/overflow (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/unclosed_quote (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/bare_quote (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n--- FAIL: TestRunWritesBeforeReadingNextRow (0.00s)\n    io.go:722: records = map[], want map[web:7\n        ]\n--- FAIL: TestRunInputFailureRetainsPrefix (0.00s)\n    io.go:722: records = map[], want map[web:7\n        ]\n--- FAIL: TestRunStopsReadingAfterInvalidRow (0.00s)\n    io.go:722: records = map[], want map[web:7\n        ]\n--- FAIL: TestCLI (0.25s)\n    --- FAIL: TestCLI/invalid_prefix (0.00s)\n        main_test.go:342: records = map[], want map[web:7\n            ]\n    --- FAIL: TestCLI/malformed_CSV (0.00s)\n        main_test.go:342: records = map[], want map[web:7\n            ]\nFAIL\nFAIL\texample.com/ledgerload\t0.489s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.598
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "TestRunStopsAtInvalidRow and TestCLI compare retained accepted-prefix file bytes; empty records differ from promised prefix."
+}

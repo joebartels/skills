@@ -1,0 +1,87 @@
+{
+  "semantic_id": "worker-start-relative",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "5228d378b778721894ad8888b6a483089cc143a599422f8602950b161fa3e1b9",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-_a8chrka/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.336s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.511
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/worker-host/mutations/worker-start-relative/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-_a8chrka/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.018
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-_a8chrka/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.163s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.32
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-_a8chrka/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRunImmediateThenFullIntervalAfterCompletion (0.08s)\n    host_test.go:104: next sweep started after 750ns; want at least 40ms after completion\nFAIL\nFAIL\texample.com/sweeper\t0.241s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.354
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "TestRunImmediateThenFullIntervalAfterCompletion measures from callback completion; mutant starts next cycle after 750ns instead of full 40ms."
+}

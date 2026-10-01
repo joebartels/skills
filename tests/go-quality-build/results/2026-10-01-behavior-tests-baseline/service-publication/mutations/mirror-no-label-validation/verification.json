@@ -1,0 +1,87 @@
+{
+  "semantic_id": "mirror-no-label-validation",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "b11e583467be497273313af968d6c51d3758aafefaa6b8843f4904e8b5954ba0",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-k2mc1py4/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.254s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.537
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/service-publication/mutations/mirror-no-label-validation/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-k2mc1py4/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-k2mc1py4/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.163s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.414
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-k2mc1py4/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody (0.01s)\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/blank_label (0.00s)\n        refresh_test.go:114: Refresh unexpectedly succeeded\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/missing_label (0.00s)\n        refresh_test.go:114: Refresh unexpectedly succeeded\nFAIL\nFAIL\texample.com/mirror\t0.149s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.337
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "TestRefreshFailuresPreserveSnapshotAndCloseBody independently rejects blank/missing Label."
+}

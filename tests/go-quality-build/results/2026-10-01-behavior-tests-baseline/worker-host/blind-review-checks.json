@@ -1,0 +1,288 @@
+[
+  {
+    "label": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-esbfdpfe",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.009811249910853803
+  },
+  {
+    "label": "platform",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "CGO_ENABLED"
+    ],
+    "cwd": "/private/tmp/go-independent-review-esbfdpfe",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off"
+    },
+    "stdout": "darwin\narm64\n1\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.010555415996350348
+  },
+  {
+    "label": "supplied-diff",
+    "command": [
+      "rtk",
+      "proxy",
+      "diff",
+      "-ru",
+      "/private/tmp/go-independent-review-esbfdpfe/original",
+      "/private/tmp/go-independent-review-esbfdpfe/candidate"
+    ],
+    "cwd": "/private/tmp/go-independent-review-esbfdpfe",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off"
+    },
+    "stdout": "diff -ru /private/tmp/go-independent-review-esbfdpfe/original/README.md /private/tmp/go-independent-review-esbfdpfe/candidate/README.md\n--- /private/tmp/go-independent-review-esbfdpfe/original/README.md\t2026-10-01 17:38:18\n+++ /private/tmp/go-independent-review-esbfdpfe/candidate/README.md\t2026-10-01 17:55:53\n@@ -14,3 +14,9 @@\n before starting work and does not acquire/release resources. The callback\n may block until its context is canceled, then finish its cleanup. Preserve\n Run's public signature, Go 1.22, and standard-library dependencies.\n+\n+A callback's returned error takes precedence over simultaneous cancellation:\n+even `context.Canceled` returned by the callback remains inspectable in Run's\n+result. Cancellation itself contributes no error when the callback returns nil.\n+Callbacks must observe their context and eventually complete cleanup; Run waits\n+for them rather than releasing a resource they may still be using.\ndiff -ru /private/tmp/go-independent-review-esbfdpfe/original/host.go /private/tmp/go-independent-review-esbfdpfe/candidate/host.go\n--- /private/tmp/go-independent-review-esbfdpfe/original/host.go\t2026-10-01 17:38:18\n+++ /private/tmp/go-independent-review-esbfdpfe/candidate/host.go\t2026-10-01 17:55:53\n@@ -6,6 +6,33 @@\n \t\"time\"\n )\n \n+// Run owns a periodic sweep until ctx is canceled or sweep returns an error.\n+// The first sweep is immediate, and each later sweep waits interval after the\n+// previous callback completes. Callbacks never overlap.\n+//\n+// Cancellation stops future sweeps and waits for an active callback to finish.\n+// A callback error is preserved even if ctx was canceled during that callback.\n+// Run cancels and joins the worker before calling release exactly once, and\n+// joins its error with the callback error. A nonpositive interval is rejected\n+// without invoking either callback.\n func Run(ctx context.Context, interval time.Duration, sweep func(context.Context) error, release func() error) error {\n-\treturn errors.Join(once(ctx, sweep), release())\n+\tif interval <= 0 {\n+\t\treturn errors.New(\"sweeper: interval must be positive\")\n+\t}\n+\n+\tworkerCtx, cancel := context.WithCancel(ctx)\n+\tdone := make(chan error, 1)\n+\tgo func() {\n+\t\tdone <- work(workerCtx, interval, sweep)\n+\t}()\n+\n+\tvar workerErr error\n+\tselect {\n+\tcase workerErr = <-done:\n+\t\tcancel()\n+\tcase <-ctx.Done():\n+\t\tcancel()\n+\t\tworkerErr = <-done\n+\t}\n+\treturn errors.Join(workerErr, release())\n }\ndiff -ru /private/tmp/go-independent-review-esbfdpfe/original/host_test.go /private/tmp/go-independent-review-esbfdpfe/candidate/host_test.go\n--- /private/tmp/go-independent-review-esbfdpfe/original/host_test.go\t2026-10-01 17:38:18\n+++ /private/tmp/go-independent-review-esbfdpfe/candidate/host_test.go\t2026-10-01 17:55:19\n@@ -1,22 +1,349 @@\n-package sweeper\n+package sweeper_test\n \n import (\n \t\"context\"\n \t\"errors\"\n+\t\"sync\"\n+\t\"sync/atomic\"\n \t\"testing\"\n \t\"time\"\n+\n+\t\"example.com/sweeper\"\n )\n \n-func TestSweepFailureReleases(t *testing.T) {\n-\twant := errors.New(\"sweep failed\")\n-\treleased := false\n-\terr := Run(context.Background(), time.Second, func(context.Context) error {\n-\t\treturn want\n+// Check the public function type as well as ordinary calls.\n+var _ func(context.Context, time.Duration, func(context.Context) error, func() error) error = sweeper.Run\n+\n+const waitLimit = 2 * time.Second\n+\n+type runningHost struct {\n+\tdone chan struct{}\n+\terr  error\n+}\n+\n+func startHost(t *testing.T, ctx context.Context, cancel context.CancelFunc, interval time.Duration, sweep func(context.Context) error, release func() error) *runningHost {\n+\tt.Helper()\n+\thost := &runningHost{done: make(chan struct{})}\n+\tgo func() {\n+\t\thost.err = sweeper.Run(ctx, interval, sweep, release)\n+\t\tclose(host.done)\n+\t}()\n+\tt.Cleanup(func() {\n+\t\tcancel()\n+\t\tselect {\n+\t\tcase <-host.done:\n+\t\tcase <-time.After(waitLimit):\n+\t\t\tt.Error(\"host did not finish during test cleanup\")\n+\t\t}\n+\t})\n+\treturn host\n+}\n+\n+func waitFor[T any](t *testing.T, description string, ch <-chan T) T {\n+\tt.Helper()\n+\tselect {\n+\tcase value := <-ch:\n+\t\treturn value\n+\tcase <-time.After(waitLimit):\n+\t\tt.Fatalf(\"timed out waiting for %s\", description)\n+\t\tvar zero T\n+\t\treturn zero\n+\t}\n+}\n+\n+func waitResult(t *testing.T, host *runningHost) error {\n+\tt.Helper()\n+\twaitFor(t, \"Run to return\", host.done)\n+\treturn host.err\n+}\n+\n+func TestRunImmediateThenFullIntervalAfterCompletion(t *testing.T) {\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tconst interval = 40 * time.Millisecond\n+\tstarts := make(chan time.Time, 8)\n+\tfirstCompleted := make(chan time.Time, 1)\n+\tfinishFirst := make(chan struct{})\n+\tvar calls, active, releases atomic.Int32\n+\tvar overlap atomic.Bool\n+\thost := startHost(t, ctx, cancel, interval, func(ctx context.Context) error {\n+\t\tif active.Add(1) != 1 {\n+\t\t\toverlap.Store(true)\n+\t\t}\n+\t\tdefer active.Add(-1)\n+\t\tcall := calls.Add(1)\n+\t\tselect {\n+\t\tcase starts <- time.Now():\n+\t\tcase <-ctx.Done():\n+\t\t\treturn nil\n+\t\t}\n+\t\tif call == 1 {\n+\t\t\tselect {\n+\t\t\tcase <-finishFirst:\n+\t\t\t\tfirstCompleted <- time.Now()\n+\t\t\tcase <-ctx.Done():\n+\t\t\t}\n+\t\t\treturn nil\n+\t\t}\n+\t\tcancel()\n+\t\treturn nil\n+\t}, func() error { releases.Add(1); return nil })\n+\n+\twaitFor(t, \"immediate first sweep\", starts)\n+\t// Hold the callback past the interval to expose accumulated ticker ticks.\n+\tselect {\n+\tcase <-starts:\n+\t\tt.Fatal(\"another sweep started while the first callback was blocked\")\n+\tcase <-host.done:\n+\t\tt.Fatalf(\"Run returned while the first callback was blocked: %v\", host.err)\n+\tcase <-time.After(2 * interval):\n+\t}\n+\tclose(finishFirst)\n+\tcompleted := waitFor(t, \"first callback completion\", firstCompleted)\n+\tsecondStarted := waitFor(t, \"second sweep\", starts)\n+\tif elapsed := secondStarted.Sub(completed); elapsed < interval {\n+\t\tt.Errorf(\"next sweep started after %s; want at least %s after completion\", elapsed, interval)\n+\t}\n+\tif err := waitResult(t, host); err != nil {\n+\t\tt.Fatalf(\"Run = %v; want nil after cancellation\", err)\n+\t}\n+\tif overlap.Load() || calls.Load() != 2 || releases.Load() != 1 {\n+\t\tt.Fatalf(\"overlap = %v, calls = %d, releases = %d; want false, 2, 1\", overlap.Load(), calls.Load(), releases.Load())\n+\t}\n+}\n+\n+func TestRunStartsImmediatelyWithLongInterval(t *testing.T) {\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tstarted := make(chan struct{}, 1)\n+\thost := startHost(t, ctx, cancel, time.Hour, func(ctx context.Context) error {\n+\t\tstarted <- struct{}{}\n+\t\t<-ctx.Done()\n+\t\treturn nil\n+\t}, func() error { return nil })\n+\twaitFor(t, \"first sweep without waiting an hour\", started)\n+\tcancel()\n+\tif err := waitResult(t, host); err != nil {\n+\t\tt.Fatalf(\"Run = %v; want nil\", err)\n+\t}\n+}\n+\n+func TestRunCancellationWaitsForCallbackCleanupBeforeRelease(t *testing.T) {\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tstarted := make(chan struct{}, 1)\n+\tcleaning := make(chan struct{})\n+\tfinishCleanup := make(chan struct{})\n+\treleased := make(chan struct{}, 1)\n+\tvar cleaned, releaseSawCleanup, releaseSawCancellation atomic.Bool\n+\tvar releases atomic.Int32\n+\tvar child context.Context\n+\thost := startHost(t, ctx, cancel, time.Hour, func(ctx context.Context) error {\n+\t\tchild = ctx\n+\t\tstarted <- struct{}{}\n+\t\t<-ctx.Done()\n+\t\tclose(cleaning)\n+\t\t<-finishCleanup\n+\t\tcleaned.Store(true)\n+\t\treturn nil\n \t}, func() error {\n-\t\treleased = true\n+\t\treleases.Add(1)\n+\t\treleaseSawCleanup.Store(cleaned.Load())\n+\t\treleaseSawCancellation.Store(child != nil && child.Err() != nil)\n+\t\treleased <- struct{}{}\n \t\treturn nil\n \t})\n-\tif !errors.Is(err, want) || !released {\n-\t\tt.Fatalf(\"Run = %v, released = %v\", err, released)\n+\tvar finishOnce sync.Once\n+\tfinish := func() { finishOnce.Do(func() { close(finishCleanup) }) }\n+\t// Open the cleanup gate before startHost's cancel-and-join cleanup on failure.\n+\tt.Cleanup(finish)\n+\twaitFor(t, \"first sweep\", started)\n+\tcancel()\n+\twaitFor(t, \"callback entering cancellation cleanup\", cleaning)\n+\tselect {\n+\tcase <-released:\n+\t\tt.Fatal(\"release ran while callback cleanup was blocked\")\n+\tcase <-host.done:\n+\t\tt.Fatalf(\"Run returned while callback cleanup was blocked: %v\", host.err)\n+\tcase <-time.After(30 * time.Millisecond):\n+\t}\n+\tfinish()\n+\tif err := waitResult(t, host); err != nil {\n+\t\tt.Fatalf(\"Run = %v; want nil\", err)\n+\t}\n+\tif releases.Load() != 1 || !releaseSawCleanup.Load() || !releaseSawCancellation.Load() {\n+\t\tt.Fatalf(\"releases = %d, saw cleanup = %v, saw cancellation = %v; want 1, true, true\", releases.Load(), releaseSawCleanup.Load(), releaseSawCancellation.Load())\n+\t}\n+}\n+\n+func TestRunAlreadyCanceledSkipsSweepAndReleasesOnce(t *testing.T) {\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tcancel()\n+\tvar calls, releases atomic.Int32\n+\thost := startHost(t, ctx, cancel, time.Second, func(context.Context) error {\n+\t\tcalls.Add(1)\n+\t\treturn nil\n+\t}, func() error { releases.Add(1); return nil })\n+\tif err := waitResult(t, host); err != nil || calls.Load() != 0 || releases.Load() != 1 {\n+\t\tt.Fatalf(\"Run = %v, calls = %d, releases = %d; want nil, 0, 1\", err, calls.Load(), releases.Load())\n+\t}\n+}\n+\n+func TestRunCancellationBetweenCycles(t *testing.T) {\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tcompleted := make(chan struct{}, 1)\n+\tvar calls, releases atomic.Int32\n+\thost := startHost(t, ctx, cancel, time.Hour, func(context.Context) error {\n+\t\tcalls.Add(1)\n+\t\tcompleted <- struct{}{}\n+\t\treturn nil\n+\t}, func() error { releases.Add(1); return nil })\n+\twaitFor(t, \"successful callback\", completed)\n+\tcancel()\n+\tif err := waitResult(t, host); err != nil || calls.Load() != 1 || releases.Load() != 1 {\n+\t\tt.Fatalf(\"Run = %v, calls = %d, releases = %d; want nil, 1, 1\", err, calls.Load(), releases.Load())\n+\t}\n+}\n+\n+type callbackError struct{}\n+\n+func (*callbackError) Error() string { return \"callback failed\" }\n+\n+func TestRunFailureStopsAndJoinsReleaseError(t *testing.T) {\n+\tfor _, tc := range []struct {\n+\t\tname   string\n+\t\tfailAt int32\n+\t}{\n+\t\t{\"immediate\", 1}, {\"after_successful_cycles\", 3},\n+\t} {\n+\t\tt.Run(tc.name, func(t *testing.T) {\n+\t\t\tctx, cancel := context.WithCancel(context.Background())\n+\t\t\twantSweep := &callbackError{}\n+\t\t\twantRelease := errors.New(\"release failed\")\n+\t\t\tvar calls, releases atomic.Int32\n+\t\t\tvar cleaned, releaseSawCleanup, releaseSawCancellation atomic.Bool\n+\t\t\tvar child context.Context\n+\t\t\thost := startHost(t, ctx, cancel, time.Millisecond, func(ctx context.Context) error {\n+\t\t\t\tchild = ctx\n+\t\t\t\tif calls.Add(1) == tc.failAt {\n+\t\t\t\t\tdefer cleaned.Store(true)\n+\t\t\t\t\treturn wantSweep\n+\t\t\t\t}\n+\t\t\t\treturn nil\n+\t\t\t}, func() error {\n+\t\t\t\treleases.Add(1)\n+\t\t\t\treleaseSawCleanup.Store(cleaned.Load())\n+\t\t\t\treleaseSawCancellation.Store(child != nil && child.Err() != nil)\n+\t\t\t\treturn wantRelease\n+\t\t\t})\n+\t\t\terr := waitResult(t, host)\n+\t\t\tif !errors.Is(err, wantSweep) || !errors.Is(err, wantRelease) {\n+\t\t\t\tt.Fatalf(\"Run = %v; want both callback and release errors\", err)\n+\t\t\t}\n+\t\t\tvar gotSweep *callbackError\n+\t\t\tif !errors.As(err, &gotSweep) || gotSweep != wantSweep {\n+\t\t\t\tt.Fatalf(\"callback error type/identity not preserved: %v\", err)\n+\t\t\t}\n+\t\t\tif calls.Load() != tc.failAt || releases.Load() != 1 || !releaseSawCleanup.Load() || !releaseSawCancellation.Load() {\n+\t\t\t\tt.Fatalf(\"calls = %d, releases = %d, saw cleanup = %v, saw cancellation = %v; want %d, 1, true, true\", calls.Load(), releases.Load(), releaseSawCleanup.Load(), releaseSawCancellation.Load(), tc.failAt)\n+\t\t\t}\n+\t\t})\n+\t}\n+}\n+\n+func TestRunCanceledCallbackResult(t *testing.T) {\n+\tindependent := errors.New(\"independent callback failure\")\n+\tfor _, tc := range []struct {\n+\t\tname string\n+\t\terr  error\n+\t}{\n+\t\t{name: \"normal_cancellation\"},\n+\t\t{name: \"context_error\", err: context.Canceled},\n+\t\t{name: \"independent_error\", err: independent},\n+\t} {\n+\t\tt.Run(tc.name, func(t *testing.T) {\n+\t\t\tctx, cancel := context.WithCancel(context.Background())\n+\t\t\tstarted := make(chan struct{}, 1)\n+\t\t\twantRelease := errors.New(\"release failed\")\n+\t\t\tvar calls, releases atomic.Int32\n+\t\t\thost := startHost(t, ctx, cancel, time.Hour, func(ctx context.Context) error {\n+\t\t\t\tcalls.Add(1)\n+\t\t\t\tstarted <- struct{}{}\n+\t\t\t\t<-ctx.Done()\n+\t\t\t\treturn tc.err\n+\t\t\t}, func() error { releases.Add(1); return wantRelease })\n+\t\t\twaitFor(t, \"callback start\", started)\n+\t\t\tcancel()\n+\t\t\terr := waitResult(t, host)\n+\t\t\tif !errors.Is(err, wantRelease) || (tc.err != nil && !errors.Is(err, tc.err)) {\n+\t\t\t\tt.Fatalf(\"Run = %v; want callback result %v joined with release error\", err, tc.err)\n+\t\t\t}\n+\t\t\tif tc.err == nil && errors.Is(err, context.Canceled) {\n+\t\t\t\tt.Fatalf(\"normal cancellation contributed an error: %v\", err)\n+\t\t\t}\n+\t\t\tif calls.Load() != 1 || releases.Load() != 1 {\n+\t\t\t\tt.Fatalf(\"calls = %d, releases = %d; want 1, 1\", calls.Load(), releases.Load())\n+\t\t\t}\n+\t\t})\n+\t}\n+}\n+\n+func TestRunRejectsNonpositiveIntervalsWithoutCallbacks(t *testing.T) {\n+\tfor _, interval := range []time.Duration{0, -time.Nanosecond, -time.Hour} {\n+\t\tt.Run(interval.String(), func(t *testing.T) {\n+\t\t\tctx, cancel := context.WithCancel(context.Background())\n+\t\t\tvar calls, releases atomic.Int32\n+\t\t\thost := startHost(t, ctx, cancel, interval, func(context.Context) error {\n+\t\t\t\tcalls.Add(1)\n+\t\t\t\treturn errors.New(\"callback must not run\")\n+\t\t\t}, func() error { releases.Add(1); return errors.New(\"release must not run\") })\n+\t\t\tif err := waitResult(t, host); err == nil || calls.Load() != 0 || releases.Load() != 0 {\n+\t\t\t\tt.Fatalf(\"Run = %v, calls = %d, releases = %d; want rejection, 0, 0\", err, calls.Load(), releases.Load())\n+\t\t\t}\n+\t\t})\n+\t}\n+}\n+\n+func TestRunInstancesHaveIndependentLifetimes(t *testing.T) {\n+\tctxA, cancelA := context.WithCancel(context.Background())\n+\tctxB, cancelB := context.WithCancel(context.Background())\n+\tstartedA := make(chan struct{}, 1)\n+\tstartsB := make(chan struct{}, 4)\n+\tfinishFirstB := make(chan struct{})\n+\tvar callsB, releasesA, releasesB atomic.Int32\n+\thostA := startHost(t, ctxA, cancelA, time.Hour, func(ctx context.Context) error {\n+\t\tstartedA <- struct{}{}\n+\t\t<-ctx.Done()\n+\t\treturn nil\n+\t}, func() error { releasesA.Add(1); return nil })\n+\thostB := startHost(t, ctxB, cancelB, time.Millisecond, func(ctx context.Context) error {\n+\t\tcall := callsB.Add(1)\n+\t\tselect {\n+\t\tcase startsB <- struct{}{}:\n+\t\tcase <-ctx.Done():\n+\t\t\treturn nil\n+\t\t}\n+\t\tif call == 1 {\n+\t\t\tselect {\n+\t\t\tcase <-finishFirstB:\n+\t\t\tcase <-ctx.Done():\n+\t\t\t}\n+\t\t\treturn nil\n+\t\t}\n+\t\tcancelB()\n+\t\treturn nil\n+\t}, func() error { releasesB.Add(1); return nil })\n+\twaitFor(t, \"first host start\", startedA)\n+\twaitFor(t, \"second host start\", startsB)\n+\tcancelA()\n+\tif err := waitResult(t, hostA); err != nil {\n+\t\tt.Fatalf(\"first Run = %v; want nil\", err)\n+\t}\n+\tselect {\n+\tcase <-hostB.done:\n+\t\tt.Fatalf(\"second host stopped when first host stopped: %v\", hostB.err)\n+\tdefault:\n+\t}\n+\tclose(finishFirstB)\n+\twaitFor(t, \"second host recurrence after first host joined\", startsB)\n+\tif err := waitResult(t, hostB); err != nil || callsB.Load() != 2 || releasesA.Load() != 1 || releasesB.Load() != 1 {\n+\t\tt.Fatalf(\"second Run = %v, calls = %d, releases = %d/%d; want nil, 2, 1/1\", err, callsB.Load(), releasesA.Load(), releasesB.Load())\n \t}\n }\ndiff -ru /private/tmp/go-independent-review-esbfdpfe/original/worker.go /private/tmp/go-independent-review-esbfdpfe/candidate/worker.go\n--- /private/tmp/go-independent-review-esbfdpfe/original/worker.go\t2026-10-01 17:38:18\n+++ /private/tmp/go-independent-review-esbfdpfe/candidate/worker.go\t2026-10-01 17:55:53\n@@ -1,7 +1,25 @@\n package sweeper\n \n-import \"context\"\n+import (\n+\t\"context\"\n+\t\"time\"\n+)\n \n-func once(ctx context.Context, sweep func(context.Context) error) error {\n-\treturn sweep(ctx)\n+func work(ctx context.Context, interval time.Duration, sweep func(context.Context) error) error {\n+\tfor {\n+\t\tif ctx.Err() != nil {\n+\t\t\treturn nil\n+\t\t}\n+\t\tif err := sweep(ctx); err != nil {\n+\t\t\treturn err\n+\t\t}\n+\n+\t\ttimer := time.NewTimer(interval)\n+\t\tselect {\n+\t\tcase <-ctx.Done():\n+\t\t\ttimer.Stop()\n+\t\t\treturn nil\n+\t\tcase <-timer.C:\n+\t\t}\n+\t}\n }\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.0068442909978330135
+  },
+  {
+    "label": "baseline-tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-esbfdpfe/verification-baseline",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.384s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.5326099999947473
+  },
+  {
+    "label": "race-shuffled-repetition",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=20",
+      "-shuffle=on",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-esbfdpfe/verification-baseline",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off"
+    },
+    "stdout": "ok  \texample.com/sweeper\t4.476s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 4.666000499972142
+  },
+  {
+    "label": "lost-sweep-error-after-successful-release",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=8s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-esbfdpfe/mutation-lost-sweep-error-after-successful-release",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.341s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.5038055420154706
+  },
+  {
+    "label": "release-before-callback-cleanup",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=8s",
+      "-run",
+      "^TestRunCancellationWaitsForCallbackCleanupBeforeRelease$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-esbfdpfe/mutation-release-before-callback-cleanup",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off"
+    },
+    "stdout": "--- FAIL: TestRunCancellationWaitsForCallbackCleanupBeforeRelease (0.00s)\n    host_test.go:162: release ran while callback cleanup was blocked\nFAIL\nFAIL\texample.com/sweeper\t0.176s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.33575437497347593
+  },
+  {
+    "label": "drop-error-on-cancellation",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=8s",
+      "-run",
+      "^TestRunCanceledCallbackResult$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-esbfdpfe/mutation-drop-error-on-cancellation",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off"
+    },
+    "stdout": "--- FAIL: TestRunCanceledCallbackResult (0.00s)\n    --- FAIL: TestRunCanceledCallbackResult/context_error (0.00s)\n        host_test.go:276: Run = release failed; want callback result context canceled joined with release error\n    --- FAIL: TestRunCanceledCallbackResult/independent_error (0.00s)\n        host_test.go:276: Run = release failed; want callback result independent callback failure joined with release error\nFAIL\nFAIL\texample.com/sweeper\t0.169s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.3209195421077311
+  },
+  {
+    "label": "ticker-started-before-callback",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=8s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-esbfdpfe/mutation-ticker-started-before-callback",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.322s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.48175233404617757
+  },
+  {
+    "label": "ticker-spacing-final-mutation",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=8s",
+      "-run",
+      "^TestRunImmediateThenFullIntervalAfterCompletion$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-esbfdpfe/mutation-ticker-started-before-callback",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off"
+    },
+    "stdout": "--- FAIL: TestRunImmediateThenFullIntervalAfterCompletion (0.08s)\n    host_test.go:104: next sweep started after 1.667\u00b5s; want at least 40ms after completion\nFAIL\nFAIL\texample.com/sweeper\t0.259s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.4209007089957595
+  },
+  {
+    "label": "single-error-baseline",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=8s",
+      "-run",
+      "^TestReviewSweepErrorWithSuccessfulRelease$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-esbfdpfe/verification-baseline",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off"
+    },
+    "added_test": "package sweeper_test\n\nimport (\n    \"context\"\n    \"errors\"\n    \"testing\"\n    \"time\"\n    \"example.com/sweeper\"\n)\n\nfunc TestReviewSweepErrorWithSuccessfulRelease(t *testing.T) {\n    want := errors.New(\"callback failed\")\n    releases := 0\n    err := sweeper.Run(context.Background(), time.Hour,\n        func(context.Context) error { return want },\n        func() error { releases++; return nil })\n    if !errors.Is(err, want) || releases != 1 {\n        t.Fatalf(\"Run = %v, releases = %d; want callback error, 1\", err, releases)\n    }\n}\n",
+    "stdout": "ok  \texample.com/sweeper\t0.231s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.3702293330570683
+  },
+  {
+    "label": "single-error-surviving-mutant",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=8s",
+      "-run",
+      "^TestReviewSweepErrorWithSuccessfulRelease$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-esbfdpfe/mutation-lost-sweep-error-after-successful-release",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off"
+    },
+    "added_test": "package sweeper_test\n\nimport (\n    \"context\"\n    \"errors\"\n    \"testing\"\n    \"time\"\n    \"example.com/sweeper\"\n)\n\nfunc TestReviewSweepErrorWithSuccessfulRelease(t *testing.T) {\n    want := errors.New(\"callback failed\")\n    releases := 0\n    err := sweeper.Run(context.Background(), time.Hour,\n        func(context.Context) error { return want },\n        func() error { releases++; return nil })\n    if !errors.Is(err, want) || releases != 1 {\n        t.Fatalf(\"Run = %v, releases = %d; want callback error, 1\", err, releases)\n    }\n}\n",
+    "stdout": "--- FAIL: TestReviewSweepErrorWithSuccessfulRelease (0.00s)\n    review_probe_test.go:18: Run = <nil>, releases = 1; want callback error, 1\nFAIL\nFAIL\texample.com/sweeper\t0.170s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.3216893339995295
+  }
+]

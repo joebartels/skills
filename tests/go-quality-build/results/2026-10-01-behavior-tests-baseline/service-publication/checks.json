@@ -1,0 +1,165 @@
+[
+  {
+    "stage": "regression tests before implementation",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-author-7r8p3riu/service-publication",
+    "process_deadline_seconds": 30,
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestRefreshPublishesRemoteSnapshot (0.00s)\n    --- FAIL: TestRefreshPublishesRemoteSnapshot/values_and_order_preserved (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 9 [running]:\ntesting.tRunner.func1.2({0x1047f3400, 0x28dcdbdd0660})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1047f3400?, 0x28dcdbdd0660?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x10487abc0, 0x28dcdbdbac40})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/mirror_test.TestRefreshPublishesRemoteSnapshot.func1(0x28dcdbf0c908)\n\t/private/tmp/go-testing-author-7r8p3riu/service-publication/refresh_test.go:38 +0xc4\ntesting.tRunner(0x28dcdbf0c908, 0x28dcdbdbac00)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 8\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/mirror\t0.206s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "stage": "regression tests before implementation using in-process HTTP",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-author-7r8p3riu/service-publication",
+    "process_deadline_seconds": 30,
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestRefreshPublishesRemoteSnapshot (0.00s)\n    --- FAIL: TestRefreshPublishesRemoteSnapshot/values_and_order_preserved (0.00s)\n        refresh_test.go:53: Refresh: remote refresh not implemented\n    --- FAIL: TestRefreshPublishesRemoteSnapshot/empty_array (0.00s)\n        refresh_test.go:53: Refresh: remote refresh not implemented\n--- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody (0.01s)\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/created_status (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/no_content_status (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/not_found_status (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/server_error_status (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/empty_response (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/malformed_JSON (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/wrong_item_field_type (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/null_document (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/object_document (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/null_item (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/blank_code (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/blank_label (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/missing_code (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/missing_label (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/later_invalid_item (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/second_array (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/trailing_scalar (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/trailing_malformed_JSON (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/initial_read_failure (0.00s)\n        refresh_test.go:117: Refresh error = remote refresh not implemented, want cause response read failed\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/read_failure_after_array (0.00s)\n        refresh_test.go:117: Refresh error = remote refresh not implemented, want cause response read failed\n--- FAIL: TestRefreshClosesSuccessfulResponseBody (0.00s)\n    refresh_test.go:134: remote refresh not implemented\n--- FAIL: TestRefreshTransportFailurePreservesSnapshot (0.00s)\n    refresh_test.go:153: Refresh error = remote refresh not implemented, want cause transport unavailable\n--- FAIL: TestRefreshPropagatesContextCancellation (0.00s)\n    refresh_test.go:189: Refresh error = remote refresh not implemented, want context.Canceled\n--- FAIL: TestRefreshReplacesSnapshotForOpenReaders (0.00s)\n    refresh_test.go:213: remote refresh not implemented\n--- FAIL: TestRefreshPublicationFailureCleansTemporaryFile (0.00s)\n    refresh_test.go:252: response body close count = 0, want 1\n--- FAIL: TestRefreshMissingParentReturnsError (0.00s)\n    refresh_test.go:270: response body close count = 0, want 1\nFAIL\nFAIL\texample.com/mirror\t0.196s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "stage": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-testing-author-7r8p3riu/service-publication",
+    "process_deadline_seconds": 10,
+    "exit_code": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": ""
+  },
+  {
+    "stage": "format source and tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "mirror.go",
+      "mirror_test.go",
+      "refresh_test.go"
+    ],
+    "cwd": "/private/tmp/go-testing-author-7r8p3riu/service-publication",
+    "process_deadline_seconds": 10,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "stage": "static analysis",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-author-7r8p3riu/service-publication",
+    "process_deadline_seconds": 30,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "stage": "regressions with race detector",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-author-7r8p3riu/service-publication",
+    "process_deadline_seconds": 55,
+    "exit_code": 0,
+    "stdout": "=== RUN   TestLocalWrite\n--- PASS: TestLocalWrite (0.00s)\n=== RUN   TestRefreshPublishesRemoteSnapshot\n=== RUN   TestRefreshPublishesRemoteSnapshot/values_and_order_preserved\n=== RUN   TestRefreshPublishesRemoteSnapshot/empty_array\n--- PASS: TestRefreshPublishesRemoteSnapshot (0.00s)\n    --- PASS: TestRefreshPublishesRemoteSnapshot/values_and_order_preserved (0.00s)\n    --- PASS: TestRefreshPublishesRemoteSnapshot/empty_array (0.00s)\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/created_status\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/no_content_status\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/not_found_status\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/server_error_status\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/empty_response\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/malformed_JSON\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/wrong_item_field_type\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/null_document\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/object_document\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/null_item\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/blank_code\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/blank_label\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/missing_code\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/missing_label\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/later_invalid_item\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/second_array\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/trailing_scalar\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/trailing_malformed_JSON\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/initial_read_failure\n=== RUN   TestRefreshFailuresPreserveSnapshotAndCloseBody/read_failure_after_array\n--- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody (0.01s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/created_status (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/no_content_status (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/not_found_status (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/server_error_status (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/empty_response (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/malformed_JSON (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/wrong_item_field_type (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/null_document (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/object_document (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/null_item (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/blank_code (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/blank_label (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/missing_code (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/missing_label (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/later_invalid_item (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/second_array (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/trailing_scalar (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/trailing_malformed_JSON (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/initial_read_failure (0.00s)\n    --- PASS: TestRefreshFailuresPreserveSnapshotAndCloseBody/read_failure_after_array (0.00s)\n=== RUN   TestRefreshClosesSuccessfulResponseBody\n--- PASS: TestRefreshClosesSuccessfulResponseBody (0.00s)\n=== RUN   TestRefreshTransportFailurePreservesSnapshot\n--- PASS: TestRefreshTransportFailurePreservesSnapshot (0.00s)\n=== RUN   TestRefreshInvalidRequestPreservesSnapshot\n--- PASS: TestRefreshInvalidRequestPreservesSnapshot (0.00s)\n=== RUN   TestRefreshPropagatesContextCancellation\n--- PASS: TestRefreshPropagatesContextCancellation (0.00s)\n=== RUN   TestRefreshReplacesSnapshotForOpenReaders\n--- PASS: TestRefreshReplacesSnapshotForOpenReaders (0.00s)\n=== RUN   TestRefreshPublicationFailureCleansTemporaryFile\n--- PASS: TestRefreshPublicationFailureCleansTemporaryFile (0.00s)\n=== RUN   TestRefreshMissingParentReturnsError\n--- PASS: TestRefreshMissingParentReturnsError (0.00s)\nPASS\nok  \texample.com/mirror\t1.244s\n",
+    "stderr": ""
+  },
+  {
+    "stage": "optional staticcheck availability",
+    "command": [
+      "rtk",
+      "proxy",
+      "sh",
+      "-c",
+      "command -v staticcheck"
+    ],
+    "cwd": "/private/tmp/go-testing-author-7r8p3riu/service-publication",
+    "process_deadline_seconds": 10,
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "stage": "Go 1.22 language compatibility",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-gcflags=-lang=go1.22",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-author-7r8p3riu/service-publication",
+    "process_deadline_seconds": 30,
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/mirror\t0.201s\n",
+    "stderr": ""
+  },
+  {
+    "stage": "formatting verification",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "mirror.go",
+      "mirror_test.go",
+      "refresh_test.go"
+    ],
+    "cwd": "/private/tmp/go-testing-author-7r8p3riu/service-publication",
+    "process_deadline_seconds": 10,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]
