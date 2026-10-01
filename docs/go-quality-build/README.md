@@ -62,8 +62,8 @@ Test combinations of neighboring skills on the same task. Resolve contradictory 
 ## Work status and next steps
 
 - **Completed:** Compared the local review approach with the upstream collection; proposed candidate boundaries and the reuse and evaluation policy in this record. Added repository agent instructions and a continuation protocol so later workers maintain this record. Pinned the upstream revision for the first architecture-group audit.
-- **Design approved:** The first group is `go-package-boundaries`, `go-api-contracts`, and `go-interfaces-and-composition` in a peer `plugins/go-quality-build/` package. The written [first-group design spec](../superpowers/specs/2026-09-30-go-quality-build-architecture-group-design.md) is ready for review; it has not yet been approved as a written spec.
-- **Next:** Review and approve or revise the written first-group spec. Then write the implementation plan and select its execution method before authoring runtime skills.
+- **Written spec reviewed:** The first group is `go-package-boundaries`, `go-api-contracts`, and `go-interfaces-and-composition` in a peer `plugins/go-quality-build/` package. The user approved the [first-group design spec](../superpowers/specs/2026-09-30-go-quality-build-architecture-group-design.md) with one requested addition: small, medium, and large package-boundary examples that show how transport and persistence boundaries emerge. That addition is incorporated.
+- **Next:** Write and review the implementation plan, then select its execution method before authoring runtime skills.
 - **Next:** Build and evaluate a small first group, revise its boundaries, then expand to remaining topics that demonstrate value.
 
 ## Continuation protocol
@@ -98,3 +98,10 @@ After each meaningful stage and before finishing a task, update the status above
 - Verification: self-review found no placeholders, internal contradiction, or unresolved scope choice; `rtk git diff --check` passed and `rtk python3 scripts/validate.py` passed with the existing 10 review skills and 120 evaluation cases. No runtime build skill or behavioral evaluation has been created.
 - The spec and this record were committed for the written-spec review gate.
 - Next action: request review of the written spec before writing the implementation plan.
+
+#### 2026-09-30 — Written spec review and package evolution examples
+
+- The user reviewed the written spec, said it looked good, and requested examples for small, medium, and large Go projects. Expanded the `go-package-boundaries` specification with one evolving orders service, including HTTP transport, a consumer-side persistence interface, SQL adapter, composition root, dependency direction, and explicit signals for when to split.
+- Kept example paths illustrative rather than prescriptive. The spec distinguishes files from packages, ports from adapters, and larger projects from mandatory technical layers.
+- Verification: self-review found no placeholders or contradictions in the revised examples; `rtk git diff --check` and `rtk python3 scripts/validate.py` passed (10 review skills, 120 review cases). No runtime build skill has been authored or evaluated.
+- Next action: create a task-by-task implementation plan.
