@@ -1,0 +1,51 @@
+[
+  {
+    "command": [
+      "rtk",
+      "go",
+      "test",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache",
+      "GOWORK": "off"
+    },
+    "exit_code": 0,
+    "stdout": "Go test: 15 passed in 2 packages\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache",
+      "GOWORK": "off"
+    },
+    "exit_code": 0,
+    "stdout": "=== RUN   TestParseValidDecimal\n=== RUN   TestParseValidDecimal/0\n=== RUN   TestParseValidDecimal/00080\n=== RUN   TestParseValidDecimal/8080\n=== RUN   TestParseValidDecimal/65535\n--- PASS: TestParseValidDecimal (0.00s)\n    --- PASS: TestParseValidDecimal/0 (0.00s)\n    --- PASS: TestParseValidDecimal/00080 (0.00s)\n    --- PASS: TestParseValidDecimal/8080 (0.00s)\n    --- PASS: TestParseValidDecimal/65535 (0.00s)\n=== RUN   TestParseInvalidInput\n=== RUN   TestParseInvalidInput/#00\n=== RUN   TestParseInvalidInput/+80\n=== RUN   TestParseInvalidInput/-1\n=== RUN   TestParseInvalidInput/_80\n=== RUN   TestParseInvalidInput/80_\n=== RUN   TestParseInvalidInput/8.0\n=== RUN   TestParseInvalidInput/\uff18\uff10\n=== RUN   TestParseInvalidInput/65536\n=== RUN   TestParseInvalidInput/999999999999999999999999999999\n--- PASS: TestParseInvalidInput (0.00s)\n    --- PASS: TestParseInvalidInput/#00 (0.00s)\n    --- PASS: TestParseInvalidInput/+80 (0.00s)\n    --- PASS: TestParseInvalidInput/-1 (0.00s)\n    --- PASS: TestParseInvalidInput/_80 (0.00s)\n    --- PASS: TestParseInvalidInput/80_ (0.00s)\n    --- PASS: TestParseInvalidInput/8.0 (0.00s)\n    --- PASS: TestParseInvalidInput/\uff18\uff10 (0.00s)\n    --- PASS: TestParseInvalidInput/65536 (0.00s)\n    --- PASS: TestParseInvalidInput/999999999999999999999999999999 (0.00s)\nPASS\nok  \texample.com/portnum/v2\t0.120s\n?   \texample.com/portnum/v2/cmd/portcheck\t[no test files]\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-build-api-eval/archive-go-cache",
+      "GOWORK": "off"
+    },
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

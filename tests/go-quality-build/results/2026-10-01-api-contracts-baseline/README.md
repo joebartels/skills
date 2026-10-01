@@ -111,3 +111,15 @@ is a specific compatibility failure for future guidance to address, not a
 claim that every module must preserve every behavior. Intentional v2 and CLI
 outcomes are useful successful controls. Runtime authoring and same-model
 skill-on comparisons remain next; there is no uplift evidence yet.
+
+
+### CLI compatibility addendum
+
+`review-cli-addendum.md` preserves the original baseline reviewer's targeted
+reassessment; `review-cli.md` remains unedited. An identical real `-jobs.json`
+invocation succeeds in original and fails in baseline. The reviewer revises
+baseline Correctness from A to B (one moderate C-F1), with Architecture A
+unchanged. The first skill-on reviewer graded the same failure minor/A-.
+These are differing severity judgments about one root cause, not evidence of
+skill-on improvement. The same executable comparison is saved in
+`../2026-10-01-api-contracts-skill-on/filename-comparison.json`.

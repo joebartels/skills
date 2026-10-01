@@ -235,3 +235,19 @@ The pinned [MIT license](https://github.com/samber/cc-skills-golang/blob/19a0626
 5. Tags, nil/empty collections, enum zero values and wrapping expose observable contracts; no blanket normalization is imported. Broader value/error guidance remains future work.
 
 The five [local fixture cases](../../tests/go-quality-build/go-package-boundaries/evals/evals.json) are ready for blind baseline model trials. Baseline judgments must remain separate from the implementer context. Runtime authoring and skill-on evaluation have not started.
+
+
+## 2026-10-01 — API-contract runtime draft use
+
+`plugins/go-quality-build/skills/go-api-contracts/SKILL.md` is newly written
+from the approved spec, local A2/A3/C1/C2 decisions and observed baseline A1;
+it is not promoted. The upstream pin remains
+`19a0626ae8565d27a7b7bdf59d8d99d94d7e284c`. The existing AC rows for public entry
+paths, representable state, field tags and public naming remain adaptations:
+inspect the actual supported contract, including exported zero state, rather
+than imposing constructor, type or representation rules. The IC-owned options
+and interface advice supplies compatibility context only; this skill does not
+own abstraction necessity. No inventory decision changes and no upstream prose
+or example code was copied, so no third-party notice is added for this draft.
+The initial-audit readiness statements above describe that earlier stage; the
+canonical design record holds current implementation/evaluation status.

@@ -77,7 +77,9 @@
       "review_status": "complete",
       "review": "review-cli.md",
       "architecture_grade": "A",
-      "correctness_grade": "A"
+      "correctness_grade": "B",
+      "original_correctness_grade": "A",
+      "review_addendum": "review-cli-addendum.md"
     },
     {
       "id": "not-public-contract",
@@ -144,5 +146,13 @@
         }
       ]
     }
-  ]
+  ],
+  "review_addendum": {
+    "artifact": "review-cli-addendum.md",
+    "blind_to_skill_on": true,
+    "trigger": "newly surfaced filename compatibility evidence",
+    "finding": "C-F1: formerly accepted sole -jobs.json filename rejected",
+    "severity": "moderate",
+    "comparison": "Same root cause as first-pass skill-on minor C-F1; severity differs across reviewers, not behavior."
+  }
 }

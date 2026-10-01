@@ -1,0 +1,133 @@
+{
+  "run_id": "2026-10-01-api-contracts-skill-on",
+  "stage": "first pass plus revision-2/revision-3 evidence archived; promotion decision separate",
+  "model": "gpt-6-luna",
+  "harness": "fresh Codex collaboration subagent per case",
+  "fork_turns": "none",
+  "reasoning_override": null,
+  "fixture_revision": "39c702a",
+  "skill_snapshot": "first-pass-SKILL.md",
+  "skill_sha256": "50460ad989d81cc932d8f1e2053e97ecc31e67b320283495a64ce06b7c2d1841",
+  "expected_judgments_withheld": true,
+  "dispatch_provenance": {
+    "exact_task_prompts": "case prompt.txt copied from evals.json",
+    "full_wrapper_bytes_preserved": false,
+    "known_instructions": "Each fresh author worked only in its disposable case copy, read project docs/source, implemented exact eval user task, ran tests/vet and wrote trial-report.md; evals.json, expected judgments, other runs and design records withheld; no repository edits.",
+    "applicable_cases": "Directed to read draft SKILL.md.",
+    "private_control": "Provided only skill path/frontmatter description; required applicability decision before opening, plus byte comparison against tracked fixture. Agent selected then opened the skill.",
+    "limit": "Full wrapper messages exist in controller conversation but were not saved separately; this is a controller-supplied summary, not verbatim reconstruction."
+  },
+  "go_version": "go version go1.26.5 darwin/arm64",
+  "cases": [
+    {
+      "id": "source-compatibility",
+      "prompt": "source-compatibility/prompt.txt",
+      "report": "source-compatibility/trial-report.md",
+      "patch": "source-compatibility/source.patch",
+      "verification": "source-compatibility/verification.json",
+      "source_sha256": {
+        "README.md": "02fa70f0e3d270ebcab9f54ad98200f3ed8ee9ad8cdc845c614d9651e0f4cf14",
+        "format.go": "c942a74c3e88f7be5361b02cbdf93f192395f4780e4abba223c287dae0878b4e",
+        "format_test.go": "d6426022607790b57f8741de296019a752fbc1f4877fb50a186b7cd2e55c9709",
+        "go.mod": "928414924b407ab7f29d16982a603cc527951d1eb4dad2b1fe66c879ef986a50"
+      },
+      "patch_reconstruction": "all output files byte-for-byte verified",
+      "skill_opened": true,
+      "selection_result": "instructed skill use; not automatic routing",
+      "architecture_grade": "A",
+      "correctness_grade": "A+",
+      "review": "review-library.md"
+    },
+    {
+      "id": "intentional-break",
+      "prompt": "intentional-break/prompt.txt",
+      "report": "intentional-break/trial-report.md",
+      "patch": "intentional-break/source.patch",
+      "verification": "intentional-break/verification.json",
+      "source_sha256": {
+        "README.md": "b2ab5584746cc0c7a930da4c73133d52db0406388ddf7bcdbbc421bff9715303",
+        "cmd/portcheck/main.go": "815d687ab4893bc4a12581cba7d770ad9523bd9dd351088fa52e2c5faae88ff7",
+        "docs/migration-v2.md": "40ed9cab8471a8056cb4f398e109f6f9b9eeecad4de0bf0bc8f84424a9903d05",
+        "docs/v2-decision.md": "f577ec66f0a16110f9bf7854f66f2d5ae884b01a2e347968b1cd292d117a9b9f",
+        "go.mod": "d03f4892b1c54a0a4e126468788fc811c1bb791d27dc7da1e50bcce83498a955",
+        "port.go": "ef1bc3ab30bf7c9883ec0ff2a654e02cda313215c95d7f301648fb57e72bdc9e",
+        "port_test.go": "2030432045b3a0b5019162fc9c31aa7670386deaff555894c1d47ac7a93c2464"
+      },
+      "patch_reconstruction": "all output files byte-for-byte verified",
+      "skill_opened": true,
+      "selection_result": "instructed skill use; not automatic routing",
+      "architecture_grade": "A",
+      "correctness_grade": "A-",
+      "review": "review-library.md"
+    },
+    {
+      "id": "wire-contract",
+      "prompt": "wire-contract/prompt.txt",
+      "report": "wire-contract/trial-report.md",
+      "patch": "wire-contract/source.patch",
+      "verification": "wire-contract/verification.json",
+      "source_sha256": {
+        "README.md": "0fd9c7b9f1da18ef5bba07af1333ac234087709bd05cb3dfc550e132a405af0c",
+        "go.mod": "5ce67e902135f3a9ce5e524f037b08b54458cc5dfe2a26a4c8470dd4688a7320",
+        "main.go": "5aa45bee86f76e7eced934fd26c4977e07d07656100bd4749a7a9a2da2cc8cd4",
+        "main_test.go": "b9e077d8e5bbfabf3efe127d3fa23869d6139d8e59cf90c9bd809a19939fdcc8"
+      },
+      "patch_reconstruction": "all output files byte-for-byte verified",
+      "skill_opened": true,
+      "selection_result": "instructed skill use; not automatic routing",
+      "architecture_grade": "A",
+      "correctness_grade": "A-",
+      "review": "review-cli.md"
+    },
+    {
+      "id": "not-public-contract",
+      "prompt": "not-public-contract/prompt.txt",
+      "report": "not-public-contract/trial-report.md",
+      "patch": "not-public-contract/source.patch",
+      "verification": "not-public-contract/verification.json",
+      "source_sha256": {
+        "README.md": "db815043de5c2878343167e62d02a0b0605253e9f4f2f4965577d83b846b5c1c",
+        "go.mod": "b358e19a75e6027b4076c0c3c750f180164c4236910c2527d4de8afdb6f03074",
+        "internal/cache/expiry.go": "c8bc20bce055c77bd9d76fbba95985eed9472fbb1b74f436cb1e5e78d94a0c6c",
+        "internal/cache/expiry_test.go": "4be474cc6a568b842bb0e046922171a249b6d84b022ce0f0000c71e57558b442"
+      },
+      "patch_reconstruction": "all output files byte-for-byte verified",
+      "skill_opened": true,
+      "selection_result": "false positive (selected and opened)",
+      "architecture_grade": "Not applicable",
+      "correctness_grade": "A",
+      "review": "review-cli.md"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B-F1",
+      "case": "intentional-break",
+      "severity": "minor",
+      "owner": "Correctness and Compatibility",
+      "summary": "Migration guide incorrectly says old sign-bearing input returned zero; v1 accepted +80.",
+      "comparison": "baseline review found no corresponding documentation defect"
+    },
+    {
+      "id": "C-F1",
+      "case": "wire-contract",
+      "severity": "minor",
+      "owner": "Correctness and Compatibility",
+      "summary": "New flag parsing rejects formerly accepted sole -jobs.json filename.",
+      "comparison": "Identical archive probe and baseline reviewer addendum confirm shared baseline/first-pass root cause. Baseline reviewer calls moderate/B; first-pass reviewer calls minor/A-. Revision 3 targeted review verifies resolution."
+    },
+    {
+      "id": "selection-private",
+      "case": "not-public-contract",
+      "summary": "Agent selected and opened API skill for a private local comparison fix; code review remains correct.",
+      "comparison": "baseline private control was controller-completed; no independent baseline selection comparison exists"
+    }
+  ],
+  "baseline_comparison_limit": "Baseline wire addendum revises Correctness A to B/moderate, whereas first-pass reviewer rates same defect A-/minor. Compare shared root cause; no skill-caused regression or grade-only improvement inferred.",
+  "baseline_review_addendum": "../2026-10-01-api-contracts-baseline/review-cli-addendum.md",
+  "revisions": [
+    "revision-2/manifest.json",
+    "revision-3/manifest.json"
+  ],
+  "final_source_coverage_limit": "No revision-3 source-compatibility rerun due agent-thread limit; first-pass A/A+ remains evidence for that snapshot only."
+}

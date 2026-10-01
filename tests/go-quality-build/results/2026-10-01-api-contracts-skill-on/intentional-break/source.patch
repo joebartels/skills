@@ -1,0 +1,137 @@
+--- a/cmd/portcheck/main.go
++++ b/cmd/portcheck/main.go
+@@ -1,7 +1,7 @@
+ package main
+ 
+ import (
+-	"example.com/portnum"
++	"example.com/portnum/v2"
+ 	"fmt"
+ 	"os"
+ )
+@@ -11,5 +11,11 @@
+ 		fmt.Fprintln(os.Stderr, "usage: portcheck PORT")
+ 		os.Exit(2)
+ 	}
+-	fmt.Println(portnum.Parse(os.Args[1]))
++
++	port, err := portnum.Parse(os.Args[1])
++	if err != nil {
++		fmt.Fprintf(os.Stderr, "invalid port: %v\n", err)
++		os.Exit(2)
++	}
++	fmt.Println(port)
+ }
+--- /dev/null
++++ b/docs/migration-v2.md
+@@ -0,0 +1,23 @@
++# Migrating to portnum v2
++
++The v2 release makes invalid port text explicit. Update imports from
++`example.com/portnum` to `example.com/portnum/v2`, including the module path in
++your `go.mod` if this module is your own module.
++
++`Parse` now returns `(int, error)` instead of a single `int`. Check the error
++before using the port:
++
++```go
++port, err := portnum.Parse(text)
++if err != nil {
++	return err
++}
++usePort(port)
++```
++
++Parsing accepts one or more ASCII decimal digits, including leading zeros, and
++values from 0 through 65535. Empty text, signs, whitespace, non-digits, and
++out-of-range values now return zero and a non-nil error. In v1 these failures
++returned zero without an error, which could be confused with port zero. The v2
++module does not include the old single-result API; the v1 release remains at
++`example.com/portnum`.
+--- a/go.mod
++++ b/go.mod
+@@ -1,3 +1,3 @@
+-module example.com/portnum
++module example.com/portnum/v2
+ 
+ go 1.22
+--- a/port.go
++++ b/port.go
+@@ -1,13 +1,26 @@
+ // Package portnum parses numeric port settings.
+ package portnum
+ 
+-import "strconv"
++import (
++	"errors"
++	"strconv"
++)
+ 
+-// Parse returns the port, or zero when text is invalid.
+-func Parse(text string) int {
+-	n, err := strconv.Atoi(text)
+-	if err != nil || n < 0 || n > 65535 {
+-		return 0
++// Parse parses one or more ASCII decimal digits as a port in the range 0..65535.
++// Leading zeros are accepted. On failure, Parse returns zero and a non-nil error.
++func Parse(text string) (int, error) {
++	if text == "" {
++		return 0, errors.New("port must contain decimal digits")
+ 	}
+-	return n
++	for _, b := range []byte(text) {
++		if b < '0' || b > '9' {
++			return 0, errors.New("port must contain only ASCII decimal digits")
++		}
++	}
++
++	n, err := strconv.ParseUint(text, 10, 16)
++	if err != nil {
++		return 0, errors.New("port must be in the range 0..65535")
++	}
++	return int(n), nil
+ }
+--- a/port_test.go
++++ b/port_test.go
+@@ -2,8 +2,38 @@
+ 
+ import "testing"
+ 
+-func TestParseDecimal(t *testing.T) {
+-	if got := Parse("8080"); got != 8080 {
+-		t.Fatalf("Parse = %d", got)
++func TestParseValidDecimal(t *testing.T) {
++	for _, tc := range []struct {
++		input string
++		want  int
++	}{
++		{input: "0", want: 0},
++		{input: "00080", want: 80},
++		{input: "8080", want: 8080},
++		{input: "65535", want: 65535},
++	} {
++		t.Run(tc.input, func(t *testing.T) {
++			got, err := Parse(tc.input)
++			if err != nil {
++				t.Fatalf("Parse(%q) error = %v", tc.input, err)
++			}
++			if got != tc.want {
++				t.Fatalf("Parse(%q) = %d, want %d", tc.input, got, tc.want)
++			}
++		})
+ 	}
+ }
++
++func TestParseInvalidInput(t *testing.T) {
++	for _, input := range []string{"", "+80", "-1", " 80", "80 ", "8.0", "８０", "65536", "999999999999999999999999999999"} {
++		t.Run(input, func(t *testing.T) {
++			got, err := Parse(input)
++			if err == nil {
++				t.Fatalf("Parse(%q) error = nil", input)
++			}
++			if got != 0 {
++				t.Fatalf("Parse(%q) = %d, want zero on failure", input, got)
++			}
++		})
++	}
++}

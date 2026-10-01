@@ -1,0 +1,22 @@
+--- a/internal/cache/expiry.go
++++ b/internal/cache/expiry.go
+@@ -1,5 +1,5 @@
+ package cache
+ 
+-// expired reports whether the local cache entry's deadline has passed.
++// expired reports whether the local cache entry has reached its deadline.
+ // A zero deadline means the entry never expires.
+-func expired(now, deadline int64) bool { return deadline != 0 && now > deadline }
++func expired(now, deadline int64) bool { return deadline != 0 && now >= deadline }
+--- a/internal/cache/expiry_test.go
++++ b/internal/cache/expiry_test.go
+@@ -9,6 +9,9 @@
+ 	if expired(8, 10) {
+ 		t.Fatal("future deadline is expired")
+ 	}
++	if !expired(10, 10) {
++		t.Fatal("entry at deadline is live")
++	}
+ 	if expired(12, 0) {
+ 		t.Fatal("permanent entry is expired")
+ 	}

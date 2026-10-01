@@ -1,0 +1,145 @@
+--- a/README.md
++++ b/README.md
+@@ -1,9 +1,11 @@
+ # joblist
+ 
+ joblist 1.x is a command used by shell scripts and a dashboard. Run it with
+-one JSON file argument. Input is a JSON array of objects with string id and
+-state fields. A JSON null document represents an empty input. Unknown fields
+-are ignored. The file must contain one complete JSON document.
++one JSON file argument, optionally with `--state STATE` to include only records
++whose state exactly matches STATE. Supplying an empty STATE matches records with
++an empty state. Input is a JSON array of objects with string id and state
++fields. A JSON null document represents an empty input. Unknown fields are
++ignored. The file must contain one complete JSON document.
+ 
+ The stable stdout format is one JSON object and a newline. It has a jobs
+ field containing the input records in their original order; records have id
+--- a/main.go
++++ b/main.go
+@@ -8,7 +8,7 @@
+ )
+ 
+ type job struct {
+-	ID    string `json:"id"`
++	Key   string `json:"id"`
+ 	State string `json:"state"`
+ }
+ type response struct {
+@@ -16,11 +16,12 @@
+ }
+ 
+ func run(args []string, stdout, stderr io.Writer) int {
+-	if len(args) != 1 {
+-		fmt.Fprintln(stderr, "usage: joblist FILE")
++	path, state, filterState, ok := parseArgs(args)
++	if !ok {
++		fmt.Fprintln(stderr, "usage: joblist [--state STATE] FILE")
+ 		return 2
+ 	}
+-	data, err := os.ReadFile(args[0])
++	data, err := os.ReadFile(path)
+ 	if err != nil {
+ 		fmt.Fprintln(stderr, err)
+ 		return 2
+@@ -32,6 +33,9 @@
+ 	}
+ 	var result []job
+ 	for _, item := range jobs {
++		if filterState && item.State != state {
++			continue
++		}
+ 		result = append(result, item)
+ 	}
+ 	if err := json.NewEncoder(stdout).Encode(response{Jobs: result}); err != nil {
+@@ -41,4 +45,43 @@
+ 	return 0
+ }
+ 
++func parseArgs(args []string) (path, state string, filterState, ok bool) {
++	// Preserve the old one-argument form, including file names that look like flags.
++	if len(args) == 1 {
++		return args[0], "", false, true
++	}
++	var positional []string
++	for i := 0; i < len(args); i++ {
++		arg := args[i]
++		switch {
++		case arg == "--":
++			positional = append(positional, args[i+1:]...)
++			return onePath(positional, state, filterState)
++		case arg == "--state":
++			if filterState || i+1 == len(args) {
++				return "", "", false, false
++			}
++			filterState = true
++			i++
++			state = args[i]
++		case len(arg) >= len("--state=") && arg[:len("--state=")] == "--state=":
++			if filterState {
++				return "", "", false, false
++			}
++			filterState = true
++			state = arg[len("--state="):]
++		default:
++			positional = append(positional, arg)
++		}
++	}
++	return onePath(positional, state, filterState)
++}
++
++func onePath(positional []string, state string, filterState bool) (string, string, bool, bool) {
++	if len(positional) != 1 {
++		return "", "", false, false
++	}
++	return positional[0], state, filterState, true
++}
++
+ func main() { os.Exit(run(os.Args[1:], os.Stdout, os.Stderr)) }
+--- a/main_test.go
++++ b/main_test.go
+@@ -20,3 +20,44 @@
+ 		t.Fatalf("output = %q", got)
+ 	}
+ }
++
++func TestStateFilter(t *testing.T) {
++	path := filepath.Join(t.TempDir(), "jobs.json")
++	if err := os.WriteFile(path, []byte(`[{"id":"a","state":"ready"},{"id":"b","state":"done"},{"id":"c","state":""}]`), 0600); err != nil {
++		t.Fatal(err)
++	}
++	tests := []struct {
++		name string
++		args []string
++		want string
++	}{
++		{name: "flag before file", args: []string{"--state", "ready", path}, want: `{"jobs":[{"id":"a","state":"ready"}]}` + "\n"},
++		{name: "flag after file", args: []string{path, "--state=done"}, want: `{"jobs":[{"id":"b","state":"done"}]}` + "\n"},
++		{name: "explicit empty", args: []string{"--state=", path}, want: `{"jobs":[{"id":"c","state":""}]}` + "\n"},
++		{name: "unmatched returns null jobs", args: []string{"--state", "missing", path}, want: "{\"jobs\":null}\n"},
++		{name: "omitted lists all", args: []string{path}, want: `{"jobs":[{"id":"a","state":"ready"},{"id":"b","state":"done"},{"id":"c","state":""}]}` + "\n"},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			var out, diag bytes.Buffer
++			if code := run(tt.args, &out, &diag); code != 0 {
++				t.Fatalf("exit %d: %s", code, &diag)
++			}
++			if got := out.String(); got != tt.want {
++				t.Fatalf("output = %q, want %q", got, tt.want)
++			}
++		})
++	}
++}
++
++func TestInvalidStateFlagUsage(t *testing.T) {
++	for _, args := range [][]string{{"--state"}, {"--state", "ready", "--state=done", "jobs.json"}} {
++		var out, diag bytes.Buffer
++		if code := run(args, &out, &diag); code != 2 {
++			t.Fatalf("run(%q) exit = %d, want 2", args, code)
++		}
++		if out.Len() != 0 || diag.Len() == 0 {
++			t.Fatalf("run(%q) stdout=%q stderr=%q", args, out.String(), diag.String())
++		}
++	}
++}
