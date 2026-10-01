@@ -1,0 +1,39 @@
+diff --git a/main.go b/main.go
+--- a/main.go
++++ b/main.go
+@@ -11,0 +12,5 @@
++	skipComments := false
++	if len(args) == 2 && args[0] == "--skip-comments" {
++		skipComments = true
++		args = args[1:]
++	}
+@@ -13 +18 @@
+-		return fmt.Errorf("usage: linesum FILE")
++		return fmt.Errorf("usage: linesum [--skip-comments] FILE")
+@@ -22,0 +28,3 @@
++			continue
++		}
++		if skipComments && strings.HasPrefix(line, "#") {
+diff --git a/main_test.go b/main_test.go
+--- a/main_test.go
++++ b/main_test.go
+@@ -32,0 +33,19 @@
++
++func TestSkipComments(t *testing.T) {
++	p := filepath.Join(t.TempDir(), "numbers")
++	if err := os.WriteFile(p, []byte(" 2\n  # a comment\n\t# another comment\n-1\n"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	var b bytes.Buffer
++	if err := run([]string{"--skip-comments", p}, &b); err != nil {
++		t.Fatal(err)
++	}
++	if b.String() != "1\n" {
++		t.Fatalf("got %q", b.String())
++	}
++
++	b.Reset()
++	if err := run([]string{p}, &b); err == nil || b.Len() != 0 {
++		t.Fatalf("comment accepted without flag or output written: %q", b.String())
++	}
++}
