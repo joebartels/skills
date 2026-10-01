@@ -7,11 +7,11 @@ Reusable skills for Claude Code, Codex, and OpenCode v2. Each collection lives i
 | Package | Skills | Purpose |
 | --- | ---: | --- |
 | [go-quality-review](plugins/go-quality-review/README.md) | 10 | Graded Go code reviews: one overall report skill and nine focused topic skills. |
-| [go-quality-build](plugins/go-quality-build/README.md) | 1 candidate | Package responsibilities and import direction; behavioral evaluation pending. |
+| [go-quality-build](plugins/go-quality-build/README.md) | 1 evaluated skill | Package responsibilities and import direction. |
 
 The detailed [Go review guide](docs/go-quality-review/README.md) covers grading, evaluations, and authoring. The [architecture and implementation plan](docs/superpowers/specs/2026-09-29-multiharness-skills-design.md) record the harness choices.
 
-The [Go quality build design record](docs/go-quality-build/README.md) tracks the writing skills, upstream reuse policy, evaluation approach, and next steps. Package boundaries has a runtime candidate; API contracts and interfaces/composition remain proposed. The build package is available for local evaluation and has not passed its promotion gate. Use the installation commands below with `go-quality-build` to load that package.
+The [Go quality build design record](docs/go-quality-build/README.md) tracks the writing skills, upstream reuse policy, evaluation approach, and next steps. Package boundaries is implemented and behaviorally evaluated on a bounded set of cases; API contracts and interfaces/composition remain proposed. Use the installation commands below with `go-quality-build` to load the current package.
 
 ## Use the skills
 
