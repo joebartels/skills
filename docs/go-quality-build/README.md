@@ -61,10 +61,9 @@ Test combinations of neighboring skills on the same task. Resolve contradictory 
 
 ## Work status and next steps
 
-- **Completed:** Compared the local review approach with the upstream collection; proposed candidate boundaries and the reuse and evaluation policy in this record. Added repository agent instructions and a continuation protocol so later workers maintain this record.
-- **Next:** Decide package placement. A peer `plugins/go-quality-build/` package is the working recommendation; this is not yet a settled choice.
-- **Next:** Pin and audit upstream source content against the review decisions, beginning with API and interface design, errors, values, concurrency, and behavioral testing.
-- **Next:** Turn the agreed boundaries into a reviewed design specification and implementation plan before authoring runtime skills.
+- **Completed:** Compared the local review approach with the upstream collection; proposed candidate boundaries and the reuse and evaluation policy in this record. Added repository agent instructions and a continuation protocol so later workers maintain this record. Pinned the upstream revision for the first architecture-group audit.
+- **In design:** The proposed first group is `go-package-boundaries`, `go-api-contracts`, and `go-interfaces-and-composition` in a peer `plugins/go-quality-build/` package. Package placement and skill boundaries await review of the concrete group design.
+- **Next:** Finish the first group's source audit and behavioral case design, then write the reviewed design specification and implementation plan.
 - **Next:** Build and evaluate a small first group, revise its boundaries, then expand to remaining topics that demonstrate value.
 
 ## Continuation protocol
@@ -83,3 +82,11 @@ After each meaningful stage and before finishing a task, update the status above
 - Verification: `rtk python3 scripts/validate.py` passed with 10 review skills and 120 valid evaluation cases; all 10 local links in the three changed Markdown files resolved.
 - Open choice: whether the writing skills ship as a peer plugin or in another package arrangement. A peer plugin remains the recommendation.
 - Next action: settle the first skill group's design and package placement, then pin and audit the relevant upstream sources.
+
+#### 2026-09-30 — First architecture group research
+
+- Selected package boundaries, public API contracts, and interfaces and composition as a proposed first group. This is a bounded starting group from the candidate map, not a completed or approved runtime package.
+- Resolved upstream `samber/cc-skills-golang` main to `19a0626ae8565d27a7b7bdf59d8d99d94d7e284c` using `rtk git ls-remote`. The source audit should use this revision rather than a moving `main` URL.
+- Compared upstream project layout, design patterns, structs and interfaces, dependency injection, and naming skills with the local Architecture and Correctness decision references. Useful material includes call-site naming, right-sized packages, small consumer needs, and explicit dependency wiring. Rules requiring a fixed directory structure, consumer-owned interfaces in every case, constructors for all dependencies, or functional options by default conflict with the local context-based guidance and require adaptation or omission.
+- Inspected `scripts/validate.py`: harness packaging checks already enumerate every plugin directory; the current behavioral and review-contract validator remains specific to `go-quality-review`, so build-skill evaluation validation will need its own check or a targeted extension.
+- Next action: present the first group's concrete design for review, then write its specification and plan before authoring runtime skills.
