@@ -1,0 +1,86 @@
+{
+  "semantic_id": "worker-start-relative",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "9f80d571694103f4ebfd2fe56e12006b2c684cbcb06ff84a48d5dab16d1aa56b",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-3pld7s9w/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.591s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.821
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-r2/worker-repeat/mutations/worker-start-relative/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-3pld7s9w/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.018
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-3pld7s9w/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.158s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.326
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-3pld7s9w/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRunWaitsFullIntervalAfterSuccessfulCompletion (0.08s)\n    lifecycle_test.go:185: cycle 2 started 14.459\u00b5s after completion, want at least 40ms\nFAIL\nFAIL\texample.com/sweeper\t0.365s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.513
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

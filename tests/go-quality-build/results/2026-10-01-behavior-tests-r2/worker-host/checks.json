@@ -1,0 +1,335 @@
+[
+  {
+    "label": "local-toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "format-tests-before-baseline",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "host_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "new-tests-on-one-shot-baseline",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=20s",
+      "-count=1",
+      "-run",
+      "TestRunRejectsNonpositiveIntervals|TestRunAlreadyCanceled|TestSweepFailureReleases|TestRunWaitsFullIntervalAfterEachCompletion|TestRunStopsAfterLaterFailure",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "--- FAIL: TestRunRejectsNonpositiveIntervals (0.00s)\n    --- FAIL: TestRunRejectsNonpositiveIntervals/0s (0.00s)\n        host_test.go:86: Run accepted a nonpositive interval\n        host_test.go:89: sweeps = 1, releases = 1; want neither\n    --- FAIL: TestRunRejectsNonpositiveIntervals/-1ns (0.00s)\n        host_test.go:86: Run accepted a nonpositive interval\n        host_test.go:89: sweeps = 1, releases = 1; want neither\n    --- FAIL: TestRunRejectsNonpositiveIntervals/-1h0m0s (0.00s)\n        host_test.go:86: Run accepted a nonpositive interval\n        host_test.go:89: sweeps = 1, releases = 1; want neither\n--- FAIL: TestRunAlreadyCanceled (0.00s)\n    host_test.go:110: sweeps = 1, releases = 1; want 0, 1\n--- FAIL: TestRunWaitsFullIntervalAfterEachCompletion (0.08s)\n    host_test.go:196: Run ended before next cycle: <nil>\n--- FAIL: TestSweepFailureReleases (0.00s)\n    host_test.go:333: releases = 1, context canceled at release = false; want 1, true\n--- FAIL: TestRunStopsAfterLaterFailure (0.00s)\n    host_test.go:357: Run = <nil>, want preserved error cause and type\nFAIL\nFAIL\texample.com/sweeper\t0.262s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "label": "format-implementation-and-tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "host.go",
+      "worker.go",
+      "host_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "full-lifecycle-suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-timeout=30s",
+      "-count=1",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "=== RUN   TestRunRejectsNonpositiveIntervals\n=== RUN   TestRunRejectsNonpositiveIntervals/0s\n=== RUN   TestRunRejectsNonpositiveIntervals/-1ns\n=== RUN   TestRunRejectsNonpositiveIntervals/-1h0m0s\n--- PASS: TestRunRejectsNonpositiveIntervals (0.00s)\n    --- PASS: TestRunRejectsNonpositiveIntervals/0s (0.00s)\n    --- PASS: TestRunRejectsNonpositiveIntervals/-1ns (0.00s)\n    --- PASS: TestRunRejectsNonpositiveIntervals/-1h0m0s (0.00s)\n=== RUN   TestRunAlreadyCanceled\n--- PASS: TestRunAlreadyCanceled (0.00s)\n=== RUN   TestRunStartsImmediatelyAndCancelsIntervalWait\n--- PASS: TestRunStartsImmediatelyAndCancelsIntervalWait (0.02s)\n=== RUN   TestRunWaitsFullIntervalAfterEachCompletion\n--- PASS: TestRunWaitsFullIntervalAfterEachCompletion (0.17s)\n=== RUN   TestRunCancellationWaitsForCallbackCleanup\n=== RUN   TestRunCancellationWaitsForCallbackCleanup/successful_callback_cleanup\n=== RUN   TestRunCancellationWaitsForCallbackCleanup/independent_callback_failure\n=== RUN   TestRunCancellationWaitsForCallbackCleanup/joined_cancellation_and_callback_failure\n--- PASS: TestRunCancellationWaitsForCallbackCleanup (0.07s)\n    --- PASS: TestRunCancellationWaitsForCallbackCleanup/successful_callback_cleanup (0.02s)\n    --- PASS: TestRunCancellationWaitsForCallbackCleanup/independent_callback_failure (0.02s)\n    --- PASS: TestRunCancellationWaitsForCallbackCleanup/joined_cancellation_and_callback_failure (0.02s)\n=== RUN   TestRunErrorCombinations\n=== RUN   TestRunErrorCombinations/success\n=== RUN   TestRunErrorCombinations/work_fails\n=== RUN   TestRunErrorCombinations/release_fails\n=== RUN   TestRunErrorCombinations/both_fail\n--- PASS: TestRunErrorCombinations (0.00s)\n    --- PASS: TestRunErrorCombinations/success (0.00s)\n    --- PASS: TestRunErrorCombinations/work_fails (0.00s)\n    --- PASS: TestRunErrorCombinations/release_fails (0.00s)\n    --- PASS: TestRunErrorCombinations/both_fail (0.00s)\n=== RUN   TestSweepFailureReleases\n--- PASS: TestSweepFailureReleases (0.00s)\n=== RUN   TestRunStopsAfterLaterFailure\n--- PASS: TestRunStopsAfterLaterFailure (0.00s)\n=== RUN   TestRunInstancesStopIndependently\n--- PASS: TestRunInstancesStopIndependently (0.00s)\nPASS\nok  \texample.com/sweeper\t0.439s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "static-analysis",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "race-repeat-shuffle",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=10",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "ok  \texample.com/sweeper\t3.778s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "timing-mutation-delay-starts-before-callback",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=20s",
+      "-count=1",
+      "-run",
+      "^TestRunWaitsFullIntervalAfterEachCompletion$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "--- FAIL: TestRunWaitsFullIntervalAfterEachCompletion (0.12s)\n    host_test.go:201: cycle 2 started 6.875\u00b5s after completion, want at least 40ms\nFAIL\nFAIL\texample.com/sweeper\t0.302s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "label": "timing-mutation-source-restored",
+    "file": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module/worker.go",
+    "restored": true,
+    "sha256": "bd029079e7dedff4e55ddd23fe7b2046ddf3a5de768ae8742c676a49a08c39b2"
+  },
+  {
+    "label": "final-format-check",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-d",
+      "host.go",
+      "worker.go",
+      "host_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "module-dependency-check",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-m",
+      "all"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "example.com/sweeper\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "staticcheck-availability",
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "None\n",
+    "stderr": "",
+    "exit_code": 0,
+    "skipped_check": "staticcheck is not installed; no tools installed per dispatch",
+    "method": "shutil.which('staticcheck') in the RTK-wrapped verification runner"
+  },
+  {
+    "label": "final-restored-source-race-repeat-shuffle",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=10",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "ok  \texample.com/sweeper\t3.783s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "final-static-analysis",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "final-complete-artifact-format-check",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-d",
+      "host.go",
+      "worker.go",
+      "host_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "final-complete-artifact-race-repeat-shuffle",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=10",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "ok  \texample.com/sweeper\t4.054s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "final-complete-artifact-vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  }
+]

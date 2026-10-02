@@ -1,0 +1,458 @@
+--- a/README.md
++++ b/README.md
+@@ -7,6 +7,10 @@
+ returned with its error identity preserved. Parent cancellation stops future
+ cycles and is a normal nil worker result. Nonpositive intervals reject.
+ 
++An error returned by the callback takes precedence over concurrent parent
++cancellation, including a callback-returned context cancellation error.
++Cancellation alone is normal completion when the callback returns nil.
++
+ The host owns release: cancel and wait for the worker and its callback cleanup
+ before invoking release, and before returning. Invoke release exactly once
+ on normal cancellation and callback failure; join any release error with the
+--- a/host.go
++++ b/host.go
+@@ -6,6 +6,19 @@
+ 	"time"
+ )
+ 
++// Run sweeps immediately and then waits interval after each successful sweep.
++// Cancellation stops future sweeps and returns nil unless sweep returns an
++// error. A sweep error takes precedence over concurrent cancellation.
++// Run waits for sweep to finish, cancels its context, and invokes release once
++// before returning, preserving both sweep and release errors.
++// A nonpositive interval is rejected without invoking either callback.
+ func Run(ctx context.Context, interval time.Duration, sweep func(context.Context) error, release func() error) error {
+-	return errors.Join(once(ctx, sweep), release())
++	if interval <= 0 {
++		return errors.New("sweep interval must be positive")
++	}
++
++	workerCtx, cancel := context.WithCancel(ctx)
++	err := runWorker(workerCtx, interval, sweep)
++	cancel()
++	return errors.Join(err, release())
+ }
+--- /dev/null
++++ b/lifecycle_test.go
+@@ -0,0 +1,386 @@
++package sweeper_test
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"sync"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	"example.com/sweeper"
++)
++
++// Keep the exact public function type usable by consumers.
++var _ func(context.Context, time.Duration, func(context.Context) error, func() error) error = sweeper.Run
++
++const waitLimit = 2 * time.Second
++
++type runningHost struct {
++	done   chan struct{}
++	cancel context.CancelFunc
++	err    error
++}
++
++func startHost(t *testing.T, parent context.Context, interval time.Duration, sweep func(context.Context) error, release func() error, unblock func()) *runningHost {
++	t.Helper()
++	ctx, cancel := context.WithCancel(parent)
++	host := &runningHost{done: make(chan struct{}), cancel: cancel}
++	go func() {
++		host.err = sweeper.Run(ctx, interval, sweep, release)
++		close(host.done)
++	}()
++	t.Cleanup(func() {
++		cancel()
++		if unblock != nil {
++			unblock()
++		}
++		select {
++		case <-host.done:
++		case <-time.After(waitLimit):
++			t.Error("host did not return during test cleanup")
++		}
++	})
++	return host
++}
++
++func (h *runningHost) wait(t *testing.T) error {
++	t.Helper()
++	await(t, h.done, "host return")
++	return h.err
++}
++
++func await[T any](t *testing.T, events <-chan T, boundary string) T {
++	t.Helper()
++	select {
++	case event := <-events:
++		return event
++	case <-time.After(waitLimit):
++		t.Fatalf("timed out waiting for %s", boundary)
++		var zero T
++		return zero
++	}
++}
++
++func TestRunRejectsNonpositiveIntervalsBeforeWork(t *testing.T) {
++	for _, interval := range []time.Duration{0, -time.Nanosecond} {
++		t.Run(interval.String(), func(t *testing.T) {
++			var sweeps, releases int
++			err := sweeper.Run(context.Background(), interval, func(context.Context) error {
++				sweeps++
++				return errors.New("unexpected sweep")
++			}, func() error {
++				releases++
++				return nil
++			})
++			if err == nil {
++				t.Error("Run accepted a nonpositive interval")
++			}
++			if sweeps != 0 || releases != 0 {
++				t.Errorf("sweeps = %d, releases = %d; want neither resource effect", sweeps, releases)
++			}
++		})
++	}
++}
++
++func TestRunAlreadyCanceledDoesNotSweep(t *testing.T) {
++	ctx, cancel := context.WithCancel(context.Background())
++	cancel()
++	var sweeps, releases int
++	err := sweeper.Run(ctx, time.Hour, func(context.Context) error {
++		sweeps++
++		return nil
++	}, func() error {
++		releases++
++		return nil
++	})
++	if err != nil || sweeps != 0 || releases != 1 {
++		t.Fatalf("Run = %v, sweeps = %d, releases = %d; want nil, 0, 1", err, sweeps, releases)
++	}
++}
++
++func TestRunStartsImmediatelyAndCancelsBetweenCycles(t *testing.T) {
++	started := make(chan context.Context, 1)
++	var sweeps, releases atomic.Int32
++	var releasedWithCanceledContext atomic.Bool
++	parent, cancel := context.WithCancel(context.Background())
++	defer cancel()
++	var callbackContext context.Context
++	host := startHost(t, parent, time.Hour, func(ctx context.Context) error {
++		sweeps.Add(1)
++		callbackContext = ctx
++		started <- ctx
++		return nil
++	}, func() error {
++		releases.Add(1)
++		releasedWithCanceledContext.Store(callbackContext.Err() != nil)
++		return nil
++	}, nil)
++	await(t, started, "immediate first sweep")
++	cancel()
++	if err := host.wait(t); err != nil {
++		t.Fatalf("Run after parent cancellation = %v, want nil", err)
++	}
++	if sweeps.Load() != 1 || releases.Load() != 1 || !releasedWithCanceledContext.Load() {
++		t.Fatalf("sweeps = %d, releases = %d, canceled before release = %v", sweeps.Load(), releases.Load(), releasedWithCanceledContext.Load())
++	}
++}
++
++func TestRunWaitsFullIntervalAfterSuccessfulCompletion(t *testing.T) {
++	const interval = 40 * time.Millisecond
++	type cycle struct {
++		number int32
++		at     time.Time
++	}
++	starts := make(chan cycle, 8)
++	completions := make(chan cycle, 8)
++	allowFirst := make(chan struct{})
++	unblock := sync.OnceFunc(func() { close(allowFirst) })
++	var calls, active, overlaps, releases atomic.Int32
++	host := startHost(t, context.Background(), interval, func(ctx context.Context) error {
++		if active.Add(1) != 1 {
++			overlaps.Add(1)
++		}
++		defer active.Add(-1)
++		n := calls.Add(1)
++		select {
++		case starts <- cycle{n, time.Now()}:
++		case <-ctx.Done():
++			return nil
++		}
++		if n == 1 {
++			select {
++			case <-allowFirst:
++			case <-ctx.Done():
++			}
++		}
++		select {
++		case completions <- cycle{n, time.Now()}:
++		case <-ctx.Done():
++		}
++		return nil
++	}, func() error {
++		releases.Add(1)
++		return nil
++	}, unblock)
++	if first := await(t, starts, "first sweep"); first.number != 1 {
++		t.Fatalf("first cycle = %d, want 1", first.number)
++	}
++	// Hold a callback past the interval: a ticker or concurrent launcher must
++	// not start the next cycle or consume the required post-completion delay.
++	select {
++	case next := <-starts:
++		t.Fatalf("cycle %d started while first callback was blocked", next.number)
++	case <-time.After(2 * interval):
++	}
++	unblock()
++	for want := int32(2); want <= 3; want++ {
++		completed := await(t, completions, "successful callback completion")
++		next := await(t, starts, "later successful sweep")
++		if completed.number != want-1 || next.number != want {
++			t.Fatalf("completed cycle %d, next cycle %d; want %d, %d", completed.number, next.number, want-1, want)
++		}
++		if gap := next.at.Sub(completed.at); gap < interval {
++			t.Fatalf("cycle %d started %v after completion, want at least %v", next.number, gap, interval)
++		}
++	}
++	await(t, completions, "third callback completion")
++	host.cancel()
++	if err := host.wait(t); err != nil {
++		t.Fatalf("Run = %v, want nil", err)
++	}
++	if overlaps.Load() != 0 || active.Load() != 0 || releases.Load() != 1 {
++		t.Fatalf("overlaps = %d, active = %d, releases = %d", overlaps.Load(), active.Load(), releases.Load())
++	}
++}
++
++func TestRunFailureStopsAfterSuccessfulCycles(t *testing.T) {
++	want := errors.New("third sweep failed")
++	var calls, releases atomic.Int32
++	host := startHost(t, context.Background(), 10*time.Millisecond, func(context.Context) error {
++		if calls.Add(1) == 3 {
++			return want
++		}
++		return nil
++	}, func() error {
++		releases.Add(1)
++		return nil
++	}, nil)
++	if err := host.wait(t); !errors.Is(err, want) {
++		t.Fatalf("Run = %v, want third sweep failure", err)
++	}
++	if calls.Load() != 3 || releases.Load() != 1 {
++		t.Fatalf("sweeps = %d, releases = %d; want 3, 1", calls.Load(), releases.Load())
++	}
++}
++
++func TestRunPreservesIndependentWorkAndReleaseErrors(t *testing.T) {
++	workErr := errors.New("sweep failed")
++	releaseErr := errors.New("release failed")
++	for _, tc := range []struct {
++		name  string
++		work  error
++		close error
++	}{
++		{"normal cancellation", nil, nil},
++		{"work failure", fmt.Errorf("sweep: %w", workErr), nil},
++		{"release failure", nil, fmt.Errorf("release: %w", releaseErr)},
++		{"both failures", workErr, releaseErr},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			ctx, cancel := context.WithCancel(context.Background())
++			defer cancel()
++			var sweeps, releases int
++			var callbackContext context.Context
++			var canceledAtRelease bool
++			host := startHost(t, ctx, time.Hour, func(ctx context.Context) error {
++				callbackContext = ctx
++				sweeps++
++				if tc.work == nil {
++					cancel()
++				}
++				return tc.work
++			}, func() error {
++				releases++
++				canceledAtRelease = callbackContext.Err() != nil
++				return tc.close
++			}, nil)
++			err := host.wait(t)
++			if tc.work == nil && tc.close == nil && err != nil {
++				t.Fatalf("Run = %v, want nil", err)
++			}
++			if tc.work != nil && !errors.Is(err, workErr) {
++				t.Errorf("Run = %v, want work cause", err)
++			}
++			if tc.close != nil && !errors.Is(err, releaseErr) {
++				t.Errorf("Run = %v, want release cause", err)
++			}
++			if sweeps != 1 || releases != 1 {
++				t.Errorf("sweeps = %d, releases = %d; want 1, 1", sweeps, releases)
++			}
++			if !canceledAtRelease {
++				t.Error("callback context still live at release")
++			}
++		})
++	}
++}
++
++// An error containing a slice is a valid, noncomparable error value.
++type callbackFailure struct{ details []string }
++
++func (e callbackFailure) Error() string { return "callback cleanup failed" }
++
++func TestRunWaitsForCanceledCallbackCleanup(t *testing.T) {
++	independent := callbackFailure{details: []string{"cleanup"}}
++	for _, tc := range []struct {
++		name string
++		err  error
++	}{
++		{"nil result", nil},
++		{"callback cancellation error", context.Canceled},
++		{"independent failure", independent},
++		{"joined cancellation and failure", errors.Join(context.Canceled, independent)},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			started := make(chan struct{})
++			cleaning := make(chan struct{})
++			finishCleanup := make(chan struct{})
++			cleaned := make(chan struct{})
++			released := make(chan struct{}, 1)
++			unblock := sync.OnceFunc(func() { close(finishCleanup) })
++			var premature, releases atomic.Int32
++			parent, cancel := context.WithCancel(context.Background())
++			defer cancel()
++			host := startHost(t, parent, time.Hour, func(ctx context.Context) error {
++				close(started)
++				<-ctx.Done()
++				close(cleaning)
++				<-finishCleanup
++				close(cleaned)
++				return tc.err
++			}, func() error {
++				releases.Add(1)
++				select {
++				case <-cleaned:
++				default:
++					premature.Add(1)
++				}
++				released <- struct{}{}
++				return nil
++			}, unblock)
++			await(t, started, "callback start")
++			cancel()
++			await(t, cleaning, "callback cancellation")
++			select {
++			case <-released:
++				t.Fatal("release ran before callback cleanup finished")
++			case <-host.done:
++				t.Fatal("Run returned before callback cleanup finished")
++			case <-time.After(25 * time.Millisecond):
++			}
++			unblock()
++			err := host.wait(t)
++			await(t, released, "resource release")
++			if tc.err == nil && err != nil {
++				t.Errorf("Run = %v, want normal cancellation to return nil", err)
++			}
++			if errors.Is(tc.err, context.Canceled) && !errors.Is(err, context.Canceled) {
++				t.Errorf("Run = %v, lost callback cancellation error", err)
++			}
++			var wantFailure, gotFailure callbackFailure
++			if errors.As(tc.err, &wantFailure) {
++				if !errors.As(err, &gotFailure) || len(gotFailure.details) != 1 || gotFailure.details[0] != "cleanup" {
++					t.Errorf("Run = %v, lost independent callback failure", err)
++				}
++			}
++			if premature.Load() != 0 || releases.Load() != 1 {
++				t.Errorf("premature releases = %d, releases = %d; want 0, 1", premature.Load(), releases.Load())
++			}
++		})
++	}
++}
++
++func TestRunInstancesAreIndependentlyOwned(t *testing.T) {
++	starts := [2]chan int32{make(chan int32, 16), make(chan int32, 16)}
++	var calls, releases [2]atomic.Int32
++	var hosts [2]*runningHost
++	for i := range hosts {
++		i := i
++		hosts[i] = startHost(t, context.Background(), 20*time.Millisecond, func(context.Context) error {
++			n := calls[i].Add(1)
++			select {
++			case starts[i] <- n:
++			default:
++			}
++			return nil
++		}, func() error {
++			releases[i].Add(1)
++			return nil
++		}, nil)
++	}
++	for i := range hosts {
++		for want := int32(1); want <= 2; want++ {
++			if got := await(t, starts[i], "both instances recurring"); got != want {
++				t.Fatalf("instance %d cycle = %d, want %d", i, got, want)
++			}
++		}
++	}
++	hosts[0].cancel()
++	if err := hosts[0].wait(t); err != nil {
++		t.Fatalf("first Run = %v", err)
++	}
++	secondAtJoin := calls[1].Load()
++	for await(t, starts[1], "second instance recurring after first joined") <= secondAtJoin {
++	}
++	if releases[0].Load() != 1 || releases[1].Load() != 0 {
++		t.Fatalf("release counts after first join = %d, %d; want 1, 0", releases[0].Load(), releases[1].Load())
++	}
++	hosts[1].cancel()
++	if err := hosts[1].wait(t); err != nil {
++		t.Fatalf("second Run = %v", err)
++	}
++	if releases[1].Load() != 1 {
++		t.Fatalf("second release count = %d, want 1", releases[1].Load())
++	}
++}
+--- a/worker.go
++++ b/worker.go
+@@ -1,7 +1,27 @@
+ package sweeper
+ 
+-import "context"
++import (
++	"context"
++	"time"
++)
+ 
+-func once(ctx context.Context, sweep func(context.Context) error) error {
+-	return sweep(ctx)
++func runWorker(ctx context.Context, interval time.Duration, sweep func(context.Context) error) error {
++	for {
++		if ctx.Err() != nil {
++			return nil
++		}
++		if err := sweep(ctx); err != nil {
++			return err
++		}
++
++		// Start the interval after the callback finishes, so slow callbacks do
++		// not shorten the wait or overlap a later cycle.
++		timer := time.NewTimer(interval)
++		select {
++		case <-ctx.Done():
++			timer.Stop()
++			return nil
++		case <-timer.C:
++		}
++	}
+ }

@@ -1,0 +1,62 @@
+{
+  "authorized_input": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-r2/worker-host/dispatch.txt",
+  "module": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module",
+  "offered_names": [
+    "go-api-contracts",
+    "go-behavior-tests",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries"
+  ],
+  "offered_skills": [
+    {
+      "name": "go-api-contracts",
+      "offered_path": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/guidance/go-api-contracts/SKILL.md",
+      "opened": true,
+      "reason": "Run is an exported function whose lifecycle and error contract change. Preserve its exact function type, callback error causes, Go directive and dependency policy; use external-package consumer tests."
+    },
+    {
+      "name": "go-behavior-tests",
+      "offered_path": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/guidance/go-behavior-tests/SKILL.md",
+      "opened": true,
+      "reason": "The request changes meaningful recurrence, timing, cancellation, callback cleanup, release ownership and independent error outcomes, and explicitly requests high-quality tests."
+    },
+    {
+      "name": "go-core-style",
+      "offered_path": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/guidance/go-core-style/SKILL.md",
+      "opened": true,
+      "reason": "Actual Go implementation and tests require idiomatic error handling, simple function dependencies, supported standard-library APIs, formatting and concurrency verification."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "offered_path": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/guidance/go-interfaces-and-composition/SKILL.md",
+      "opened": true,
+      "reason": "The host now owns a periodic worker, its derived context, stop and join behavior, and resource release ordering. Existing function dependencies remain sufficient."
+    },
+    {
+      "name": "go-package-boundaries",
+      "offered_path": "/private/tmp/go-fresh-author-mm5bi5gc/task-4/guidance/go-package-boundaries/SKILL.md",
+      "opened": false,
+      "reason": "Not selected: the change stays in the existing sweeper package and preserves host/worker responsibilities; it neither relocates packages nor changes import direction or ownership between packages."
+    }
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-4/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-4/guidance/go-behavior-tests/SKILL.md",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-4/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-4/guidance/go-interfaces-and-composition/SKILL.md"
+  ],
+  "opened_reference_paths": [
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-4/guidance/go-behavior-tests/references/behavior-observations.md"
+  ],
+  "reference_reason": "Read the relevant worker/host observations, independent error combinations, cancellation-error values and external consumer boundary advice.",
+  "opened_module_paths": [
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module/README.md",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module/go.mod",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module/host.go",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module/worker.go",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-4/module/host_test.go"
+  ],
+  "other_repository_or_author_files_opened": [],
+  "delegation": false
+}
