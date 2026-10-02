@@ -74,7 +74,7 @@ Evaluation agents consume a disposable copy of one case, the task prompt, fixed 
 - [x] Resolve packaging: no new runtime promotion, so root/plugin catalogs and versions remain at the three existing architecture skills. The two drafts and names/docs reference are documented outside runtime.
 - [x] Run root/build-eval/review-layout/grade tests, repository validation, Claude package/marketplace validation and both draft frontmatter validators. Verify local links, hashes and all 27 reproducible patches; preserve raw patch context whitespace as evidence.
 - [x] Obtain independent whole-change/exact-byte review and final arm-blinded/provenance-aware effectiveness review. Correct combined provenance, independently adjudicate the reader disagreement, and record limits and continuation actions. No draft content changes are required after final-byte exposure.
-- [ ] Commit the final verified work and deliver concise per-skill results plus independent effectiveness feedback. Do not install or publish.
+- [x] Commit the final verified work and prepare concise per-skill results plus independent effectiveness feedback. Final evidence/recommendations checkpoint: `0db25e7`; no installation or publication.
 
 ## Execution decisions
 
