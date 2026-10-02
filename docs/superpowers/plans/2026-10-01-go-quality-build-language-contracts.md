@@ -48,7 +48,7 @@ Evaluation agents consume a disposable copy of one case, the task prompt, fixed 
 
 ### Task 2: Error skill evaluation and promotion decision
 
-- [ ] Write minimal `go-error-contracts` draft addressing demonstrated error decisions, with trigger/exclusion, concise decision table, and one useful example. References contain only conditional detail.
+- [x] Write minimal `go-error-contracts` draft addressing demonstrated error decisions, with trigger/exclusion, concise decision table, and one useful example. References contain only conditional detail.
 - [ ] Run matched fresh skill-on cases, including the positive exposure case and non-selection control, against final bytes. Verify probes, build/tests/vet, opened skills, unnecessary changes, and output hashes.
 - [ ] Have an independent reviewer assess changed code and evidence using relevant existing review skills. Revise only demonstrated harmful/incomplete guidance; rerun affected cases and final controls after changes.
 - [ ] Promote if distinct benefit and controls support it; otherwise record why it is deferred. Validate runtime/frontmatter/links and archive reproducibility. Update canonical record and commit before Task 3.
@@ -57,7 +57,7 @@ Evaluation agents consume a disposable copy of one case, the task prompt, fixed 
 
 - [x] Create four value cases: `default-wire` (zero/configured/explicit-zero state and intentional nil/empty output), `snapshot-ownership` (nested aliasing, receivers/method sets, copy-sensitive state), `required-construction` (counterexample retaining validated inputs), `not-value-work` (private calculation).
 - [x] Run baseline implementations before draft; preserve independent findings and behavioral probes.
-- [ ] Author `go-values-and-zero-values` from demonstrated needs. Run matched final-revision skill-on cases and independent Code Quality/Correctness assessment; resolve overlap with composition/API/errors at the owning decision.
+- [x] Author `go-values-and-zero-values` from demonstrated needs. Run matched final-revision skill-on cases and independent Code Quality/Correctness assessment; resolve overlap with composition/API/errors at the owning decision.
 - [ ] Promote or defer using the same evidence gate, with fresh fixture/test/vet/structural checks, hashes and progress entry. Commit before Task 4.
 
 ### Task 4: Names/docs baseline, evaluation, and promotion decision
@@ -90,3 +90,11 @@ Value decision (2026-10-01): four fresh baselines and independent applicable-cas
 review passed without a confirmed owned defect. Under the current gate, draft and
 skill-on steps are deferred. The optional user preference question can revise the
 deliverable standard; an unanswered question is not authorization to change it.
+
+Draft-authoring reconciliation (2026-10-01): the human's content-sufficiency and
+expert-feedback conditions are met for errors and values. The stricter pre-draft
+failure gate was a workflow choice, not a human prohibition. Create and review
+non-installable drafts under existing authorization; no measured benefit or
+runtime promotion is implied. Names/docs receives a focused non-runtime reference
+and standalone deferral; Task 4 behavioral skill steps are intentionally skipped.
+Final checks concern draft quality and compatibility, not a manufactured uplift.

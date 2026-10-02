@@ -1,0 +1,39 @@
+[
+  {
+    "cwd": "/private/tmp/language-draft-review-7r5q1g8c",
+    "args": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=45s",
+      "-v",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "=== RUN   TestCompletion\n--- PASS: TestCompletion (0.00s)\n=== RUN   TestTypedNil\n--- PASS: TestTypedNil (0.00s)\n=== RUN   TestCapacity\n--- PASS: TestCapacity (0.00s)\n=== RUN   TestShallowClones\n--- PASS: TestShallowClones (0.00s)\n=== RUN   TestEmptyCopies\n--- PASS: TestEmptyCopies (0.00s)\n=== RUN   TestJSON\n--- PASS: TestJSON (0.00s)\n=== RUN   TestNilMap\n--- PASS: TestNilMap (0.00s)\n=== RUN   TestAddressableCall\n--- PASS: TestAddressableCall (0.00s)\nPASS\nok  \texample.com/draftreview\t1.190s\n",
+    "stderr": ""
+  },
+  {
+    "cwd": "/private/tmp/language-draft-review-7r5q1g8c",
+    "args": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "cwd": "/private/tmp/language-draft-review-7r5q1g8c/negative",
+    "args": [
+      "go",
+      "test",
+      "./..."
+    ],
+    "exit_code": 1,
+    "stdout": "FAIL\texample.com/negative [build failed]\nFAIL\n",
+    "stderr": "# example.com/negative\n./bad.go:4:29: cannot use Item{} (value of struct type Item) as interface{Change()} value in variable declaration: Item does not implement interface{Change()} (method Change has pointer receiver)\n./bad.go:5:41: cannot call pointer method Change on Item\n"
+  }
+]

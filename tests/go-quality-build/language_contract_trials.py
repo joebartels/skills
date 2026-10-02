@@ -44,7 +44,9 @@ def prepare(skill, arm, case, repeat, model, effort):
     for name in ARCHITECTURE:
         shutil.copytree(REPO / f'plugins/go-quality-build/skills/{name}', catalog / name)
     if arm == 'skill-on':
-        shutil.copytree(REPO / f'tests/go-quality-build/{skill}/draft', catalog / skill)
+        candidates = ('go-error-contracts', 'go-values-and-zero-values') if skill == 'combined' else (skill,)
+        for candidate in candidates:
+            shutil.copytree(REPO / f'tests/go-quality-build/{candidate}/draft', catalog / candidate)
     elif arm != 'baseline':
         raise ValueError('arm must be baseline or skill-on')
     descriptions = []

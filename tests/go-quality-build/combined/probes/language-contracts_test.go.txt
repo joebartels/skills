@@ -1,0 +1,22 @@
+package batchview
+import (
+ "errors"
+ "io"
+ "strings"
+ "testing"
+)
+type finalReader struct{data string;failure error;done bool}
+func(r *finalReader) Read(b []byte)(int,error){if r.done{return 0,io.EOF};r.done=true;return copy(b,r.data),r.failure}
+func TestContractPartial(t *testing.T){
+ cause:=errors.New("read failure");got,e:=Load(&finalReader{data:"#comment\na=one\nb=two",failure:cause});if len(got)!=2 || !errors.Is(e,cause){t.Fatalf("%v %v",got,e)}
+ got,e=Load(strings.NewReader("a=one\nbroken\nb=two"));if len(got)!=1 || e==nil {t.Fatalf("%v %v",got,e)}
+ got,e=Load(strings.NewReader("k="+strings.Repeat("x",100000)));if len(got)!=1 || e!=nil {t.Fatalf("%d %v",len(got),e)}
+ var _ func(io.Reader)([]Item,error)=Load
+}
+func TestContractSnapshot(t *testing.T){
+ data:=make([]byte,3,10);copy(data,"one");in:=[]Item{{Key:"a",Tags:map[string][]byte{"data":data}}}
+ got:=Select(in,"a");if len(got)!=1 {t.Fatal(got)};got[0].Tags["data"][0]='X';got[0].Tags["extra"]=nil
+ if string(in[0].Tags["data"])!="one" || len(in[0].Tags)!=1 {t.Fatal("snapshot aliases input")}
+ in[0].Tags["data"][1]='Y';if string(got[0].Tags["data"])!="Xne" {t.Fatal("input aliases snapshot")}
+ if Select(nil,"")!=nil || Select([]Item{},"")==nil || Select(in,"none")==nil {t.Fatal("nil/empty contract")}
+}
