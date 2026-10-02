@@ -1,0 +1,66 @@
+{
+  "skill_name": "go-concurrency-and-ownership",
+  "evals": [
+    {
+      "id": "library-shared-state",
+      "prompt": "Update Totals and tests to satisfy README.md coherent concurrent update/snapshot contracts. Preserve the public API and supported version.",
+      "expected_output": "Documented invariants, effects and ownership boundaries hold with direct compatible Go.",
+      "assertions": [
+        "Preserve the explicit README contract and specified Go/API/dependency boundaries.",
+        "Use meaningful regression observations without unrelated abstraction or concurrency."
+      ],
+      "files": [
+        "files/library-shared-state/README.md",
+        "files/library-shared-state/go.mod",
+        "files/library-shared-state/totals.go",
+        "files/library-shared-state/totals_test.go"
+      ]
+    },
+    {
+      "id": "service-owned-workers",
+      "prompt": "Update Serve and tests to satisfy README.md capacity, admission, completion, release and failure contracts using the existing Lease API. Preserve supported version.",
+      "expected_output": "Documented invariants, effects and ownership boundaries hold with direct compatible Go.",
+      "assertions": [
+        "Preserve the explicit README contract and specified Go/API/dependency boundaries.",
+        "Use meaningful regression observations without unrelated abstraction or concurrency."
+      ],
+      "files": [
+        "files/service-owned-workers/README.md",
+        "files/service-owned-workers/go.mod",
+        "files/service-owned-workers/host.go",
+        "files/service-owned-workers/host_test.go"
+      ]
+    },
+    {
+      "id": "cli-pipeline-stop",
+      "prompt": "Update private runPipeline and tests to satisfy README.md bounded early-completion and failure contracts. Preserve the supplied command host and supported version.",
+      "expected_output": "Documented invariants, effects and ownership boundaries hold with direct compatible Go.",
+      "assertions": [
+        "Preserve the explicit README contract and specified Go/API/dependency boundaries.",
+        "Use meaningful regression observations without unrelated abstraction or concurrency."
+      ],
+      "files": [
+        "files/cli-pipeline-stop/README.md",
+        "files/cli-pipeline-stop/cmd/pipeline/main.go",
+        "files/cli-pipeline-stop/cmd/pipeline/pipeline.go",
+        "files/cli-pipeline-stop/cmd/pipeline/pipeline_test.go",
+        "files/cli-pipeline-stop/go.mod"
+      ]
+    },
+    {
+      "id": "not-concurrency-work",
+      "prompt": "Repair sumPositive and add one focused ordinary regression test according to README.md. Preserve its private API and direct serial implementation.",
+      "expected_output": "Documented invariants, effects and ownership boundaries hold with direct compatible Go.",
+      "assertions": [
+        "Preserve the explicit README contract and specified Go/API/dependency boundaries.",
+        "Use meaningful regression observations without unrelated abstraction or concurrency."
+      ],
+      "files": [
+        "files/not-concurrency-work/README.md",
+        "files/not-concurrency-work/go.mod",
+        "files/not-concurrency-work/sum.go",
+        "files/not-concurrency-work/sum_test.go"
+      ]
+    }
+  ]
+}

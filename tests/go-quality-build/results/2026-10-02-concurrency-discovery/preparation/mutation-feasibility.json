@@ -1,0 +1,206 @@
+[
+  {
+    "case": "library-shared-state",
+    "meaning": "split-compound-publication",
+    "target": "TestControllerCoherentSnapshots",
+    "file": "totals.go",
+    "old": "package totals\n\nimport \"sync\"\n\ntype Snapshot struct {\n\tCount int64\n\tSum   int64\n}\ntype Totals struct {\n\tmu         sync.Mutex\n\tcount, sum int64\n}\n\nfunc (t *Totals) Add(delta int64) { t.mu.Lock(); defer t.mu.Unlock(); t.count++; t.sum += delta }\nfunc (t *Totals) Snapshot() Snapshot {\n\tt.mu.Lock()\n\tdefer t.mu.Unlock()\n\treturn Snapshot{t.count, t.sum}\n}\n",
+    "new": "package totals\n\nimport (\n\t\"runtime\"\n\t\"sync/atomic\"\n)\n\ntype Snapshot struct {\n\tCount int64\n\tSum   int64\n}\ntype Totals struct{ count, sum atomic.Int64 }\n\nfunc (t *Totals) Add(delta int64) { t.count.Add(1); runtime.Gosched(); t.sum.Add(delta) }\nfunc (t *Totals) Snapshot() Snapshot {\n\tcount := t.count.Load()\n\truntime.Gosched()\n\treturn Snapshot{count, t.sum.Load()}\n}\n",
+    "compile": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-concurrency-mutation-20665epm",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/library-shared-state\t0.176s [no tests to run]\n",
+      "stderr": "",
+      "elapsed_seconds": 0.316
+    },
+    "held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerCoherentSnapshots$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-concurrency-mutation-20665epm",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerCoherentSnapshots (0.01s)\n    controller_contract_test.go:48: incoherent Count/Sum publication\nFAIL\nFAIL\texample.com/library-shared-state\t0.128s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 0.241
+    },
+    "qualified": true
+  },
+  {
+    "case": "service-owned-workers",
+    "meaning": "release-before-completion",
+    "target": "TestControllerPartialStartAndBlockedAdmission",
+    "file": "host.go",
+    "old": "package workers\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"sync\"\n)\n\ntype Job int\ntype Lease interface {\n\tRun(context.Context, Job) error\n\tClose() error\n}\n\nfunc Serve(ctx context.Context, jobs <-chan Job, limit int, open func(context.Context, Job) (Lease, error)) error {\n\tif err := ctx.Err(); err != nil {\n\t\treturn err\n\t}\n\tchild, cancel := context.WithCancel(ctx)\n\tdefer cancel()\n\tvar runs sync.WaitGroup\n\tvar mu sync.Mutex\n\tvar failures []error\n\tcollect := func(err error) {\n\t\tif err == nil {\n\t\t\treturn\n\t\t}\n\t\tmu.Lock()\n\t\tfailures = append(failures, err)\n\t\tmu.Unlock()\n\t\tcancel()\n\t}\n\tvar cohort []Lease\n\tfinish := func() {\n\t\truns.Wait()\n\t\tfor _, lease := range cohort {\n\t\t\tcollect(lease.Close())\n\t\t}\n\t\tcohort = nil\n\t}\n\tstopping := false\nadmission:\n\tfor {\n\t\tif len(cohort) == limit {\n\t\t\tfinish()\n\t\t\tif child.Err() != nil {\n\t\t\t\tstopping = true\n\t\t\t\tbreak\n\t\t\t}\n\t\t}\n\t\tvar job Job\n\t\tvar ok bool\n\t\tselect {\n\t\tcase <-child.Done():\n\t\t\tstopping = true\n\t\t\tbreak admission\n\t\tcase job, ok = <-jobs:\n\t\t}\n\t\tif !ok {\n\t\t\tbreak\n\t\t}\n\t\tif child.Err() != nil {\n\t\t\tstopping = true\n\t\t\tbreak\n\t\t}\n\t\tlease, err := open(child, job)\n\t\tif err != nil {\n\t\t\tcollect(err)\n\t\t\tbreak\n\t\t}\n\t\tcohort = append(cohort, lease)\n\t\tif child.Err() != nil {\n\t\t\tstopping = true\n\t\t\tbreak\n\t\t}\n\t\truns.Add(1)\n\t\tgo func(l Lease, j Job) { defer runs.Done(); collect(l.Run(child, j)) }(lease, job)\n\t}\n\tfinish()\n\tif stopping {\n\t\tcollect(ctx.Err())\n\t}\n\tmu.Lock()\n\tdefer mu.Unlock()\n\treturn errors.Join(failures...)\n}\n",
+    "new": "package workers\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"sync\"\n)\n\ntype Job int\ntype Lease interface {\n\tRun(context.Context, Job) error\n\tClose() error\n}\n\nfunc Serve(ctx context.Context, jobs <-chan Job, limit int, open func(context.Context, Job) (Lease, error)) error {\n\tif err := ctx.Err(); err != nil {\n\t\treturn err\n\t}\n\tchild, cancel := context.WithCancel(ctx)\n\tdefer cancel()\n\tvar runs sync.WaitGroup\n\tvar mu sync.Mutex\n\tvar failures []error\n\tcollect := func(err error) {\n\t\tif err == nil {\n\t\t\treturn\n\t\t}\n\t\tmu.Lock()\n\t\tfailures = append(failures, err)\n\t\tmu.Unlock()\n\t\tcancel()\n\t}\n\tvar cohort []Lease\n\tfinish := func() {\n\t\t/* skipped completion join */\n\t\tfor _, lease := range cohort {\n\t\t\tcollect(lease.Close())\n\t\t}\n\t\tcohort = nil\n\t}\n\tstopping := false\nadmission:\n\tfor {\n\t\tif len(cohort) == limit {\n\t\t\tfinish()\n\t\t\tif child.Err() != nil {\n\t\t\t\tstopping = true\n\t\t\t\tbreak\n\t\t\t}\n\t\t}\n\t\tvar job Job\n\t\tvar ok bool\n\t\tselect {\n\t\tcase <-child.Done():\n\t\t\tstopping = true\n\t\t\tbreak admission\n\t\tcase job, ok = <-jobs:\n\t\t}\n\t\tif !ok {\n\t\t\tbreak\n\t\t}\n\t\tif child.Err() != nil {\n\t\t\tstopping = true\n\t\t\tbreak\n\t\t}\n\t\tlease, err := open(child, job)\n\t\tif err != nil {\n\t\t\tcollect(err)\n\t\t\tbreak\n\t\t}\n\t\tcohort = append(cohort, lease)\n\t\tif child.Err() != nil {\n\t\t\tstopping = true\n\t\t\tbreak\n\t\t}\n\t\truns.Add(1)\n\t\tgo func(l Lease, j Job) { defer runs.Done(); collect(l.Run(child, j)) }(lease, job)\n\t}\n\tfinish()\n\tif stopping {\n\t\tcollect(ctx.Err())\n\t}\n\tmu.Lock()\n\tdefer mu.Unlock()\n\treturn errors.Join(failures...)\n}\n",
+    "compile": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-concurrency-mutation-f6jnhxo9",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.183s [no tests to run]\n",
+      "stderr": "",
+      "elapsed_seconds": 0.327
+    },
+    "held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerPartialStartAndBlockedAdmission$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-concurrency-mutation-f6jnhxo9",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerPartialStartAndBlockedAdmission (0.00s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/startup_failure (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/worker_failure (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:206: worker failure lost: independent close failure\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/caller_cancellation (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:209: cancellation lost: independent close failure\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:218: lease closed before all started users joined\nFAIL\nFAIL\texample.com/service-owned-workers\t0.118s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 0.234
+    },
+    "qualified": true
+  },
+  {
+    "case": "service-owned-workers",
+    "meaning": "unresponsive-admission",
+    "target": "TestControllerCancellationWithOpenInput",
+    "file": "host.go",
+    "old": "package workers\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"sync\"\n)\n\ntype Job int\ntype Lease interface {\n\tRun(context.Context, Job) error\n\tClose() error\n}\n\nfunc Serve(ctx context.Context, jobs <-chan Job, limit int, open func(context.Context, Job) (Lease, error)) error {\n\tif err := ctx.Err(); err != nil {\n\t\treturn err\n\t}\n\tchild, cancel := context.WithCancel(ctx)\n\tdefer cancel()\n\tvar runs sync.WaitGroup\n\tvar mu sync.Mutex\n\tvar failures []error\n\tcollect := func(err error) {\n\t\tif err == nil {\n\t\t\treturn\n\t\t}\n\t\tmu.Lock()\n\t\tfailures = append(failures, err)\n\t\tmu.Unlock()\n\t\tcancel()\n\t}\n\tvar cohort []Lease\n\tfinish := func() {\n\t\truns.Wait()\n\t\tfor _, lease := range cohort {\n\t\t\tcollect(lease.Close())\n\t\t}\n\t\tcohort = nil\n\t}\n\tstopping := false\nadmission:\n\tfor {\n\t\tif len(cohort) == limit {\n\t\t\tfinish()\n\t\t\tif child.Err() != nil {\n\t\t\t\tstopping = true\n\t\t\t\tbreak\n\t\t\t}\n\t\t}\n\t\tvar job Job\n\t\tvar ok bool\n\t\tselect {\n\t\tcase <-child.Done():\n\t\t\tstopping = true\n\t\t\tbreak admission\n\t\tcase job, ok = <-jobs:\n\t\t}\n\t\tif !ok {\n\t\t\tbreak\n\t\t}\n\t\tif child.Err() != nil {\n\t\t\tstopping = true\n\t\t\tbreak\n\t\t}\n\t\tlease, err := open(child, job)\n\t\tif err != nil {\n\t\t\tcollect(err)\n\t\t\tbreak\n\t\t}\n\t\tcohort = append(cohort, lease)\n\t\tif child.Err() != nil {\n\t\t\tstopping = true\n\t\t\tbreak\n\t\t}\n\t\truns.Add(1)\n\t\tgo func(l Lease, j Job) { defer runs.Done(); collect(l.Run(child, j)) }(lease, job)\n\t}\n\tfinish()\n\tif stopping {\n\t\tcollect(ctx.Err())\n\t}\n\tmu.Lock()\n\tdefer mu.Unlock()\n\treturn errors.Join(failures...)\n}\n",
+    "new": "package workers\n\nimport (\n\t\"context\"\n\t\"errors\"\n\t\"sync\"\n)\n\ntype Job int\ntype Lease interface {\n\tRun(context.Context, Job) error\n\tClose() error\n}\n\nfunc Serve(ctx context.Context, jobs <-chan Job, limit int, open func(context.Context, Job) (Lease, error)) error {\n\tif err := ctx.Err(); err != nil {\n\t\treturn err\n\t}\n\tchild, cancel := context.WithCancel(ctx)\n\tdefer cancel()\n\tvar runs sync.WaitGroup\n\tvar mu sync.Mutex\n\tvar failures []error\n\tcollect := func(err error) {\n\t\tif err == nil {\n\t\t\treturn\n\t\t}\n\t\tmu.Lock()\n\t\tfailures = append(failures, err)\n\t\tmu.Unlock()\n\t\tcancel()\n\t}\n\tvar cohort []Lease\n\tfinish := func() {\n\t\truns.Wait()\n\t\tfor _, lease := range cohort {\n\t\t\tcollect(lease.Close())\n\t\t}\n\t\tcohort = nil\n\t}\n\tstopping := false\n\tfor {\n\t\tif len(cohort) == limit {\n\t\t\tfinish()\n\t\t\tif child.Err() != nil {\n\t\t\t\tstopping = true\n\t\t\t\tbreak\n\t\t\t}\n\t\t}\n\t\tvar job Job\n\t\tvar ok bool\n\t\tjob, ok = <-jobs\n\t\tif !ok {\n\t\t\tbreak\n\t\t}\n\t\tif child.Err() != nil {\n\t\t\tstopping = true\n\t\t\tbreak\n\t\t}\n\t\tlease, err := open(child, job)\n\t\tif err != nil {\n\t\t\tcollect(err)\n\t\t\tbreak\n\t\t}\n\t\tcohort = append(cohort, lease)\n\t\tif child.Err() != nil {\n\t\t\tstopping = true\n\t\t\tbreak\n\t\t}\n\t\truns.Add(1)\n\t\tgo func(l Lease, j Job) { defer runs.Done(); collect(l.Run(child, j)) }(lease, job)\n\t}\n\tfinish()\n\tif stopping {\n\t\tcollect(ctx.Err())\n\t}\n\tmu.Lock()\n\tdefer mu.Unlock()\n\treturn errors.Join(failures...)\n}\n",
+    "compile": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-concurrency-mutation-7q00fvdj",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.251s [no tests to run]\n",
+      "stderr": "",
+      "elapsed_seconds": 0.414
+    },
+    "held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerCancellationWithOpenInput$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-concurrency-mutation-7q00fvdj",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerCancellationWithOpenInput (1.00s)\n    controller_contract_test.go:352: missing event: blocked admission observes cancellation before input closure\nFAIL\nFAIL\texample.com/service-owned-workers\t1.125s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 1.253
+    },
+    "qualified": true
+  },
+  {
+    "case": "cli-pipeline-stop",
+    "meaning": "unjoined-early-completion",
+    "target": "TestControllerEarlyConsumerAndProducerFailure",
+    "file": "cmd/pipeline/pipeline.go",
+    "old": "package main\n\nimport (\n\t\"context\"\n\t\"errors\"\n)\n\ntype pipelineResult struct {\n\terr     error\n\tstopped bool\n}\n\nfunc runPipeline(ctx context.Context, capacity int, produce func(context.Context, chan<- int) error, consume func(context.Context, <-chan int) error) error {\n\tchild, cancel := context.WithCancel(ctx)\n\tdefer cancel()\n\toutput := make(chan int, capacity)\n\tproducerDone := make(chan pipelineResult, 1)\n\tconsumerDone := make(chan pipelineResult, 1)\n\tgo func() {\n\t\tproducerErr := produce(child, output)\n\t\tstopped := child.Err() != nil\n\t\tclose(output)\n\t\tif producerErr != nil {\n\t\t\tcancel()\n\t\t}\n\t\tproducerDone <- pipelineResult{producerErr, stopped}\n\t}()\n\tgo func() {\n\t\tconsumerErr := consume(child, output)\n\t\tstopped := child.Err() != nil\n\t\tcancel()\n\t\tconsumerDone <- pipelineResult{consumerErr, stopped}\n\t}()\n\tproducer, consumer := <-producerDone, <-consumerDone\n\tnormalize := func(result pipelineResult) error {\n\t\tif result.stopped && (result.err == context.Canceled || result.err == context.DeadlineExceeded) {\n\t\t\treturn nil\n\t\t}\n\t\treturn result.err\n\t}\n\treturn errors.Join(normalize(producer), normalize(consumer), ctx.Err())\n}\n",
+    "new": "package main\n\nimport (\n\t\"context\"\n\t\"errors\"\n)\n\ntype pipelineResult struct {\n\terr     error\n\tstopped bool\n}\n\nfunc runPipeline(ctx context.Context, capacity int, produce func(context.Context, chan<- int) error, consume func(context.Context, <-chan int) error) error {\n\tchild, cancel := context.WithCancel(ctx)\n\tdefer cancel()\n\toutput := make(chan int, capacity)\n\tproducerDone := make(chan pipelineResult, 1)\n\tconsumerDone := make(chan pipelineResult, 1)\n\tgo func() {\n\t\tproducerErr := produce(child, output)\n\t\tstopped := child.Err() != nil\n\t\tclose(output)\n\t\tif producerErr != nil {\n\t\t\tcancel()\n\t\t}\n\t\tproducerDone <- pipelineResult{producerErr, stopped}\n\t}()\n\tgo func() {\n\t\tconsumerErr := consume(child, output)\n\t\tstopped := child.Err() != nil\n\t\tif consumerErr != nil {\n\t\t\tcancel()\n\t\t}\n\t\tconsumerDone <- pipelineResult{consumerErr, stopped}\n\t}()\n\tproducer, consumer := <-producerDone, <-consumerDone\n\tnormalize := func(result pipelineResult) error {\n\t\tif result.stopped && (result.err == context.Canceled || result.err == context.DeadlineExceeded) {\n\t\t\treturn nil\n\t\t}\n\t\treturn result.err\n\t}\n\treturn errors.Join(normalize(producer), normalize(consumer), ctx.Err())\n}\n",
+    "compile": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-concurrency-mutation-6xbi6zew",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.178s [no tests to run]\n",
+      "stderr": "",
+      "elapsed_seconds": 0.332
+    },
+    "held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerEarlyConsumerAndProducerFailure$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-concurrency-mutation-6xbi6zew",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerEarlyConsumerAndProducerFailure (1.00s)\n    --- FAIL: TestControllerEarlyConsumerAndProducerFailure/early_consumer_joins_blocked_producer (1.00s)\n        controller_contract_test.go:78: missing event: blocked producer requested to stop\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t1.123s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 1.246
+    },
+    "qualified": true
+  }
+]

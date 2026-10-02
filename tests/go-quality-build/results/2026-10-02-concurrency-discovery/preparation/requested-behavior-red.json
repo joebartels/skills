@@ -1,0 +1,82 @@
+{
+  "library-shared-state": {
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-requested-y7_uwe9j",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestControllerCoherentSnapshots (0.00s)\n    controller_contract_test.go:51: final={Count:39864 Sum:39864}\nFAIL\nFAIL\texample.com/library-shared-state\t0.161s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.298
+  },
+  "service-owned-workers": {
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-requested-8wi3cfe4",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestControllerPartialStartAndBlockedAdmission (2.01s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/startup_failure (1.00s)\n        controller_contract_test.go:171: missing event: first run requested to stop\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/worker_failure (1.00s)\n        controller_contract_test.go:171: missing event: first run requested to stop\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/caller_cancellation (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:184: later job opened despite bounded/stopped admission\n        controller_contract_test.go:200: close failure lost: unexpected later open\n        controller_contract_test.go:209: cancellation lost: unexpected later open\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:184: later job opened despite bounded/stopped admission\n        controller_contract_test.go:190: Run started on lease acquired after stopping\n        controller_contract_test.go:200: close failure lost: unexpected later open\n        controller_contract_test.go:209: cancellation lost: unexpected later open\n        controller_contract_test.go:218: lease closed before all started users joined\n--- FAIL: TestControllerCapacityAndAcceptedWork (1.00s)\n    controller_contract_test.go:297: available capacity not used concurrently\n--- FAIL: TestControllerCancellationWithOpenInput (1.00s)\n    controller_contract_test.go:352: missing event: blocked admission observes cancellation before input closure\nFAIL\nFAIL\texample.com/service-owned-workers\t4.182s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 4.337
+  },
+  "cli-pipeline-stop": {
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-requested-37h2tzwi",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestControllerEarlyConsumerAndProducerFailure (2.00s)\n    --- FAIL: TestControllerEarlyConsumerAndProducerFailure/early_consumer_joins_blocked_producer (1.00s)\n        controller_contract_test.go:78: missing event: blocked producer requested to stop\n    --- FAIL: TestControllerEarlyConsumerAndProducerFailure/producer_failure_stops_blocked_receive (1.00s)\n        controller_contract_test.go:132: missing event: producer failure joins consumer\n--- FAIL: TestControllerActualPipelineCommand (0.35s)\n    --- FAIL: TestControllerActualPipelineCommand/early_prefix (0.22s)\n        controller_contract_test.go:183: code=2 stdout=\"1\\n2\\n\" stderr=\"fatal error: all goroutines are asleep - deadlock!\\n\\ngoroutine 1 [chan receive]:\\nmain.runPipeline({0x102ef6bf8, 0x102f2d4c0}, 0x4?, 0x2ead3a10258, 0x2ead3a0ae98)\\n\\t/private/tmp/go-requested-37h2tzwi/cmd/pipeline/pipeline.go:13 +0xf0\\nmain.command({0x102ef6bf8, 0x102f2d4c0}, {0x2ead3a12a00, 0x2, 0x2}, {0x102ef67c8, 0x2ead3a04018}, {0x102ef67e8, 0x2ead3a04020}, {0x102ef67e8, ...})\\n\\t/private/tmp/go-requested-37h2tzwi/cmd/pipeline/main.go:21 +0x1cc\\nmain.main()\\n\\t/private/tmp/go-requested-37h2tzwi/cmd/pipeline/main.go:57 +0x8c\\n\\ngoroutine 34 [select]:\\nmain.command.func1({0x102ef6bf8, 0x102f2d4c0}, 0x2ead3a38000)\\n\\t/private/tmp/go-requested-37h2tzwi/cmd/pipeline/main.go:28 +0xe8\\nmain.runPipeline.func1()\\n\\t/private/tmp/go-requested-37h2tzwi/cmd/pipeline/pipeline.go:11 +0x58\\ncreated by main.runPipeline in goroutine 1\\n\\t/private/tmp/go-requested-37h2tzwi/cmd/pipeline/pipeline.go:11 +0xbc\\n\"\n--- FAIL: TestControllerIndependentCancellationClassBeforeStop (1.00s)\n    controller_contract_test.go:223: missing event: independent cancellation class retained after coordinated stopping\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t3.532s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 3.688
+  },
+  "not-concurrency-work": {
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-requested-9ie83jqy",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestControllerFinalPositiveValue (0.00s)\n    controller_contract_test.go:11: values=[7] got=0 want=7\nFAIL\nFAIL\texample.com/not-concurrency-work\t0.157s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.29
+  }
+}
