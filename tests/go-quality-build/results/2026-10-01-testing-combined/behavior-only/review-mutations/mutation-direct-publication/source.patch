@@ -1,0 +1,30 @@
+--- a/refresh.go
++++ b/refresh.go
+@@ -7,7 +7,6 @@
+ 	"io"
+ 	"net/http"
+ 	"os"
+-	"path/filepath"
+ 	"strings"
+ )
+ 
+@@ -63,11 +62,10 @@
+ }
+ 
+ func publish(path string, data []byte) error {
+-	file, err := os.CreateTemp(filepath.Dir(path), ".refresh-*")
++	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+ 	if err != nil {
+ 		return err
+ 	}
+-	defer os.Remove(file.Name())
+ 	if _, err := file.Write(data); err != nil {
+ 		file.Close()
+ 		return err
+@@ -75,5 +73,5 @@
+ 	if err := file.Close(); err != nil {
+ 		return err
+ 	}
+-	return os.Rename(file.Name(), path)
++	return nil
+ }

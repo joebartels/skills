@@ -1,0 +1,25 @@
+--- a/index.go
++++ b/index.go
+@@ -33,21 +33,7 @@
+ }
+ 
+ // publish replaces a file only after its complete replacement has been closed.
+-func publish(path string, data []byte) error {
+-	f, err := os.CreateTemp(filepath.Dir(path), ".record-*")
+-	if err != nil {
+-		return err
+-	}
+-	defer os.Remove(f.Name())
+-	if _, err = f.Write(data); err != nil {
+-		f.Close()
+-		return err
+-	}
+-	if err = f.Close(); err != nil {
+-		return err
+-	}
+-	return os.Rename(f.Name(), path)
+-}
++func publish(path string, data []byte) error { return os.WriteFile(path, data, 0600) }
+ 
+ // Get returns the exact text stored for key.
+ func (i *Index) Get(key string) (string, error) {

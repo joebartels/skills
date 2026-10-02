@@ -1,0 +1,11 @@
+--- a/index.go
++++ b/index.go
+@@ -69,7 +69,7 @@
+ }
+ 
+ func validateRecord(record Record) error {
+-	if !keyPattern.MatchString(record.Key) || strings.TrimSpace(record.Text) == "" {
++	if !keyPattern.MatchString(record.Key) || strings.TrimSpace(record.Text) == "\x00" {
+ 		return ErrInvalidRecord
+ 	}
+ 	return nil

@@ -1,0 +1,86 @@
+{
+  "semantic_id": "process-success-on-error",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "7db981b4b78b959f639bc2ef300d705ddf3f1fcb17d537332935efac979e7488",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-71dhhtvs/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.475s\nok  \texample.com/indexer/cmd/indexer\t1.976s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 2.249
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined/both/mutations/process-success-on-error/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-71dhhtvs/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.02
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-71dhhtvs/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.171s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.280s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.516
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-71dhhtvs/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.407s\n--- FAIL: TestCommandProcessContracts (0.51s)\n    --- FAIL: TestCommandProcessContracts/put_rejection_preserves_value (0.01s)\n        process_test.go:32: [put /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessContractsput_rejection_preserves_value3552358951/001 ../alpha bad]: status 0, stdout \"\", stderr \"invalid record\\n\"; want status 2 and matching streams\n    --- FAIL: TestCommandProcessContracts/apply_write_failure_prefix (0.01s)\n        process_test.go:46: [apply --dir /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessContractsapply_write_failure_prefix565465744/001]: status 0, stdout \"\", stderr \"CSV row 2: rename /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessContractsapply_write_failure_prefix565465744/001/.record-18886453 /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessContractsapply_write_failure_prefix565465744/001/beta: file exists\\n\"; want status 2 and matching streams\n    --- FAIL: TestCommandProcessContracts/apply_validation_prefix (0.01s)\n        process_test.go:58: [apply --dir /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessContractsapply_validation_prefix22376079/001]: status 0, stdout \"\", stderr \"CSV row 2: invalid record\\n\"; want status 2 and matching streams\n    --- FAIL: TestCommandProcessContracts/apply_parse_prefix (0.01s)\n        process_test.go:58: [apply --dir /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessContractsapply_parse_prefix2283680157/001]: status 0, stdout \"\", stderr \"CSV row 2: invalid record\\nrecord on line 2: wrong number of fields\\n\"; want status 2 and matching streams\n    --- FAIL: TestCommandProcessContracts/usage_[] (0.01s)\n        process_test.go:66: []: status 0, stdout \"\", stderr \"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status 2 and matching streams\n    --- FAIL: TestCommandProcessContracts/usage_[\"put\"] (0.00s)\n        process_test.go:66: [put]: status 0, stdout \"\", stderr \"usage: indexer put DIR KEY TEXT\\n\"; want status 2 and matching streams\n    --- FAIL: TestCommandProcessContracts/usage_[\"apply\"] (0.00s)\n        process_test.go:66: [apply]: status 0, stdout \"\", stderr \"usage: indexer apply --dir DIR\\n\"; want status 2 and matching streams\n    --- FAIL: TestCommandProcessContracts/usage_[\"apply\"_\"--unknown\"] (0.00s)\n        process_test.go:66: [apply --unknown]: status 0, stdout \"\", stderr \"flag provided but not defined: -unknown\\n\"; want status 2 and matching streams\n    --- FAIL: TestCommandProcessContracts/usage_[\"apply\"_\"--dir\"_\"somewhere\"_\"extra\"] (0.00s)\n        process_test.go:66: [apply --dir somewhere extra]: status 0, stdout \"\", stderr \"usage: indexer apply --dir DIR\\n\"; want status 2 and matching streams\n    --- FAIL: TestCommandProcessContracts/usage_[\"unknown\"] (0.00s)\n        process_test.go:66: [unknown]: status 0, stdout \"\", stderr \"unknown command \\\"unknown\\\"\\n\"; want status 2 and matching streams\n--- FAIL: TestWatchProcessContracts (1.05s)\n    --- FAIL: TestWatchProcessContracts/missing_URL (0.19s)\n        process_test.go:82: [watch --url  --file out --interval 1s]: status 0, stdout \"\", stderr \"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and matching streams\n    --- FAIL: TestWatchProcessContracts/missing_host (0.01s)\n        process_test.go:82: [watch --url http:///path --file out --interval 1s]: status 0, stdout \"\", stderr \"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and matching streams\n    --- FAIL: TestWatchProcessContracts/unsupported_scheme (0.01s)\n        process_test.go:82: [watch --url file://host/path --file out --interval 1s]: status 0, stdout \"\", stderr \"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and matching streams\n    --- FAIL: TestWatchProcessContracts/missing_path (0.01s)\n        process_test.go:82: [watch --url http://127.0.0.1:1 --file  --interval 1s]: status 0, stdout \"\", stderr \"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and matching streams\n    --- FAIL: TestWatchProcessContracts/zero_interval (0.01s)\n        process_test.go:82: [watch --url http://127.0.0.1:1 --file out --interval 0]: status 0, stdout \"\", stderr \"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and matching streams\n    --- FAIL: TestWatchProcessContracts/negative_interval (0.00s)\n        process_test.go:82: [watch --url http://127.0.0.1:1 --file out --interval -1s]: status 0, stdout \"\", stderr \"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and matching streams\n    --- FAIL: TestWatchProcessContracts/malformed_duration (0.00s)\n        process_test.go:82: [watch --url http://127.0.0.1:1 --file out --interval fast]: status 0, stdout \"\", stderr \"invalid value \\\"fast\\\" for flag -interval: parse error\\n\"; want status 2 and matching streams\n    --- FAIL: TestWatchProcessContracts/first_status_failure (0.01s)\n        process_test.go:105: [watch --url http://127.0.0.1:62734 --file /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestWatchProcessContractsfirst_status_failure132047929/001/records.json --interval 10ms]: status 0, stdout \"\", stderr \"fetch records: HTTP status 503\\n\"; want status 2 and matching streams\n    --- FAIL: TestWatchProcessContracts/first_validation_failure (0.01s)\n        process_test.go:105: [watch --url http://127.0.0.1:62736 --file /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestWatchProcessContractsfirst_validation_failure1398154657/001/records.json --interval 10ms]: status 0, stdout \"\", stderr \"record 1: invalid record\\n\"; want status 2 and matching streams\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t1.863s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 2.073
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

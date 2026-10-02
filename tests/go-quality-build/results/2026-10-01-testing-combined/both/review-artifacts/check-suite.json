@@ -1,0 +1,22 @@
+{
+  "id": "suite",
+  "cwd": "/private/tmp/go-independent-review-0hqvmxet/verification",
+  "command_argv": [
+    "rtk",
+    "proxy",
+    "env",
+    "GOCACHE=/private/tmp/go-quality-testing-cache",
+    "GOTOOLCHAIN=local",
+    "go",
+    "test",
+    "-count=1",
+    "-timeout=45s",
+    "./..."
+  ],
+  "timeout_seconds": 60.0,
+  "exit_code": 1,
+  "timed_out": false,
+  "stdout": "--- FAIL: TestRefreshRealHTTPCancellation (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 69 [running]:\ntesting.tRunner.func1.2({0x102b50a40, 0x4b8620610a70})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x102b50a40?, 0x4b8620610a70?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x102bddb40, 0x4b862061a840})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer_test.TestRefreshRealHTTPCancellation(0x4b86206626c8)\n\t/private/tmp/go-independent-review-0hqvmxet/verification/refresh_test.go:192 +0x9c\ntesting.tRunner(0x4b86206626c8, 0x102bd9950)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer\t0.294s\n--- FAIL: TestWatchProcessContracts (0.41s)\n    --- FAIL: TestWatchProcessContracts/first_status_failure (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 57 [running]:\ntesting.tRunner.func1.2({0x105058740, 0x50c45d14b40})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x105058740?, 0x50c45d14b40?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1050e4600, 0x50c45cfd500})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer/cmd/indexer.TestWatchProcessContracts.func2(0x50c45dcf688)\n\t/private/tmp/go-independent-review-0hqvmxet/verification/cmd/indexer/process_test.go:95 +0xc4\ntesting.tRunner(0x50c45dcf688, 0x50c45cfd4c0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 107\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer/cmd/indexer\t1.391s\nFAIL\n",
+  "stderr": "",
+  "elapsed_seconds": 1.7353942500194535
+}

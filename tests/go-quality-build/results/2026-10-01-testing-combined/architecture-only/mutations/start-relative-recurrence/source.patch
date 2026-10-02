@@ -1,0 +1,18 @@
+--- a/serve.go
++++ b/serve.go
+@@ -19,13 +19,14 @@
+ 	}
+ 	defer func() { err = errors.Join(err, release()) }()
+ 	for ctx.Err() == nil {
++		cycleStart := time.Now()
+ 		if err := refresh(ctx); err != nil {
+ 			if cancellationOnly(err, ctx.Err(), context.Cause(ctx)) {
+ 				return nil
+ 			}
+ 			return err
+ 		}
+-		timer := time.NewTimer(interval)
++		timer := time.NewTimer(interval - time.Since(cycleStart))
+ 		select {
+ 		case <-ctx.Done():
+ 			timer.Stop()

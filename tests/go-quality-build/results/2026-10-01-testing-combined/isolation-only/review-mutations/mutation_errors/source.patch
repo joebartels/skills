@@ -1,0 +1,11 @@
+--- a/serve.go
++++ b/serve.go
+@@ -15,7 +15,7 @@
+ 	if interval <= 0 {
+ 		return ErrInvalidInterval
+ 	}
+-	defer func() { err = errors.Join(err, release()) }()
++	defer func() { _ = release() }()
+ 	for {
+ 		if ctx.Err() != nil {
+ 			return nil

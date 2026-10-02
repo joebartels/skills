@@ -1,0 +1,253 @@
+[
+  {
+    "label": "installed-toolchain",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-2eyvo9zd",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.009,
+    "timeout_seconds": 90
+  },
+  {
+    "label": "effective-build-target",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION",
+      "GOMOD",
+      "CGO_ENABLED"
+    ],
+    "cwd": "/private/tmp/go-independent-review-2eyvo9zd/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "darwin\narm64\ngo1.26.5\n/private/tmp/go-independent-review-2eyvo9zd/candidate/go.mod\n1\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.009,
+    "timeout_seconds": 90
+  },
+  {
+    "label": "candidate-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=60s",
+      "-v",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2eyvo9zd/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestExistingPutAndReplace\n=== PAUSE TestExistingPutAndReplace\n=== RUN   TestIndependentRoots\n=== PAUSE TestIndependentRoots\n=== RUN   TestApplyCSVQuotedAndDuplicateRecords\n=== PAUSE TestApplyCSVQuotedAndDuplicateRecords\n=== RUN   TestApplyCSVRejectedReplacementKeepsPrefix\n=== PAUSE TestApplyCSVRejectedReplacementKeepsPrefix\n=== RUN   TestApplyCSVWriteFailureKeepsPrefix\n=== PAUSE TestApplyCSVWriteFailureKeepsPrefix\n=== RUN   TestApplyCSVReadFailureKeepsPrefix\n=== PAUSE TestApplyCSVReadFailureKeepsPrefix\n=== RUN   TestPutWriteFailureKeepsOld\n=== PAUSE TestPutWriteFailureKeepsOld\n=== RUN   TestRefreshPublishesOrderedSnapshot\n=== PAUSE TestRefreshPublishesOrderedSnapshot\n=== RUN   TestRefreshEmptyArray\n=== PAUSE TestRefreshEmptyArray\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes\n=== RUN   TestRefreshReadAndFetchErrors\n=== PAUSE TestRefreshReadAndFetchErrors\n=== RUN   TestRefreshPublicationFailure\n=== PAUSE TestRefreshPublicationFailure\n=== RUN   TestRefreshPublicationFailureKeepsPriorFile\n=== PAUSE TestRefreshPublicationFailureKeepsPriorFile\n=== RUN   TestRefreshRealHTTPCancellation\n=== PAUSE TestRefreshRealHTTPCancellation\n=== RUN   TestServeRejectsIntervalBeforeOwnership\n=== PAUSE TestServeRejectsIntervalBeforeOwnership\n=== RUN   TestServeAlreadyCanceledReleasesWithoutRefresh\n=== PAUSE TestServeAlreadyCanceledReleasesWithoutRefresh\n=== RUN   TestServeJoinsCallbackAndReleaseErrors\n=== PAUSE TestServeJoinsCallbackAndReleaseErrors\n=== RUN   TestServeCancellationWaitsForCallbackCleanup\n=== PAUSE TestServeCancellationWaitsForCallbackCleanup\n=== RUN   TestServeWaitsIntervalFromCompletionAndDoesNotOverlap\n=== PAUSE TestServeWaitsIntervalFromCompletionAndDoesNotOverlap\n=== RUN   TestServeCancellationDuringInterval\n=== PAUSE TestServeCancellationDuringInterval\n=== RUN   TestServeInvocationsAreIndependent\n=== PAUSE TestServeInvocationsAreIndependent\n=== CONT  TestExistingPutAndReplace\n=== CONT  TestRefreshPublicationFailure\n=== CONT  TestPutWriteFailureKeepsOld\n=== CONT  TestApplyCSVRejectedReplacementKeepsPrefix\n=== RUN   TestApplyCSVRejectedReplacementKeepsPrefix/blank\n=== PAUSE TestApplyCSVRejectedReplacementKeepsPrefix/blank\n=== RUN   TestApplyCSVRejectedReplacementKeepsPrefix/uppercase\n=== PAUSE TestApplyCSVRejectedReplacementKeepsPrefix/uppercase\n=== CONT  TestRefreshRejectionKeepsExactPriorBytes\n=== CONT  TestApplyCSVQuotedAndDuplicateRecords\n=== CONT  TestRefreshPublishesOrderedSnapshot\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/status\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/status\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/empty\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/empty\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/null\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/null\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/object\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/object\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/malformed\n=== CONT  TestRefreshReadAndFetchErrors\n=== RUN   TestApplyCSVRejectedReplacementKeepsPrefix/traversal\n=== CONT  TestServeJoinsCallbackAndReleaseErrors\n--- PASS: TestServeJoinsCallbackAndReleaseErrors (0.00s)\n=== CONT  TestServeInvocationsAreIndependent\n=== PAUSE TestApplyCSVRejectedReplacementKeepsPrefix/traversal\n=== RUN   TestApplyCSVRejectedReplacementKeepsPrefix/missing-field\n=== PAUSE TestApplyCSVRejectedReplacementKeepsPrefix/missing-field\n=== RUN   TestApplyCSVRejectedReplacementKeepsPrefix/extra-field\n=== PAUSE TestApplyCSVRejectedReplacementKeepsPrefix/extra-field\n=== RUN   TestApplyCSVRejectedReplacementKeepsPrefix/parse\n=== PAUSE TestApplyCSVRejectedReplacementKeepsPrefix/parse\n=== CONT  TestServeWaitsIntervalFromCompletionAndDoesNotOverlap\n=== CONT  TestApplyCSVRejectedReplacementKeepsPrefix/blank\n=== CONT  TestApplyCSVWriteFailureKeepsPrefix\n=== CONT  TestRefreshRealHTTPCancellation\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/malformed\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/trailing-object\n=== RUN   TestRefreshReadAndFetchErrors/read\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/trailing-object\n=== PAUSE TestRefreshReadAndFetchErrors/read\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/trailing-garbage\n=== RUN   TestRefreshReadAndFetchErrors/fetch\n=== PAUSE TestRefreshReadAndFetchErrors/fetch\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/trailing-garbage\n=== CONT  TestServeCancellationDuringInterval\n=== CONT  TestRefreshPublicationFailureKeepsPriorFile\n=== CONT  TestApplyCSVReadFailureKeepsPrefix\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/bad-key\n=== CONT  TestServeAlreadyCanceledReleasesWithoutRefresh\n--- PASS: TestServeCancellationDuringInterval (0.00s)\n--- PASS: TestServeAlreadyCanceledReleasesWithoutRefresh (0.00s)\n=== CONT  TestServeRejectsIntervalBeforeOwnership\n--- PASS: TestServeRejectsIntervalBeforeOwnership (0.00s)\n=== CONT  TestApplyCSVRejectedReplacementKeepsPrefix/traversal\n=== CONT  TestApplyCSVRejectedReplacementKeepsPrefix/extra-field\n=== CONT  TestRefreshEmptyArray\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/bad-key\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/path-key\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/path-key\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/blank\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/blank\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/later-invalid\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/later-invalid\n=== CONT  TestApplyCSVRejectedReplacementKeepsPrefix/missing-field\n=== CONT  TestServeCancellationWaitsForCallbackCleanup\n=== RUN   TestServeCancellationWaitsForCallbackCleanup/none\n=== PAUSE TestServeCancellationWaitsForCallbackCleanup/none\n=== RUN   TestServeCancellationWaitsForCallbackCleanup/independent\n=== PAUSE TestServeCancellationWaitsForCallbackCleanup/independent\n=== RUN   TestServeCancellationWaitsForCallbackCleanup/callback-context-error\n=== PAUSE TestServeCancellationWaitsForCallbackCleanup/callback-context-error\n=== CONT  TestIndependentRoots\n--- FAIL: TestRefreshRealHTTPCancellation (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 20 [running]:\ntesting.tRunner.func1.2({0x1048f3de0, 0x54c7387901a0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1048f3de0?, 0x54c7387901a0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x10497e820, 0x54c73879e0c0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer_test.TestRefreshRealHTTPCancellation(0x54c7385c2248)\n\t/private/tmp/go-independent-review-2eyvo9zd/candidate/refresh_test.go:202 +0xd4\ntesting.tRunner(0x54c7385c2248, 0x10497a6f8)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer\t0.240s\n=== RUN   TestExistingPut\n--- PASS: TestExistingPut (0.00s)\n=== RUN   TestCommandContracts\n=== RUN   TestCommandContracts/put-success\n=== PAUSE TestCommandContracts/put-success\n=== RUN   TestCommandContracts/put-empty-text\n=== PAUSE TestCommandContracts/put-empty-text\n=== RUN   TestCommandContracts/put-rejection\n=== PAUSE TestCommandContracts/put-rejection\n=== RUN   TestCommandContracts/apply-success\n=== PAUSE TestCommandContracts/apply-success\n=== RUN   TestCommandContracts/apply-rejected-prefix\n=== PAUSE TestCommandContracts/apply-rejected-prefix\n=== RUN   TestCommandContracts/apply-parse-prefix\n=== PAUSE TestCommandContracts/apply-parse-prefix\n=== RUN   TestCommandContracts/apply-write-prefix\n=== PAUSE TestCommandContracts/apply-write-prefix\n=== RUN   TestCommandContracts/startup/missing\n=== PAUSE TestCommandContracts/startup/missing\n=== RUN   TestCommandContracts/startup/unknown\n=== PAUSE TestCommandContracts/startup/unknown\n=== RUN   TestCommandContracts/startup/put-arity\n=== PAUSE TestCommandContracts/startup/put-arity\n=== RUN   TestCommandContracts/startup/apply-missing-dir\n=== PAUSE TestCommandContracts/startup/apply-missing-dir\n=== RUN   TestCommandContracts/startup/apply-unknown-flag\n=== PAUSE TestCommandContracts/startup/apply-unknown-flag\n=== RUN   TestCommandContracts/startup/apply-extra\n=== PAUSE TestCommandContracts/startup/apply-extra\n=== RUN   TestCommandContracts/startup/watch-missing\n=== PAUSE TestCommandContracts/startup/watch-missing\n=== RUN   TestCommandContracts/startup/watch-scheme\n=== PAUSE TestCommandContracts/startup/watch-scheme\n=== RUN   TestCommandContracts/startup/watch-host\n=== PAUSE TestCommandContracts/startup/watch-host\n=== RUN   TestCommandContracts/startup/watch-url-parse\n=== PAUSE TestCommandContracts/startup/watch-url-parse\n=== RUN   TestCommandContracts/startup/watch-path\n=== PAUSE TestCommandContracts/startup/watch-path\n=== RUN   TestCommandContracts/startup/watch-zero\n=== PAUSE TestCommandContracts/startup/watch-zero\n=== RUN   TestCommandContracts/startup/watch-negative\n=== PAUSE TestCommandContracts/startup/watch-negative\n=== RUN   TestCommandContracts/startup/watch-duration\n=== PAUSE TestCommandContracts/startup/watch-duration\n=== RUN   TestCommandContracts/startup/watch-extra\n=== PAUSE TestCommandContracts/startup/watch-extra\n=== RUN   TestCommandContracts/watch-first-refresh-failure\n=== PAUSE TestCommandContracts/watch-first-refresh-failure\n=== RUN   TestCommandContracts/watch-recurrence-and-interrupt\n=== PAUSE TestCommandContracts/watch-recurrence-and-interrupt\n=== RUN   TestCommandContracts/watch-recurrence-and-termination\n=== PAUSE TestCommandContracts/watch-recurrence-and-termination\n=== CONT  TestCommandContracts/put-success\n=== CONT  TestCommandContracts/startup/watch-missing\n=== CONT  TestCommandContracts/watch-recurrence-and-termination\n=== CONT  TestCommandContracts/startup/missing\n=== CONT  TestCommandContracts/apply-rejected-prefix\n=== CONT  TestCommandContracts/startup/apply-extra\n=== CONT  TestCommandContracts/apply-write-prefix\n=== CONT  TestCommandContracts/apply-success\n=== CONT  TestCommandContracts/apply-parse-prefix\n=== CONT  TestCommandContracts/watch-recurrence-and-interrupt\n=== CONT  TestCommandContracts/watch-first-refresh-failure\n=== CONT  TestCommandContracts/startup/watch-extra\n=== CONT  TestCommandContracts/startup/watch-host\n=== CONT  TestCommandContracts/startup/watch-scheme\n=== CONT  TestCommandContracts/startup/watch-negative\n=== CONT  TestCommandContracts/startup/watch-zero\n=== CONT  TestCommandContracts/startup/watch-url-parse\n=== CONT  TestCommandContracts/startup/watch-path\n--- FAIL: TestCommandContracts (0.43s)\n    --- FAIL: TestCommandContracts/watch-recurrence-and-termination (0.00s)\n    --- FAIL: TestCommandContracts/watch-recurrence-and-interrupt (0.00s)\n    --- FAIL: TestCommandContracts/watch-first-refresh-failure (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 55 [running]:\ntesting.tRunner.func1.2({0x102d2c8a0, 0x2a23035100e0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x102d2c8a0?, 0x2a23035100e0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x102db8aa0, 0x2a230319a0b0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer/cmd/indexer.TestCommandContracts.func9(0x2a230333d208)\n\t/private/tmp/go-independent-review-2eyvo9zd/candidate/cmd/indexer/main_test.go:137 +0x90\ntesting.tRunner(0x2a230333d208, 0x2a23033024e0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 20\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer/cmd/indexer\t0.602s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.857,
+    "timeout_seconds": 80
+  },
+  {
+    "label": "candidate-full-tests-loopback",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=60s",
+      "-v",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2eyvo9zd/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestExistingPutAndReplace\n=== PAUSE TestExistingPutAndReplace\n=== RUN   TestIndependentRoots\n=== PAUSE TestIndependentRoots\n=== RUN   TestApplyCSVQuotedAndDuplicateRecords\n=== PAUSE TestApplyCSVQuotedAndDuplicateRecords\n=== RUN   TestApplyCSVRejectedReplacementKeepsPrefix\n=== PAUSE TestApplyCSVRejectedReplacementKeepsPrefix\n=== RUN   TestApplyCSVWriteFailureKeepsPrefix\n=== PAUSE TestApplyCSVWriteFailureKeepsPrefix\n=== RUN   TestApplyCSVReadFailureKeepsPrefix\n=== PAUSE TestApplyCSVReadFailureKeepsPrefix\n=== RUN   TestPutWriteFailureKeepsOld\n=== PAUSE TestPutWriteFailureKeepsOld\n=== RUN   TestRefreshPublishesOrderedSnapshot\n=== PAUSE TestRefreshPublishesOrderedSnapshot\n=== RUN   TestRefreshEmptyArray\n=== PAUSE TestRefreshEmptyArray\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes\n=== RUN   TestRefreshReadAndFetchErrors\n=== PAUSE TestRefreshReadAndFetchErrors\n=== RUN   TestRefreshPublicationFailure\n=== PAUSE TestRefreshPublicationFailure\n=== RUN   TestRefreshPublicationFailureKeepsPriorFile\n=== PAUSE TestRefreshPublicationFailureKeepsPriorFile\n=== RUN   TestRefreshRealHTTPCancellation\n=== PAUSE TestRefreshRealHTTPCancellation\n=== RUN   TestServeRejectsIntervalBeforeOwnership\n=== PAUSE TestServeRejectsIntervalBeforeOwnership\n=== RUN   TestServeAlreadyCanceledReleasesWithoutRefresh\n=== PAUSE TestServeAlreadyCanceledReleasesWithoutRefresh\n=== RUN   TestServeJoinsCallbackAndReleaseErrors\n=== PAUSE TestServeJoinsCallbackAndReleaseErrors\n=== RUN   TestServeCancellationWaitsForCallbackCleanup\n=== PAUSE TestServeCancellationWaitsForCallbackCleanup\n=== RUN   TestServeWaitsIntervalFromCompletionAndDoesNotOverlap\n=== PAUSE TestServeWaitsIntervalFromCompletionAndDoesNotOverlap\n=== RUN   TestServeCancellationDuringInterval\n=== PAUSE TestServeCancellationDuringInterval\n=== RUN   TestServeInvocationsAreIndependent\n=== PAUSE TestServeInvocationsAreIndependent\n=== CONT  TestExistingPutAndReplace\n=== CONT  TestRefreshPublicationFailure\n=== CONT  TestPutWriteFailureKeepsOld\n=== CONT  TestRefreshRejectionKeepsExactPriorBytes\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/status\n=== CONT  TestApplyCSVRejectedReplacementKeepsPrefix\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/status\n=== CONT  TestRefreshReadAndFetchErrors\n=== RUN   TestRefreshReadAndFetchErrors/read\n=== RUN   TestApplyCSVRejectedReplacementKeepsPrefix/blank\n=== PAUSE TestRefreshReadAndFetchErrors/read\n=== RUN   TestRefreshReadAndFetchErrors/fetch\n=== PAUSE TestRefreshReadAndFetchErrors/fetch\n=== PAUSE TestApplyCSVRejectedReplacementKeepsPrefix/blank\n=== CONT  TestIndependentRoots\n=== RUN   TestApplyCSVRejectedReplacementKeepsPrefix/uppercase\n=== PAUSE TestApplyCSVRejectedReplacementKeepsPrefix/uppercase\n=== RUN   TestApplyCSVRejectedReplacementKeepsPrefix/traversal\n=== PAUSE TestApplyCSVRejectedReplacementKeepsPrefix/traversal\n=== RUN   TestApplyCSVRejectedReplacementKeepsPrefix/missing-field\n=== PAUSE TestApplyCSVRejectedReplacementKeepsPrefix/missing-field\n=== RUN   TestApplyCSVRejectedReplacementKeepsPrefix/extra-field\n=== PAUSE TestApplyCSVRejectedReplacementKeepsPrefix/extra-field\n=== RUN   TestApplyCSVRejectedReplacementKeepsPrefix/parse\n=== PAUSE TestApplyCSVRejectedReplacementKeepsPrefix/parse\n=== CONT  TestApplyCSVRejectedReplacementKeepsPrefix/blank\n=== CONT  TestApplyCSVReadFailureKeepsPrefix\n=== CONT  TestRefreshEmptyArray\n=== CONT  TestServeJoinsCallbackAndReleaseErrors\n--- PASS: TestServeJoinsCallbackAndReleaseErrors (0.00s)\n=== CONT  TestRefreshPublishesOrderedSnapshot\n=== CONT  TestServeAlreadyCanceledReleasesWithoutRefresh\n--- PASS: TestServeAlreadyCanceledReleasesWithoutRefresh (0.00s)\n=== CONT  TestRefreshReadAndFetchErrors/fetch\n=== CONT  TestRefreshRealHTTPCancellation\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/empty\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/empty\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/null\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/null\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/object\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/object\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/malformed\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/malformed\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/trailing-object\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/trailing-object\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/trailing-garbage\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/trailing-garbage\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/bad-key\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/bad-key\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/path-key\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/path-key\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/blank\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/blank\n=== RUN   TestRefreshRejectionKeepsExactPriorBytes/later-invalid\n=== PAUSE TestRefreshRejectionKeepsExactPriorBytes/later-invalid\n=== CONT  TestRefreshReadAndFetchErrors/read\n=== CONT  TestApplyCSVRejectedReplacementKeepsPrefix/parse\n=== CONT  TestApplyCSVQuotedAndDuplicateRecords\n=== CONT  TestServeInvocationsAreIndependent\n=== CONT  TestServeWaitsIntervalFromCompletionAndDoesNotOverlap\n=== CONT  TestServeCancellationWaitsForCallbackCleanup\n=== CONT  TestServeRejectsIntervalBeforeOwnership\n--- PASS: TestServeRejectsIntervalBeforeOwnership (0.00s)\n=== CONT  TestApplyCSVWriteFailureKeepsPrefix\n=== RUN   TestServeCancellationWaitsForCallbackCleanup/none\n=== CONT  TestServeCancellationDuringInterval\n=== PAUSE TestServeCancellationWaitsForCallbackCleanup/none\n--- PASS: TestServeCancellationDuringInterval (0.00s)\n=== CONT  TestRefreshRejectionKeepsExactPriorBytes/status\n=== RUN   TestServeCancellationWaitsForCallbackCleanup/independent\n=== PAUSE TestServeCancellationWaitsForCallbackCleanup/independent\n=== RUN   TestServeCancellationWaitsForCallbackCleanup/callback-context-error\n=== PAUSE TestServeCancellationWaitsForCallbackCleanup/callback-context-error\n=== CONT  TestRefreshPublicationFailureKeepsPriorFile\n--- PASS: TestApplyCSVReadFailureKeepsPrefix (0.00s)\n=== CONT  TestApplyCSVRejectedReplacementKeepsPrefix/missing-field\n--- PASS: TestPutWriteFailureKeepsOld (0.00s)\n=== CONT  TestApplyCSVRejectedReplacementKeepsPrefix/extra-field\n--- PASS: TestRefreshEmptyArray (0.00s)\n=== CONT  TestApplyCSVRejectedReplacementKeepsPrefix/traversal\n=== CONT  TestRefreshRejectionKeepsExactPriorBytes/trailing-garbage\n--- PASS: TestRefreshPublicationFailure (0.01s)\n=== CONT  TestApplyCSVRejectedReplacementKeepsPrefix/uppercase\n--- PASS: TestRefreshReadAndFetchErrors (0.00s)\n    --- PASS: TestRefreshReadAndFetchErrors/read (0.00s)\n    --- PASS: TestRefreshReadAndFetchErrors/fetch (0.01s)\n=== CONT  TestRefreshRejectionKeepsExactPriorBytes/blank\n=== CONT  TestRefreshRejectionKeepsExactPriorBytes/later-invalid\n=== CONT  TestRefreshRejectionKeepsExactPriorBytes/object\n--- PASS: TestRefreshPublishesOrderedSnapshot (0.01s)\n=== CONT  TestRefreshRejectionKeepsExactPriorBytes/trailing-object\n--- PASS: TestRefreshRealHTTPCancellation (0.01s)\n=== CONT  TestRefreshRejectionKeepsExactPriorBytes/malformed\n--- PASS: TestRefreshPublicationFailureKeepsPriorFile (0.01s)\n=== CONT  TestRefreshRejectionKeepsExactPriorBytes/null\n=== CONT  TestRefreshRejectionKeepsExactPriorBytes/path-key\n--- PASS: TestApplyCSVWriteFailureKeepsPrefix (0.01s)\n=== CONT  TestRefreshRejectionKeepsExactPriorBytes/bad-key\n=== CONT  TestRefreshRejectionKeepsExactPriorBytes/empty\n=== CONT  TestServeCancellationWaitsForCallbackCleanup/none\n=== CONT  TestServeCancellationWaitsForCallbackCleanup/callback-context-error\n=== CONT  TestServeCancellationWaitsForCallbackCleanup/independent\n--- PASS: TestServeCancellationWaitsForCallbackCleanup (0.00s)\n    --- PASS: TestServeCancellationWaitsForCallbackCleanup/none (0.00s)\n    --- PASS: TestServeCancellationWaitsForCallbackCleanup/callback-context-error (0.00s)\n    --- PASS: TestServeCancellationWaitsForCallbackCleanup/independent (0.00s)\n--- PASS: TestIndependentRoots (0.01s)\n--- PASS: TestExistingPutAndReplace (0.01s)\n--- PASS: TestApplyCSVQuotedAndDuplicateRecords (0.01s)\n--- PASS: TestApplyCSVRejectedReplacementKeepsPrefix (0.00s)\n    --- PASS: TestApplyCSVRejectedReplacementKeepsPrefix/blank (0.01s)\n    --- PASS: TestApplyCSVRejectedReplacementKeepsPrefix/parse (0.01s)\n    --- PASS: TestApplyCSVRejectedReplacementKeepsPrefix/missing-field (0.01s)\n    --- PASS: TestApplyCSVRejectedReplacementKeepsPrefix/extra-field (0.01s)\n    --- PASS: TestApplyCSVRejectedReplacementKeepsPrefix/traversal (0.01s)\n    --- PASS: TestApplyCSVRejectedReplacementKeepsPrefix/uppercase (0.01s)\n--- PASS: TestRefreshRejectionKeepsExactPriorBytes (0.00s)\n    --- PASS: TestRefreshRejectionKeepsExactPriorBytes/status (0.00s)\n    --- PASS: TestRefreshRejectionKeepsExactPriorBytes/trailing-garbage (0.00s)\n    --- PASS: TestRefreshRejectionKeepsExactPriorBytes/blank (0.00s)\n    --- PASS: TestRefreshRejectionKeepsExactPriorBytes/null (0.00s)\n    --- PASS: TestRefreshRejectionKeepsExactPriorBytes/object (0.00s)\n    --- PASS: TestRefreshRejectionKeepsExactPriorBytes/later-invalid (0.00s)\n    --- PASS: TestRefreshRejectionKeepsExactPriorBytes/trailing-object (0.00s)\n    --- PASS: TestRefreshRejectionKeepsExactPriorBytes/bad-key (0.00s)\n    --- PASS: TestRefreshRejectionKeepsExactPriorBytes/path-key (0.00s)\n    --- PASS: TestRefreshRejectionKeepsExactPriorBytes/malformed (0.00s)\n    --- PASS: TestRefreshRejectionKeepsExactPriorBytes/empty (0.00s)\n--- PASS: TestServeInvocationsAreIndependent (0.01s)\n--- PASS: TestServeWaitsIntervalFromCompletionAndDoesNotOverlap (0.12s)\nPASS\nok  \texample.com/indexer\t0.299s\n=== RUN   TestExistingPut\n--- PASS: TestExistingPut (0.00s)\n=== RUN   TestCommandContracts\n=== RUN   TestCommandContracts/put-success\n=== PAUSE TestCommandContracts/put-success\n=== RUN   TestCommandContracts/put-empty-text\n=== PAUSE TestCommandContracts/put-empty-text\n=== RUN   TestCommandContracts/put-rejection\n=== PAUSE TestCommandContracts/put-rejection\n=== RUN   TestCommandContracts/apply-success\n=== PAUSE TestCommandContracts/apply-success\n=== RUN   TestCommandContracts/apply-rejected-prefix\n=== PAUSE TestCommandContracts/apply-rejected-prefix\n=== RUN   TestCommandContracts/apply-parse-prefix\n=== PAUSE TestCommandContracts/apply-parse-prefix\n=== RUN   TestCommandContracts/apply-write-prefix\n=== PAUSE TestCommandContracts/apply-write-prefix\n=== RUN   TestCommandContracts/startup/missing\n=== PAUSE TestCommandContracts/startup/missing\n=== RUN   TestCommandContracts/startup/unknown\n=== PAUSE TestCommandContracts/startup/unknown\n=== RUN   TestCommandContracts/startup/put-arity\n=== PAUSE TestCommandContracts/startup/put-arity\n=== RUN   TestCommandContracts/startup/apply-missing-dir\n=== PAUSE TestCommandContracts/startup/apply-missing-dir\n=== RUN   TestCommandContracts/startup/apply-unknown-flag\n=== PAUSE TestCommandContracts/startup/apply-unknown-flag\n=== RUN   TestCommandContracts/startup/apply-extra\n=== PAUSE TestCommandContracts/startup/apply-extra\n=== RUN   TestCommandContracts/startup/watch-missing\n=== PAUSE TestCommandContracts/startup/watch-missing\n=== RUN   TestCommandContracts/startup/watch-scheme\n=== PAUSE TestCommandContracts/startup/watch-scheme\n=== RUN   TestCommandContracts/startup/watch-host\n=== PAUSE TestCommandContracts/startup/watch-host\n=== RUN   TestCommandContracts/startup/watch-url-parse\n=== PAUSE TestCommandContracts/startup/watch-url-parse\n=== RUN   TestCommandContracts/startup/watch-path\n=== PAUSE TestCommandContracts/startup/watch-path\n=== RUN   TestCommandContracts/startup/watch-zero\n=== PAUSE TestCommandContracts/startup/watch-zero\n=== RUN   TestCommandContracts/startup/watch-negative\n=== PAUSE TestCommandContracts/startup/watch-negative\n=== RUN   TestCommandContracts/startup/watch-duration\n=== PAUSE TestCommandContracts/startup/watch-duration\n=== RUN   TestCommandContracts/startup/watch-extra\n=== PAUSE TestCommandContracts/startup/watch-extra\n=== RUN   TestCommandContracts/watch-first-refresh-failure\n=== PAUSE TestCommandContracts/watch-first-refresh-failure\n=== RUN   TestCommandContracts/watch-recurrence-and-interrupt\n=== PAUSE TestCommandContracts/watch-recurrence-and-interrupt\n=== RUN   TestCommandContracts/watch-recurrence-and-termination\n=== PAUSE TestCommandContracts/watch-recurrence-and-termination\n=== CONT  TestCommandContracts/put-success\n=== CONT  TestCommandContracts/startup/watch-missing\n=== CONT  TestCommandContracts/watch-first-refresh-failure\n=== CONT  TestCommandContracts/startup/watch-url-parse\n=== CONT  TestCommandContracts/startup/missing\n=== CONT  TestCommandContracts/startup/apply-extra\n=== CONT  TestCommandContracts/watch-recurrence-and-termination\n=== CONT  TestCommandContracts/watch-recurrence-and-interrupt\n=== CONT  TestCommandContracts/startup/apply-unknown-flag\n=== CONT  TestCommandContracts/startup/apply-missing-dir\n=== CONT  TestCommandContracts/startup/put-arity\n=== CONT  TestCommandContracts/startup/unknown\n=== CONT  TestCommandContracts/startup/watch-duration\n=== CONT  TestCommandContracts/apply-rejected-prefix\n=== CONT  TestCommandContracts/apply-write-prefix\n=== CONT  TestCommandContracts/apply-parse-prefix\n=== CONT  TestCommandContracts/put-rejection\n=== CONT  TestCommandContracts/startup/watch-negative\n=== CONT  TestCommandContracts/apply-success\n=== CONT  TestCommandContracts/put-empty-text\n=== CONT  TestCommandContracts/startup/watch-zero\n=== CONT  TestCommandContracts/startup/watch-path\n=== CONT  TestCommandContracts/startup/watch-host\n=== CONT  TestCommandContracts/startup/watch-scheme\n=== CONT  TestCommandContracts/startup/watch-extra\n--- PASS: TestCommandContracts (0.20s)\n    --- PASS: TestCommandContracts/startup/apply-missing-dir (0.18s)\n    --- PASS: TestCommandContracts/startup/apply-extra (0.18s)\n    --- PASS: TestCommandContracts/put-rejection (0.18s)\n    --- PASS: TestCommandContracts/apply-parse-prefix (0.18s)\n    --- PASS: TestCommandContracts/put-success (0.19s)\n    --- PASS: TestCommandContracts/apply-rejected-prefix (0.19s)\n    --- PASS: TestCommandContracts/startup/watch-duration (0.19s)\n    --- PASS: TestCommandContracts/startup/apply-unknown-flag (0.19s)\n    --- PASS: TestCommandContracts/startup/missing (0.19s)\n    --- PASS: TestCommandContracts/watch-first-refresh-failure (0.19s)\n    --- PASS: TestCommandContracts/startup/watch-url-parse (0.19s)\n    --- PASS: TestCommandContracts/startup/watch-negative (0.19s)\n    --- PASS: TestCommandContracts/startup/unknown (0.19s)\n    --- PASS: TestCommandContracts/startup/watch-missing (0.19s)\n    --- PASS: TestCommandContracts/startup/put-arity (0.19s)\n    --- PASS: TestCommandContracts/apply-write-prefix (0.19s)\n    --- PASS: TestCommandContracts/startup/watch-path (0.01s)\n    --- PASS: TestCommandContracts/put-empty-text (0.01s)\n    --- PASS: TestCommandContracts/startup/watch-zero (0.01s)\n    --- PASS: TestCommandContracts/startup/watch-host (0.01s)\n    --- PASS: TestCommandContracts/apply-success (0.01s)\n    --- PASS: TestCommandContracts/startup/watch-scheme (0.01s)\n    --- PASS: TestCommandContracts/startup/watch-extra (0.01s)\n    --- PASS: TestCommandContracts/watch-recurrence-and-termination (0.24s)\n    --- PASS: TestCommandContracts/watch-recurrence-and-interrupt (0.24s)\nPASS\nok  \texample.com/indexer/cmd/indexer\t0.740s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.938,
+    "timeout_seconds": 80.0
+  },
+  {
+    "label": "candidate-race-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2eyvo9zd/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t1.609s\nok  \texample.com/indexer/cmd/indexer\t2.697s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 3.016,
+    "timeout_seconds": 80.0
+  },
+  {
+    "label": "redirect-contract-probe",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=TestReviewRedirectRejection",
+      "-count=1",
+      "-timeout=15s",
+      "-v",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2eyvo9zd/probe",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestReviewRedirectRejection\nredirect probe: requests=2 err=<nil> destination=\"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"new\\\"}]\\n\" readErr=<nil>\n    review_probe_test.go:32: initial status 302: requests=2 error=<nil> destination=\"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"new\\\"}]\\n\"; want one request, rejection, retained prior bytes\n--- FAIL: TestReviewRedirectRejection (0.00s)\nFAIL\nFAIL\texample.com/indexer\t0.156s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.429,
+    "timeout_seconds": 30.0
+  },
+  {
+    "label": "mutation-atomic-replacement",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=TestRefreshPublishesOrderedSnapshot",
+      "-count=1",
+      "-timeout=15s",
+      "-v",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2eyvo9zd/mutation_atomic",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestRefreshPublishesOrderedSnapshot\n=== PAUSE TestRefreshPublishesOrderedSnapshot\n=== CONT  TestRefreshPublishesOrderedSnapshot\n    refresh_test.go:64: opened snapshot = \"[{\\\"key\\\":\\\"beta\\\",\\\"text\\\":\\\"  keep\\\\ntext  \\\"},{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"first\\\"},{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"second\\\"}]\\n\", <nil>; want \"exact old snapshot\\x00\\n\"\n--- FAIL: TestRefreshPublishesOrderedSnapshot (0.00s)\nFAIL\nFAIL\texample.com/indexer\t0.208s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.456,
+    "timeout_seconds": 30.0
+  },
+  {
+    "label": "mutation-release-errors",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=TestServeJoinsCallbackAndReleaseErrors",
+      "-count=1",
+      "-timeout=15s",
+      "-v",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2eyvo9zd/mutation_errors",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestServeJoinsCallbackAndReleaseErrors\n=== PAUSE TestServeJoinsCallbackAndReleaseErrors\n=== CONT  TestServeJoinsCallbackAndReleaseErrors\n    serve_test.go:43: Serve = refresh failed, calls=1, releases=1\n--- FAIL: TestServeJoinsCallbackAndReleaseErrors (0.00s)\nFAIL\nFAIL\texample.com/indexer\t0.207s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.454,
+    "timeout_seconds": 30.0
+  },
+  {
+    "label": "candidate-go122-symbol-vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2eyvo9zd/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.13,
+    "timeout_seconds": 30.0
+  },
+  {
+    "label": "mutation-release-order",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=TestServeCancellationWaitsForCallbackCleanup",
+      "-count=1",
+      "-timeout=15s",
+      "-v",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2eyvo9zd/mutation_release_order",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestServeCancellationWaitsForCallbackCleanup\n=== PAUSE TestServeCancellationWaitsForCallbackCleanup\n=== CONT  TestServeCancellationWaitsForCallbackCleanup\n=== RUN   TestServeCancellationWaitsForCallbackCleanup/none\n=== PAUSE TestServeCancellationWaitsForCallbackCleanup/none\n=== RUN   TestServeCancellationWaitsForCallbackCleanup/independent\n=== PAUSE TestServeCancellationWaitsForCallbackCleanup/independent\n=== RUN   TestServeCancellationWaitsForCallbackCleanup/callback-context-error\n=== PAUSE TestServeCancellationWaitsForCallbackCleanup/callback-context-error\n=== CONT  TestServeCancellationWaitsForCallbackCleanup/none\n=== CONT  TestServeCancellationWaitsForCallbackCleanup/callback-context-error\n=== CONT  TestServeCancellationWaitsForCallbackCleanup/independent\n=== NAME  TestServeCancellationWaitsForCallbackCleanup/none\n    serve_test.go:91: release overtook blocked cleanup\n=== NAME  TestServeCancellationWaitsForCallbackCleanup/callback-context-error\n    serve_test.go:91: release overtook blocked cleanup\n--- FAIL: TestServeCancellationWaitsForCallbackCleanup (0.00s)\n    --- FAIL: TestServeCancellationWaitsForCallbackCleanup/none (0.00s)\n    --- PASS: TestServeCancellationWaitsForCallbackCleanup/independent (0.00s)\n    --- FAIL: TestServeCancellationWaitsForCallbackCleanup/callback-context-error (0.00s)\nFAIL\nFAIL\texample.com/indexer\t0.211s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.455,
+    "timeout_seconds": 30.0
+  },
+  {
+    "label": "supplied-changeset",
+    "argv": [
+      "rtk",
+      "proxy",
+      "diff",
+      "-rq",
+      "original",
+      "candidate"
+    ],
+    "cwd": "/private/tmp/go-independent-review-2eyvo9zd",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "Files original/cmd/indexer/main.go and candidate/cmd/indexer/main.go differ\nFiles original/cmd/indexer/main_test.go and candidate/cmd/indexer/main_test.go differ\nFiles original/index.go and candidate/index.go differ\nFiles original/index_test.go and candidate/index_test.go differ\nFiles original/refresh.go and candidate/refresh.go differ\nOnly in candidate: refresh_test.go\nFiles original/serve.go and candidate/serve.go differ\nOnly in candidate: serve_test.go\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.006,
+    "timeout_seconds": 15.0
+  }
+]

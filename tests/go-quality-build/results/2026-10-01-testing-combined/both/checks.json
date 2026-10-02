@@ -1,0 +1,860 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "gofmt",
+      "-w",
+      "index.go",
+      "refresh.go",
+      "serve.go",
+      "index_test.go",
+      "apply_test.go",
+      "refresh_test.go",
+      "serve_test.go",
+      "write_failure_unix_test.go",
+      "cmd/indexer/main.go",
+      "cmd/indexer/main_test.go",
+      "cmd/indexer/process_test.go"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.008096209028735757
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshRealHTTPCancellation (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 65 [running]:\ntesting.tRunner.func1.2({0x1009c89e0, 0x5bf357d12d30})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1009c89e0?, 0x5bf357d12d30?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x100a55880, 0x5bf357d1aae0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer_test.TestRefreshRealHTTPCancellation(0x5bf358084488)\n\t/private/tmp/go-combined-author-vsgga4k8/task-4/module/refresh_test.go:165 +0x9c\ntesting.tRunner(0x5bf358084488, 0x100a516c8)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer\t0.369s\n--- FAIL: TestWatchProcessContracts (0.40s)\n    --- FAIL: TestWatchProcessContracts/first_status_failure (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 101 [running]:\ntesting.tRunner.func1.2({0x100810720, 0x6c080aaa0850})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x100810720?, 0x6c080aaa0850?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x10089c540, 0x6c080aa9cc00})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer/cmd/indexer.TestWatchProcessContracts.func2(0x6c080aacd8c8)\n\t/private/tmp/go-combined-author-vsgga4k8/task-4/module/cmd/indexer/process_test.go:84 +0xc4\ntesting.tRunner(0x6c080aacd8c8, 0x6c080aa9cbc0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 93\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer/cmd/indexer\t1.073s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 1.3307125000283122
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.460s\nok  \texample.com/indexer/cmd/indexer\t1.539s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.7467163749970496,
+    "execution_context": "approved-listeners-unchanged-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "gofmt",
+      "-w",
+      "index.go",
+      "refresh.go",
+      "serve.go",
+      "index_test.go",
+      "apply_test.go",
+      "refresh_test.go",
+      "serve_test.go",
+      "write_failure_unix_test.go",
+      "cmd/indexer/main.go",
+      "cmd/indexer/main_test.go",
+      "cmd/indexer/process_test.go"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.010108832968398929,
+    "execution_context": "approved-listeners"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.477s\nok  \texample.com/indexer/cmd/indexer\t1.621s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.8930198330199346,
+    "execution_context": "approved-listeners"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.12418641592375934,
+    "execution_context": "approved-listeners"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t11.287s\nok  \texample.com/indexer/cmd/indexer\t4.788s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 11.618483208003454,
+    "execution_context": "approved-listeners"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "gofmt",
+      "-w",
+      "index.go",
+      "refresh.go",
+      "serve.go",
+      "index_test.go",
+      "apply_test.go",
+      "refresh_test.go",
+      "serve_test.go",
+      "write_failure_unix_test.go",
+      "cmd/indexer/main.go",
+      "cmd/indexer/main_test.go",
+      "cmd/indexer/process_test.go"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.010423667030408978,
+    "execution_context": "approved-listeners"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.490s\nok  \texample.com/indexer/cmd/indexer\t1.633s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.9006320419721305,
+    "execution_context": "approved-listeners"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=20s",
+      "-run=^TestPartialWriteFailureRetainsPriorData$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "execution_context": "workspace sandbox; synthetic transport and child-local file-size limit",
+    "stdout": "--- FAIL: TestPartialWriteFailureRetainsPriorData (0.02s)\n    --- FAIL: TestPartialWriteFailureRetainsPriorData/put (0.01s)\n        write_failure_unix_test.go:45: file /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestPartialWriteFailureRetainsPriorDataput424214114/001/alpha = \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", <nil>; want \"exact prior bytes\\x00\\n\"\n    --- FAIL: TestPartialWriteFailureRetainsPriorData/csv (0.01s)\n        write_failure_unix_test.go:45: file /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestPartialWriteFailureRetainsPriorDatacsv2413989793/001/alpha = \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", <nil>; want \"accepted\"\n    --- FAIL: TestPartialWriteFailureRetainsPriorData/refresh (0.01s)\n        write_failure_unix_test.go:45: file /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestPartialWriteFailureRetainsPriorDatarefresh2397938889/001/alpha = \"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", <nil>; want \"exact prior bytes\\x00\\n\"\nFAIL\nFAIL\texample.com/indexer\t0.230s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.478051665937528,
+    "expected_assertion_failure": true,
+    "controlled_mutation": "replace atomic staging/rename with direct os.WriteFile to the live destination",
+    "source_sha256_before": "2f1c57e445822651c9824c2924891555fa868cc22902af0329ef83ba4ad67fbb",
+    "source_sha256_after_restoration": "2f1c57e445822651c9824c2924891555fa868cc22902af0329ef83ba4ad67fbb"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "gofmt",
+      "-w",
+      "index.go",
+      "refresh.go",
+      "serve.go",
+      "index_test.go",
+      "apply_test.go",
+      "refresh_test.go",
+      "serve_test.go",
+      "write_failure_unix_test.go",
+      "cmd/indexer/main.go",
+      "cmd/indexer/main_test.go",
+      "cmd/indexer/process_test.go"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.014016582979820669,
+    "execution_context": "approved-listeners-restored-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.11989800003357232,
+    "execution_context": "approved-listeners-restored-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t11.315s\nok  \texample.com/indexer/cmd/indexer\t4.799s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 11.644044582964852,
+    "execution_context": "approved-listeners-restored-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-run=^TestApplyCSVRejectedReplacementRetainsPrefix$/^empty_text$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.209s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.45020695799030364,
+    "execution_context": "approved-listeners-restored-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-run=^TestPartialWriteFailureRetainsPriorData$/^csv$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.179s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.36774229200091213,
+    "execution_context": "approved-listeners-restored-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-run=^TestServeCancellationJoinsCleanupBeforeRelease$/^callback_error$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.207s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.3981603339780122,
+    "execution_context": "approved-listeners-restored-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-run=^TestWatchProcessContracts$/^recurrence_and_in_flight_termination$",
+      "./cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer/cmd/indexer\t0.855s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.0545967079233378,
+    "execution_context": "approved-listeners-restored-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-run=^TestCommandProcessContracts$/^apply_validation_prefix$",
+      "./cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer/cmd/indexer\t0.546s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.7425564581062645,
+    "execution_context": "approved-listeners-restored-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "gofmt",
+      "-l",
+      "index.go",
+      "refresh.go",
+      "serve.go",
+      "index_test.go",
+      "apply_test.go",
+      "refresh_test.go",
+      "serve_test.go",
+      "write_failure_unix_test.go",
+      "cmd/indexer/main.go",
+      "cmd/indexer/main_test.go",
+      "cmd/indexer/process_test.go"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.011618125019595027,
+    "execution_context": "approved-listeners-restored-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.01130299991928041,
+    "execution_context": "approved-listeners-restored-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "list",
+      "-m",
+      "-json"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "{\n\t\"Path\": \"example.com/indexer\",\n\t\"Main\": true,\n\t\"Dir\": \"/private/tmp/go-combined-author-vsgga4k8/task-4/module\",\n\t\"GoMod\": \"/private/tmp/go-combined-author-vsgga4k8/task-4/module/go.mod\",\n\t\"GoVersion\": \"1.22\"\n}\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.01061704196035862,
+    "execution_context": "approved-listeners-restored-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "python3",
+      "-c",
+      "import shutil; print(shutil.which('staticcheck') or 'staticcheck unavailable')"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "staticcheck unavailable\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.02172374993097037,
+    "execution_context": "approved-listeners-restored-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "gofmt",
+      "-w",
+      "index.go",
+      "refresh.go",
+      "serve.go",
+      "index_test.go",
+      "apply_test.go",
+      "refresh_test.go",
+      "serve_test.go",
+      "write_failure_unix_test.go",
+      "cmd/indexer/main.go",
+      "cmd/indexer/main_test.go",
+      "cmd/indexer/process_test.go"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.008856000029481947,
+    "execution_context": "approved-listeners-final-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.11219829192850739,
+    "execution_context": "approved-listeners-final-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t11.171s\nok  \texample.com/indexer/cmd/indexer\t6.009s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 11.466090707923286,
+    "execution_context": "approved-listeners-final-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-run=^TestApplyCSVRejectedReplacementRetainsPrefix$/^empty_text$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.202s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.4359591669635847,
+    "execution_context": "approved-listeners-final-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-run=^TestPartialWriteFailureRetainsPriorData$/^csv$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.184s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.3735186669509858,
+    "execution_context": "approved-listeners-final-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-run=^TestServeCancellationJoinsCleanupBeforeRelease$/^callback_error$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.207s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.40376200003083795,
+    "execution_context": "approved-listeners-final-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-run=^TestWatchProcessContracts$/^recurrence_and_in_flight_termination$",
+      "./cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer/cmd/indexer\t1.223s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.4632724170805886,
+    "execution_context": "approved-listeners-final-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-run=^TestCommandProcessContracts$/^apply_validation_prefix$",
+      "./cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer/cmd/indexer\t0.547s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.7458587499568239,
+    "execution_context": "approved-listeners-final-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "gofmt",
+      "-l",
+      "index.go",
+      "refresh.go",
+      "serve.go",
+      "index_test.go",
+      "apply_test.go",
+      "refresh_test.go",
+      "serve_test.go",
+      "write_failure_unix_test.go",
+      "cmd/indexer/main.go",
+      "cmd/indexer/main_test.go",
+      "cmd/indexer/process_test.go"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.011476707994006574,
+    "execution_context": "approved-listeners-final-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.01122154202312231,
+    "execution_context": "approved-listeners-final-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "list",
+      "-m",
+      "-json"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "{\n\t\"Path\": \"example.com/indexer\",\n\t\"Main\": true,\n\t\"Dir\": \"/private/tmp/go-combined-author-vsgga4k8/task-4/module\",\n\t\"GoMod\": \"/private/tmp/go-combined-author-vsgga4k8/task-4/module/go.mod\",\n\t\"GoVersion\": \"1.22\"\n}\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.01064716698601842,
+    "execution_context": "approved-listeners-final-source"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "python3",
+      "-c",
+      "import shutil; print(shutil.which('staticcheck') or 'staticcheck unavailable')"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "staticcheck unavailable\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.02123924996703863,
+    "execution_context": "approved-listeners-final-source"
+  }
+]

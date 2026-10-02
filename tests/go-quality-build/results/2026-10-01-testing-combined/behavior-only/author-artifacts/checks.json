@@ -1,0 +1,168 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-s",
+      "-w",
+      "."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.008,
+    "process_deadline_seconds": 90
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.637s\n--- FAIL: TestWatchFirstRefreshFailureProcess (0.00s)\n    --- FAIL: TestWatchFirstRefreshFailureProcess/status (0.00s)\n        watch_unix_test.go:32: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestWatchFirstRefreshFailureProcess/invalid_record (0.00s)\n        watch_unix_test.go:32: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestWatchFirstRefreshFailureProcess/trailing_data (0.00s)\n        watch_unix_test.go:32: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\n--- FAIL: TestWatchRecursAndJoinsOnSignals (0.00s)\n    --- FAIL: TestWatchRecursAndJoinsOnSignals/interrupt (0.00s)\n        watch_unix_test.go:55: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestWatchRecursAndJoinsOnSignals/terminated (0.00s)\n        watch_unix_test.go:55: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\n--- FAIL: TestWatchCancelsInFlightResponse (0.00s)\n    watch_unix_test.go:93: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t0.932s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.194,
+    "process_deadline_seconds": 90
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t(cached)\nok  \texample.com/indexer/cmd/indexer\t1.407s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.601,
+    "process_deadline_seconds": 90,
+    "execution_boundary": "approved unsandboxed unchanged-source rerun after localhost listener denial"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.01,
+    "process_deadline_seconds": 90,
+    "execution_boundary": "approved unsandboxed verification; source unchanged from initial rerun"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.121,
+    "process_deadline_seconds": 90,
+    "execution_boundary": "approved unsandboxed verification; source unchanged from initial rerun"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t4.747s\nok  \texample.com/indexer/cmd/indexer\t2.685s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 5.076,
+    "process_deadline_seconds": 90,
+    "execution_boundary": "approved unsandboxed verification; source unchanged from initial rerun"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t1.393s\nok  \texample.com/indexer/cmd/indexer\t3.255s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 3.47,
+    "process_deadline_seconds": 90,
+    "execution_boundary": "approved unsandboxed verification; source unchanged from initial rerun"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.015,
+    "process_deadline_seconds": 90,
+    "execution_boundary": "approved unsandboxed verification; source unchanged from initial rerun"
+  }
+]

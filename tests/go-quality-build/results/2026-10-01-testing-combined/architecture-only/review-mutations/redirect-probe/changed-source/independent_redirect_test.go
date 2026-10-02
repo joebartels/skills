@@ -1,0 +1,33 @@
+package indexer_test
+
+import (
+ "context"
+ "fmt"
+ "io"
+ "net/http"
+ "os"
+ "path/filepath"
+ "strings"
+ "testing"
+ "example.com/indexer"
+)
+
+func TestIndependentSingleGETContract(t *testing.T) {
+ path := filepath.Join(t.TempDir(), "records.json")
+ if err := os.WriteFile(path, []byte("prior bytes"), 0600); err != nil { t.Fatal(err) }
+ calls := 0
+ closed := 0
+ client := &http.Client{Transport: roundTripFunc(func(req *http.Request) (*http.Response,error) {
+  calls++
+  status, body := 200, `[{"key":"alpha","text":"redirect target"}]`
+  headers := make(http.Header)
+  if calls == 1 { status, body = 302, ""; headers.Set("Location", "https://records.invalid/target") }
+  return &http.Response{StatusCode:status, Header:headers, Body:&probeCloseBody{Reader:strings.NewReader(body),closed:&closed}, Request:req},nil
+ })}
+ err := indexer.Refresh(context.Background(), client, "https://records.invalid/feed", path)
+ data, readErr := os.ReadFile(path)
+ fmt.Printf("redirect probe: calls=%d closes=%d error=%v data=%q readError=%v\n",calls,closed,err,data,readErr)
+ if calls != 1 || err == nil || string(data) != "prior bytes" { t.Fatalf("single-GET/status-rejection contract broken") }
+}
+type probeCloseBody struct { io.Reader; closed *int }
+func (b *probeCloseBody) Close() error { (*b.closed)++; return nil }

@@ -1,0 +1,29 @@
+--- a/refresh.go
++++ b/refresh.go
+@@ -7,7 +7,6 @@
+ 	"io"
+ 	"net/http"
+ 	"os"
+-	"path/filepath"
+ )
+ 
+ type Record struct {
+@@ -57,17 +56,5 @@
+ }
+ 
+ func publish(path string, data []byte) error {
+-	file, err := os.CreateTemp(filepath.Dir(path), ".snapshot-*")
+-	if err != nil {
+-		return err
+-	}
+-	defer os.Remove(file.Name())
+-	if _, err := file.Write(data); err != nil {
+-		file.Close()
+-		return err
+-	}
+-	if err := file.Close(); err != nil {
+-		return err
+-	}
+-	return os.Rename(file.Name(), path)
++    return os.WriteFile(path, data, 0600)
+ }

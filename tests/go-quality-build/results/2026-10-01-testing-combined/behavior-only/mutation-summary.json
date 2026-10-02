@@ -1,0 +1,49 @@
+{
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "manual_interpretation": true,
+  "checks": [
+    {
+      "semantic_id": "direct-snapshot-truncation",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "TestRefreshPublishesSnapshot",
+      "meaning": "old open snapshot changes to new bytes",
+      "evidence": "mutations/direct-snapshot-truncation/verification.json"
+    },
+    {
+      "semantic_id": "discarded-caller-context",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "context was replaced",
+      "meaning": "explicit callback context comparison fails; bounded event/process failures are additional diagnostics",
+      "evidence": "mutations/discarded-caller-context/verification.json"
+    },
+    {
+      "semantic_id": "host-release-before-join",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "release overtook cleanup",
+      "meaning": "started callback cleanup is overtaken by release; independent work-error assertions also fail",
+      "evidence": "mutations/host-release-before-join/verification.json"
+    },
+    {
+      "semantic_id": "omitted-text-validation",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "blank_text",
+      "meaning": "blank-text and later-record cases lose rejection",
+      "evidence": "mutations/omitted-text-validation/verification.json"
+    },
+    {
+      "semantic_id": "process-success-on-error",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "want status 2",
+      "meaning": "actual child status is 0 instead of the promised rejection status",
+      "evidence": "mutations/process-success-on-error/verification.json"
+    },
+    {
+      "semantic_id": "start-relative-recurrence",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "want at least 80ms",
+      "meaning": "successful recurrence occurs microseconds after completion rather than the promised interval",
+      "evidence": "mutations/start-relative-recurrence/verification.json"
+    }
+  ]
+}

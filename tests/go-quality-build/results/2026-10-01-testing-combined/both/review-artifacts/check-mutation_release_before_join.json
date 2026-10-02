@@ -1,0 +1,24 @@
+{
+  "id": "mutation_release_before_join",
+  "cwd": "/private/tmp/go-independent-review-0hqvmxet/mutation-release_before_join",
+  "command_argv": [
+    "rtk",
+    "proxy",
+    "env",
+    "GOCACHE=/private/tmp/go-quality-testing-cache",
+    "GOTOOLCHAIN=local",
+    "go",
+    "test",
+    "-count=1",
+    "-timeout=20s",
+    "-run",
+    "TestServeCancellationJoinsCleanupBeforeRelease",
+    "."
+  ],
+  "timeout_seconds": 30.0,
+  "exit_code": 1,
+  "timed_out": false,
+  "stdout": "--- FAIL: TestServeCancellationJoinsCleanupBeforeRelease (0.00s)\n    --- FAIL: TestServeCancellationJoinsCleanupBeforeRelease/nil_callback_result (0.00s)\n        serve_test.go:183: Serve returned while cleanup was held: release overtook cleanup\n    --- FAIL: TestServeCancellationJoinsCleanupBeforeRelease/callback_error (0.00s)\n        serve_test.go:181: release ran while callback cleanup was held\nFAIL\nFAIL\texample.com/indexer\t0.357s\nFAIL\n",
+  "stderr": "",
+  "elapsed_seconds": 0.7778626660583541
+}

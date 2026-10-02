@@ -1,0 +1,86 @@
+{
+  "semantic_id": "discarded-caller-context",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "18c9d44d691eb951dc769af08c433354508e71615f11a20d620a7fd183bf52ab",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-h38y_yrs/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.483s\nok  \texample.com/indexer/cmd/indexer\t0.678s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.95
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined/isolation-only/mutations/discarded-caller-context/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-h38y_yrs/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-h38y_yrs/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.206s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.359s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.615
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-h38y_yrs/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestServeCancellationWaitsForCallbackCleanup (0.00s)\n    --- FAIL: TestServeCancellationWaitsForCallbackCleanup/callback-context-error (3.00s)\n        serve_test.go:86: timed out waiting for immediate refresh\n    --- FAIL: TestServeCancellationWaitsForCallbackCleanup/independent (3.00s)\n        serve_test.go:86: timed out waiting for immediate refresh\n    --- FAIL: TestServeCancellationWaitsForCallbackCleanup/none (3.00s)\n        serve_test.go:86: timed out waiting for immediate refresh\nFAIL\nFAIL\texample.com/indexer\t3.172s\n--- FAIL: TestCommandContracts (0.22s)\n    --- FAIL: TestCommandContracts/watch-recurrence-and-termination (3.28s)\n        main_test.go:224: signal did not cancel in-flight HTTP request\n    --- FAIL: TestCommandContracts/watch-recurrence-and-interrupt (3.28s)\n        main_test.go:224: signal did not cancel in-flight HTTP request\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t3.792s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 4.01
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

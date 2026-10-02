@@ -1,0 +1,183 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-i2rcmuj1/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "seconds": 0.008983584004454315
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION",
+      "CGO_ENABLED"
+    ],
+    "cwd": "/private/tmp/go-independent-review-i2rcmuj1/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "darwin\narm64\ngo1.26.5\n1\n",
+    "stderr": "",
+    "exit_code": 0,
+    "seconds": 0.008095124969258904
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-i2rcmuj1/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.546s\n--- FAIL: TestWatchFirstRefreshFailureProcess (0.00s)\n    --- FAIL: TestWatchFirstRefreshFailureProcess/status (0.00s)\n        watch_unix_test.go:32: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestWatchFirstRefreshFailureProcess/invalid_record (0.00s)\n        watch_unix_test.go:32: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestWatchFirstRefreshFailureProcess/trailing_data (0.00s)\n        watch_unix_test.go:32: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\n--- FAIL: TestWatchRecursAndJoinsOnSignals (0.00s)\n    --- FAIL: TestWatchRecursAndJoinsOnSignals/interrupt (0.00s)\n        watch_unix_test.go:55: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestWatchRecursAndJoinsOnSignals/terminated (0.00s)\n        watch_unix_test.go:55: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\n--- FAIL: TestWatchCancelsInFlightResponse (0.00s)\n    watch_unix_test.go:93: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t0.800s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "seconds": 1.053765375050716
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-i2rcmuj1/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t4.681s\n--- FAIL: TestWatchFirstRefreshFailureProcess (0.00s)\n    --- FAIL: TestWatchFirstRefreshFailureProcess/status (0.00s)\n        watch_unix_test.go:32: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestWatchFirstRefreshFailureProcess/invalid_record (0.00s)\n        watch_unix_test.go:32: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestWatchFirstRefreshFailureProcess/trailing_data (0.00s)\n        watch_unix_test.go:32: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\n--- FAIL: TestWatchRecursAndJoinsOnSignals (0.00s)\n    --- FAIL: TestWatchRecursAndJoinsOnSignals/interrupt (0.00s)\n        watch_unix_test.go:55: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestWatchRecursAndJoinsOnSignals/terminated (0.00s)\n        watch_unix_test.go:55: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\n--- FAIL: TestWatchCancelsInFlightResponse (0.00s)\n    watch_unix_test.go:93: real HTTP listener boundary: listen tcp 127.0.0.1:0: bind: operation not permitted\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t0.841s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "seconds": 5.023309916025028
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-i2rcmuj1/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "sandbox": "require_escalated, local HTTP listeners",
+    "stdout": "ok  \texample.com/indexer\t(cached)\nok  \texample.com/indexer/cmd/indexer\t1.383s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "seconds": 1.5842324580298737
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=3",
+      "-shuffle=on",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-i2rcmuj1/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "sandbox": "require_escalated, local HTTP listeners",
+    "stdout": "ok  \texample.com/indexer\t11.507s\nok  \texample.com/indexer/cmd/indexer\t4.318s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "seconds": 11.741399582941085
+  },
+  {
+    "label": "version-aware vet on go 1.22 module",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-i2rcmuj1/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "seconds": 0.12077495793346316
+  },
+  {
+    "label": "mutation: replace atomic publication by truncating destination",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=TestRefreshPublishesSnapshot|TestPartialWritesPreservePriorState/refresh",
+      "-timeout=15s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-i2rcmuj1/mutation-direct-publication",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshPublishesSnapshot (0.00s)\n    refresh_test.go:75: opened snapshot = \"[{\\\"key\\\":\\\"beta\\\",\\\"text\\\":\\\"  spaced  \\\"},{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"one\\\"},{\\\"key\\\":\\\"beta\\\",\\\"text\\\":\\\"last\\\"}]\\n\", <nil>\n--- FAIL: TestPartialWritesPreservePriorState (0.01s)\n    --- FAIL: TestPartialWritesPreservePriorState/refresh (0.01s)\n        write_failure_unix_test.go:29: limited child: exit status 1\n            --- FAIL: TestWriteFailureChild (0.00s)\n                write_failure_unix_test.go:71: file = \"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", <nil>; want \"original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original original \"\n            FAIL\nFAIL\nFAIL\texample.com/indexer\t0.215s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "seconds": 0.45908962504472584
+  },
+  {
+    "label": "mutation: release resources before callback cleanup",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=TestServeWaitsForCancellationCleanup",
+      "-timeout=15s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-i2rcmuj1/mutation-early-release",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestServeWaitsForCancellationCleanup (0.00s)\n    --- FAIL: TestServeWaitsForCancellationCleanup/nil (0.00s)\n        serve_test.go:94: release overtook cleanup\n        serve_test.go:105: released while callback was cleaning\n    --- FAIL: TestServeWaitsForCancellationCleanup/independent_failure (0.00s)\n        serve_test.go:94: release overtook cleanup\n        serve_test.go:105: released while callback was cleaning\n    --- FAIL: TestServeWaitsForCancellationCleanup/context_canceled (0.00s)\n        serve_test.go:94: release overtook cleanup\n        serve_test.go:105: released while callback was cleaning\nFAIL\nFAIL\texample.com/indexer\t0.210s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "seconds": 0.4594181249849498
+  }
+]

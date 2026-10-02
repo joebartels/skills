@@ -1,0 +1,11 @@
+--- a/index.go
++++ b/index.go
+@@ -46,7 +46,7 @@
+ 	if err = f.Close(); err != nil {
+ 		return err
+ 	}
+-	return os.Rename(f.Name(), path)
++	return os.WriteFile(path, data, 0600)
+ }
+ 
+ // Get returns the exact text stored for key.

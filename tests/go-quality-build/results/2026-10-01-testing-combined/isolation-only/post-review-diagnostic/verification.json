@@ -1,0 +1,23 @@
+{
+  "command": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-run",
+    "^TestDiagnosticSingleRequestInitialStatus$",
+    "-count=1",
+    "-timeout=15s",
+    "."
+  ],
+  "cwd": "/private/tmp/go-redirect-diagnostic-zd0w20n3/module",
+  "env": {
+    "GOCACHE": "/private/tmp/go-quality-testing-cache",
+    "GOTOOLCHAIN": "local"
+  },
+  "stdout": "--- FAIL: TestDiagnosticSingleRequestInitialStatus (0.00s)\n    diagnostic_redirect_test.go:29: initial 302 must reject\n    diagnostic_redirect_test.go:30: requests=2, want 1\n    diagnostic_redirect_test.go:31: closed bodies=2, want 1\n    diagnostic_redirect_test.go:32: prior bytes changed to \"[{\\\"key\\\":\\\"new\\\",\\\"text\\\":\\\"value\\\"}]\\n\"\nFAIL\nFAIL\texample.com/indexer\t0.207s\nFAIL\n",
+  "stderr": "",
+  "exit_code": 1,
+  "duration": 0.4555137080606073,
+  "scope": "identical post-review contract probe through concrete http.Client policy and controlled RoundTripper; no socket/network claim; not one of the six frozen mutations"
+}

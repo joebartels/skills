@@ -1,0 +1,49 @@
+{
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "manual_interpretation": true,
+  "checks": [
+    {
+      "semantic_id": "direct-snapshot-truncation",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "open snapshot =",
+      "meaning": "old open snapshot changes; shared publication helper mutation affects both Put and Refresh, and the explicit Refresh observation detects it",
+      "evidence": "mutations/direct-snapshot-truncation/verification.json"
+    },
+    {
+      "semantic_id": "discarded-caller-context",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "wrong context = true",
+      "meaning": "synchronized recurrence result reports replaced callback context; bounded missing-cancellation diagnostics are additional",
+      "evidence": "mutations/discarded-caller-context/verification.json"
+    },
+    {
+      "semantic_id": "host-release-before-join",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "release overtook callback cleanup",
+      "meaning": "started callback cleanup is overtaken by release/return",
+      "evidence": "mutations/host-release-before-join/verification.json"
+    },
+    {
+      "semantic_id": "omitted-text-validation",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "want rejection",
+      "meaning": "blank record loses independent rejection in shared ingress/refresh validation",
+      "evidence": "mutations/omitted-text-validation/verification.json"
+    },
+    {
+      "semantic_id": "process-success-on-error",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "want exit=2",
+      "meaning": "actual child status is 0 instead of promised rejection status",
+      "evidence": "mutations/process-success-on-error/verification.json"
+    },
+    {
+      "semantic_id": "start-relative-recurrence",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "want at least 40ms",
+      "meaning": "successful recurrence begins microseconds after completion instead of promised delay",
+      "evidence": "mutations/start-relative-recurrence/verification.json"
+    }
+  ]
+}

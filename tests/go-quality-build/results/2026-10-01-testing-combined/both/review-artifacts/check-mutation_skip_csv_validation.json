@@ -1,0 +1,24 @@
+{
+  "id": "mutation_skip_csv_validation",
+  "cwd": "/private/tmp/go-independent-review-0hqvmxet/mutation-skip_csv_validation",
+  "command_argv": [
+    "rtk",
+    "proxy",
+    "env",
+    "GOCACHE=/private/tmp/go-quality-testing-cache",
+    "GOTOOLCHAIN=local",
+    "go",
+    "test",
+    "-count=1",
+    "-timeout=20s",
+    "-run",
+    "TestApplyCSVRejectedReplacementRetainsPrefix",
+    "."
+  ],
+  "timeout_seconds": 30.0,
+  "exit_code": 1,
+  "timed_out": false,
+  "stdout": "--- FAIL: TestApplyCSVRejectedReplacementRetainsPrefix (0.00s)\n    --- FAIL: TestApplyCSVRejectedReplacementRetainsPrefix/empty_text (0.00s)\n        apply_test.go:95: rejected row succeeded\n    --- FAIL: TestApplyCSVRejectedReplacementRetainsPrefix/unicode_whitespace (0.00s)\n        apply_test.go:95: rejected row succeeded\nFAIL\nFAIL\texample.com/indexer\t0.829s\nFAIL\n",
+  "stderr": "",
+  "elapsed_seconds": 1.2483161659911275
+}
