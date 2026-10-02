@@ -44,3 +44,29 @@ lines combined); they are not advertised as archive replay commands. No broad
 helper rewrite is included. Runtime promotion and the draft/reference dispositions
 remain unchanged. PR replies, re-review outcome, size growth and final verification
 are recorded in the canonical design record after completing this review round.
+
+Published as `250164f`; [the inline reply](https://github.com/joebartels/skills/pull/4#discussion_r4162771895)
+explains the scope correction and verified replay. The original thread is resolved
+and Copilot re-review requested. Changed-line PR growth is 0.969% against the
+pre-review baseline; both CI validations pass at that head. No re-review outcome
+is presumed from the request succeeding.
+
+## Second review and closing scope
+
+Copilot's second review at `250164f` marks the original finding resolved and raises
+[comment 4162791024](https://github.com/joebartels/skills/pull/4#discussion_r4162791024)
+about the then-published stale continuation status. This is **VALID**: the
+post-publication status/log update was still local. The canonical record now
+states the actual pushed/replied/resolved actions and successful CI, adds a dated
+post-publication entry and records the independent closing assessment.
+
+[Independent no-context review](pr-4-independent-review.md) confirms the replay
+claims and meaningful helper success/failure paths, with no material defect and
+no code-change recommendation. All nine Go review grades are **Not applicable**
+to its Python/documentation scope; no Python letter grade is invented. Its upstream
+fresh-fetch limitation is explicit. This final update changes only continuation
+documentation and the reviewer report, leaving verified executable bytes intact.
+
+The second thread receives the publication evidence and resolution, followed by
+a final bounded re-review request. Re-review requests alone do not establish a
+clean outcome; current review/check status remains visible on PR #4.
