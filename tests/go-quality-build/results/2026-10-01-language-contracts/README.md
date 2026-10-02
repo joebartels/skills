@@ -9,7 +9,7 @@ skill has been authored or promoted at this stage.
 
 ## Error decision: deferred
 
-The independent [outcome review](../../../../../docs/go-quality-build/error-contracts-baseline-review.md)
+The independent [outcome review](../../../../docs/go-quality-build/error-contracts-baseline-review.md)
 found no confirmed owned defect in four gpt-6-luna medium outcomes (A/A). The
 single bounded supplementary cursor task also passes. The reserved CSV case
 remains unused. Do not consume it to continue searching for failures. Successful
@@ -48,4 +48,4 @@ usefulness remain unverified; checks used Go 1.26.5 darwin/arm64.
 ## Values
 
 Five original cases are fixed before drafting, including a reserved borrowed-frame
-transfer. Baseline work is underway; no value draft or benefit is claimed.
+transfer. Four fresh gpt-6-luna medium baselines are archived (three applicable and one private control). All pass the private checks; the control opens no skills. Independent [value outcome review](../../../../docs/go-quality-build/value-semantics-baseline-review.md) grades all applicable changes A/A with no confirmed owned defect. Drafting/promotion is deferred under the current improvement gate; this is not evidence that value guidance is useless on other tasks. Reserved transfer remains unused. Additional reviewer checks/probes and identities are under [expert-review](go-values-and-zero-values/expert-review/). No value draft or added benefit is claimed.

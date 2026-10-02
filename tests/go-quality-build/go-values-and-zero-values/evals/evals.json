@@ -1,0 +1,81 @@
+{
+  "skill_name": "go-values-and-zero-values",
+  "evals": [
+    {
+      "id": "default-wire",
+      "prompt": "Add explicit unlimited configuration to Formatter as described in README. Preserve existing consumers, test, and document it.",
+      "expected_output": "Zero/default and intentional nil/empty wire state are preserved.",
+      "assertions": [
+        "Default remains ten; explicit zero is unlimited; negatives rejected.",
+        "New exact type and JSON nil/empty behavior remain."
+      ],
+      "files": [
+        "files/default-wire/README.md",
+        "files/default-wire/go.mod",
+        "files/default-wire/view.go",
+        "files/default-wire/view_test.go"
+      ]
+    },
+    {
+      "id": "snapshot-ownership",
+      "prompt": "Add independently editable graph forks while retaining borrowed RootView behavior. Follow README; implement, test, and document the change.",
+      "expected_output": "Fork isolates owned state while preserving internal graph identity and borrowed view semantics.",
+      "assertions": [
+        "Nested map byte values and links are isolated in both directions.",
+        "Shared targets and cycles are retained without recursion failure.",
+        "Nil/empty state and non-addressable value method sets survive."
+      ],
+      "files": [
+        "files/snapshot-ownership/README.md",
+        "files/snapshot-ownership/go.mod",
+        "files/snapshot-ownership/graph.go",
+        "files/snapshot-ownership/graph_test.go"
+      ]
+    },
+    {
+      "id": "required-construction",
+      "prompt": "Add Count for concurrent-safe counter observation, keeping the construction invariant in README. Implement, test, and document it.",
+      "expected_output": "Construction invariant and copy-sensitive state remain sound.",
+      "assertions": [
+        "Validated key constructor retained; no forced zero usability.",
+        "No used mutex copying; observation works under concurrent Sign calls."
+      ],
+      "files": [
+        "files/required-construction/README.md",
+        "files/required-construction/counter.go",
+        "files/required-construction/counter_test.go",
+        "files/required-construction/go.mod"
+      ]
+    },
+    {
+      "id": "not-value-work",
+      "prompt": "Fix pages so exact multiples and zero items do not overcount. Keep the helper private and add regression tests.",
+      "expected_output": "Pure calculation skips value semantics.",
+      "assertions": [
+        "Correct ceiling division without representation or API changes."
+      ],
+      "files": [
+        "files/not-value-work/README.md",
+        "files/not-value-work/go.mod",
+        "files/not-value-work/pages.go",
+        "files/not-value-work/pages_test.go"
+      ]
+    },
+    {
+      "id": "borrowed-transfer",
+      "prompt": "Add CollectMatching to select retained frames with the borrowed predicate behavior in README. Implement, test, and document it.",
+      "expected_output": "Borrowed views are copied at retention, with truthful error and nilness behavior.",
+      "assertions": [
+        "Retained frames survive source reuse; rejected frames do not need copies.",
+        "Predicate sees the original borrowed view; nil/empty frame representations survive."
+      ],
+      "files": [
+        "files/borrowed-transfer/README.md",
+        "files/borrowed-transfer/frames.go",
+        "files/borrowed-transfer/frames_test.go",
+        "files/borrowed-transfer/go.mod"
+      ],
+      "role": "reserved-transfer"
+    }
+  ]
+}

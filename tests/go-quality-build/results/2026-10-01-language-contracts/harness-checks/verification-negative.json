@@ -1,0 +1,41 @@
+[
+  {
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=45s",
+      "./..."
+    ],
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestExactMultiple (0.00s)\n    pages_test.go:13: exact multiple should not add a page\n--- FAIL: TestZeroItems (0.00s)\n    pages_test.go:19: zero items should need zero pages\nFAIL\nFAIL\texample.com/paging\t0.216s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=45s",
+      "-run",
+      "^TestContract",
+      "./..."
+    ],
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestContractPages (0.00s)\n    language_contract_probe_test.go:3: {0 3 0} got 1\nFAIL\nFAIL\texample.com/paging\t0.185s\nFAIL\n",
+    "stderr": "",
+    "probe_sha256": "1875bcd9f392b635d444899ae2be60d1cf0e1b28d8d9111c5bf4f902946618c6"
+  }
+]

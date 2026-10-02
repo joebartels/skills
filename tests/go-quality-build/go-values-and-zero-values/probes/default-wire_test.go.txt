@@ -1,0 +1,10 @@
+package reportview
+import "testing"
+func TestContractDefaults(t *testing.T) {
+ var factory func() Formatter=New; _=factory
+ items:=make([]string,12); for i:=range items {items[i]="x"}
+ for _,f:=range []Formatter{{},New()} {b,e:=f.Format(items);if e!=nil || string(b)!=`{"items":["x","x","x","x","x","x","x","x","x","x"]}` {t.Fatalf("default: %s %v",b,e)}}
+ f,e:=NewWithLimit(0);if e!=nil {t.Fatal(e)};b,e:=f.Format(items);if e!=nil || string(b)!=`{"items":["x","x","x","x","x","x","x","x","x","x","x","x"]}` {t.Fatalf("explicit zero: %s %v",b,e)}
+ for _,input:=range [][]string{nil,{}} {b,e:=f.Format(input);want:=`{"items":[]}`;if input==nil {want=`{"items":null}`};if e!=nil || string(b)!=want {t.Fatalf("wire: %s %v",b,e)}}
+ if _,e:=NewWithLimit(-1);e==nil {t.Fatal("negative accepted")}
+}

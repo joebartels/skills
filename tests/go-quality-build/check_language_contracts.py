@@ -15,13 +15,14 @@ SPEC.loader.exec_module(trials)
 
 
 def check(skill, arm, case, repeat, round_name):
+    trials.locations(skill, arm, case, round_name)
     trial, archive = trials.locations(skill, arm, case, repeat)
     source = trial / 'reconstructed'
     commands = []
     cache = Path('/private/tmp/go-language-contract-check-cache')
     cache.mkdir(exist_ok=True)
-    environment = dict(os.environ, GOCACHE=str(cache))
-    for args in (['go', 'test', '-race', './...'], ['go', 'vet', './...']):
+    environment = dict(os.environ, GOCACHE=str(cache), GOWORK='off')
+    for args in (['go', 'test', '-race', '-count=1', '-timeout=45s', './...'], ['go', 'vet', './...']):
         result = subprocess.run(['rtk', 'proxy', *args], cwd=source, env=environment, text=True, capture_output=True)
         commands.append({'command': args, 'exit_code': result.returncode,
                          'stdout': result.stdout, 'stderr': result.stderr})
@@ -32,7 +33,7 @@ def check(skill, arm, case, repeat, round_name):
             raise FileExistsError(checked)
         shutil.copytree(source, checked)
         (checked / 'language_contract_probe_test.go').write_text(probe.read_text())
-        args = ['go', 'test', '-race', '-run', '^TestContract', './...']
+        args = ['go', 'test', '-race', '-count=1', '-timeout=45s', '-run', '^TestContract', './...']
         result = subprocess.run(['rtk', 'proxy', *args], cwd=checked, env=environment, text=True, capture_output=True)
         commands.append({'command': args, 'exit_code': result.returncode,
                          'stdout': result.stdout, 'stderr': result.stderr,
@@ -62,6 +63,7 @@ def check(skill, arm, case, repeat, round_name):
     destination.write_text(json.dumps(commands, indent=2) + '\n')
     print(json.dumps({'skill': skill, 'arm': arm, 'case': case, 'repeat': repeat,
                       'checks': [{'command': c['command'], 'exit_code': c['exit_code']} for c in commands]}))
+    return all(c['exit_code'] == 0 for c in commands)
 
 
 if __name__ == '__main__':
@@ -72,4 +74,4 @@ if __name__ == '__main__':
     parser.add_argument('--repeat', default='first')
     parser.add_argument('--round', default='final')
     args = parser.parse_args()
-    check(args.skill, args.arm, args.case, args.repeat, args.round)
+    raise SystemExit(0 if check(args.skill, args.arm, args.case, args.repeat, args.round) else 1)

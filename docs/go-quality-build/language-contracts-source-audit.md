@@ -391,3 +391,5 @@ Next: run the frozen matched error baselines, author only guidance justified by 
 ## Corpus identity correction
 
 Root verified the materialized corpus against the fetched GitHub content and pinned Git tree blobs. Initial materialization added one terminal newline per file. On 2026-10-01 root restored all 23 exact fetched byte sequences, verified Git blob SHA-1 identities, and corrected the SHA-256/line identities above. Section decisions and source heading line locations are unchanged. The corrected corpus totals 3,899 lines; prior audit-stage log counts remain historical.
+
+Exact source identity is also preserved in [the upstream corpus manifest](language-contracts-upstream-manifest.json): all 23 fetched Git blob IDs match locally computed blob hashes, with byte counts, SHA-256 and line counts. Independent follow-up verification found no discrepancies in the corrected 3,899-line corpus or the unchanged section/preamble coverage and decision totals.

@@ -1,0 +1,41 @@
+[
+  {
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=45s",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/signedcounter\t1.315s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=45s",
+      "-run",
+      "^TestContract",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/signedcounter\t1.183s\n",
+    "stderr": "",
+    "probe_sha256": "4ec00da08f78d512dc39170ca940fb02f6220e9caa212b4c189360e5b97947d6"
+  }
+]

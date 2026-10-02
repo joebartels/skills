@@ -1,0 +1,143 @@
+diff --git a/README.md b/README.md
+index d564b3fc03213d592be9e5136ae984857ab0f266..0affba65d47121c469190ae45073bed2c529efd8 100644
+--- a/README.md
++++ b/README.md
+@@ -1,7 +1,10 @@
+ # reportview
+ Go 1.22 library. Formatter's zero value and New both show at most ten items.
+-JSON is a stable consumer format: absent items are null; a known empty list is [].
+-Add NewWithLimit(limit int) (Formatter, error): limit zero explicitly means no limit;
+-negative limits are rejected. Keep New's exact func() Formatter type, existing
+-zero behavior, and JSON tags. Format accepts a borrowed input and must not change
+-it. Document and test the new configuration and established representations.
++Use NewWithLimit(limit) to configure a Formatter: positive limits cap the number
++of items, and zero explicitly means no limit. Negative limits return an error.
++New keeps its func() Formatter type, and the zero value retains its ten-item
++default.
++
++JSON is a stable consumer format: absent items are null; a known empty list is
++[]. Format accepts a borrowed input and does not change it. The JSON field name
++is `items`.
+diff --git a/view.go b/view.go
+index 038ad2170b77e1299652aa5d8112f6614a337c57..75ee1245b8a50d6f307049788527922b87b35ed5 100644
+--- a/view.go
++++ b/view.go
+@@ -1,13 +1,40 @@
+ package reportview
+ 
+-import "encoding/json"
++import (
++	"encoding/json"
++	"fmt"
++)
+ 
+-type Formatter struct{}
++// Formatter formats a list of items as JSON. Its zero value limits output to
++// the first ten items.
++type Formatter struct {
++	limit     int
++	unlimited bool
++}
+ 
++// New returns a Formatter that limits output to the first ten items.
+ func New() Formatter { return Formatter{} }
+-func (Formatter) Format(items []string) ([]byte, error) {
+-	if len(items) > 10 {
+-		items = items[:10]
++
++// NewWithLimit returns a Formatter that includes at most limit items. A limit
++// of zero means no limit; negative limits are invalid.
++func NewWithLimit(limit int) (Formatter, error) {
++	if limit < 0 {
++		return Formatter{}, fmt.Errorf("reportview: limit must not be negative")
++	}
++	if limit == 0 {
++		return Formatter{unlimited: true}, nil
++	}
++	return Formatter{limit: limit}, nil
++}
++
++// Format returns items encoded as JSON. It does not modify items.
++func (f Formatter) Format(items []string) ([]byte, error) {
++	limit := f.limit
++	if !f.unlimited && limit == 0 {
++		limit = 10
++	}
++	if !f.unlimited && len(items) > limit {
++		items = items[:limit]
+ 	}
+ 	return json.Marshal(struct {
+ 		Items []string `json:"items"`
+diff --git a/view_test.go b/view_test.go
+index 845ddf8c2bf07aefe2be79c4a891d50394fc770b..b2b123886a0b6cf310cca7ffdd8f7b107fa88065 100644
+--- a/view_test.go
++++ b/view_test.go
+@@ -9,3 +9,68 @@ func TestDefault(t *testing.T) {
+ 		t.Fatalf("%s %v", b, err)
+ 	}
+ }
++
++func TestNewKeepsFunctionType(t *testing.T) {
++	var factory func() Formatter = New
++	b, err := factory().Format([]string{"a", "b"})
++	if err != nil || string(b) != `{"items":["a","b"]}` {
++		t.Fatalf("%s %v", b, err)
++	}
++}
++
++func TestNewUsesTenItemDefault(t *testing.T) {
++	items := make([]string, 11)
++	b, err := New().Format(items)
++	if err != nil || string(b) != `{"items":["","","","","","","","","",""]}` {
++		t.Fatalf("%s %v", b, err)
++	}
++}
++
++func TestNewWithLimit(t *testing.T) {
++	items := []string{"a", "b", "c"}
++	f, err := NewWithLimit(2)
++	if err != nil {
++		t.Fatal(err)
++	}
++	b, err := f.Format(items)
++	if err != nil || string(b) != `{"items":["a","b"]}` {
++		t.Fatalf("%s %v", b, err)
++	}
++	if len(items) != 3 || items[2] != "c" {
++		t.Fatalf("input changed: %#v", items)
++	}
++}
++
++func TestNewWithLimitZeroIsUnlimited(t *testing.T) {
++	f, err := NewWithLimit(0)
++	if err != nil {
++		t.Fatal(err)
++	}
++	items := make([]string, 11)
++	b, err := f.Format(items)
++	if err != nil || string(b) != `{"items":["","","","","","","","","","",""]}` {
++		t.Fatalf("%s %v", b, err)
++	}
++}
++
++func TestNewWithLimitRejectsNegative(t *testing.T) {
++	if _, err := NewWithLimit(-1); err == nil {
++		t.Fatal("NewWithLimit(-1) succeeded")
++	}
++}
++
++func TestEmptyAndAbsentItemsKeepRepresentations(t *testing.T) {
++	f, err := NewWithLimit(0)
++	if err != nil {
++		t.Fatal(err)
++	}
++	for _, tc := range []struct {
++		items []string
++		want  string
++	}{{nil, `{"items":null}`}, {[]string{}, `{"items":[]}`}} {
++		b, err := f.Format(tc.items)
++		if err != nil || string(b) != tc.want {
++			t.Fatalf("Format(%#v) = %s, %v; want %s", tc.items, b, err, tc.want)
++		}
++	}
++}

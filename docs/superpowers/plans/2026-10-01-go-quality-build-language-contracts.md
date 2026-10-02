@@ -56,7 +56,7 @@ Evaluation agents consume a disposable copy of one case, the task prompt, fixed 
 ### Task 3: Value skill baseline, evaluation, and promotion decision
 
 - [x] Create four value cases: `default-wire` (zero/configured/explicit-zero state and intentional nil/empty output), `snapshot-ownership` (nested aliasing, receivers/method sets, copy-sensitive state), `required-construction` (counterexample retaining validated inputs), `not-value-work` (private calculation).
-- [ ] Run baseline implementations before draft; preserve independent findings and behavioral probes.
+- [x] Run baseline implementations before draft; preserve independent findings and behavioral probes.
 - [ ] Author `go-values-and-zero-values` from demonstrated needs. Run matched final-revision skill-on cases and independent Code Quality/Correctness assessment; resolve overlap with composition/API/errors at the owning decision.
 - [ ] Promote or defer using the same evidence gate, with fresh fixture/test/vet/structural checks, hashes and progress entry. Commit before Task 4.
 
@@ -85,3 +85,8 @@ skipped because independent baseline review found no confirmed owned defect afte
 the bounded alternative. Deferred is a completed candidate decision, not an
 implemented/evaluated runtime skill. Preserve the unused CSV transfer. Task 3 may
 proceed without error runtime changes.
+
+Value decision (2026-10-01): four fresh baselines and independent applicable-case
+review passed without a confirmed owned defect. Under the current gate, draft and
+skill-on steps are deferred. The optional user preference question can revise the
+deliverable standard; an unanswered question is not authorization to change it.

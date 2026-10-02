@@ -1,0 +1,12 @@
+package signedcounter
+import (
+ "sync"
+ "testing"
+)
+func TestContractCount(t *testing.T) {
+ if _,e:=New(nil);e==nil {t.Fatal("constructor weakened")}
+ c,e:=New([]byte("sixteen-byte-key!"));if e!=nil {t.Fatal(e)}
+ var wg sync.WaitGroup
+ for i:=0;i<20;i++ {wg.Add(1);go func(){defer wg.Done();c.Sign(nil);_=c.Count()}()};wg.Wait()
+ if c.Count()!=20 {t.Fatal(c.Count())}
+}
