@@ -68,7 +68,7 @@ Create runnable inputs and private expectations before writing a candidate skill
 
 Judge actual behavior, public consumer probes, code clarity, and documentation accuracy. Hidden checks should detect plausible relevant regressions without requiring a particular implementation. Documentation quality needs an evidence-backed manual comparison as well as compiling examples; it cannot be reduced to comment counts or preferred identifier spellings. Check each completed task with relevant Go builds/tests/vet and the appropriate existing Code Quality, Correctness, Architecture, or Security reviewer. Report unavailable minimum-toolchain, platform, or integration checks as limits.
 
-Observe a confirmed baseline weakness before authoring guidance to fix it. If the baseline is already strong, use a materially different task rather than manufacturing a grade failure. If useful distinct benefit remains unproven, defer or merge the candidate. Preserve first-pass results separately from later review-guided repairs. Rerun affected cases after guidance changes, and run applicable positive, counterexample, and non-selection cases against the final bytes before promotion.
+Observe a confirmed baseline weakness before claiming guidance remedies it. If the baseline is already strong, a bounded materially different task can clarify need; do not manufacture a grade failure. The 2026-10-01 execution ruling allows non-installable drafts when independent expert review establishes enough distinct content under the user's original creation condition. Such drafts may receive selection/behavior checks without an improvement claim. Runtime promotion still requires distinct demonstrated benefit; otherwise defer promotion or retain reference material. Preserve first-pass results separately from later review-guided repairs. Rerun affected cases after guidance changes, and run applicable positive, counterexample, and non-selection cases against the final bytes before promotion.
 
 After individual gates, run one fresh combined library/CLI evolution task covering error exposure, snapshot/default state, and accurate public usage. Compare a fixed existing-skill arm with the same arm plus the new group. Check interactions with API contracts and composition, unnecessary code/dependencies, and contradictions at each owner. Testing skills may be included only through a separately recorded, fixed revision present identically in both arms; they are not a dependency of this group.
 
@@ -79,3 +79,14 @@ A promoted skill has a distinct trigger, checked links/examples, realistic final
 The testing chat works in a different managed worktree. Reserve its two decision owners and avoid writing their runtime files or evaluations here. Shared README/catalog/design-record updates may need reconciliation when branches meet; preserve both dated work logs and test each catalog after integration. Do not message the other chat without user authorization.
 
 This spec is approved for sequential baseline/authoring/evaluation work under the implementation plan. Promotion remains contingent on evidence. No new runtime skill, evaluation fixture, package metadata, or installation was included in the design stage.
+
+## 2026-10-01 execution reconciliation
+
+Independent experts found enough distinct content for errors and value ownership,
+while all applicable pre-draft baselines already passed. The user's instruction
+conditions creation on sufficient content and expert feedback. The stricter
+pre-draft-failure rule was our workflow choice and is revised above for reversible,
+non-installable drafts; no repeated approval is required. Deliver reviewed drafts
+and a focused names/docs reference, record correct outcome/selection evidence,
+and keep unproven measured benefit and runtime promotion explicit. Preserve all
+first-stage deferral records and successful baselines.

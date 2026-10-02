@@ -4,21 +4,23 @@ The three architecture skills are available identically in both arms. Authors se
 only task inputs and catalog descriptions, choose relevant skills explicitly,
 and record opened files. This measures explicit exposure, not automatic routing.
 Each manifest records input/catalog/output SHA-256 values; `source.patch` applies
-to the tracked fixture to reconstruct the completed source exactly. No candidate
-skill has been authored or promoted at this stage.
+to the tracked fixture to reconstruct the completed source exactly. Two independently reviewed candidate drafts now exist outside runtime. No new
+skill has been promoted and no measured incremental improvement is claimed.
 
-## Error decision: deferred
+## Errors: reviewed draft, promotion unproven
 
 The independent [outcome review](../../../../docs/go-quality-build/error-contracts-baseline-review.md)
 found no confirmed owned defect in four gpt-6-luna medium outcomes (A/A). The
 single bounded supplementary cursor task also passes. The reserved CSV case
-remains unused. Do not consume it to continue searching for failures. Successful
+was consumed prospectively after drafting as a matched compatibility control.
+It is not baseline failure search. Successful
 baselines are evidence against claiming measured incremental benefit here.
 
 Two early inherited-model trials are supplemental: their exact model IDs are
 unavailable. The explicit gpt-6-luna medium cohort was declared before examining
 completed outputs; inherited trials are not silently treated as matched samples.
-The private-calculation control opened no skills. No skill-on arm exists.
+The pre-draft private-calculation control opened no skills. Final-byte draft
+exposure trials are now underway, with one fresh author per case/arm.
 
 | Trial | Author model / effort | Archived verification |
 | --- | --- | --- |
@@ -48,4 +50,21 @@ usefulness remain unverified; checks used Go 1.26.5 darwin/arm64.
 ## Values
 
 Five original cases are fixed before drafting, including a reserved borrowed-frame
-transfer. Four fresh gpt-6-luna medium baselines are archived (three applicable and one private control). All pass the private checks; the control opens no skills. Independent [value outcome review](../../../../docs/go-quality-build/value-semantics-baseline-review.md) grades all applicable changes A/A with no confirmed owned defect. Drafting/promotion is deferred under the current improvement gate; this is not evidence that value guidance is useless on other tasks. Reserved transfer remains unused. Additional reviewer checks/probes and identities are under [expert-review](go-values-and-zero-values/expert-review/). No value draft or added benefit is claimed.
+transfer. Four fresh gpt-6-luna medium baselines are archived (three applicable and one private control). All pass the private checks; the control opens no skills. Independent [value outcome review](../../../../docs/go-quality-build/value-semantics-baseline-review.md) grades all applicable changes A/A with no confirmed owned defect. The user's content condition authorizes the reviewed value draft; promotion remains unproven; this is not evidence that value guidance is useless on other tasks. Reserved transfer is now a prospectively consumed matched control after drafting. Additional reviewer checks/probes and identities are under [expert-review](go-values-and-zero-values/expert-review/). No measured added benefit is claimed.
+
+## Draft and reference review
+
+The [exact-byte expert review](../../../../docs/go-quality-build/language-contracts-final-review.md#2026-10-01-follow-up-exact-draft-content-review)
+approves the error/value drafts and names/docs reference for candidate evaluation.
+Drafts remain outside runtime; content sufficiency is separate from measured
+incremental effectiveness. Final hashes and reading cost are recorded. Raw
+compiled-example/semantic checks and source are in [draft-review](draft-review/).
+Names/docs has no standalone skill or behavior suite.
+
+## Combined use
+
+A fresh library/CLI case tests partial caller input errors, nested independent
+snapshots, intentional nil/empty results and actual process status/prefix output.
+The fixed three-skill catalog is identical; the draft-exposure arm adds both
+reviewed candidates. This checks interaction and possible harm; it does not
+establish automatic routing or a broad effectiveness estimate. Results pending.

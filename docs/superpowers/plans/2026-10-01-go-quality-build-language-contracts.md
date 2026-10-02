@@ -14,7 +14,7 @@
 
 - Retain upstream `samber/cc-skills-golang@19a0626ae8565d27a7b7bdf59d8d99d94d7e284c` and audit retained material before drafting.
 - Do not edit the independent review skills or testing group's runtime/fixture files.
-- One candidate completes baseline, draft, final-revision evaluation, and promotion decision before the next draft.
+- Runtime promotion remains sequential. For the reconciled non-installable draft deliverable, independent error/value authoring and trials may proceed concurrently; preserve distinct statuses and claims.
 - Use identical fixture hashes, model/effort, and existing-skill exposure within each comparison; disclose batching and repeats.
 - No global installation, publication, new coordinator, or required third-party Go dependency.
 - Keep explicit exposure separate from automatic routing and actual minimum-toolchain/platform verification.
@@ -57,15 +57,15 @@ Evaluation agents consume a disposable copy of one case, the task prompt, fixed 
 
 - [x] Create four value cases: `default-wire` (zero/configured/explicit-zero state and intentional nil/empty output), `snapshot-ownership` (nested aliasing, receivers/method sets, copy-sensitive state), `required-construction` (counterexample retaining validated inputs), `not-value-work` (private calculation).
 - [x] Run baseline implementations before draft; preserve independent findings and behavioral probes.
-- [x] Author `go-values-and-zero-values` from demonstrated needs. Run matched final-revision skill-on cases and independent Code Quality/Correctness assessment; resolve overlap with composition/API/errors at the owning decision.
+- [x] Author `go-values-and-zero-values` from independently reviewed ownership decisions.
+- [ ] Run matched final-revision skill-on cases and independent Code Quality/Correctness assessment; resolve overlap with composition/API/errors at the owning decision.
 - [ ] Promote or defer using the same evidence gate, with fresh fixture/test/vet/structural checks, hashes and progress entry. Commit before Task 4.
 
-### Task 4: Names/docs baseline, evaluation, and promotion decision
+### Task 4: Names/docs disposition
 
-- [ ] Create four cases: `library-docs` (public units/ownership/errors, internal names, stable protocol names and executable usage), `cli-docs` (accurate service/CLI guarantees), `docs-only` (correction preserving behavior), `formatting-control` (non-selection).
-- [ ] Run fresh baselines. Independently identify accuracy/use-site problems; do not count preferred spelling or missing comment volume as effectiveness evidence.
-- [ ] Author a draft only if enough distinct, non-obvious content exists. Run matched final-revision skill-on cases and independent documentation/code-quality assessment with example compilation.
-- [ ] Promote when useful contribution is demonstrated; merge into a reference or defer when redundant. Preserve that distinction in package counts and claims. Commit results/progress.
+- [x] Independently assess distinct content and overlap; choose a focused non-runtime reference over a standalone skill.
+- [x] Author and obtain exact-byte review of `docs/go-quality-build/authoring-references/names-and-docs.md`.
+- Not run: the originally proposed library/CLI/docs-only/formatting skill baselines and skill-on trials. No names/docs standalone draft, promotion or behavioral effectiveness result is claimed.
 
 ### Task 5: Combined use, package verification, and final review
 
@@ -78,15 +78,15 @@ Evaluation agents consume a disposable copy of one case, the task prompt, fixed 
 
 ## Execution decisions
 
-Ruling: the user's “then go for it” authorizes implementation after the reviewed spec, including the implementation mechanics recorded here. Author inline and use independent agents for assessment/evaluations as explicitly requested; do not add another approval round for this plan. Matched cases may run concurrently because their trial directories are independent. Keep runtime drafting/promotion sequential. Existing managed worktree isolation is reused.
+Ruling: the user's “then go for it” authorizes implementation after the reviewed spec, including the implementation mechanics recorded here. Author inline and use independent agents for assessment/evaluations as explicitly requested; do not add another approval round for this plan. Matched cases may run concurrently because their trial directories are independent. Keep runtime promotion sequential; the later draft-authoring reconciliation permits independent draft exposure trials concurrently. Existing managed worktree isolation is reused.
 
-Error decision (2026-10-01): Task 2 draft/skill-on/promotion steps are intentionally
+Initial error decision (2026-10-01; draft deferral superseded below): Task 2 draft/skill-on/promotion steps are intentionally
 skipped because independent baseline review found no confirmed owned defect after
 the bounded alternative. Deferred is a completed candidate decision, not an
 implemented/evaluated runtime skill. Preserve the unused CSV transfer. Task 3 may
 proceed without error runtime changes.
 
-Value decision (2026-10-01): four fresh baselines and independent applicable-case
+Initial value decision (2026-10-01; draft deferral superseded below): four fresh baselines and independent applicable-case
 review passed without a confirmed owned defect. Under the current gate, draft and
 skill-on steps are deferred. The optional user preference question can revise the
 deliverable standard; an unanswered question is not authorization to change it.

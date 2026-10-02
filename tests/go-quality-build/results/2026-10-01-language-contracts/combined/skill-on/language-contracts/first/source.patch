@@ -1,0 +1,411 @@
+diff --git a/README.md b/README.md
+index 14a03f0cc72e9ae1f04a44c3670c4225b66a8604..d3f866b7b1e1897a8e9fbb7fa6f703512685aa99 100644
+--- a/README.md
++++ b/README.md
+@@ -1,18 +1,21 @@
+ # batchview
+-Go 1.22 library and CLI. Load reads key=payload lines, ignores blank lines, and
+-returns valid items before malformed input. Item.Tag data is editable caller-owned
+-state. Add comment lines beginning with # and handle bytes returned alongside
+-caller read errors: return the valid prefix and an inspectable read cause. EOF is
+-completion; no line-size cap is promised. Readers remain borrowed.
+-Add Select(items []Item, prefix string) []Item: retain matching keys in order in an
+-independently editable snapshot, including nested tag bytes. Empty prefix selects
+-all. Mutations to either input or output must not affect the other. Preserve nil
+-input as nil; non-nil input produces a non-nil slice even when no keys match.
+-Keep Load's exact signature and existing Item fields/JSON tags. Document errors,
+-partial results and ownership without claiming concurrency safety.
+-CLI: batchview INPUT OUTPUT [PREFIX]. Positional paths beginning with - remain
+-valid. The optional prefix uses Select. Always write the valid selected prefix,
+-even after malformed/read input; then report incomplete input on stderr and exit
+-1. Successful runs exit 0 with empty stdout/stderr. Usage exits 2; output failures
+-exit 1. No atomic publication or retry guarantee is required. Implement, test and
+-update concise usage docs; keep the package small.
++
++`batchview` is a Go 1.22 library and CLI for reading `key=payload` lines.
++Blank lines and lines beginning with `#` are ignored. `Load` processes bytes a
++reader returns alongside an error and returns items parsed before malformed or
++unreadable input. The returned error preserves a reader's cause for
++`errors.Is`; if malformed input and a reader error occur together, both are
++inspectable. EOF completes the read. Readers are borrowed and are not closed.
++
++Each item stores its payload in the `data` tag. `Select(items, prefix)` keeps
++matching keys in order and returns an independently editable snapshot,
++including its tag maps and byte slices. An empty prefix selects all items. A
++nil input stays nil; a non-nil input produces a non-nil slice, even when there
++are no matches. No concurrency-safety guarantee is made.
++
++Run `batchview INPUT OUTPUT [PREFIX]`. Paths beginning with `-` are positional
++paths. The optional prefix filters the loaded items. The CLI writes the valid
++selected prefix even when input is malformed or a read fails, then reports the
++input error to stderr and exits 1. Successful runs exit 0 with empty
++stdout/stderr; invalid argument counts print usage and exit 2. Output failures
++exit 1. Output publication is not atomic and is not retried.
+diff --git a/cmd/batchview/main.go b/cmd/batchview/main.go
+index 81dcf84246f02b1f147d7cf24b6b7d105d17a7d8..74e06292133cf78fe8804b4ed8b4deae7018d7ff 100644
+--- a/cmd/batchview/main.go
++++ b/cmd/batchview/main.go
+@@ -8,29 +8,40 @@ import (
+ )
+ 
+ func main() { os.Exit(run(os.Args[1:])) }
++
+ func run(args []string) int {
+-	if len(args) != 2 {
+-		fmt.Fprintln(os.Stderr, "usage: batchview INPUT OUTPUT")
++	if len(args) != 2 && len(args) != 3 {
++		fmt.Fprintln(os.Stderr, "usage: batchview INPUT OUTPUT [PREFIX]")
+ 		return 2
+ 	}
+-	input, e := os.Open(args[0])
+-	if e != nil {
+-		fmt.Fprintln(os.Stderr, e)
++
++	input, err := os.Open(args[0])
++	if err != nil {
++		fmt.Fprintln(os.Stderr, err)
+ 		return 1
+ 	}
+ 	defer input.Close()
+-	items, e := batchview.Load(input)
+-	if e != nil {
+-		fmt.Fprintln(os.Stderr, e)
++	items, loadErr := batchview.Load(input)
++	if len(args) == 3 {
++		items = batchview.Select(items, args[2])
++	}
++
++	data, err := json.Marshal(items)
++	if err != nil {
++		fmt.Fprintln(os.Stderr, err)
+ 		return 1
+ 	}
+-	data, e := json.Marshal(items)
+-	if e != nil {
+-		fmt.Fprintln(os.Stderr, e)
++	if err := os.WriteFile(args[1], data, 0600); err != nil {
++		fmt.Fprintln(os.Stderr, err)
++		if loadErr != nil {
++			fmt.Fprintln(os.Stderr, loadErr)
++		}
+ 		return 1
+ 	}
+-	if e = os.WriteFile(args[1], data, 0600); e != nil {
+-		fmt.Fprintln(os.Stderr, e)
++	if loadErr != nil {
++		fmt.Fprintln(os.Stderr, loadErr)
++	}
++	if loadErr != nil {
+ 		return 1
+ 	}
+ 	return 0
+diff --git a/cmd/batchview/main_test.go b/cmd/batchview/main_test.go
+new file mode 100644
+index 0000000000000000000000000000000000000000..8a244e0380e61a7b598481da7419f3c9e68368e8
+--- /dev/null
++++ b/cmd/batchview/main_test.go
+@@ -0,0 +1,116 @@
++package main
++
++import (
++	"os"
++	"os/exec"
++	"path/filepath"
++	"strings"
++	"testing"
++)
++
++func TestCLIContracts(t *testing.T) {
++	dir := t.TempDir()
++	binary := filepath.Join(dir, "batchview")
++	cache := filepath.Join(dir, "gocache")
++	build := exec.Command("go", "build", "-o", binary, ".")
++	build.Env = withEnv(os.Environ(), "GOWORK", "off", "GOCACHE", cache)
++	build.Dir = "."
++	if output, err := build.CombinedOutput(); err != nil {
++		t.Fatalf("build CLI: %v\n%s", err, output)
++	}
++
++	t.Run("success with dash-prefixed paths and prefix", func(t *testing.T) {
++		work := t.TempDir()
++		if err := os.WriteFile(filepath.Join(work, "-input"), []byte("# comment\na=one\nb=two\n"), 0600); err != nil {
++			t.Fatal(err)
++		}
++		cmd := exec.Command(binary, "-input", "-output", "a")
++		cmd.Dir = work
++		var stdout, stderr strings.Builder
++		cmd.Stdout, cmd.Stderr = &stdout, &stderr
++		if err := cmd.Run(); err != nil {
++			t.Fatalf("run: %v; stderr=%q", err, stderr.String())
++		}
++		got, err := os.ReadFile(filepath.Join(work, "-output"))
++		if err != nil {
++			t.Fatal(err)
++		}
++		if string(got) != `[{"key":"a","tags":{"data":"b25l"}}]` || stdout.Len() != 0 || stderr.Len() != 0 {
++			t.Fatalf("output=%s stdout=%q stderr=%q", got, stdout.String(), stderr.String())
++		}
++	})
++
++	t.Run("writes prefix after malformed input", func(t *testing.T) {
++		work := t.TempDir()
++		if err := os.WriteFile(filepath.Join(work, "in"), []byte("a=one\nbroken\nc=three\n"), 0600); err != nil {
++			t.Fatal(err)
++		}
++		cmd := exec.Command(binary, "in", "out", "a")
++		cmd.Dir = work
++		var stdout, stderr strings.Builder
++		cmd.Stdout, cmd.Stderr = &stdout, &stderr
++		err := cmd.Run()
++		if exit, ok := err.(*exec.ExitError); !ok || exit.ExitCode() != 1 {
++			t.Fatalf("run error = %v, want exit 1", err)
++		}
++		got, readErr := os.ReadFile(filepath.Join(work, "out"))
++		if readErr != nil {
++			t.Fatal(readErr)
++		}
++		if string(got) != `[{"key":"a","tags":{"data":"b25l"}}]` || !strings.Contains(stderr.String(), "malformed item") || stdout.Len() != 0 {
++			t.Fatalf("output=%s stdout=%q stderr=%q", got, stdout.String(), stderr.String())
++		}
++	})
++
++	t.Run("usage exits two", func(t *testing.T) {
++		cmd := exec.Command(binary, "only-one")
++		var stdout, stderr strings.Builder
++		cmd.Stdout, cmd.Stderr = &stdout, &stderr
++		err := cmd.Run()
++		if exit, ok := err.(*exec.ExitError); !ok || exit.ExitCode() != 2 {
++			t.Fatalf("run error = %v, want exit 2", err)
++		}
++		if stdout.Len() != 0 || !strings.Contains(stderr.String(), "usage: batchview INPUT OUTPUT [PREFIX]") {
++			t.Fatalf("stdout=%q stderr=%q", stdout.String(), stderr.String())
++		}
++	})
++
++	t.Run("output failure exits one", func(t *testing.T) {
++		work := t.TempDir()
++		if err := os.WriteFile(filepath.Join(work, "in"), []byte("a=one\n"), 0600); err != nil {
++			t.Fatal(err)
++		}
++		if err := os.Mkdir(filepath.Join(work, "out"), 0700); err != nil {
++			t.Fatal(err)
++		}
++		cmd := exec.Command(binary, "in", "out")
++		cmd.Dir = work
++		var stdout, stderr strings.Builder
++		cmd.Stdout, cmd.Stderr = &stdout, &stderr
++		err := cmd.Run()
++		if exit, ok := err.(*exec.ExitError); !ok || exit.ExitCode() != 1 {
++			t.Fatalf("run error = %v, want exit 1", err)
++		}
++		if stdout.Len() != 0 || stderr.Len() == 0 {
++			t.Fatalf("stdout=%q stderr=%q", stdout.String(), stderr.String())
++		}
++	})
++}
++
++func withEnv(env []string, key, value string, more ...string) []string {
++	updates := map[string]string{key: value}
++	for i := 0; i+1 < len(more); i += 2 {
++		updates[more[i]] = more[i+1]
++	}
++	out := make([]string, 0, len(env)+len(updates))
++	for _, entry := range env {
++		name, _, ok := strings.Cut(entry, "=")
++		if _, replace := updates[name]; !ok || !replace {
++			out = append(out, entry)
++		}
++	}
++	for name, value := range updates {
++		out = append(out, name+"="+value)
++	}
++	return out
++}
+diff --git a/load.go b/load.go
+index db3b41527426d3280fd4a1c4aa51d6b830378940..157d0831c0fc4d498868870350501bf0f5165756 100644
+--- a/load.go
++++ b/load.go
+@@ -11,14 +11,27 @@ type Item struct {
+ 	Tags map[string][]byte `json:"tags"`
+ }
+ 
++// Load reads key=payload lines from r. Blank lines and lines beginning with
++// # are ignored. It returns the valid prefix when malformed input or a read
++// error stops the load. A non-EOF read error remains inspectable with
++// errors.Is. Bytes returned by r alongside an error are processed first.
++// The reader remains borrowed; Load does not close it.
+ func Load(r io.Reader) ([]Item, error) {
+-	data, err := io.ReadAll(r)
+-	if err != nil {
+-		return nil, err
++	data, readErr := io.ReadAll(r)
++	items, parseErr := parse(data)
++	if parseErr != nil && readErr != nil {
++		return items, errors.Join(parseErr, readErr)
+ 	}
++	if parseErr != nil {
++		return items, parseErr
++	}
++	return items, readErr
++}
++
++func parse(data []byte) ([]Item, error) {
+ 	var out []Item
+ 	for _, line := range strings.Split(string(data), "\n") {
+-		if line == "" {
++		if line == "" || strings.HasPrefix(line, "#") {
+ 			continue
+ 		}
+ 		key, value, ok := strings.Cut(line, "=")
+@@ -29,3 +42,32 @@ func Load(r io.Reader) ([]Item, error) {
+ 	}
+ 	return out, nil
+ }
++
++// Select returns an independently editable snapshot of items whose keys have
++// prefix. An empty prefix selects every item. A nil input returns nil; a
++// non-nil input returns a non-nil slice even when nothing matches. Nested maps
++// and byte slices are copied so edits to either side do not affect the other.
++func Select(items []Item, prefix string) []Item {
++	if items == nil {
++		return nil
++	}
++	out := make([]Item, 0, len(items))
++	for _, item := range items {
++		if !strings.HasPrefix(item.Key, prefix) {
++			continue
++		}
++		copyItem := Item{Key: item.Key}
++		if item.Tags != nil {
++			copyItem.Tags = make(map[string][]byte, len(item.Tags))
++			for key, value := range item.Tags {
++				if value == nil {
++					copyItem.Tags[key] = nil
++					continue
++				}
++				copyItem.Tags[key] = append([]byte{}, value...)
++			}
++		}
++		out = append(out, copyItem)
++	}
++	return out
++}
+diff --git a/load_test.go b/load_test.go
+index 31fb79f811112aa233cdc1cd7d0e19134a974883..381f469253dff1df52d49938970b195b70c3aedb 100644
+--- a/load_test.go
++++ b/load_test.go
+@@ -1,13 +1,110 @@
+ package batchview
+ 
+ import (
++	"encoding/json"
++	"errors"
++	"reflect"
+ 	"strings"
+ 	"testing"
+ )
+ 
+-func TestLoad(t *testing.T) {
+-	got, e := Load(strings.NewReader("a=one\nb=two\n"))
+-	if len(got) != 2 || e != nil {
+-		t.Fatalf("%v %v", got, e)
++func TestLoadSkipsCommentsAndBlankLines(t *testing.T) {
++	got, err := Load(strings.NewReader("# comment\n\na=one\n# another\nb=two\n"))
++	want := []Item{
++		{Key: "a", Tags: map[string][]byte{"data": []byte("one")}},
++		{Key: "b", Tags: map[string][]byte{"data": []byte("two")}},
++	}
++	if err != nil || !reflect.DeepEqual(got, want) {
++		t.Fatalf("Load() = %#v, %v; want %#v, nil", got, err, want)
++	}
++}
++
++func TestLoadReturnsValidPrefixOnMalformedInput(t *testing.T) {
++	got, err := Load(strings.NewReader("a=one\nnot-an-item\nb=two\n"))
++	if len(got) != 1 || got[0].Key != "a" || err == nil || err.Error() != "malformed item" {
++		t.Fatalf("Load() = %#v, %v", got, err)
++	}
++}
++
++type bytesAndErrorReader struct {
++	data []byte
++	err  error
++}
++
++func (r bytesAndErrorReader) Read(p []byte) (int, error) {
++	if len(r.data) == 0 {
++		return 0, r.err
++	}
++	n := copy(p, r.data)
++	return n, r.err
++}
++
++func TestLoadProcessesBytesReturnedWithReadError(t *testing.T) {
++	cause := errors.New("source failed")
++	got, err := Load(bytesAndErrorReader{data: []byte("a=one\nb=two\n"), err: cause})
++	if len(got) != 2 || got[1].Key != "b" || !errors.Is(err, cause) {
++		t.Fatalf("Load() = %#v, %v; want both items and inspectable cause", got, err)
++	}
++}
++
++func TestLoadPreservesMalformedAndReadFailures(t *testing.T) {
++	cause := errors.New("source failed")
++	got, err := Load(bytesAndErrorReader{data: []byte("a=one\nbroken\nc=three\n"), err: cause})
++	if len(got) != 1 || got[0].Key != "a" || err == nil || !errors.Is(err, cause) || !strings.Contains(err.Error(), "malformed item") {
++		t.Fatalf("Load() = %#v, %v; want prefix and both failures", got, err)
++	}
++}
++
++func TestLoadReadErrorWithoutBytes(t *testing.T) {
++	cause := errors.New("source failed")
++	got, err := Load(bytesAndErrorReader{err: cause})
++	if got != nil || !errors.Is(err, cause) {
++		t.Fatalf("Load() = %#v, %v; want nil prefix and inspectable cause", got, err)
++	}
++}
++
++func TestSelectOwnsNestedStateAndPreservesNilness(t *testing.T) {
++	items := []Item{
++		{Key: "alpha", Tags: map[string][]byte{"data": []byte("one"), "nil": nil, "empty": {}}},
++		{Key: "beta", Tags: map[string][]byte{"data": []byte("two")}},
++	}
++	got := Select(items, "a")
++	if len(got) != 1 || got[0].Key != "alpha" || got == nil {
++		t.Fatalf("Select() = %#v", got)
++	}
++	got[0].Tags["data"][0] = 'O'
++	got[0].Tags["added"] = []byte("new")
++	if string(items[0].Tags["data"]) != "one" || items[0].Tags["added"] != nil {
++		t.Fatal("mutating selected item changed input")
++	}
++	items[0].Tags["data"][0] = 'X'
++	items[0].Tags["later"] = []byte("value")
++	if string(got[0].Tags["data"]) != "One" || got[0].Tags["later"] != nil {
++		t.Fatal("mutating input changed selected item")
++	}
++	if got[0].Tags["nil"] != nil || got[0].Tags["empty"] == nil {
++		t.Fatalf("Select() changed nested nilness: %#v", got[0].Tags)
++	}
++}
++
++func TestSelectEmptyAndNilResults(t *testing.T) {
++	if got := Select(nil, ""); got != nil {
++		t.Fatalf("Select(nil, \"\") = %#v, want nil", got)
++	}
++	input := []Item{{Key: "a"}}
++	got := Select(input, "missing")
++	if got == nil || len(got) != 0 {
++		t.Fatalf("Select() = %#v, want non-nil empty slice", got)
++	}
++	all := Select(input, "")
++	if len(all) != 1 || all[0].Key != "a" {
++		t.Fatalf("Select() = %#v, want all items for empty prefix", all)
++	}
++}
++
++func TestItemJSONFieldsRemainStable(t *testing.T) {
++	got, err := json.Marshal(Item{Key: "k", Tags: map[string][]byte{"data": []byte("v")}})
++	if err != nil || string(got) != `{"key":"k","tags":{"data":"dg=="}}` {
++		t.Fatalf("Marshal() = %s, %v", got, err)
+ 	}
+ }
