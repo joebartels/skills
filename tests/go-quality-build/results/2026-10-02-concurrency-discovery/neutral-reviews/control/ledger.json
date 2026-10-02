@@ -1,0 +1,66 @@
+{
+  "scope": "go-independent-concurrency-control-outcome-2026-10-02; full supplied original-to-candidate snapshot",
+  "coverage": [
+    {
+      "id": "architecture-and-design",
+      "status": "not_applicable",
+      "reason": "The only production change is the loop condition in the existing private function. Package boundaries, the func([]int) int API, dependencies, value ownership and local serial composition are unchanged; no architecture decision is introduced or worsened. The requested preservation of the direct local implementation is inspected under Code Quality and Correctness."
+    },
+    {
+      "id": "code-quality-and-idioms",
+      "status": "complete",
+      "reason": "The complete local implementation and both tests are readable, serial, and use syntax supported by Go 1.22; formatting and vet checks pass. No actionable issue is confirmed."
+    },
+    {
+      "id": "correctness-and-compatibility",
+      "status": "complete",
+      "reason": "The loop includes the final element and all other positive values, retains zero for empty/nonpositive inputs and preserves the private API and input contents. Contract checks pass on host and minimum toolchains."
+    },
+    {
+      "id": "testing",
+      "status": "complete",
+      "reason": "The candidate adds an ordinary focused test for the changed final-positive behavior with an explicit numerical assertion. That test fails against the original production code and passes against the candidate on both checked toolchains."
+    },
+    {
+      "id": "security",
+      "status": "not_applicable",
+      "reason": "This changeset performs private local integer arithmetic over an existing slice API. It adds no parsing, authorization, trust-boundary crossing, network/file sink, secret, crypto or dependency surface; the packet provides no security decision implicated by the loop-bound repair."
+    },
+    {
+      "id": "observability-and-resilience",
+      "status": "not_applicable",
+      "reason": "There is no I/O, error path, retry, deadline, queue, cancellation, service lifecycle or operational event in the supplied function. Including one final slice element introduces no diagnosability or failure-control decision."
+    },
+    {
+      "id": "performance-and-resource-management",
+      "status": "not_applicable",
+      "reason": "The required extra iteration preserves the same direct O(n) serial scan with constant local state. No allocation, retention, goroutine, pool, lock, resource lifetime, workload bound or performance contract changes; no new performance/resource choice warrants a topic grade."
+    },
+    {
+      "id": "dependencies-and-reproducibility",
+      "status": "not_applicable",
+      "reason": "The go.mod (go 1.22), module path, production imports (none) and test import (testing) are unchanged. There are no external requirements, workspace, vendor, generation or native build inputs in the complete packet. No dependency or rebuild decision changes. The explicit Go 1.22 preservation requirement is verified under Correctness and Code Quality."
+    },
+    {
+      "id": "deployment-and-operations",
+      "status": "not_applicable",
+      "reason": "The complete packet is a private arithmetic package with no executable, release pipeline, image, runtime configuration, probes, rollout or recovery path. The changeset adds no deployment/operations decision. This is justified irrelevance for this packet rather than unavailable evidence about a wider repository."
+    }
+  ],
+  "findings": [],
+  "strengths": [
+    {
+      "id": "G1",
+      "evidence": "Correct final-element inclusion with unchanged private local serial behavior; candidate/sum.go:3-10, independent-checks/behavior-checks.json"
+    },
+    {
+      "id": "G2",
+      "evidence": "Focused regression detects the original off-by-one; candidate/sum_test.go:11-15, independent-checks/regression-original-host.log, independent-checks/regression-original-minimum.log"
+    },
+    {
+      "id": "G3",
+      "evidence": "Maintains declared Go 1.22 support and mechanical clarity; candidate/go.mod:3, independent-checks/ordinary-checks.json"
+    }
+  ],
+  "safeguards": []
+}

@@ -1,0 +1,78 @@
+{
+  "scope": "Candidate code-area outcome review of `/private/tmp/go-independent-concurrency-service/candidate/host.go`, `host_test.go`, and `go.mod` against [the task contract](/private/tmp/go-independent-concurrency-service/original/README.md); original source is comparison context. Go 1.22 minimum; standard-library-only, host-owned lifecycle API. Candidate host.go SHA-256 `18b161e49c3ddfde132e5c0e634b75bb7b461442b4c77d88c035fe823c84ec26`; full before/after hashes are in [/private/tmp/go-independent-concurrency-service/review-validation/candidate-hashes-before.json](/private/tmp/go-independent-concurrency-service/review-validation/candidate-hashes-before.json). Candidate source remained unchanged.",
+  "mode": "candidate code-area outcome review; original implementation is context",
+  "topics": [
+    {
+      "topic": "architecture-and-design",
+      "status": "applicable",
+      "grade": "C-",
+      "reason": "The shared lifecycle API, cohort admission, ownership and supervisor boundaries are changed and contract-critical.",
+      "card": "/private/tmp/go-independent-concurrency-service/cards/architecture-and-design.md",
+      "coverage": "complete"
+    },
+    {
+      "topic": "code-quality-and-idioms",
+      "status": "applicable",
+      "grade": "C",
+      "reason": "Go error-flow timing, local concurrency expression, standard-library idioms and mechanical checks are relevant.",
+      "card": "/private/tmp/go-independent-concurrency-service/cards/code-quality-and-idioms.md",
+      "coverage": "complete"
+    },
+    {
+      "topic": "correctness-and-compatibility",
+      "status": "applicable",
+      "grade": "C-",
+      "reason": "The complete Serve lifecycle and cancellation/error/consumer contracts are the requested outcome.",
+      "card": "/private/tmp/go-independent-concurrency-service/cards/correctness-and-compatibility.md",
+      "coverage": "complete"
+    },
+    {
+      "topic": "dependencies-and-reproducibility",
+      "status": "applicable",
+      "grade": "A",
+      "reason": "New errors import/API use must satisfy the explicit Go 1.22 minimum and standard-library-only standalone build.",
+      "card": "/private/tmp/go-independent-concurrency-service/cards/dependencies-and-reproducibility.md",
+      "coverage": "complete"
+    },
+    {
+      "topic": "deployment-and-operations",
+      "status": "not_applicable",
+      "grade": "Not applicable",
+      "reason": "The bounded library packet changes no release artifact, CI gate, container, runtime manifest, process wiring or rollout control. Lifecycle implementation is assessed in architecture/resource/resilience; no deployment contract is supplied.",
+      "card": null,
+      "coverage": "not_applicable"
+    },
+    {
+      "topic": "observability-and-resilience",
+      "status": "applicable",
+      "grade": "C",
+      "reason": "Cooperative dependency failure, context propagation, stop containment and shutdown join/Close completion are explicit obligations.",
+      "card": "/private/tmp/go-independent-concurrency-service/cards/observability-and-resilience.md",
+      "coverage": "complete"
+    },
+    {
+      "topic": "performance-and-resource-management",
+      "status": "applicable",
+      "grade": "C-",
+      "reason": "Declared capacity bounds acquired leases through Close; admission progress and goroutine/resource termination are central.",
+      "card": "/private/tmp/go-independent-concurrency-service/cards/performance-and-resource-management.md",
+      "coverage": "complete"
+    },
+    {
+      "topic": "security",
+      "status": "not_applicable",
+      "grade": "Not applicable",
+      "reason": "No authorization, credential, untrusted data sink, network/file/crypto boundary or attacker-driven abuse contract is implicated by this small lifecycle protocol. Resource behavior is covered without inventing security reach.",
+      "card": null,
+      "coverage": "not_applicable"
+    },
+    {
+      "topic": "testing",
+      "status": "applicable",
+      "grade": "C-",
+      "reason": "The authored tests must detect meaningful regressions in the explicit concurrency and ownership contracts.",
+      "card": "/private/tmp/go-independent-concurrency-service/cards/testing.md",
+      "coverage": "complete"
+    }
+  ]
+}

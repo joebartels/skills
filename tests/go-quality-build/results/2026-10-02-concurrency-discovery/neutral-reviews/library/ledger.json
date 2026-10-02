@@ -1,0 +1,71 @@
+{
+  "scope": "Supplied original/ to candidate/ changeset in /private/tmp/go-independent-concurrency-library; exact file snapshots in evidence/source-hashes-before.json. Library module example.com/library-shared-state; go 1.22; standard library only.",
+  "coverage": [
+    {
+      "id": "architecture-and-design",
+      "status": "complete",
+      "reason": "The change places synchronization with each instance's private state, preserves the public API and ownership contract, and uses a direct implementation. No framework, constructor requirement, process effect, or additional public API is introduced."
+    },
+    {
+      "id": "code-quality-and-idioms",
+      "status": "complete",
+      "reason": "Pointer receivers, a documented copy restriction, usable zero value, scalar snapshots, and short explicit lock scopes are clear and version-compatible; vet and formatting checks pass."
+    },
+    {
+      "id": "correctness-and-compatibility",
+      "status": "complete",
+      "reason": "The README expressly requires concurrent Add/Snapshot coherence, independent values/instances, the existing public interface, and Go 1.22 support. Both shared fields are updated and copied under the same instance mutex."
+    },
+    {
+      "id": "testing",
+      "status": "complete",
+      "reason": "Changed concurrency and instance ownership contracts are checked by concrete intermediate and final assertions, deterministic start/wait synchronization, repeated race runs, and reproduced negative controls."
+    },
+    {
+      "id": "security",
+      "status": "not_applicable",
+      "reason": "The changed code only updates private int64 totals under a mutex. It introduces no trust boundary, authentication/authorization, parsing, secret/crypto handling, unsafe code, file/network sink, dependency vulnerability claim, or attacker-controlled allocation/lifecycle path."
+    },
+    {
+      "id": "observability-and-resilience",
+      "status": "not_applicable",
+      "reason": "This synchronous in-memory scalar library has no new failure-reporting, retry, deadline, queue, overload, probe, or background lifecycle contract. Mutex coherence and contention are assessed under Correctness and Performance; the README promises no diagnostic or cancellation behavior."
+    },
+    {
+      "id": "performance-and-resource-management",
+      "status": "complete",
+      "reason": "Synchronization is a relevant contention/resource decision. Critical sections perform bounded scalar work, each instance owns its mutex, and production methods create no queue, goroutine, I/O resource, or accumulating buffer. No workload budget or speed improvement is asserted."
+    },
+    {
+      "id": "dependencies-and-reproducibility",
+      "status": "complete",
+      "reason": "The sync import and explicit Go 1.22 floor are build decisions. The unchanged module has no external requirements/replacements/generators, and standalone readonly/offline builds/tests and minimum-version tests succeed in disposable copies with packet-local caches."
+    },
+    {
+      "id": "deployment-and-operations",
+      "status": "not_applicable",
+      "reason": "The supplied changeset is an in-memory library implementation and tests, with no executable artifact, CI/release setting, runtime configuration, health check, signal handling, deployment, rollout, or rollback change implicated. No absent broader pipeline is inferred."
+    }
+  ],
+  "findings": [],
+  "strengths": [
+    {
+      "id": "G1",
+      "evidence": "candidate/totals.go:20 and :28 use the same instance mutex for compound publication/observation; race-shuffle and independent/controller contract checks passed."
+    },
+    {
+      "id": "G2",
+      "evidence": "candidate/totals.go:12 per-instance mutex/counters and :6 scalar Snapshot boundary; candidate/independent/controller instance and ownership checks passed."
+    },
+    {
+      "id": "G3",
+      "evidence": "candidate/totals_test.go:37 and :53 check coherent intermediate/exact final state; original and compiling atomic split-publication negative controls are rejected."
+    },
+    {
+      "id": "G4",
+      "evidence": "go.mod go 1.22 retained; stdlib-only module/dependency list, standalone offline readonly build, Go 1.22.12 candidate/contract tests all pass; vet and formatting clean."
+    }
+  ],
+  "safeguards": [],
+  "a_plus_decision": "Mutex synchronization, scalar snapshots, and ordinary regression assertions are routine appropriate controls; do not infer two nonroutine safeguards from repeated descriptions/checks."
+}

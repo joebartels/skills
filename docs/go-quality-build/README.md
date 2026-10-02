@@ -62,7 +62,7 @@ Test combinations of neighboring skills on the same task. Resolve contradictory 
 
 ## Work status and next steps
 
-**Current continuation:** Task3 concurrency preparation is frozen: 23 inputs/17 author files/eight original five-skill files, 23 green controller checks and four compiling intended mutations. Original suites pass actual Go1.22.12/1.26.5; requested checks fail before repair. Three fresh reference baselines are next. Context bytes are excluded; no concurrency draft/author yet. Context is sealed and unpromoted; runtime five 0.2.0.
+**Current continuation:** Task3 concurrency discovery completed with independently frozen all-nine cards: library/controlA, serviceC- (two source causes/three testing gaps). [Discovery comparison](../../tests/go-quality-build/results/2026-10-02-concurrency-discovery/comparison.md) justifies a focused mechanics draft; primary service admission stall remains fixed. Three authors/group19; Task4 draft/preflight is next. No concurrency draft/runtime addition yet; context remains sealed/unpromoted and runtime five0.2.0.
 
 - **Completed:** Compared the local review approach with the upstream collection; proposed candidate boundaries and the reuse and evaluation policy in this record. Added repository agent instructions and a continuation protocol so later workers maintain this record. Pinned the upstream revision for the first architecture-group audit.
 - **Written spec revised:** The first group is `go-package-boundaries`, `go-api-contracts`, and `go-interfaces-and-composition` in a peer `plugins/go-quality-build/` package. After reviewing the [first-group design spec](../superpowers/specs/2026-09-30-go-quality-build-architecture-group-design.md), the user clarified that transport and database persistence are examples, not the center of package-boundary guidance. The spec now requires package maps across libraries, CLIs, services, and workers, plus a broader component palette.
@@ -1016,3 +1016,25 @@ After each meaningful stage and before finishing a task, update the status above
 - Verified exact original five-skill comparator at0d0a339 (eight files; ninth context-study file is excluded), 23 input hashes/17 supplied author files, checked host-disable bytes and fixed profile/primary/budget manifest. Inventory assertion exposed a generated CLI executable from ordinary go build; removed that generated binary and redirected preparation builds to /dev/null, then reran all four original host/minimum suites successfully. No source contract or held assertion changed.
 - Controller-only conformance has23 green commands on actual1.22.12/1.26.5, including three concurrent race/shuffle repetitions. All four mutations compile and fail intended coherence/join/admission/producer-stop assertions. These are feasibility evidence, excluded from author benefit. Root/build/layout/grade6/10/1/12; validator46build/120review; Claude package/marketplace and current tracked whitespace pass.
 - Next: preparation commit then three fresh reference authors with exact original comparator and no context guidance. Concurrency0/16 authors; cumulative16/36; selection14/40. No draft or runtime change.
+
+
+#### 2026-10-02 — Concurrency fresh baseline execution
+
+- Preparation committed d2a7e1b before three fresh neutral Codex gpt-6-luna medium launches. All completed, with exact prompts/dispatches/settings/catalog observations/event streams/reports/patches/source hashes/costs preserved. No context bytes in catalog or workspaces. Every launch counted: concurrency3/16, group19/36.
+- Library/control reconstruct byte-for-byte and pass original/held actual1.22.12/1.26.5 checks (library race/shuffle included). Concrete split-publication mutation compiles, fails intended held coherence assertion and is detected by library author tests. Service verification pending; independent source-only library/control reviewers dispatched with unchanged review guidance, no writing skills/arm labels.
+- Next: service checks, concrete qualified mutations and fresh service outcome review; freeze all cards before discovery disposition. No draft/benefit/runtime/publication claim.
+
+
+#### 2026-10-02 — Independent concurrency discovery findings
+
+- Library/control neutral reviews finished and were frozen before arm disclosure. Library six relevant topicsA, three justifiedN/A; control three relevant topicsA, six justifiedN/A; zero confirmed findings. Reviewers independently exercise actual minimum/current compilers and targeted negative controls, with candidate hashes unchanged. No overall grade averages.
+- Service reviewer independently confirms two source/contract failures on both compilers: full-cohort prefill prevents a single available job starting with open caller input, and observing all Open completions before Run errors lets a failed Run leave a cooperating Open blocked until external cancellation. Two supplementary author-test sensitivity gaps also reproduced. Final service cards/applicability are pending before discovery disposition. No guidance authored from reviewer repairs; exact original frozen probes remain unchanged.
+- Next: freeze service cards, record specific primary mechanics cause and complete Task3; then minimal original concurrency guidance, independent preflight and fixed matched study. Runtime remains five0.2.0.
+
+
+#### 2026-10-02 — Concurrency discovery disposition
+
+- All three independent source-only reviews completed and frozen before disclosure; nine-topic applicability/card/ledger rules unchanged. Library/controlA; serviceC- with two major production causes and three distinct major test gaps. Raw minimum/current/race probes, supported strengths and rejected claims retained. Original/candidate hashes unchanged.
+- F1 full-cohort prefill is the fixed primary mechanics cause, observed by the frozen first-start event and independently isolated sparse-input diagnostic. Later caller cancellation actually returns, so the initial failure is not misreported as cancellation itself hanging. F2 Run-failure supervision of pending Open remains a separate material contract. Test gaps cover sparse progress, cooperative stop and capacity through held Close. Supplementary probes/mutations cannot replace the four frozen targets or manufacture primary benefit.
+- Controller feasibility is excluded from authors. Three source patches reconstruct; all ordinary host/minimum checks pass; library/control held green, declared service failure retained on both compilers/race. Concrete author mutation results/limits recorded. Concurrency3/16, group19/36, selection remains14/40.
+- Next: Task3 read-only gate/commit/completion, then minimal original Task4 guidance and independent exact-byte/source/neighbor review before freeze/trials. No new runtime/notice/dependency/publication change.

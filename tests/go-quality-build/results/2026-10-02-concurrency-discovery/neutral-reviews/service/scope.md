@@ -1,0 +1,1 @@
+Review candidate against original/README contract. Only source/task/checks; no writing guidance/arm labels/expected outcomes/planning/prior judgments. Do not assume supplied check failures automatically support a finding; independently validate contract/source and distinguish assertion sensitivity. All-nine applicability unchanged grade/report rules.

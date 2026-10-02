@@ -1,7 +1,7 @@
 # Context and concurrency source audit
 
 **Date:** 2026-10-02
-**Status:** Section-level authoring audit complete; original wording/examples selected. No upstream text or code imported, no candidate authored or promoted.
+**Status:** Section-level authoring audit complete; original wording/examples selected. Context is an exact-byte reviewed draft outside runtime. Concurrency discovery is underway; no concurrency guidance or runtime addition exists. No upstream text or code imported.
 
 The [approved design](../superpowers/specs/2026-10-02-go-quality-build-context-concurrency-design.md) and [scoped source review](next-group-source-review.md) define this bounded audit. The [file inventory](context-concurrency-source-inventory.json) records the exact revisions, SHA-256 values and sizes for 16 guidance files and four root licenses retrieved during planning. All 20 local captures reverified against that inventory before this audit. Temporary captures are conveniences, not runtime or replay dependencies; retrieve each repository/path at its recorded revision to reproduce the inventory.
 
@@ -61,7 +61,7 @@ Primary documentation was checked during planning and rechecked for version-sens
 
 Audit decisions match existing API/package/composition/testing ownership and the unchanged all-nine review contract. General error representation/aliasing drafts stay non-installable; necessary cancellation inspection and synchronization rules remain locally usable. Outcome reviews still judge actual correctness, idioms, ownership, budget, resource and test contracts rather than this section inventory. Structural/source checks do not prove effectiveness, native routing or actual Go 1.22 execution.
 
-Next: prepare/freeze original fixtures and probes, then run discovery baselines before deciding whether new guidance is warranted. No useful source decision requires expanding repository discovery now.
+Current action: finish the independently reviewed concurrency discovery disposition before drafting. Original fixtures/probes/comparator and native settings are frozen. No useful source decision requires expanding repository discovery now.
 
 ## Context draft use before exposure
 

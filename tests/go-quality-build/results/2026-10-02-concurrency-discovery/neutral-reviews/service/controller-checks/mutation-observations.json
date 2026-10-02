@@ -1,0 +1,69 @@
+[
+  {
+    "meaning": "release-before-completion",
+    "substitution": {
+      "file": "host.go",
+      "old": "\t\tfor i := 0; i < runCount; i++ {\n\t\t\tif err := <-runs; err != nil {\n\t\t\t\tresult = errors.Join(result, err)\n\t\t\t\tcancel()\n\t\t\t}\n\t\t}",
+      "new": "\t\t_ = runCount // mutation: release without observing started completions"
+    },
+    "original_held_named": {
+      "argv": [
+        "go",
+        "test",
+        "-run",
+        "^TestControllerPartialStartAndBlockedAdmission$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.162s\n",
+      "stderr": ""
+    },
+    "compile": {
+      "argv": [
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.161s [no tests to run]\n",
+      "stderr": ""
+    },
+    "author_tests": {
+      "argv": [
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "status": 1,
+      "stdout": "--- FAIL: TestServeCapacityAndJoinBeforeRelease (3.04s)\n    host_test.go:84: timed out waiting for third Run\n--- FAIL: TestServeJoinsIndependentFailures (0.00s)\n    host_test.go:117: Serve error close\n        close does not include run\nFAIL\nFAIL\texample.com/service-owned-workers\t3.160s\nFAIL\n",
+      "stderr": ""
+    },
+    "held_named": {
+      "argv": [
+        "go",
+        "test",
+        "-run",
+        "^TestControllerPartialStartAndBlockedAdmission$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerPartialStartAndBlockedAdmission (0.00s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/startup_failure (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/worker_failure (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:206: worker failure lost: independent close failure\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/caller_cancellation (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:209: cancellation lost: independent close failure\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:218: lease closed before all started users joined\nFAIL\nFAIL\texample.com/service-owned-workers\t0.176s\nFAIL\n",
+      "stderr": ""
+    },
+    "qualified": true
+  },
+  {
+    "meaning": "unresponsive-admission",
+    "qualified": false,
+    "not_applied": "Original TestControllerCancellationWithOpenInput already fails before first work starts; no mutation detection credit for an already-failing observation.",
+    "original_held_status": 1
+  }
+]

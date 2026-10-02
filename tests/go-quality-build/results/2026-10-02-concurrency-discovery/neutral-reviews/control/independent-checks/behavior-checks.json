@@ -1,0 +1,112 @@
+[
+  {
+    "name": "regression-original-host",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestSumIncludesFinalPositiveValue$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-control-disposable/regression-original",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/go-independent-concurrency-control-disposable/cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-control-disposable/module-cache"
+    },
+    "status": 1,
+    "expected_status": 1,
+    "stdout": "--- FAIL: TestSumIncludesFinalPositiveValue (0.00s)\n    sum_test.go:13: sum=2, want 5\nFAIL\nFAIL\texample.com/not-concurrency-work\t0.218s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.351
+  },
+  {
+    "name": "regression-original-minimum",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestSumIncludesFinalPositiveValue$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-control-disposable/regression-original",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/go-independent-concurrency-control-disposable/cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-control-disposable/module-cache"
+    },
+    "status": 1,
+    "expected_status": 1,
+    "stdout": "--- FAIL: TestSumIncludesFinalPositiveValue (0.00s)\n    sum_test.go:13: sum=2, want 5\nFAIL\nFAIL\texample.com/not-concurrency-work\t0.156s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.297
+  },
+  {
+    "name": "boundaries-host",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "-v",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-control-disposable/boundary-candidate",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/go-independent-concurrency-control-disposable/cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-control-disposable/module-cache"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "=== RUN   TestIndependentContractBoundaries\n=== RUN   TestIndependentContractBoundaries/nil\n=== RUN   TestIndependentContractBoundaries/empty\n=== RUN   TestIndependentContractBoundaries/negative-only\n=== RUN   TestIndependentContractBoundaries/zero-only\n=== RUN   TestIndependentContractBoundaries/single-positive\n=== RUN   TestIndependentContractBoundaries/single-negative\n=== RUN   TestIndependentContractBoundaries/single-zero\n=== RUN   TestIndependentContractBoundaries/only-final-positive\n=== RUN   TestIndependentContractBoundaries/all-positive\n=== RUN   TestIndependentContractBoundaries/mixed\n--- PASS: TestIndependentContractBoundaries (0.00s)\n    --- PASS: TestIndependentContractBoundaries/nil (0.00s)\n    --- PASS: TestIndependentContractBoundaries/empty (0.00s)\n    --- PASS: TestIndependentContractBoundaries/negative-only (0.00s)\n    --- PASS: TestIndependentContractBoundaries/zero-only (0.00s)\n    --- PASS: TestIndependentContractBoundaries/single-positive (0.00s)\n    --- PASS: TestIndependentContractBoundaries/single-negative (0.00s)\n    --- PASS: TestIndependentContractBoundaries/single-zero (0.00s)\n    --- PASS: TestIndependentContractBoundaries/only-final-positive (0.00s)\n    --- PASS: TestIndependentContractBoundaries/all-positive (0.00s)\n    --- PASS: TestIndependentContractBoundaries/mixed (0.00s)\n=== RUN   TestIndependentBoundedEnumeration\n    independent_contract_test.go:54: checked 3906 bounded input vectors\n--- PASS: TestIndependentBoundedEnumeration (0.00s)\n=== RUN   TestSumWithNonpositiveTail\n--- PASS: TestSumWithNonpositiveTail (0.00s)\n=== RUN   TestSumIncludesFinalPositiveValue\n--- PASS: TestSumIncludesFinalPositiveValue (0.00s)\nPASS\nok  \texample.com/not-concurrency-work\t0.159s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.3
+  },
+  {
+    "name": "boundaries-minimum",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "-v",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-control-disposable/boundary-candidate",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/go-independent-concurrency-control-disposable/cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-control-disposable/module-cache"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "=== RUN   TestIndependentContractBoundaries\n=== RUN   TestIndependentContractBoundaries/nil\n=== RUN   TestIndependentContractBoundaries/empty\n=== RUN   TestIndependentContractBoundaries/negative-only\n=== RUN   TestIndependentContractBoundaries/zero-only\n=== RUN   TestIndependentContractBoundaries/single-positive\n=== RUN   TestIndependentContractBoundaries/single-negative\n=== RUN   TestIndependentContractBoundaries/single-zero\n=== RUN   TestIndependentContractBoundaries/only-final-positive\n=== RUN   TestIndependentContractBoundaries/all-positive\n=== RUN   TestIndependentContractBoundaries/mixed\n--- PASS: TestIndependentContractBoundaries (0.00s)\n    --- PASS: TestIndependentContractBoundaries/nil (0.00s)\n    --- PASS: TestIndependentContractBoundaries/empty (0.00s)\n    --- PASS: TestIndependentContractBoundaries/negative-only (0.00s)\n    --- PASS: TestIndependentContractBoundaries/zero-only (0.00s)\n    --- PASS: TestIndependentContractBoundaries/single-positive (0.00s)\n    --- PASS: TestIndependentContractBoundaries/single-negative (0.00s)\n    --- PASS: TestIndependentContractBoundaries/single-zero (0.00s)\n    --- PASS: TestIndependentContractBoundaries/only-final-positive (0.00s)\n    --- PASS: TestIndependentContractBoundaries/all-positive (0.00s)\n    --- PASS: TestIndependentContractBoundaries/mixed (0.00s)\n=== RUN   TestIndependentBoundedEnumeration\n    independent_contract_test.go:54: checked 3906 bounded input vectors\n--- PASS: TestIndependentBoundedEnumeration (0.00s)\n=== RUN   TestSumWithNonpositiveTail\n--- PASS: TestSumWithNonpositiveTail (0.00s)\n=== RUN   TestSumIncludesFinalPositiveValue\n--- PASS: TestSumIncludesFinalPositiveValue (0.00s)\nPASS\nok  \texample.com/not-concurrency-work\t0.148s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.286
+  }
+]

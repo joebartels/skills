@@ -100,7 +100,47 @@
   "author_ceiling": 16,
   "group_ceiling": 36,
   "group_authors_spent_before_candidate": 16,
-  "attempts": [],
+  "attempts": [
+    {
+      "number": 1,
+      "case": "library-shared-state",
+      "arm": "baseline",
+      "profile": "discovery",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-01",
+      "exit_code": 0,
+      "elapsed_seconds": 45.99
+    },
+    {
+      "number": 2,
+      "case": "service-owned-workers",
+      "arm": "baseline",
+      "profile": "discovery",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-02",
+      "exit_code": 0,
+      "elapsed_seconds": 134.462
+    },
+    {
+      "number": 3,
+      "case": "not-concurrency-work",
+      "arm": "baseline",
+      "profile": "discovery",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-03",
+      "exit_code": 0,
+      "elapsed_seconds": 20.856
+    }
+  ],
   "allocation": {
     "discovery_reference": 3,
     "matched_reference_exposures": 3,
@@ -119,5 +159,74 @@
     "Five original runtime skills comprise eight files; context-study catalog nine includes excluded context draft.",
     "Every failed author launch counts. A failed attempt permits at most one retry using an unspent slot.",
     "Controller conformance is fixture validation, excluded from authors and uplift."
-  ]
+  ],
+  "authors_spent_total": 3,
+  "group_authors_spent_total": 19,
+  "discovery_review_status": "complete; neutral cards frozen before disclosure",
+  "verification_summary": {
+    "all_ordinary_host_minimum": [
+      0,
+      0,
+      0
+    ],
+    "library_held": [
+      0,
+      0,
+      0
+    ],
+    "service_held": [
+      1,
+      1,
+      1
+    ],
+    "control_held": [
+      0,
+      0
+    ],
+    "service_failure": "first work not entered while caller input stays open below cohort capacity; source batches until full before starting work",
+    "qualified_mutations": {
+      "library-split-publication": "detected",
+      "service-release-before-completion": "detected",
+      "service-unresponsive-admission": "not qualified: original target fails",
+      "control-final-positive": "detected; outside four candidate targets"
+    }
+  },
+  "neutral_review_mapping": {
+    "library": "attempt-01",
+    "service": "attempt-02",
+    "control": "attempt-03"
+  },
+  "discovery_disposition": "draft-justified",
+  "confirmed_primary_defect": {
+    "finding": "F1",
+    "case": "service-owned-workers",
+    "cause": "Full-cohort prefill delays an available first job indefinitely until capacity fills or caller input closes.",
+    "frozen_observation": "TestControllerCancellationWithOpenInput fails first-work-entered event before caller cancellation.",
+    "secondary_independent_diagnostic": "TestReviewAvailableJobWithOpenInput isolates progress while showing later cancellation itself returns.",
+    "limits": "Supplementary reviewer probes and test sensitivity variants do not replace the original four frozen mutation targets; F2 is a separate cause."
+  },
+  "all_nine_coverage": {
+    "library": {
+      "applicable": 6,
+      "not_applicable": 3,
+      "grade": "A"
+    },
+    "service": {
+      "applicable": 7,
+      "not_applicable": 2,
+      "grade": "C-",
+      "confirmed_unique_causes": [
+        "F1",
+        "F2",
+        "T1",
+        "T2",
+        "T3"
+      ]
+    },
+    "control": {
+      "applicable": 3,
+      "not_applicable": 6,
+      "grade": "A"
+    }
+  }
 }

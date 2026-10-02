@@ -1,0 +1,48 @@
+[
+  {
+    "meaning": "control-final-positive-regression",
+    "candidate_target": false,
+    "substitution": {
+      "file": "sum.go",
+      "old": "i < len(values)",
+      "new": "i+1 < len(values)"
+    },
+    "compile": {
+      "argv": [
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "status": 0,
+      "stdout": "ok  \texample.com/not-concurrency-work\t0.173s [no tests to run]\n",
+      "stderr": ""
+    },
+    "author_tests": {
+      "argv": [
+        "go",
+        "test",
+        "-count=1",
+        "./..."
+      ],
+      "status": 1,
+      "stdout": "--- FAIL: TestSumIncludesFinalPositiveValue (0.00s)\n    sum_test.go:13: sum=2, want 5\nFAIL\nFAIL\texample.com/not-concurrency-work\t0.116s\nFAIL\n",
+      "stderr": ""
+    },
+    "held_named": {
+      "argv": [
+        "go",
+        "test",
+        "-run",
+        "^TestControllerFinalPositiveValue$",
+        "-count=1",
+        "./..."
+      ],
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerFinalPositiveValue (0.00s)\n    controller_contract_test.go:11: values=[7] got=0 want=7\nFAIL\nFAIL\texample.com/not-concurrency-work\t0.169s\nFAIL\n",
+      "stderr": ""
+    },
+    "qualified": true
+  }
+]
