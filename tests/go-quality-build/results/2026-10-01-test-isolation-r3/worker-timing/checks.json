@@ -1,0 +1,280 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.141s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.301
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "poll_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.007
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestCancellation\n=== PAUSE TestCancellation\n=== RUN   TestCallbackError\n=== PAUSE TestCallbackError\n=== RUN   TestCallbackErrorDuringCancellation\n=== PAUSE TestCallbackErrorDuringCancellation\n=== RUN   TestAlreadyCanceled\n=== PAUSE TestAlreadyCanceled\n=== RUN   TestInvalidInterval\n=== PAUSE TestInvalidInterval\n=== RUN   TestRecurrence\n=== PAUSE TestRecurrence\n=== RUN   TestFixtureTeardown\n=== PAUSE TestFixtureTeardown\n=== RUN   TestIndependentInvocations\n=== PAUSE TestIndependentInvocations\n=== CONT  TestCancellation\n=== CONT  TestInvalidInterval\n=== CONT  TestCallbackError\n=== CONT  TestFixtureTeardown\n=== CONT  TestRecurrence\n=== CONT  TestCallbackErrorDuringCancellation\n=== RUN   TestInvalidInterval/zero\n--- PASS: TestCancellation (0.00s)\n=== CONT  TestIndependentInvocations\n=== RUN   TestIndependentInvocations/callback_error\n--- PASS: TestCallbackError (0.00s)\n=== PAUSE TestInvalidInterval/zero\n=== RUN   TestInvalidInterval/negative\n=== PAUSE TestInvalidInterval/negative\n=== CONT  TestInvalidInterval/zero\n--- PASS: TestCallbackErrorDuringCancellation (0.00s)\n=== PAUSE TestIndependentInvocations/callback_error\n=== RUN   TestIndependentInvocations/cancellation\n=== PAUSE TestIndependentInvocations/cancellation\n=== CONT  TestIndependentInvocations/callback_error\n=== CONT  TestInvalidInterval/negative\n--- PASS: TestInvalidInterval (0.00s)\n    --- PASS: TestInvalidInterval/zero (0.00s)\n    --- PASS: TestInvalidInterval/negative (0.00s)\n=== CONT  TestIndependentInvocations/cancellation\n=== CONT  TestAlreadyCanceled\n--- PASS: TestAlreadyCanceled (0.00s)\n--- PASS: TestIndependentInvocations (0.00s)\n    --- PASS: TestIndependentInvocations/cancellation (0.00s)\n    --- PASS: TestIndependentInvocations/callback_error (0.00s)\n--- PASS: TestFixtureTeardown (0.03s)\n--- PASS: TestRecurrence (0.11s)\nPASS\nok  \texample.com/poller\t0.287s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.432
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.009
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "poll_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.007
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.069
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run=^TestIndependentInvocations$/^callback_error$",
+      "-count=20",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t1.205s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.322
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run=^TestIndependentInvocations$/^cancellation$",
+      "-count=20",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t1.168s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.288
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run=^TestInvalidInterval$/^negative$",
+      "-count=20",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t1.148s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.266
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=50",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t6.517s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 6.695
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run=^TestFixtureTeardown$",
+      "-count=20",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t1.741s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.868
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run=^TestRecurrence$",
+      "-count=20",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t3.269s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 3.396
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "sh",
+      "-c",
+      "command -v staticcheck"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.007
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-c",
+      "import json; from pathlib import Path; checks=json.loads(Path(\"/private/tmp/go-fresh-author-8hjrllxp/task-4/report/checks.json\").read_text()); assert len(checks)==13; assert all(c[\"exit_code\"]==0 for c in checks if c[\"command\"][-1]!=\"command -v staticcheck\"); assert checks[-1][\"command\"][-1]==\"command -v staticcheck\" and checks[-1][\"exit_code\"]==1; print(\"All 13 recorded checks are present; verification passed and the unavailable staticcheck probe is explicitly retained.\")"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-4/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "All 13 recorded checks are present; verification passed and the unavailable staticcheck probe is explicitly retained.\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.02
+  }
+]

@@ -1,0 +1,77 @@
+[
+  {
+    "label": "focused alpha repeat",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^alpha$/^repeat$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-focused-check-pconklmo/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "patch": null,
+    "stdout": "ok  \texample.com/filestore\t1.198s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.3844770829891786
+  },
+  {
+    "label": "focused gamma replacement",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^gamma$/^replacement$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-focused-check-hb5b842n/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "patch": null,
+    "stdout": "ok  \texample.com/filestore\t1.153s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.3272255000192672
+  },
+  {
+    "label": "shared-root signal at parallel1",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-parallel=1",
+      "-timeout=30s",
+      "-run",
+      "^TestStoreIndependentInstances$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-focused-check-t54_4oqe/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "patch": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r2/file-repeat/mutations/store-shared-root/source.patch",
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    store_test.go:87: alpha: Get after children = \"beta\\nreplacement\\x00\"; want \"alpha replacement\"\n    store_test.go:87: gamma: Get after children = \"beta\\nreplacement\\x00\"; want \"gamma replacement\"\nFAIL\nFAIL\texample.com/filestore\t0.152s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.307247249991633
+  }
+]

@@ -1,0 +1,29 @@
+--- a/store_test.go
++++ b/store_test.go
+@@ -1,6 +1,7 @@
+ package filestore_test
+ 
+ import (
++ "os"
+ 	"testing"
+ 
+ 	"example.com/filestore"
+@@ -33,13 +34,16 @@
+ 		{name: "beta", replacement: "beta\nreplacement\x00"},
+ 		{name: "gamma", replacement: "gamma replacement"},
+ 	}
+-	for i := range instances {
++	roots := make([]string, len(instances))
++ for i := range instances {
+ 		// These roots belong to the outer test, which reads them after the group.
+-		instances[i].store = filestore.New(t.TempDir())
++		roots[i] = t.TempDir()
++ instances[i].store = filestore.New(roots[i])
+ 	}
+ 
+ 	// Returning from this group waits for all selected parallel descendants.
+ 	t.Run("instances", func(t *testing.T) {
++ defer func() { for _, root := range roots { _ = os.RemoveAll(root) } }()
+ 		for i := range instances {
+ 			instance := &instances[i]
+ 			t.Run(instance.name, func(t *testing.T) {

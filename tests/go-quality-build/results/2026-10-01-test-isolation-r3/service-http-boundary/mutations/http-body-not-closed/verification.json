@@ -1,0 +1,86 @@
+{
+  "semantic_id": "http-body-not-closed",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "2807ecbcf6fc4d8fabb909fdeda5be1aede31706d28a654c0a12bcf9c2c34068",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-3pen9puk/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.207s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.429
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r3/service-http-boundary/mutations/http-body-not-closed/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-3pen9puk/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.016
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-3pen9puk/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.194s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.471
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-3pen9puk/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestFetchReadError (0.00s)\n    fetch_test.go:152: Fetch did not close its response body after a read error\n--- FAIL: TestFetchSuccess (0.00s)\n    --- FAIL: TestFetchSuccess/preserved_name (0.00s)\n        fetch_test.go:60: Fetch did not close its response body\n    --- FAIL: TestFetchSuccess/ordinary (0.00s)\n        fetch_test.go:60: Fetch did not close its response body\n    --- FAIL: TestFetchSuccess/surrounding_whitespace (0.00s)\n        fetch_test.go:60: Fetch did not close its response body\n--- FAIL: TestFetchResponseErrors (0.00s)\n    --- FAIL: TestFetchResponseErrors/created (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/trailing_garbage (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/empty_object (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/not_found (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/server_error (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/trailing_null (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/malformed (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/redirect (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/no_content (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/empty (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/whitespace (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/scalar (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/trailing_object (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/missing_revision (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/wrong_revision_type (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/wrong_name_type (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/empty_name (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/missing_name (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/null_revision (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/null (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/fractional_revision (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/zero_revision (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/array (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/blank_name (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/null_name (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/negative_revision (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n--- FAIL: TestFetchCancellation (0.00s)\n    --- FAIL: TestFetchCancellation/during_body (0.00s)\n        fetch_test.go:331: Fetch did not close its acquired response body after cancellation\nFAIL\nFAIL\texample.com/metadata\t0.332s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.513
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}
