@@ -1,0 +1,12 @@
+package recordload
+import ("errors"; "io"; "reflect"; "testing")
+type closeoutReader struct { used bool; cause error }
+func (r *closeoutReader) Read(p []byte) (int,error) {
+    if r.used { return 0,io.EOF }; r.used=true
+    return copy(p,[]byte("a=1\nbroken")),r.cause
+}
+func TestCloseoutCofailureObservation(t *testing.T) {
+    cause := errors.New("caller read cause")
+    got,err := Load(&closeoutReader{cause:cause})
+    t.Logf("prefixLength=%d readCause=%t errorType=%v error=%v", len(got),errors.Is(err,cause),reflect.TypeOf(err),err)
+}

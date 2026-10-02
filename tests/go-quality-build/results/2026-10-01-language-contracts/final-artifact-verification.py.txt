@@ -1,0 +1,52 @@
+from pathlib import Path
+import hashlib
+import json
+import shutil
+import subprocess
+
+root = Path('/Users/jb/.codex/worktrees/3b23/skills')
+archive = root / 'tests/go-quality-build/results/2026-10-01-language-contracts'
+scratch = Path('/private/tmp/go-language-final-reconstruction-3b23')
+scratch.mkdir(exist_ok=True)
+def digest(p): return hashlib.sha256(p.read_bytes()).hexdigest()
+def tree(p): return {str(f.relative_to(p)):digest(f) for f in p.rglob('*') if f.is_file() and '.git' not in f.parts}
+counts = {'trials':0,'input_hashes':0,'output_hashes':0,'catalog_hashes':0,'blind_hashes':0,'upstream_files':0}
+for mp in sorted(archive.glob('*/*/*/*/manifest.json')):
+    m = json.loads(mp.read_text())
+    original = root / f'tests/go-quality-build/{m["skill"]}/evals/files/{m["case"]}'
+    assert tree(original) == m['input_hashes'], mp
+    patch = mp.parent/'source.patch'
+    assert digest(patch) == m['patch_sha256'], patch
+    dest = scratch / str(mp.parent.relative_to(archive)).replace('/','--')
+    if dest.exists(): shutil.rmtree(dest)
+    shutil.copytree(original,dest)
+    checked = subprocess.run(['rtk','proxy','git','apply',str(patch)],cwd=dest,text=True,capture_output=True)
+    assert checked.returncode == 0, checked
+    assert tree(dest) == m['output_hashes'], mp
+    for relative,expected in m['catalog_hashes'].items():
+        skill,*rest = relative.split('/')
+        folder = root / (f'tests/go-quality-build/{skill}/draft' if skill in ('go-error-contracts','go-values-and-zero-values') else f'plugins/go-quality-build/skills/{skill}')
+        assert digest(folder.joinpath(*rest)) == expected, (mp,relative)
+    counts['trials'] += 1
+    counts['input_hashes'] += len(m['input_hashes'])
+    counts['output_hashes'] += len(m['output_hashes'])
+    counts['catalog_hashes'] += len(m['catalog_hashes'])
+blind = Path('/private/tmp/go-language-blind-outcomes-3b23')
+for relative,expected in json.loads((archive/'blind-review/blind-source-manifest.json').read_text()).items():
+    assert digest(blind/relative) == expected,relative
+    counts['blind_hashes'] += 1
+for relative,expected in json.loads((archive/'blind-review/artifact-hashes.json').read_text()).items():
+    assert digest(archive/'blind-review'/relative) == expected,relative
+frozen = archive/'blind-review/frozen-report.md'
+assert digest(frozen) == '4c7e9dcdd03e8eb764a8146f5f220e9d03f11066e33ecfe353e5a2c4704d1933'
+assert frozen.read_bytes() == (root/'docs/go-quality-build/language-contracts-blind-outcomes.md').read_bytes()
+for f in json.loads((root/'docs/go-quality-build/language-contracts-upstream-manifest.json').read_text())['files']:
+    raw = (Path('/private/tmp/go-language-upstream-19a0626')/f['path']).read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == f['sha256'], f['path']
+    assert hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest() == f['git_blob_sha1'], f['path']
+    assert len(raw) == f['bytes'] and len(raw.splitlines()) == f['lines'], f['path']
+    counts['upstream_files'] += 1
+assert counts['trials'] == 27
+out = {'status':'PASS','counts':counts,'command':['rtk','proxy','python3','-B','/private/tmp/go-language-final-identities-3b23.py'],'limits':'Verifies preserved local artifact identities and patch reconstruction, not new behavioral tests or automatic routing.'}
+(archive/'final-artifact-verification.json').write_text(json.dumps(out,indent=2)+'\n')
+print(json.dumps(out,indent=2))

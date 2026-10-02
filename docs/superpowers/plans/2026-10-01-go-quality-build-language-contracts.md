@@ -50,16 +50,16 @@ Evaluation agents consume a disposable copy of one case, the task prompt, fixed 
 
 - [x] Write minimal `go-error-contracts` draft addressing demonstrated error decisions, with trigger/exclusion, concise decision table, and one useful example. References contain only conditional detail.
 - [x] Run matched fresh skill-on cases, including the positive exposure case and non-selection control, against final bytes. Verify probes, build/tests/vet, opened skills, unnecessary changes, and output hashes.
-- [ ] Have an independent reviewer assess changed code and evidence using relevant existing review skills. Revise only demonstrated harmful/incomplete guidance; rerun affected cases and final controls after changes.
-- [ ] Promote if distinct benefit and controls support it; otherwise record why it is deferred. Validate runtime/frontmatter/links and archive reproducibility. Update canonical record and commit before Task 3.
+- [x] Have an independent reviewer assess changed code and evidence using relevant existing review skills. Frozen blind review plus separate reader adjudication confirms one observed baseline cause-loss issue; no harmful/incomplete draft guidance requires revision.
+- [x] Resolve promotion: retain the reviewed draft outside runtime. One post-draft pair shows an error improvement, but repeated causal benefit remains unproven. Frontmatter, links and reproducibility pass; stage commits and canonical entries preserve the authoring/promotion distinction.
 
 ### Task 3: Value skill baseline, evaluation, and promotion decision
 
 - [x] Create four value cases: `default-wire` (zero/configured/explicit-zero state and intentional nil/empty output), `snapshot-ownership` (nested aliasing, receivers/method sets, copy-sensitive state), `required-construction` (counterexample retaining validated inputs), `not-value-work` (private calculation).
 - [x] Run baseline implementations before draft; preserve independent findings and behavioral probes.
 - [x] Author `go-values-and-zero-values` from independently reviewed ownership decisions.
-- [ ] Run matched final-revision skill-on cases and independent Code Quality/Correctness assessment; resolve overlap with composition/API/errors at the owning decision.
-- [ ] Promote or defer using the same evidence gate, with fresh fixture/test/vet/structural checks, hashes and progress entry. Commit before Task 4.
+- [x] Run matched final-revision skill-on cases and independent Code Quality/Correctness assessment; no owned contradiction or harmful value outcome is confirmed.
+- [x] Resolve promotion: retain the independently reviewed value draft outside runtime. All five pairs tie on assessed code grades; sufficient distinct content supports drafting, while measured benefit remains unproven. Checks, hashes and stage commits are preserved.
 
 ### Task 4: Names/docs disposition
 
@@ -69,11 +69,11 @@ Evaluation agents consume a disposable copy of one case, the task prompt, fixed 
 
 ### Task 5: Combined use, package verification, and final review
 
-- [x] Create a fresh library/CLI evolution case covering errors, defaults/snapshots and accurate usage; run matched fixed-existing-skill and existing-plus-promoted-group arms in fresh contexts.
-- [ ] Independently assess code and cross-skill contradictions, preserving blind output separately from any review-guided repair. Rerun affected checks if guidance changes.
-- [ ] Update root/plugin READMEs, manifests and marketplace description/version together for actual promoted skills. Do not count drafted/deferred skills as evaluated runtime content.
-- [ ] Run root/build-eval/review-layout/grade tests, repository validation, Claude package/marketplace validation, skill frontmatter validation and whitespace checks. Verify local links, fixture/output hashes and reproducible patches.
-- [ ] Request fresh whole-change review of skills, content sufficiency, evaluations and packaging. Fix confirmed important findings, obtain follow-up verification when material, and record limitations and exact next action in canonical status/log.
+- [x] Create a fresh library/CLI evolution case covering errors, defaults/snapshots and accurate usage; run fixed-existing-skill and existing-plus-draft arms. The draft author read the canonical record; preserve this context qualification rather than calling all author contexts isolated.
+- [x] Independently assess code and cross-skill contradictions, preserving frozen blind output separately from provenance interpretation. Both combined candidates grade A/A; no code contradiction is confirmed. This single context-qualified pair shows compatible use, not synergy.
+- [x] Resolve packaging: no new runtime promotion, so root/plugin catalogs and versions remain at the three existing architecture skills. The two drafts and names/docs reference are documented outside runtime.
+- [x] Run root/build-eval/review-layout/grade tests, repository validation, Claude package/marketplace validation and both draft frontmatter validators. Verify local links, hashes and all 27 reproducible patches; preserve raw patch context whitespace as evidence.
+- [x] Obtain independent whole-change/exact-byte review and final arm-blinded/provenance-aware effectiveness review. Correct combined provenance, independently adjudicate the reader disagreement, and record limits and continuation actions. No draft content changes are required after final-byte exposure.
 - [ ] Commit the final verified work and deliver concise per-skill results plus independent effectiveness feedback. Do not install or publish.
 
 ## Execution decisions
@@ -98,3 +98,11 @@ non-installable drafts under existing authorization; no measured benefit or
 runtime promotion is implied. Names/docs receives a focused non-runtime reference
 and standalone deferral; Task 4 behavioral skill steps are intentionally skipped.
 Final checks concern draft quality and compatibility, not a manufactured uplift.
+
+Final disposition (2026-10-01): two independently reviewed, explicitly exposed,
+behavior-checked skill drafts; names/docs as reviewed reference; zero new runtime
+promotions. The expert feedback satisfies the user's review request. There are
+27 authored trials, 12 paired tasks (11 clean pairs plus one context-qualified
+combined pair), and one post-draft observed reader improvement. A future promotion
+study should declare repeated realistic tasks/outcomes in advance; no such repeat
+study or broad benefit is claimed by this delivery.
