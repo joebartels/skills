@@ -1,0 +1,411 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/isolation-only/mutations/automatic-redirect-following/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-_v229nat/module",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.013,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "isolation-only/automatic-redirect-following apply"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-_v229nat/module",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/indexer\t0.184s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.329s [no tests to run]\n",
+    "stderr": "",
+    "elapsed_seconds": 0.612,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "isolation-only/automatic-redirect-following compile"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-_v229nat/module",
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestRefreshRejectsRedirectWithoutChangingClient (0.00s)\n    refresh_test.go:204: accepted redirect\nFAIL\nFAIL\texample.com/indexer\t0.450s\nok  \texample.com/indexer/cmd/indexer\t0.783s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.998,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "isolation-only/automatic-redirect-following candidate tests only"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/isolation-only/mutations/accept-all-2xx/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-9x064_3_/module",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.025,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "isolation-only/accept-all-2xx apply"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-9x064_3_/module",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/indexer\t0.337s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.184s [no tests to run]\n",
+    "stderr": "",
+    "elapsed_seconds": 0.799,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "isolation-only/accept-all-2xx compile"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-9x064_3_/module",
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestRefreshValidationAndBodyOwnership (0.00s)\n    --- FAIL: TestRefreshValidationAndBodyOwnership/created_status (0.00s)\n        refresh_test.go:84: Refresh error = <nil>; want success false\nFAIL\nFAIL\texample.com/indexer\t0.337s\nok  \texample.com/indexer/cmd/indexer\t1.065s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 1.295,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "isolation-only/accept-all-2xx candidate tests only"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/isolation-only/mutations/unsafe-cancellation-cause-comparison/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-ux95vo3k/module",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.015,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "isolation-only/unsafe-cancellation-cause-comparison apply"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-ux95vo3k/module",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/indexer\t0.227s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.379s [no tests to run]\n",
+    "stderr": "",
+    "elapsed_seconds": 0.657,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "isolation-only/unsafe-cancellation-cause-comparison compile"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-ux95vo3k/module",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/indexer\t0.334s\nok  \texample.com/indexer/cmd/indexer\t0.896s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.122,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "isolation-only/unsafe-cancellation-cause-comparison candidate tests only"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/both/mutations/automatic-redirect-following/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-35ctdb25/module",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.011,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "both/automatic-redirect-following apply"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-35ctdb25/module",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/indexer\t0.216s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.362s [no tests to run]\n",
+    "stderr": "",
+    "elapsed_seconds": 0.636,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "both/automatic-redirect-following compile"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-35ctdb25/module",
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestRefreshRejectsRedirectWithoutChangingClient (0.00s)\n    refresh_test.go:183: accepted redirect\nFAIL\nFAIL\texample.com/indexer\t0.525s\nok  \texample.com/indexer/cmd/indexer\t0.951s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 1.158,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "both/automatic-redirect-following candidate tests only"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/both/mutations/accept-all-2xx/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-zggf3sb6/module",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.013,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "both/accept-all-2xx apply"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-zggf3sb6/module",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/indexer\t0.357s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.205s [no tests to run]\n",
+    "stderr": "",
+    "elapsed_seconds": 0.622,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "both/accept-all-2xx compile"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-zggf3sb6/module",
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestRefreshRejectionsRetainSnapshot (0.00s)\n    --- FAIL: TestRefreshRejectionsRetainSnapshot/partial_success_status (0.00s)\n        refresh_test.go:104: accepted rejected response\nFAIL\nFAIL\texample.com/indexer\t0.516s\n--- FAIL: TestCLIProcessContracts (5.66s)\n    --- FAIL: TestCLIProcessContracts/failed_first_refresh (5.03s)\n        --- FAIL: TestCLIProcessContracts/failed_first_refresh/neighbor_status (5.00s)\n            process_test.go:113: command exceeded deadline: context deadline exceeded\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t5.955s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 6.16,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "both/accept-all-2xx candidate tests only"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/both/mutations/unsafe-cancellation-cause-comparison/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-1mj8mc3c/module",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.014,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "both/unsafe-cancellation-cause-comparison apply"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-1mj8mc3c/module",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/indexer\t0.205s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.357s [no tests to run]\n",
+    "stderr": "",
+    "elapsed_seconds": 0.631,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "both/unsafe-cancellation-cause-comparison compile"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/mutant-1mj8mc3c/module",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/indexer\t0.514s\nok  \texample.com/indexer/cmd/indexer\t0.927s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.129,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "both/unsafe-cancellation-cause-comparison candidate tests only"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.01,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "actual toolchain"
+  }
+]

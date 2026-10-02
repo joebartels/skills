@@ -1,0 +1,198 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-wcpvc8sf/verification",
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit": 0,
+    "elapsed_seconds": 0.010364582994952798
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-wcpvc8sf/verification",
+    "stdout": "ok  \texample.com/indexer\t0.604s\n--- FAIL: TestCommandWatchLifecycle (0.18s)\n    --- FAIL: TestCommandWatchLifecycle/recurs_and_joins_on_interrupt (0.00s)\n        process_test.go:208: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/recurs_and_joins_on_terminated (0.00s)\n        process_test.go:208: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/interrupt_cancels_in_flight_request (0.00s)\n        process_test.go:239: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/first_status_failure (0.00s)\n        process_test.go:281: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/first_decode_failure (0.00s)\n        process_test.go:281: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/first_validation_failure (0.00s)\n        process_test.go:281: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/later_failure_retains_last_successful_refresh (0.00s)\n        process_test.go:299: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t1.079s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 1.3306782500585541
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-wcpvc8sf/verification",
+    "stdout": "ok  \texample.com/indexer\t2.423s\n-test.shuffle 1790906130191673000\n--- FAIL: TestCommandWatchLifecycle (0.18s)\n    --- FAIL: TestCommandWatchLifecycle/recurs_and_joins_on_interrupt (0.00s)\n        process_test.go:208: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/recurs_and_joins_on_terminated (0.00s)\n        process_test.go:208: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/interrupt_cancels_in_flight_request (0.00s)\n        process_test.go:239: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/first_status_failure (0.00s)\n        process_test.go:281: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/first_decode_failure (0.00s)\n        process_test.go:281: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/first_validation_failure (0.00s)\n        process_test.go:281: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/later_failure_retains_last_successful_refresh (0.00s)\n        process_test.go:299: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n--- FAIL: TestCommandWatchLifecycle (0.18s)\n    --- FAIL: TestCommandWatchLifecycle/recurs_and_joins_on_interrupt (0.00s)\n        process_test.go:208: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/recurs_and_joins_on_terminated (0.00s)\n        process_test.go:208: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/interrupt_cancels_in_flight_request (0.00s)\n        process_test.go:239: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/first_status_failure (0.00s)\n        process_test.go:281: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/first_decode_failure (0.00s)\n        process_test.go:281: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/first_validation_failure (0.00s)\n        process_test.go:281: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/later_failure_retains_last_successful_refresh (0.00s)\n        process_test.go:299: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n--- FAIL: TestCommandWatchLifecycle (0.18s)\n    --- FAIL: TestCommandWatchLifecycle/recurs_and_joins_on_interrupt (0.00s)\n        process_test.go:208: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/recurs_and_joins_on_terminated (0.00s)\n        process_test.go:208: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/interrupt_cancels_in_flight_request (0.00s)\n        process_test.go:239: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/first_status_failure (0.00s)\n        process_test.go:281: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/first_decode_failure (0.00s)\n        process_test.go:281: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/first_validation_failure (0.00s)\n        process_test.go:281: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/later_failure_retains_last_successful_refresh (0.00s)\n        process_test.go:299: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t2.381s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 2.743500749929808
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-wcpvc8sf/verification",
+    "execution": "outside sandbox for finite loopback tests",
+    "stdout": "ok  \texample.com/indexer\t2.502s\nok  \texample.com/indexer/cmd/indexer\t5.129s\n",
+    "stderr": "",
+    "exit": 0,
+    "elapsed_seconds": 5.359210000024177
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-run=TestIndependentSingleGETContract",
+      "-v",
+      "-count=1",
+      "-timeout=10s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-wcpvc8sf/redirect-probe",
+    "purpose": "redirect contract probe",
+    "stdout": "=== RUN   TestIndependentSingleGETContract\nredirect probe: calls=2 closes=2 error=<nil> data=\"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"redirect target\\\"}]\\n\" readError=<nil>\n    independent_redirect_test.go:30: single-GET/status-rejection contract broken\n--- FAIL: TestIndependentSingleGETContract (0.00s)\nFAIL\nFAIL\texample.com/indexer\t0.204s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 0.44600299990270287
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-run=TestRefreshPublishesExactArrayAndRetainsOpenSnapshot",
+      "-count=1",
+      "-timeout=10s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-wcpvc8sf/mutation-direct-publication",
+    "purpose": "mutation: direct publication instead of rename",
+    "stdout": "--- FAIL: TestRefreshPublishesExactArrayAndRetainsOpenSnapshot (0.00s)\n    --- FAIL: TestRefreshPublishesExactArrayAndRetainsOpenSnapshot/ordered_records (0.00s)\n        refresh_test.go:79: open snapshot = \"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"  first\\\\n \\\"},{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"two\\\"},{\\\"key\\\":\\\"beta\\\",\\\"text\\\":\\\"\u00e9\\\"}]\\n\", <nil>; want \"old snapshot with exact\\nbytes\\x00\"\n    --- FAIL: TestRefreshPublishesExactArrayAndRetainsOpenSnapshot/empty (0.00s)\n        refresh_test.go:79: open snapshot = \"[]\\n\", <nil>; want \"old snapshot with exact\\nbytes\\x00\"\nFAIL\nFAIL\texample.com/indexer\t0.197s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 0.44464600004721433
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-run=TestServeRecursAfterCompletionWithoutOverlap",
+      "-count=1",
+      "-timeout=10s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-wcpvc8sf/mutation-start-based-interval",
+    "purpose": "mutation: interval measured from callback start",
+    "stdout": "--- FAIL: TestServeRecursAfterCompletionWithoutOverlap (0.08s)\n    serve_test.go:139: second callback began 44.958\u00b5s after first completion; want at least 40ms\nFAIL\nFAIL\texample.com/indexer\t0.291s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 0.5460641669342294
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-wcpvc8sf/verification",
+    "stdout": "",
+    "stderr": "",
+    "exit": 0,
+    "elapsed_seconds": 0.12042645795736462
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "list",
+      "-m",
+      "all"
+    ],
+    "cwd": "/private/tmp/go-independent-review-wcpvc8sf/verification",
+    "stdout": "example.com/indexer\n",
+    "stderr": "",
+    "exit": 0,
+    "elapsed_seconds": 0.00977979099843651
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION"
+    ],
+    "cwd": "/private/tmp/go-independent-review-wcpvc8sf/verification",
+    "stdout": "darwin\narm64\ngo1.26.5\n",
+    "stderr": "",
+    "exit": 0,
+    "elapsed_seconds": 0.008639208041131496
+  }
+]

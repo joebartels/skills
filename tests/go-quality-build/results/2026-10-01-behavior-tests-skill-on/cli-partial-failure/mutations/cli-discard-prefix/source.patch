@@ -1,0 +1,18 @@
+--- a/main.go
++++ b/main.go
+@@ -21,6 +21,15 @@
+ 	if *dir == "" || fs.NArg() != 0 {
+ 		return fmt.Errorf("--dir required and no positional arguments allowed")
+ 	}
++	all, err := io.ReadAll(input)
++	if err != nil { return err }
++	rows, err := csv.NewReader(strings.NewReader(string(all))).ReadAll()
++	if err != nil { return err }
++	for _, row := range rows {
++		if len(row) != 2 { return fmt.Errorf("invalid row") }
++		qty, err := strconv.Atoi(row[1]); if err != nil || qty <= 0 { return fmt.Errorf("invalid quantity") }
++	}
++	input = strings.NewReader(string(all))
+ 	reader := csv.NewReader(input)
+ 	reader.FieldsPerRecord = 2
+ 	dirReady := false

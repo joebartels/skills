@@ -1,0 +1,49 @@
+{
+  "source_sha256": "e0617bb1e7f66688c5faddf7cdc3c38047c5e1d58f41ad67763fb50acaeb6548",
+  "reference_sha256": "142d91164b0932a7691b035dc45e8517e1acf860e5bdb0e6fe6783f799763ae0",
+  "checks": [
+    {
+      "stage": "error-dropping counterexample",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-behavior-example-1ggefxz7",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "--- FAIL: TestFinishErrorCombinations (0.00s)\n    --- FAIL: TestFinishErrorCombinations/work_fails,_close_succeeds (0.00s)\n        finish_test.go:36: finish = <nil>, want cause work failed\nFAIL\nFAIL\texample.com/finish\t0.224s\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "duration_seconds": 0.36561241606250405
+    },
+    {
+      "stage": "original example",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-behavior-example-1ggefxz7",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/finish\t0.167s\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.3122563329525292
+    }
+  ],
+  "minimum_toolchain_executed": false
+}

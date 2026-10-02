@@ -1,0 +1,49 @@
+{
+  "offered_guidance_names": [
+    "go-api-contracts",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries",
+    "go-test-isolation"
+  ],
+  "opened_skill_reference_paths": [
+    "/private/tmp/go-testing-author-iu16ahig/guidance/go-core-style/SKILL.md"
+  ],
+  "decisions": [
+    {
+      "name": "go-api-contracts",
+      "selected": false,
+      "reason": "This repair restores the established README contract; it does not create or change the exported API or supported contract."
+    },
+    {
+      "name": "go-core-style",
+      "selected": true,
+      "reason": "The task writes Go implementation and test code, so idiomatic Go style and verification guidance apply."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "selected": false,
+      "reason": "No interface, dependency, constructor, option, wiring, or resource lifecycle changes."
+    },
+    {
+      "name": "go-package-boundaries",
+      "selected": false,
+      "reason": "The existing package, responsibility, ownership, and imports remain unchanged."
+    },
+    {
+      "name": "go-test-isolation",
+      "selected": false,
+      "reason": "Clamp is a pure deterministic calculation. The ordinary regression test uses local inputs and assertions without I/O, doubles, shared state, goroutines, timers, fixtures, or parallel execution."
+    }
+  ],
+  "opened_task_input_paths": [
+    "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/not-isolation-work/dispatch.txt",
+    "/private/tmp/go-testing-author-iu16ahig/not-isolation-work/README.md",
+    "/private/tmp/go-testing-author-iu16ahig/not-isolation-work/go.mod",
+    "/private/tmp/go-testing-author-iu16ahig/not-isolation-work/clamp.go",
+    "/private/tmp/go-testing-author-iu16ahig/not-isolation-work/clamp_test.go"
+  ],
+  "opened_verification_record_paths": [
+    "/private/tmp/go-testing-author-iu16ahig/not-isolation-work-report/checks.json"
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "semantic_id": "http-body-not-closed",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "2807ecbcf6fc4d8fabb909fdeda5be1aede31706d28a654c0a12bcf9c2c34068",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-ly6f3aae/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.253s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.493
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/service-http-boundary/mutations/http-body-not-closed/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-ly6f3aae/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.016
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-ly6f3aae/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.198s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.434
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-ly6f3aae/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestFetchResponse (0.00s)\n    --- FAIL: TestFetchResponse/no_content (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/not_modified (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/server_error (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/empty (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/read_error_after_valid_json (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/array (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/trailing_object (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/not_found (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/malformed (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/string (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/blank_name (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/missing_name (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/success (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/empty_name (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/missing_revision (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/null (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/trailing_garbage (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/wrong_revision_type (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/negative_revision (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/fractional_revision (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/whitespace (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/zero_revision (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/wrong_name_type (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/created (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n--- FAIL: TestFetchCancellation (0.00s)\n    --- FAIL: TestFetchCancellation/reading_body (0.00s)\n        fetch_test.go:285: canceled response body closed 0 times, want once\nFAIL\nFAIL\texample.com/metadata\t0.155s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.341
+  },
+  "classification": "detected by meaningful ownership/cancellation assertions",
+  "controller_interpretation": "Explicit acquired-body close counts fail across success/status/JSON/read failure and canceled body paths.",
+  "verification_environment": "automatically approved local-loopback execution"
+}

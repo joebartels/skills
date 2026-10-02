@@ -1,0 +1,86 @@
+{
+  "semantic_id": "discarded-caller-context",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "64f4cc95df9101e01df3dabd45c17008b0e8a385e142ae67fb10ee14dd267d88",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-fzzyv4q7/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.606s\nok  \texample.com/indexer/cmd/indexer\t1.652s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.91
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined/architecture-only/mutations/discarded-caller-context/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-fzzyv4q7/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-fzzyv4q7/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.373s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.227s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.623
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-fzzyv4q7/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestServeRecursAfterCompletionWithoutOverlap (0.12s)\n    serve_test.go:149: result = <nil>, calls = 2, releases = 1, overlap = false, wrong context = true\n--- FAIL: TestServeParentCancellationCauseAndDeadline (8.01s)\n    --- FAIL: TestServeParentCancellationCauseAndDeadline/cancellation_cause (4.00s)\n        serve_test.go:166: timed out waiting for parent cancellation with a cause\n        serve_test.go:52: Serve did not join during cleanup\n    --- FAIL: TestServeParentCancellationCauseAndDeadline/deadline (4.00s)\n        serve_test.go:179: timed out waiting for parent deadline\n        serve_test.go:52: Serve did not join during cleanup\n--- FAIL: TestServeWaitsForCanceledCleanupAndPreservesErrors (14.01s)\n    --- FAIL: TestServeWaitsForCanceledCleanupAndPreservesErrors/nil_callback (2.00s)\n        serve_test.go:235: timed out waiting for callback start\n    --- FAIL: TestServeWaitsForCanceledCleanupAndPreservesErrors/context_callback (2.00s)\n        serve_test.go:235: timed out waiting for callback start\n    --- FAIL: TestServeWaitsForCanceledCleanupAndPreservesErrors/wrapped_context_callback (2.00s)\n        serve_test.go:235: timed out waiting for callback start\n    --- FAIL: TestServeWaitsForCanceledCleanupAndPreservesErrors/independent_callback (2.00s)\n        serve_test.go:235: timed out waiting for callback start\n    --- FAIL: TestServeWaitsForCanceledCleanupAndPreservesErrors/release_failure (2.00s)\n        serve_test.go:235: timed out waiting for callback start\n    --- FAIL: TestServeWaitsForCanceledCleanupAndPreservesErrors/callback_and_release (2.00s)\n        serve_test.go:235: timed out waiting for callback start\n    --- FAIL: TestServeWaitsForCanceledCleanupAndPreservesErrors/joined_callback_causes (2.00s)\n        serve_test.go:235: timed out waiting for callback start\nFAIL\nFAIL\texample.com/indexer\t22.340s\n--- FAIL: TestCommandWatchLifecycle (3.77s)\n    --- FAIL: TestCommandWatchLifecycle/interrupt_cancels_in_flight_request (3.02s)\n        process_test.go:263: watch process exceeded completion deadline\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t4.598s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 22.554
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

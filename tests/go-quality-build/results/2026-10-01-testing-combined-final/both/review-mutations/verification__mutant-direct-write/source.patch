@@ -1,0 +1,10 @@
+--- a/index.go
++++ b/index.go
+@@ -65,6 +65,7 @@
+ 
+ // replaceFile publishes only a fully written and closed file in the same directory.
+ func replaceFile(path string, data []byte) error {
++	return os.WriteFile(path, data, 0600)
+ 	f, err := os.CreateTemp(filepath.Dir(path), ".record-*")
+ 	if err != nil {
+ 		return err

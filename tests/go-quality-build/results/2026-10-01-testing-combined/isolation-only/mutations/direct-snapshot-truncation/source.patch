@@ -1,0 +1,9 @@
+--- a/refresh.go
++++ b/refresh.go
+@@ -69,5 +69,5 @@
+ 	if err := file.Close(); err != nil {
+ 		return err
+ 	}
+-	return os.Rename(file.Name(), path)
++	return os.WriteFile(path, data, 0600)
+ }

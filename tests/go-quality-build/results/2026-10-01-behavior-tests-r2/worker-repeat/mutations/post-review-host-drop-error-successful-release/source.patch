@@ -1,0 +1,9 @@
+--- a/host.go
++++ b/host.go
+@@ -20,5 +20,5 @@
+ 	workerCtx, cancel := context.WithCancel(ctx)
+ 	err := runWorker(workerCtx, interval, sweep)
+ 	cancel()
+-	return errors.Join(err, release())
++	if releaseErr := release(); releaseErr != nil { return errors.Join(err, releaseErr) }; return nil
+ }

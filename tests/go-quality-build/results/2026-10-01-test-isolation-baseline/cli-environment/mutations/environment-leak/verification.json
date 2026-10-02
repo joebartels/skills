@@ -1,0 +1,87 @@
+{
+  "semantic_id": "environment-leak",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "c16c59f3afd205016f5d5802d22f33b9e59bdfcd79b461278c9bb8489bcd3c8c",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-aavc8pa2/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/showcfg\t0.455s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.629
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/cli-environment/mutations/environment-leak/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-aavc8pa2/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-aavc8pa2/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/showcfg\t0.173s [no tests to run]\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.319
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-aavc8pa2/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestLoadFromEnv (0.00s)\n    config_test.go:114: endpoint environment changed after \"http endpoint with default mode\": showcfg_test.envValue{value:\"http://example.invalid:8080/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n--- FAIL: TestEnvironmentRestoration (0.00s)\n    --- FAIL: TestEnvironmentRestoration/unset (0.00s)\n        config_test.go:151: endpoint after child \"supplied\" = showcfg_test.envValue{value:\"https://child.invalid\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:154: mode after child \"supplied\" = showcfg_test.envValue{value:\"read\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    --- FAIL: TestEnvironmentRestoration/empty (0.00s)\n        config_test.go:151: endpoint after child \"unset\" = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:154: mode after child \"unset\" = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:151: endpoint after child \"supplied\" = showcfg_test.envValue{value:\"https://child.invalid\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:154: mode after child \"supplied\" = showcfg_test.envValue{value:\"read\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n    --- FAIL: TestEnvironmentRestoration/supplied (0.00s)\n        config_test.go:151: endpoint after child \"unset\" = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:154: mode after child \"unset\" = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:151: endpoint after child \"supplied\" = showcfg_test.envValue{value:\"https://child.invalid\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:154: mode after child \"supplied\" = showcfg_test.envValue{value:\"read\", present:true}; want showcfg_test.envValue{value:\"write\", present:true}\nFAIL\nFAIL\texample.com/showcfg\t0.345s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.46
+  },
+  "classification": "detected test-helper sabotage",
+  "controller_interpretation": "Only test helper changes t.Setenv to un-restored os.Setenv. Explicit before/after presence and value assertions fail. Not a production LoadFromEnv defect."
+}

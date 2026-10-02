@@ -1,0 +1,87 @@
+{
+  "semantic_id": "poll-start-relative",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "c2039edbf37da6f9f413771f27ab040dc4ff8df8518a6f38e90036e1ac70a18c",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-y751hbc0/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.328s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.505
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/worker-timing/mutations/poll-start-relative/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-y751hbc0/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.018
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-y751hbc0/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.154s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.317
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-y751hbc0/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRecurrence (0.08s)\n    poll_test.go:168: callback 2 started 8.25\u00b5s after completion, want at least 40ms\nFAIL\nFAIL\texample.com/poller\t0.199s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.31
+  },
+  "classification": "detected by meaningful context/recurrence assertions",
+  "controller_interpretation": "Observed later callback starts about 8 microseconds after preceding completion against promised 40 milliseconds, so meaningful recurrence assertion rejects fixed-ticker scheduling."
+}

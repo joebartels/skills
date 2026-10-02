@@ -1,0 +1,11 @@
+--- a/host.go
++++ b/host.go
+@@ -18,7 +18,7 @@
+ 	}
+ 
+ 	workerCtx, cancel := context.WithCancel(ctx)
+-	err := runWorker(workerCtx, interval, sweep)
++	err := func() error { done := make(chan error, 1); go func() { done <- runWorker(workerCtx, interval, sweep) }(); select { case result := <-done: return result; case <-ctx.Done(): return nil } }()
+ 	cancel()
+ 	return errors.Join(err, release())
+ }

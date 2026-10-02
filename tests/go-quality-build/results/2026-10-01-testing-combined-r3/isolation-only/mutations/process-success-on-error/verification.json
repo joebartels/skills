@@ -1,0 +1,86 @@
+{
+  "semantic_id": "process-success-on-error",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "4e9ecd73fec64bb599c5027ad0420bbe16b2b9ff892906c429a29add025ce1a8",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-w9i9hzb2/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.397s\nok  \texample.com/indexer/cmd/indexer\t1.036s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.299
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/isolation-only/mutations/process-success-on-error/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-w9i9hzb2/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-w9i9hzb2/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.167s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.287s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.521
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-w9i9hzb2/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.377s\n--- FAIL: TestCommandProcesses (0.67s)\n    --- FAIL: TestCommandProcesses/put_preserves_positional_text_and_streams (0.24s)\n        process_test.go:47: invalid put = 0, stdout \"\", stderr \"invalid record\\n\"\n    --- FAIL: TestCommandProcesses/apply_success_and_retained_prefix (0.01s)\n        process_test.go:63: rejected apply = 0, \"\", \"CSV row 2: invalid record\\n\"\n    --- FAIL: TestCommandProcesses/startup_rejections (0.06s)\n        --- FAIL: TestCommandProcesses/startup_rejections/usage (0.01s)\n            process_test.go:94: startup = 0, \"\", \"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"\n        --- FAIL: TestCommandProcesses/startup_rejections/unknown (0.01s)\n            process_test.go:94: startup = 0, \"\", \"unknown command \\\"missing\\\"\\n\"\n        --- FAIL: TestCommandProcesses/startup_rejections/put_usage (0.00s)\n            process_test.go:94: startup = 0, \"\", \"usage: indexer put DIR KEY TEXT\\n\"\n        --- FAIL: TestCommandProcesses/startup_rejections/apply_missing_dir (0.00s)\n            process_test.go:94: startup = 0, \"\", \"usage: indexer apply --dir DIR\\n\"\n        --- FAIL: TestCommandProcesses/startup_rejections/apply_extra (0.00s)\n            process_test.go:94: startup = 0, \"\", \"usage: indexer apply --dir DIR\\n\"\n        --- FAIL: TestCommandProcesses/startup_rejections/watch_scheme (0.00s)\n            process_test.go:94: startup = 0, \"\", \"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"\n        --- FAIL: TestCommandProcesses/startup_rejections/watch_host (0.00s)\n            process_test.go:94: startup = 0, \"\", \"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"\n        --- FAIL: TestCommandProcesses/startup_rejections/watch_port_without_host (0.00s)\n            process_test.go:94: startup = 0, \"\", \"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"\n        --- FAIL: TestCommandProcesses/startup_rejections/watch_missing_file (0.00s)\n            process_test.go:94: startup = 0, \"\", \"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"\n        --- FAIL: TestCommandProcesses/startup_rejections/watch_zero (0.00s)\n            process_test.go:94: startup = 0, \"\", \"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"\n        --- FAIL: TestCommandProcesses/startup_rejections/watch_negative (0.00s)\n            process_test.go:94: startup = 0, \"\", \"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"\n        --- FAIL: TestCommandProcesses/startup_rejections/watch_bad_duration (0.00s)\n            process_test.go:94: startup = 0, \"\", \"watch arguments: invalid value \\\"invalid\\\" for flag -interval: parse error\\n\"\n        --- FAIL: TestCommandProcesses/startup_rejections/watch_unknown_flag (0.00s)\n            process_test.go:94: startup = 0, \"\", \"watch arguments: flag provided but not defined: -unknown\\n\"\n    --- FAIL: TestCommandProcesses/failed_first_refresh (0.01s)\n        process_test.go:113: first failure = 0, \"\", \"refresh status: 503 Service Unavailable\\n\"\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t0.993s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.202
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

@@ -1,0 +1,11 @@
+--- a/refresh.go
++++ b/refresh.go
+@@ -35,7 +35,7 @@
+ 		return fmt.Errorf("refresh fetch: %w", err)
+ 	}
+ 	defer response.Body.Close()
+-	if response.StatusCode != http.StatusOK {
++	if response.StatusCode < 200 || response.StatusCode >= 300 {
+ 		return fmt.Errorf("refresh status: %s", response.Status)
+ 	}
+ 	decoder := json.NewDecoder(response.Body)

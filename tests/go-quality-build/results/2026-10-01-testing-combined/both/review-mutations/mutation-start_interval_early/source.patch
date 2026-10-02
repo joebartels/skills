@@ -1,0 +1,14 @@
+--- a/serve.go
++++ b/serve.go
+@@ -21,10 +21,10 @@
+ 		if ctx.Err() != nil {
+ 			return nil
+ 		}
++		timer := time.NewTimer(interval)
+ 		if err := refresh(ctx); err != nil {
+ 			return err
+ 		}
+-		timer := time.NewTimer(interval)
+ 		select {
+ 		case <-ctx.Done():
+ 			timer.Stop()

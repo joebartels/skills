@@ -1,0 +1,11 @@
+--- a/fetch.go
++++ b/fetch.go
+@@ -33,7 +33,7 @@
+ 		return Metadata{}, err
+ 	}
+ 	var result Metadata
+-	if err := json.Unmarshal(data, &result); err != nil {
++	if err := json.NewDecoder(strings.NewReader(string(data))).Decode(&result); err != nil {
+ 		return Metadata{}, err
+ 	}
+ 	if strings.TrimSpace(result.Name) == "" || result.Revision <= 0 {

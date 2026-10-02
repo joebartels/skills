@@ -1,0 +1,405 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 15,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.007
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 60,
+    "stdout": "ok  \texample.com/indexer\t0.456s\n--- FAIL: TestCommandProcesses (0.50s)\n    --- FAIL: TestCommandProcesses/watch_failed_first_refresh (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 113 [running]:\ntesting.tRunner.func1.2({0x102998820, 0x273a58296080})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x102998820?, 0x273a58296080?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x102a24580, 0x273a58296030})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer/cmd/indexer.TestCommandProcesses.func6(0x273a582a8008)\n\t/private/tmp/go-fresh-author-s21flpf_/task-1/module/cmd/indexer/process_test.go:74 +0x90\ntesting.tRunner(0x273a582a8008, 0x273a5829a000)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 36\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer/cmd/indexer\t0.878s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 1.134
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 15,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.007,
+    "source_sha256_before": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "487987cbb7d5f37f7549131abf7938fcf04335baed5cc0cdc096d3871c0b9c9f",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "83de9194283a9356d9483c6f01d1dff7a29933a6d9d6fccbd0e82f83118b03f7",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "source_sha256_after": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "487987cbb7d5f37f7549131abf7938fcf04335baed5cc0cdc096d3871c0b9c9f",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "285b127f72b60648c077355ffe954a4bd16fd44ced795310b9c55b8d1922af5b",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "execution_boundary": "sandboxed"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 60,
+    "stdout": "ok  \texample.com/indexer\t0.469s\n--- FAIL: TestCommandProcesses (0.50s)\n    --- FAIL: TestCommandProcesses/watch_failed_first_refresh (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 100 [running]:\ntesting.tRunner.func1.2({0x1053a4820, 0x61318ed92810})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1053a4820?, 0x61318ed92810?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1054305a0, 0x61318ed927c0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer/cmd/indexer.TestCommandProcesses.func6(0x61318ee4d448)\n\t/private/tmp/go-fresh-author-s21flpf_/task-1/module/cmd/indexer/process_test.go:74 +0x90\ntesting.tRunner(0x61318ee4d448, 0x61318ed68810)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 5\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer/cmd/indexer\t0.894s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 1.152,
+    "source_sha256_before": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "487987cbb7d5f37f7549131abf7938fcf04335baed5cc0cdc096d3871c0b9c9f",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "285b127f72b60648c077355ffe954a4bd16fd44ced795310b9c55b8d1922af5b",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "source_sha256_after": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "487987cbb7d5f37f7549131abf7938fcf04335baed5cc0cdc096d3871c0b9c9f",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "285b127f72b60648c077355ffe954a4bd16fd44ced795310b9c55b8d1922af5b",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "execution_boundary": "sandboxed"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 60,
+    "stdout": "ok  \texample.com/indexer\t(cached)\nok  \texample.com/indexer/cmd/indexer\t0.708s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.899,
+    "source_sha256_before": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "487987cbb7d5f37f7549131abf7938fcf04335baed5cc0cdc096d3871c0b9c9f",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "285b127f72b60648c077355ffe954a4bd16fd44ced795310b9c55b8d1922af5b",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "source_sha256_after": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "487987cbb7d5f37f7549131abf7938fcf04335baed5cc0cdc096d3871c0b9c9f",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "285b127f72b60648c077355ffe954a4bd16fd44ced795310b9c55b8d1922af5b",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "execution_boundary": "approved-unsandboxed"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 45,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.13,
+    "source_sha256_before": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "487987cbb7d5f37f7549131abf7938fcf04335baed5cc0cdc096d3871c0b9c9f",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "285b127f72b60648c077355ffe954a4bd16fd44ced795310b9c55b8d1922af5b",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "source_sha256_after": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "487987cbb7d5f37f7549131abf7938fcf04335baed5cc0cdc096d3871c0b9c9f",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "285b127f72b60648c077355ffe954a4bd16fd44ced795310b9c55b8d1922af5b",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "execution_boundary": "sandboxed"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 120,
+    "stdout": "ok  \texample.com/indexer\t11.096s\nok  \texample.com/indexer/cmd/indexer\t3.016s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 11.436,
+    "source_sha256_before": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "487987cbb7d5f37f7549131abf7938fcf04335baed5cc0cdc096d3871c0b9c9f",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "285b127f72b60648c077355ffe954a4bd16fd44ced795310b9c55b8d1922af5b",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "source_sha256_after": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "487987cbb7d5f37f7549131abf7938fcf04335baed5cc0cdc096d3871c0b9c9f",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "285b127f72b60648c077355ffe954a4bd16fd44ced795310b9c55b8d1922af5b",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "execution_boundary": "approved-unsandboxed"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-run=^TestWriteFailureAfterProgressRetainsState$",
+      "-timeout=30s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 45,
+    "stdout": "--- FAIL: TestWriteFailureAfterProgressRetainsState (0.02s)\n    --- FAIL: TestWriteFailureAfterProgressRetainsState/put (0.01s)\n        write_failure_unix_test.go:50: file /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestWriteFailureAfterProgressRetainsStateput3054886094/001/alpha = \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", <nil>; want \"original\"\n    --- FAIL: TestWriteFailureAfterProgressRetainsState/csv (0.01s)\n        write_failure_unix_test.go:50: file /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestWriteFailureAfterProgressRetainsStatecsv82981844/001/alpha = \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", <nil>; want \"accepted\"\n    --- FAIL: TestWriteFailureAfterProgressRetainsState/refresh (0.01s)\n        write_failure_unix_test.go:50: file /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestWriteFailureAfterProgressRetainsStaterefresh3490455449/001/alpha = \"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", <nil>; want \"original\"\nFAIL\nFAIL\texample.com/indexer\t0.263s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.52,
+    "source_sha256_before": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "3c09c93fb8aa9a285ada755248288db51051b6b1fc8859d768a0f436eac78874",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "285b127f72b60648c077355ffe954a4bd16fd44ced795310b9c55b8d1922af5b",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "source_sha256_after": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "3c09c93fb8aa9a285ada755248288db51051b6b1fc8859d768a0f436eac78874",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "285b127f72b60648c077355ffe954a4bd16fd44ced795310b9c55b8d1922af5b",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "execution_boundary": "sandboxed"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-run=^TestWriteFailureAfterProgressRetainsState$",
+      "-timeout=30s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 45,
+    "stdout": "ok  \texample.com/indexer\t0.191s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.376,
+    "source_sha256_before": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "487987cbb7d5f37f7549131abf7938fcf04335baed5cc0cdc096d3871c0b9c9f",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "285b127f72b60648c077355ffe954a4bd16fd44ced795310b9c55b8d1922af5b",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "source_sha256_after": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "487987cbb7d5f37f7549131abf7938fcf04335baed5cc0cdc096d3871c0b9c9f",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "285b127f72b60648c077355ffe954a4bd16fd44ced795310b9c55b8d1922af5b",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "execution_boundary": "sandboxed"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 15,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.008,
+    "source_sha256_before": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "487987cbb7d5f37f7549131abf7938fcf04335baed5cc0cdc096d3871c0b9c9f",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "285b127f72b60648c077355ffe954a4bd16fd44ced795310b9c55b8d1922af5b",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "source_sha256_after": {
+      "cmd/indexer/main.go": "20c93bed8b00922efff8999ebe919fc8748653f4f722de07b52879e7efe285e7",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+      "cmd/indexer/process_test.go": "192ef2297b3c2e92f52111e4f739d361e838139e8a060697b8ff1bec57e557d2",
+      "index.go": "487987cbb7d5f37f7549131abf7938fcf04335baed5cc0cdc096d3871c0b9c9f",
+      "index_test.go": "2e081dd41f2db5261973b2932e92f93d2bad1491130f819136911cc8b01d26a8",
+      "refresh.go": "fecf00d9d5acaab11bf6947ae1aac93fb2c4e6d9020a43802ede6b6dacf81485",
+      "refresh_test.go": "285b127f72b60648c077355ffe954a4bd16fd44ced795310b9c55b8d1922af5b",
+      "serve.go": "2f271ce73758a526ef66c32b1b4ea40d90e7226e2de4fb713140dc870b731c8e",
+      "serve_test.go": "2a48fa976ba3dcd5aa516801786c4b8c97dfba96f8ff0e18ad5620b13c496cd7",
+      "write_failure_unix_test.go": "1421030f06bc2e5cdeaa3a5ce4b5cc7b2eea6a2df5d76e56b30e16fd5a51bf3c"
+    },
+    "execution_boundary": "sandboxed"
+  }
+]

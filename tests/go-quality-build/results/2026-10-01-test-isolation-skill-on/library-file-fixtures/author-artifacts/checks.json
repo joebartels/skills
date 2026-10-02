@@ -1,0 +1,210 @@
+{
+  "staticcheck_available": false,
+  "checks": [
+    {
+      "name": "format",
+      "argv": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-w",
+        "store_test.go"
+      ],
+      "process_timeout_seconds": 15,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "go-version",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "version"
+      ],
+      "process_timeout_seconds": 15,
+      "exit_code": 0,
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": ""
+    },
+    {
+      "name": "format-check",
+      "argv": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-d",
+        "store_test.go"
+      ],
+      "process_timeout_seconds": 15,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "vet",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "process_timeout_seconds": 90,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "full-suite-race",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "test",
+        "-race",
+        "-v",
+        "-timeout=30s",
+        "./..."
+      ],
+      "process_timeout_seconds": 90,
+      "exit_code": 0,
+      "stdout": "=== RUN   TestStoreSerialChildren\n=== RUN   TestStoreSerialChildren/first\n=== RUN   TestStoreSerialChildren/replacement\n--- PASS: TestStoreSerialChildren (0.00s)\n    --- PASS: TestStoreSerialChildren/first (0.00s)\n    --- PASS: TestStoreSerialChildren/replacement (0.00s)\n=== RUN   TestStoreIndependentInstances\n=== PAUSE TestStoreIndependentInstances\n=== CONT  TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/alpha\n=== PAUSE TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/beta\n=== PAUSE TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/gamma\n=== PAUSE TestStoreIndependentInstances/instances/gamma\n=== CONT  TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/alpha/initial\n=== CONT  TestStoreIndependentInstances/instances/gamma\n=== CONT  TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/gamma/initial\n=== RUN   TestStoreIndependentInstances/instances/beta/initial\n=== RUN   TestStoreIndependentInstances/instances/alpha/shorter\n=== RUN   TestStoreIndependentInstances/instances/alpha/empty\n=== RUN   TestStoreIndependentInstances/instances/gamma/shorter\n=== RUN   TestStoreIndependentInstances/instances/beta/shorter\n=== RUN   TestStoreIndependentInstances/instances/alpha/replacement\n=== RUN   TestStoreIndependentInstances/instances/alpha/repeat\n=== RUN   TestStoreIndependentInstances/instances/gamma/empty\n=== RUN   TestStoreIndependentInstances/instances/beta/empty\n=== RUN   TestStoreIndependentInstances/instances/gamma/replacement\n=== RUN   TestStoreIndependentInstances/instances/beta/replacement\n=== RUN   TestStoreIndependentInstances/instances/gamma/repeat\n=== RUN   TestStoreIndependentInstances/instances/beta/repeat\n--- PASS: TestStoreIndependentInstances (0.00s)\n    --- PASS: TestStoreIndependentInstances/instances (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/initial (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/shorter (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/empty (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/repeat (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/gamma (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/initial (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/shorter (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/empty (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/replacement (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/repeat (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/initial (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/shorter (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/empty (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/repeat (0.00s)\nPASS\nok  \texample.com/filestore\t1.251s\n",
+      "stderr": ""
+    },
+    {
+      "name": "independent-instances-alone",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "test",
+        "-race",
+        "-timeout=30s",
+        "-run=^TestStoreIndependentInstances$",
+        "./..."
+      ],
+      "process_timeout_seconds": 90,
+      "exit_code": 0,
+      "stdout": "ok  \texample.com/filestore\t1.165s\n",
+      "stderr": ""
+    },
+    {
+      "name": "focused-replacement",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "test",
+        "-race",
+        "-count=10",
+        "-timeout=30s",
+        "-run=^TestStoreIndependentInstances$/^instances$/^beta$/^replacement$",
+        "./..."
+      ],
+      "process_timeout_seconds": 90,
+      "exit_code": 0,
+      "stdout": "ok  \texample.com/filestore\t1.177s\n",
+      "stderr": ""
+    },
+    {
+      "name": "focused-empty",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "test",
+        "-race",
+        "-count=10",
+        "-timeout=30s",
+        "-run=^TestStoreIndependentInstances$/^instances$/^alpha$/^empty$",
+        "./..."
+      ],
+      "process_timeout_seconds": 90,
+      "exit_code": 0,
+      "stdout": "ok  \texample.com/filestore\t1.175s\n",
+      "stderr": ""
+    },
+    {
+      "name": "focused-repeat",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "test",
+        "-race",
+        "-count=10",
+        "-timeout=30s",
+        "-run=^TestStoreIndependentInstances$/^instances$/^gamma$/^repeat$",
+        "./..."
+      ],
+      "process_timeout_seconds": 90,
+      "exit_code": 0,
+      "stdout": "ok  \texample.com/filestore\t1.178s\n",
+      "stderr": ""
+    },
+    {
+      "name": "serial-alone",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "test",
+        "-race",
+        "-timeout=30s",
+        "-run=^TestStoreSerialChildren$",
+        "./..."
+      ],
+      "process_timeout_seconds": 90,
+      "exit_code": 0,
+      "stdout": "ok  \texample.com/filestore\t1.157s\n",
+      "stderr": ""
+    },
+    {
+      "name": "shuffle-repeat-race",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "test",
+        "-race",
+        "-shuffle=on",
+        "-count=25",
+        "-timeout=45s",
+        "./..."
+      ],
+      "process_timeout_seconds": 105,
+      "exit_code": 0,
+      "stdout": "ok  \texample.com/filestore\t1.207s\n",
+      "stderr": ""
+    }
+  ]
+}

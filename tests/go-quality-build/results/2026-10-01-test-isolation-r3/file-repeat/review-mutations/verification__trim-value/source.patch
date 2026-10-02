@@ -1,0 +1,17 @@
+--- a/store.go
++++ b/store.go
+@@ -4,6 +4,7 @@
+ 	"fmt"
+ 	"os"
+ 	"path/filepath"
++	"strings"
+ )
+ 
+ // Store uses a caller-supplied filesystem root.
+@@ -38,5 +39,5 @@
+ 		return "", fmt.Errorf("invalid key %q", key)
+ 	}
+ 	data, err := os.ReadFile(filepath.Join(s.root, key))
+-	return string(data), err
++	return strings.TrimRight(string(data), "\x00"), err
+ }

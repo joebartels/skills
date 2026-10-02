@@ -1,0 +1,86 @@
+{
+  "semantic_id": "unsafe-cancellation-cause-comparison",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "43315c29dad60eb0ef60cba5bca07a851ce82e010488cb598743af0122cdbeb3",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-rau2j63u/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.704s\nok  \texample.com/indexer/cmd/indexer\t0.809s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.073
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/both/mutations/unsafe-cancellation-cause-comparison/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-rau2j63u/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-rau2j63u/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.205s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.361s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.621
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-rau2j63u/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.676s\nok  \texample.com/indexer/cmd/indexer\t0.866s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.074
+  },
+  "classification": "survived"
+}

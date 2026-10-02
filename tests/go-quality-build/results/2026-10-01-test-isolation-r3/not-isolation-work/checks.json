@@ -1,0 +1,142 @@
+[
+  {
+    "stage": "regression_before_fix",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestLowerBound$",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-5/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 55,
+    "stdout": "--- FAIL: TestLowerBound (0.00s)\n    clamp_test.go:18: Clamp(0, 1, 9) = 2, want 1\n    clamp_test.go:18: Clamp(1, 1, 9) = 2, want 1\nFAIL\nFAIL\texample.com/clamp\t0.186s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "stage": "format",
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-s",
+      "-w",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-5/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 55,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "stage": "format_check",
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-5/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 55,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "stage": "unit_tests_race",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-5/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 55,
+    "stdout": "=== RUN   TestInterior\n--- PASS: TestInterior (0.00s)\n=== RUN   TestLowerBound\n--- PASS: TestLowerBound (0.00s)\nPASS\nok  \texample.com/clamp\t1.197s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "stage": "vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-5/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 55,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "stage": "toolchain",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-5/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 55,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "stage": "staticcheck",
+    "argv": [
+      "rtk",
+      "proxy",
+      "staticcheck",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-5/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 55,
+    "stdout": "",
+    "stderr": "rtk: Failed to execute command: staticcheck: No such file or directory (os error 2)\n",
+    "exit_code": 1
+  }
+]

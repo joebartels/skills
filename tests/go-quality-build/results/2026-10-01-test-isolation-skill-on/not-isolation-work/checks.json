@@ -1,0 +1,129 @@
+[
+  {
+    "name": "regression_before_fix",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestLowerBound$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "timeout_seconds": 60,
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestLowerBound (0.00s)\n    --- FAIL: TestLowerBound/below (0.00s)\n        clamp_test.go:25: Clamp(0, 1, 9) = 2, want 1\n    --- FAIL: TestLowerBound/inclusive (0.00s)\n        clamp_test.go:25: Clamp(1, 1, 9) = 2, want 1\nFAIL\nFAIL\texample.com/clamp\t0.172s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "name": "staticcheck",
+    "command": [
+      "rtk",
+      "proxy",
+      "staticcheck",
+      "./..."
+    ],
+    "status": "not_run",
+    "reason": "staticcheck is not installed; task forbids installing tools."
+  },
+  {
+    "name": "format",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-s",
+      "-w",
+      "."
+    ],
+    "timeout_seconds": 60,
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "name": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "timeout_seconds": 60,
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "name": "tests_with_race",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "timeout_seconds": 60,
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestInterior\n--- PASS: TestInterior (0.00s)\n=== RUN   TestLowerBound\n=== RUN   TestLowerBound/below\n=== RUN   TestLowerBound/inclusive\n--- PASS: TestLowerBound (0.00s)\n    --- PASS: TestLowerBound/below (0.00s)\n    --- PASS: TestLowerBound/inclusive (0.00s)\nPASS\nok  \texample.com/clamp\t1.226s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "name": "vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "timeout_seconds": 60,
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "name": "format_check",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "timeout_seconds": 60,
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  }
+]

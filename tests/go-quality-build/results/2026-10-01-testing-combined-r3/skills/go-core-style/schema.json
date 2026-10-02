@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GoCoreStyleConfig",
+  "description": "Configuration schema for Go Core Philosophy & Style static checks and LLM linter assertions.",
+  "type": "object",
+  "properties": {
+    "enforce_line_of_sight": {
+      "type": "boolean",
+      "default": true,
+      "description": "Require early guard clauses and left-aligned happy path control flow."
+    },
+    "wrap_errors_with_w": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enforce fmt.Errorf wrapping using %w for dynamic error annotations."
+    },
+    "accept_interfaces_return_structs": {
+      "type": "boolean",
+      "default": true,
+      "description": "Require constructors to return concrete struct pointers and consumers to define narrow interfaces."
+    },
+    "disallow_global_state": {
+      "type": "boolean",
+      "default": true,
+      "description": "Flag package-level mutable state variables."
+    },
+    "disallow_interface_impl_suffixes": {
+      "type": "boolean",
+      "default": true,
+      "description": "Prohibit Impl suffixes or Default prefixes in interface and struct names."
+    },
+    "max_cyclomatic_complexity": {
+      "type": "integer",
+      "default": 10,
+      "description": "Maximum allowed function complexity before requiring refactoring."
+    }
+  },
+  "required": [
+    "enforce_line_of_sight",
+    "wrap_errors_with_w",
+    "accept_interfaces_return_structs"
+  ],
+  "additionalProperties": false
+}

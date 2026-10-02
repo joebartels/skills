@@ -1,0 +1,22 @@
+{
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "mutations": [
+    {
+      "semantic_id": "host-no-join",
+      "interpretation": "explicit callback-cleanup/release order assertion rejects premature host release",
+      "evidence": "mutations/host-no-join/verification.json"
+    },
+    {
+      "semantic_id": "worker-start-relative",
+      "interpretation": "observed cycle two begins microseconds after actual callback-completion event, not full promised 40ms",
+      "evidence": "mutations/worker-start-relative/verification.json"
+    },
+    {
+      "semantic_id": "post-review-host-drop-error-successful-release",
+      "interpretation": "callback-only error identity/type and cancellation-plus-independent-failure assertions reject discarded work error when release succeeds",
+      "evidence": "mutations/post-review-host-drop-error-successful-release/verification.json"
+    }
+  ],
+  "claim": "fresh final guidance retains confirmed callback-error/successful-release benefit; independent repeat/outcome pending"
+}

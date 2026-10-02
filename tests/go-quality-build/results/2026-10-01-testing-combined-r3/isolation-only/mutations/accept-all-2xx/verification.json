@@ -1,0 +1,86 @@
+{
+  "semantic_id": "accept-all-2xx",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "5684eff7d7b6ed54fe5c28d51fc43195d75bad6f47245342eed67cafa28589d6",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-zio9oik9/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.401s\nok  \texample.com/indexer/cmd/indexer\t1.056s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.316
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/isolation-only/mutations/accept-all-2xx/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-zio9oik9/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-zio9oik9/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.170s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.330s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.591
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-zio9oik9/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshValidationAndBodyOwnership (0.00s)\n    --- FAIL: TestRefreshValidationAndBodyOwnership/created_status (0.00s)\n        refresh_test.go:84: Refresh error = <nil>; want success false\nFAIL\nFAIL\texample.com/indexer\t0.383s\nok  \texample.com/indexer/cmd/indexer\t0.948s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.146
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

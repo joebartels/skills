@@ -1,0 +1,86 @@
+{
+  "semantic_id": "premature-parent-teardown",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "6e3a7af83c6ebc595a9a4e0989401e2a3568a2304d4d35a3900d3c9b76a54b45",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-l7zz77fh/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.150s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.293
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r3/library-file-fixtures/mutations/premature-parent-teardown/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-l7zz77fh/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-l7zz77fh/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.162s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.301
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-l7zz77fh/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    --- FAIL: TestStoreIndependentInstances/instances (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/first (0.00s)\n                store_test.go:53: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances1328491039/001/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\n                store_test.go:53: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances1328491039/001/same-key: no such file or directory\n        --- FAIL: TestStoreIndependentInstances/instances/gamma (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/first (0.00s)\n                store_test.go:53: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances1328491039/003/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/replacement (0.00s)\n                store_test.go:53: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances1328491039/003/same-key: no such file or directory\n        --- FAIL: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/beta/first (0.00s)\n                store_test.go:53: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances1328491039/002/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\n                store_test.go:53: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances1328491039/002/same-key: no such file or directory\nFAIL\nFAIL\texample.com/filestore\t0.124s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.237
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

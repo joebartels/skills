@@ -1,0 +1,89 @@
+{
+  "semantic_id": "post-review-host-drop-error-successful-release",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "06762ed88963e9ca57a2769abea391195bbc41bdd78e0404e4af6ce01c97a022",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-85imu5pn/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.378s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.538
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/worker-host/mutations/post-review-host-drop-error-successful-release/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-85imu5pn/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.026
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-85imu5pn/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.183s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.343
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-85imu5pn/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.289s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.408
+  },
+  "classification": "survived",
+  "post_review_diagnostic": true,
+  "pre_dispatch_frozen_probe": false,
+  "controller_interpretation": "Independent-review gap confirmed: dropping callback error after successful release passes all candidate tests."
+}

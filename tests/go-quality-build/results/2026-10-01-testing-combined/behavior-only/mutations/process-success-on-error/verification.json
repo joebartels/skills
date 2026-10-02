@@ -1,0 +1,86 @@
+{
+  "semantic_id": "process-success-on-error",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "5d4ab9a09f375095957314dd3cde3abf503a5fc66aa1b699392d146af13a9011",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-php3f1jz/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.738s\nok  \texample.com/indexer/cmd/indexer\t1.465s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.731
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined/behavior-only/mutations/process-success-on-error/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-php3f1jz/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.019
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-php3f1jz/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.173s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.508s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.844
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-php3f1jz/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.643s\n--- FAIL: TestPutProcessContract (0.18s)\n    main_test.go:56: process = status 0, stdout \"\", stderr \"invalid record\\n\"; want status 2\n--- FAIL: TestApplyProcessContract (0.01s)\n    main_test.go:68: process = status 0, stdout \"\", stderr \"CSV row 2: invalid record\\n\"; want status 2\n--- FAIL: TestUsageProcessContract (0.05s)\n    --- FAIL: TestUsageProcessContract/#00 (0.00s)\n        main_test.go:87: process = status 0, stdout \"\", stderr \"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status 2\n    --- FAIL: TestUsageProcessContract/put (0.00s)\n        main_test.go:87: process = status 0, stdout \"\", stderr \"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status 2\n    --- FAIL: TestUsageProcessContract/unknown (0.00s)\n        main_test.go:87: process = status 0, stdout \"\", stderr \"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status 2\n    --- FAIL: TestUsageProcessContract/apply (0.00s)\n        main_test.go:87: process = status 0, stdout \"\", stderr \"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status 2\n    --- FAIL: TestUsageProcessContract/apply_--dir_/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestUsageProcessContract3206291357/001_extra (0.00s)\n        main_test.go:87: process = status 0, stdout \"\", stderr \"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status 2\n    --- FAIL: TestUsageProcessContract/watch_--url_ftp://example.test_--file_out_--interval_1s (0.00s)\n        main_test.go:87: process = status 0, stdout \"\", stderr \"watch requires an HTTP/HTTPS URL with a host\\n\"; want status 2\n    --- FAIL: TestUsageProcessContract/watch_--url_http:///missing_--file_out_--interval_1s (0.01s)\n        main_test.go:87: process = status 0, stdout \"\", stderr \"watch requires an HTTP/HTTPS URL with a host\\n\"; want status 2\n    --- FAIL: TestUsageProcessContract/watch_--url_https://example.test_--file_out_--interval_0s (0.00s)\n        main_test.go:87: process = status 0, stdout \"\", stderr \"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status 2\n    --- FAIL: TestUsageProcessContract/watch_--url_https://example.test_--file_out_--interval_-1s (0.00s)\n        main_test.go:87: process = status 0, stdout \"\", stderr \"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status 2\n    --- FAIL: TestUsageProcessContract/watch_--url_https://example.test_--file_out_--interval_no (0.00s)\n        main_test.go:87: process = status 0, stdout \"\", stderr \"invalid value \\\"no\\\" for flag -interval: parse error\\n\"; want status 2\n    --- FAIL: TestUsageProcessContract/watch_--url_https://example.test_--interval_1s (0.00s)\n        main_test.go:87: process = status 0, stdout \"\", stderr \"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status 2\n    --- FAIL: TestUsageProcessContract/watch_--url_https://example.test_--file_out_--interval_1s_extra (0.00s)\n        main_test.go:87: process = status 0, stdout \"\", stderr \"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status 2\n--- FAIL: TestWatchFirstRefreshFailureProcess (0.01s)\n    --- FAIL: TestWatchFirstRefreshFailureProcess/status (0.01s)\n        watch_unix_test.go:44: process = status 0, stdout \"\", stderr \"fetch records: HTTP status 503\\n\"; want status 2\n    --- FAIL: TestWatchFirstRefreshFailureProcess/invalid_record (0.00s)\n        watch_unix_test.go:44: process = status 0, stdout \"\", stderr \"record 1: invalid record\\n\"; want status 2\n    --- FAIL: TestWatchFirstRefreshFailureProcess/trailing_data (0.00s)\n        watch_unix_test.go:44: process = status 0, stdout \"\", stderr \"decode records: trailing JSON value\\n\"; want status 2\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t1.574s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.81
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

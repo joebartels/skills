@@ -1,0 +1,49 @@
+{
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "manual_interpretation": true,
+  "checks": [
+    {
+      "semantic_id": "direct-snapshot-truncation",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "opened snapshot =",
+      "meaning": "old open snapshot changes instead of retaining exact prior bytes",
+      "evidence": "mutations/direct-snapshot-truncation/verification.json"
+    },
+    {
+      "semantic_id": "discarded-caller-context",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "signal did not cancel in-flight HTTP request",
+      "meaning": "actual command signal fails to cancel already-started HTTP request; bounded readiness failures are additional diagnostics",
+      "evidence": "mutations/discarded-caller-context/verification.json"
+    },
+    {
+      "semantic_id": "host-release-before-join",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "release overtook blocked cleanup",
+      "meaning": "started callback cleanup is overtaken by release",
+      "evidence": "mutations/host-release-before-join/verification.json"
+    },
+    {
+      "semantic_id": "omitted-text-validation",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "want rejection",
+      "meaning": "blank record loses independent rejection and retention checks in ingress and refresh",
+      "evidence": "mutations/omitted-text-validation/verification.json"
+    },
+    {
+      "semantic_id": "process-success-on-error",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "want exit 2",
+      "meaning": "actual child status is 0 instead of rejection status",
+      "evidence": "mutations/process-success-on-error/verification.json"
+    },
+    {
+      "semantic_id": "start-relative-recurrence",
+      "classification": "detected by meaningful compiled candidate assertion",
+      "signal": "want at least 40ms",
+      "meaning": "successful recurrence starts microseconds after completion instead of the promised delay",
+      "evidence": "mutations/start-relative-recurrence/verification.json"
+    }
+  ]
+}

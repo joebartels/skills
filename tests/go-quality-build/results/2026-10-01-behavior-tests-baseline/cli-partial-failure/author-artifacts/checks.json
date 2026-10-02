@@ -1,0 +1,46 @@
+{
+  "output_capture_note": "Initial and race-test commands were captured by exec_command as combined stdout/stderr; separate streams are preserved for subsequent checks.",
+  "checks": [
+    {
+      "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go test -timeout=60s ./...",
+      "stage": "before implementation",
+      "chunk_id": "64de3c",
+      "wall_time_seconds": 0.384188083,
+      "exit_code": 1,
+      "original_token_count": 858,
+      "output": "--- FAIL: TestRunSuccess (0.00s)\n    --- FAIL: TestRunSuccess/batch (0.00s)\n        main_test.go:36: records = map[web:7\n            ], want map[api:12\n             last:3\n             web:4\n            ]\n    --- FAIL: TestRunSuccess/quoted_and_CRLF (0.00s)\n        main_test.go:36: records = map[a,b:9\n            ], want map[a,b:9\n             next:2\n            ]\n--- FAIL: TestRunStopsAtInvalidRow (0.01s)\n    --- FAIL: TestRunStopsAtInvalidRow/missing_field (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/extra_field (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/empty_id (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/slash (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/backslash (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/dot (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/dot_dot (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/zero (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/negative (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/empty_quantity (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/nondecimal (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/fraction (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/exponent (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/whitespace (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/overflow (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/unclosed_quote (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n    --- FAIL: TestRunStopsAtInvalidRow/bare_quote (0.00s)\n        main_test.go:69: expected useful error, got <nil>\n--- FAIL: TestRunCreatesDirectory (0.00s)\n    main_test.go:91: records = map[web:1\n        ], want map[api:2\n         web:1\n        ]\n--- FAIL: TestRunFileFailureRetainsPrefix (0.00s)\n    main_test.go:115: expected error naming failed target, got <nil>\n--- FAIL: TestRunWritesBeforeReadingNextRow (0.00s)\n    main_test.go:202: read 1 rows, want 3\n--- FAIL: TestRunInputFailureRetainsPrefix (0.00s)\n    main_test.go:216: error = <nil>, want stdin failure\n--- FAIL: TestRunStopsReadingAfterInvalidRow (0.00s)\n    main_test.go:230: invalid row succeeded\n--- FAIL: TestCLI (0.23s)\n    --- FAIL: TestCLI/success (0.11s)\n        main_test.go:342: records = map[web:7\n            ], want map[api:2\n             web:9\n            ]\n    --- FAIL: TestCLI/invalid_prefix (0.00s)\n        main_test.go:331: exit = 0, want 2; stderr = \"\"\n    --- FAIL: TestCLI/malformed_CSV (0.00s)\n        main_test.go:331: exit = 0, want 2; stderr = \"\"\n    --- FAIL: TestCLI/file_failure (0.00s)\n        main_test.go:331: exit = 0, want 2; stderr = \"\"\nFAIL\nFAIL\texample.com/ledgerload\t0.388s\nFAIL\n"
+    },
+    {
+      "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go test -v -race -timeout=90s ./...",
+      "stage": "after implementation",
+      "output": "=== RUN   TestRunSuccess\n=== RUN   TestRunSuccess/empty\n=== RUN   TestRunSuccess/single\n=== RUN   TestRunSuccess/batch\n=== RUN   TestRunSuccess/quoted_and_CRLF\n--- PASS: TestRunSuccess (0.01s)\n    --- PASS: TestRunSuccess/empty (0.00s)\n    --- PASS: TestRunSuccess/single (0.00s)\n    --- PASS: TestRunSuccess/batch (0.00s)\n    --- PASS: TestRunSuccess/quoted_and_CRLF (0.00s)\n=== RUN   TestRunStopsAtInvalidRow\n=== RUN   TestRunStopsAtInvalidRow/missing_field\n=== RUN   TestRunStopsAtInvalidRow/extra_field\n=== RUN   TestRunStopsAtInvalidRow/empty_id\n=== RUN   TestRunStopsAtInvalidRow/slash\n=== RUN   TestRunStopsAtInvalidRow/backslash\n=== RUN   TestRunStopsAtInvalidRow/dot\n=== RUN   TestRunStopsAtInvalidRow/dot_dot\n=== RUN   TestRunStopsAtInvalidRow/zero\n=== RUN   TestRunStopsAtInvalidRow/negative\n=== RUN   TestRunStopsAtInvalidRow/empty_quantity\n=== RUN   TestRunStopsAtInvalidRow/nondecimal\n=== RUN   TestRunStopsAtInvalidRow/fraction\n=== RUN   TestRunStopsAtInvalidRow/exponent\n=== RUN   TestRunStopsAtInvalidRow/whitespace\n=== RUN   TestRunStopsAtInvalidRow/overflow\n=== RUN   TestRunStopsAtInvalidRow/unclosed_quote\n=== RUN   TestRunStopsAtInvalidRow/bare_quote\n--- PASS: TestRunStopsAtInvalidRow (0.02s)\n    --- PASS: TestRunStopsAtInvalidRow/missing_field (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/extra_field (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/empty_id (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/slash (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/backslash (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/dot (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/dot_dot (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/zero (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/negative (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/empty_quantity (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/nondecimal (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/fraction (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/exponent (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/whitespace (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/overflow (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/unclosed_quote (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/bare_quote (0.00s)\n=== RUN   TestRunInvalidFirstRowCreatesNothing\n--- PASS: TestRunInvalidFirstRowCreatesNothing (0.00s)\n=== RUN   TestRunCreatesDirectory\n--- PASS: TestRunCreatesDirectory (0.00s)\n=== RUN   TestRunEmptyInputCreatesNothing\n--- PASS: TestRunEmptyInputCreatesNothing (0.00s)\n=== RUN   TestRunFileFailureRetainsPrefix\n--- PASS: TestRunFileFailureRetainsPrefix (0.00s)\n=== RUN   TestRunDirectoryFailure\n--- PASS: TestRunDirectoryFailure (0.00s)\n=== RUN   TestRunUsageDoesNotReadInput\n=== RUN   TestRunUsageDoesNotReadInput/missing_dir\n=== RUN   TestRunUsageDoesNotReadInput/empty_dir\n=== RUN   TestRunUsageDoesNotReadInput/missing_value\n=== RUN   TestRunUsageDoesNotReadInput/unknown_flag\n=== RUN   TestRunUsageDoesNotReadInput/positional\n--- PASS: TestRunUsageDoesNotReadInput (0.00s)\n    --- PASS: TestRunUsageDoesNotReadInput/missing_dir (0.00s)\n    --- PASS: TestRunUsageDoesNotReadInput/empty_dir (0.00s)\n    --- PASS: TestRunUsageDoesNotReadInput/missing_value (0.00s)\n    --- PASS: TestRunUsageDoesNotReadInput/unknown_flag (0.00s)\n    --- PASS: TestRunUsageDoesNotReadInput/positional (0.00s)\n=== RUN   TestRunWritesBeforeReadingNextRow\n--- PASS: TestRunWritesBeforeReadingNextRow (0.00s)\n=== RUN   TestRunInputFailureRetainsPrefix\n--- PASS: TestRunInputFailureRetainsPrefix (0.00s)\n=== RUN   TestRunStopsReadingAfterInvalidRow\n--- PASS: TestRunStopsReadingAfterInvalidRow (0.00s)\n=== RUN   TestCLI\n=== RUN   TestCLI/success\n=== RUN   TestCLI/empty\n=== RUN   TestCLI/invalid_prefix\n=== RUN   TestCLI/malformed_CSV\n=== RUN   TestCLI/file_failure\n=== RUN   TestCLI/missing_dir\n=== RUN   TestCLI/positional\n=== RUN   TestCLI/unknown_flag\n--- PASS: TestCLI (0.29s)\n    --- PASS: TestCLI/success (0.16s)\n    --- PASS: TestCLI/empty (0.00s)\n    --- PASS: TestCLI/invalid_prefix (0.00s)\n    --- PASS: TestCLI/malformed_CSV (0.00s)\n    --- PASS: TestCLI/file_failure (0.00s)\n    --- PASS: TestCLI/missing_dir (0.00s)\n    --- PASS: TestCLI/positional (0.00s)\n    --- PASS: TestCLI/unknown_flag (0.00s)\nPASS\nok  \texample.com/ledgerload\t1.517s\n",
+      "exit_code": 0
+    },
+    {
+      "command": "rtk proxy gofmt -l main.go main_test.go",
+      "timeout_seconds": 60,
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": "rtk proxy go version",
+      "timeout_seconds": 60,
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": "rtk proxy go vet ./...",
+      "timeout_seconds": 60,
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": "staticcheck ./...",
+      "ran": false,
+      "reason": "staticcheck is not installed; dependency/tool installation is prohibited"
+    }
+  ]
+}

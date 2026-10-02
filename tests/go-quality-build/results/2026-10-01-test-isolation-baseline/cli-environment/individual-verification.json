@@ -1,0 +1,74 @@
+[
+  {
+    "test": "TestEnvironmentRestoration",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestEnvironmentRestoration$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolated-tests-2v1aa4t9/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/showcfg\t1.459s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.69
+  },
+  {
+    "test": "TestLoadFromEnv",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestLoadFromEnv$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolated-tests-2v1aa4t9/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/showcfg\t1.123s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.249
+  },
+  {
+    "test": "TestShowcfgCommand",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestShowcfgCommand$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolated-tests-2v1aa4t9/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/showcfg\t1.412s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.553
+  }
+]

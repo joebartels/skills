@@ -1,0 +1,12 @@
+--- a/main.go
++++ b/main.go
+@@ -36,7 +36,8 @@
+ 		}
+ 		qty, err := strconv.Atoi(row[1])
+ 		if err != nil || qty <= 0 {
+-			return fmt.Errorf("record %d: invalid quantity %q", record, row[1])
++			os.RemoveAll(*dir)
++ return fmt.Errorf("record %d: invalid quantity %q", record, row[1])
+ 		}
+ 		if err := os.MkdirAll(*dir, 0o755); err != nil {
+ 			return fmt.Errorf("record %d: create directory: %w", record, err)

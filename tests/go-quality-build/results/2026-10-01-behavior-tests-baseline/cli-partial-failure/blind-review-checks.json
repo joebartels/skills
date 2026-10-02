@@ -1,0 +1,212 @@
+[
+  {
+    "name": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-0rd44ar6/candidate",
+    "stdin": null,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "platform",
+    "command": [
+      "rtk",
+      "proxy",
+      "uname",
+      "-a"
+    ],
+    "cwd": "/private/tmp/go-independent-review-0rd44ar6/candidate",
+    "stdin": null,
+    "stdout": "Darwin jbs-MacBook-Pro.local 25.5.0 Darwin Kernel Version 25.5.0: Tue Jun  9 22:28:34 PDT 2026; root:xnu-12377.121.10~1/RELEASE_ARM64_T6050 arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "candidate-tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-0rd44ar6/candidate",
+    "stdin": null,
+    "stdout": "ok  \texample.com/ledgerload\t0.471s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "candidate-order-isolation",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=3",
+      "-shuffle=on",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-0rd44ar6/candidate",
+    "stdin": null,
+    "stdout": "ok  \texample.com/ledgerload\t0.828s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "candidate-build",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "build",
+      "-o",
+      "/private/tmp/go-independent-review-0rd44ar6/output/ledgerload",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-0rd44ar6/candidate",
+    "stdin": null,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "partial-duplicate-write",
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-independent-review-0rd44ar6/output/ledgerload",
+      "--dir",
+      "/private/tmp/go-independent-review-0rd44ar6/output/limited-records"
+    ],
+    "cwd": "/private/tmp/go-independent-review-0rd44ar6/candidate",
+    "stdin": "web,1\nweb,12345\nlater,9\n",
+    "stdout": "",
+    "stderr": "record 2: writing \"web\": write /private/tmp/go-independent-review-0rd44ar6/output/limited-records/web: file too large\n",
+    "exit_code": 2,
+    "timeout_seconds": 60,
+    "setup": "Child ignores SIGXFSZ and has RLIMIT_FSIZE soft=hard=3 bytes; output directory initially empty."
+  },
+  {
+    "name": "partial-duplicate-result",
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-c",
+      "import json,pathlib; p=pathlib.Path('/private/tmp/go-independent-review-0rd44ar6/output/limited-records'); print(json.dumps({f.name:f.read_text() for f in p.iterdir()},sort_keys=True))"
+    ],
+    "cwd": "/private/tmp/go-independent-review-0rd44ar6/candidate",
+    "stdin": null,
+    "stdout": "{\"web\": \"123\"}\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "mutation-setup-buffered-input",
+    "path": "/private/tmp/go-independent-review-0rd44ar6/mutation-buffered-input/main.go",
+    "original_sha256": "91004aa2c2406c454f8202ff9d665f37344105a77b9c5a9c323f64a1b3d96a4f",
+    "mutation_sha256": "46a9cf9b6fe66a08bce1a770fb794af39fa52f91c2ed5b9044b4f15aa43c9998",
+    "description": "Read all stdin before writing"
+  },
+  {
+    "name": "mutation-buffered-input",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=15s",
+      "-run",
+      "^TestRunWritesBeforeReadingNextRow$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-0rd44ar6/mutation-buffered-input",
+    "stdin": null,
+    "stdout": "--- FAIL: TestRunWritesBeforeReadingNextRow (0.00s)\n    io.go:722: records = map[], want map[web:7\n        ]\nFAIL\nFAIL\texample.com/ledgerload\t0.168s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "mutation-setup-discard-write-error",
+    "path": "/private/tmp/go-independent-review-0rd44ar6/mutation-discard-write-error/main.go",
+    "original_sha256": "91004aa2c2406c454f8202ff9d665f37344105a77b9c5a9c323f64a1b3d96a4f",
+    "mutation_sha256": "d6bb17659a64be0a4319dc6938b854150323877930746fca760ec4a22eaa1ff2",
+    "description": "Continue after os.WriteFile failure"
+  },
+  {
+    "name": "mutation-discard-write-error",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=15s",
+      "-run",
+      "^TestRunFileFailureRetainsPrefix$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-0rd44ar6/mutation-discard-write-error",
+    "stdin": null,
+    "stdout": "--- FAIL: TestRunFileFailureRetainsPrefix (0.00s)\n    main_test.go:115: expected error naming failed target, got <nil>\nFAIL\nFAIL\texample.com/ledgerload\t0.173s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "candidate-source-hashes",
+    "command": [
+      "rtk",
+      "proxy",
+      "shasum",
+      "-a",
+      "256",
+      "README.md",
+      "go.mod",
+      "main.go",
+      "main_test.go"
+    ],
+    "cwd": "/private/tmp/go-independent-review-0rd44ar6/candidate",
+    "stdin": null,
+    "stdout": "9b9cb46434771af31b656f3e2f5c608453676942d4e221684fa3db7e6ad44ea7  README.md\n7cc2e99e3d21cbb24055f9067300830bf4072ba1b15cb5b00e4932cfcc2ebc0f  go.mod\n91004aa2c2406c454f8202ff9d665f37344105a77b9c5a9c323f64a1b3d96a4f  main.go\n58a8b8da6c272348f7cc756aaceaac6e1234ebcac80ee97feca8afe1f21d4bae  main_test.go\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timeout_seconds": 60
+  }
+]

@@ -1,0 +1,91 @@
+[
+  {
+    "semantic_id": "automatic-redirect-following",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "refresh_test.go:186: redirect accepted"
+    ],
+    "classification": "compiled meaningful candidate-only regression detection",
+    "no_outer_timeout_credit": true
+  },
+  {
+    "semantic_id": "direct-snapshot-truncation",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "refresh_test.go:249: old reader = \"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"new snapshot\\\"}]\\n\", <nil>; want \"complete old snapshot\\n\""
+    ],
+    "classification": "compiled meaningful candidate-only regression detection",
+    "no_outer_timeout_credit": true
+  },
+  {
+    "semantic_id": "discarded-caller-context",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "serve_test.go:61: caller context changed",
+      "serve_test.go:61: caller context changed",
+      "serve_test.go:61: caller context changed",
+      "serve_test.go:61: caller context changed"
+    ],
+    "classification": "compiled meaningful candidate-only regression detection",
+    "no_outer_timeout_credit": true
+  },
+  {
+    "semantic_id": "host-release-before-join",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "serve_test.go:80: Serve = <nil>; missing refresh failed",
+      "serve_test.go:80: Serve = release failed; missing refresh failed",
+      "serve_test.go:138: Serve returned during cleanup: release before callback cleanup",
+      "serve_test.go:138: Serve returned during cleanup: release before callback cleanup"
+    ],
+    "classification": "compiled meaningful candidate-only regression detection",
+    "no_outer_timeout_credit": true
+  },
+  {
+    "semantic_id": "omitted-text-validation",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "index_test.go:89: expected rejection",
+      "index_test.go:89: expected rejection",
+      "refresh_test.go:121: accepted rejected response",
+      "refresh_test.go:121: accepted rejected response"
+    ],
+    "classification": "compiled meaningful candidate-only regression detection",
+    "no_outer_timeout_credit": true
+  },
+  {
+    "semantic_id": "process-success-on-error",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "main_test.go:118: status/stdout/stderr = 0/\"\"/\"invalid value \\\"bad\\\" for flag -interval: parse error\\n\"; want status 2 and empty stdout",
+      "main_test.go:118: status/stdout/stderr = 0/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout",
+      "main_test.go:118: status/stdout/stderr = 0/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout",
+      "main_test.go:118: status/stdout/stderr = 0/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout"
+    ],
+    "classification": "compiled meaningful candidate-only regression detection",
+    "no_outer_timeout_credit": true
+  },
+  {
+    "semantic_id": "start-relative-recurrence",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "serve_test.go:208: next callback after 4.25\u00b5s; want at least 40ms from completion"
+    ],
+    "classification": "compiled meaningful candidate-only regression detection",
+    "no_outer_timeout_credit": true
+  }
+]

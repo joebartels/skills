@@ -1,0 +1,86 @@
+{
+  "semantic_id": "cli-discard-prefix",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "126f0a2490e87d882f6a3fdbc077d2786851c69fc091298d38cb6572bc19a6ce",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-dryly027/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t1.057s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.258
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-r2/cli-repeat/mutations/cli-discard-prefix/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-dryly027/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.017
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-dryly027/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.313s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.498
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-dryly027/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestBatchStopsAtInvalidReplacement (0.01s)\n    --- FAIL: TestBatchStopsAtInvalidReplacement/zero (0.00s)\n        batch_test.go:73: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestBatchStopsAtInvalidReplacementzero319356556/001: no such file or directory\n    --- FAIL: TestBatchStopsAtInvalidReplacement/negative (0.00s)\n        batch_test.go:73: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestBatchStopsAtInvalidReplacementnegative2585505006/001: no such file or directory\n    --- FAIL: TestBatchStopsAtInvalidReplacement/empty_quantity (0.00s)\n        batch_test.go:73: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestBatchStopsAtInvalidReplacementempty_quantity4161308052/001: no such file or directory\n    --- FAIL: TestBatchStopsAtInvalidReplacement/hexadecimal (0.00s)\n        batch_test.go:73: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestBatchStopsAtInvalidReplacementhexadecimal2147095970/001: no such file or directory\n    --- FAIL: TestBatchStopsAtInvalidReplacement/fraction (0.00s)\n        batch_test.go:73: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestBatchStopsAtInvalidReplacementfraction2205285857/001: no such file or directory\n    --- FAIL: TestBatchStopsAtInvalidReplacement/space (0.00s)\n        batch_test.go:73: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestBatchStopsAtInvalidReplacementspace3643508138/001: no such file or directory\n    --- FAIL: TestBatchStopsAtInvalidReplacement/overflow (0.00s)\n        batch_test.go:73: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestBatchStopsAtInvalidReplacementoverflow4174348824/001: no such file or directory\n--- FAIL: TestFirstInvalidRowDoesNotWrite (0.00s)\n    batch_test.go:83: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestFirstInvalidRowDoesNotWrite3034098568/001: no such file or directory\n--- FAIL: TestCLIContract (0.39s)\n    --- FAIL: TestCLIContract/invalid_first_row (0.00s)\n        batch_test.go:222: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIContractinvalid_first_row3210320836/001: no such file or directory\n    --- FAIL: TestCLIContract/invalid_replacement (0.00s)\n        batch_test.go:222: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIContractinvalid_replacement389299847/001: no such file or directory\nFAIL\nFAIL\texample.com/ledgerload\t0.924s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.044
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

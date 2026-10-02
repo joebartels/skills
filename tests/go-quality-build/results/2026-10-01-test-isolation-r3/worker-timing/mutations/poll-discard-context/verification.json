@@ -1,0 +1,86 @@
+{
+  "semantic_id": "poll-discard-context",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "45c759e74a30a1816445a29cc7214a44d170ba4d807fd140039abe016d2c8796",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-064n_dea/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.260s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.399
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r3/worker-timing/mutations/poll-discard-context/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-064n_dea/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-064n_dea/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.156s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.304
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-064n_dea/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCancellation (0.00s)\n    poll_test.go:85: callback did not receive the caller context\n--- FAIL: TestCallbackErrorDuringCancellation (0.00s)\n    poll_test.go:112: callback did not receive the caller context\n--- FAIL: TestIndependentInvocations (0.00s)\n    --- FAIL: TestIndependentInvocations/callback_error (3.00s)\n        poll_test.go:326: slow callback received another invocation's context\n        poll_test.go:32: timed out waiting for Poll during cleanup\n    --- FAIL: TestIndependentInvocations/cancellation (6.00s)\n        poll_test.go:381: timed out waiting for first invocation cancellation\n        poll_test.go:32: timed out waiting for Poll during cleanup\n--- FAIL: TestFixtureTeardown (9.00s)\n    poll_test.go:292: timed out waiting for callback entering cleanup\n    poll_test.go:259: timed out waiting for callback cleanup\n    poll_test.go:260: timed out waiting for Poll teardown\n    poll_test.go:245: fixture after teardown: <nil>, want closed file\n    poll_test.go:253: fixture contents = \"active\\n\", want callback work, cleanup, and caller work\nFAIL\nFAIL\texample.com/poller\t9.126s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 9.247
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

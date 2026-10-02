@@ -1,0 +1,19 @@
+--- a/worker.go
++++ b/worker.go
+@@ -10,13 +10,14 @@
+ 		if ctx.Err() != nil {
+ 			return nil
+ 		}
+-		if err := sweep(ctx); err != nil {
++		cycleStart := time.Now()
++ if err := sweep(ctx); err != nil {
+ 			return err
+ 		}
+ 
+ 		// Start the interval after the callback finishes, so slow callbacks do
+ 		// not shorten the wait or overlap a later cycle.
+-		timer := time.NewTimer(interval)
++		timer := time.NewTimer(interval - time.Since(cycleStart))
+ 		select {
+ 		case <-ctx.Done():
+ 			timer.Stop()

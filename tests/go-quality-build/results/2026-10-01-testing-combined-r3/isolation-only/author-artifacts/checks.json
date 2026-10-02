@@ -1,0 +1,545 @@
+[
+  {
+    "stage": "baseline",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.241s\nok  \texample.com/indexer/cmd/indexer\t0.375s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.6007907500024885,
+    "process_timeout_seconds": 60
+  },
+  {
+    "stage": "implementation",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.00810387497767806,
+    "process_timeout_seconds": 30
+  },
+  {
+    "stage": "implementation",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshRealRequestCancellation (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 30 [running]:\ntesting.tRunner.func1.2({0x105457ec0, 0x175108b08070})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x105457ec0?, 0x175108b08070?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1054e2fc0, 0x175108ae0030})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer_test.TestRefreshRealRequestCancellation(0x175108beb8c8)\n\t/private/tmp/go-fresh-author-_5871z_7/task-1/module/refresh_test.go:226 +0xa4\ntesting.tRunner(0x175108beb8c8, 0x1054def10)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer\t0.263s\n--- FAIL: TestCommandProcesses (0.53s)\n    --- FAIL: TestCommandProcesses/failed_first_refresh (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 133 [running]:\ntesting.tRunner.func1.2({0x104c608e0, 0x286fb5d202c0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x104c608e0?, 0x286fb5d202c0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x104cec960, 0x104ce8a08})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer/cmd/indexer.TestCommandProcesses.func4(0x286fb5d24908)\n\t/private/tmp/go-fresh-author-_5871z_7/task-1/module/cmd/indexer/process_test.go:102 +0x44\ntesting.tRunner(0x286fb5d24908, 0x286fb5d284e0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 5\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer/cmd/indexer\t0.929s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 1.1864655829267576,
+    "process_timeout_seconds": 90
+  },
+  {
+    "stage": "unchanged-source local-listener rerun",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.391s\n--- FAIL: TestCommandProcesses (0.62s)\n    --- FAIL: TestCommandProcesses/watch_interrupt (0.07s)\n        process_test.go:225: watch signal exit: exit status 2, stderr \"refresh fetch: Get \\\"http://127.0.0.1:52737\\\": interrupt signal received\\n\"\n    --- FAIL: TestCommandProcesses/watch_terminated (0.07s)\n        process_test.go:225: watch signal exit: exit status 2, stderr \"refresh fetch: Get \\\"http://127.0.0.1:52739\\\": terminated signal received\\n\"\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t0.953s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 1.155940541997552,
+    "process_timeout_seconds": 90,
+    "source_sha256": {
+      "index.go": "d1e427eeb715ffc38cd6de734507d6f51d61c702f2cac43ed5310edd817fe52d",
+      "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+      "serve.go": "2ae6e8c373c85970b0c9375a3fd8426b77deaf120dddacd757f40e9cef6cc4ba",
+      "serve_test.go": "21d71b8a97c683094f98d1140c4def921f1b8fc300b0b00fb721f91100282c9d",
+      "refresh.go": "db003ac30f3429025fe488812233fc401ce7c0bbd8e25c94cd55ce6f933d615a",
+      "index_regression_test.go": "283271edb2a8e45492cf023d9b6aefff88fa9e38340de8bba27edbf62f8f2ea8",
+      "refresh_test.go": "c3ffd116e9df3f420c763ffb53e9d2bad368c8c22231b1de9fff112b2ee83055",
+      "cmd/indexer/process_test.go": "33a40a3e3a3d978c48c6547950aefcbb7dfb78c9fde3c4371263ebff75fad455",
+      "cmd/indexer/main.go": "389fb38b7b4bb7e5570376eadb52d98002f76ff4c98db653d960324428b0c3c3",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f"
+    },
+    "sandbox_permissions": "require_escalated"
+  },
+  {
+    "stage": "verification after signal-cause fix",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.008015583036467433,
+    "process_timeout_seconds": 30
+  },
+  {
+    "stage": "verification after signal-cause fix",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=60s",
+      "-run",
+      "TestExisting|TestIndependent|TestPut|TestApply|TestRefreshValidation|TestRefreshFetch|TestRefreshPOSIX|TestServe",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.395s\nok  \texample.com/indexer/cmd/indexer\t0.355s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.6617532920790836,
+    "process_timeout_seconds": 90
+  },
+  {
+    "stage": "verification after signal-cause fix",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.12505066709127277,
+    "process_timeout_seconds": 60
+  },
+  {
+    "stage": "verification after signal-cause fix",
+    "command": [
+      "rtk",
+      "proxy",
+      "which",
+      "staticcheck"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.006227249978110194,
+    "process_timeout_seconds": 10
+  },
+  {
+    "stage": "final verification with local listeners",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.00975891703274101,
+    "process_timeout_seconds": 10,
+    "sandbox_permissions": "require_escalated",
+    "source_sha256": {
+      "index.go": "d1e427eeb715ffc38cd6de734507d6f51d61c702f2cac43ed5310edd817fe52d",
+      "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+      "serve.go": "31a7fe07e93f44593c8ccdb2d6ad2e4cf60c85c7ed6728165e1522076e2388c2",
+      "serve_test.go": "d374c35bdbd2e462ccc50c3c77e7627925f390e0c6a7fcfd6c1e2f9b315b3db7",
+      "refresh.go": "db003ac30f3429025fe488812233fc401ce7c0bbd8e25c94cd55ce6f933d615a",
+      "index_regression_test.go": "283271edb2a8e45492cf023d9b6aefff88fa9e38340de8bba27edbf62f8f2ea8",
+      "refresh_test.go": "c3ffd116e9df3f420c763ffb53e9d2bad368c8c22231b1de9fff112b2ee83055",
+      "cmd/indexer/process_test.go": "33a40a3e3a3d978c48c6547950aefcbb7dfb78c9fde3c4371263ebff75fad455",
+      "cmd/indexer/main.go": "389fb38b7b4bb7e5570376eadb52d98002f76ff4c98db653d960324428b0c3c3",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f"
+    }
+  },
+  {
+    "stage": "final verification with local listeners",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-shuffle=20261001",
+      "-count=3",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "-test.shuffle 20261001\n=== RUN   TestServeInvalidAndAlreadyCanceled\n=== PAUSE TestServeInvalidAndAlreadyCanceled\n=== RUN   TestExistingPutAndReplace\n--- PASS: TestExistingPutAndReplace (0.00s)\n=== RUN   TestServeCancellationDuringInterval\n=== PAUSE TestServeCancellationDuringInterval\n=== RUN   TestIndependentIndexes\n=== PAUSE TestIndependentIndexes\n=== RUN   TestRefreshFetchAndPublicationFailures\n=== PAUSE TestRefreshFetchAndPublicationFailures\n=== RUN   TestServeIndependentInvocations\n=== PAUSE TestServeIndependentInvocations\n=== RUN   TestApplyCSVWriteAndReadFailures\n=== PAUSE TestApplyCSVWriteAndReadFailures\n=== RUN   TestPutRetainsPriorFileOnFailure\n=== PAUSE TestPutRetainsPriorFileOnFailure\n=== RUN   TestRefreshPOSIXSnapshot\n=== PAUSE TestRefreshPOSIXSnapshot\n=== RUN   TestApplyCSV\n=== PAUSE TestApplyCSV\n=== RUN   TestServeFailureIdentities\n=== PAUSE TestServeFailureIdentities\n=== RUN   TestRefreshRejectsRedirectWithoutChangingClient\n=== PAUSE TestRefreshRejectsRedirectWithoutChangingClient\n=== RUN   TestServeRecursFromCompletionWithoutOverlap\n=== PAUSE TestServeRecursFromCompletionWithoutOverlap\n=== RUN   TestRefreshRealRequestCancellation\n=== PAUSE TestRefreshRealRequestCancellation\n=== RUN   TestRefreshValidationAndBodyOwnership\n=== PAUSE TestRefreshValidationAndBodyOwnership\n=== RUN   TestServeCancellationWaitsForCleanup\n=== PAUSE TestServeCancellationWaitsForCleanup\n=== CONT  TestServeInvalidAndAlreadyCanceled\n=== CONT  TestApplyCSV\n--- PASS: TestServeInvalidAndAlreadyCanceled (0.00s)\n=== CONT  TestRefreshRealRequestCancellation\n=== CONT  TestRefreshPOSIXSnapshot\n=== CONT  TestPutRetainsPriorFileOnFailure\n=== CONT  TestServeIndependentInvocations\n=== CONT  TestApplyCSVWriteAndReadFailures\n=== RUN   TestApplyCSVWriteAndReadFailures/write\n=== PAUSE TestApplyCSVWriteAndReadFailures/write\n=== CONT  TestRefreshFetchAndPublicationFailures\n=== CONT  TestIndependentIndexes\n=== CONT  TestServeCancellationDuringInterval\n--- PASS: TestServeCancellationDuringInterval (0.00s)\n=== CONT  TestRefreshRejectsRedirectWithoutChangingClient\n=== CONT  TestServeRecursFromCompletionWithoutOverlap\n=== CONT  TestServeFailureIdentities\n=== CONT  TestRefreshValidationAndBodyOwnership\n=== CONT  TestServeCancellationWaitsForCleanup\n--- PASS: TestServeFailureIdentities (0.00s)\n=== RUN   TestRefreshValidationAndBodyOwnership/records\n=== RUN   TestApplyCSVWriteAndReadFailures/reader\n=== PAUSE TestApplyCSVWriteAndReadFailures/reader\n=== RUN   TestServeCancellationWaitsForCleanup/nil\n=== CONT  TestApplyCSVWriteAndReadFailures/reader\n=== PAUSE TestRefreshValidationAndBodyOwnership/records\n=== RUN   TestApplyCSV/empty\n=== PAUSE TestServeCancellationWaitsForCleanup/nil\n=== RUN   TestRefreshValidationAndBodyOwnership/empty_array\n=== CONT  TestApplyCSVWriteAndReadFailures/write\n=== PAUSE TestRefreshValidationAndBodyOwnership/empty_array\n=== PAUSE TestApplyCSV/empty\n=== RUN   TestRefreshValidationAndBodyOwnership/status\n=== RUN   TestServeCancellationWaitsForCleanup/context_error\n=== PAUSE TestRefreshValidationAndBodyOwnership/status\n=== PAUSE TestServeCancellationWaitsForCleanup/context_error\n=== RUN   TestRefreshValidationAndBodyOwnership/created_status\n=== RUN   TestApplyCSV/ordered_duplicates_and_exact_text\n=== RUN   TestServeCancellationWaitsForCleanup/wrapped_context_error\n=== PAUSE TestApplyCSV/ordered_duplicates_and_exact_text\n=== PAUSE TestServeCancellationWaitsForCleanup/wrapped_context_error\n=== PAUSE TestRefreshValidationAndBodyOwnership/created_status\n=== RUN   TestRefreshValidationAndBodyOwnership/null\n=== RUN   TestApplyCSV/invalid_replacement\n=== PAUSE TestRefreshValidationAndBodyOwnership/null\n=== PAUSE TestApplyCSV/invalid_replacement\n=== RUN   TestServeCancellationWaitsForCleanup/parent_cause\n=== RUN   TestRefreshValidationAndBodyOwnership/object\n=== PAUSE TestServeCancellationWaitsForCleanup/parent_cause\n=== PAUSE TestRefreshValidationAndBodyOwnership/object\n=== RUN   TestApplyCSV/invalid_key\n=== RUN   TestServeCancellationWaitsForCleanup/independent_error\n=== PAUSE TestApplyCSV/invalid_key\n=== PAUSE TestServeCancellationWaitsForCleanup/independent_error\n=== RUN   TestRefreshValidationAndBodyOwnership/syntax\n=== RUN   TestServeCancellationWaitsForCleanup/joined_context_error\n=== PAUSE TestRefreshValidationAndBodyOwnership/syntax\n=== RUN   TestApplyCSV/unicode_blank\n=== PAUSE TestServeCancellationWaitsForCleanup/joined_context_error\n=== RUN   TestRefreshValidationAndBodyOwnership/second_array\n=== PAUSE TestApplyCSV/unicode_blank\n=== CONT  TestServeCancellationWaitsForCleanup/parent_cause\n=== RUN   TestApplyCSV/too_few_fields\n=== CONT  TestServeCancellationWaitsForCleanup/wrapped_context_error\n=== PAUSE TestApplyCSV/too_few_fields\n=== RUN   TestApplyCSV/too_many_fields\n=== CONT  TestServeCancellationWaitsForCleanup/nil\n=== PAUSE TestRefreshValidationAndBodyOwnership/second_array\n=== CONT  TestServeCancellationWaitsForCleanup/joined_context_error\n=== RUN   TestRefreshValidationAndBodyOwnership/trailing_garbage\n=== CONT  TestServeCancellationWaitsForCleanup/context_error\n=== CONT  TestServeCancellationWaitsForCleanup/independent_error\n=== PAUSE TestApplyCSV/too_many_fields\n=== PAUSE TestRefreshValidationAndBodyOwnership/trailing_garbage\n=== RUN   TestApplyCSV/malformed_csv\n=== RUN   TestRefreshValidationAndBodyOwnership/invalid_key\n--- PASS: TestRefreshPOSIXSnapshot (0.00s)\n=== PAUSE TestRefreshValidationAndBodyOwnership/invalid_key\n=== PAUSE TestApplyCSV/malformed_csv\n=== RUN   TestRefreshValidationAndBodyOwnership/blank_text\n=== CONT  TestApplyCSV/empty\n=== CONT  TestApplyCSV/invalid_key\n=== PAUSE TestRefreshValidationAndBodyOwnership/blank_text\n=== RUN   TestRefreshValidationAndBodyOwnership/late_invalid\n=== PAUSE TestRefreshValidationAndBodyOwnership/late_invalid\n=== RUN   TestRefreshValidationAndBodyOwnership/read_failure\n=== PAUSE TestRefreshValidationAndBodyOwnership/read_failure\n=== CONT  TestApplyCSV/too_few_fields\n--- PASS: TestPutRetainsPriorFileOnFailure (0.00s)\n=== RUN   TestRefreshValidationAndBodyOwnership/read_failure_after_array\n--- PASS: TestIndependentIndexes (0.00s)\n=== CONT  TestApplyCSV/too_many_fields\n=== PAUSE TestRefreshValidationAndBodyOwnership/read_failure_after_array\n=== CONT  TestApplyCSV/ordered_duplicates_and_exact_text\n=== CONT  TestApplyCSV/invalid_replacement\n--- PASS: TestRefreshRealRequestCancellation (0.01s)\n=== CONT  TestApplyCSV/malformed_csv\n--- PASS: TestRefreshRejectsRedirectWithoutChangingClient (0.01s)\n=== CONT  TestApplyCSV/unicode_blank\n--- PASS: TestRefreshFetchAndPublicationFailures (0.01s)\n=== CONT  TestRefreshValidationAndBodyOwnership/records\n=== CONT  TestRefreshValidationAndBodyOwnership/trailing_garbage\n--- PASS: TestApplyCSVWriteAndReadFailures (0.00s)\n    --- PASS: TestApplyCSVWriteAndReadFailures/reader (0.00s)\n    --- PASS: TestApplyCSVWriteAndReadFailures/write (0.01s)\n=== CONT  TestRefreshValidationAndBodyOwnership/read_failure\n=== CONT  TestRefreshValidationAndBodyOwnership/read_failure_after_array\n=== CONT  TestRefreshValidationAndBodyOwnership/blank_text\n=== CONT  TestRefreshValidationAndBodyOwnership/late_invalid\n=== CONT  TestRefreshValidationAndBodyOwnership/invalid_key\n=== CONT  TestRefreshValidationAndBodyOwnership/second_array\n=== CONT  TestRefreshValidationAndBodyOwnership/null\n=== CONT  TestRefreshValidationAndBodyOwnership/object\n=== CONT  TestRefreshValidationAndBodyOwnership/syntax\n=== CONT  TestRefreshValidationAndBodyOwnership/empty_array\n=== CONT  TestRefreshValidationAndBodyOwnership/status\n=== CONT  TestRefreshValidationAndBodyOwnership/created_status\n--- PASS: TestApplyCSV (0.00s)\n    --- PASS: TestApplyCSV/empty (0.00s)\n    --- PASS: TestApplyCSV/too_few_fields (0.01s)\n    --- PASS: TestApplyCSV/invalid_key (0.01s)\n    --- PASS: TestApplyCSV/too_many_fields (0.01s)\n    --- PASS: TestApplyCSV/unicode_blank (0.00s)\n    --- PASS: TestApplyCSV/invalid_replacement (0.01s)\n    --- PASS: TestApplyCSV/malformed_csv (0.01s)\n    --- PASS: TestApplyCSV/ordered_duplicates_and_exact_text (0.01s)\n--- PASS: TestRefreshValidationAndBodyOwnership (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/trailing_garbage (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/read_failure (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/read_failure_after_array (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/records (0.01s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/blank_text (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/late_invalid (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/invalid_key (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/second_array (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/object (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/null (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/syntax (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/status (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/created_status (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/empty_array (0.00s)\n--- PASS: TestServeIndependentInvocations (0.02s)\n--- PASS: TestServeCancellationWaitsForCleanup (0.00s)\n    --- PASS: TestServeCancellationWaitsForCleanup/context_error (0.03s)\n    --- PASS: TestServeCancellationWaitsForCleanup/joined_context_error (0.03s)\n    --- PASS: TestServeCancellationWaitsForCleanup/independent_error (0.03s)\n    --- PASS: TestServeCancellationWaitsForCleanup/wrapped_context_error (0.03s)\n    --- PASS: TestServeCancellationWaitsForCleanup/nil (0.03s)\n    --- PASS: TestServeCancellationWaitsForCleanup/parent_cause (0.03s)\n--- PASS: TestServeRecursFromCompletionWithoutOverlap (0.18s)\n=== RUN   TestServeInvalidAndAlreadyCanceled\n=== PAUSE TestServeInvalidAndAlreadyCanceled\n=== RUN   TestExistingPutAndReplace\n--- PASS: TestExistingPutAndReplace (0.00s)\n=== RUN   TestServeCancellationDuringInterval\n=== PAUSE TestServeCancellationDuringInterval\n=== RUN   TestIndependentIndexes\n=== PAUSE TestIndependentIndexes\n=== RUN   TestRefreshFetchAndPublicationFailures\n=== PAUSE TestRefreshFetchAndPublicationFailures\n=== RUN   TestServeIndependentInvocations\n=== PAUSE TestServeIndependentInvocations\n=== RUN   TestApplyCSVWriteAndReadFailures\n=== PAUSE TestApplyCSVWriteAndReadFailures\n=== RUN   TestPutRetainsPriorFileOnFailure\n=== PAUSE TestPutRetainsPriorFileOnFailure\n=== RUN   TestRefreshPOSIXSnapshot\n=== PAUSE TestRefreshPOSIXSnapshot\n=== RUN   TestApplyCSV\n=== PAUSE TestApplyCSV\n=== RUN   TestServeFailureIdentities\n=== PAUSE TestServeFailureIdentities\n=== RUN   TestRefreshRejectsRedirectWithoutChangingClient\n=== PAUSE TestRefreshRejectsRedirectWithoutChangingClient\n=== RUN   TestServeRecursFromCompletionWithoutOverlap\n=== PAUSE TestServeRecursFromCompletionWithoutOverlap\n=== RUN   TestRefreshRealRequestCancellation\n=== PAUSE TestRefreshRealRequestCancellation\n=== RUN   TestRefreshValidationAndBodyOwnership\n=== PAUSE TestRefreshValidationAndBodyOwnership\n=== RUN   TestServeCancellationWaitsForCleanup\n=== PAUSE TestServeCancellationWaitsForCleanup\n=== CONT  TestServeCancellationDuringInterval\n=== CONT  TestRefreshPOSIXSnapshot\n=== CONT  TestRefreshValidationAndBodyOwnership\n=== CONT  TestApplyCSVWriteAndReadFailures\n=== CONT  TestApplyCSV\n=== CONT  TestRefreshRejectsRedirectWithoutChangingClient\n=== CONT  TestPutRetainsPriorFileOnFailure\n=== CONT  TestServeFailureIdentities\n=== RUN   TestApplyCSVWriteAndReadFailures/write\n=== CONT  TestIndependentIndexes\n=== PAUSE TestApplyCSVWriteAndReadFailures/write\n=== CONT  TestRefreshRealRequestCancellation\n=== CONT  TestServeInvalidAndAlreadyCanceled\n=== CONT  TestRefreshFetchAndPublicationFailures\n=== RUN   TestRefreshValidationAndBodyOwnership/records\n=== PAUSE TestRefreshValidationAndBodyOwnership/records\n=== CONT  TestServeCancellationWaitsForCleanup\n--- PASS: TestServeCancellationDuringInterval (0.00s)\n=== CONT  TestServeIndependentInvocations\n=== RUN   TestServeCancellationWaitsForCleanup/nil\n=== CONT  TestServeRecursFromCompletionWithoutOverlap\n=== RUN   TestApplyCSV/empty\n=== RUN   TestApplyCSVWriteAndReadFailures/reader\n=== PAUSE TestApplyCSV/empty\n=== PAUSE TestApplyCSVWriteAndReadFailures/reader\n--- PASS: TestServeFailureIdentities (0.00s)\n=== CONT  TestApplyCSVWriteAndReadFailures/write\n=== RUN   TestRefreshValidationAndBodyOwnership/empty_array\n=== PAUSE TestServeCancellationWaitsForCleanup/nil\n=== RUN   TestApplyCSV/ordered_duplicates_and_exact_text\n=== CONT  TestApplyCSVWriteAndReadFailures/reader\n--- PASS: TestServeInvalidAndAlreadyCanceled (0.00s)\n=== PAUSE TestRefreshValidationAndBodyOwnership/empty_array\n=== RUN   TestServeCancellationWaitsForCleanup/context_error\n=== RUN   TestRefreshValidationAndBodyOwnership/status\n=== PAUSE TestApplyCSV/ordered_duplicates_and_exact_text\n=== PAUSE TestRefreshValidationAndBodyOwnership/status\n=== PAUSE TestServeCancellationWaitsForCleanup/context_error\n=== RUN   TestRefreshValidationAndBodyOwnership/created_status\n=== PAUSE TestRefreshValidationAndBodyOwnership/created_status\n=== RUN   TestApplyCSV/invalid_replacement\n=== RUN   TestServeCancellationWaitsForCleanup/wrapped_context_error\n=== PAUSE TestApplyCSV/invalid_replacement\n=== PAUSE TestServeCancellationWaitsForCleanup/wrapped_context_error\n=== RUN   TestRefreshValidationAndBodyOwnership/null\n=== RUN   TestApplyCSV/invalid_key\n=== RUN   TestServeCancellationWaitsForCleanup/parent_cause\n=== PAUSE TestRefreshValidationAndBodyOwnership/null\n=== PAUSE TestServeCancellationWaitsForCleanup/parent_cause\n=== RUN   TestServeCancellationWaitsForCleanup/independent_error\n=== PAUSE TestServeCancellationWaitsForCleanup/independent_error\n=== RUN   TestServeCancellationWaitsForCleanup/joined_context_error\n=== PAUSE TestApplyCSV/invalid_key\n=== RUN   TestRefreshValidationAndBodyOwnership/object\n=== PAUSE TestServeCancellationWaitsForCleanup/joined_context_error\n=== PAUSE TestRefreshValidationAndBodyOwnership/object\n=== RUN   TestApplyCSV/unicode_blank\n=== CONT  TestServeCancellationWaitsForCleanup/joined_context_error\n=== CONT  TestServeCancellationWaitsForCleanup/independent_error\n=== CONT  TestServeCancellationWaitsForCleanup/wrapped_context_error\n=== RUN   TestRefreshValidationAndBodyOwnership/syntax\n=== PAUSE TestRefreshValidationAndBodyOwnership/syntax\n=== CONT  TestServeCancellationWaitsForCleanup/nil\n=== RUN   TestRefreshValidationAndBodyOwnership/second_array\n=== CONT  TestServeCancellationWaitsForCleanup/parent_cause\n=== CONT  TestServeCancellationWaitsForCleanup/context_error\n=== PAUSE TestApplyCSV/unicode_blank\n=== PAUSE TestRefreshValidationAndBodyOwnership/second_array\n=== RUN   TestApplyCSV/too_few_fields\n=== PAUSE TestApplyCSV/too_few_fields\n=== RUN   TestRefreshValidationAndBodyOwnership/trailing_garbage\n=== RUN   TestApplyCSV/too_many_fields\n=== PAUSE TestRefreshValidationAndBodyOwnership/trailing_garbage\n=== PAUSE TestApplyCSV/too_many_fields\n=== RUN   TestRefreshValidationAndBodyOwnership/invalid_key\n=== PAUSE TestRefreshValidationAndBodyOwnership/invalid_key\n=== RUN   TestRefreshValidationAndBodyOwnership/blank_text\n=== RUN   TestApplyCSV/malformed_csv\n=== PAUSE TestRefreshValidationAndBodyOwnership/blank_text\n=== PAUSE TestApplyCSV/malformed_csv\n=== RUN   TestRefreshValidationAndBodyOwnership/late_invalid\n=== CONT  TestApplyCSV/empty\n=== PAUSE TestRefreshValidationAndBodyOwnership/late_invalid\n=== RUN   TestRefreshValidationAndBodyOwnership/read_failure\n=== PAUSE TestRefreshValidationAndBodyOwnership/read_failure\n=== RUN   TestRefreshValidationAndBodyOwnership/read_failure_after_array\n=== PAUSE TestRefreshValidationAndBodyOwnership/read_failure_after_array\n=== CONT  TestApplyCSV/unicode_blank\n--- PASS: TestRefreshPOSIXSnapshot (0.00s)\n=== CONT  TestApplyCSV/malformed_csv\n--- PASS: TestRefreshRealRequestCancellation (0.00s)\n=== CONT  TestApplyCSV/too_few_fields\n=== CONT  TestApplyCSV/too_many_fields\n--- PASS: TestPutRetainsPriorFileOnFailure (0.00s)\n=== CONT  TestApplyCSV/ordered_duplicates_and_exact_text\n--- PASS: TestRefreshRejectsRedirectWithoutChangingClient (0.00s)\n=== CONT  TestApplyCSV/invalid_replacement\n--- PASS: TestIndependentIndexes (0.00s)\n=== CONT  TestApplyCSV/invalid_key\n=== CONT  TestRefreshValidationAndBodyOwnership/status\n=== CONT  TestRefreshValidationAndBodyOwnership/read_failure\n=== CONT  TestRefreshValidationAndBodyOwnership/read_failure_after_array\n--- PASS: TestApplyCSVWriteAndReadFailures (0.00s)\n    --- PASS: TestApplyCSVWriteAndReadFailures/reader (0.00s)\n    --- PASS: TestApplyCSVWriteAndReadFailures/write (0.00s)\n=== CONT  TestRefreshValidationAndBodyOwnership/blank_text\n=== CONT  TestRefreshValidationAndBodyOwnership/invalid_key\n--- PASS: TestRefreshFetchAndPublicationFailures (0.01s)\n=== CONT  TestRefreshValidationAndBodyOwnership/trailing_garbage\n=== CONT  TestRefreshValidationAndBodyOwnership/second_array\n=== CONT  TestRefreshValidationAndBodyOwnership/syntax\n=== CONT  TestRefreshValidationAndBodyOwnership/late_invalid\n=== CONT  TestRefreshValidationAndBodyOwnership/null\n=== CONT  TestRefreshValidationAndBodyOwnership/created_status\n=== CONT  TestRefreshValidationAndBodyOwnership/object\n=== CONT  TestRefreshValidationAndBodyOwnership/empty_array\n=== CONT  TestRefreshValidationAndBodyOwnership/records\n--- PASS: TestApplyCSV (0.00s)\n    --- PASS: TestApplyCSV/empty (0.00s)\n    --- PASS: TestApplyCSV/unicode_blank (0.00s)\n    --- PASS: TestApplyCSV/malformed_csv (0.00s)\n    --- PASS: TestApplyCSV/too_many_fields (0.01s)\n    --- PASS: TestApplyCSV/too_few_fields (0.01s)\n    --- PASS: TestApplyCSV/invalid_replacement (0.00s)\n    --- PASS: TestApplyCSV/ordered_duplicates_and_exact_text (0.01s)\n    --- PASS: TestApplyCSV/invalid_key (0.01s)\n--- PASS: TestRefreshValidationAndBodyOwnership (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/status (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/read_failure_after_array (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/read_failure (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/blank_text (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/invalid_key (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/second_array (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/trailing_garbage (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/syntax (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/late_invalid (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/created_status (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/null (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/object (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/records (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/empty_array (0.00s)\n--- PASS: TestServeIndependentInvocations (0.02s)\n--- PASS: TestServeCancellationWaitsForCleanup (0.00s)\n    --- PASS: TestServeCancellationWaitsForCleanup/context_error (0.03s)\n    --- PASS: TestServeCancellationWaitsForCleanup/joined_context_error (0.03s)\n    --- PASS: TestServeCancellationWaitsForCleanup/parent_cause (0.03s)\n    --- PASS: TestServeCancellationWaitsForCleanup/wrapped_context_error (0.03s)\n    --- PASS: TestServeCancellationWaitsForCleanup/nil (0.03s)\n    --- PASS: TestServeCancellationWaitsForCleanup/independent_error (0.03s)\n--- PASS: TestServeRecursFromCompletionWithoutOverlap (0.18s)\n=== RUN   TestServeInvalidAndAlreadyCanceled\n=== PAUSE TestServeInvalidAndAlreadyCanceled\n=== RUN   TestExistingPutAndReplace\n--- PASS: TestExistingPutAndReplace (0.00s)\n=== RUN   TestServeCancellationDuringInterval\n=== PAUSE TestServeCancellationDuringInterval\n=== RUN   TestIndependentIndexes\n=== PAUSE TestIndependentIndexes\n=== RUN   TestRefreshFetchAndPublicationFailures\n=== PAUSE TestRefreshFetchAndPublicationFailures\n=== RUN   TestServeIndependentInvocations\n=== PAUSE TestServeIndependentInvocations\n=== RUN   TestApplyCSVWriteAndReadFailures\n=== PAUSE TestApplyCSVWriteAndReadFailures\n=== RUN   TestPutRetainsPriorFileOnFailure\n=== PAUSE TestPutRetainsPriorFileOnFailure\n=== RUN   TestRefreshPOSIXSnapshot\n=== PAUSE TestRefreshPOSIXSnapshot\n=== RUN   TestApplyCSV\n=== PAUSE TestApplyCSV\n=== RUN   TestServeFailureIdentities\n=== PAUSE TestServeFailureIdentities\n=== RUN   TestRefreshRejectsRedirectWithoutChangingClient\n=== PAUSE TestRefreshRejectsRedirectWithoutChangingClient\n=== RUN   TestServeRecursFromCompletionWithoutOverlap\n=== PAUSE TestServeRecursFromCompletionWithoutOverlap\n=== RUN   TestRefreshRealRequestCancellation\n=== PAUSE TestRefreshRealRequestCancellation\n=== RUN   TestRefreshValidationAndBodyOwnership\n=== PAUSE TestRefreshValidationAndBodyOwnership\n=== RUN   TestServeCancellationWaitsForCleanup\n=== PAUSE TestServeCancellationWaitsForCleanup\n=== CONT  TestRefreshRejectsRedirectWithoutChangingClient\n=== CONT  TestRefreshRealRequestCancellation\n=== CONT  TestServeInvalidAndAlreadyCanceled\n=== CONT  TestRefreshFetchAndPublicationFailures\n--- PASS: TestServeInvalidAndAlreadyCanceled (0.00s)\n=== CONT  TestApplyCSV\n=== RUN   TestApplyCSV/empty\n=== CONT  TestRefreshPOSIXSnapshot\n=== PAUSE TestApplyCSV/empty\n=== RUN   TestApplyCSV/ordered_duplicates_and_exact_text\n=== CONT  TestServeFailureIdentities\n=== CONT  TestPutRetainsPriorFileOnFailure\n--- PASS: TestServeFailureIdentities (0.00s)\n=== CONT  TestServeIndependentInvocations\n=== CONT  TestApplyCSVWriteAndReadFailures\n=== RUN   TestApplyCSVWriteAndReadFailures/write\n=== CONT  TestIndependentIndexes\n=== CONT  TestServeCancellationDuringInterval\n=== CONT  TestRefreshValidationAndBodyOwnership\n=== RUN   TestRefreshValidationAndBodyOwnership/records\n=== CONT  TestServeCancellationWaitsForCleanup\n=== CONT  TestServeRecursFromCompletionWithoutOverlap\n--- PASS: TestServeCancellationDuringInterval (0.00s)\n=== PAUSE TestApplyCSV/ordered_duplicates_and_exact_text\n=== PAUSE TestApplyCSVWriteAndReadFailures/write\n=== PAUSE TestRefreshValidationAndBodyOwnership/records\n=== RUN   TestApplyCSV/invalid_replacement\n=== PAUSE TestApplyCSV/invalid_replacement\n=== RUN   TestServeCancellationWaitsForCleanup/nil\n=== PAUSE TestServeCancellationWaitsForCleanup/nil\n=== RUN   TestApplyCSVWriteAndReadFailures/reader\n=== RUN   TestServeCancellationWaitsForCleanup/context_error\n=== PAUSE TestApplyCSVWriteAndReadFailures/reader\n=== PAUSE TestServeCancellationWaitsForCleanup/context_error\n=== RUN   TestRefreshValidationAndBodyOwnership/empty_array\n=== RUN   TestServeCancellationWaitsForCleanup/wrapped_context_error\n=== PAUSE TestRefreshValidationAndBodyOwnership/empty_array\n=== RUN   TestApplyCSV/invalid_key\n=== RUN   TestRefreshValidationAndBodyOwnership/status\n=== PAUSE TestApplyCSV/invalid_key\n=== PAUSE TestServeCancellationWaitsForCleanup/wrapped_context_error\n=== RUN   TestServeCancellationWaitsForCleanup/parent_cause\n=== RUN   TestApplyCSV/unicode_blank\n=== PAUSE TestServeCancellationWaitsForCleanup/parent_cause\n=== CONT  TestApplyCSVWriteAndReadFailures/reader\n=== RUN   TestServeCancellationWaitsForCleanup/independent_error\n=== PAUSE TestRefreshValidationAndBodyOwnership/status\n=== PAUSE TestServeCancellationWaitsForCleanup/independent_error\n=== CONT  TestApplyCSVWriteAndReadFailures/write\n=== RUN   TestRefreshValidationAndBodyOwnership/created_status\n=== PAUSE TestRefreshValidationAndBodyOwnership/created_status\n=== RUN   TestServeCancellationWaitsForCleanup/joined_context_error\n=== PAUSE TestApplyCSV/unicode_blank\n=== PAUSE TestServeCancellationWaitsForCleanup/joined_context_error\n=== RUN   TestApplyCSV/too_few_fields\n=== CONT  TestServeCancellationWaitsForCleanup/nil\n=== CONT  TestServeCancellationWaitsForCleanup/context_error\n=== RUN   TestRefreshValidationAndBodyOwnership/null\n=== PAUSE TestRefreshValidationAndBodyOwnership/null\n=== CONT  TestServeCancellationWaitsForCleanup/independent_error\n=== RUN   TestRefreshValidationAndBodyOwnership/object\n=== PAUSE TestApplyCSV/too_few_fields\n=== CONT  TestServeCancellationWaitsForCleanup/wrapped_context_error\n=== CONT  TestServeCancellationWaitsForCleanup/joined_context_error\n=== CONT  TestServeCancellationWaitsForCleanup/parent_cause\n=== RUN   TestApplyCSV/too_many_fields\n=== PAUSE TestRefreshValidationAndBodyOwnership/object\n=== PAUSE TestApplyCSV/too_many_fields\n=== RUN   TestRefreshValidationAndBodyOwnership/syntax\n=== RUN   TestApplyCSV/malformed_csv\n=== PAUSE TestRefreshValidationAndBodyOwnership/syntax\n=== PAUSE TestApplyCSV/malformed_csv\n=== RUN   TestRefreshValidationAndBodyOwnership/second_array\n=== CONT  TestApplyCSV/invalid_replacement\n=== PAUSE TestRefreshValidationAndBodyOwnership/second_array\n=== RUN   TestRefreshValidationAndBodyOwnership/trailing_garbage\n=== PAUSE TestRefreshValidationAndBodyOwnership/trailing_garbage\n=== RUN   TestRefreshValidationAndBodyOwnership/invalid_key\n=== PAUSE TestRefreshValidationAndBodyOwnership/invalid_key\n=== RUN   TestRefreshValidationAndBodyOwnership/blank_text\n=== PAUSE TestRefreshValidationAndBodyOwnership/blank_text\n=== RUN   TestRefreshValidationAndBodyOwnership/late_invalid\n=== PAUSE TestRefreshValidationAndBodyOwnership/late_invalid\n=== RUN   TestRefreshValidationAndBodyOwnership/read_failure\n=== PAUSE TestRefreshValidationAndBodyOwnership/read_failure\n=== RUN   TestRefreshValidationAndBodyOwnership/read_failure_after_array\n=== PAUSE TestRefreshValidationAndBodyOwnership/read_failure_after_array\n=== CONT  TestApplyCSV/unicode_blank\n--- PASS: TestRefreshPOSIXSnapshot (0.00s)\n=== CONT  TestApplyCSV/malformed_csv\n=== CONT  TestApplyCSV/too_many_fields\n--- PASS: TestRefreshRealRequestCancellation (0.00s)\n--- PASS: TestPutRetainsPriorFileOnFailure (0.00s)\n=== CONT  TestApplyCSV/too_few_fields\n=== CONT  TestApplyCSV/ordered_duplicates_and_exact_text\n--- PASS: TestIndependentIndexes (0.00s)\n=== CONT  TestApplyCSV/empty\n--- PASS: TestApplyCSVWriteAndReadFailures (0.00s)\n    --- PASS: TestApplyCSVWriteAndReadFailures/reader (0.00s)\n    --- PASS: TestApplyCSVWriteAndReadFailures/write (0.00s)\n=== CONT  TestApplyCSV/invalid_key\n--- PASS: TestRefreshFetchAndPublicationFailures (0.00s)\n=== CONT  TestRefreshValidationAndBodyOwnership/records\n--- PASS: TestRefreshRejectsRedirectWithoutChangingClient (0.00s)\n=== CONT  TestRefreshValidationAndBodyOwnership/trailing_garbage\n=== CONT  TestRefreshValidationAndBodyOwnership/read_failure_after_array\n=== CONT  TestRefreshValidationAndBodyOwnership/late_invalid\n=== CONT  TestRefreshValidationAndBodyOwnership/blank_text\n=== CONT  TestRefreshValidationAndBodyOwnership/object\n=== CONT  TestRefreshValidationAndBodyOwnership/second_array\n=== CONT  TestRefreshValidationAndBodyOwnership/syntax\n=== CONT  TestRefreshValidationAndBodyOwnership/invalid_key\n=== CONT  TestRefreshValidationAndBodyOwnership/empty_array\n=== CONT  TestRefreshValidationAndBodyOwnership/status\n=== CONT  TestRefreshValidationAndBodyOwnership/null\n=== CONT  TestRefreshValidationAndBodyOwnership/created_status\n=== CONT  TestRefreshValidationAndBodyOwnership/read_failure\n--- PASS: TestApplyCSV (0.00s)\n    --- PASS: TestApplyCSV/unicode_blank (0.00s)\n    --- PASS: TestApplyCSV/invalid_replacement (0.00s)\n    --- PASS: TestApplyCSV/malformed_csv (0.00s)\n    --- PASS: TestApplyCSV/empty (0.00s)\n    --- PASS: TestApplyCSV/too_many_fields (0.00s)\n    --- PASS: TestApplyCSV/too_few_fields (0.00s)\n    --- PASS: TestApplyCSV/invalid_key (0.00s)\n    --- PASS: TestApplyCSV/ordered_duplicates_and_exact_text (0.01s)\n--- PASS: TestRefreshValidationAndBodyOwnership (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/trailing_garbage (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/read_failure_after_array (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/records (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/late_invalid (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/blank_text (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/invalid_key (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/object (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/second_array (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/syntax (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/null (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/status (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/created_status (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/empty_array (0.00s)\n    --- PASS: TestRefreshValidationAndBodyOwnership/read_failure (0.00s)\n--- PASS: TestServeIndependentInvocations (0.02s)\n--- PASS: TestServeCancellationWaitsForCleanup (0.00s)\n    --- PASS: TestServeCancellationWaitsForCleanup/nil (0.03s)\n    --- PASS: TestServeCancellationWaitsForCleanup/independent_error (0.03s)\n    --- PASS: TestServeCancellationWaitsForCleanup/context_error (0.03s)\n    --- PASS: TestServeCancellationWaitsForCleanup/wrapped_context_error (0.03s)\n    --- PASS: TestServeCancellationWaitsForCleanup/parent_cause (0.03s)\n    --- PASS: TestServeCancellationWaitsForCleanup/joined_context_error (0.03s)\n--- PASS: TestServeRecursFromCompletionWithoutOverlap (0.18s)\nPASS\nok  \texample.com/indexer\t1.789s\n-test.shuffle 20261001\n=== RUN   TestExistingPut\n--- PASS: TestExistingPut (0.00s)\n=== RUN   TestCommandProcesses\n=== RUN   TestCommandProcesses/put_preserves_positional_text_and_streams\n=== RUN   TestCommandProcesses/apply_success_and_retained_prefix\n=== RUN   TestCommandProcesses/startup_rejections\n=== RUN   TestCommandProcesses/startup_rejections/usage\n=== RUN   TestCommandProcesses/startup_rejections/unknown\n=== RUN   TestCommandProcesses/startup_rejections/put_usage\n=== RUN   TestCommandProcesses/startup_rejections/apply_missing_dir\n=== RUN   TestCommandProcesses/startup_rejections/apply_extra\n=== RUN   TestCommandProcesses/startup_rejections/watch_scheme\n=== RUN   TestCommandProcesses/startup_rejections/watch_host\n=== RUN   TestCommandProcesses/startup_rejections/watch_missing_file\n=== RUN   TestCommandProcesses/startup_rejections/watch_zero\n=== RUN   TestCommandProcesses/startup_rejections/watch_negative\n=== RUN   TestCommandProcesses/startup_rejections/watch_bad_duration\n=== RUN   TestCommandProcesses/startup_rejections/watch_unknown_flag\n=== RUN   TestCommandProcesses/failed_first_refresh\n=== RUN   TestCommandProcesses/watch_interrupt\n=== RUN   TestCommandProcesses/watch_terminated\n--- PASS: TestCommandProcesses (0.66s)\n    --- PASS: TestCommandProcesses/put_preserves_positional_text_and_streams (0.23s)\n    --- PASS: TestCommandProcesses/apply_success_and_retained_prefix (0.01s)\n    --- PASS: TestCommandProcesses/startup_rejections (0.06s)\n        --- PASS: TestCommandProcesses/startup_rejections/usage (0.01s)\n        --- PASS: TestCommandProcesses/startup_rejections/unknown (0.01s)\n        --- PASS: TestCommandProcesses/startup_rejections/put_usage (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/apply_missing_dir (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/apply_extra (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_scheme (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_host (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_missing_file (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_zero (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_negative (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_bad_duration (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_unknown_flag (0.00s)\n    --- PASS: TestCommandProcesses/failed_first_refresh (0.01s)\n    --- PASS: TestCommandProcesses/watch_interrupt (0.07s)\n    --- PASS: TestCommandProcesses/watch_terminated (0.07s)\n=== RUN   TestExistingPut\n--- PASS: TestExistingPut (0.00s)\n=== RUN   TestCommandProcesses\n=== RUN   TestCommandProcesses/put_preserves_positional_text_and_streams\n=== RUN   TestCommandProcesses/apply_success_and_retained_prefix\n=== RUN   TestCommandProcesses/startup_rejections\n=== RUN   TestCommandProcesses/startup_rejections/usage\n=== RUN   TestCommandProcesses/startup_rejections/unknown\n=== RUN   TestCommandProcesses/startup_rejections/put_usage\n=== RUN   TestCommandProcesses/startup_rejections/apply_missing_dir\n=== RUN   TestCommandProcesses/startup_rejections/apply_extra\n=== RUN   TestCommandProcesses/startup_rejections/watch_scheme\n=== RUN   TestCommandProcesses/startup_rejections/watch_host\n=== RUN   TestCommandProcesses/startup_rejections/watch_missing_file\n=== RUN   TestCommandProcesses/startup_rejections/watch_zero\n=== RUN   TestCommandProcesses/startup_rejections/watch_negative\n=== RUN   TestCommandProcesses/startup_rejections/watch_bad_duration\n=== RUN   TestCommandProcesses/startup_rejections/watch_unknown_flag\n=== RUN   TestCommandProcesses/failed_first_refresh\n=== RUN   TestCommandProcesses/watch_interrupt\n=== RUN   TestCommandProcesses/watch_terminated\n--- PASS: TestCommandProcesses (0.62s)\n    --- PASS: TestCommandProcesses/put_preserves_positional_text_and_streams (0.21s)\n    --- PASS: TestCommandProcesses/apply_success_and_retained_prefix (0.01s)\n    --- PASS: TestCommandProcesses/startup_rejections (0.06s)\n        --- PASS: TestCommandProcesses/startup_rejections/usage (0.01s)\n        --- PASS: TestCommandProcesses/startup_rejections/unknown (0.01s)\n        --- PASS: TestCommandProcesses/startup_rejections/put_usage (0.01s)\n        --- PASS: TestCommandProcesses/startup_rejections/apply_missing_dir (0.01s)\n        --- PASS: TestCommandProcesses/startup_rejections/apply_extra (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_scheme (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_host (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_missing_file (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_zero (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_negative (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_bad_duration (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_unknown_flag (0.00s)\n    --- PASS: TestCommandProcesses/failed_first_refresh (0.01s)\n    --- PASS: TestCommandProcesses/watch_interrupt (0.07s)\n    --- PASS: TestCommandProcesses/watch_terminated (0.07s)\n=== RUN   TestExistingPut\n--- PASS: TestExistingPut (0.00s)\n=== RUN   TestCommandProcesses\n=== RUN   TestCommandProcesses/put_preserves_positional_text_and_streams\n=== RUN   TestCommandProcesses/apply_success_and_retained_prefix\n=== RUN   TestCommandProcesses/startup_rejections\n=== RUN   TestCommandProcesses/startup_rejections/usage\n=== RUN   TestCommandProcesses/startup_rejections/unknown\n=== RUN   TestCommandProcesses/startup_rejections/put_usage\n=== RUN   TestCommandProcesses/startup_rejections/apply_missing_dir\n=== RUN   TestCommandProcesses/startup_rejections/apply_extra\n=== RUN   TestCommandProcesses/startup_rejections/watch_scheme\n=== RUN   TestCommandProcesses/startup_rejections/watch_host\n=== RUN   TestCommandProcesses/startup_rejections/watch_missing_file\n=== RUN   TestCommandProcesses/startup_rejections/watch_zero\n=== RUN   TestCommandProcesses/startup_rejections/watch_negative\n=== RUN   TestCommandProcesses/startup_rejections/watch_bad_duration\n=== RUN   TestCommandProcesses/startup_rejections/watch_unknown_flag\n=== RUN   TestCommandProcesses/failed_first_refresh\n=== RUN   TestCommandProcesses/watch_interrupt\n=== RUN   TestCommandProcesses/watch_terminated\n--- PASS: TestCommandProcesses (0.62s)\n    --- PASS: TestCommandProcesses/put_preserves_positional_text_and_streams (0.21s)\n    --- PASS: TestCommandProcesses/apply_success_and_retained_prefix (0.01s)\n    --- PASS: TestCommandProcesses/startup_rejections (0.06s)\n        --- PASS: TestCommandProcesses/startup_rejections/usage (0.01s)\n        --- PASS: TestCommandProcesses/startup_rejections/unknown (0.01s)\n        --- PASS: TestCommandProcesses/startup_rejections/put_usage (0.01s)\n        --- PASS: TestCommandProcesses/startup_rejections/apply_missing_dir (0.01s)\n        --- PASS: TestCommandProcesses/startup_rejections/apply_extra (0.01s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_scheme (0.01s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_host (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_missing_file (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_zero (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_negative (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_bad_duration (0.00s)\n        --- PASS: TestCommandProcesses/startup_rejections/watch_unknown_flag (0.00s)\n    --- PASS: TestCommandProcesses/failed_first_refresh (0.01s)\n    --- PASS: TestCommandProcesses/watch_interrupt (0.07s)\n    --- PASS: TestCommandProcesses/watch_terminated (0.07s)\nPASS\nok  \texample.com/indexer/cmd/indexer\t3.296s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 3.6665096250362694,
+    "process_timeout_seconds": 150,
+    "sandbox_permissions": "require_escalated",
+    "source_sha256": {
+      "index.go": "d1e427eeb715ffc38cd6de734507d6f51d61c702f2cac43ed5310edd817fe52d",
+      "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+      "serve.go": "31a7fe07e93f44593c8ccdb2d6ad2e4cf60c85c7ed6728165e1522076e2388c2",
+      "serve_test.go": "d374c35bdbd2e462ccc50c3c77e7627925f390e0c6a7fcfd6c1e2f9b315b3db7",
+      "refresh.go": "db003ac30f3429025fe488812233fc401ce7c0bbd8e25c94cd55ce6f933d615a",
+      "index_regression_test.go": "283271edb2a8e45492cf023d9b6aefff88fa9e38340de8bba27edbf62f8f2ea8",
+      "refresh_test.go": "c3ffd116e9df3f420c763ffb53e9d2bad368c8c22231b1de9fff112b2ee83055",
+      "cmd/indexer/process_test.go": "33a40a3e3a3d978c48c6547950aefcbb7dfb78c9fde3c4371263ebff75fad455",
+      "cmd/indexer/main.go": "389fb38b7b4bb7e5570376eadb52d98002f76ff4c98db653d960324428b0c3c3",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f"
+    }
+  },
+  {
+    "stage": "final verification with local listeners",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=3",
+      "-timeout=30s",
+      "-run",
+      "^TestApplyCSV$/^invalid_replacement$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t1.338s\nok  \texample.com/indexer/cmd/indexer\t1.190s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.576977749937214,
+    "process_timeout_seconds": 45,
+    "sandbox_permissions": "require_escalated",
+    "source_sha256": {
+      "index.go": "d1e427eeb715ffc38cd6de734507d6f51d61c702f2cac43ed5310edd817fe52d",
+      "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+      "serve.go": "31a7fe07e93f44593c8ccdb2d6ad2e4cf60c85c7ed6728165e1522076e2388c2",
+      "serve_test.go": "d374c35bdbd2e462ccc50c3c77e7627925f390e0c6a7fcfd6c1e2f9b315b3db7",
+      "refresh.go": "db003ac30f3429025fe488812233fc401ce7c0bbd8e25c94cd55ce6f933d615a",
+      "index_regression_test.go": "283271edb2a8e45492cf023d9b6aefff88fa9e38340de8bba27edbf62f8f2ea8",
+      "refresh_test.go": "c3ffd116e9df3f420c763ffb53e9d2bad368c8c22231b1de9fff112b2ee83055",
+      "cmd/indexer/process_test.go": "33a40a3e3a3d978c48c6547950aefcbb7dfb78c9fde3c4371263ebff75fad455",
+      "cmd/indexer/main.go": "389fb38b7b4bb7e5570376eadb52d98002f76ff4c98db653d960324428b0c3c3",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f"
+    }
+  },
+  {
+    "stage": "final verification with local listeners",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=3",
+      "-timeout=30s",
+      "-run",
+      "^TestRefreshRealRequestCancellation$|^TestServeCancellationWaitsForCleanup$/^parent_cause$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t1.425s\nok  \texample.com/indexer/cmd/indexer\t1.203s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.6694504580227658,
+    "process_timeout_seconds": 45,
+    "sandbox_permissions": "require_escalated",
+    "source_sha256": {
+      "index.go": "d1e427eeb715ffc38cd6de734507d6f51d61c702f2cac43ed5310edd817fe52d",
+      "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+      "serve.go": "31a7fe07e93f44593c8ccdb2d6ad2e4cf60c85c7ed6728165e1522076e2388c2",
+      "serve_test.go": "d374c35bdbd2e462ccc50c3c77e7627925f390e0c6a7fcfd6c1e2f9b315b3db7",
+      "refresh.go": "db003ac30f3429025fe488812233fc401ce7c0bbd8e25c94cd55ce6f933d615a",
+      "index_regression_test.go": "283271edb2a8e45492cf023d9b6aefff88fa9e38340de8bba27edbf62f8f2ea8",
+      "refresh_test.go": "c3ffd116e9df3f420c763ffb53e9d2bad368c8c22231b1de9fff112b2ee83055",
+      "cmd/indexer/process_test.go": "33a40a3e3a3d978c48c6547950aefcbb7dfb78c9fde3c4371263ebff75fad455",
+      "cmd/indexer/main.go": "389fb38b7b4bb7e5570376eadb52d98002f76ff4c98db653d960324428b0c3c3",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f"
+    }
+  },
+  {
+    "stage": "final verification with local listeners",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=3",
+      "-timeout=45s",
+      "-run",
+      "^TestCommandProcesses$/^watch_interrupt$",
+      "./cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer/cmd/indexer\t2.579s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 2.805507624987513,
+    "process_timeout_seconds": 60,
+    "sandbox_permissions": "require_escalated",
+    "source_sha256": {
+      "index.go": "d1e427eeb715ffc38cd6de734507d6f51d61c702f2cac43ed5310edd817fe52d",
+      "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+      "serve.go": "31a7fe07e93f44593c8ccdb2d6ad2e4cf60c85c7ed6728165e1522076e2388c2",
+      "serve_test.go": "d374c35bdbd2e462ccc50c3c77e7627925f390e0c6a7fcfd6c1e2f9b315b3db7",
+      "refresh.go": "db003ac30f3429025fe488812233fc401ce7c0bbd8e25c94cd55ce6f933d615a",
+      "index_regression_test.go": "283271edb2a8e45492cf023d9b6aefff88fa9e38340de8bba27edbf62f8f2ea8",
+      "refresh_test.go": "c3ffd116e9df3f420c763ffb53e9d2bad368c8c22231b1de9fff112b2ee83055",
+      "cmd/indexer/process_test.go": "33a40a3e3a3d978c48c6547950aefcbb7dfb78c9fde3c4371263ebff75fad455",
+      "cmd/indexer/main.go": "389fb38b7b4bb7e5570376eadb52d98002f76ff4c98db653d960324428b0c3c3",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f"
+    }
+  },
+  {
+    "stage": "final verification with local listeners",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.013757625012658536,
+    "process_timeout_seconds": 10,
+    "sandbox_permissions": "require_escalated",
+    "source_sha256": {
+      "index.go": "d1e427eeb715ffc38cd6de734507d6f51d61c702f2cac43ed5310edd817fe52d",
+      "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+      "serve.go": "31a7fe07e93f44593c8ccdb2d6ad2e4cf60c85c7ed6728165e1522076e2388c2",
+      "serve_test.go": "d374c35bdbd2e462ccc50c3c77e7627925f390e0c6a7fcfd6c1e2f9b315b3db7",
+      "refresh.go": "db003ac30f3429025fe488812233fc401ce7c0bbd8e25c94cd55ce6f933d615a",
+      "index_regression_test.go": "283271edb2a8e45492cf023d9b6aefff88fa9e38340de8bba27edbf62f8f2ea8",
+      "refresh_test.go": "c3ffd116e9df3f420c763ffb53e9d2bad368c8c22231b1de9fff112b2ee83055",
+      "cmd/indexer/process_test.go": "33a40a3e3a3d978c48c6547950aefcbb7dfb78c9fde3c4371263ebff75fad455",
+      "cmd/indexer/main.go": "389fb38b7b4bb7e5570376eadb52d98002f76ff4c98db653d960324428b0c3c3",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f"
+    }
+  },
+  {
+    "stage": "final hostname and cancellation-leaf verification",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.007966208970174193,
+    "process_timeout_seconds": 60
+  },
+  {
+    "stage": "final hostname and cancellation-leaf verification",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.14161754108499736,
+    "process_timeout_seconds": 60
+  },
+  {
+    "stage": "final source verification with local listeners",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=20261001",
+      "-count=3",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t1.825s\nok  \texample.com/indexer/cmd/indexer\t3.377s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 3.709349208045751,
+    "process_timeout_seconds": 150,
+    "sandbox_permissions": "require_escalated",
+    "source_sha256": {
+      "index.go": "d1e427eeb715ffc38cd6de734507d6f51d61c702f2cac43ed5310edd817fe52d",
+      "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+      "serve.go": "ef7894269851beb9ffe8628770e27c27241ef777c876314bd2ebb2033599601e",
+      "serve_test.go": "d374c35bdbd2e462ccc50c3c77e7627925f390e0c6a7fcfd6c1e2f9b315b3db7",
+      "refresh.go": "db003ac30f3429025fe488812233fc401ce7c0bbd8e25c94cd55ce6f933d615a",
+      "index_regression_test.go": "283271edb2a8e45492cf023d9b6aefff88fa9e38340de8bba27edbf62f8f2ea8",
+      "refresh_test.go": "c3ffd116e9df3f420c763ffb53e9d2bad368c8c22231b1de9fff112b2ee83055",
+      "cmd/indexer/process_test.go": "57da99a8b85d49aaa8731fb5545a64db2450615f950aa1310056a5df5bbb1841",
+      "cmd/indexer/main.go": "25f8cbd433a2a783e34d08481546eea9c805707ba8799ffa9d11b7ef21e86c0f",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f"
+    }
+  },
+  {
+    "stage": "final source verification with local listeners",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=3",
+      "-timeout=45s",
+      "-run",
+      "^TestCommandProcesses$/^startup_rejections$/^watch_port_without_host$",
+      "./cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer/cmd/indexer\t2.341s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 2.566623165970668,
+    "process_timeout_seconds": 60,
+    "sandbox_permissions": "require_escalated",
+    "source_sha256": {
+      "index.go": "d1e427eeb715ffc38cd6de734507d6f51d61c702f2cac43ed5310edd817fe52d",
+      "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+      "serve.go": "ef7894269851beb9ffe8628770e27c27241ef777c876314bd2ebb2033599601e",
+      "serve_test.go": "d374c35bdbd2e462ccc50c3c77e7627925f390e0c6a7fcfd6c1e2f9b315b3db7",
+      "refresh.go": "db003ac30f3429025fe488812233fc401ce7c0bbd8e25c94cd55ce6f933d615a",
+      "index_regression_test.go": "283271edb2a8e45492cf023d9b6aefff88fa9e38340de8bba27edbf62f8f2ea8",
+      "refresh_test.go": "c3ffd116e9df3f420c763ffb53e9d2bad368c8c22231b1de9fff112b2ee83055",
+      "cmd/indexer/process_test.go": "57da99a8b85d49aaa8731fb5545a64db2450615f950aa1310056a5df5bbb1841",
+      "cmd/indexer/main.go": "25f8cbd433a2a783e34d08481546eea9c805707ba8799ffa9d11b7ef21e86c0f",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f"
+    }
+  },
+  {
+    "stage": "final source verification with local listeners",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-_5871z_7/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.01411337498575449,
+    "process_timeout_seconds": 10,
+    "sandbox_permissions": "require_escalated",
+    "source_sha256": {
+      "index.go": "d1e427eeb715ffc38cd6de734507d6f51d61c702f2cac43ed5310edd817fe52d",
+      "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+      "serve.go": "ef7894269851beb9ffe8628770e27c27241ef777c876314bd2ebb2033599601e",
+      "serve_test.go": "d374c35bdbd2e462ccc50c3c77e7627925f390e0c6a7fcfd6c1e2f9b315b3db7",
+      "refresh.go": "db003ac30f3429025fe488812233fc401ce7c0bbd8e25c94cd55ce6f933d615a",
+      "index_regression_test.go": "283271edb2a8e45492cf023d9b6aefff88fa9e38340de8bba27edbf62f8f2ea8",
+      "refresh_test.go": "c3ffd116e9df3f420c763ffb53e9d2bad368c8c22231b1de9fff112b2ee83055",
+      "cmd/indexer/process_test.go": "57da99a8b85d49aaa8731fb5545a64db2450615f950aa1310056a5df5bbb1841",
+      "cmd/indexer/main.go": "25f8cbd433a2a783e34d08481546eea9c805707ba8799ffa9d11b7ef21e86c0f",
+      "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f"
+    }
+  }
+]

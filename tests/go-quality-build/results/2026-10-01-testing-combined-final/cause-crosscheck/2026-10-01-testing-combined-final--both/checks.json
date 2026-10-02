@@ -1,0 +1,96 @@
+{
+  "kind": "independent contract reproduction; no candidate repair; no prescribed nil versus returned cause",
+  "candidate_run": "2026-10-01-testing-combined-final",
+  "case": "both",
+  "candidate_sha256": {
+    "index.go": "c98af4ef68b1b980f0f8d6937e39fcc63ce69c4f3ac7a9a356c2207e69d4f233",
+    "go.mod": "6ad6c1c685b8d95d2f5e38dff9fd806cbca1f647c684b5823237f6d260b17b56",
+    "index_test.go": "fb6ac3d0d791d35b4ef10634ea1153f60658f580a4a5dd51b80b575065168138",
+    "serve.go": "126b84f80e024a214a4301cf4975348949e7f942479b942e2cb7e86ec439fd03",
+    "serve_test.go": "d2914d58f68fa44ba926a0461d800117f682e3ea5fd0ff73f98a797520474ee9",
+    "write_failure_posix_test.go": "3593119bcf6a3836b8dc1c0942db5affc603996c98ae9cf80dbb09cc77291a03",
+    "README.md": "4c64d29f9e5586a08f7f6a6d74ba34e723299125c267a23ccacc3c42c2ecc44c",
+    "refresh.go": "c440a97bb1541a1f74b9f3480d36f571b65d1428b3e1a135c432d5064ff027d1",
+    "refresh_test.go": "6978bcaced6140fb0c109517bab57259a8d0e71115cf1376ad578489da35b209",
+    "cmd/indexer/main.go": "8cabf596f0c7a383d05972216c6a56fc0954ef942cec2b64ea28f6b8b16dd854",
+    "cmd/indexer/main_test.go": "049af8ceaef16623698a6a6d62e8cd4ff8ca3de3a2d3a38b2d51854da469a84a"
+  },
+  "probe_added_sha256": {
+    "index.go": "c98af4ef68b1b980f0f8d6937e39fcc63ce69c4f3ac7a9a356c2207e69d4f233",
+    "go.mod": "6ad6c1c685b8d95d2f5e38dff9fd806cbca1f647c684b5823237f6d260b17b56",
+    "index_test.go": "fb6ac3d0d791d35b4ef10634ea1153f60658f580a4a5dd51b80b575065168138",
+    "serve.go": "126b84f80e024a214a4301cf4975348949e7f942479b942e2cb7e86ec439fd03",
+    "serve_test.go": "d2914d58f68fa44ba926a0461d800117f682e3ea5fd0ff73f98a797520474ee9",
+    "write_failure_posix_test.go": "3593119bcf6a3836b8dc1c0942db5affc603996c98ae9cf80dbb09cc77291a03",
+    "README.md": "4c64d29f9e5586a08f7f6a6d74ba34e723299125c267a23ccacc3c42c2ecc44c",
+    "refresh.go": "c440a97bb1541a1f74b9f3480d36f571b65d1428b3e1a135c432d5064ff027d1",
+    "refresh_test.go": "6978bcaced6140fb0c109517bab57259a8d0e71115cf1376ad578489da35b209",
+    "diagnostic_cause_test.go": "852b312ca45da4cdda98dbc5e1b59205796d97c10564e4d577800a95d9f6db78",
+    "cmd/indexer/main.go": "8cabf596f0c7a383d05972216c6a56fc0954ef942cec2b64ea28f6b8b16dd854",
+    "cmd/indexer/main_test.go": "049af8ceaef16623698a6a6d62e8cd4ff8ca3de3a2d3a38b2d51854da469a84a"
+  },
+  "reconstruction": "exact",
+  "checks": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-w",
+        "diagnostic_cause_test.go"
+      ],
+      "cwd": "/private/tmp/go-cause-crosscheck-msvttfhv/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.007
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-cause-crosscheck-msvttfhv/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/indexer\t0.178s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.553s [no tests to run]\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.838
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestDiagnosticNonComparableCause$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-cause-crosscheck-msvttfhv/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/indexer\t0.182s\nok  \texample.com/indexer/cmd/indexer\t0.511s [no tests to run]\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.718
+    }
+  ]
+}

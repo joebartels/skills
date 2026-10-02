@@ -1,0 +1,13 @@
+--- a/refresh.go
++++ b/refresh.go
+@@ -26,9 +26,7 @@
+ 	// A redirect would issue another GET and accept a non-200 initial response.
+ 	// Copy the client so the caller's redirect policy remains unchanged.
+ 	oneRequest := *client
+-	oneRequest.CheckRedirect = func(*http.Request, []*http.Request) error {
+-		return http.ErrUseLastResponse
+-	}
++	oneRequest.CheckRedirect = func(*http.Request, []*http.Request) error { return nil }
+ 	response, err := oneRequest.Do(request)
+ 	if err != nil {
+ 		return fmt.Errorf("fetch snapshot: %w", err)

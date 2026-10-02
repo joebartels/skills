@@ -1,0 +1,291 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 10,
+    "elapsed_seconds": 0.01,
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "fetch_test.go"
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 10,
+    "elapsed_seconds": 0.007,
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 60,
+    "elapsed_seconds": 0.522,
+    "exit_code": 1,
+    "timed_out": false,
+    "stdout": "=== RUN   TestFetchHTTP\n=== PAUSE TestFetchHTTP\n=== RUN   TestFetchResponse\n=== PAUSE TestFetchResponse\n=== RUN   TestFetchTransportError\n=== PAUSE TestFetchTransportError\n=== RUN   TestFetchInvalidURL\n=== PAUSE TestFetchInvalidURL\n=== RUN   TestFetchCancellation\n=== PAUSE TestFetchCancellation\n=== CONT  TestFetchResponse\n=== CONT  TestFetchInvalidURL\n=== RUN   TestFetchResponse/success\n=== CONT  TestFetchHTTP\n=== CONT  TestFetchCancellation\n=== CONT  TestFetchTransportError\n--- PASS: TestFetchInvalidURL (0.00s)\n=== PAUSE TestFetchResponse/success\n=== RUN   TestFetchResponse/whitespace\n=== PAUSE TestFetchResponse/whitespace\n=== RUN   TestFetchResponse/created\n=== RUN   TestFetchCancellation/before_headers\n=== PAUSE TestFetchResponse/created\n--- PASS: TestFetchTransportError (0.00s)\n=== PAUSE TestFetchCancellation/before_headers\n=== RUN   TestFetchResponse/no_content\n=== RUN   TestFetchCancellation/reading_body\n=== PAUSE TestFetchResponse/no_content\n=== RUN   TestFetchResponse/not_modified\n=== PAUSE TestFetchCancellation/reading_body\n=== CONT  TestFetchCancellation/before_headers\n=== CONT  TestFetchCancellation/reading_body\n=== PAUSE TestFetchResponse/not_modified\n--- FAIL: TestFetchHTTP (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 4 [running]:\ntesting.tRunner.func1.2({0x103345140, 0xc000198070})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x2b8\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x460\npanic({0x103345140?, 0xc000198070?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0x13c\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1033d4600, 0xc000198020})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x30\nexample.com/metadata_test.TestFetchHTTP(0xc0000fe488)\n\t/private/tmp/go-testing-author-iu16ahig/service-http-boundary/fetch_test.go:64 +0xb0\ntesting.tRunner(0xc0000fe488, 0x1033d00a0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x168\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x7c0\nFAIL\texample.com/metadata\t0.216s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-timeout=30s",
+      "./..."
+    ],
+    "execution": "outside sandbox; local httptest loopback binding",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 60,
+    "elapsed_seconds": 1.427,
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "=== RUN   TestFetchHTTP\n=== PAUSE TestFetchHTTP\n=== RUN   TestFetchResponse\n=== PAUSE TestFetchResponse\n=== RUN   TestFetchTransportError\n=== PAUSE TestFetchTransportError\n=== RUN   TestFetchInvalidURL\n=== PAUSE TestFetchInvalidURL\n=== RUN   TestFetchCancellation\n=== PAUSE TestFetchCancellation\n=== CONT  TestFetchResponse\n=== RUN   TestFetchResponse/success\n=== CONT  TestFetchHTTP\n=== PAUSE TestFetchResponse/success\n=== CONT  TestFetchInvalidURL\n=== RUN   TestFetchResponse/whitespace\n=== CONT  TestFetchTransportError\n=== CONT  TestFetchCancellation\n=== RUN   TestFetchCancellation/before_headers\n=== PAUSE TestFetchCancellation/before_headers\n=== PAUSE TestFetchResponse/whitespace\n=== RUN   TestFetchCancellation/reading_body\n=== RUN   TestFetchResponse/created\n=== PAUSE TestFetchCancellation/reading_body\n=== PAUSE TestFetchResponse/created\n=== CONT  TestFetchCancellation/reading_body\n=== RUN   TestFetchResponse/no_content\n=== PAUSE TestFetchResponse/no_content\n=== RUN   TestFetchResponse/not_modified\n=== PAUSE TestFetchResponse/not_modified\n=== RUN   TestFetchResponse/not_found\n=== PAUSE TestFetchResponse/not_found\n=== CONT  TestFetchCancellation/before_headers\n--- PASS: TestFetchTransportError (0.00s)\n=== RUN   TestFetchResponse/server_error\n--- PASS: TestFetchInvalidURL (0.00s)\n=== PAUSE TestFetchResponse/server_error\n=== RUN   TestFetchResponse/read_error_after_valid_json\n=== PAUSE TestFetchResponse/read_error_after_valid_json\n=== RUN   TestFetchResponse/empty\n=== PAUSE TestFetchResponse/empty\n=== RUN   TestFetchResponse/malformed\n=== PAUSE TestFetchResponse/malformed\n=== RUN   TestFetchResponse/null\n=== PAUSE TestFetchResponse/null\n=== RUN   TestFetchResponse/array\n=== PAUSE TestFetchResponse/array\n=== RUN   TestFetchResponse/string\n=== PAUSE TestFetchResponse/string\n=== RUN   TestFetchResponse/trailing_object\n=== PAUSE TestFetchResponse/trailing_object\n=== RUN   TestFetchResponse/trailing_garbage\n=== PAUSE TestFetchResponse/trailing_garbage\n=== RUN   TestFetchResponse/missing_name\n=== PAUSE TestFetchResponse/missing_name\n=== RUN   TestFetchResponse/empty_name\n=== PAUSE TestFetchResponse/empty_name\n=== RUN   TestFetchResponse/blank_name\n=== PAUSE TestFetchResponse/blank_name\n=== RUN   TestFetchResponse/missing_revision\n=== PAUSE TestFetchResponse/missing_revision\n=== RUN   TestFetchResponse/zero_revision\n=== PAUSE TestFetchResponse/zero_revision\n=== RUN   TestFetchResponse/negative_revision\n=== PAUSE TestFetchResponse/negative_revision\n=== RUN   TestFetchResponse/wrong_name_type\n=== PAUSE TestFetchResponse/wrong_name_type\n=== RUN   TestFetchResponse/wrong_revision_type\n=== PAUSE TestFetchResponse/wrong_revision_type\n=== RUN   TestFetchResponse/fractional_revision\n=== PAUSE TestFetchResponse/fractional_revision\n=== CONT  TestFetchResponse/whitespace\n=== CONT  TestFetchResponse/server_error\n=== CONT  TestFetchResponse/created\n=== CONT  TestFetchResponse/not_found\n=== CONT  TestFetchResponse/no_content\n=== CONT  TestFetchResponse/not_modified\n=== CONT  TestFetchResponse/wrong_name_type\n=== CONT  TestFetchResponse/missing_revision\n=== CONT  TestFetchResponse/blank_name\n=== CONT  TestFetchResponse/malformed\n=== CONT  TestFetchResponse/empty\n=== CONT  TestFetchResponse/trailing_object\n=== CONT  TestFetchResponse/read_error_after_valid_json\n=== CONT  TestFetchResponse/fractional_revision\n=== CONT  TestFetchResponse/wrong_revision_type\n=== CONT  TestFetchResponse/missing_name\n=== CONT  TestFetchResponse/negative_revision\n=== CONT  TestFetchResponse/empty_name\n=== CONT  TestFetchResponse/zero_revision\n=== CONT  TestFetchResponse/trailing_garbage\n=== CONT  TestFetchResponse/string\n=== CONT  TestFetchResponse/success\n=== CONT  TestFetchResponse/array\n=== CONT  TestFetchResponse/null\n--- PASS: TestFetchCancellation (0.00s)\n    --- PASS: TestFetchCancellation/before_headers (0.00s)\n    --- PASS: TestFetchCancellation/reading_body (0.00s)\n--- PASS: TestFetchResponse (0.00s)\n    --- PASS: TestFetchResponse/server_error (0.00s)\n    --- PASS: TestFetchResponse/created (0.00s)\n    --- PASS: TestFetchResponse/not_found (0.00s)\n    --- PASS: TestFetchResponse/not_modified (0.00s)\n    --- PASS: TestFetchResponse/no_content (0.00s)\n    --- PASS: TestFetchResponse/whitespace (0.00s)\n    --- PASS: TestFetchResponse/missing_revision (0.00s)\n    --- PASS: TestFetchResponse/wrong_name_type (0.00s)\n    --- PASS: TestFetchResponse/malformed (0.00s)\n    --- PASS: TestFetchResponse/blank_name (0.00s)\n    --- PASS: TestFetchResponse/trailing_object (0.00s)\n    --- PASS: TestFetchResponse/empty (0.00s)\n    --- PASS: TestFetchResponse/read_error_after_valid_json (0.00s)\n    --- PASS: TestFetchResponse/fractional_revision (0.00s)\n    --- PASS: TestFetchResponse/negative_revision (0.00s)\n    --- PASS: TestFetchResponse/missing_name (0.00s)\n    --- PASS: TestFetchResponse/wrong_revision_type (0.00s)\n    --- PASS: TestFetchResponse/empty_name (0.00s)\n    --- PASS: TestFetchResponse/zero_revision (0.00s)\n    --- PASS: TestFetchResponse/trailing_garbage (0.00s)\n    --- PASS: TestFetchResponse/string (0.00s)\n    --- PASS: TestFetchResponse/success (0.00s)\n    --- PASS: TestFetchResponse/array (0.00s)\n    --- PASS: TestFetchResponse/null (0.00s)\n--- PASS: TestFetchHTTP (0.00s)\nPASS\nok  \texample.com/metadata\t1.204s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "staticcheck",
+      "./..."
+    ],
+    "status": "not run",
+    "reason": "staticcheck is not installed; dependency/tool installation is prohibited"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "fetch_test.go"
+    ],
+    "execution": "sandbox",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 10,
+    "elapsed_seconds": 0.008,
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "fetch_test.go"
+    ],
+    "execution": "sandbox",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 10,
+    "elapsed_seconds": 0.007,
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "execution": "sandbox",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 60,
+    "elapsed_seconds": 0.129,
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run=^TestFetchResponse$/^(read_error_after_valid_json|trailing_object|null)$",
+      "-count=10",
+      "-timeout=15s",
+      "./..."
+    ],
+    "execution": "sandbox",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 60,
+    "elapsed_seconds": 1.521,
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "ok  \texample.com/metadata\t1.255s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=25",
+      "-timeout=30s",
+      "./..."
+    ],
+    "execution": "outside sandbox; local httptest loopback binding",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 60,
+    "elapsed_seconds": 1.441,
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "ok  \texample.com/metadata\t1.230s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run=^TestFetchCancellation$/^before_headers$",
+      "-count=10",
+      "-timeout=20s",
+      "./..."
+    ],
+    "execution": "outside sandbox; local httptest loopback binding",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 60,
+    "elapsed_seconds": 1.438,
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "ok  \texample.com/metadata\t1.204s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run=^TestFetchCancellation$/^reading_body$",
+      "-count=10",
+      "-timeout=20s",
+      "./..."
+    ],
+    "execution": "outside sandbox; local httptest loopback binding",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 60,
+    "elapsed_seconds": 1.437,
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "ok  \texample.com/metadata\t1.206s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run=^TestFetchHTTP$",
+      "-count=10",
+      "-timeout=20s",
+      "./..."
+    ],
+    "execution": "outside sandbox; local httptest loopback binding",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 60,
+    "elapsed_seconds": 1.442,
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "ok  \texample.com/metadata\t1.215s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-s",
+      "-l",
+      "fetch_test.go"
+    ],
+    "execution": "sandbox",
+    "process_deadline_seconds": 10,
+    "elapsed_seconds": 0.008,
+    "exit_code": 0,
+    "timed_out": false,
+    "stdout": "",
+    "stderr": ""
+  }
+]

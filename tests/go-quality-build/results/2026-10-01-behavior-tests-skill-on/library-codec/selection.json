@@ -1,0 +1,51 @@
+{
+  "offered_guidance_names": [
+    "go-api-contracts",
+    "go-behavior-tests",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries"
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-behavior-tests/SKILL.md",
+    "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-core-style/SKILL.md"
+  ],
+  "opened_reference_paths": [
+    "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-behavior-tests/references/behavior-observations.md"
+  ],
+  "decisions": [
+    {
+      "name": "go-api-contracts",
+      "selected": true,
+      "reason": "The supported exported library API and wire contract change. Retain function types, Key representation and ErrInvalidKey while extending field values and documenting changed wire bytes."
+    },
+    {
+      "name": "go-behavior-tests",
+      "selected": true,
+      "reason": "Escaping changes meaningful encoding and decoding behavior, and the request asks for contract tests. Fixed external-package oracles test each direction independently; error and zero-result assertions protect rejection behavior; examples and bounded fuzzing supplement those tests."
+    },
+    {
+      "name": "go-core-style",
+      "selected": true,
+      "reason": "Writing Go production and test code warrants standard-library use, guard clauses, explicit error handling, gofmt and available verification tools."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "selected": false,
+      "reason": "No interface, constructor, dependency injection, options API or resource lifecycle changes. This is a pure codec using the standard library."
+    },
+    {
+      "name": "go-package-boundaries",
+      "selected": false,
+      "reason": "The existing package keeps its codec responsibility and import direction; no package is created, split, merged or moved."
+    }
+  ],
+  "opened_task_paths": [
+    "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/library-codec/dispatch.txt",
+    "/private/tmp/go-testing-author-z3h6ca5c/library-codec/README.md",
+    "/private/tmp/go-testing-author-z3h6ca5c/library-codec/key.go",
+    "/private/tmp/go-testing-author-z3h6ca5c/library-codec/key_test.go",
+    "/private/tmp/go-testing-author-z3h6ca5c/library-codec/go.mod"
+  ]
+}

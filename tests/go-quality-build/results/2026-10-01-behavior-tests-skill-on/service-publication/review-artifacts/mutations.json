@@ -1,0 +1,32 @@
+[
+  {
+    "name": "in-place-publication",
+    "path": "/private/tmp/go-independent-review-kolmdafa/mutations/in-place-publication/mirror.go",
+    "old": "\t// Keep the temporary file in the destination directory",
+    "new": "\tif true { return os.WriteFile(path, data, 0o644) }\n\t// Keep the temporary file in the destination directory"
+  },
+  {
+    "name": "accept-blank-fields",
+    "path": "/private/tmp/go-independent-review-kolmdafa/mutations/accept-blank-fields/mirror.go",
+    "old": "if strings.TrimSpace(item.Code) == \"\" || strings.TrimSpace(item.Label) == \"\" {",
+    "new": "if false && (strings.TrimSpace(item.Code) == \"\" || strings.TrimSpace(item.Label) == \"\") {"
+  },
+  {
+    "name": "ignore-late-read-error",
+    "path": "/private/tmp/go-independent-review-kolmdafa/mutations/ignore-late-read-error/mirror.go",
+    "old": "if err != nil {\n\t\treturn fmt.Errorf(\"read snapshot: %w\", err)",
+    "new": "if err != nil && len(data) == 0 {\n\t\treturn fmt.Errorf(\"read snapshot: %w\", err)"
+  },
+  {
+    "name": "omit-response-close",
+    "path": "/private/tmp/go-independent-review-kolmdafa/mutations/omit-response-close/mirror.go",
+    "old": "\tdefer resp.Body.Close()",
+    "new": "\t// Deliberately omit response-body closure."
+  },
+  {
+    "name": "accept-trailing-json",
+    "path": "/private/tmp/go-independent-review-kolmdafa/mutations/accept-trailing-json/mirror.go",
+    "old": "json.Unmarshal(data, &items)",
+    "new": "json.NewDecoder(strings.NewReader(string(data))).Decode(&items)"
+  }
+]

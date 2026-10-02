@@ -1,0 +1,274 @@
+[
+  {
+    "name": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-4kte569z/candidate",
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.011
+  },
+  {
+    "name": "platform",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "CGO_ENABLED",
+      "GOVERSION"
+    ],
+    "cwd": "/private/tmp/go-independent-review-4kte569z/candidate",
+    "stdout": "darwin\narm64\n1\ngo1.26.5\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.009
+  },
+  {
+    "name": "candidate_test",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4kte569z/candidate",
+    "stdout": "ok  \texample.com/mirror\t0.225s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.466
+  },
+  {
+    "name": "candidate_race_shuffle",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=5",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4kte569z/candidate",
+    "stdout": "ok  \texample.com/mirror\t1.310s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.602
+  },
+  {
+    "name": "mutation_in_place_publication",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=10s",
+      "-run",
+      "^TestRefreshReplacesSnapshotForOpenReaders$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4kte569z/mutations/in_place_publication",
+    "source_mutation": "Disposable copy only; see mirror.go in cwd.",
+    "stdout": "--- FAIL: TestRefreshReplacesSnapshotForOpenReaders (0.00s)\n    refresh_test.go:220: already-open handle = \"[]\", want \"  [ {\\\"code\\\":\\\"old\\\",\\\"label\\\":\\\"Old\\\"} ]\\n\"\nFAIL\nFAIL\texample.com/mirror\t0.239s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.486
+  },
+  {
+    "name": "mutation_missing_body_close",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=10s",
+      "-run",
+      "^TestRefresh(ClosesSuccessfulResponseBody|FailuresPreserveSnapshotAndCloseBody)$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4kte569z/mutations/missing_body_close",
+    "source_mutation": "Disposable copy only; see mirror.go in cwd.",
+    "stdout": "--- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody (0.01s)\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/created_status (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/no_content_status (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/not_found_status (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/server_error_status (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/empty_response (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/malformed_JSON (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/wrong_item_field_type (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/null_document (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/object_document (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/null_item (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/blank_code (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/blank_label (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/missing_code (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/missing_label (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/later_invalid_item (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/second_array (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/trailing_scalar (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/trailing_malformed_JSON (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/initial_read_failure (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/read_failure_after_array (0.00s)\n        refresh_test.go:121: response body close count = 0, want 1\n--- FAIL: TestRefreshClosesSuccessfulResponseBody (0.00s)\n    refresh_test.go:138: response body close count = 0, want 1\nFAIL\nFAIL\texample.com/mirror\t0.222s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.486
+  },
+  {
+    "name": "mutation_missing_trailing_check",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=10s",
+      "-run",
+      "^TestRefreshFailuresPreserveSnapshotAndCloseBody/(second_array|trailing_scalar|trailing_malformed_JSON|read_failure_after_array)$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4kte569z/mutations/missing_trailing_check",
+    "source_mutation": "Disposable copy only; see mirror.go in cwd.",
+    "stdout": "--- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody (0.00s)\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/second_array (0.00s)\n        refresh_test.go:114: Refresh unexpectedly succeeded\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/trailing_scalar (0.00s)\n        refresh_test.go:114: Refresh unexpectedly succeeded\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/trailing_malformed_JSON (0.00s)\n        refresh_test.go:114: Refresh unexpectedly succeeded\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/read_failure_after_array (0.00s)\n        refresh_test.go:114: Refresh unexpectedly succeeded\nFAIL\nFAIL\texample.com/mirror\t0.206s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.442
+  },
+  {
+    "name": "mutation_normalize_values",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=10s",
+      "-run",
+      "^TestRefreshPublishesRemoteSnapshot$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4kte569z/mutations/normalize_values",
+    "source_mutation": "Disposable copy only; see mirror.go in cwd.",
+    "stdout": "--- FAIL: TestRefreshPublishesRemoteSnapshot (0.00s)\n    --- FAIL: TestRefreshPublishesRemoteSnapshot/values_and_order_preserved (0.00s)\n        refresh_test.go:55: snapshot = \"[{\\\"code\\\":\\\"x\\\",\\\"label\\\":\\\"Label\\\"},{\\\"code\\\":\\\"x\\\",\\\"label\\\":\\\"Other\\\"}]\", want \"[{\\\"code\\\":\\\"  x\\\\t\\\",\\\"label\\\":\\\" Label \\\\n\\\"},{\\\"code\\\":\\\"x\\\",\\\"label\\\":\\\"Other\\\"}]\"\nFAIL\nFAIL\texample.com/mirror\t0.200s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.438
+  },
+  {
+    "name": "mutation_ignore_context",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=10s",
+      "-run",
+      "^TestRefreshPropagatesContextCancellation$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4kte569z/mutations/ignore_context",
+    "source_mutation": "Disposable copy only; see mirror.go in cwd.",
+    "stdout": "--- FAIL: TestRefreshPropagatesContextCancellation (1.00s)\n    refresh_test.go:189: Refresh error = fetch snapshot: Get \"https://example.invalid/items\": request did not carry the supplied context, want context.Canceled\nFAIL\nFAIL\texample.com/mirror\t1.205s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 1.45
+  },
+  {
+    "name": "mutation_overwrite_on_failure",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=10s",
+      "-run",
+      "^TestRefreshFailuresPreserveSnapshotAndCloseBody/(malformed_JSON|blank_code|server_error_status)$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4kte569z/mutations/overwrite_on_failure",
+    "source_mutation": "Disposable copy only; see mirror.go in cwd.",
+    "stdout": "--- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody (0.00s)\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/server_error_status (0.00s)\n        refresh_test.go:119: snapshot = \"corrupt\", want \"  [ {\\\"code\\\":\\\"old\\\",\\\"label\\\":\\\"Old\\\"} ]\\n\"\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/malformed_JSON (0.00s)\n        refresh_test.go:119: snapshot = \"corrupt\", want \"  [ {\\\"code\\\":\\\"old\\\",\\\"label\\\":\\\"Old\\\"} ]\\n\"\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/blank_code (0.00s)\n        refresh_test.go:119: snapshot = \"corrupt\", want \"  [ {\\\"code\\\":\\\"old\\\",\\\"label\\\":\\\"Old\\\"} ]\\n\"\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/trailing_malformed_JSON (0.00s)\n        refresh_test.go:119: snapshot = \"corrupt\", want \"  [ {\\\"code\\\":\\\"old\\\",\\\"label\\\":\\\"Old\\\"} ]\\n\"\nFAIL\nFAIL\texample.com/mirror\t0.205s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.451
+  },
+  {
+    "name": "reviewer_real_http_boundary",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-count=3",
+      "-timeout=20s",
+      "-run",
+      "^TestReviewerRealHTTP",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4kte569z/real-http-verification",
+    "stdout": "--- FAIL: TestReviewerRealHTTPPublishesSnapshot (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 4 [running]:\ntesting.tRunner.func1.2({0x100a5d260, 0xc00003a630})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x2b8\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x460\npanic({0x100a5d260?, 0xc00003a630?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0x13c\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x100aecaa0, 0xc00003a5d0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x30\nexample.com/mirror_test.TestReviewerRealHTTPPublishesSnapshot(0xc0000fe6c8)\n\t/private/tmp/go-independent-review-4kte569z/real-http-verification/review_boundary_test.go:19 +0xa8\ntesting.tRunner(0xc0000fe6c8, 0x100ae8410)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x168\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x7c0\nFAIL\texample.com/mirror\t0.227s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.517
+  },
+  {
+    "name": "declared_version_vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4kte569z/candidate",
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.627
+  },
+  {
+    "name": "original_test",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4kte569z/original",
+    "stdout": "ok  \texample.com/mirror\t0.239s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.431
+  }
+]

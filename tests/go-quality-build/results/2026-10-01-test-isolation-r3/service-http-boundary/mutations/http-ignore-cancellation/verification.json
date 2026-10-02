@@ -1,0 +1,86 @@
+{
+  "semantic_id": "http-ignore-cancellation",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "65fac6692caedb972c27518c6ee7e0152f0d22efd9996ed69e8f5e662c081ee2",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-s826yu1n/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.261s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.5
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r3/service-http-boundary/mutations/http-ignore-cancellation/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-s826yu1n/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.016
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-s826yu1n/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.206s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.44
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-s826yu1n/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestFetchSuccess (0.00s)\n    --- FAIL: TestFetchSuccess/preserved_name (0.00s)\n        fetch_test.go:75: request lost caller context value\n    --- FAIL: TestFetchSuccess/surrounding_whitespace (0.00s)\n        fetch_test.go:75: request lost caller context value\n    --- FAIL: TestFetchSuccess/ordinary (0.00s)\n        fetch_test.go:75: request lost caller context value\n--- FAIL: TestFetchCancellation (0.00s)\n    --- FAIL: TestFetchCancellation/before_headers (5.00s)\n        fetch_test.go:323: timed out waiting for Fetch completion after caller cancellation\n    --- FAIL: TestFetchCancellation/during_body (5.00s)\n        fetch_test.go:323: timed out waiting for Fetch completion after caller cancellation\nFAIL\nFAIL\texample.com/metadata\t5.171s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 5.369
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

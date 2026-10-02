@@ -1,0 +1,21 @@
+--- a/index.go
++++ b/index.go
+@@ -78,17 +78,5 @@
+ // replaceFile stages data beside the destination so rename publishes a complete
+ // snapshot. Failure before rename leaves the destination untouched.
+ func replaceFile(path string, data []byte) error {
+-	f, err := os.CreateTemp(filepath.Dir(path), ".record-*")
+-	if err != nil {
+-		return err
+-	}
+-	defer os.Remove(f.Name())
+-	if _, err := f.Write(data); err != nil {
+-		f.Close()
+-		return err
+-	}
+-	if err := f.Close(); err != nil {
+-		return err
+-	}
+-	return os.Rename(f.Name(), path)
++	return os.WriteFile(path, data, 0600)
+ }

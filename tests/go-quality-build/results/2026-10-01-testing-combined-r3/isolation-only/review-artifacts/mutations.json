@@ -1,0 +1,44 @@
+[
+  {
+    "name": "no-body-close",
+    "directory": "/private/tmp/go-independent-review-0vvp8kdb/mutation-no-body-close",
+    "file": "refresh.go",
+    "old": "defer response.Body.Close()",
+    "new": "// MUTATION: acquired response body not closed"
+  },
+  {
+    "name": "in-place-publication",
+    "directory": "/private/tmp/go-independent-review-0vvp8kdb/mutation-in-place-publication",
+    "file": "index.go",
+    "old": "func writeAtomic(path string, data []byte) error {",
+    "new": "func writeAtomic(path string, data []byte) error {\n\treturn os.WriteFile(path, data, 0600)\n}\n\nfunc unusedAtomic(path string, data []byte) error {"
+  },
+  {
+    "name": "discard-callback-error",
+    "directory": "/private/tmp/go-independent-review-0vvp8kdb/mutation-discard-callback-error",
+    "file": "serve.go",
+    "old": "return err\n\t\t}",
+    "new": "return nil\n\t\t}"
+  },
+  {
+    "name": "no-completion-delay",
+    "directory": "/private/tmp/go-independent-review-0vvp8kdb/mutation-no-completion-delay",
+    "file": "serve.go",
+    "old": "timer := time.NewTimer(interval)",
+    "new": "timer := time.NewTimer(time.Nanosecond)"
+  },
+  {
+    "name": "continue-invalid-csv",
+    "directory": "/private/tmp/go-independent-review-0vvp8kdb/mutation-continue-invalid-csv",
+    "file": "index.go",
+    "old": "return fmt.Errorf(\"CSV row %d: %w\", row, ErrInvalidRecord)",
+    "new": "continue // MUTATION: ignore rejected record"
+  },
+  {
+    "name": "release-before-join",
+    "directory": "/private/tmp/go-independent-review-0vvp8kdb/mutation-release-before-join",
+    "file": "serve.go",
+    "old": "\t\tif err := refresh(ctx); err != nil {\n\t\t\tif cancellationOnly(err, ctx.Err(), context.Cause(ctx)) {\n\t\t\t\treturn nil\n\t\t\t}\n\t\t\treturn err\n\t\t}",
+    "new": "\t\tresult := make(chan error, 1)\n\t\tgo func() { result <- refresh(ctx) }()\n\t\tselect {\n\t\tcase <-ctx.Done():\n\t\t\treturn nil // MUTATION: release before callback cleanup returns\n\t\tcase callbackErr := <-result:\n\t\t\tif callbackErr != nil {\n\t\t\t\tif cancellationOnly(callbackErr, ctx.Err(), context.Cause(ctx)) {\n\t\t\t\t\treturn nil\n\t\t\t\t}\n\t\t\t\treturn callbackErr\n\t\t\t}\n\t\t}"
+  }
+]

@@ -1,0 +1,422 @@
+{
+  "cases": {
+    "library-file-fixtures": {
+      "input_hashes": {
+        "README.md": "df19712c89bd7f5bb0eab796eebfb1851f219e527c6e17a5cd7b06515253ba4e",
+        "go.mod": "a01bd52ca12cb3fb06203c3d132732ff7cf72450576be33158d2690c29b78e97",
+        "store.go": "74a5e9db0f5a3f6136c252d0be23742c2ebffbc1a1a9884793cdbb1981f92504",
+        "store_test.go": "6a655de084ba6cdfb8e5dd3253d57aac341f0bb31120b00066baa47ff799e496"
+      },
+      "checks": [
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=30s",
+            "./..."
+          ],
+          "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/go-test-isolation/evals/files/library-file-fixtures",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "ok  \texample.com/filestore\t0.173s\n",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.285
+        },
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "go",
+            "vet",
+            "./..."
+          ],
+          "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/go-test-isolation/evals/files/library-file-fixtures",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.065
+        },
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/go-test-isolation/evals/files/library-file-fixtures",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.008
+        },
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=30s",
+            "./..."
+          ],
+          "cwd": "/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-testing-input-5umyuwai/library-file-fixtures",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "ok  \texample.com/filestore\t0.175s\n",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.314
+        }
+      ]
+    },
+    "cli-environment": {
+      "input_hashes": {
+        "README.md": "ccc78d092abcfcef5d49c294f9da4978e4c32aa8b6449ac2f6132f23632432df",
+        "cmd/showcfg/main.go": "3959cf1b861e050db483ed4bffd1803d4a2e767366294624e30d46a2df224ec8",
+        "config.go": "fa3a3d3e5567ea07e6ccaeb74760f499a3ebab6a4732dcefd336935f1b91e4b3",
+        "config_test.go": "d6ed2e1ac39786be35547f6150fba270cb7b7100fc04be09984c359f523a3514",
+        "go.mod": "b1217148ca155453db59050c312de14fca2a65a4c879c98c89946ca12c64177e"
+      },
+      "checks": [
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=30s",
+            "./..."
+          ],
+          "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/go-test-isolation/evals/files/cli-environment",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "ok  \texample.com/showcfg\t0.121s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.239
+        },
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "go",
+            "vet",
+            "./..."
+          ],
+          "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/go-test-isolation/evals/files/cli-environment",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.064
+        },
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/go-test-isolation/evals/files/cli-environment",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.008
+        },
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=30s",
+            "./..."
+          ],
+          "cwd": "/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-testing-input-yrj2hytd/cli-environment",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "ok  \texample.com/showcfg\t0.475s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.63
+        }
+      ]
+    },
+    "service-http-boundary": {
+      "input_hashes": {
+        "README.md": "5e52eb6593abf19cb5eff5217737defefdfa9c96535433ad69aede1a898c5da6",
+        "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+        "fetch_test.go": "7b7f93721ddd485550ebac2035fe53f39b1ec834167e0da3fbe6584c2812b61a",
+        "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3"
+      },
+      "checks": [
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=30s",
+            "./..."
+          ],
+          "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/go-test-isolation/evals/files/service-http-boundary",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "ok  \texample.com/metadata\t0.176s\n",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.364
+        },
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "go",
+            "vet",
+            "./..."
+          ],
+          "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/go-test-isolation/evals/files/service-http-boundary",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.098
+        },
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/go-test-isolation/evals/files/service-http-boundary",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.008
+        },
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=30s",
+            "./..."
+          ],
+          "cwd": "/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-testing-input-zpnp8jg0/service-http-boundary",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "ok  \texample.com/metadata\t0.210s\n",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.443
+        }
+      ]
+    },
+    "worker-timing": {
+      "input_hashes": {
+        "README.md": "a8b458db577e2c868a7923297f6e9b87c546164f2e18f9bc78d34a05f3599181",
+        "go.mod": "a7aa1456ec43a9e34590246526baefddcb794ce46b06e2e893147f769899738d",
+        "poll.go": "cac1ee3ceb250f0c8b9d800ec2f55277b11d0a614e51086f151b64a2c4cad491",
+        "poll_test.go": "99f20687d301daa8e80e3b749b474570398c588b7eb6f88fd05cec1e73b3af7d"
+      },
+      "checks": [
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=30s",
+            "./..."
+          ],
+          "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/go-test-isolation/evals/files/worker-timing",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "ok  \texample.com/poller\t0.135s\n",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.25
+        },
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "go",
+            "vet",
+            "./..."
+          ],
+          "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/go-test-isolation/evals/files/worker-timing",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.062
+        },
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/go-test-isolation/evals/files/worker-timing",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.008
+        },
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=30s",
+            "./..."
+          ],
+          "cwd": "/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-testing-input-ah0po_5k/worker-timing",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "ok  \texample.com/poller\t0.316s\n",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.463
+        }
+      ]
+    },
+    "not-isolation-work": {
+      "input_hashes": {
+        "README.md": "6f83be8f1fb4bae7ae3a4118e64cbe65b2975efc99abcc7a450264a41f80a41c",
+        "clamp.go": "1531f4f12762a8de67afad06945345c7814fd5cb2bc07d5dca56e12acab66824",
+        "clamp_test.go": "4ee58de54175701b8b223487e181d74a32c55c593878c63b3b124b731781bc3f",
+        "go.mod": "6159f8c50c24e8a65f078eb935b56655ab3da9e77bd2c62ba41b955b40bb319d"
+      },
+      "checks": [
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=30s",
+            "./..."
+          ],
+          "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/go-test-isolation/evals/files/not-isolation-work",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "ok  \texample.com/clamp\t0.147s\n",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.268
+        },
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "go",
+            "vet",
+            "./..."
+          ],
+          "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/go-test-isolation/evals/files/not-isolation-work",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.064
+        },
+        {
+          "command": [
+            "rtk",
+            "proxy",
+            "gofmt",
+            "-l",
+            "."
+          ],
+          "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/go-test-isolation/evals/files/not-isolation-work",
+          "env": {
+            "GOCACHE": "/private/tmp/go-quality-testing-cache",
+            "GOTOOLCHAIN": "local"
+          },
+          "stdout": "",
+          "stderr": "",
+          "exit_code": 0,
+          "duration_seconds": 0.008
+        }
+      ]
+    }
+  },
+  "controller_probe_hashes": {
+    "cli-environment/contract_test.go": "84bff83c8c2dc3e96bf48c456719c71f170a52b9b4158b60accf21e470f8bf11",
+    "library-file-fixtures/contract_test.go": "441ec0fbca823daad4704bfe00c96b5696de51bcb4fee7ec0af23d1c02a6cb93",
+    "mutations.md": "c74fc57bfa075cb16426713581abb73f93cd2c41cdd8367e5bdfb12fc46f2107",
+    "service-http-boundary/contract_test.go": "756b963ec841dc247a7972f5cfbfca44a8ca573ae3e5149b826b9f1afe417e3e",
+    "worker-timing/contract_test.go": "edbcadbf604a04c72598c70806763e0f5e9878be0a8d4e5f381bf52712192ef7"
+  }
+}

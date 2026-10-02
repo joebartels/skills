@@ -1,0 +1,98 @@
+[
+  {
+    "case": "library-file-fixtures",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-shuffle=on",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-probe-439si5kx/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t1.251s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.4246200419729576,
+    "execution_permission": "automatically approved local loopback evaluation"
+  },
+  {
+    "case": "cli-environment",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-shuffle=on",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-probe-v8u3z1fa/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/showcfg\t3.497s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 3.695242083980702,
+    "execution_permission": "automatically approved local loopback evaluation"
+  },
+  {
+    "case": "service-http-boundary",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-shuffle=on",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-probe-wa430z_k/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t1.231s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.512561707990244,
+    "execution_permission": "automatically approved local loopback evaluation"
+  },
+  {
+    "case": "worker-timing",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-shuffle=on",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-probe-bprkbsx1/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t2.491s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 2.6689368339721113,
+    "execution_permission": "automatically approved local loopback evaluation"
+  }
+]

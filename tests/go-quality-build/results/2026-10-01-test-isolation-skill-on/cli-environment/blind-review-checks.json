@@ -1,0 +1,496 @@
+[
+  {
+    "name": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/verification-baseline",
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit": 0,
+    "seconds": 0.01234512496739626
+  },
+  {
+    "name": "platform",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION"
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/verification-baseline",
+    "stdout": "darwin\narm64\ngo1.26.5\n",
+    "stderr": "",
+    "exit": 0,
+    "seconds": 0.010513084009289742
+  },
+  {
+    "name": "baseline-all",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/verification-baseline",
+    "stdout": "ok  \texample.com/showcfg\t0.442s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit": 0,
+    "seconds": 0.600425541982986
+  },
+  {
+    "name": "hostile-parent-shuffled",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "INDEXER_ENDPOINT=ftp://hostile.invalid",
+      "INDEXER_MODE=bad-parent",
+      "go",
+      "test",
+      "-shuffle=on",
+      "-count=5",
+      "-timeout=120s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/verification-baseline",
+    "stdout": "ok  \texample.com/showcfg\t1.373s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit": 0,
+    "seconds": 1.4931584999430925
+  },
+  {
+    "name": "empty-parent-shuffled",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "INDEXER_ENDPOINT=",
+      "INDEXER_MODE=",
+      "go",
+      "test",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/verification-baseline",
+    "stdout": "ok  \texample.com/showcfg\t0.919s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit": 0,
+    "seconds": 1.034130832995288
+  },
+  {
+    "name": "unset-parent-shuffled",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "-u",
+      "INDEXER_ENDPOINT",
+      "-u",
+      "INDEXER_MODE",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "test",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/verification-baseline",
+    "stdout": "ok  \texample.com/showcfg\t0.885s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit": 0,
+    "seconds": 0.9998697920236737
+  },
+  {
+    "name": "mutation-empty-becomes-default",
+    "mutation": {
+      "file": "config.go",
+      "old": "if !present {",
+      "new": "if !present || endpoint == \"\" {",
+      "count": 1
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=90s",
+      "-run",
+      "^Test(LoadFromEnv|ShowcfgCommand)$/^empty_endpoint$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/mutation-empty-becomes-default",
+    "stdout": "--- FAIL: TestLoadFromEnv (0.00s)\n    --- FAIL: TestLoadFromEnv/empty_endpoint (0.00s)\n        config_test.go:111: LoadFromEnv = showcfg.Config{Endpoint:\"http://127.0.0.1:9090\", Mode:\"read\"}; want zero Config on error\n        config_test.go:114: LoadFromEnv succeeded; want an error\n--- FAIL: TestShowcfgCommand (0.25s)\n    --- FAIL: TestShowcfgCommand/empty_endpoint (0.15s)\n        config_test.go:194: command error = <nil>; want exit 2; stderr: \"\"\nFAIL\nFAIL\texample.com/showcfg\t0.427s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "seconds": 0.5959999160841107
+  },
+  {
+    "name": "mutation-nonzero-config-on-error",
+    "mutation": {
+      "file": "config.go",
+      "old": "return Config{}, fmt.Errorf(\"invalid INDEXER_ENDPOINT %q\", endpoint)",
+      "new": "return Config{Endpoint: endpoint}, fmt.Errorf(\"invalid INDEXER_ENDPOINT %q\", endpoint)",
+      "count": 1
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=90s",
+      "-run",
+      "^TestLoadFromEnv$/^missing_scheme$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/mutation-nonzero-config-on-error",
+    "stdout": "--- FAIL: TestLoadFromEnv (0.00s)\n    --- FAIL: TestLoadFromEnv/missing_scheme (0.00s)\n        config_test.go:111: LoadFromEnv = showcfg.Config{Endpoint:\"example.invalid/api\", Mode:\"\"}; want zero Config on error\nFAIL\nFAIL\texample.com/showcfg\t0.174s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "seconds": 0.34234454203397036
+  },
+  {
+    "name": "mutation-wrong-command-exit",
+    "mutation": {
+      "file": "cmd/showcfg/main.go",
+      "old": "os.Exit(2)",
+      "new": "os.Exit(1)",
+      "count": 1
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=90s",
+      "-run",
+      "^TestShowcfgCommand$/^empty_mode$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/mutation-wrong-command-exit",
+    "stdout": "--- FAIL: TestShowcfgCommand (0.25s)\n    --- FAIL: TestShowcfgCommand/empty_mode (0.15s)\n        config_test.go:194: command error = exit status 1; want exit 2; stderr: \"invalid INDEXER_MODE \\\"\\\"\\n\"\nFAIL\nFAIL\texample.com/showcfg\t0.429s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "seconds": 0.5994037920609117
+  },
+  {
+    "name": "mutation-second-json-output",
+    "mutation": {
+      "file": "cmd/showcfg/main.go",
+      "old": "\tif err := json.NewEncoder(os.Stdout).Encode(config); err != nil {",
+      "new": "\tfmt.Fprintln(os.Stdout, `{}`)\n\tif err := json.NewEncoder(os.Stdout).Encode(config); err != nil {",
+      "count": 1
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=90s",
+      "-run",
+      "^TestShowcfgCommand$/^defaults$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/mutation-second-json-output",
+    "stdout": "--- FAIL: TestShowcfgCommand (0.25s)\n    --- FAIL: TestShowcfgCommand/defaults (0.15s)\n        config_test.go:208: command JSON = map[string]string{}; want lowercase endpoint \"http://127.0.0.1:9090\" and mode \"read\" only\n        config_test.go:208: bytes after Config JSON = \"\\n{\\\"endpoint\\\":\\\"http://127.0.0.1:9090\\\",\\\"mode\\\":\\\"read\\\"}\\n\"; want exactly one newline\nFAIL\nFAIL\texample.com/showcfg\t0.428s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "seconds": 0.6065779170021415
+  },
+  {
+    "name": "mutation-lost-environment-cleanup",
+    "mutation": {
+      "file": "config_test.go",
+      "old": "\t\tt.Setenv(key, value)",
+      "new": "\t\tos.Setenv(key, value)",
+      "count": 1
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=90s",
+      "-run",
+      "^TestEnvironmentRestoration$/^present_values$/^defaults$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/mutation-lost-environment-cleanup",
+    "stdout": "--- FAIL: TestEnvironmentRestoration (0.00s)\n    --- FAIL: TestEnvironmentRestoration/present_values (0.00s)\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\nFAIL\nFAIL\texample.com/showcfg\t0.179s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "seconds": 0.3454938329523429
+  },
+  {
+    "name": "mutation-child-inherits-parent",
+    "mutation": {
+      "file": "config_test.go",
+      "old": "if strings.EqualFold(key, \"INDEXER_ENDPOINT\") || strings.EqualFold(key, \"INDEXER_MODE\") {",
+      "new": "if false {",
+      "count": 1
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=90s",
+      "-run",
+      "^TestShowcfgCommand$/^defaults$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/mutation-child-inherits-parent",
+    "stdout": "FAIL\texample.com/showcfg [build failed]\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+    "stderr": "# example.com/showcfg_test [example.com/showcfg.test]\n./config_test.go:255:3: declared and not used: key\n",
+    "exit": 1,
+    "seconds": 0.09855845803394914
+  },
+  {
+    "name": "mutation-generic-error",
+    "mutation": {
+      "file": "config.go",
+      "old": "fmt.Errorf(\"invalid INDEXER_MODE %q\", mode)",
+      "new": "fmt.Errorf(\"invalid config\")",
+      "count": 1
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=90s",
+      "-run",
+      "^Test(LoadFromEnv|ShowcfgCommand)$/^unknown_mode$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/mutation-generic-error",
+    "stdout": "--- FAIL: TestLoadFromEnv (0.00s)\n    --- FAIL: TestLoadFromEnv/unknown_mode (0.00s)\n        config_test.go:116: diagnostic = \"invalid config\"; want offending variable INDEXER_MODE\n        config_test.go:116: diagnostic = \"invalid config\"; want offending value \"delete\"\n--- FAIL: TestShowcfgCommand (0.24s)\n    --- FAIL: TestShowcfgCommand/unknown_mode (0.15s)\n        config_test.go:199: diagnostic = \"invalid config\\n\"; want offending variable INDEXER_MODE\n        config_test.go:199: diagnostic = \"invalid config\\n\"; want offending value \"delete\"\nFAIL\nFAIL\texample.com/showcfg\t0.421s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "seconds": 0.583226874936372
+  },
+  {
+    "name": "stdversion-vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/verification-baseline",
+    "stdout": "",
+    "stderr": "",
+    "exit": 0,
+    "seconds": 0.08039329200983047
+  },
+  {
+    "name": "mutation-child-inherits-parent-valid",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestShowcfgCommand$/^defaults$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/mutation-child-inherits-parent-valid",
+    "stdout": "--- FAIL: TestShowcfgCommand (0.25s)\n    --- FAIL: TestShowcfgCommand/defaults (0.15s)\n        config_test.go:203: command: exit status 2; stderr: \"invalid INDEXER_ENDPOINT \\\"parent://ignored\\\"\\n\"\nFAIL\nFAIL\texample.com/showcfg\t0.471s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "seconds": 0.6363622919889167,
+    "mutation": {
+      "file": "config_test.go",
+      "old": "if strings.EqualFold(key, \"INDEXER_ENDPOINT\") || strings.EqualFold(key, \"INDEXER_MODE\") {",
+      "new": "if strings.EqualFold(key, \"IGNORED_ENDPOINT\") || strings.EqualFold(key, \"IGNORED_MODE\") {",
+      "count": 1
+    }
+  },
+  {
+    "name": "mutation-command-hangs",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestShowcfgCommand$/^defaults$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp/mutation-command-hangs",
+    "stdout": "--- FAIL: TestShowcfgCommand (10.11s)\n    --- FAIL: TestShowcfgCommand/defaults (10.00s)\n        config_test.go:189: command deadline: context deadline exceeded; stdout: \"\"; stderr: \"\"\nFAIL\nFAIL\texample.com/showcfg\t10.288s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "seconds": 10.463317082962021,
+    "mutation": {
+      "file": "cmd/showcfg/main.go",
+      "changes": [
+        "import time",
+        "sleep one hour at main entry"
+      ]
+    }
+  },
+  {
+    "name": "preservation",
+    "command": [
+      "rtk",
+      "proxy",
+      "diff",
+      "-r",
+      "/private/tmp/go-independent-review-2ngscywp/candidate",
+      "/private/tmp/go-independent-review-2ngscywp/verification-baseline"
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp",
+    "stdout": "",
+    "stderr": "",
+    "exit": 0,
+    "seconds": 0.0066948330495506525
+  },
+  {
+    "name": "scope-diff",
+    "command": [
+      "rtk",
+      "proxy",
+      "diff",
+      "-ru",
+      "/private/tmp/go-independent-review-2ngscywp/original",
+      "/private/tmp/go-independent-review-2ngscywp/candidate"
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp",
+    "stdout": "diff -ru /private/tmp/go-independent-review-2ngscywp/original/config_test.go /private/tmp/go-independent-review-2ngscywp/candidate/config_test.go\n--- /private/tmp/go-independent-review-2ngscywp/original/config_test.go\t2026-10-01 19:05:22\n+++ /private/tmp/go-independent-review-2ngscywp/candidate/config_test.go\t2026-10-01 19:47:10\n@@ -1,17 +1,293 @@\n package showcfg_test\n \n import (\n+\t\"bytes\"\n+\t\"context\"\n+\t\"encoding/json\"\n+\t\"errors\"\n+\t\"os\"\n+\t\"os/exec\"\n+\t\"path/filepath\"\n+\t\"runtime\"\n+\t\"strings\"\n \t\"testing\"\n+\t\"time\"\n \n \t\"example.com/showcfg\"\n )\n \n-func TestExplicitConfiguration(t *testing.T) {\n-\tt.Setenv(\"INDEXER_ENDPOINT\", \"https://example.invalid/api\")\n-\tt.Setenv(\"INDEXER_MODE\", \"write\")\n-\tgot, err := showcfg.LoadFromEnv()\n-\twant := showcfg.Config{Endpoint: \"https://example.invalid/api\", Mode: \"write\"}\n-\tif err != nil || got != want {\n-\t\tt.Fatalf(\"LoadFromEnv = %#v, %v; want %#v\", got, err, want)\n+type configCase struct {\n+\tname     string\n+\tenv      map[string]string\n+\twant     showcfg.Config\n+\terrorKey string\n+}\n+\n+func configurationCases() []configCase {\n+\treturn []configCase{\n+\t\t{\n+\t\t\tname: \"defaults\",\n+\t\t\twant: showcfg.Config{Endpoint: \"http://127.0.0.1:9090\", Mode: \"read\"},\n+\t\t},\n+\t\t{\n+\t\t\tname: \"explicit_http_read\",\n+\t\t\tenv:  map[string]string{\"INDEXER_ENDPOINT\": \"http://example.invalid/api\", \"INDEXER_MODE\": \"read\"},\n+\t\t\twant: showcfg.Config{Endpoint: \"http://example.invalid/api\", Mode: \"read\"},\n+\t\t},\n+\t\t{\n+\t\t\tname: \"explicit_https_write\",\n+\t\t\tenv:  map[string]string{\"INDEXER_ENDPOINT\": \"https://example.invalid/api?limit=10\", \"INDEXER_MODE\": \"write\"},\n+\t\t\twant: showcfg.Config{Endpoint: \"https://example.invalid/api?limit=10\", Mode: \"write\"},\n+\t\t},\n+\t\t{\n+\t\t\tname: \"endpoint_only\",\n+\t\t\tenv:  map[string]string{\"INDEXER_ENDPOINT\": \"https://example.invalid\"},\n+\t\t\twant: showcfg.Config{Endpoint: \"https://example.invalid\", Mode: \"read\"},\n+\t\t},\n+\t\t{\n+\t\t\tname: \"mode_only\",\n+\t\t\tenv:  map[string]string{\"INDEXER_MODE\": \"write\"},\n+\t\t\twant: showcfg.Config{Endpoint: \"http://127.0.0.1:9090\", Mode: \"write\"},\n+\t\t},\n+\t\t{\n+\t\t\tname:     \"empty_endpoint\",\n+\t\t\tenv:      map[string]string{\"INDEXER_ENDPOINT\": \"\"},\n+\t\t\terrorKey: \"INDEXER_ENDPOINT\",\n+\t\t},\n+\t\t{\n+\t\t\tname:     \"missing_scheme\",\n+\t\t\tenv:      map[string]string{\"INDEXER_ENDPOINT\": \"example.invalid/api\"},\n+\t\t\terrorKey: \"INDEXER_ENDPOINT\",\n+\t\t},\n+\t\t{\n+\t\t\tname:     \"unsupported_scheme\",\n+\t\t\tenv:      map[string]string{\"INDEXER_ENDPOINT\": \"ftp://example.invalid/api\"},\n+\t\t\terrorKey: \"INDEXER_ENDPOINT\",\n+\t\t},\n+\t\t{\n+\t\t\tname:     \"missing_host\",\n+\t\t\tenv:      map[string]string{\"INDEXER_ENDPOINT\": \"http:///api\"},\n+\t\t\terrorKey: \"INDEXER_ENDPOINT\",\n+\t\t},\n+\t\t{\n+\t\t\tname:     \"malformed_endpoint\",\n+\t\t\tenv:      map[string]string{\"INDEXER_ENDPOINT\": \"https://%zz\"},\n+\t\t\terrorKey: \"INDEXER_ENDPOINT\",\n+\t\t},\n+\t\t{\n+\t\t\tname:     \"empty_mode\",\n+\t\t\tenv:      map[string]string{\"INDEXER_MODE\": \"\"},\n+\t\t\terrorKey: \"INDEXER_MODE\",\n+\t\t},\n+\t\t{\n+\t\t\tname:     \"unknown_mode\",\n+\t\t\tenv:      map[string]string{\"INDEXER_MODE\": \"delete\"},\n+\t\t\terrorKey: \"INDEXER_MODE\",\n+\t\t},\n+\t\t{\n+\t\t\tname:     \"capitalized_mode\",\n+\t\t\tenv:      map[string]string{\"INDEXER_MODE\": \"Read\"},\n+\t\t\terrorKey: \"INDEXER_MODE\",\n+\t\t},\n+\t\t{\n+\t\t\tname:     \"whitespace_mode\",\n+\t\t\tenv:      map[string]string{\"INDEXER_MODE\": \" read \"},\n+\t\t\terrorKey: \"INDEXER_MODE\",\n+\t\t},\n+\t}\n+}\n+\n+func TestLoadFromEnv(t *testing.T) {\n+\t// Environment mutation and all ancestors stay serial.\n+\toriginal := currentEnvironment()\n+\tfor _, tc := range configurationCases() {\n+\t\tt.Run(tc.name, func(t *testing.T) {\n+\t\t\tsetEnvironment(t, tc.env)\n+\t\t\tbefore := currentEnvironment()\n+\t\t\tgot, err := showcfg.LoadFromEnv()\n+\t\t\tassertEnvironment(t, before)\n+\t\t\tif tc.errorKey != \"\" {\n+\t\t\t\tif got != (showcfg.Config{}) {\n+\t\t\t\t\tt.Errorf(\"LoadFromEnv = %#v; want zero Config on error\", got)\n+\t\t\t\t}\n+\t\t\t\tif err == nil {\n+\t\t\t\t\tt.Fatal(\"LoadFromEnv succeeded; want an error\")\n+\t\t\t\t}\n+\t\t\t\tassertDiagnostic(t, err.Error(), tc)\n+\t\t\t\treturn\n+\t\t\t}\n+\t\t\tif err != nil {\n+\t\t\t\tt.Fatalf(\"LoadFromEnv: %v\", err)\n+\t\t\t}\n+\t\t\tif got != tc.want {\n+\t\t\t\tt.Errorf(\"LoadFromEnv = %#v; want %#v\", got, tc.want)\n+\t\t\t}\n+\t\t})\n+\t\t// Subtest cleanup must restore both the value and its presence.\n+\t\tassertEnvironment(t, original)\n+\t}\n+}\n+\n+func TestEnvironmentRestoration(t *testing.T) {\n+\tparents := []struct {\n+\t\tname string\n+\t\tenv  map[string]string\n+\t}{\n+\t\t{name: \"unset\"},\n+\t\t{name: \"present_empty\", env: map[string]string{\"INDEXER_ENDPOINT\": \"\", \"INDEXER_MODE\": \"\"}},\n+\t\t{name: \"present_values\", env: map[string]string{\"INDEXER_ENDPOINT\": \"https://parent.invalid\", \"INDEXER_MODE\": \"write\"}},\n+\t}\n+\tfor _, parent := range parents {\n+\t\tt.Run(parent.name, func(t *testing.T) {\n+\t\t\tsetEnvironment(t, parent.env)\n+\t\t\tbefore := currentEnvironment()\n+\t\t\tfor _, tc := range configurationCases() {\n+\t\t\t\tt.Run(tc.name, func(t *testing.T) {\n+\t\t\t\t\tsetEnvironment(t, tc.env)\n+\t\t\t\t\t_, _ = showcfg.LoadFromEnv()\n+\t\t\t\t})\n+\t\t\t\tassertEnvironment(t, before)\n+\t\t\t}\n+\t\t})\n+\t}\n+}\n+\n+func TestShowcfgCommand(t *testing.T) {\n+\t// Poison the parent to expose accidental inheritance in defaults and\n+\t// partially supplied cases. t.Setenv owns restoration for this test.\n+\tt.Setenv(\"INDEXER_ENDPOINT\", \"parent://ignored\")\n+\tt.Setenv(\"INDEXER_MODE\", \"parent-mode\")\n+\tparent := currentEnvironment()\n+\tbinary := filepath.Join(t.TempDir(), \"showcfg\")\n+\tif runtime.GOOS == \"windows\" {\n+\t\tbinary += \".exe\"\n+\t}\n+\tctx, cancel := context.WithTimeout(context.Background(), time.Minute)\n+\tdefer cancel()\n+\tbuild := exec.CommandContext(ctx, \"go\", \"build\", \"-o\", binary, \"./cmd/showcfg\")\n+\tbuild.Env = commandEnvironment(nil)\n+\tbuild.WaitDelay = 5 * time.Second\n+\toutput, err := build.CombinedOutput()\n+\tif ctx.Err() != nil {\n+\t\tt.Fatalf(\"build command deadline: %v; output: %s\", ctx.Err(), output)\n+\t}\n+\tif err != nil {\n+\t\tt.Fatalf(\"build command: %v; output: %s\", err, output)\n+\t}\n+\tfor _, tc := range configurationCases() {\n+\t\tt.Run(tc.name, func(t *testing.T) {\n+\t\t\tctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)\n+\t\t\tdefer cancel()\n+\t\t\tcmd := exec.CommandContext(ctx, binary)\n+\t\t\tcmd.Env = commandEnvironment(tc.env)\n+\t\t\tcmd.WaitDelay = 5 * time.Second\n+\t\t\tvar stdout, stderr bytes.Buffer\n+\t\t\tcmd.Stdout = &stdout\n+\t\t\tcmd.Stderr = &stderr\n+\t\t\terr := cmd.Run()\n+\t\t\tif ctx.Err() != nil {\n+\t\t\t\tt.Fatalf(\"command deadline: %v; stdout: %q; stderr: %q\", ctx.Err(), stdout.String(), stderr.String())\n+\t\t\t}\n+\t\t\tif tc.errorKey != \"\" {\n+\t\t\t\tvar exitErr *exec.ExitError\n+\t\t\t\tif !errors.As(err, &exitErr) || exitErr.ExitCode() != 2 {\n+\t\t\t\t\tt.Fatalf(\"command error = %v; want exit 2; stderr: %q\", err, stderr.String())\n+\t\t\t\t}\n+\t\t\t\tif stdout.Len() != 0 {\n+\t\t\t\t\tt.Errorf(\"stdout = %q; want empty on failure\", stdout.String())\n+\t\t\t\t}\n+\t\t\t\tassertDiagnostic(t, stderr.String(), tc)\n+\t\t\t\treturn\n+\t\t\t}\n+\t\t\tif err != nil {\n+\t\t\t\tt.Fatalf(\"command: %v; stderr: %q\", err, stderr.String())\n+\t\t\t}\n+\t\t\tif stderr.Len() != 0 {\n+\t\t\t\tt.Errorf(\"stderr = %q; want empty on success\", stderr.String())\n+\t\t\t}\n+\t\t\tassertConfigJSON(t, stdout.Bytes(), tc.want)\n+\t\t})\n+\t\tassertEnvironment(t, parent)\n+\t}\n+}\n+\n+func setEnvironment(t *testing.T, values map[string]string) {\n+\tt.Helper()\n+\tfor _, key := range []string{\"INDEXER_ENDPOINT\", \"INDEXER_MODE\"} {\n+\t\tvalue, present := values[key]\n+\t\t// Register restoration before unsetting, including on a setup failure.\n+\t\tt.Setenv(key, value)\n+\t\tif !present {\n+\t\t\tif err := os.Unsetenv(key); err != nil {\n+\t\t\t\tt.Fatalf(\"unset %s: %v\", key, err)\n+\t\t\t}\n+\t\t}\n+\t}\n+}\n+\n+type envValue struct {\n+\tvalue   string\n+\tpresent bool\n+}\n+\n+func currentEnvironment() map[string]envValue {\n+\tvalues := make(map[string]envValue)\n+\tfor _, key := range []string{\"INDEXER_ENDPOINT\", \"INDEXER_MODE\"} {\n+\t\tvalue, present := os.LookupEnv(key)\n+\t\tvalues[key] = envValue{value: value, present: present}\n+\t}\n+\treturn values\n+}\n+\n+func assertEnvironment(t *testing.T, want map[string]envValue) {\n+\tt.Helper()\n+\tfor key, expected := range want {\n+\t\tvalue, present := os.LookupEnv(key)\n+\t\tif got := (envValue{value: value, present: present}); got != expected {\n+\t\t\tt.Errorf(\"environment %s = %#v; want %#v\", key, got, expected)\n+\t\t}\n+\t}\n+}\n+\n+func commandEnvironment(values map[string]string) []string {\n+\tenv := make([]string, 0, len(os.Environ())+len(values))\n+\tfor _, entry := range os.Environ() {\n+\t\tkey, _, _ := strings.Cut(entry, \"=\")\n+\t\t// Environment keys are case-insensitive on Windows.\n+\t\tif strings.EqualFold(key, \"INDEXER_ENDPOINT\") || strings.EqualFold(key, \"INDEXER_MODE\") {\n+\t\t\tcontinue\n+\t\t}\n+\t\tenv = append(env, entry)\n+\t}\n+\tfor key, value := range values {\n+\t\tenv = append(env, key+\"=\"+value)\n+\t}\n+\treturn env\n+}\n+\n+func assertDiagnostic(t *testing.T, diagnostic string, tc configCase) {\n+\tt.Helper()\n+\tif !strings.Contains(diagnostic, tc.errorKey) {\n+\t\tt.Errorf(\"diagnostic = %q; want offending variable %s\", diagnostic, tc.errorKey)\n+\t}\n+\tif value := tc.env[tc.errorKey]; value != \"\" && !strings.Contains(diagnostic, value) {\n+\t\tt.Errorf(\"diagnostic = %q; want offending value %q\", diagnostic, value)\n+\t}\n+}\n+\n+func assertConfigJSON(t *testing.T, output []byte, want showcfg.Config) {\n+\tt.Helper()\n+\tdecoder := json.NewDecoder(bytes.NewReader(output))\n+\tvar got map[string]string\n+\tif err := decoder.Decode(&got); err != nil {\n+\t\tt.Fatalf(\"decode command stdout %q: %v\", output, err)\n+\t}\n+\tendpoint, hasEndpoint := got[\"endpoint\"]\n+\tmode, hasMode := got[\"mode\"]\n+\tif len(got) != 2 || !hasEndpoint || !hasMode || endpoint != want.Endpoint || mode != want.Mode {\n+\t\tt.Errorf(\"command JSON = %#v; want lowercase endpoint %q and mode %q only\", got, want.Endpoint, want.Mode)\n+\t}\n+\tif trailing := string(output[decoder.InputOffset():]); trailing != \"\\n\" {\n+\t\tt.Errorf(\"bytes after Config JSON = %q; want exactly one newline\", trailing)\n \t}\n }\n",
+    "stderr": "",
+    "exit": 1,
+    "seconds": 0.006338707986287773
+  },
+  {
+    "name": "contracts-numbered",
+    "command": [
+      "rtk",
+      "proxy",
+      "nl",
+      "-ba",
+      "/private/tmp/go-independent-review-2ngscywp/candidate/README.md"
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp",
+    "stdout": "     1\t# Configuration test work\n     2\t\n     3\t`Config` has exported string fields Endpoint and Mode, serialized as lowercase\n     4\t`endpoint` and `mode`. `LoadFromEnv() (Config, error)` reads INDEXER_ENDPOINT\n     5\tand INDEXER_MODE. Unset variables default to `http://127.0.0.1:9090` and `read`.\n     6\tAn explicitly supplied endpoint must have an HTTP/HTTPS scheme and a host;\n     7\tan explicitly supplied mode must be exactly `read` or `write`. Empty supplied\n     8\tvalues are invalid. On failure the result is the zero Config and a useful error.\n     9\t\n    10\t`cmd/showcfg` prints exactly one Config JSON value followed by newline on\n    11\tsuccess, with exit 0 and empty stderr. Failure exits 2 with a useful stderr\n    12\tdiagnostic and no stdout. The implementation already supports this behavior.\n    13\tExtend reliable tests for defaults, supplied and malformed values, parent\n    14\tenvironment preservation, and the actual command boundary. Do not depend on\n    15\tthe invoking shell's configuration or leave test process state changed.\n    16\tKeep public API, standard-library dependencies and Go 1.22 minimum unchanged.\n",
+    "stderr": "",
+    "exit": 0,
+    "seconds": 0.005042125005275011
+  },
+  {
+    "name": "production-numbered",
+    "command": [
+      "rtk",
+      "proxy",
+      "nl",
+      "-ba",
+      "/private/tmp/go-independent-review-2ngscywp/candidate/config.go"
+    ],
+    "cwd": "/private/tmp/go-independent-review-2ngscywp",
+    "stdout": "     1\tpackage showcfg\n     2\t\n     3\timport (\n     4\t\t\"fmt\"\n     5\t\t\"net/url\"\n     6\t\t\"os\"\n     7\t)\n     8\t\n     9\ttype Config struct {\n    10\t\tEndpoint string `json:\"endpoint\"`\n    11\t\tMode     string `json:\"mode\"`\n    12\t}\n    13\t\n    14\t// LoadFromEnv reads configuration from the current process environment.\n    15\tfunc LoadFromEnv() (Config, error) {\n    16\t\tendpoint, present := os.LookupEnv(\"INDEXER_ENDPOINT\")\n    17\t\tif !present {\n    18\t\t\tendpoint = \"http://127.0.0.1:9090\"\n    19\t\t}\n    20\t\tu, err := url.Parse(endpoint)\n    21\t\tif err != nil || u.Host == \"\" || (u.Scheme != \"http\" && u.Scheme != \"https\") {\n    22\t\t\treturn Config{}, fmt.Errorf(\"invalid INDEXER_ENDPOINT %q\", endpoint)\n    23\t\t}\n    24\t\tmode, present := os.LookupEnv(\"INDEXER_MODE\")\n    25\t\tif !present {\n    26\t\t\tmode = \"read\"\n    27\t\t}\n    28\t\tif mode != \"read\" && mode != \"write\" {\n    29\t\t\treturn Config{}, fmt.Errorf(\"invalid INDEXER_MODE %q\", mode)\n    30\t\t}\n    31\t\treturn Config{Endpoint: endpoint, Mode: mode}, nil\n    32\t}\n",
+    "stderr": "",
+    "exit": 0,
+    "seconds": 0.004823541967198253
+  }
+]

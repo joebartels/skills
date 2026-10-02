@@ -1,0 +1,88 @@
+{
+  "semantic_id": "mirror-direct-truncate",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "642642d0c04d9e4a43f400f4e272427e02d360ebf789d218fedfda3102b4e7f8",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-howxg9_w/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.222s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.461
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/mutations/mirror-direct-truncate/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-howxg9_w/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.014
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-howxg9_w/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.200s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.441
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-howxg9_w/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshReplacesSnapshotWithoutTruncatingOldHandle (0.00s)\n    refresh_unix_test.go:42: already-open snapshot = \"[{\\\"code\\\":\\\"new\\\",\\\"label\\\":\\\"New\\\"}]\", want \"old snapshot with exact bytes\\n\"\n--- FAIL: TestRefreshPartialWriteFailureRetainsPreviousSnapshot (0.01s)\n    refresh_unix_test.go:99: snapshot = \"[{\\\"code\\\":\\\"new\\\",\\\"label\\\":\\\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", want \"accepted snapshot\\n\"\nFAIL\nFAIL\texample.com/mirror\t0.176s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.365
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "Direct write changes the pre-opened old handle and corrupts accepted bytes under a partial failed write.",
+  "execution_permission": "approved local loopback evaluation outside restricted sandbox"
+}

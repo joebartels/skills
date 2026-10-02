@@ -1,0 +1,45 @@
+{
+  "checks": [
+    {
+      "name": "race suite",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "f8b0ce",
+        "wall_time_seconds": 1.002356334,
+        "session_id": 42134,
+        "original_token_count": 517,
+        "output": "=== RUN   TestInvalidIntervalHasNoEffects\n=== RUN   TestInvalidIntervalHasNoEffects/0s\n=== RUN   TestInvalidIntervalHasNoEffects/-1ns\n--- PASS: TestInvalidIntervalHasNoEffects (0.00s)\n    --- PASS: TestInvalidIntervalHasNoEffects/0s (0.00s)\n    --- PASS: TestInvalidIntervalHasNoEffects/-1ns (0.00s)\n=== RUN   TestAlreadyCanceledSkipsSweepAndReleases\n--- PASS: TestAlreadyCanceledSkipsSweepAndReleases (0.00s)\n=== RUN   TestImmediateSweepAndCancellationDuringInterval\n--- PASS: TestImmediateSweepAndCancellationDuringInterval (0.00s)\n=== RUN   TestSuccessfulCyclesWaitAfterCompletionAndNeverOverlap\n--- PASS: TestSuccessfulCyclesWaitAfterCompletionAndNeverOverlap (0.24s)\n=== RUN   TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn\n=== RUN   TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/normal_cancellation\n=== RUN   TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/callback_error_during_cancellation\n--- PASS: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn (0.06s)\n    --- PASS: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/normal_cancellation (0.03s)\n    --- PASS: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/callback_error_during_cancellation (0.03s)\n=== RUN   TestWorkerAndReleaseErrorCombinations\n=== RUN   TestWorkerAndReleaseErrorCombinations/normal_cancellation\n=== RUN   TestWorkerAndReleaseErrorCombinations/sweep_failure_releases\n=== RUN   TestWorkerAndReleaseErrorCombinations/release_failure_after_cancellation\n=== RUN   TestWorkerAndReleaseErrorCombinations/both_fail\n--- PASS: TestWorkerAndReleaseErrorCombinations (0.00s)\n    --- PASS: TestWorkerAndReleaseErrorCombinations/normal_cancellation (0.00s)\n    --- PASS: TestWorkerAndReleaseErrorCombinations/sweep_failure_releases (0.00s)\n    --- PASS: TestWorkerAndReleaseErrorCombinations/release_failure_after_cancellation (0.00s)\n    --- PASS: TestWorkerAndReleaseErrorCombinations/both_fail (0.00s)\n=== RUN   TestRunWaitsForReleaseBeforeReturning\n--- PASS: TestRunWaitsForReleaseBeforeReturning (0.00s)\nPASS\n"
+      }
+    },
+    {
+      "name": "vet",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "90653b",
+        "wall_time_seconds": 0.000005875,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    },
+    {
+      "name": "tool availability",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "46843d",
+        "wall_time_seconds": 0.000009167,
+        "exit_code": 0,
+        "original_token_count": 9,
+        "output": "go version go1.26.5 darwin/arm64\n"
+      }
+    }
+  ],
+  "race_completion": {
+    "chunk_id": "fdcf8b",
+    "wall_time_seconds": 0.000004459,
+    "exit_code": 0,
+    "original_token_count": 8,
+    "output": "ok  \texample.com/sweeper\t1.499s\n"
+  },
+  "note": "Initial exec results combine stdout/stderr. Final checks.json uses separate stdout/stderr and finite subprocess deadlines."
+}

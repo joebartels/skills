@@ -1,0 +1,86 @@
+{
+  "semantic_id": "direct-snapshot-truncation",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "f97d40e406c40b7aa54fdcd5cc772d22b9fe3d4e94eeeaec8fa3af1355d3f154",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-5t9zw1_8/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.381s\nok  \texample.com/indexer/cmd/indexer\t0.885s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.157
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-final/both/mutations/direct-snapshot-truncation/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-5t9zw1_8/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-5t9zw1_8/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.206s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.576s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.83
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-5t9zw1_8/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshPOSIXSnapshot (0.00s)\n    refresh_test.go:195: old reader = \"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"new\\\"}]\\n\", <nil>\nFAIL\nFAIL\texample.com/indexer\t0.344s\nok  \texample.com/indexer/cmd/indexer\t0.801s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.999
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

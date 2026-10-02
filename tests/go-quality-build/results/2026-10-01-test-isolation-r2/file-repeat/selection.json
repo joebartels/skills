@@ -1,0 +1,50 @@
+{
+  "offered_names": [
+    "go-api-contracts",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries",
+    "go-test-isolation"
+  ],
+  "selection_decisions": [
+    {
+      "name": "go-api-contracts",
+      "opened": false,
+      "reason": "The task changes tests only; the established exported API and supported contracts remain unchanged."
+    },
+    {
+      "name": "go-core-style",
+      "opened": true,
+      "reason": "Writing Go tests requires idiomatic naming, formatting, error handling and concurrency ownership."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "opened": false,
+      "reason": "No interface, concrete dependency, constructor, options API or production resource lifecycle changes are needed. Test fixture lifetime is covered by go-test-isolation."
+    },
+    {
+      "name": "go-package-boundaries",
+      "opened": false,
+      "reason": "The tests remain in the existing external test package; package responsibilities and import ownership do not change."
+    },
+    {
+      "name": "go-test-isolation",
+      "opened": true,
+      "reason": "The task explicitly involves real files, parent-owned fixtures, grouped parallel children, repeated replacements and focused child selection."
+    }
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-fresh-author-txf1lez2/task-6/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-fresh-author-txf1lez2/task-6/guidance/go-test-isolation/SKILL.md"
+  ],
+  "opened_reference_paths": [
+    "/private/tmp/go-fresh-author-txf1lez2/task-6/guidance/go-test-isolation/references/isolation-patterns.md"
+  ],
+  "opened_task_paths": [
+    "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r2/file-repeat/dispatch.txt",
+    "/private/tmp/go-fresh-author-txf1lez2/task-6/module/README.md",
+    "/private/tmp/go-fresh-author-txf1lez2/task-6/module/go.mod",
+    "/private/tmp/go-fresh-author-txf1lez2/task-6/module/store.go",
+    "/private/tmp/go-fresh-author-txf1lez2/task-6/module/store_test.go"
+  ]
+}

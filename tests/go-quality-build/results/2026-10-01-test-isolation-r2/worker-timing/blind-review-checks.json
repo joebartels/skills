@@ -1,0 +1,365 @@
+{
+  "changeset": "/private/tmp/go-independent-review-85l0o0s_/changeset-1",
+  "environment": {
+    "GOCACHE": "/private/tmp/go-quality-testing-cache",
+    "GOTOOLCHAIN": "local",
+    "GOPROXY": "off"
+  },
+  "checks": [
+    {
+      "label": "toolchain",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/verification",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:56:03.643392+00:00",
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 60
+    },
+    {
+      "label": "platform_and_cgo",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "env",
+        "GOOS",
+        "GOARCH",
+        "CGO_ENABLED",
+        "GOVERSION",
+        "GOMOD"
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/verification",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:56:03.653385+00:00",
+      "stdout": "darwin\narm64\n1\ngo1.26.5\n/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/verification/go.mod\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 60
+    },
+    {
+      "label": "supplied_diff",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "diff",
+        "-ru",
+        "/private/tmp/go-independent-review-85l0o0s_/changeset-1/original",
+        "/private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate"
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-1",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:56:03.663605+00:00",
+      "stdout": "diff -ru /private/tmp/go-independent-review-85l0o0s_/changeset-1/original/poll_test.go /private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate/poll_test.go\n--- /private/tmp/go-independent-review-85l0o0s_/changeset-1/original/poll_test.go\t2026-10-01 19:05:22\n+++ /private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate/poll_test.go\t2026-10-01 21:44:27\n@@ -3,33 +3,440 @@\n import (\n \t\"context\"\n \t\"errors\"\n+\t\"os\"\n+\t\"sync\"\n+\t\"sync/atomic\"\n \t\"testing\"\n \t\"time\"\n \n \t\"example.com/poller\"\n )\n \n+// Bounds diagnose stalled work; callback events establish readiness.\n+const waitLimit = 5 * time.Second\n+\n+type pollRun struct {\n+\tfinished chan struct{}\n+\terr      error // Read only after finished closes.\n+}\n+\n+func startPoll(t *testing.T, ctx context.Context, cancel context.CancelFunc, interval time.Duration, callback func(context.Context) error) *pollRun {\n+\tt.Helper()\n+\trun := &pollRun{finished: make(chan struct{})}\n+\t// Own cancellation and joining before starting work or making assertions.\n+\tt.Cleanup(func() {\n+\t\tcancel()\n+\t\ttimer := time.NewTimer(waitLimit)\n+\t\tdefer timer.Stop()\n+\t\tselect {\n+\t\tcase <-run.finished:\n+\t\tcase <-timer.C:\n+\t\t\tt.Error(\"Poll did not finish during cleanup\")\n+\t\t}\n+\t})\n+\tgo func() {\n+\t\trun.err = poller.Poll(ctx, interval, callback)\n+\t\tclose(run.finished)\n+\t}()\n+\treturn run\n+}\n+\n+func (run *pollRun) wait(t *testing.T) error {\n+\tt.Helper()\n+\twaitEvent(t, run.finished, \"Poll completion\")\n+\treturn run.err\n+}\n+\n+func waitEvent(t *testing.T, event <-chan struct{}, name string) {\n+\tt.Helper()\n+\ttimer := time.NewTimer(waitLimit)\n+\tdefer timer.Stop()\n+\tselect {\n+\tcase <-event:\n+\tcase <-timer.C:\n+\t\tt.Fatalf(\"timed out waiting for %s\", name)\n+\t}\n+}\n+\n func TestCancellation(t *testing.T) {\n+\tt.Parallel()\n \tctx, cancel := context.WithCancel(context.Background())\n-\tdefer cancel()\n-\tdone := make(chan error, 1)\n-\tgo func() { done <- poller.Poll(ctx, time.Hour, func(context.Context) error { return nil }) }()\n-\ttime.Sleep(5 * time.Millisecond)\n+\tstarted := make(chan struct{})\n+\tvar calls atomic.Int32\n+\trun := startPoll(t, ctx, cancel, time.Hour, func(context.Context) error {\n+\t\tif calls.Add(1) == 1 {\n+\t\t\tclose(started)\n+\t\t}\n+\t\treturn nil\n+\t})\n+\twaitEvent(t, started, \"first callback\")\n \tcancel()\n+\tif err := run.wait(t); err != nil {\n+\t\tt.Fatalf(\"Poll after cancellation = %v, want nil\", err)\n+\t}\n+\tif got := calls.Load(); got != 1 {\n+\t\tt.Fatalf(\"callback calls = %d, want 1\", got)\n+\t}\n+}\n+\n+func TestCallbackError(t *testing.T) {\n+\tt.Parallel()\n+\twant := errors.New(\"poll failed\")\n+\tctx, cancel := context.WithCancel(context.Background())\n+\trun := startPoll(t, ctx, cancel, time.Hour, func(context.Context) error { return want })\n+\terr := run.wait(t)\n+\tif err != want || !errors.Is(err, want) {\n+\t\tt.Fatalf(\"Poll = %v, want original callback error %v\", err, want)\n+\t}\n+}\n+\n+func TestAlreadyCanceled(t *testing.T) {\n+\tt.Parallel()\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tcancel()\n+\tvar calls atomic.Int32\n+\trun := startPoll(t, ctx, cancel, time.Hour, func(context.Context) error {\n+\t\tcalls.Add(1)\n+\t\treturn nil\n+\t})\n+\tif err := run.wait(t); err != nil {\n+\t\tt.Fatalf(\"Poll with canceled context = %v, want nil\", err)\n+\t}\n+\tif got := calls.Load(); got != 0 {\n+\t\tt.Fatalf(\"callback calls = %d, want 0\", got)\n+\t}\n+}\n+\n+func TestInvalidInterval(t *testing.T) {\n+\tt.Parallel()\n+\tfor _, tc := range []struct {\n+\t\tname     string\n+\t\tinterval time.Duration\n+\t}{\n+\t\t{name: \"zero\", interval: 0},\n+\t\t{name: \"negative\", interval: -time.Second},\n+\t} {\n+\t\tt.Run(tc.name, func(t *testing.T) {\n+\t\t\tt.Parallel()\n+\t\t\tctx, cancel := context.WithCancel(context.Background())\n+\t\t\tvar calls atomic.Int32\n+\t\t\trun := startPoll(t, ctx, cancel, tc.interval, func(context.Context) error {\n+\t\t\t\tcalls.Add(1)\n+\t\t\t\treturn errors.New(\"unexpected callback\")\n+\t\t\t})\n+\t\t\tif err := run.wait(t); err == nil {\n+\t\t\t\tt.Fatal(\"Poll accepted a nonpositive interval\")\n+\t\t\t}\n+\t\t\tif got := calls.Load(); got != 0 {\n+\t\t\t\tt.Fatalf(\"callback calls = %d, want 0\", got)\n+\t\t\t}\n+\t\t})\n+\t}\n+}\n+\n+type cycleEvent struct {\n+\tcycle int32\n+\tat    time.Time\n+}\n+\n+func nextCycle(t *testing.T, events <-chan cycleEvent, name string) cycleEvent {\n+\tt.Helper()\n+\ttimer := time.NewTimer(waitLimit)\n+\tdefer timer.Stop()\n \tselect {\n-\tcase err := <-done:\n+\tcase event := <-events:\n+\t\treturn event\n+\tcase <-timer.C:\n+\t\tt.Fatalf(\"timed out waiting for %s\", name)\n+\t\treturn cycleEvent{}\n+\t}\n+}\n+\n+func TestCompletionRelativeRecurrence(t *testing.T) {\n+\tt.Parallel()\n+\tconst interval = 30 * time.Millisecond\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tstarted := make(chan cycleEvent, 4)\n+\tcompleted := make(chan cycleEvent, 4)\n+\tfirstRelease := make(chan struct{})\n+\tsecondRelease := make(chan struct{})\n+\tvar calls, active atomic.Int32\n+\twant := errors.New(\"three cycles complete\")\n+\trun := startPoll(t, ctx, cancel, interval, func(callbackCtx context.Context) error {\n+\t\tcycle := calls.Add(1)\n+\t\tconcurrent := active.Add(1) != 1\n+\t\tdefer func() {\n+\t\t\tactive.Add(-1)\n+\t\t\t// This final event precedes actual return, conservatively checking\n+\t\t\t// the minimum interval. A release gate is not completion.\n+\t\t\tcompleted <- cycleEvent{cycle: cycle, at: time.Now()}\n+\t\t}()\n+\t\tstarted <- cycleEvent{cycle: cycle, at: time.Now()}\n+\t\tif concurrent {\n+\t\t\treturn errors.New(\"overlapping callbacks\")\n+\t\t}\n+\t\tvar release <-chan struct{}\n+\t\tswitch cycle {\n+\t\tcase 1:\n+\t\t\trelease = firstRelease\n+\t\tcase 2:\n+\t\t\trelease = secondRelease\n+\t\tdefault:\n+\t\t\treturn want\n+\t\t}\n+\t\tselect {\n+\t\tcase <-release:\n+\t\tcase <-callbackCtx.Done():\n+\t\t}\n+\t\treturn nil\n+\t})\n+\n+\tfirst := nextCycle(t, started, \"first callback start\")\n+\tif first.cycle != 1 {\n+\t\tt.Fatalf(\"first cycle = %d, want 1\", first.cycle)\n+\t}\n+\t// Readiness is observed before holding this callback beyond one interval.\n+\thold := time.NewTimer(2 * interval)\n+\tt.Cleanup(func() { hold.Stop() })\n+\tselect {\n+\tcase event := <-started:\n+\t\tt.Fatalf(\"cycle %d started while the first callback was blocked\", event.cycle)\n+\tcase <-hold.C:\n+\t}\n+\tclose(firstRelease)\n+\tfirstDone := nextCycle(t, completed, \"first callback completion\")\n+\tsecond := nextCycle(t, started, \"second callback start\")\n+\tif firstDone.cycle != 1 || second.cycle != 2 {\n+\t\tt.Fatalf(\"completion/start cycles = %d/%d, want 1/2\", firstDone.cycle, second.cycle)\n+\t}\n+\tif elapsed := second.at.Sub(firstDone.at); elapsed < interval {\n+\t\tt.Fatalf(\"second callback started %v after completion, want at least %v\", elapsed, interval)\n+\t}\n+\tclose(secondRelease)\n+\tsecondDone := nextCycle(t, completed, \"second callback completion\")\n+\tthird := nextCycle(t, started, \"third callback start\")\n+\tif secondDone.cycle != 2 || third.cycle != 3 {\n+\t\tt.Fatalf(\"completion/start cycles = %d/%d, want 2/3\", secondDone.cycle, third.cycle)\n+\t}\n+\tif elapsed := third.at.Sub(secondDone.at); elapsed < interval {\n+\t\tt.Fatalf(\"third callback started %v after completion, want at least %v\", elapsed, interval)\n+\t}\n+\tif err := run.wait(t); err != want {\n+\t\tt.Fatalf(\"Poll = %v, want %v\", err, want)\n+\t}\n+\tif got := calls.Load(); got != 3 {\n+\t\tt.Fatalf(\"callback calls = %d, want 3\", got)\n+\t}\n+}\n+\n+func TestCallbackErrorWinsCancellation(t *testing.T) {\n+\tt.Parallel()\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tstarted := make(chan struct{})\n+\twant := errors.New(\"callback failed during cancellation\")\n+\trun := startPoll(t, ctx, cancel, time.Hour, func(callbackCtx context.Context) error {\n+\t\tclose(started)\n+\t\tselect {\n+\t\tcase <-callbackCtx.Done():\n+\t\tcase <-ctx.Done():\n+\t\t}\n+\t\treturn want\n+\t})\n+\twaitEvent(t, started, \"active callback\")\n+\tcancel()\n+\tif err := run.wait(t); err != want {\n+\t\tt.Fatalf(\"Poll = %v, want original callback error %v\", err, want)\n+\t}\n+}\n+\n+func TestFixtureTeardown(t *testing.T) {\n+\tt.Parallel()\n+\tvar fixture *os.File\n+\tvar fixturePath string\n+\tif !t.Run(\"callback_cleanup\", func(t *testing.T) {\n+\t\tvar err error\n+\t\tfixture, err = os.CreateTemp(t.TempDir(), \"callback-\")\n \t\tif err != nil {\n \t\t\tt.Fatal(err)\n \t\t}\n-\tcase <-time.After(time.Second):\n-\t\tt.Fatal(\"Poll did not stop after cancellation\")\n+\t\tfixturePath = fixture.Name()\n+\t\tvar run *pollRun\n+\t\t// LIFO cleanup joins the worker before closing its borrowed fixture.\n+\t\tt.Cleanup(func() {\n+\t\t\tif run != nil {\n+\t\t\t\tselect {\n+\t\t\t\tcase <-run.finished:\n+\t\t\t\tdefault:\n+\t\t\t\t\tt.Error(\"Poll still running; fixture cannot safely close\")\n+\t\t\t\t\treturn\n+\t\t\t\t}\n+\t\t\t}\n+\t\t\tif err := fixture.Close(); err != nil {\n+\t\t\t\tt.Errorf(\"close fixture: %v\", err)\n+\t\t\t}\n+\t\t})\n+\t\ttype contextKey struct{}\n+\t\tctx, cancel := context.WithCancel(context.WithValue(context.Background(), contextKey{}, \"caller\"))\n+\t\tstarted := make(chan struct{})\n+\t\tcleanupStarted := make(chan struct{})\n+\t\treleaseCleanup := make(chan struct{})\n+\t\tvar releaseOnce sync.Once\n+\t\trelease := func() { releaseOnce.Do(func() { close(releaseCleanup) }) }\n+\t\tvar callbackCtx context.Context\n+\t\tvar cleanupErr error\n+\t\trun = startPoll(t, ctx, cancel, time.Hour, func(received context.Context) error {\n+\t\t\tcallbackCtx = received\n+\t\t\tclose(started)\n+\t\t\tselect {\n+\t\t\tcase <-received.Done():\n+\t\t\tcase <-ctx.Done():\n+\t\t\t}\n+\t\t\tclose(cleanupStarted)\n+\t\t\t<-releaseCleanup\n+\t\t\t_, cleanupErr = fixture.WriteString(\"callback cleanup finished\\n\")\n+\t\t\treturn cleanupErr\n+\t\t})\n+\t\t// Open the test gate before cancel/join, including early fatal exits.\n+\t\tt.Cleanup(release)\n+\t\twaitEvent(t, started, \"callback borrowing fixture\")\n+\t\tif callbackCtx != ctx || callbackCtx.Value(contextKey{}) != \"caller\" {\n+\t\t\tt.Fatal(\"callback did not receive the caller's context\")\n+\t\t}\n+\t\tcancel()\n+\t\twaitEvent(t, cleanupStarted, \"callback cleanup\")\n+\t\t// Cleanup is already observed and cannot finish before release.\n+\t\tobservation := time.NewTimer(20 * time.Millisecond)\n+\t\tt.Cleanup(func() { observation.Stop() })\n+\t\tselect {\n+\t\tcase <-run.finished:\n+\t\t\tt.Fatal(\"Poll returned while callback cleanup was blocked\")\n+\t\tcase <-observation.C:\n+\t\t}\n+\t\trelease()\n+\t\tif err := run.wait(t); err != nil {\n+\t\t\tt.Fatalf(\"Poll after cancellation = %v, want nil\", err)\n+\t\t}\n+\t\tif callbackCtx.Err() != context.Canceled {\n+\t\t\tt.Fatalf(\"callback context error = %v, want cancellation\", callbackCtx.Err())\n+\t\t}\n+\t\tif cleanupErr != nil {\n+\t\t\tt.Fatalf(\"callback fixture cleanup: %v\", cleanupErr)\n+\t\t}\n+\t\tif _, err := fixture.Stat(); err != nil {\n+\t\t\tt.Fatalf(\"caller fixture closed before owner teardown: %v\", err)\n+\t\t}\n+\t\tdata, err := os.ReadFile(fixturePath)\n+\t\tif err != nil {\n+\t\t\tt.Fatal(err)\n+\t\t}\n+\t\tif string(data) != \"callback cleanup finished\\n\" {\n+\t\t\tt.Fatalf(\"fixture data = %q, want callback cleanup output\", data)\n+\t\t}\n+\t}) {\n+\t\treturn\n \t}\n+\tif _, err := fixture.Stat(); !errors.Is(err, os.ErrClosed) {\n+\t\tt.Fatalf(\"fixture after owner cleanup = %v, want closed\", err)\n+\t}\n+\tif _, err := os.Stat(fixturePath); !errors.Is(err, os.ErrNotExist) {\n+\t\tt.Fatalf(\"fixture path after owner cleanup = %v, want removed\", err)\n+\t}\n }\n \n-func TestCallbackError(t *testing.T) {\n-\twant := errors.New(\"poll failed\")\n-\terr := poller.Poll(context.Background(), time.Hour, func(context.Context) error { return want })\n-\tif !errors.Is(err, want) {\n-\t\tt.Fatalf(\"Poll = %v, want callback cause\", err)\n+func TestIndependentInvocations(t *testing.T) {\n+\tt.Parallel()\n+\tfirstCtx, cancelFirst := context.WithCancel(context.Background())\n+\tsecondCtx, cancelSecond := context.WithCancel(context.Background())\n+\tfirstStarted := make(chan struct{})\n+\tsecondStarted := make(chan struct{})\n+\tsecondRelease := make(chan struct{})\n+\twant := errors.New(\"second invocation complete\")\n+\tfirst := startPoll(t, firstCtx, cancelFirst, time.Hour, func(context.Context) error {\n+\t\tclose(firstStarted)\n+\t\t<-firstCtx.Done()\n+\t\treturn nil\n+\t})\n+\tsecond := startPoll(t, secondCtx, cancelSecond, time.Hour, func(context.Context) error {\n+\t\tclose(secondStarted)\n+\t\tselect {\n+\t\tcase <-secondRelease:\n+\t\t\treturn want\n+\t\tcase <-secondCtx.Done():\n+\t\t\treturn nil\n+\t\t}\n+\t})\n+\twaitEvent(t, firstStarted, \"first invocation\")\n+\twaitEvent(t, secondStarted, \"second invocation\")\n+\tcancelFirst()\n+\tif err := first.wait(t); err != nil {\n+\t\tt.Fatalf(\"first Poll = %v, want nil\", err)\n+\t}\n+\tobservation := time.NewTimer(20 * time.Millisecond)\n+\tt.Cleanup(func() { observation.Stop() })\n+\tselect {\n+\tcase <-second.finished:\n+\t\tt.Fatal(\"second Poll stopped when the first invocation was canceled\")\n+\tcase <-observation.C:\n+\t}\n+\tclose(secondRelease)\n+\tif err := second.wait(t); err != want {\n+\t\tt.Fatalf(\"second Poll = %v, want its callback error %v\", err, want)\n+\t}\n+\tif err := secondCtx.Err(); err != nil {\n+\t\tt.Fatalf(\"second caller context = %v, want uncanceled\", err)\n+\t}\n+}\n+\n+func TestFixtureCleanupOnReturn(t *testing.T) {\n+\tt.Parallel()\n+\tvar fixture *os.File\n+\tvar path string\n+\tvar callbackErr error\n+\tcleanupFinished := make(chan struct{})\n+\tif !t.Run(\"owned\", func(t *testing.T) {\n+\t\tvar err error\n+\t\tfixture, err = os.CreateTemp(t.TempDir(), \"cleanup-\")\n+\t\tif err != nil {\n+\t\t\tt.Fatal(err)\n+\t\t}\n+\t\tpath = fixture.Name()\n+\t\tvar run *pollRun\n+\t\tt.Cleanup(func() {\n+\t\t\tif run != nil {\n+\t\t\t\tselect {\n+\t\t\t\tcase <-run.finished:\n+\t\t\t\tdefault:\n+\t\t\t\t\tt.Error(\"Poll still running; fixture cannot safely close\")\n+\t\t\t\t\treturn\n+\t\t\t\t}\n+\t\t\t}\n+\t\t\tif err := fixture.Close(); err != nil {\n+\t\t\t\tt.Errorf(\"close fixture: %v\", err)\n+\t\t\t}\n+\t\t})\n+\t\tctx, cancel := context.WithCancel(context.Background())\n+\t\tstarted := make(chan struct{})\n+\t\trun = startPoll(t, ctx, cancel, time.Hour, func(context.Context) error {\n+\t\t\tclose(started)\n+\t\t\t<-ctx.Done()\n+\t\t\t_, callbackErr = fixture.WriteString(\"teardown used the open fixture\\n\")\n+\t\t\tclose(cleanupFinished)\n+\t\t\treturn callbackErr\n+\t\t})\n+\t\twaitEvent(t, started, \"callback borrowing fixture\")\n+\t\t// Return with the callback active. Cleanup itself must cancel and join\n+\t\t// it before closing the file or removing its directory.\n+\t}) {\n+\t\treturn\n+\t}\n+\twaitEvent(t, cleanupFinished, \"callback cleanup during subtest teardown\")\n+\tif callbackErr != nil {\n+\t\tt.Fatalf(\"callback cleanup could not use its fixture: %v\", callbackErr)\n+\t}\n+\tif _, err := fixture.Stat(); !errors.Is(err, os.ErrClosed) {\n+\t\tt.Fatalf(\"fixture after teardown = %v, want closed\", err)\n+\t}\n+\tif _, err := os.Stat(path); !errors.Is(err, os.ErrNotExist) {\n+\t\tt.Fatalf(\"fixture path after teardown = %v, want removed\", err)\n \t}\n }\n",
+      "stderr": "",
+      "exit_code": 1,
+      "timeout_seconds": 60
+    },
+    {
+      "label": "candidate_tests",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/verification",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:56:03.671522+00:00",
+      "stdout": "ok  \texample.com/poller\t0.457s\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 60
+    },
+    {
+      "label": "race_repeated_shuffled",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-race",
+        "-count=20",
+        "-shuffle=on",
+        "-timeout=45s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/verification",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:56:04.298765+00:00",
+      "stdout": "ok  \texample.com/poller\t3.705s\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 60
+    },
+    {
+      "label": "mutation_start_relative_timer",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-count=1",
+        "-run=^TestCompletionRelativeRecurrence$",
+        "-timeout=20s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/mutation-start_relative_timer",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:57:55.337000+00:00",
+      "stdout": "--- FAIL: TestCompletionRelativeRecurrence (0.06s)\n    poll_test.go:213: second callback started 5.416\u00b5s after completion, want at least 30ms\nFAIL\nFAIL\texample.com/poller\t0.388s\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "timeout_seconds": 30
+    },
+    {
+      "label": "mutation_cancellation_swallows_error",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-count=1",
+        "-run=^TestCallbackErrorWinsCancellation$",
+        "-timeout=20s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/mutation-cancellation_swallows_error",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:57:55.906824+00:00",
+      "stdout": "--- FAIL: TestCallbackErrorWinsCancellation (0.00s)\n    poll_test.go:248: Poll = <nil>, want original callback error callback failed during cancellation\nFAIL\nFAIL\texample.com/poller\t0.141s\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "timeout_seconds": 30
+    },
+    {
+      "label": "mutation_return_before_callback_cleanup",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-count=1",
+        "-run=^TestFixtureTeardown$",
+        "-timeout=20s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/mutation-return_before_callback_cleanup",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:57:56.198607+00:00",
+      "stdout": "--- FAIL: TestFixtureTeardown (0.00s)\n    --- FAIL: TestFixtureTeardown/callback_cleanup (0.00s)\n        poll_test.go:312: Poll returned while callback cleanup was blocked\nFAIL\nFAIL\texample.com/poller\t0.173s\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "timeout_seconds": 30
+    },
+    {
+      "label": "mutation_shared_invocation_lock",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-count=1",
+        "-run=^TestIndependentInvocations$",
+        "-timeout=25s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/mutation-shared_invocation_lock",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:57:56.526694+00:00",
+      "stdout": "--- FAIL: TestIndependentInvocations (10.00s)\n    poll_test.go:369: timed out waiting for second invocation\n    poll_test.go:34: Poll did not finish during cleanup\nFAIL\nFAIL\texample.com/poller\t10.173s\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "timeout_seconds": 35
+    },
+    {
+      "label": "mutation_fixture_close_before_join",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-count=1",
+        "-run=^TestFixtureCleanupOnReturn$",
+        "-timeout=20s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/mutation-fixture_close_before_join",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:58:06.864398+00:00",
+      "stdout": "--- FAIL: TestFixtureCleanupOnReturn (0.00s)\n    --- FAIL: TestFixtureCleanupOnReturn/owned (0.00s)\n        poll_test.go:419: Poll still running; fixture cannot safely close\nFAIL\nFAIL\texample.com/poller\t0.184s\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "timeout_seconds": 30
+    },
+    {
+      "label": "effective_minimum_standard_library_check",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "-stdversion",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/verification",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:58:47.187544+00:00",
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 60
+    }
+  ],
+  "operations": [
+    {
+      "kind": "disposable_copy",
+      "source": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate",
+      "destination": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/verification"
+    },
+    {
+      "kind": "disposable_copy",
+      "source": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate",
+      "destination": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/mutation-start_relative_timer"
+    },
+    {
+      "kind": "mutation",
+      "name": "start_relative_timer",
+      "path": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/mutation-start_relative_timer/poll.go",
+      "old": "\t\tif err := callback(ctx); err != nil {\n\t\t\treturn err\n\t\t}\n\t\ttimer := time.NewTimer(interval)",
+      "new": "\t\ttimer := time.NewTimer(interval)\n\t\tif err := callback(ctx); err != nil {\n\t\t\ttimer.Stop()\n\t\t\treturn err\n\t\t}",
+      "purpose": "^TestCompletionRelativeRecurrence$"
+    },
+    {
+      "kind": "disposable_copy",
+      "source": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate",
+      "destination": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/mutation-cancellation_swallows_error"
+    },
+    {
+      "kind": "mutation",
+      "name": "cancellation_swallows_error",
+      "path": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/mutation-cancellation_swallows_error/poll.go",
+      "old": "\t\tif err := callback(ctx); err != nil {\n\t\t\treturn err\n\t\t}",
+      "new": "\t\tif err := callback(ctx); err != nil {\n\t\t\tif ctx.Err() != nil { return nil }\n\t\t\treturn err\n\t\t}",
+      "purpose": "^TestCallbackErrorWinsCancellation$"
+    },
+    {
+      "kind": "disposable_copy",
+      "source": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate",
+      "destination": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/mutation-return_before_callback_cleanup"
+    },
+    {
+      "kind": "mutation",
+      "name": "return_before_callback_cleanup",
+      "path": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/mutation-return_before_callback_cleanup/poll.go",
+      "old": "\t\tif err := callback(ctx); err != nil {\n\t\t\treturn err\n\t\t}",
+      "new": "\t\tcallbackDone := make(chan error, 1)\n\t\tgo func() { callbackDone <- callback(ctx) }()\n\t\tselect {\n\t\tcase <-ctx.Done(): return nil\n\t\tcase err := <-callbackDone:\n\t\t\tif err != nil { return err }\n\t\t}",
+      "purpose": "^TestFixtureTeardown$"
+    },
+    {
+      "kind": "disposable_copy",
+      "source": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate",
+      "destination": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/mutation-shared_invocation_lock"
+    },
+    {
+      "kind": "mutation",
+      "name": "shared_invocation_lock",
+      "path": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/mutation-shared_invocation_lock/poll.go",
+      "purpose": "serialize independent Poll invocations with a process-wide mutex"
+    },
+    {
+      "kind": "disposable_copy",
+      "source": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate",
+      "destination": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/mutation-fixture_close_before_join"
+    },
+    {
+      "kind": "mutation",
+      "name": "fixture_close_before_join",
+      "path": "/private/tmp/go-independent-review-85l0o0s_/changeset-1/output/mutation-fixture_close_before_join/poll_test.go",
+      "purpose": "reverse cleanup registration order so fixture-close runs before cancel-and-join"
+    }
+  ],
+  "source_hashes": {
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-1/original/README.md": "a8b458db577e2c868a7923297f6e9b87c546164f2e18f9bc78d34a05f3599181",
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-1/original/go.mod": "a7aa1456ec43a9e34590246526baefddcb794ce46b06e2e893147f769899738d",
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-1/original/poll.go": "cac1ee3ceb250f0c8b9d800ec2f55277b11d0a614e51086f151b64a2c4cad491",
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-1/original/poll_test.go": "99f20687d301daa8e80e3b749b474570398c588b7eb6f88fd05cec1e73b3af7d",
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate/README.md": "a8b458db577e2c868a7923297f6e9b87c546164f2e18f9bc78d34a05f3599181",
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate/go.mod": "a7aa1456ec43a9e34590246526baefddcb794ce46b06e2e893147f769899738d",
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate/poll.go": "cac1ee3ceb250f0c8b9d800ec2f55277b11d0a614e51086f151b64a2c4cad491",
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate/poll_test.go": "e51a1b0bd348f99bd4b6c90355339f2fffa397427b3c4257edc4659949233430"
+  },
+  "source_integrity": {
+    "match": true,
+    "actual_sha256": {
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-1/original/README.md": "a8b458db577e2c868a7923297f6e9b87c546164f2e18f9bc78d34a05f3599181",
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-1/original/go.mod": "a7aa1456ec43a9e34590246526baefddcb794ce46b06e2e893147f769899738d",
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-1/original/poll.go": "cac1ee3ceb250f0c8b9d800ec2f55277b11d0a614e51086f151b64a2c4cad491",
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-1/original/poll_test.go": "99f20687d301daa8e80e3b749b474570398c588b7eb6f88fd05cec1e73b3af7d",
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate/README.md": "a8b458db577e2c868a7923297f6e9b87c546164f2e18f9bc78d34a05f3599181",
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate/go.mod": "a7aa1456ec43a9e34590246526baefddcb794ce46b06e2e893147f769899738d",
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate/poll.go": "cac1ee3ceb250f0c8b9d800ec2f55277b11d0a614e51086f151b64a2c4cad491",
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-1/candidate/poll_test.go": "e51a1b0bd348f99bd4b6c90355339f2fffa397427b3c4257edc4659949233430"
+    }
+  }
+}

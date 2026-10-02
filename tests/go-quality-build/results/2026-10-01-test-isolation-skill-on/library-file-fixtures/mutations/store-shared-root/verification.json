@@ -1,0 +1,105 @@
+{
+  "semantic_id": "store-shared-root",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "7884626be81007d8ff7d6483349ad7165cf5e0a1758c76193f40daaa73e99ad2",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-shcjfoah/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.179s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.328
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/library-file-fixtures/mutations/store-shared-root/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-shcjfoah/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-shcjfoah/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.168s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.328
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-shcjfoah/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    --- FAIL: TestStoreIndependentInstances/instances (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/initial (0.00s)\n                store_test.go:72: Get = \"\"; want \"alpha initial longer value\"\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/shorter (0.00s)\n                store_test.go:72: Get = \"\"; want \"alpha\"\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\n                store_test.go:72: Get = \"\"; want \"alpha replacement\"\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/repeat (0.00s)\n                store_test.go:72: Get = \"beta replacementt\"; want \"alpha replacement\"\n        --- FAIL: TestStoreIndependentInstances/instances/gamma (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/initial (0.00s)\n                store_test.go:72: Get = \"beta initial longer value\"; want \"gamma initial longer value\"\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/shorter (0.00s)\n                store_test.go:72: Get = \"\"; want \"gamma\"\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/replacement (0.00s)\n                store_test.go:72: Get = \"beta replacementt\"; want \"gamma replacement\"\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/repeat (0.00s)\n                store_test.go:72: Get = \"beta replacement\"; want \"gamma replacement\"\n        --- FAIL: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/beta/initial (0.00s)\n                store_test.go:72: Get = \"\"; want \"beta initial longer value\"\n            --- FAIL: TestStoreIndependentInstances/instances/beta/shorter (0.00s)\n                store_test.go:72: Get = \"\"; want \"beta\"\n            --- FAIL: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\n                store_test.go:72: Get = \"beta replacementt\"; want \"beta replacement\"\n    store_test.go:91: alpha persisted Get = \"beta replacement\"; want \"alpha replacement\"\n    store_test.go:91: gamma persisted Get = \"beta replacement\"; want \"gamma replacement\"\nFAIL\nFAIL\texample.com/filestore\t0.120s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.238
+  },
+  "classification": "detected by meaningful value assertions",
+  "controller_interpretation": "Cross-root contamination fails distinct child values and final persistence reads; no outer timeout/compile rejection credited.",
+  "single_parallel_slot_check": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-parallel=1",
+      "-timeout=30s",
+      "-run",
+      "^TestStoreIndependentInstances$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-store-serial-mut-6gdm_u3h/module",
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    store_test.go:91: alpha persisted Get = \"beta replacement\"; want \"alpha replacement\"\n    store_test.go:91: gamma persisted Get = \"beta replacement\"; want \"gamma replacement\"\nFAIL\nFAIL\texample.com/filestore\t0.203s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  }
+}

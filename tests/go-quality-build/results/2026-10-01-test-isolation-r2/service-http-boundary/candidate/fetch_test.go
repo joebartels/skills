@@ -1,0 +1,385 @@
+package metadata_test
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"strconv"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"testing"
+	"time"
+
+	"example.com/metadata"
+)
+
+// These bounds diagnose stalled work; readiness is always signaled by events.
+const waitLimit = 10 * time.Second
+
+type roundTrip func(*http.Request) (*http.Response, error)
+
+func (f roundTrip) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+type trackedBody struct {
+	reader io.Reader
+	closes int
+}
+
+func (b *trackedBody) Read(p []byte) (int, error) {
+	return b.reader.Read(p)
+}
+
+func (b *trackedBody) Close() error {
+	b.closes++
+	return nil
+}
+
+type errorReader struct{ err error }
+
+func (r errorReader) Read([]byte) (int, error) { return 0, r.err }
+
+// The handwritten transport isolates response validation, read errors, and body
+// ownership. It does not simulate HTTP framing or network cancellation.
+func TestFetchResponse(t *testing.T) {
+	t.Parallel()
+	readFailure := errors.New("injected response read failure")
+	cases := []struct {
+		name    string
+		status  int
+		body    string
+		readErr error
+		want    metadata.Metadata
+		wantErr bool
+	}{
+		{name: "success", status: 200, body: `{"name":"first","revision":1}`, want: metadata.Metadata{Name: "first", Revision: 1}},
+		{name: "preserves_name_bytes", status: 200, body: `{"name":" \tBjörk\n ","revision":7}`, want: metadata.Metadata{Name: " \tBjörk\n ", Revision: 7}},
+		{name: "surrounding_json_whitespace", status: 200, body: " \n{\"name\":\"first\",\"revision\":1}\t\n", want: metadata.Metadata{Name: "first", Revision: 1}},
+		{name: "created_status", status: 201, body: `{"name":"first","revision":1}`, wantErr: true},
+		{name: "no_content_status", status: 204, wantErr: true},
+		{name: "redirect_status", status: 302, body: `{"name":"first","revision":1}`, wantErr: true},
+		{name: "client_status", status: 400, body: `{"name":"first","revision":1}`, wantErr: true},
+		{name: "server_status", status: 503, body: `{"name":"first","revision":1}`, wantErr: true},
+		{name: "empty_body", status: 200, wantErr: true},
+		{name: "malformed_json", status: 200, body: `{"name":"first","revision":`, wantErr: true},
+		{name: "null", status: 200, body: `null`, wantErr: true},
+		{name: "array", status: 200, body: `[{"name":"first","revision":1}]`, wantErr: true},
+		{name: "trailing_object", status: 200, body: `{"name":"first","revision":1} {"name":"second","revision":2}`, wantErr: true},
+		{name: "trailing_garbage", status: 200, body: `{"name":"first","revision":1} garbage`, wantErr: true},
+		{name: "missing_name", status: 200, body: `{"revision":1}`, wantErr: true},
+		{name: "empty_name", status: 200, body: `{"name":"","revision":1}`, wantErr: true},
+		{name: "whitespace_name", status: 200, body: `{"name":" \t\n\u2003 ","revision":1}`, wantErr: true},
+		{name: "wrong_name_type", status: 200, body: `{"name":42,"revision":1}`, wantErr: true},
+		{name: "missing_revision", status: 200, body: `{"name":"first"}`, wantErr: true},
+		{name: "zero_revision", status: 200, body: `{"name":"first","revision":0}`, wantErr: true},
+		{name: "negative_revision", status: 200, body: `{"name":"first","revision":-1}`, wantErr: true},
+		{name: "fractional_revision", status: 200, body: `{"name":"first","revision":1.5}`, wantErr: true},
+		{name: "wrong_revision_type", status: 200, body: `{"name":"first","revision":"1"}`, wantErr: true},
+		{name: "read_failure_before_data", status: 200, readErr: readFailure, wantErr: true},
+		{name: "read_failure_after_complete_json", status: 200, body: `{"name":"first","revision":1}`, readErr: readFailure, wantErr: true},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			var reader io.Reader = strings.NewReader(tc.body)
+			if tc.readErr != nil {
+				reader = io.MultiReader(reader, errorReader{tc.readErr})
+			}
+			body := &trackedBody{reader: reader}
+			client := &http.Client{Transport: roundTrip(func(*http.Request) (*http.Response, error) {
+				return &http.Response{StatusCode: tc.status, Body: body}, nil
+			})}
+			got, err := metadata.Fetch(context.Background(), client, "http://example.invalid/catalog")
+			if body.closes != 1 {
+				t.Errorf("response body closed %d times, want 1", body.closes)
+			}
+			if got != tc.want {
+				t.Errorf("Fetch metadata = %#v, want %#v", got, tc.want)
+			}
+			if !tc.wantErr {
+				if err != nil {
+					t.Errorf("Fetch error = %v, want nil", err)
+				}
+				return
+			}
+			if err == nil {
+				t.Fatal("Fetch error = nil, want failure")
+			}
+			if err.Error() == "" {
+				t.Error("Fetch returned an empty error message")
+			}
+			if tc.status != http.StatusOK && !strings.Contains(err.Error(), strconv.Itoa(tc.status)) {
+				t.Errorf("Fetch error %q does not identify HTTP status %d", err, tc.status)
+			}
+			if tc.readErr != nil && !errors.Is(err, tc.readErr) {
+				t.Errorf("Fetch error = %v, want underlying read error %v", err, tc.readErr)
+			}
+		})
+	}
+}
+
+func TestFetchTransportError(t *testing.T) {
+	t.Parallel()
+	wantErr := errors.New("injected transport failure")
+	ctx, cancel := context.WithCancel(context.Background())
+	t.Cleanup(cancel)
+	var request *http.Request
+	calls := 0
+	client := &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
+		request = r
+		calls++
+		return nil, wantErr
+	})}
+	got, err := metadata.Fetch(ctx, client, "http://example.invalid/catalog?revision=1")
+	if got != (metadata.Metadata{}) {
+		t.Errorf("Fetch metadata = %#v, want zero", got)
+	}
+	if !errors.Is(err, wantErr) {
+		t.Errorf("Fetch error = %v, want underlying transport error %v", err, wantErr)
+	}
+	if calls != 1 {
+		t.Fatalf("transport called %d times, want 1", calls)
+	}
+	if request.Context() != ctx {
+		t.Error("request does not carry the supplied context")
+	}
+}
+
+func TestFetchInvalidURL(t *testing.T) {
+	t.Parallel()
+	for _, endpoint := range []string{"://bad", "http://example.invalid/%zz"} {
+		t.Run(endpoint, func(t *testing.T) {
+			t.Parallel()
+			calls := 0
+			client := &http.Client{Transport: roundTrip(func(*http.Request) (*http.Response, error) {
+				calls++
+				return nil, errors.New("unexpected transport call")
+			})}
+			got, err := metadata.Fetch(context.Background(), client, endpoint)
+			if got != (metadata.Metadata{}) || err == nil || err.Error() == "" {
+				t.Errorf("Fetch = %#v, %v; want zero metadata and useful error", got, err)
+			}
+			if calls != 0 {
+				t.Errorf("invalid URL reached transport %d times, want 0", calls)
+			}
+		})
+	}
+}
+
+// A local server and the real HTTP transport verify the request on the wire.
+func TestFetchHTTPRequest(t *testing.T) {
+	t.Parallel()
+	type observation struct {
+		method   string
+		uri      string
+		writeErr error
+	}
+	observed := make(chan observation, 1)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, err := io.WriteString(w, `{"name":" \tBjörk\n ","revision":7}`)
+		observed <- observation{method: r.Method, uri: r.RequestURI, writeErr: err}
+	}))
+	t.Cleanup(server.Close)
+	client := server.Client()
+	t.Cleanup(client.CloseIdleConnections)
+	ctx, cancel := context.WithTimeout(context.Background(), waitLimit)
+	t.Cleanup(cancel)
+	const pathQuery = "/catalog/space%20name?label=a%2Fb&label=c+d&empty="
+	got, err := metadata.Fetch(ctx, client, server.URL+pathQuery)
+	if err != nil {
+		t.Fatalf("Fetch: %v", err)
+	}
+	if want := (metadata.Metadata{Name: " \tBjörk\n ", Revision: 7}); got != want {
+		t.Errorf("Fetch metadata = %#v, want %#v", got, want)
+	}
+	select {
+	case request := <-observed:
+		if request.method != http.MethodGet || request.uri != pathQuery {
+			t.Errorf("wire request = %s %q, want GET %q", request.method, request.uri, pathQuery)
+		}
+		if request.writeErr != nil {
+			t.Errorf("server response write: %v", request.writeErr)
+		}
+	case <-time.After(waitLimit):
+		t.Fatal("server did not report its completed request")
+	}
+}
+
+// This server checks actual client redirect policy: the caller can reject a
+// redirect without following it, and Fetch must report that original status.
+func TestFetchRejectedRedirect(t *testing.T) {
+	t.Parallel()
+	var targetRequests atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/catalog" {
+			http.Redirect(w, r, "/target", http.StatusFound)
+			return
+		}
+		targetRequests.Add(1)
+		_, _ = io.WriteString(w, `{"name":"redirected","revision":1}`)
+	}))
+	t.Cleanup(server.Close)
+	client := server.Client()
+	client.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
+	t.Cleanup(client.CloseIdleConnections)
+	ctx, cancel := context.WithTimeout(context.Background(), waitLimit)
+	t.Cleanup(cancel)
+	got, err := metadata.Fetch(ctx, client, server.URL+"/catalog")
+	if got != (metadata.Metadata{}) || err == nil {
+		t.Fatalf("Fetch = %#v, %v; want zero metadata and redirect status error", got, err)
+	}
+	if !strings.Contains(err.Error(), "302") {
+		t.Errorf("Fetch error %q does not identify original HTTP status 302", err)
+	}
+	if got := targetRequests.Load(); got != 0 {
+		t.Errorf("redirect target received %d requests, want 0", got)
+	}
+}
+
+type signalingBody struct {
+	io.ReadCloser
+	started chan struct{}
+	once    sync.Once
+	closes  atomic.Int32
+}
+
+func (b *signalingBody) Read(p []byte) (int, error) {
+	b.once.Do(func() { close(b.started) })
+	return b.ReadCloser.Read(p)
+}
+
+func (b *signalingBody) Close() error {
+	b.closes.Add(1)
+	return b.ReadCloser.Close()
+}
+
+// Real local sockets carry the request and cancellation. The body wrapper only
+// signals when Fetch starts reading; all reads and closes reach the real body.
+func TestFetchCancellation(t *testing.T) {
+	t.Parallel()
+	for _, tc := range []struct {
+		name      string
+		startBody bool
+	}{
+		{name: "before_headers"},
+		{name: "while_reading_response", startBody: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			handlerStarted := make(chan struct{})
+			handlerFinished := make(chan struct{})
+			handlerResult := make(chan error, 1)
+			release := make(chan struct{})
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				defer close(handlerFinished)
+				close(handlerStarted)
+				if tc.startBody {
+					if _, err := io.WriteString(w, `{"name":"`); err != nil {
+						handlerResult <- fmt.Errorf("write partial response: %w", err)
+						return
+					}
+					w.(http.Flusher).Flush()
+				}
+				select {
+				case <-r.Context().Done():
+					handlerResult <- r.Context().Err()
+				case <-release:
+					handlerResult <- errors.New("handler released before request cancellation")
+				}
+			}))
+			t.Cleanup(server.Close)
+			transport := &http.Transport{}
+			t.Cleanup(transport.CloseIdleConnections)
+			readStarted := make(chan struct{})
+			bodies := make(chan *signalingBody, 1)
+			client := &http.Client{
+				Timeout: waitLimit,
+				Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
+					response, err := transport.RoundTrip(r)
+					if err != nil {
+						return nil, err
+					}
+					body := &signalingBody{ReadCloser: response.Body, started: readStarted}
+					response.Body = body
+					bodies <- body
+					return response, nil
+				}),
+			}
+			ctx, cancel := context.WithCancel(context.Background())
+			type result struct {
+				metadata metadata.Metadata
+				err      error
+			}
+			fetchResult := make(chan result, 1)
+			fetchFinished := make(chan struct{})
+			// Registered before starting the worker or making any assertions. Release
+			// gates, cancel and join work before closing the transport and server.
+			t.Cleanup(func() {
+				close(release)
+				cancel()
+				waitForSignal(t, fetchFinished, "Fetch cleanup")
+				select {
+				case <-handlerStarted:
+					waitForSignal(t, handlerFinished, "handler cleanup")
+				default:
+					// Server.Close joins any handler that starts after this check;
+					// the closed release gate lets that handler finish immediately.
+				}
+			})
+			go func() {
+				defer close(fetchFinished)
+				got, err := metadata.Fetch(ctx, client, server.URL+"/catalog")
+				fetchResult <- result{metadata: got, err: err}
+			}()
+			if !waitForSignal(t, handlerStarted, "HTTP request arrival") {
+				return
+			}
+			if tc.startBody && !waitForSignal(t, readStarted, "response body read start") {
+				return
+			}
+			cancel()
+			if !waitForSignal(t, fetchFinished, "Fetch after caller cancellation") {
+				return
+			}
+			got := <-fetchResult
+			if got.metadata != (metadata.Metadata{}) {
+				t.Errorf("Fetch metadata = %#v, want zero", got.metadata)
+			}
+			if !errors.Is(got.err, context.Canceled) {
+				t.Errorf("Fetch error = %v, want context.Canceled", got.err)
+			}
+			if !waitForSignal(t, handlerFinished, "server request cancellation") {
+				return
+			}
+			if err := <-handlerResult; !errors.Is(err, context.Canceled) {
+				t.Errorf("server request ended with %v, want context.Canceled", err)
+			}
+			if tc.startBody {
+				select {
+				case body := <-bodies:
+					if got := body.closes.Load(); got != 1 {
+						t.Errorf("canceled response body closed %d times, want 1", got)
+					}
+				default:
+					t.Error("Fetch did not acquire a response body")
+				}
+			}
+		})
+	}
+}
+
+func waitForSignal(t *testing.T, done <-chan struct{}, operation string) bool {
+	t.Helper()
+	timer := time.NewTimer(waitLimit)
+	defer timer.Stop()
+	select {
+	case <-done:
+		return true
+	case <-timer.C:
+		t.Errorf("timed out waiting for %s", operation)
+		return false
+	}
+}

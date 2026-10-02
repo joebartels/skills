@@ -1,0 +1,11 @@
+--- a/refresh.go
++++ b/refresh.go
+@@ -47,7 +47,7 @@
+ 		return fmt.Errorf("decode records: trailing data: %w", err)
+ 	}
+ 	for n, record := range records {
+-		if !keyPattern.MatchString(record.Key) || strings.TrimSpace(record.Text) == "" {
++		if !keyPattern.MatchString(record.Key) || strings.TrimSpace(record.Text) == "\x00" {
+ 			return fmt.Errorf("record %d: %w", n+1, ErrInvalidRecord)
+ 		}
+ 	}

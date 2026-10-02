@@ -1,0 +1,78 @@
+--- a/store_test.go
++++ b/store_test.go
+@@ -1,19 +1,14 @@
+ package filestore_test
+ 
+ import (
+-	"os"
++	"fmt"
+ 	"testing"
+ 
+ 	"example.com/filestore"
+ )
+ 
+ func TestStoreSerialChildren(t *testing.T) {
+-	root, err := os.MkdirTemp("", "store-test-")
+-	if err != nil {
+-		t.Fatal(err)
+-	}
+-	defer os.RemoveAll(root)
+-	store := filestore.New(root)
++	store := filestore.New(t.TempDir())
+ 	for _, value := range []string{"first", "replacement"} {
+ 		t.Run(value, func(t *testing.T) {
+ 			if err := store.Put("same-key", value); err != nil {
+@@ -26,3 +21,53 @@
+ 		})
+ 	}
+ }
++
++func TestStoreIndependentInstances(t *testing.T) {
++	t.Parallel()
++	instances := []struct {
++		name   string
++		values []string
++		store  *filestore.Store
++	}{
++		{name: "alpha", values: []string{"alpha", "alpha replacement", "alpha"}},
++		{name: "beta", values: []string{"beta", "beta replacement", "beta"}},
++		{name: "empty", values: []string{"", "line one\nline two\x00", ""}},
++	}
++	for i := range instances {
++		// The parent owns each root so it also survives the final reads below.
++		instances[i].store = filestore.New(t.TempDir())
++	}
++
++	// This group waits for its parallel children before the final reads run.
++	t.Run("instances", func(t *testing.T) {
++		for _, instance := range instances {
++			t.Run(instance.name, func(t *testing.T) {
++				t.Parallel()
++				if _, err := instance.store.Get("same-key"); err == nil {
++					t.Fatal("Get of missing key succeeded")
++				}
++				t.Run("replacements", func(t *testing.T) {
++					for i, value := range instance.values {
++						t.Run(fmt.Sprintf("value-%d", i), func(t *testing.T) {
++							if err := instance.store.Put("same-key", value); err != nil {
++								t.Fatalf("Put = %v", err)
++							}
++							got, err := instance.store.Get("same-key")
++							if err != nil || got != value {
++								t.Fatalf("Get = %q, %v; want %q", got, err, value)
++							}
++						})
++					}
++				})
++			})
++		}
++	})
++
++	for _, instance := range instances {
++		want := instance.values[len(instance.values)-1]
++		got, err := instance.store.Get("same-key")
++		if err != nil || got != want {
++			t.Errorf("%s: final Get = %q, %v; want %q", instance.name, got, err, want)
++		}
++	}
++}

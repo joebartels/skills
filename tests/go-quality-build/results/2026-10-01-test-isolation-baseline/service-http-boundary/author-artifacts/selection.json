@@ -1,0 +1,49 @@
+{
+  "offered_guidance_names": [
+    "go-api-contracts",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries"
+  ],
+  "guidance_decisions": [
+    {
+      "name": "go-api-contracts",
+      "path": "/private/tmp/go-testing-author-y6_tmx1p/guidance/go-api-contracts/SKILL.md",
+      "selected": false,
+      "reason": "The request tests the existing README contract. No exported API, supported wire or error contract, compatibility promise, or migration behavior is created or changed."
+    },
+    {
+      "name": "go-core-style",
+      "path": "/private/tmp/go-testing-author-y6_tmx1p/guidance/go-core-style/SKILL.md",
+      "selected": true,
+      "reason": "Writing Go tests requires idiomatic naming, simple test helpers, errors.Is checks, local fixture state, supported-version choices, and owned goroutine cleanup."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "path": "/private/tmp/go-testing-author-y6_tmx1p/guidance/go-interfaces-and-composition/SKILL.md",
+      "selected": true,
+      "reason": "Test fixtures wire supplied HTTP clients to the existing RoundTripper boundary and decorate a real transport. The tests own servers, transport cleanup, cancellation, and a Fetch goroutine. Guidance informed the existing-boundary choice, response observation, early-failure handling, and stop/join cleanup order. No new production seam was introduced."
+    },
+    {
+      "name": "go-package-boundaries",
+      "path": "/private/tmp/go-testing-author-y6_tmx1p/guidance/go-package-boundaries/SKILL.md",
+      "selected": false,
+      "reason": "The existing metadata production package and external metadata_test package retain their responsibilities and import direction. Only tests and standard-library test fixtures are added; no package is created, moved, split, or merged."
+    }
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-testing-author-y6_tmx1p/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-testing-author-y6_tmx1p/guidance/go-interfaces-and-composition/SKILL.md"
+  ],
+  "opened_reference_paths": [],
+  "opened_task_input_paths": [
+    "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/service-http-boundary/dispatch.txt",
+    "/private/tmp/go-testing-author-y6_tmx1p/service-http-boundary/README.md",
+    "/private/tmp/go-testing-author-y6_tmx1p/service-http-boundary/fetch.go",
+    "/private/tmp/go-testing-author-y6_tmx1p/service-http-boundary/fetch_test.go",
+    "/private/tmp/go-testing-author-y6_tmx1p/service-http-boundary/go.mod"
+  ],
+  "opened_execution_instruction_paths": [
+    "/Users/jb/.codex/RTK.md"
+  ]
+}

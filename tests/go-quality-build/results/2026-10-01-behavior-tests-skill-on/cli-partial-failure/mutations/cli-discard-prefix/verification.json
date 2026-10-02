@@ -1,0 +1,87 @@
+{
+  "semantic_id": "cli-discard-prefix",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "f038bb1ec89c9d98afdfa36553b29387d40a7d6b705568a298da79987961416b",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-km7nzwp4/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t1.140s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.338
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/cli-partial-failure/mutations/cli-discard-prefix/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-km7nzwp4/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-km7nzwp4/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.222s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.379
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-km7nzwp4/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRunStopsAtInvalidRow (0.01s)\n    --- FAIL: TestRunStopsAtInvalidRow/too_few_fields (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/too_many_fields (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/empty_quantity (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/zero_quantity (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/negative_duplicate (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/fractional_quantity (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/nondecimal_quantity (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/space_in_quantity (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/overflow_quantity (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/malformed_CSV (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n--- FAIL: TestRunInputFailureRetainsPrefix (0.00s)\n    main_test.go:122: entries = [], want records map[first:3\n         keep:5\n        ]\n--- FAIL: TestRunPublishesBeforeReadingNextRecord (0.00s)\n    main_test.go:141: first record not published before next read: \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestRunPublishesBeforeReadingNextRecord3020539128/001/first: no such file or directory\n--- FAIL: TestCLIProcessContract (0.74s)\n    --- FAIL: TestCLIProcessContract/invalid_duplicate (0.00s)\n        main_test.go:175: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIProcessContractinvalid_duplicate3868952469/001/records: no such file or directory\n    --- FAIL: TestCLIProcessContract/malformed_CSV_after_prefix (0.00s)\n        main_test.go:175: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIProcessContractmalformed_CSV_after_prefix2308667260/001/records: no such file or directory\nFAIL\nFAIL\texample.com/ledgerload\t1.228s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.341
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "Exact accepted-prefix records are missing; later read begins before immediate publication."
+}

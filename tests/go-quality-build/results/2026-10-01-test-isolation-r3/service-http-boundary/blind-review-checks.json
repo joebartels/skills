@@ -1,0 +1,249 @@
+[
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go version",
+    "cwd": "/private/tmp",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.01
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "CGO_ENABLED"
+    ],
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go env GOOS GOARCH CGO_ENABLED",
+    "cwd": "/private/tmp",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "darwin\narm64\n1\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.009
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "diff",
+      "-ru",
+      "/private/tmp/go-independent-review-q4rd7fh4/changeset-1/original",
+      "/private/tmp/go-independent-review-q4rd7fh4/changeset-1/candidate"
+    ],
+    "command": "rtk proxy diff -ru /private/tmp/go-independent-review-q4rd7fh4/changeset-1/original /private/tmp/go-independent-review-q4rd7fh4/changeset-1/candidate",
+    "cwd": "/private/tmp",
+    "env_overrides": {},
+    "stdout": "diff -ru /private/tmp/go-independent-review-q4rd7fh4/changeset-1/original/fetch_test.go /private/tmp/go-independent-review-q4rd7fh4/changeset-1/candidate/fetch_test.go\n--- /private/tmp/go-independent-review-q4rd7fh4/changeset-1/original/fetch_test.go\t2026-10-01 19:05:22\n+++ /private/tmp/go-independent-review-q4rd7fh4/changeset-1/candidate/fetch_test.go\t2026-10-01 23:24:08\n@@ -2,10 +2,15 @@\n \n import (\n \t\"context\"\n+\t\"errors\"\n \t\"io\"\n \t\"net/http\"\n+\t\"net/http/httptest\"\n+\t\"strconv\"\n \t\"strings\"\n \t\"testing\"\n+\t\"testing/iotest\"\n+\t\"time\"\n \n \t\"example.com/metadata\"\n )\n@@ -14,12 +19,332 @@\n \n func (f roundTrip) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }\n \n-func TestFetchMetadata(t *testing.T) {\n+// These doubles exercise Fetch's supplied-client boundary and body ownership.\n+// They do not establish network behavior; the server tests below do that.\n+type observedBody struct {\n+\tio.Reader\n+\tcloseCalls int\n+}\n+\n+func (b *observedBody) Close() error {\n+\tb.closeCalls++\n+\treturn nil\n+}\n+\n+func TestFetchSuccess(t *testing.T) {\n+\tt.Parallel()\n+\tfor _, test := range []struct {\n+\t\tname string\n+\t\tdata string\n+\t\twant metadata.Metadata\n+\t}{\n+\t\t{\"ordinary\", `{\"name\":\"first\",\"revision\":1}`, metadata.Metadata{Name: \"first\", Revision: 1}},\n+\t\t{\"preserved_name\", `{\"name\":\" \\tfirst\\n \",\"revision\":7}`, metadata.Metadata{Name: \" \\tfirst\\n \", Revision: 7}},\n+\t\t{\"surrounding_whitespace\", \" \\n {\\\"name\\\":\\\"caf\u00e9\\\",\\\"revision\\\":2} \\t\\n\", metadata.Metadata{Name: \"caf\u00e9\", Revision: 2}},\n+\t} {\n+\t\tt.Run(test.name, func(t *testing.T) {\n+\t\t\tt.Parallel()\n+\t\t\ttype contextKey struct{}\n+\t\t\tctx := context.WithValue(context.Background(), contextKey{}, \"caller\")\n+\t\t\tconst endpoint = \"https://example.invalid/catalog/a%2Fb?revision=7&name=a%20b\"\n+\t\t\tbody := &observedBody{Reader: strings.NewReader(test.data)}\n+\t\t\tvar request *http.Request\n+\t\t\tcalls := 0\n+\t\t\tclient := &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {\n+\t\t\t\trequest = r\n+\t\t\t\tcalls++\n+\t\t\t\treturn &http.Response{StatusCode: http.StatusOK, Body: body}, nil\n+\t\t\t})}\n+\t\t\tgot, err := metadata.Fetch(ctx, client, endpoint)\n+\t\t\tif body.closeCalls == 0 {\n+\t\t\t\tt.Error(\"Fetch did not close its response body\")\n+\t\t\t}\n+\t\t\tif err != nil {\n+\t\t\t\tt.Fatalf(\"Fetch: %v\", err)\n+\t\t\t}\n+\t\t\tif got != test.want {\n+\t\t\t\tt.Errorf(\"Fetch = %#v, want %#v\", got, test.want)\n+\t\t\t}\n+\t\t\tif calls != 1 || request == nil {\n+\t\t\t\tt.Fatalf(\"transport calls = %d, want 1\", calls)\n+\t\t\t}\n+\t\t\tif request.Method != http.MethodGet || request.URL.String() != endpoint || request.Body != nil {\n+\t\t\t\tt.Errorf(\"request = %s %s, body %v; want GET %s with no body\", request.Method, request.URL, request.Body, endpoint)\n+\t\t\t}\n+\t\t\tif request.Context().Value(contextKey{}) != \"caller\" {\n+\t\t\t\tt.Error(\"request lost caller context value\")\n+\t\t\t}\n+\t\t})\n+\t}\n+}\n+\n+func TestFetchResponseErrors(t *testing.T) {\n+\tt.Parallel()\n+\tconst valid = `{\"name\":\"first\",\"revision\":1}`\n+\tfor _, test := range []struct {\n+\t\tname   string\n+\t\tstatus int\n+\t\tdata   string\n+\t}{\n+\t\t{\"created\", http.StatusCreated, valid},\n+\t\t{\"no_content\", http.StatusNoContent, valid},\n+\t\t{\"redirect\", http.StatusFound, valid},\n+\t\t{\"not_found\", http.StatusNotFound, valid},\n+\t\t{\"server_error\", http.StatusInternalServerError, valid},\n+\t\t{\"empty\", http.StatusOK, \"\"},\n+\t\t{\"whitespace\", http.StatusOK, \" \\t\\n\"},\n+\t\t{\"malformed\", http.StatusOK, `{\"name\":`},\n+\t\t{\"null\", http.StatusOK, `null`},\n+\t\t{\"array\", http.StatusOK, `[{\"name\":\"first\",\"revision\":1}]`},\n+\t\t{\"scalar\", http.StatusOK, `\"first\"`},\n+\t\t{\"trailing_object\", http.StatusOK, valid + ` {\"name\":\"second\",\"revision\":2}`},\n+\t\t{\"trailing_null\", http.StatusOK, valid + ` null`},\n+\t\t{\"trailing_garbage\", http.StatusOK, valid + ` garbage`},\n+\t\t{\"wrong_name_type\", http.StatusOK, `{\"name\":1,\"revision\":1}`},\n+\t\t{\"wrong_revision_type\", http.StatusOK, `{\"name\":\"first\",\"revision\":\"1\"}`},\n+\t\t{\"fractional_revision\", http.StatusOK, `{\"name\":\"first\",\"revision\":1.5}`},\n+\t\t{\"empty_object\", http.StatusOK, `{}`},\n+\t\t{\"missing_name\", http.StatusOK, `{\"revision\":1}`},\n+\t\t{\"empty_name\", http.StatusOK, `{\"name\":\"\",\"revision\":1}`},\n+\t\t{\"blank_name\", http.StatusOK, `{\"name\":\" \\t\\n\\u2003\",\"revision\":1}`},\n+\t\t{\"null_name\", http.StatusOK, `{\"name\":null,\"revision\":1}`},\n+\t\t{\"missing_revision\", http.StatusOK, `{\"name\":\"first\"}`},\n+\t\t{\"zero_revision\", http.StatusOK, `{\"name\":\"first\",\"revision\":0}`},\n+\t\t{\"negative_revision\", http.StatusOK, `{\"name\":\"first\",\"revision\":-1}`},\n+\t\t{\"null_revision\", http.StatusOK, `{\"name\":\"first\",\"revision\":null}`},\n+\t} {\n+\t\tt.Run(test.name, func(t *testing.T) {\n+\t\t\tt.Parallel()\n+\t\t\tbody := &observedBody{Reader: strings.NewReader(test.data)}\n+\t\t\tclient := &http.Client{Transport: roundTrip(func(*http.Request) (*http.Response, error) {\n+\t\t\t\treturn &http.Response{StatusCode: test.status, Body: body}, nil\n+\t\t\t})}\n+\t\t\tgot, err := metadata.Fetch(context.Background(), client, \"https://example.invalid/catalog\")\n+\t\t\tif body.closeCalls == 0 {\n+\t\t\t\tt.Error(\"Fetch did not close its response body on failure\")\n+\t\t\t}\n+\t\t\tif got != (metadata.Metadata{}) {\n+\t\t\t\tt.Errorf(\"Fetch = %#v, want zero Metadata on failure\", got)\n+\t\t\t}\n+\t\t\tif err == nil || err.Error() == \"\" {\n+\t\t\t\tt.Fatalf(\"Fetch error = %v, want useful error\", err)\n+\t\t\t}\n+\t\t\tif test.status != http.StatusOK && !strings.Contains(err.Error(), strconv.Itoa(test.status)) {\n+\t\t\t\tt.Errorf(\"Fetch error = %v, want status %d\", err, test.status)\n+\t\t\t}\n+\t\t})\n+\t}\n+}\n+\n+func TestFetchReadError(t *testing.T) {\n+\tt.Parallel()\n+\treadErr := errors.New(\"response stream failed\")\n+\t// A complete valid object before the read error must not yield partial success.\n+\tbody := &observedBody{Reader: io.MultiReader(strings.NewReader(`{\"name\":\"first\",\"revision\":1}`), iotest.ErrReader(readErr))}\n \tclient := &http.Client{Transport: roundTrip(func(*http.Request) (*http.Response, error) {\n-\t\treturn &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(`{\"name\":\"first\",\"revision\":1}`))}, nil\n+\t\treturn &http.Response{StatusCode: http.StatusOK, Body: body}, nil\n \t})}\n-\tgot, err := metadata.Fetch(context.Background(), client, \"http://example.invalid/catalog\")\n-\tif err != nil || got.Name != \"first\" || got.Revision != 1 {\n-\t\tt.Fatalf(\"Fetch = %#v, %v\", got, err)\n+\tgot, err := metadata.Fetch(context.Background(), client, \"https://example.invalid/catalog\")\n+\tif got != (metadata.Metadata{}) || !errors.Is(err, readErr) {\n+\t\tt.Errorf(\"Fetch = %#v, %v; want zero Metadata and read error\", got, err)\n+\t}\n+\tif body.closeCalls == 0 {\n+\t\tt.Error(\"Fetch did not close its response body after a read error\")\n+\t}\n+}\n+\n+func TestFetchTransportError(t *testing.T) {\n+\tt.Parallel()\n+\ttransportErr := errors.New(\"transport failed\")\n+\tcalls := 0\n+\tclient := &http.Client{Transport: roundTrip(func(*http.Request) (*http.Response, error) {\n+\t\tcalls++\n+\t\treturn nil, transportErr\n+\t})}\n+\tgot, err := metadata.Fetch(context.Background(), client, \"https://example.invalid/catalog\")\n+\tif got != (metadata.Metadata{}) || !errors.Is(err, transportErr) {\n+\t\tt.Errorf(\"Fetch = %#v, %v; want zero Metadata and transport error\", got, err)\n+\t}\n+\tif calls != 1 {\n+\t\tt.Errorf(\"transport calls = %d, want 1\", calls)\n+\t}\n+}\n+\n+func TestFetchInvalidEndpoint(t *testing.T) {\n+\tt.Parallel()\n+\tcalls := 0\n+\tclient := &http.Client{Transport: roundTrip(func(*http.Request) (*http.Response, error) {\n+\t\tcalls++\n+\t\treturn nil, errors.New(\"unexpected transport call\")\n+\t})}\n+\tgot, err := metadata.Fetch(context.Background(), client, \"http://example.invalid/%\")\n+\tif got != (metadata.Metadata{}) || err == nil || err.Error() == \"\" {\n+\t\tt.Errorf(\"Fetch = %#v, %v; want zero Metadata and URL error\", got, err)\n+\t}\n+\tif calls != 0 {\n+\t\tt.Errorf(\"transport calls = %d, want 0 for an invalid URL\", calls)\n+\t}\n+}\n+\n+func TestFetchHTTP(t *testing.T) {\n+\tt.Parallel()\n+\ttype requestInfo struct{ method, uri string }\n+\trequests := make(chan requestInfo, 1)\n+\tserver := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n+\t\tselect {\n+\t\tcase requests <- requestInfo{r.Method, r.RequestURI}:\n+\t\tdefault:\n+\t\t}\n+\t\tw.Header().Set(\"Content-Type\", \"application/json\")\n+\t\tio.WriteString(w, `{\"name\":\" remote \",\"revision\":3}`)\n+\t}))\n+\tt.Cleanup(server.Close)\n+\tclient := server.Client()\n+\tclient.Timeout = 5 * time.Second\n+\tt.Cleanup(client.CloseIdleConnections)\n+\tconst pathQuery = \"/catalog/a%2Fb?revision=7&name=a%20b\"\n+\tctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)\n+\tt.Cleanup(cancel)\n+\tgot, err := metadata.Fetch(ctx, client, server.URL+pathQuery)\n+\tif err != nil {\n+\t\tt.Fatalf(\"Fetch through local HTTP: %v\", err)\n+\t}\n+\tif want := (metadata.Metadata{Name: \" remote \", Revision: 3}); got != want {\n+\t\tt.Errorf(\"Fetch = %#v, want %#v\", got, want)\n+\t}\n+\trequest := receive(t, requests, \"server request\")\n+\tif request.method != http.MethodGet || request.uri != pathQuery {\n+\t\tt.Errorf(\"server received %s %s, want GET %s\", request.method, request.uri, pathQuery)\n+\t}\n+}\n+\n+type fetchResult struct {\n+\tmetadata metadata.Metadata\n+\terr      error\n+}\n+\n+// A read signal establishes that Fetch reached the real response stream.\n+type signaledBody struct {\n+\tio.ReadCloser\n+\tstarted    chan struct{}\n+\tcloseCalls int\n+}\n+\n+func (b *signaledBody) Read(p []byte) (int, error) {\n+\tif b.started != nil {\n+\t\tclose(b.started)\n+\t\tb.started = nil\n+\t}\n+\treturn b.ReadCloser.Read(p)\n+}\n+\n+func (b *signaledBody) Close() error {\n+\tb.closeCalls++\n+\treturn b.ReadCloser.Close()\n+}\n+\n+func TestFetchCancellation(t *testing.T) {\n+\tt.Parallel()\n+\tfor _, stage := range []string{\"before_headers\", \"during_body\"} {\n+\t\tt.Run(stage, func(t *testing.T) {\n+\t\t\tt.Parallel()\n+\t\t\tstarted := make(chan error, 1)\n+\t\t\thandlerDone := make(chan error, 1)\n+\t\t\trelease := make(chan struct{})\n+\t\t\tserver := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n+\t\t\t\tvar err error\n+\t\t\t\tif stage == \"during_body\" {\n+\t\t\t\t\t_, err = io.WriteString(w, `{\"name\":\"`)\n+\t\t\t\t\tif err == nil {\n+\t\t\t\t\t\terr = http.NewResponseController(w).Flush()\n+\t\t\t\t\t}\n+\t\t\t\t}\n+\t\t\t\tselect {\n+\t\t\t\tcase started <- err:\n+\t\t\t\tdefault:\n+\t\t\t\t}\n+\t\t\t\tselect {\n+\t\t\t\tcase <-r.Context().Done():\n+\t\t\t\tcase <-release:\n+\t\t\t\t}\n+\t\t\t\tselect {\n+\t\t\t\tcase handlerDone <- r.Context().Err():\n+\t\t\t\tdefault:\n+\t\t\t\t}\n+\t\t\t}))\n+\t\t\tt.Cleanup(server.Close)\n+\t\t\tclient := server.Client()\n+\t\t\tclient.Timeout = 5 * time.Second\n+\t\t\tt.Cleanup(client.CloseIdleConnections)\n+\t\t\treadStarted := make(chan struct{})\n+\t\t\tvar body *signaledBody\n+\t\t\tif stage == \"during_body\" {\n+\t\t\t\ttransport := client.Transport\n+\t\t\t\tclient.Transport = roundTrip(func(r *http.Request) (*http.Response, error) {\n+\t\t\t\t\tresponse, err := transport.RoundTrip(r)\n+\t\t\t\t\tif err != nil {\n+\t\t\t\t\t\treturn response, err\n+\t\t\t\t\t}\n+\t\t\t\t\tbody = &signaledBody{ReadCloser: response.Body, started: readStarted}\n+\t\t\t\t\tresponse.Body = body\n+\t\t\t\t\treturn response, nil\n+\t\t\t\t})\n+\t\t\t\t// The wrapper forwards real I/O and cancellation; own the underlying pool.\n+\t\t\t\tt.Cleanup(transport.(*http.Transport).CloseIdleConnections)\n+\t\t\t}\n+\t\t\tctx, cancel := context.WithCancel(context.Background())\n+\t\t\tresults := make(chan fetchResult, 1)\n+\t\t\tfetchDone := make(chan struct{})\n+\t\t\t// Run on early failures too, releasing handlers before joining the worker\n+\t\t\t// and before server.Close waits for handlers to finish.\n+\t\t\tt.Cleanup(func() {\n+\t\t\t\tcancel()\n+\t\t\t\tclose(release)\n+\t\t\t\ttimer := time.NewTimer(5 * time.Second)\n+\t\t\t\tdefer timer.Stop()\n+\t\t\t\tselect {\n+\t\t\t\tcase <-fetchDone:\n+\t\t\t\tcase <-timer.C:\n+\t\t\t\t\tt.Error(\"Fetch worker did not finish during cleanup\")\n+\t\t\t\t}\n+\t\t\t})\n+\t\t\tgo func() {\n+\t\t\t\tdefer close(fetchDone)\n+\t\t\t\tgot, err := metadata.Fetch(ctx, client, server.URL+\"/catalog\")\n+\t\t\t\tresults <- fetchResult{got, err}\n+\t\t\t}()\n+\t\t\tif err := receive(t, started, \"handler startup\"); err != nil {\n+\t\t\t\tt.Fatalf(\"start response stream: %v\", err)\n+\t\t\t}\n+\t\t\tif stage == \"during_body\" {\n+\t\t\t\treceive(t, readStarted, \"response body read\")\n+\t\t\t}\n+\t\t\tcancel()\n+\t\t\tresult := receive(t, results, \"Fetch completion after caller cancellation\")\n+\t\t\tif result.metadata != (metadata.Metadata{}) || !errors.Is(result.err, context.Canceled) {\n+\t\t\t\tt.Errorf(\"Fetch = %#v, %v; want zero Metadata and context.Canceled\", result.metadata, result.err)\n+\t\t\t}\n+\t\t\tif err := receive(t, handlerDone, \"server cancellation\"); !errors.Is(err, context.Canceled) {\n+\t\t\t\tt.Errorf(\"server context error = %v, want context.Canceled\", err)\n+\t\t\t}\n+\t\t\tif stage == \"during_body\" && (body == nil || body.closeCalls == 0) {\n+\t\t\t\tt.Error(\"Fetch did not close its acquired response body after cancellation\")\n+\t\t\t}\n+\t\t})\n+\t}\n+}\n+\n+// This deadline diagnoses stalled work, rather than guessing event readiness.\n+func receive[T any](t *testing.T, events <-chan T, operation string) T {\n+\tt.Helper()\n+\ttimer := time.NewTimer(5 * time.Second)\n+\tdefer timer.Stop()\n+\tselect {\n+\tcase event := <-events:\n+\t\treturn event\n+\tcase <-timer.C:\n+\t\tt.Fatalf(\"timed out waiting for %s\", operation)\n+\t\tvar zero T\n+\t\treturn zero\n \t}\n }\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.007
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "./...",
+      "-timeout=30s"
+    ],
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go test ./... -timeout=30s",
+    "cwd": "/private/tmp/go-independent-review-q4rd7fh4/changeset-1/candidate",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestFetchCancellation (0.00s)\n    --- FAIL: TestFetchCancellation/before_headers (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 7 [running]:\ntesting.tRunner.func1.2({0x100bb7fa0, 0x617381990630})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x100bb7fa0?, 0x617381990630?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x100c423c0, 0x617381a89b30})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/metadata_test.TestFetchCancellation.func1(0x617381ac2b48)\n\t/private/tmp/go-independent-review-q4rd7fh4/changeset-1/candidate/fetch_test.go:254 +0xe8\ntesting.tRunner(0x617381ac2b48, 0x617381966498)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 36\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/metadata\t0.251s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.486
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go vet -stdversion ./...",
+    "cwd": "/private/tmp/go-independent-review-q4rd7fh4/changeset-1/candidate",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.122
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "./...",
+      "-race",
+      "-count=10",
+      "-shuffle=on",
+      "-timeout=30s",
+      "-run=^TestFetch(Success|ResponseErrors|ReadError|TransportError|InvalidEndpoint)$"
+    ],
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go test ./... -race -count=10 -shuffle=on -timeout=30s '-run=^TestFetch(Success|ResponseErrors|ReadError|TransportError|InvalidEndpoint)$'",
+    "cwd": "/private/tmp/go-independent-review-q4rd7fh4/changeset-1/candidate",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "execution_context": "sandbox",
+    "stdout": "ok  \texample.com/metadata\t1.265s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.538
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "./...",
+      "-race",
+      "-count=10",
+      "-shuffle=on",
+      "-timeout=30s"
+    ],
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go test ./... -race -count=10 -shuffle=on -timeout=30s",
+    "cwd": "/private/tmp/go-independent-review-q4rd7fh4/changeset-1/candidate",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "execution_context": "approved unchanged-source local-listener rerun",
+    "stdout": "ok  \texample.com/metadata\t1.218s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.435
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "./...",
+      "-count=1",
+      "-timeout=30s",
+      "-run=^TestFetch(Success|ResponseErrors|ReadError)$"
+    ],
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go test ./... -count=1 -timeout=30s '-run=^TestFetch(Success|ResponseErrors|ReadError)$'",
+    "cwd": "/private/tmp/go-independent-review-q4rd7fh4/changeset-1/verification/no-close",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "execution_context": "sandbox disposable mutation",
+    "mutation": "no-close",
+    "expected_result": "assertion failure detecting the mutation",
+    "stdout": "--- FAIL: TestFetchReadError (0.00s)\n    fetch_test.go:152: Fetch did not close its response body after a read error\n--- FAIL: TestFetchSuccess (0.00s)\n    --- FAIL: TestFetchSuccess/ordinary (0.00s)\n        fetch_test.go:60: Fetch did not close its response body\n    --- FAIL: TestFetchSuccess/surrounding_whitespace (0.00s)\n        fetch_test.go:60: Fetch did not close its response body\n    --- FAIL: TestFetchSuccess/preserved_name (0.00s)\n        fetch_test.go:60: Fetch did not close its response body\n--- FAIL: TestFetchResponseErrors (0.00s)\n    --- FAIL: TestFetchResponseErrors/trailing_garbage (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/trailing_null (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/created (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/empty (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/empty_object (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/server_error (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/whitespace (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/redirect (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/not_found (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/blank_name (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/wrong_revision_type (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/malformed (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/null (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/scalar (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/no_content (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/zero_revision (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/negative_revision (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/null_revision (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/missing_revision (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/missing_name (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/empty_name (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/trailing_object (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/fractional_revision (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/wrong_name_type (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/null_name (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\n    --- FAIL: TestFetchResponseErrors/array (0.00s)\n        fetch_test.go:124: Fetch did not close its response body on failure\nFAIL\nFAIL\texample.com/metadata\t0.215s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.449
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "./...",
+      "-count=1",
+      "-timeout=30s",
+      "-run=^TestFetchResponseErrors$/^trailing_"
+    ],
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go test ./... -count=1 -timeout=30s '-run=^TestFetchResponseErrors$/^trailing_'",
+    "cwd": "/private/tmp/go-independent-review-q4rd7fh4/changeset-1/verification/trailing-json",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "execution_context": "sandbox disposable mutation",
+    "mutation": "trailing-json",
+    "expected_result": "assertion failure detecting the mutation",
+    "stdout": "--- FAIL: TestFetchResponseErrors (0.00s)\n    --- FAIL: TestFetchResponseErrors/trailing_object (0.00s)\n        fetch_test.go:127: Fetch = metadata.Metadata{Name:\"first\", Revision:1}, want zero Metadata on failure\n        fetch_test.go:130: Fetch error = <nil>, want useful error\n    --- FAIL: TestFetchResponseErrors/trailing_null (0.00s)\n        fetch_test.go:127: Fetch = metadata.Metadata{Name:\"first\", Revision:1}, want zero Metadata on failure\n        fetch_test.go:130: Fetch error = <nil>, want useful error\n    --- FAIL: TestFetchResponseErrors/trailing_garbage (0.00s)\n        fetch_test.go:127: Fetch = metadata.Metadata{Name:\"first\", Revision:1}, want zero Metadata on failure\n        fetch_test.go:130: Fetch error = <nil>, want useful error\nFAIL\nFAIL\texample.com/metadata\t0.208s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.453
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "./...",
+      "-run=^TestFetchCancellation$",
+      "-count=1",
+      "-timeout=30s"
+    ],
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go test ./... '-run=^TestFetchCancellation$' -count=1 -timeout=30s",
+    "cwd": "/private/tmp/go-independent-review-q4rd7fh4/changeset-1/verification/ignored-context",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "execution_context": "approved disposable-mutation local-listener check",
+    "mutation": "ignored-context",
+    "expected_result": "failure detecting caller cancellation loss",
+    "stdout": "--- FAIL: TestFetchCancellation (0.00s)\n    --- FAIL: TestFetchCancellation/before_headers (5.00s)\n        fetch_test.go:323: timed out waiting for Fetch completion after caller cancellation\n    --- FAIL: TestFetchCancellation/during_body (5.00s)\n        fetch_test.go:325: Fetch = metadata.Metadata{Name:\"\", Revision:0}, context deadline exceeded (Client.Timeout or context cancellation while reading body); want zero Metadata and context.Canceled\nFAIL\nFAIL\texample.com/metadata\t5.206s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 5.45
+  }
+]

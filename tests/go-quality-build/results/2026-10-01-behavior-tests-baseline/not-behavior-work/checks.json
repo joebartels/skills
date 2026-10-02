@@ -1,0 +1,97 @@
+{
+  "checks": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-w",
+        "format.go"
+      ],
+      "process_timeout_seconds": 15,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.007
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-l",
+        "format.go",
+        "format_test.go"
+      ],
+      "process_timeout_seconds": 15,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.007
+    },
+    {
+      "check": "Edit scope",
+      "exit_code": 0,
+      "stdout": "Only the Format doc comment changed. README.md, format_test.go, and go.mod are byte-for-byte unchanged.\n",
+      "stderr": "",
+      "unchanged_file_sha256": {
+        "README.md": "9750bd801cf80aa048e2ddfcd2cc1ec9fbca127a88a79012c6e398b1cc53979c",
+        "format_test.go": "89890815f2c9c92a0eed5c6fd16a032e383feb89259bfe5ae4cc7acea3a4303c",
+        "go.mod": "8343dd1bfd30037b9bfea8a9810477b940de99bf8158bb1ff286f6770050d19b"
+      }
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "test",
+        "-v",
+        "-race",
+        "-timeout=20s",
+        "./..."
+      ],
+      "process_timeout_seconds": 60,
+      "exit_code": 0,
+      "stdout": "=== RUN   TestFormat\n--- PASS: TestFormat (0.00s)\nPASS\nok  \texample.com/label\t1.194s\n",
+      "stderr": "",
+      "elapsed_seconds": 1.349
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "process_timeout_seconds": 30,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.078
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "staticcheck",
+        "./..."
+      ],
+      "exit_code": null,
+      "skipped": true,
+      "reason": "staticcheck is not installed; task prohibits installing tools.",
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

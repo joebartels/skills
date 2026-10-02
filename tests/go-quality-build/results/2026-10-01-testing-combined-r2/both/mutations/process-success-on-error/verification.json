@@ -1,0 +1,86 @@
+{
+  "semantic_id": "process-success-on-error",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "decae8a31e78081f42cf598e900576399c4286b55229d4af37632242772cb619",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-9r9g4534/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.423s\nok  \texample.com/indexer/cmd/indexer\t1.282s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.554
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r2/both/mutations/process-success-on-error/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-9r9g4534/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.016
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-9r9g4534/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.158s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.489s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.723
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-9r9g4534/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.465s\n--- FAIL: TestStartupRejectionsAreProcessFailures (0.00s)\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_malformed_interval (0.17s)\n        main_test.go:118: status/stdout/stderr = 0/\"\"/\"invalid value \\\"bad\\\" for flag -interval: parse error\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_empty_hostname (0.17s)\n        main_test.go:118: status/stdout/stderr = 0/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_missing_values (0.17s)\n        main_test.go:118: status/stdout/stderr = 0/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_zero_interval (0.17s)\n        main_test.go:118: status/stdout/stderr = 0/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_missing_host (0.17s)\n        main_test.go:118: status/stdout/stderr = 0/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_negative_interval (0.17s)\n        main_test.go:118: status/stdout/stderr = 0/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_extra_argument (0.17s)\n        main_test.go:118: status/stdout/stderr = 0/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_missing_file (0.18s)\n        main_test.go:118: status/stdout/stderr = 0/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/unknown_command (0.18s)\n        main_test.go:118: status/stdout/stderr = 0/\"\"/\"unknown command: unknown\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_wrong_scheme (0.18s)\n        main_test.go:118: status/stdout/stderr = 0/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/apply_extra_argument (0.18s)\n        main_test.go:118: status/stdout/stderr = 0/\"\"/\"usage: indexer apply --dir DIR\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/put_usage (0.18s)\n        main_test.go:118: status/stdout/stderr = 0/\"\"/\"usage: indexer put DIR KEY TEXT\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/missing_command (0.18s)\n        main_test.go:118: status/stdout/stderr = 0/\"\"/\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/apply_unknown_option (0.18s)\n        main_test.go:118: status/stdout/stderr = 0/\"\"/\"flag provided but not defined: -unknown\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/apply_missing_directory (0.18s)\n        main_test.go:118: status/stdout/stderr = 0/\"\"/\"usage: indexer apply --dir DIR\\n\"; want status 2 and empty stdout\n--- FAIL: TestApplyProcessWriteFailureRetainsPrefix (0.01s)\n    main_test.go:90: status/stdout/stderr = 0/\"\"/\"CSV row 2: rename /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestApplyProcessWriteFailureRetainsPrefix1583265543/001/.record-576482486 /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestApplyProcessWriteFailureRetainsPrefix1583265543/001/beta: file exists\\n\"; want status 2 and empty stdout\n--- FAIL: TestWatchFirstRefreshFailure (0.01s)\n    main_test.go:133: status/stdout/stderr = 0/\"\"/\"fetch status: 503\\n\"; want status 2 and empty stdout\n--- FAIL: TestApplyProcess (0.01s)\n    main_test.go:75: status/stdout/stderr = 0/\"\"/\"CSV row 2: invalid record\\n\"; want status 2 and empty stdout\n--- FAIL: TestPutProcessStreamsAndCompatibility (0.03s)\n    main_test.go:63: status/stdout/stderr = 0/\"\"/\"invalid record\\n\"; want status 2 and empty stdout\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t0.963s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.17
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

@@ -1,0 +1,77 @@
+{
+  "authorized_dispatch": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r2/isolation-only/dispatch.txt",
+  "module": "/private/tmp/go-fresh-author-qjdzm0iq/task-1/module",
+  "offered_names": [
+    "go-api-contracts",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries",
+    "go-test-isolation"
+  ],
+  "selections": [
+    {
+      "name": "go-api-contracts",
+      "selected": true,
+      "opened_path": "/private/tmp/go-fresh-author-qjdzm0iq/task-1/guidance/go-api-contracts/SKILL.md",
+      "reason": "The task implements exported methods/functions, JSON publication, sentinel errors and existing/new process contracts. Preserve function types, old Put semantics and CLI status/streams."
+    },
+    {
+      "name": "go-core-style",
+      "selected": true,
+      "opened_path": "/private/tmp/go-fresh-author-qjdzm0iq/task-1/guidance/go-core-style/SKILL.md",
+      "reason": "All implementation and regression-test work is Go; use simple standard-library code, early error handling, owned state and Go1.22-compatible APIs."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "selected": true,
+      "opened_path": "/private/tmp/go-fresh-author-qjdzm0iq/task-1/guidance/go-interfaces-and-composition/SKILL.md",
+      "reason": "Refresh borrows a supplied HTTP client/context and owns response bodies; Serve owns callback/release ordering, recurrence and cooperative cancellation; the CLI owns its client transport and signals."
+    },
+    {
+      "name": "go-package-boundaries",
+      "selected": true,
+      "opened_path": "/private/tmp/go-fresh-author-qjdzm0iq/task-1/guidance/go-package-boundaries/SKILL.md",
+      "reason": "The package acquires CSV ingestion, snapshot fetching/publication and refresh lifecycle responsibilities. Existing stubs and the current command already identify the consumers. Keep cohesive library operations in the existing package and host signals/configuration in cmd/indexer; no package split or interface is justified."
+    },
+    {
+      "name": "go-test-isolation",
+      "selected": true,
+      "opened_path": "/private/tmp/go-fresh-author-qjdzm0iq/task-1/guidance/go-test-isolation/SKILL.md",
+      "reason": "The tests own temporary files, HTTP servers, process environment, subprocesses, callback gates, goroutines and timing observations. Use independent paths, explicit events, cancellation/join cleanup and bounded checks."
+    }
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-fresh-author-qjdzm0iq/task-1/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-fresh-author-qjdzm0iq/task-1/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-fresh-author-qjdzm0iq/task-1/guidance/go-interfaces-and-composition/SKILL.md",
+    "/private/tmp/go-fresh-author-qjdzm0iq/task-1/guidance/go-package-boundaries/SKILL.md",
+    "/private/tmp/go-fresh-author-qjdzm0iq/task-1/guidance/go-test-isolation/SKILL.md"
+  ],
+  "opened_reference_paths": [
+    "/private/tmp/go-fresh-author-qjdzm0iq/task-1/guidance/go-test-isolation/references/isolation-patterns.md"
+  ],
+  "reference_relevance": {
+    "go-test-isolation/references/isolation-patterns.md": "Needed Go1.22 event/timing choices, parallel subtest fixture lifetime, focused selection and faithful HTTP/process boundaries."
+  },
+  "opened_source_paths": [
+    "/private/tmp/go-fresh-author-qjdzm0iq/task-1/module/README.md",
+    "/private/tmp/go-fresh-author-qjdzm0iq/task-1/module/index.go",
+    "/private/tmp/go-fresh-author-qjdzm0iq/task-1/module/refresh.go",
+    "/private/tmp/go-fresh-author-qjdzm0iq/task-1/module/serve.go",
+    "/private/tmp/go-fresh-author-qjdzm0iq/task-1/module/index_test.go",
+    "/private/tmp/go-fresh-author-qjdzm0iq/task-1/module/cmd/indexer/main.go",
+    "/private/tmp/go-fresh-author-qjdzm0iq/task-1/module/cmd/indexer/main_test.go",
+    "/private/tmp/go-fresh-author-qjdzm0iq/task-1/module/go.mod"
+  ],
+  "other_skills_opened": [],
+  "restrictions_observed": [
+    "No skills repository/design/evaluation/controller files inspected beyond the authorized standalone dispatch.",
+    "No other author workspace inspected.",
+    "No delegation, dependency/tool installation, commits or external changes."
+  ],
+  "notes": [
+    "The package-maps reference was not opened: no package split or alternative project-shape comparison was needed.",
+    "No unavailable behavior-testing guidance was opened.",
+    "The initial dispatch read preceded knowledge of its rtk requirement. Every shell command after reading the dispatch used rtk proxy."
+  ]
+}

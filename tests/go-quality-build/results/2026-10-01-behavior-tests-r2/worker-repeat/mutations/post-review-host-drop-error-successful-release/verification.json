@@ -1,0 +1,86 @@
+{
+  "semantic_id": "post-review-host-drop-error-successful-release",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "68a251925c19d1f77807689bd598fefbcfd10c9e2c9dcca1295db4710a877c6d",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-4glco0ua/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.869s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.094
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-r2/worker-repeat/mutations/post-review-host-drop-error-successful-release/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-4glco0ua/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.017
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-4glco0ua/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.246s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.45
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-4glco0ua/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestSweepFailureReleases (0.00s)\n    host_test.go:20: Run = <nil>, released = true\n--- FAIL: TestRunFailureStopsAfterSuccessfulCycles (0.02s)\n    lifecycle_test.go:211: Run = <nil>, want third sweep failure\n--- FAIL: TestRunPreservesIndependentWorkAndReleaseErrors (0.00s)\n    --- FAIL: TestRunPreservesIndependentWorkAndReleaseErrors/work_failure (0.00s)\n        lifecycle_test.go:254: Run = <nil>, want work cause\n--- FAIL: TestRunWaitsForCanceledCallbackCleanup (0.10s)\n    --- FAIL: TestRunWaitsForCanceledCallbackCleanup/callback_cancellation_error (0.03s)\n        lifecycle_test.go:329: Run = <nil>, lost callback cancellation error\n    --- FAIL: TestRunWaitsForCanceledCallbackCleanup/independent_failure (0.03s)\n        lifecycle_test.go:334: Run = <nil>, lost independent callback failure\n    --- FAIL: TestRunWaitsForCanceledCallbackCleanup/joined_cancellation_and_failure (0.03s)\n        lifecycle_test.go:329: Run = <nil>, lost callback cancellation error\n        lifecycle_test.go:334: Run = <nil>, lost independent callback failure\nFAIL\nFAIL\texample.com/sweeper\t0.545s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.67
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

@@ -1,0 +1,11 @@
+--- a/config_test.go
++++ b/config_test.go
+@@ -48,7 +48,7 @@
+ func setConfigurationEnv(t *testing.T, endpoint, mode envValue) {
+ 	t.Helper()
+ 	for key, value := range map[string]envValue{"INDEXER_ENDPOINT": endpoint, "INDEXER_MODE": mode} {
+-		t.Setenv(key, value.value)
++		if err := os.Setenv(key, value.value); err != nil { t.Fatal(err) }
+ 		if !value.present {
+ 			if err := os.Unsetenv(key); err != nil {
+ 				t.Fatalf("unset %s: %v", key, err)

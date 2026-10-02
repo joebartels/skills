@@ -1,0 +1,11 @@
+--- a/serve.go
++++ b/serve.go
+@@ -22,7 +22,7 @@
+ 			return nil
+ 		}
+ 		if err := refresh(ctx); err != nil {
+-			if ctx.Err() != nil && onlyCancellation(err, ctx.Err()) {
++			if ctx.Err() != nil && errors.Is(err, ctx.Err()) {
+ 				return nil
+ 			}
+ 			return err

@@ -1,0 +1,15 @@
+--- a/poll.go
++++ b/poll.go
+@@ -15,10 +15,11 @@
+ 		if ctx.Err() != nil {
+ 			return nil
+ 		}
++		timer := time.NewTimer(interval)
+ 		if err := callback(ctx); err != nil {
++			timer.Stop()
+ 			return err
+ 		}
+-		timer := time.NewTimer(interval)
+ 		select {
+ 		case <-ctx.Done():
+ 			timer.Stop()

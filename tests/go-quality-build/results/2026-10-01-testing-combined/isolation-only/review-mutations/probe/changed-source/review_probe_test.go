@@ -1,0 +1,34 @@
+package indexer_test
+
+import (
+    "context"
+    "fmt"
+    "io"
+    "net/http"
+    "os"
+    "path/filepath"
+    "strings"
+    "testing"
+
+    "example.com/indexer"
+)
+
+func TestReviewRedirectRejection(t *testing.T) {
+    path := filepath.Join(t.TempDir(), "snapshot.json")
+    old := "exact prior bytes"
+    if err := os.WriteFile(path, []byte(old), 0600); err != nil { t.Fatal(err) }
+    calls := 0
+    client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+        calls++
+        if calls == 1 {
+            return &http.Response{StatusCode: http.StatusFound, Header: http.Header{"Location": []string{"http://fixture.invalid/redirected"}}, Body: io.NopCloser(strings.NewReader("redirect")), Request: r}, nil
+        }
+        return &http.Response{StatusCode: http.StatusOK, Body: io.NopCloser(strings.NewReader(`[{"key":"alpha","text":"new"}]`)), Request: r}, nil
+    })}
+    err := indexer.Refresh(context.Background(), client, "http://fixture.invalid/original", path)
+    got, readErr := os.ReadFile(path)
+    fmt.Printf("redirect probe: requests=%d err=%v destination=%q readErr=%v\n", calls, err, got, readErr)
+    if err == nil || calls != 1 || string(got) != old {
+        t.Fatalf("initial status 302: requests=%d error=%v destination=%q; want one request, rejection, retained prior bytes", calls, err, got)
+    }
+}

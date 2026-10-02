@@ -1,0 +1,27 @@
+--- a/main.go
++++ b/main.go
+@@ -49,23 +49,7 @@
+ 
+ // Publish only complete records so a failed duplicate cannot damage an earlier write.
+ func writeRecord(dir, id string, qty int) error {
+-	file, err := os.CreateTemp(dir, ".ledgerload-*")
+-	if err != nil {
+-		return err
+-	}
+-	defer os.Remove(file.Name())
+-	if _, err := file.WriteString(strconv.Itoa(qty) + "\n"); err != nil {
+-		file.Close()
+-		return err
+-	}
+-	if err := file.Chmod(0o644); err != nil {
+-		file.Close()
+-		return err
+-	}
+-	if err := file.Close(); err != nil {
+-		return err
+-	}
+-	return os.Rename(file.Name(), filepath.Join(dir, id))
++	return os.WriteFile(filepath.Join(dir, id), []byte(strconv.Itoa(qty)+"\n"), 0o644)
+ }
+ 
+ func main() {

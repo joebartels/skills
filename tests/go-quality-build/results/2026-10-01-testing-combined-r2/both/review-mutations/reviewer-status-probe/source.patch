@@ -1,0 +1,32 @@
+--- /dev/null
++++ b/review_status_probe_test.go
+@@ -0,0 +1,29 @@
++package indexer_test
++
++import (
++    "context"
++    "io"
++    "net/http"
++    "os"
++    "path/filepath"
++    "strings"
++    "testing"
++
++    "example.com/indexer"
++)
++
++type reviewStatusTransport struct{}
++func (reviewStatusTransport) RoundTrip(*http.Request) (*http.Response, error) {
++    return &http.Response{StatusCode: http.StatusPartialContent, Body: io.NopCloser(strings.NewReader(`[{"key":"alpha","text":"partial result"}]`)), Header: make(http.Header)}, nil
++}
++func TestReviewerNon200SuccessStatusPreservesPriorBytes(t *testing.T) {
++    path := filepath.Join(t.TempDir(), "snapshot")
++    prior := "prior complete snapshot\x00\n"
++    if err := os.WriteFile(path, []byte(prior), 0600); err != nil { t.Fatal(err) }
++    err := indexer.Refresh(context.Background(), &http.Client{Transport:reviewStatusTransport{}}, "http://example.test/source", path)
++    got, readErr := os.ReadFile(path)
++    t.Logf("status=206 error=%v retained=%q", err, got)
++    if err == nil || readErr != nil || string(got) != prior {
++        t.Fatalf("non-200 status rejection: err=%v readErr=%v bytes=%q; want error and %q", err, readErr, got, prior)
++    }
++}

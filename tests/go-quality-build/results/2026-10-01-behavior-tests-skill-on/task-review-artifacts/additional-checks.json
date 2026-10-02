@@ -1,0 +1,644 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "status",
+      "--short"
+    ],
+    "cwd": "/private/tmp/go-quality-build-upstream",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.022
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "/private/tmp/go-quality-build-upstream",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "19a0626ae8565d27a7b7bdf59d8d99d94d7e284c\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "show",
+      "19a0626ae8565d27a7b7bdf59d8d99d94d7e284c:skills/golang-testing/SKILL.md"
+    ],
+    "cwd": "/private/tmp/go-quality-build-upstream",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "---\nname: golang-testing\ndescription: \"Production-ready Golang tests \u2014 table-driven tests, testify suites and mocks, parallel tests, fuzzing, fixtures, goroutine leak detection with goleak, snapshot testing, code coverage, integration tests, idiomatic test naming. Use when writing or reviewing Go tests, choosing a testing approach, setting up Go test CI, or debugging flaky/slow tests. For testify-specific APIs see `samber/cc-skills-golang@golang-stretchr-testify`; for measurement methodology see `samber/cc-skills-golang@golang-benchmark`.\"\nuser-invocable: true\nlicense: MIT\ncompatibility: Designed for Claude Code, Codex or similar harness, and for projects using Golang.\nmetadata:\n  author: samber\n  version: \"1.4.0\"\n  openclaw:\n    emoji: \"\ud83e\uddea\"\n    homepage: https://github.com/samber/cc-skills-golang\n    requires:\n      bins:\n        - go\n        - gotests\n    install:\n      - kind: go\n        package: github.com/cweill/gotests/gotests@latest\n        bins: [gotests]\nallowed-tools: Read Edit Write Glob Grep Bash(go:*) Bash(golangci-lint:*) Bash(git:*) Agent Bash(gotests:*) AskUserQuestion\npaths:\n  - \"**/*.go\"\n---\n\n**Persona:** You are a Go engineer who treats tests as executable specifications. You write tests to constrain behavior, not to hit coverage targets.\n\n**Thinking mode:** Reason as thoroughly as possible for test strategy design and failure analysis \u2014 shallow reasoning misses edge cases and produces brittle tests that pass today but break tomorrow. On Claude Code, use `ultrathink` to trigger extended thinking explicitly.\n\n**Orchestration mode:** Fan out the three sub-agents described in Audit mode (unit quality and coverage gaps, integration isolation, goroutine/race issues) for auditing a large test suite, and merge their findings into one gap report. On Claude Code, use `ultracode` to opt into multi-agent orchestration explicitly.\n\n**Modes:**\n\n- **Write mode** \u2014 generating new tests for existing or new code. Work sequentially through the code under test; use `gotests` to scaffold table-driven tests, then enrich with edge cases and error paths.\n- **Review mode** \u2014 reviewing a PR's test changes. Focus on the diff: check coverage of new behaviour, assertion quality, table-driven structure, and absence of flakiness patterns. Sequential.\n- **Audit mode** \u2014 auditing an existing test suite for gaps, flakiness, or bad patterns (order-dependent tests, missing `t.Parallel()`, implementation-detail coupling). Launch up to 3 parallel sub-agents split by concern: (1) unit test quality and coverage gaps, (2) integration test isolation and build tags, (3) goroutine leaks and race conditions.\n- **Debug mode** \u2014 a test is failing or flaky. Work sequentially: reproduce reliably, isolate the failing assertion, trace the root cause in production code or test setup.\n\n> **Community default.** A company skill that explicitly supersedes `samber/cc-skills-golang@golang-testing` skill takes precedence.\n\n**Dependencies:**\n\n- gotests: `go install github.com/cweill/gotests/gotests@latest`\n\n# Go Testing Best Practices\n\nThis skill guides the creation of production-ready tests for Go applications. Follow these principles to write maintainable, fast, and reliable tests.\n\n## Best Practices Summary\n\n1. Table-driven tests MUST use named subtests -- every test case needs a `name` field passed to `t.Run`\n2. Integration tests MUST use build tags (`//go:build integration`) to separate from unit tests\n3. Tests MUST NOT depend on execution order -- each test MUST be independently runnable\n4. Independent tests SHOULD use `t.Parallel()` when possible\n5. Tests MUST assert observable behavior and public API contracts, not implementation details -- a test coupled to internals turns every refactor into a test rewrite while proving nothing about the contract\n6. Packages with goroutines SHOULD use `goleak.VerifyTestMain` in `TestMain` to detect goroutine leaks\n7. Use testify as helpers, not a replacement for standard library\n8. Mock interfaces, not concrete types\n9. Keep unit tests fast (< 1ms), use build tags for integration tests\n10. Run tests with race detection in CI\n11. Include examples as executable documentation\n12. Test files MUST be named after the source file under test, not after the function or method being tested\n13. Test functions SHOULD appear in the same order as the functions/methods they test in the source file\n\n## Test Structure and Organization\n\n### File Conventions\n\n```go\n// package_test.go - tests in same package (white-box, access unexported)\npackage mypackage\n\n// mypackage_test.go - tests in test package (black-box, public API only)\npackage mypackage_test\n```\n\nName the test file after the source file it tests, not after the function or method under test. Go's convention is one test file per source file (`foo.go` -> `foo_test.go`), because tools (`go test`, coverage reports, IDE \"jump to test\" navigation, `gotests`) and reviewers all resolve tests by source file, not by symbol. A source file usually declares several functions/methods; splitting its tests by symbol name scatters them across many files and breaks that file-to-file mapping.\n\n```\n// \u2713 Good \u2014 one test file per source file\nhelloworld.go       -> helloworld_test.go   // contains TestHelloWorld, TestAbcd, TestXyz, ...\n\n// \u2717 Bad \u2014 test file named after the function/method instead of the source file\nhelloworld.go       -> abcd_test.go         // wrong: should be helloworld_test.go\n```\n\nException: very large source files MAY be split into multiple `_test.go` files by concern (e.g. `foo_test.go` + `foo_edgecases_test.go`), but each split file's name MUST still be derived from the source file name, never from an individual function name. Prefer keeping a single `_test.go` file per source file even when it grows large \u2014 splitting adds navigation overhead and is rarely worth it; reach for the exception only when a single file becomes genuinely unwieldy to browse or review.\n\nWithin a test file, order test functions to match the order their tested functions/methods appear in the source file. A reader (human or agent) scrolling `foo.go` alongside `foo_test.go` can then find the matching test by position instead of searching; drift between the two orderings compounds every time either file grows.\n\n### Naming Conventions\n\n```go\nfunc TestAdd(t *testing.T) { ... }               // function test\nfunc TestMyStruct_MyMethod(t *testing.T) { ... } // method test\nfunc BenchmarkAdd(b *testing.B) { ... }          // benchmark\nfunc ExampleAdd() { ... }                        // example\nfunc FuzzAdd(f *testing.F) { ... }               // fuzz test\n```\n\n## Table-Driven Tests\n\nTable-driven tests are the idiomatic Go way to test multiple scenarios. Always name each test case.\n\n```go\nfunc TestCalculatePrice(t *testing.T) {\n    tests := []struct {\n        name     string\n        quantity int\n        unitPrice float64\n        expected  float64\n    }{\n        {\n            name:      \"single item\",\n            quantity:  1,\n            unitPrice: 10.0,\n            expected:  10.0,\n        },\n        {\n            name:      \"bulk discount - 100 items\",\n            quantity:  100,\n            unitPrice: 10.0,\n            expected:  900.0, // 10% discount\n        },\n        {\n            name:      \"zero quantity\",\n            quantity:  0,\n            unitPrice: 10.0,\n            expected:  0.0,\n        },\n    }\n\n    for _, tt := range tests {\n        t.Run(tt.name, func(t *testing.T) {\n            got := CalculatePrice(tt.quantity, tt.unitPrice)\n            if got != tt.expected {\n                t.Errorf(\"CalculatePrice(%d, %.2f) = %.2f, want %.2f\",\n                    tt.quantity, tt.unitPrice, got, tt.expected)\n            }\n        })\n    }\n}\n```\n\n## Common Pitfall: Assert Scope Leaking into Subtests\n\nNever create a testify `assert`/`require` instance in the parent test function and reuse it inside `t.Run` closures. `assert.New(t)` captures the exact `*testing.T` it was built with, so if that `t` belongs to the parent, every failure raised inside the subtest gets attributed to the _parent_ test in `go test` output \u2014 the failing subtest itself still reports `--- PASS`, silently hiding which case broke. This happens whether or not the subtest calls `t.Parallel()`.\n\n```go\n// WRONG -- `is` is bound to the parent's t\nfunc TestCalculatePrice(t *testing.T) {\n    is := assert.New(t)\n    for _, tt := range tests {\n        t.Run(tt.name, func(t *testing.T) {\n            is.Equal(tt.expected, CalculatePrice(tt.quantity, tt.unitPrice)) // misattributed on failure\n        })\n    }\n}\n\n// RIGHT -- each subtest builds its own instance from its own t\nfunc TestCalculatePrice(t *testing.T) {\n    for _, tt := range tests {\n        t.Run(tt.name, func(t *testing.T) {\n            is := assert.New(t)\n            is.Equal(tt.expected, CalculatePrice(tt.quantity, tt.unitPrice))\n        })\n    }\n}\n```\n\nVerify with a deliberately-broken case: if `go test -v -run TestName` shows `--- FAIL: TestName` but every `--- PASS: TestName/subtest_name` line still says PASS, the assert scope is leaking.\n\n## Unit Tests\n\nUnit tests should be fast (< 1ms), isolated (no external dependencies), and deterministic.\n\n## Testing HTTP Handlers\n\nUse `httptest` for handler tests with table-driven patterns. See [HTTP Testing](./references/http-testing.md) for examples with request/response bodies, query parameters, headers, and status code assertions.\n\n## Goroutine Leak Detection with goleak\n\nUse `go.uber.org/goleak` to detect leaking goroutines, especially for concurrent code:\n\n```go\nimport (\n    \"testing\"\n    \"go.uber.org/goleak\"\n)\n\nfunc TestMain(m *testing.M) {\n    goleak.VerifyTestMain(m)\n}\n```\n\nTo exclude specific goroutine stacks (for known leaks or library goroutines):\n\n```go\nfunc TestMain(m *testing.M) {\n    goleak.VerifyTestMain(m,\n        goleak.IgnoreCurrent(),\n    )\n}\n```\n\nOr per-test:\n\n```go\nfunc TestWorkerPool(t *testing.T) {\n    defer goleak.VerifyNone(t)\n    // ... test code ...\n}\n```\n\n## testing/synctest for Deterministic Goroutine Testing\n\n`testing/synctest` (Go 1.25+) provides deterministic tests for goroutines, timers, deadlines, and context cancellation. Time advances only when all goroutines are blocked, making ordering predictable.\n\nWhen to use `synctest` instead of real time:\n\n- Testing concurrent code with time-based operations (time.Sleep, time.After, time.Ticker)\n- When race conditions need to be reproducible\n- When tests are flaky due to timing issues\n\n```go\nimport (\n    \"context\"\n    \"testing\"\n    \"testing/synctest\"\n    \"time\"\n)\n\nfunc TestContextTimeout(t *testing.T) {\n    synctest.Test(t, func(t *testing.T) {\n        const timeout = 5 * time.Second\n\n        ctx, cancel := context.WithTimeout(t.Context(), timeout)\n        defer cancel()\n\n        time.Sleep(timeout - time.Nanosecond)\n        synctest.Wait()\n        if err := ctx.Err(); err != nil {\n            t.Fatalf(\"before timeout: %v\", err)\n        }\n\n        time.Sleep(time.Nanosecond)\n        synctest.Wait()\n        if err := ctx.Err(); err != context.DeadlineExceeded {\n            t.Fatalf(\"after timeout: got %v, want DeadlineExceeded\", err)\n        }\n    })\n}\n```\n\nUse `synctest.Test` in Go 1.25+ and later. Do not use the old Go 1.24 experimental `synctest.Run` API in Go 1.25+ code. If a module explicitly targets Go 1.24 and opts into `GOEXPERIMENT=synctest`, use the old API only as a compatibility fallback.\n\nKey differences in `synctest`:\n\n- `time.Sleep` advances synthetic time instantly when the goroutine blocks\n- `time.After` fires when synthetic time reaches the duration\n- All goroutines run to blocking points before time advances\n- Test execution is deterministic and repeatable\n- Go 1.27+ adds `synctest.Sleep(d)` as a direct helper to advance the bubble's fake clock, equivalent to `time.Sleep(d)` followed by `synctest.Wait()` but without needing a real goroutine to block on\n\nGo 1.27+ also adds `httptest.NewTestServer()`, an in-memory fake-network variant of `httptest.NewServer` that composes with `synctest` \u2014 no real socket, so server tests can run inside a `synctest.Test` bubble instead of needing `httptest.NewServer` plus real timers.\n\n## Test Timeouts\n\nFor tests that may hang, use a timeout helper that panics with caller location. See [Helpers](./references/helpers.md).\n\n## Benchmarks\n\nWrite benchmarks as sub-benchmarks (`b.Run` per variant) so each variant gets its own name in the output \u2014 that name is what comparison tooling diffs. For Go 1.24+, use `b.Loop()` rather than a `b.N` loop.\n\n\u2192 See [Benchmarks in a Test Suite](./references/benchmarks.md) for the code shape and size-parameterized examples.\n\n\u2192 See `samber/cc-skills-golang@golang-benchmark` skill for measurement methodology: `benchstat`, profiling from benchmarks, and CI regression detection.\n\n## Go 1.26+: test artifacts\n\nWhen a test, benchmark, or fuzz target needs to persist files for inspection, use `ArtifactDir()` instead of ad-hoc paths or repo-local output.\n\n```go\nfunc TestRenderGoldenArtifact(t *testing.T) {\n    dir := t.ArtifactDir()\n\n    out := filepath.Join(dir, \"rendered.json\")\n    if err := os.WriteFile(out, renderedBytes, 0o644); err != nil {\n        t.Fatal(err)\n    }\n\n    t.Logf(\"artifact written: %s\", out)\n}\n```\n\nAvailable on `*testing.T`, `*testing.B`, and `*testing.F` in Go 1.26+.\n\n### Go 1.27+: `stdversion` runs automatically\n\n`go test` now invokes the `stdversion` vet check by default, flagging any use of an API newer than the module's `go` directive. A CI failure from this check means either the `go` directive needs bumping or the code needs to stop using the newer API \u2014 it is not a check to silence.\n\n## Parallel Tests\n\nUse `t.Parallel()` to run tests concurrently:\n\n```go\nfunc TestParallelOperations(t *testing.T) {\n    tests := []struct {\n        name string\n        data []byte\n    }{\n        {\"small data\", make([]byte, 1024)},\n        {\"medium data\", make([]byte, 1024*1024)},\n    }\n\n    for _, tt := range tests {\n        t.Run(tt.name, func(t *testing.T) {\n            t.Parallel()\n            is := assert.New(t)\n\n            result := Process(tt.data)\n            is.NotNil(result)\n        })\n    }\n}\n```\n\n## Fuzzing\n\nUse fuzzing to find edge cases and bugs:\n\n```go\nfunc FuzzReverse(f *testing.F) {\n    f.Add(\"hello\")\n    f.Add(\"\")\n    f.Add(\"a\")\n\n    f.Fuzz(func(t *testing.T, input string) {\n        reversed := Reverse(input)\n        doubleReversed := Reverse(reversed)\n        if input != doubleReversed {\n            t.Errorf(\"Reverse(Reverse(%q)) = %q, want %q\", input, doubleReversed, input)\n        }\n    })\n}\n```\n\n## Examples as Documentation\n\n`ExampleXxx` functions are executable documentation: `go test` compares their stdout to the `// Output:` comment, so a drifting example fails the build instead of misleading readers.\n\n\u2192 See [Examples as Documentation](./references/examples.md) for naming rules, `Unordered output`, and placement.\n\n## Code Coverage\n\nGenerate a profile with `go test -coverprofile=coverage.out ./...`, then read the uncovered lines with `go tool cover -html=coverage.out`. Coverage locates untested paths; it does not measure assertion quality, so treat a percentage as a gap finder rather than a target.\n\n\u2192 See [Code Coverage](./references/coverage.md) for coverage modes, `-coverpkg`, and reporting pitfalls.\n\n## Integration Tests\n\nUse build tags to separate integration tests from unit tests:\n\n```go\n//go:build integration\n\npackage mypackage\n\nfunc TestDatabaseIntegration(t *testing.T) {\n    db, err := sql.Open(\"postgres\", os.Getenv(\"DATABASE_URL\"))\n    if err != nil {\n        t.Fatal(err)\n    }\n    defer db.Close()\n\n    // Test real database operations\n}\n```\n\nRun integration tests separately:\n\n```bash\ngo test -tags=integration ./...\n```\n\nFor Docker Compose fixtures, SQL schemas, and integration test suites, see [Integration Testing](./references/integration-testing.md).\n\n## Mocking\n\nMock interfaces, not concrete types. Define interfaces where consumed, then create mock implementations.\n\nFor mock patterns, test fixtures, and time mocking, see [Mocking](./references/mocking.md).\n\n## Enforce with Linters\n\nMany test best practices are enforced automatically by linters: `thelper`, `paralleltest`, `testifylint`. See the `samber/cc-skills-golang@golang-lint` skill for configuration and usage.\n\n## Cross-References\n\n- \u2192 See `samber/cc-skills-golang@golang-stretchr-testify` skill for detailed testify API (assert, require, mock, suite)\n- \u2192 See `samber/cc-skills-golang@golang-database` skill (testing.md) for database integration test patterns\n- \u2192 See `samber/cc-skills-golang@golang-concurrency` skill for goroutine leak detection with goleak\n- \u2192 See `samber/cc-skills-golang@golang-continuous-integration` skill for CI test configuration and GitHub Actions workflows\n- \u2192 See `samber/cc-skills-golang@golang-lint` skill for testifylint and paralleltest configuration\n- \u2192 See `samber/cc-skills-golang@golang-continuous-integration` skill for automated AI-driven code review in CI using these guidelines\n\n## Quick Reference\n\n```bash\ngo test ./...                          # all tests\ngo test -run TestName ./...            # specific test by exact name\ngo test -run TestName/subtest ./...    # subtests within a test\ngo test -run 'Test(Add|Sub)' ./...     # multiple tests (regexp OR)\ngo test -run 'Test[A-Z]' ./...         # tests starting with capital letter\ngo test -run 'TestUser.*' ./...        # tests matching prefix\ngo test -run '.*Validation.*' ./...    # tests containing substring\ngo test -run TestName/. ./...          # all subtests of TestName\ngo test -run '/(unit|integration)' ./... # filter by subtest name\ngo test -race ./...                    # race detection\ngo test -cover ./...                   # coverage summary\ngo test -bench=. -benchmem ./...       # benchmarks\ngo test -fuzz=FuzzName ./...           # fuzzing\ngo test -tags=integration ./...        # integration tests\n```\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.011
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "show",
+      "19a0626ae8565d27a7b7bdf59d8d99d94d7e284c:skills/golang-testing/references/benchmarks.md"
+    ],
+    "cwd": "/private/tmp/go-quality-build-upstream",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "# Benchmarks in a Test Suite\n\nBenchmarking methodology \u2014 `benchstat`, profiling from benchmarks, noise control, CI regression detection \u2014 belongs to the `samber/cc-skills-golang@golang-benchmark` skill. This page only covers writing a benchmark that sits next to the tests of the same package.\n\n## Shape\n\n```go\nfunc BenchmarkStringConcatenation(b *testing.B) {\n    b.Run(\"plus-operator\", func(b *testing.B) {\n        for b.Loop() {\n            result := \"a\" + \"b\" + \"c\"\n            _ = result\n        }\n    })\n\n    b.Run(\"strings.Builder\", func(b *testing.B) {\n        for b.Loop() {\n            var builder strings.Builder\n            builder.WriteString(\"a\")\n            builder.WriteString(\"b\")\n            builder.WriteString(\"c\")\n            _ = builder.String()\n        }\n    })\n}\n```\n\nSub-benchmarks give each variant its own name in the output, which is what `benchstat` compares. A single benchmark mixing both variants produces one number and hides the difference.\n\n## Varying input size\n\n```go\nfunc BenchmarkFibonacci(b *testing.B) {\n    sizes := []int{10, 20, 30}\n    for _, size := range sizes {\n        b.Run(fmt.Sprintf(\"n=%d\", size), func(b *testing.B) {\n            b.ReportAllocs()\n            for b.Loop() {\n                Fibonacci(size)\n            }\n        })\n    }\n}\n```\n\nSize-parameterized sub-benchmarks expose complexity growth: a jump that outpaces the size increase points at a superlinear algorithm, which no single-size benchmark reveals.\n\n## `b.Loop()` vs `b.N`\n\nFor Go 1.24+, write new benchmarks with `b.Loop()` \u2014 it keeps setup outside the timed region and prevents the compiler from optimizing the loop body away, the two failure modes that make `b.N` benchmarks report impossibly fast results. Use a legacy `b.N` loop only when the module targets Go <1.24 or when preserving existing benchmark code intentionally.\n\n\u2192 See `samber/cc-skills-golang@golang-benchmark` skill for measurement methodology and regression detection.\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "show",
+      "19a0626ae8565d27a7b7bdf59d8d99d94d7e284c:skills/golang-testing/references/coverage.md"
+    ],
+    "cwd": "/private/tmp/go-quality-build-upstream",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "# Code Coverage\n\nCoverage measures which lines ran, not whether their behavior was asserted. Treat it as a gap finder \u2014 read the uncovered lines \u2014 not as a quality target to chase.\n\n## Commands\n\n```bash\n# Generate coverage file\ngo test -coverprofile=coverage.out ./...\n\n# View coverage in HTML (uncovered lines in red)\ngo tool cover -html=coverage.out\n\n# Coverage by function\ngo tool cover -func=coverage.out\n\n# Total coverage percentage\ngo tool cover -func=coverage.out | grep total\n\n# Count how many times each statement ran, not just whether it ran\ngo test -covermode=count -coverprofile=coverage.out ./...\n\n# Safe under -race (atomic counters)\ngo test -race -covermode=atomic -coverprofile=coverage.out ./...\n\n# Attribute coverage of package A to tests living in package B\ngo test -coverpkg=./... ./...\n\n# Coverage of a single package, printed inline\ngo test -cover ./internal/store\n```\n\n## Modes\n\n| Mode | Records | Use when |\n| --- | --- | --- |\n| `set` | Statement executed (default) | Normal runs |\n| `count` | Execution count per statement | Finding never-taken branches in hot paths |\n| `atomic` | Count, race-safe | Any run combined with `-race` or `t.Parallel()` |\n\n## Pitfalls\n\n- **Per-package by default.** Without `-coverpkg`, a test in `api` exercising `store` reports nothing for `store`, making well-tested packages look untested.\n- **Integration tests are invisible** unless the build tag is passed: `go test -tags=integration -coverprofile=...`.\n- **Generated code inflates the number.** Exclude it before setting any threshold, otherwise the metric measures the generator.\n- **A covered line is not an asserted line.** A test that calls a function and ignores its result reports 100% coverage and verifies nothing.\n\n\u2192 See `samber/cc-skills-golang@golang-continuous-integration` skill for wiring coverage reporting into CI.\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "show",
+      "19a0626ae8565d27a7b7bdf59d8d99d94d7e284c:skills/golang-testing/references/examples.md"
+    ],
+    "cwd": "/private/tmp/go-quality-build-upstream",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "# Examples as Documentation\n\nExamples are executable documentation: `go test` runs them and compares stdout to the `// Output:` comment, and `pkg.go.dev` renders them next to the documented symbol. An example that drifts from the API fails the build, unlike a code block in a README.\n\n```go\nfunc ExampleCalculatePrice() {\n    price := CalculatePrice(100, 10.0)\n    fmt.Printf(\"Price: %.2f\\n\", price)\n    // Output: Price: 900.00\n}\n\nfunc ExampleCalculatePrice_singleItem() {\n    price := CalculatePrice(1, 25.50)\n    fmt.Printf(\"Price: %.2f\\n\", price)\n    // Output: Price: 25.50\n}\n```\n\n## Naming\n\nThe suffix decides where godoc attaches the example, so a typo silently detaches it from its symbol:\n\n| Function name               | Documents                          |\n| --------------------------- | ---------------------------------- |\n| `Example()`                 | The package itself                 |\n| `ExampleCalculatePrice()`   | The `CalculatePrice` function      |\n| `ExampleStore_Get()`        | The `Get` method of `Store`        |\n| `ExampleStore_Get_cached()` | A named variant of the same method |\n\nThe suffix after the second underscore MUST start with a lowercase letter \u2014 otherwise Go reads it as a type or method name and the example is orphaned.\n\n## Output directives\n\n- `// Output:` \u2014 stdout MUST match exactly (leading/trailing whitespace is trimmed).\n- `// Unordered output:` \u2014 lines may arrive in any order. Use it for map iteration and concurrent producers, which have no stable order.\n- **No output comment** \u2014 the example is compiled but not run. Useful for code that needs a live dependency, but it stops verifying behavior, so prefer a real output assertion.\n\n## Placement\n\nExamples live in `_test.go` files. Put them in the `package foo_test` external test package: an example that only compiles against the exported API proves the public surface is usable, which is the point of the example.\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.011
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "show",
+      "19a0626ae8565d27a7b7bdf59d8d99d94d7e284c:skills/golang-testing/references/helpers.md"
+    ],
+    "cwd": "/private/tmp/go-quality-build-upstream",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "# Test Helpers\n\n## Test Timeout\n\nFor tests that may hang, use a timeout helper that panics with caller location:\n\n```go\n// https://github.com/stretchr/testify/issues/1101\nfunc testWithTimeout(t *testing.T, timeout time.Duration) {\n    t.Helper()\n\n    testFinished := make(chan struct{})\n    t.Cleanup(func() {\n        close(testFinished)\n    })\n\n    var pc [1]uintptr\n    n := runtime.Callers(2, pc[:])\n    line, funcName := \"\", \"\"\n    if n > 0 {\n        frames := runtime.CallersFrames(pc[:])\n        frame, _ := frames.Next()\n        line = frame.File + \":\" + strconv.Itoa(frame.Line)\n        funcName = frame.Function\n    }\n\n    go func() {\n        select {\n        case <-testFinished:\n        case <-time.After(timeout):\n            panic(fmt.Sprintf(\"%s: Test timed out after: %v\\n%s\", funcName, timeout, line))\n        }\n    }()\n}\n\n// Usage\nfunc TestLongRunningOperation(t *testing.T) {\n    testWithTimeout(t, 2*time.Second)\n    result := LongRunningOperation()\n    // If this takes longer than 2 seconds, the test panics with location info\n}\n```\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "show",
+      "19a0626ae8565d27a7b7bdf59d8d99d94d7e284c:skills/golang-testing/references/http-testing.md"
+    ],
+    "cwd": "/private/tmp/go-quality-build-upstream",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "# HTTP Handler Testing\n\nUse `httptest` package for testing HTTP handlers without starting a server.\n\n## Basic Handler Test\n\n```go\nfunc TestCreateUserHandler(t *testing.T) {\n    tests := []struct {\n        name           string\n        body           string\n        expectedStatus int\n    }{\n        {\n            name:           \"valid request\",\n            body:           `{\"name\": \"Alice\", \"email\": \"alice@example.com\"}`,\n            expectedStatus: http.StatusCreated,\n        },\n        {\n            name:           \"invalid JSON\",\n            body:           `invalid json`,\n            expectedStatus: http.StatusBadRequest,\n        },\n    }\n\n    for _, tt := range tests {\n        t.Run(tt.name, func(t *testing.T) {\n            is := assert.New(t)\n\n            req := httptest.NewRequest(http.MethodPost, \"/users\", strings.NewReader(tt.body))\n            req.Header.Set(\"Content-Type\", \"application/json\")\n\n            w := httptest.NewRecorder()\n            handler := http.HandlerFunc(CreateUserHandler)\n            handler.ServeHTTP(w, req)\n\n            is.Equal(tt.expectedStatus, w.Code)\n        })\n    }\n}\n```\n\n## Query Parameters and Headers\n\n```go\nfunc TestListUsersHandler(t *testing.T) {\n    tests := []struct {\n        name           string\n        query          string\n        authHeader     string\n        expectedStatus int\n    }{\n        {\n            name:           \"paginated results\",\n            query:          \"?page=1&limit=10\",\n            authHeader:     \"Bearer token123\",\n            expectedStatus: http.StatusOK,\n        },\n        {\n            name:           \"missing auth\",\n            query:          \"?page=1\",\n            authHeader:     \"\",\n            expectedStatus: http.StatusUnauthorized,\n        },\n    }\n\n    for _, tt := range tests {\n        t.Run(tt.name, func(t *testing.T) {\n            is := assert.New(t)\n\n            req := httptest.NewRequest(http.MethodGet, \"/users\"+tt.query, nil)\n            if tt.authHeader != \"\" {\n                req.Header.Set(\"Authorization\", tt.authHeader)\n            }\n\n            w := httptest.NewRecorder()\n            handler := AuthMiddleware(ListUsersHandler)\n            handler.ServeHTTP(w, req)\n\n            is.Equal(tt.expectedStatus, w.Code)\n        })\n    }\n}\n```\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "show",
+      "19a0626ae8565d27a7b7bdf59d8d99d94d7e284c:skills/golang-testing/references/integration-testing.md"
+    ],
+    "cwd": "/private/tmp/go-quality-build-upstream",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "# Integration Testing\n\n## Table of Contents\n\n- [Docker Compose Fixture](#docker-compose-fixture)\n- [SQL Schema Fixture](#sql-schema-fixture)\n- [Test Data Fixture](#test-data-fixture)\n- [Using Fixtures in Tests](#using-fixtures-in-tests)\n- [Test Helper with Embedded Fixtures](#test-helper-with-embedded-fixtures)\n\n## Docker Compose Fixture\n\nCreate `pkg/myfeature/testdata/docker-compose.yml` for test services:\n\n```yaml\nversion: \"3.8\"\nservices:\n  postgres:\n    image: postgres:16-alpine\n    environment:\n      POSTGRES_USER: test\n      POSTGRES_PASSWORD: test\n      POSTGRES_DB: testdb\n    ports:\n      - \"5433:5432\"\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U test\"]\n      interval: 5s\n      timeout: 5s\n      retries: 5\n\n  redis:\n    image: redis:7-alpine\n    ports:\n      - \"6380:6379\"\n    healthcheck:\n      test: [\"CMD\", \"redis-cli\", \"ping\"]\n      interval: 5s\n      timeout: 5s\n      retries: 5\n```\n\n## SQL Schema Fixture\n\nCreate `pkg/myfeature/testdata/schema.sql` for database initialization:\n\n```sql\nCREATE TABLE IF NOT EXISTS users (\n    id SERIAL PRIMARY KEY,\n    name VARCHAR(255) NOT NULL,\n    email VARCHAR(255) UNIQUE NOT NULL,\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\nCREATE TABLE IF NOT EXISTS orders (\n    id SERIAL PRIMARY KEY,\n    user_id INTEGER REFERENCES users(id),\n    amount DECIMAL(10,2) NOT NULL,\n    status VARCHAR(50) DEFAULT 'pending',\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n```\n\n## Test Data Fixture\n\nCreate `pkg/myfeature/testdata/testdata.sql`:\n\n```sql\nINSERT INTO users (name, email) VALUES\n    ('Alice Johnson', 'alice@example.com'),\n    ('Bob Smith', 'bob@example.com'),\n    ('Charlie Brown', 'charlie@example.com');\n\nINSERT INTO orders (user_id, amount, status) VALUES\n    (1, 100.00, 'completed'),\n    (1, 50.00, 'pending'),\n    (2, 200.00, 'completed');\n```\n\n## Using Fixtures in Tests\n\n```go\n//go:build integration\n\npackage database_test\n\nimport (\n    \"database/sql\"\n    \"os\"\n    \"os/exec\"\n    \"testing\"\n    \"time\"\n    \"github.com/stretchr/testify/assert\"\n    \"github.com/stretchr/testify/suite\"\n)\n\ntype DatabaseTestSuite struct {\n    suite.Suite\n    db *sql.DB\n}\n\nfunc (s *DatabaseTestSuite) SetupSuite() {\n    cmd := exec.Command(\"docker-compose\", \"-f\", \"testdata/docker-compose.yml\", \"up\", \"-d\")\n    if err := cmd.Run(); err != nil {\n        s.T().Fatalf(\"failed to start docker-compose: %v\", err)\n    }\n\n    time.Sleep(5 * time.Second)\n\n    db, err := sql.Open(\"postgres\", \"postgres://test:test@localhost:5433/testdb?sslmode=disable\")\n    if err != nil {\n        s.T().Fatalf(\"failed to connect to database: %v\", err)\n    }\n    s.db = db\n\n    schema, _ := os.ReadFile(\"testdata/schema.sql\")\n    _, err = db.Exec(string(schema))\n    if err != nil {\n        s.T().Fatalf(\"failed to run schema: %v\", err)\n    }\n}\n\nfunc (s *DatabaseTestSuite) TearDownSuite() {\n    cmd := exec.Command(\"docker-compose\", \"-f\", \"testdata/docker-compose.yml\", \"down\", \"-v\")\n    _ = cmd.Run()\n}\n\nfunc (s *DatabaseTestSuite) SetupTest() {\n    _, err := s.db.Exec(\"TRUNCATE TABLE orders, users CASCADE\")\n    if err != nil {\n        s.T().Fatalf(\"failed to clear database: %v\", err)\n    }\n\n    testdata, _ := os.ReadFile(\"testdata/testdata.sql\")\n    _, err = s.db.Exec(string(testdata))\n    if err != nil {\n        s.T().Fatalf(\"failed to load test data: %v\", err)\n    }\n}\n\nfunc (s *DatabaseTestSuite) TestUserCount() {\n    is := assert.New(s.T())\n\n    var count int\n    err := s.db.QueryRow(\"SELECT COUNT(*) FROM users\").Scan(&count)\n    is.NoError(err)\n    is.Equal(3, count)\n}\n\nfunc (s *DatabaseTestSuite) TestOrderSum() {\n    is := assert.New(s.T())\n\n    var sum float64\n    err := s.db.QueryRow(\"SELECT SUM(amount) FROM orders\").Scan(&sum)\n    is.NoError(err)\n    is.InDelta(350.0, sum, 0.01)\n}\n\nfunc TestDatabaseTestSuite(t *testing.T) {\n    suite.Run(t, new(DatabaseTestSuite))\n}\n```\n\n## Test Helper with Embedded Fixtures\n\n```go\npackage myfeature\n\nimport (\n    \"database/sql\"\n    \"embed\"\n)\n\n//go:embed testdata/schema.sql testdata/testdata.sql\nvar fixtures embed.FS\n\nfunc SetupDB(db *sql.DB) error {\n    schema, err := fixtures.ReadFile(\"testdata/schema.sql\")\n    if err != nil {\n        return err\n    }\n    if _, err := db.Exec(string(schema)); err != nil {\n        return err\n    }\n\n    data, err := fixtures.ReadFile(\"testdata/testdata.sql\")\n    if err != nil {\n        return err\n    }\n    if _, err := db.Exec(string(data)); err != nil {\n        return err\n    }\n    return nil\n}\n```\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "show",
+      "19a0626ae8565d27a7b7bdf59d8d99d94d7e284c:skills/golang-testing/references/mocking.md"
+    ],
+    "cwd": "/private/tmp/go-quality-build-upstream",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "# Mocking and Test Fixtures\n\n## Table of Contents\n\n- [Mocks with testify/mock](#mocks-with-testifymock)\n- [Mock Organization](#mock-organization)\n- [Test Fixtures](#test-fixtures)\n- [Time Mocking](#time-mocking)\n\n## Mocks with testify/mock\n\nCreate interfaces for your dependencies, then mock them.\n\n> For the full testify/mock API (argument matchers, call modifiers, verification), see the `samber/cc-skills-golang@golang-stretchr-testify` skill.\n\n```go\n// Define the interface\ntype Database interface {\n    GetUser(id string) (*User, error)\n    CreateUser(user *User) error\n}\n\n// Mock implementation\ntype MockDatabase struct {\n    mock.Mock\n}\n\nfunc (m *MockDatabase) GetUser(id string) (*User, error) {\n    args := m.Called(id)\n    if args.Get(0) == nil {\n        return nil, args.Error(1)\n    }\n    return args.Get(0).(*User), args.Error(1)\n}\n\nfunc (m *MockDatabase) CreateUser(user *User) error {\n    args := m.Called(user)\n    return args.Error(0)\n}\n\n// Usage in tests\nfunc TestService_GetUser(t *testing.T) {\n    is := assert.New(t)\n\n    mockDB := new(MockDatabase)\n    service := NewService(mockDB)\n\n    expectedUser := &User{ID: \"1\", Name: \"John\"}\n    mockDB.On(\"GetUser\", \"1\").Return(expectedUser, nil)\n\n    user, err := service.GetUser(\"1\")\n\n    is.NoError(err)\n    is.Equal(expectedUser, user)\n    mockDB.AssertExpectations(t)\n}\n\nfunc TestService_GetUser_NotFound(t *testing.T) {\n    is := assert.New(t)\n\n    mockDB := new(MockDatabase)\n    service := NewService(mockDB)\n\n    mockDB.On(\"GetUser\", \"999\").Return(nil, ErrNotFound)\n\n    user, err := service.GetUser(\"999\")\n\n    is.Error(err)\n    is.ErrorIs(err, ErrNotFound)\n    is.Nil(user)\n    mockDB.AssertExpectations(t)\n}\n```\n\n## Mock Organization\n\nFor larger codebases, organize mocks alongside the code they mock:\n\n```go\n// user_service.go\ntype UserService struct {\n    db    Database\n    email EmailService\n}\ntype Database interface {\n    GetUser(id string) (*User, error)\n    CreateUser(user *User) error\n}\ntype EmailService interface {\n    SendWelcomeEmail(to string) error\n}\n```\n\n```go\n// user_service_test.go\npackage mypackage_test\n\nimport (\n    \"testing\"\n    \"github.com/stretchr/testify/assert\"\n    \"github.com/stretchr/testify/mock\"\n    \"path/to/mypackage\"\n)\n\n// MockDatabase implements mypackage.Database\ntype MockDatabase struct {\n    mock.Mock\n}\nfunc (m *MockDatabase) GetUser(id string) (*mypackage.User, error) {\n    args := m.Called(id)\n    if args.Get(0) == nil { return nil, args.Error(1) }\n    return args.Get(0).(*mypackage.User), args.Error(1)\n}\nfunc (m *MockDatabase) CreateUser(user *mypackage.User) error {\n    return m.Called(user).Error(0)\n}\n\n// MockEmailService implements mypackage.EmailService\ntype MockEmailService struct {\n    mock.Mock\n}\nfunc (m *MockEmailService) SendWelcomeEmail(to string) error {\n    return m.Called(to).Error(0)\n}\n\nfunc TestUserService_CreateUser(t *testing.T) {\n    mockDB := new(MockDatabase)\n    mockEmail := new(MockEmailService)\n    service := mypackage.NewUserService(mockDB, mockEmail)\n\n    user := &mypackage.User{Name: \"Test\", Email: \"test@example.com\"}\n    mockDB.On(\"CreateUser\", user).Return(nil)\n    mockEmail.On(\"SendWelcomeEmail\", \"test@example.com\").Return(nil)\n\n    err := service.CreateUser(user)\n\n    assert.NoError(t, err)\n    mockDB.AssertExpectations(t)\n    mockEmail.AssertExpectations(t)\n}\n```\n\n## Test Fixtures\n\nCreate reusable test data in a separate package or file:\n\n```go\npackage fixtures\n\nimport \"time\"\n\nvar (\n    DefaultUser = &User{\n        ID:        \"user-123\",\n        Name:      \"Jane Doe\",\n        Email:     \"jane@example.com\",\n        CreatedAt: time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),\n    }\n\n    AdminUser = &User{\n        ID:        \"admin-1\",\n        Name:      \"Admin User\",\n        Email:     \"admin@example.com\",\n        Role:      \"admin\",\n        CreatedAt: time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),\n    }\n)\n\nfunc NewUser(name, email string) *User {\n    return &User{\n        ID:        \"user-\" + uuid.New().String(),\n        Name:      name,\n        Email:     email,\n        CreatedAt: time.Now(),\n    }\n}\n```\n\n## Time Mocking\n\nUse `clockwork` to test time-dependent code without `time.Sleep()`:\n\n```go\nimport (\n    \"testing\"\n    \"time\"\n    \"github.com/jonboulle/clockwork\"\n    \"github.com/stretchr/testify/assert\"\n)\n\nfunc TestScheduler_AddJob(t *testing.T) {\n    is := assert.New(t)\n\n    fakeClock := clockwork.NewFakeClock()\n    scheduler := NewScheduler(fakeClock)\n\n    job := &Job{ID: \"1\", RunAt: time.Now().Add(1 * time.Hour)}\n    scheduler.AddJob(job)\n\n    is.Equal(1, scheduler.PendingCount())\n\n    // Advance fake time\n    fakeClock.Advance(2 * time.Hour)\n\n    is.Equal(0, scheduler.PendingCount())\n}\n```\n\nInstall clockwork:\n\n```bash\ngo get github.com/jonboulle/clockwork\n```\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "show",
+      "19a0626ae8565d27a7b7bdf59d8d99d94d7e284c:skills/golang-naming/references/testing.md"
+    ],
+    "cwd": "/private/tmp/go-quality-build-upstream",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "# Test Naming\n\n## Test Functions\n\nTest functions follow `Test` + the name of what is being tested. Use underscores for subcases.\n\n```go\nfunc TestParseToken(t *testing.T) { ... }\nfunc TestServer_Handle(t *testing.T) { ... }           // method test\nfunc TestParseToken_InvalidInput(t *testing.T) { ... }  // subcase\n```\n\n## Table-Driven Tests\n\nTable-driven test case names SHOULD be **fully lowercase, descriptive phrases** \u2014 including acronyms. Use `input` for inputs and `expected` for expected outputs to make the data flow clear:\n\n```go\ntests := []struct {\n    name         string\n    input        string\n    expectedCode int\n    expectedErr  bool\n}{\n    {name: \"empty input\", input: \"\", expectedCode: 400, expectedErr: true},\n    {name: \"valid token\", input: \"abc123\", expectedCode: 200},\n    {name: \"expired token\", input: \"exp\", expectedCode: 401, expectedErr: true},\n    {name: \"invalid id\", input: \"???\", expectedCode: 400, expectedErr: true},  // \"id\" not \"ID\"\n}\n\n// Bad \u2014 mixed case in test names\n{name: \"valid ID\", ...}      // should be \"valid id\"\n{name: \"Empty Input\", ...}   // should be \"empty input\"\n```\n\n## Test Helpers\n\nTest helper functions that panic on failure conventionally use the `must` prefix: `mustLoadFixture()`, `mustParseURL()`.\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "show",
+      "19a0626ae8565d27a7b7bdf59d8d99d94d7e284c:skills/golang-project-layout/references/testing-layout.md"
+    ],
+    "cwd": "/private/tmp/go-quality-build-upstream",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "# Tests, Benchmarks, and Examples\n\n## Table of Contents\n\n- [File Naming Conventions](#file-naming-conventions)\n- [Where to Place Tests](#where-to-place-tests)\n- [Test Package Options](#test-package-options)\n- [Benchmarks](#benchmarks)\n- [Examples](#examples)\n- [Test Utilities](#test-utilities)\n- [Test Fixtures](#test-fixtures)\n- [Running Tests](#running-tests)\n- [Test File Summary](#test-file-summary)\n\n## File Naming Conventions\n\nGo uses suffix-based naming for test-related files:\n\n| Suffix | Purpose | Build Tag |\n| --- | --- | --- |\n| `_test.go` | Tests | Not included in normal builds |\n| `_bench_test.go` | Benchmarks | Not included in normal builds |\n| `_example_test.go` | Examples that verify output | Not included in normal builds |\n| No suffix | Regular code | Included in all builds |\n\n## Where to Place Tests\n\n**Co-locate tests with the code they test:**\n\n```\ninternal/\n\u251c\u2500\u2500 handler/\n\u2502   \u251c\u2500\u2500 handler.go          # Production code\n\u2502   \u251c\u2500\u2500 handler_test.go     # Tests for handler\n\u2502   \u2514\u2500\u2500 handler_bench_test.go  # Benchmarks (optional)\n\u251c\u2500\u2500 service/\n\u2502   \u251c\u2500\u2500 service.go\n\u2502   \u2514\u2500\u2500 service_test.go\n\u2514\u2500\u2500 model/\n    \u251c\u2500\u2500 user.go\n    \u2514\u2500\u2500 user_test.go\n\npkg/\n\u2514\u2500\u2500 logger/\n    \u251c\u2500\u2500 logger.go\n    \u2514\u2500\u2500 logger_test.go\n```\n\n**Key principles:**\n\n- Tests live in the **same package** as the code (e.g., `package handler`)\n- Test files are in the **same directory** as the code they test\n- Use `_test.go` suffix for all test files\n\n## Test Package Options\n\nWhen writing tests, you have two options for the package declaration:\n\n**Option 1: Same package (white-box testing)**\n\n```go\npackage handler  // Same package, can access unexported\n\nimport \"testing\"\n\nfunc TestHandler(t *testing.T) {\n    // Can access unexported functions and types\n    internalFunction()\n}\n```\n\n**Option 2: Package with `_test` suffix (black-box testing)**\n\n```go\npackage handler_test  // Different package, only exported API\n\nimport \"testing\"\n\nfunc TestHandler(t *testing.T) {\n    // Can only access exported functions and types\n    handler.PublicMethod()\n}\n```\n\n**When to use each:**\n\n- Use **same package** for unit tests that need to test internals\n- Use **`_test` suffix** for integration/behavioral tests\n\n## Benchmarks\n\nBenchmarks use the `_bench_test.go` suffix and contain functions with the `Benchmark` prefix.\n\n## Examples\n\nExamples serve two purposes: documentation and verification.\n\n**In libraries** - use `*_example_test.go` files:\n\n```\npkg/\n\u2514\u2500\u2500 logger/\n    \u251c\u2500\u2500 logger.go\n    \u251c\u2500\u2500 logger_test.go\n    \u2514\u2500\u2500 logger_example_test.go     # Examples\n```\n\n**Example function format:**\n\n```go\npackage logger\n\nimport \"fmt\"\n\nfunc ExampleLogger_Info() {\n    log := New()\n    log.Info(\"processing started\")\n    log.Info(\"processing complete\")\n    // Output:\n    // INFO: processing started\n    // INFO: processing complete\n}\n```\n\n**Key points:**\n\n- Example functions must start with `Example`\n- The `// Output:` comment verifies the output\n- Examples are runnable tests: `go test` will fail if output doesn't match\n- `godoc` displays examples as documentation\n- File name format: `{package}_example_test.go` (e.g., `logger_example_test.go`)\n\n**For executable examples** (standalone demo programs):\n\n```\nexamples/\n\u2514\u2500\u2500 basic-usage/\n    \u2514\u2500\u2500 main.go                    # Executable example\n```\n\n## Test Utilities\n\nWhen you have shared test helpers, use a dedicated package:\n\n```\ntest/\n\u2514\u2500\u2500 testutils/\n    \u251c\u2500\u2500 mock.go\n    \u2514\u2500\u2500 fixtures.go\n```\n\nOr use the `internal/testutil` pattern:\n\n```\ninternal/\n\u2514\u2500\u2500 testutil/\n    \u251c\u2500\u2500 mock.go\n    \u2514\u2500\u2500 fixtures.go\n```\n\n## Test Fixtures\n\nFixtures are test data files used across multiple tests. Use one of these patterns:\n\n**Option 1: Local testdata directory** (package-specific fixtures)\n\n```\ninternal/\n\u2514\u2500\u2500 handler/\n    \u251c\u2500\u2500 handler.go\n    \u251c\u2500\u2500 handler_test.go\n    \u2514\u2500\u2500 testdata/\n        \u251c\u2500\u2500 users.json\n        \u251c\u2500\u2500 request_valid.json\n        \u2514\u2500\u2500 request_invalid.json\n```\n\n**Option 2: Global test directory** (shared across packages)\n\n```\ntest/\n\u2514\u2500\u2500 fixtures/\n    \u251c\u2500\u2500 users.json\n    \u251c\u2500\u2500 products.json\n    \u2514\u2500\u2500 responses/\n        \u251c\u2500\u2500 success.json\n        \u2514\u2500\u2500 error.json\n```\n\n**Option 3: Embedded fixtures** (Go 1.16+, use `//go:embed`)\n\n```\ninternal/\n\u2514\u2500\u2500 handler/\n    \u251c\u2500\u2500 handler.go\n    \u251c\u2500\u2500 handler_test.go\n    \u2514\u2500\u2500 testdata/\n        \u2514\u2500\u2500 users.json\n```\n\n**Important notes:**\n\n- Go ignores the `testdata` directory when building regular packages\n- Use `testdata/` for package-specific test data\n- Use `test/fixtures/` for cross-package shared fixtures\n- Don't put `.go` files in `testdata/` - they will be ignored\n\n## Running Tests\n\n```bash\ngo test ./...                    # Run all tests\ngo test ./internal/handler       # Test specific package\ngo test -v ./...                 # Verbose output\ngo test -race ./...              # Race detection\ngo test -cover ./...             # Coverage report\ngo test -short ./...             # Skip long-running tests\n```\n\n## Test File Summary\n\n| File Type | Suffix | Package | Purpose |\n| --- | --- | --- | --- |\n| Test | `*_test.go` | `package X` or `package X_test` | Unit/integration tests |\n| Benchmark | `*_bench_test.go` | Same as code | Performance tests |\n| Example (godoc) | `*_example_test.go` | Same as code | Documentation + verification |\n| Executable example | No suffix | `package main` | Standalone demo programs |\n| Test utilities | `*_test.go` | `package testutil` | Shared test helpers |\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "show",
+      "19a0626ae8565d27a7b7bdf59d8d99d94d7e284c:LICENSE"
+    ],
+    "cwd": "/private/tmp/go-quality-build-upstream",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "MIT License\n\nCopyright (c) 2026 Samuel Berthe\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "kind": "pinned-copy-scope-check",
+    "pin": "19a0626ae8565d27a7b7bdf59d8d99d94d7e284c",
+    "source_sha256": {
+      "skills/golang-testing/SKILL.md": "55eea3ed4536df0c95fc1247382d3027d45b1d1af0a94fc9de653debae5df0f2",
+      "skills/golang-testing/references/benchmarks.md": "f9de0e2e50cbb8e28684da1f99ff15fa84779150b4a8deefdf97ea3345c871f1",
+      "skills/golang-testing/references/coverage.md": "b2f7af52412b084cf353ff493941ad43276cae9d197470db2287b5d2c5a1aebf",
+      "skills/golang-testing/references/examples.md": "40c070f0a83898edbc0c87c034fc2281d9c2b04e0514c94aa1ff07b802b575c5",
+      "skills/golang-testing/references/helpers.md": "8c71d253a246e66b8249022c96d7e8892f5bfc2156b02a36673c321db2c843f4",
+      "skills/golang-testing/references/http-testing.md": "39381274d7887651b86bde513085835f52860aa0832eb6f945f79c008f240e0f",
+      "skills/golang-testing/references/integration-testing.md": "a29e725c58a1c2feaf16470db7eb4f8394aa36a476df92a792ac026c950d0b85",
+      "skills/golang-testing/references/mocking.md": "65558f907dea483831aea4aca50b1d6f1b64f92803bc2446f6a550a6d6c5c33a",
+      "skills/golang-naming/references/testing.md": "be7066959d1eb1da03b38ea93a2e7d6d69d3ed82b0bb5d0600a9e4065a819471",
+      "skills/golang-project-layout/references/testing-layout.md": "e94120a0fea89aa5ede1f41a2bcfe33b1ae06309568b7ab608388579c3f7c80a",
+      "LICENSE": "a6735e3815503be2fc1ae4813758cb3d0c24a5309df508309ce180cf5a4ead58"
+    },
+    "longest_word_matches": [
+      {
+        "local": "/Users/jb/.codex/worktrees/b633/skills/docs/go-quality-build/drafts/go-behavior-tests/SKILL.md",
+        "longest_matches": [
+          {
+            "source": "skills/golang-testing/SKILL.md",
+            "consecutive_word_count": 3,
+            "local_start_word": 287,
+            "upstream_start_word": 313
+          },
+          {
+            "source": "skills/golang-testing/references/benchmarks.md",
+            "consecutive_word_count": 2,
+            "local_start_word": 25,
+            "upstream_start_word": 1
+          },
+          {
+            "source": "skills/golang-testing/references/coverage.md",
+            "consecutive_word_count": 2,
+            "local_start_word": 5,
+            "upstream_start_word": 135
+          },
+          {
+            "source": "skills/golang-testing/references/examples.md",
+            "consecutive_word_count": 2,
+            "local_start_word": 25,
+            "upstream_start_word": 43
+          },
+          {
+            "source": "skills/golang-testing/references/helpers.md",
+            "consecutive_word_count": 2,
+            "local_start_word": 52,
+            "upstream_start_word": 5
+          },
+          {
+            "source": "skills/golang-testing/references/integration-testing.md",
+            "consecutive_word_count": 2,
+            "local_start_word": 598,
+            "upstream_start_word": 51
+          },
+          {
+            "source": "skills/golang-testing/references/mocking.md",
+            "consecutive_word_count": 2,
+            "local_start_word": 25,
+            "upstream_start_word": 410
+          },
+          {
+            "source": "skills/golang-naming/references/testing.md",
+            "consecutive_word_count": 2,
+            "local_start_word": 72,
+            "upstream_start_word": 145
+          },
+          {
+            "source": "skills/golang-project-layout/references/testing-layout.md",
+            "consecutive_word_count": 2,
+            "local_start_word": 20,
+            "upstream_start_word": 120
+          },
+          {
+            "source": "skills/golang-testing/references/http-testing.md",
+            "consecutive_word_count": 1,
+            "local_start_word": 0,
+            "upstream_start_word": 25
+          }
+        ]
+      },
+      {
+        "local": "/Users/jb/.codex/worktrees/b633/skills/docs/go-quality-build/drafts/go-behavior-tests/references/behavior-observations.md",
+        "longest_matches": [
+          {
+            "source": "skills/golang-testing/SKILL.md",
+            "consecutive_word_count": 5,
+            "local_start_word": 435,
+            "upstream_start_word": 1036
+          },
+          {
+            "source": "skills/golang-testing/references/http-testing.md",
+            "consecutive_word_count": 5,
+            "local_start_word": 435,
+            "upstream_start_word": 61
+          },
+          {
+            "source": "skills/golang-testing/references/examples.md",
+            "consecutive_word_count": 3,
+            "local_start_word": 140,
+            "upstream_start_word": 19
+          },
+          {
+            "source": "skills/golang-testing/references/helpers.md",
+            "consecutive_word_count": 3,
+            "local_start_word": 390,
+            "upstream_start_word": 28
+          },
+          {
+            "source": "skills/golang-testing/references/integration-testing.md",
+            "consecutive_word_count": 3,
+            "local_start_word": 390,
+            "upstream_start_word": 488
+          },
+          {
+            "source": "skills/golang-testing/references/mocking.md",
+            "consecutive_word_count": 3,
+            "local_start_word": 390,
+            "upstream_start_word": 132
+          },
+          {
+            "source": "skills/golang-naming/references/testing.md",
+            "consecutive_word_count": 3,
+            "local_start_word": 280,
+            "upstream_start_word": 63
+          },
+          {
+            "source": "skills/golang-project-layout/references/testing-layout.md",
+            "consecutive_word_count": 3,
+            "local_start_word": 390,
+            "upstream_start_word": 211
+          },
+          {
+            "source": "skills/golang-testing/references/benchmarks.md",
+            "consecutive_word_count": 2,
+            "local_start_word": 50,
+            "upstream_start_word": 175
+          },
+          {
+            "source": "skills/golang-testing/references/coverage.md",
+            "consecutive_word_count": 2,
+            "local_start_word": 2,
+            "upstream_start_word": 19
+          }
+        ]
+      }
+    ],
+    "note": "Consecutive-word comparison supplements manual comparison; shared generic Go/test terms are not by themselves copied substantial content."
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "build",
+      "-o",
+      "/private/tmp/go-behavior-promotion-review/partial-write/baseline/ledgerload",
+      "."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/reconstructed/baseline/cli-partial-failure",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.087
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-behavior-promotion-review/partial-write/baseline/ledgerload",
+      "--dir",
+      "/private/tmp/go-behavior-promotion-review/partial-write/baseline/records"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/reconstructed/baseline/cli-partial-failure",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "record 2: writing \"web\": write /private/tmp/go-behavior-promotion-review/partial-write/baseline/records/web: file too large\n",
+    "exit_code": 2,
+    "duration_seconds": 0.217,
+    "stdin": "web,1\nweb,12345\nlater,9\n",
+    "setup": "child-only RLIMIT_FSIZE soft=hard=3; inherited SIGXFSZ ignored",
+    "contents": {
+      "web": "123"
+    },
+    "parent_limit_after": [
+      9223372036854775807,
+      9223372036854775807
+    ]
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "build",
+      "-o",
+      "/private/tmp/go-behavior-promotion-review/partial-write/skill-on/ledgerload",
+      "."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/reconstructed/skill-on/cli-partial-failure",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.107
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-behavior-promotion-review/partial-write/skill-on/ledgerload",
+      "--dir",
+      "/private/tmp/go-behavior-promotion-review/partial-write/skill-on/records"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/reconstructed/skill-on/cli-partial-failure",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "write record 2 (\"web\"): write /private/tmp/go-behavior-promotion-review/partial-write/skill-on/records/.ledgerload-1169367055: file too large\n",
+    "exit_code": 2,
+    "duration_seconds": 0.122,
+    "stdin": "web,1\nweb,12345\nlater,9\n",
+    "setup": "child-only RLIMIT_FSIZE soft=hard=3; inherited SIGXFSZ ignored",
+    "contents": {
+      "web": "1\n"
+    },
+    "parent_limit_after": [
+      9223372036854775807,
+      9223372036854775807
+    ]
+  },
+  {
+    "kind": "exact-example",
+    "source_sha256": "e0617bb1e7f66688c5faddf7cdc3c38047c5e1d58f41ad67763fb50acaeb6548",
+    "archive_sha256": "e0617bb1e7f66688c5faddf7cdc3c38047c5e1d58f41ad67763fb50acaeb6548"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/example",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/finish\t0.159s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.292
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/example",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.071
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/example",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/finish\t0.179s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.311
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/example",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestFinishErrorCombinations (0.00s)\n    --- FAIL: TestFinishErrorCombinations/work_fails,_close_succeeds (0.00s)\n        finish_test.go:39: finish = <nil>, want cause work failed\nFAIL\nFAIL\texample.com/finish\t0.123s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.239
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "/Users/jb/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+      "docs/go-quality-build/drafts/go-behavior-tests"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "Skill is valid!\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.032
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "scripts/validate.py"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "PASS: 10 skills; matching grading/report contracts; 120 valid evaluation cases\nPASS: 20 valid build evaluation cases\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.046
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "status",
+      "--short"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.02
+  }
+]

@@ -1,0 +1,300 @@
+[
+  {
+    "label": "baseline",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 90,
+    "duration_seconds": 0.338,
+    "stdout": "ok  \texample.com/showcfg\t0.179s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "format",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "config_test.go",
+      "command_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-2/module",
+    "environment": {},
+    "timeout_seconds": 10,
+    "duration_seconds": 0.008,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "full_suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 90,
+    "duration_seconds": 0.651,
+    "stdout": "=== RUN   TestShowcfg\n=== RUN   TestShowcfg/cases\n=== RUN   TestShowcfg/cases/defaults\n=== PAUSE TestShowcfg/cases/defaults\n=== RUN   TestShowcfg/cases/explicit_http_read\n=== PAUSE TestShowcfg/cases/explicit_http_read\n=== RUN   TestShowcfg/cases/explicit_https_write\n=== PAUSE TestShowcfg/cases/explicit_https_write\n=== RUN   TestShowcfg/cases/endpoint_only\n=== PAUSE TestShowcfg/cases/endpoint_only\n=== RUN   TestShowcfg/cases/mode_only\n=== PAUSE TestShowcfg/cases/mode_only\n=== RUN   TestShowcfg/cases/empty_endpoint\n=== PAUSE TestShowcfg/cases/empty_endpoint\n=== RUN   TestShowcfg/cases/unsupported_scheme\n=== PAUSE TestShowcfg/cases/unsupported_scheme\n=== RUN   TestShowcfg/cases/missing_host\n=== PAUSE TestShowcfg/cases/missing_host\n=== RUN   TestShowcfg/cases/relative_endpoint\n=== PAUSE TestShowcfg/cases/relative_endpoint\n=== RUN   TestShowcfg/cases/malformed_endpoint\n=== PAUSE TestShowcfg/cases/malformed_endpoint\n=== RUN   TestShowcfg/cases/empty_mode\n=== PAUSE TestShowcfg/cases/empty_mode\n=== RUN   TestShowcfg/cases/unsupported_mode\n=== PAUSE TestShowcfg/cases/unsupported_mode\n=== RUN   TestShowcfg/cases/uppercase_mode\n=== PAUSE TestShowcfg/cases/uppercase_mode\n=== RUN   TestShowcfg/cases/whitespace_mode\n=== PAUSE TestShowcfg/cases/whitespace_mode\n=== RUN   TestShowcfg/cases/valid_endpoint_invalid_mode\n=== PAUSE TestShowcfg/cases/valid_endpoint_invalid_mode\n=== CONT  TestShowcfg/cases/defaults\n=== CONT  TestShowcfg/cases/relative_endpoint\n=== CONT  TestShowcfg/cases/valid_endpoint_invalid_mode\n=== CONT  TestShowcfg/cases/whitespace_mode\n=== CONT  TestShowcfg/cases/uppercase_mode\n=== CONT  TestShowcfg/cases/mode_only\n=== CONT  TestShowcfg/cases/missing_host\n=== CONT  TestShowcfg/cases/explicit_https_write\n=== CONT  TestShowcfg/cases/empty_endpoint\n=== CONT  TestShowcfg/cases/endpoint_only\n=== CONT  TestShowcfg/cases/empty_mode\n=== CONT  TestShowcfg/cases/unsupported_mode\n=== CONT  TestShowcfg/cases/malformed_endpoint\n=== CONT  TestShowcfg/cases/explicit_http_read\n=== CONT  TestShowcfg/cases/unsupported_scheme\n--- PASS: TestShowcfg (0.28s)\n    --- PASS: TestShowcfg/cases (0.00s)\n        --- PASS: TestShowcfg/cases/empty_endpoint (0.17s)\n        --- PASS: TestShowcfg/cases/relative_endpoint (0.17s)\n        --- PASS: TestShowcfg/cases/uppercase_mode (0.17s)\n        --- PASS: TestShowcfg/cases/missing_host (0.17s)\n        --- PASS: TestShowcfg/cases/empty_mode (0.17s)\n        --- PASS: TestShowcfg/cases/unsupported_mode (0.17s)\n        --- PASS: TestShowcfg/cases/unsupported_scheme (0.17s)\n        --- PASS: TestShowcfg/cases/whitespace_mode (0.17s)\n        --- PASS: TestShowcfg/cases/valid_endpoint_invalid_mode (0.18s)\n        --- PASS: TestShowcfg/cases/explicit_https_write (0.17s)\n        --- PASS: TestShowcfg/cases/endpoint_only (0.17s)\n        --- PASS: TestShowcfg/cases/explicit_http_read (0.17s)\n        --- PASS: TestShowcfg/cases/mode_only (0.17s)\n        --- PASS: TestShowcfg/cases/defaults (0.18s)\n        --- PASS: TestShowcfg/cases/malformed_endpoint (0.17s)\n=== RUN   TestLoadFromEnv\n=== RUN   TestLoadFromEnv/defaults\n=== RUN   TestLoadFromEnv/explicit_http_read\n=== RUN   TestLoadFromEnv/explicit_https_write\n=== RUN   TestLoadFromEnv/endpoint_only\n=== RUN   TestLoadFromEnv/mode_only\n=== RUN   TestLoadFromEnv/empty_endpoint\n=== RUN   TestLoadFromEnv/unsupported_scheme\n=== RUN   TestLoadFromEnv/missing_host\n=== RUN   TestLoadFromEnv/relative_endpoint\n=== RUN   TestLoadFromEnv/malformed_endpoint\n=== RUN   TestLoadFromEnv/empty_mode\n=== RUN   TestLoadFromEnv/unsupported_mode\n=== RUN   TestLoadFromEnv/uppercase_mode\n=== RUN   TestLoadFromEnv/whitespace_mode\n=== RUN   TestLoadFromEnv/valid_endpoint_invalid_mode\n--- PASS: TestLoadFromEnv (0.00s)\n    --- PASS: TestLoadFromEnv/defaults (0.00s)\n    --- PASS: TestLoadFromEnv/explicit_http_read (0.00s)\n    --- PASS: TestLoadFromEnv/explicit_https_write (0.00s)\n    --- PASS: TestLoadFromEnv/endpoint_only (0.00s)\n    --- PASS: TestLoadFromEnv/mode_only (0.00s)\n    --- PASS: TestLoadFromEnv/empty_endpoint (0.00s)\n    --- PASS: TestLoadFromEnv/unsupported_scheme (0.00s)\n    --- PASS: TestLoadFromEnv/missing_host (0.00s)\n    --- PASS: TestLoadFromEnv/relative_endpoint (0.00s)\n    --- PASS: TestLoadFromEnv/malformed_endpoint (0.00s)\n    --- PASS: TestLoadFromEnv/empty_mode (0.00s)\n    --- PASS: TestLoadFromEnv/unsupported_mode (0.00s)\n    --- PASS: TestLoadFromEnv/uppercase_mode (0.00s)\n    --- PASS: TestLoadFromEnv/whitespace_mode (0.00s)\n    --- PASS: TestLoadFromEnv/valid_endpoint_invalid_mode (0.00s)\n=== RUN   TestEnvironmentRestored\n=== RUN   TestEnvironmentRestored/unset\n=== RUN   TestEnvironmentRestored/unset/unset\n=== RUN   TestEnvironmentRestored/unset/supplied\n=== RUN   TestEnvironmentRestored/unset/malformed\n=== RUN   TestEnvironmentRestored/present_empty\n=== RUN   TestEnvironmentRestored/present_empty/unset\n=== RUN   TestEnvironmentRestored/present_empty/supplied\n=== RUN   TestEnvironmentRestored/present_empty/malformed\n=== RUN   TestEnvironmentRestored/present_value\n=== RUN   TestEnvironmentRestored/present_value/unset\n=== RUN   TestEnvironmentRestored/present_value/supplied\n=== RUN   TestEnvironmentRestored/present_value/malformed\n--- PASS: TestEnvironmentRestored (0.00s)\n    --- PASS: TestEnvironmentRestored/unset (0.00s)\n        --- PASS: TestEnvironmentRestored/unset/unset (0.00s)\n        --- PASS: TestEnvironmentRestored/unset/supplied (0.00s)\n        --- PASS: TestEnvironmentRestored/unset/malformed (0.00s)\n    --- PASS: TestEnvironmentRestored/present_empty (0.00s)\n        --- PASS: TestEnvironmentRestored/present_empty/unset (0.00s)\n        --- PASS: TestEnvironmentRestored/present_empty/supplied (0.00s)\n        --- PASS: TestEnvironmentRestored/present_empty/malformed (0.00s)\n    --- PASS: TestEnvironmentRestored/present_value (0.00s)\n        --- PASS: TestEnvironmentRestored/present_value/unset (0.00s)\n        --- PASS: TestEnvironmentRestored/present_value/supplied (0.00s)\n        --- PASS: TestEnvironmentRestored/present_value/malformed (0.00s)\nPASS\nok  \texample.com/showcfg\t0.494s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "focused_defaults",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-count=1",
+      "-timeout=60s",
+      "-run=^TestLoadFromEnv$/^defaults$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 90,
+    "duration_seconds": 0.415,
+    "stdout": "=== RUN   TestLoadFromEnv\n=== RUN   TestLoadFromEnv/defaults\n--- PASS: TestLoadFromEnv (0.00s)\n    --- PASS: TestLoadFromEnv/defaults (0.00s)\nPASS\nok  \texample.com/showcfg\t0.256s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "focused_command_default",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-count=1",
+      "-timeout=60s",
+      "-run=^TestShowcfg$/^cases$/^defaults$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 90,
+    "duration_seconds": 0.627,
+    "stdout": "=== RUN   TestShowcfg\n=== RUN   TestShowcfg/cases\n=== RUN   TestShowcfg/cases/defaults\n=== PAUSE TestShowcfg/cases/defaults\n=== CONT  TestShowcfg/cases/defaults\n--- PASS: TestShowcfg (0.32s)\n    --- PASS: TestShowcfg/cases (0.00s)\n        --- PASS: TestShowcfg/cases/defaults (0.23s)\nPASS\nok  \texample.com/showcfg\t0.468s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "focused_command_failure",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-count=1",
+      "-timeout=60s",
+      "-run=^TestShowcfg$/^cases$/^empty_mode$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 90,
+    "duration_seconds": 0.848,
+    "stdout": "=== RUN   TestShowcfg\n=== RUN   TestShowcfg/cases\n=== RUN   TestShowcfg/cases/empty_mode\n=== PAUSE TestShowcfg/cases/empty_mode\n=== CONT  TestShowcfg/cases/empty_mode\n--- PASS: TestShowcfg (0.33s)\n    --- PASS: TestShowcfg/cases (0.00s)\n        --- PASS: TestShowcfg/cases/empty_mode (0.23s)\nPASS\nok  \texample.com/showcfg\t0.690s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "focused_restoration",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-count=1",
+      "-timeout=60s",
+      "-run=^TestEnvironmentRestored$/^present_empty$/^unset$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 90,
+    "duration_seconds": 0.328,
+    "stdout": "=== RUN   TestEnvironmentRestored\n=== RUN   TestEnvironmentRestored/present_empty\n=== RUN   TestEnvironmentRestored/present_empty/unset\n--- PASS: TestEnvironmentRestored (0.00s)\n    --- PASS: TestEnvironmentRestored/present_empty (0.00s)\n        --- PASS: TestEnvironmentRestored/present_empty/unset (0.00s)\nPASS\nok  \texample.com/showcfg\t0.210s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "race_shuffle_hostile_parent",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "INDEXER_ENDPOINT=parent-invalid-endpoint",
+      "INDEXER_MODE=parent-invalid-mode",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=73",
+      "-count=5",
+      "-timeout=120s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "INDEXER_ENDPOINT": "parent-invalid-endpoint",
+      "INDEXER_MODE": "parent-invalid-mode"
+    },
+    "timeout_seconds": 150,
+    "duration_seconds": 2.463,
+    "stdout": "ok  \texample.com/showcfg\t2.248s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 60,
+    "duration_seconds": 0.085,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "format_check",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "gofmt",
+      "-l",
+      "config_test.go",
+      "command_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 10,
+    "duration_seconds": 0.009,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 10,
+    "duration_seconds": 0.011,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "staticcheck_availability",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "python3",
+      "-c",
+      "import json, shutil; print(json.dumps({\"staticcheck_path\": shutil.which(\"staticcheck\")}))"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 10,
+    "duration_seconds": 0.023,
+    "stdout": "{\"staticcheck_path\": null}\n",
+    "stderr": "",
+    "exit_code": 0
+  }
+]

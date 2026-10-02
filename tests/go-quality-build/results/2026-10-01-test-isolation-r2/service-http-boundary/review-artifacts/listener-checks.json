@@ -1,0 +1,50 @@
+[
+  {
+    "label": "approved unchanged-source full suite with listeners",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "./...",
+      "-count=1",
+      "-timeout=40s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.201s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.388,
+    "sandbox_permissions": "require_escalated"
+  },
+  {
+    "label": "approved unchanged-source race shuffled repeated with listeners",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "./...",
+      "-race",
+      "-count=10",
+      "-shuffle=on",
+      "-timeout=60s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/metadata\t1.197s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.416,
+    "sandbox_permissions": "require_escalated"
+  }
+]

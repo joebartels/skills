@@ -1,0 +1,60 @@
+{
+  "reason": "controller/author test-name collision, not candidate failure or semantic probe change",
+  "mapping": [
+    {
+      "frozen_path": "tests/go-quality-build/go-test-isolation/evals/controller-probes/worker-timing/contract_test.go",
+      "frozen_sha256": "edbcadbf604a04c72598c70806763e0f5e9878be0a8d4e5f381bf52712192ef7",
+      "renamed_sha256": "743f5e81b235e06747fb642dd45a838003dfbbe6b6043490df7903e56656638b",
+      "identifier_map": {
+        "TestCompletionRelativeRecurrence": "TestControlleredbcadbfCompletionRelativeRecurrence",
+        "TestTeardownOrder": "TestControlleredbcadbfTeardownOrder"
+      },
+      "semantic_equivalence": "exact bytes restored by inverse top-level test function name mapping; bodies unchanged"
+    }
+  ],
+  "checks": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-namespaced-probe-935fibpv/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/poller\t0.165s [no tests to run]\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.3190069160191342,
+      "kind": "withheld-contract-probes-namespaced"
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-namespaced-probe-935fibpv/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/poller\t0.368s\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.47769520804286003,
+      "kind": "withheld-contract-probes-namespaced"
+    }
+  ]
+}

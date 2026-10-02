@@ -1,0 +1,12 @@
+--- a/host.go
++++ b/host.go
+@@ -26,5 +26,8 @@
+ 
+ 	err := <-done
+ 	cancel()
+-	return errors.Join(err, release())
++	if releaseErr := release(); releaseErr != nil {
++		return errors.Join(err, releaseErr)
++	}
++	return nil
+ }

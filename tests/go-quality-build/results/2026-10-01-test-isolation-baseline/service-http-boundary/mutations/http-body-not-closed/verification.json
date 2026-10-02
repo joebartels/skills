@@ -1,0 +1,88 @@
+{
+  "semantic_id": "http-body-not-closed",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "2807ecbcf6fc4d8fabb909fdeda5be1aede31706d28a654c0a12bcf9c2c34068",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-a8b9ydga/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.203s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.434
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/service-http-boundary/mutations/http-body-not-closed/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-a8b9ydga/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-a8b9ydga/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.204s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.441
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-a8b9ydga/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestFetchSuccessClosesBody (0.00s)\n    --- FAIL: TestFetchSuccessClosesBody/ordinary (0.00s)\n        fetch_test.go:72: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchSuccessClosesBody/preserve_name (0.00s)\n        fetch_test.go:72: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchSuccessClosesBody/surrounding_JSON_whitespace (0.00s)\n        fetch_test.go:72: body closed 0 times, want 1 before Fetch returns\n--- FAIL: TestFetchInvalidJSONOrFieldsClosesBody (0.00s)\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/empty_body (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/malformed_JSON (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/null (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/array (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/scalar (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/trailing_object (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/trailing_garbage (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/missing_name (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/empty_name (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/whitespace_name (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/null_name (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/wrong_name_type (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/missing_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/zero_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/negative_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/null_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/wrong_revision_type (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/fractional_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/overflowing_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n--- FAIL: TestFetchNon200StatusClosesBody (0.00s)\n    --- FAIL: TestFetchNon200StatusClosesBody/201 (0.00s)\n        fetch_test.go:123: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchNon200StatusClosesBody/204 (0.00s)\n        fetch_test.go:123: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchNon200StatusClosesBody/206 (0.00s)\n        fetch_test.go:123: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchNon200StatusClosesBody/404 (0.00s)\n        fetch_test.go:123: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchNon200StatusClosesBody/500 (0.00s)\n        fetch_test.go:123: body closed 0 times, want 1 before Fetch returns\n--- FAIL: TestFetchReadFailureClosesBody (0.00s)\n    fetch_test.go:146: body closed 0 times, want 1 before Fetch returns\n--- FAIL: TestFetchCancellation (0.00s)\n    --- FAIL: TestFetchCancellation/while_reading_response_body (0.00s)\n        fetch_test.go:340: canceled response body closed 0 times, want 1\nFAIL\nFAIL\texample.com/metadata\t0.164s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.349
+  },
+  "classification": "detected by meaningful ownership/cancellation assertions",
+  "controller_interpretation": "Explicit synthetic body closure assertions fail across success/status/JSON/read failures, plus acquired real canceled body closure. No compile rejection is credited.",
+  "verification_environment": "automatically approved local-loopback execution"
+}

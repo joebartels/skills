@@ -1,0 +1,139 @@
+[
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "config_test.go"
+    ],
+    "process_timeout_seconds": 20,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "process_timeout_seconds": 20,
+    "exit_code": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-timeout=90s",
+      "-run",
+      "^TestLoadFromEnv$",
+      "./..."
+    ],
+    "process_timeout_seconds": 110,
+    "exit_code": 0,
+    "stdout": "=== RUN   TestLoadFromEnv\n=== RUN   TestLoadFromEnv/defaults\n=== RUN   TestLoadFromEnv/explicit_http_read\n=== RUN   TestLoadFromEnv/explicit_https_write\n=== RUN   TestLoadFromEnv/endpoint_only\n=== RUN   TestLoadFromEnv/mode_only\n=== RUN   TestLoadFromEnv/empty_endpoint\n=== RUN   TestLoadFromEnv/missing_scheme\n=== RUN   TestLoadFromEnv/unsupported_scheme\n=== RUN   TestLoadFromEnv/missing_host\n=== RUN   TestLoadFromEnv/malformed_endpoint\n=== RUN   TestLoadFromEnv/empty_mode\n=== RUN   TestLoadFromEnv/unknown_mode\n=== RUN   TestLoadFromEnv/capitalized_mode\n=== RUN   TestLoadFromEnv/whitespace_mode\n--- PASS: TestLoadFromEnv (0.00s)\n    --- PASS: TestLoadFromEnv/defaults (0.00s)\n    --- PASS: TestLoadFromEnv/explicit_http_read (0.00s)\n    --- PASS: TestLoadFromEnv/explicit_https_write (0.00s)\n    --- PASS: TestLoadFromEnv/endpoint_only (0.00s)\n    --- PASS: TestLoadFromEnv/mode_only (0.00s)\n    --- PASS: TestLoadFromEnv/empty_endpoint (0.00s)\n    --- PASS: TestLoadFromEnv/missing_scheme (0.00s)\n    --- PASS: TestLoadFromEnv/unsupported_scheme (0.00s)\n    --- PASS: TestLoadFromEnv/missing_host (0.00s)\n    --- PASS: TestLoadFromEnv/malformed_endpoint (0.00s)\n    --- PASS: TestLoadFromEnv/empty_mode (0.00s)\n    --- PASS: TestLoadFromEnv/unknown_mode (0.00s)\n    --- PASS: TestLoadFromEnv/capitalized_mode (0.00s)\n    --- PASS: TestLoadFromEnv/whitespace_mode (0.00s)\nPASS\nok  \texample.com/showcfg\t0.172s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-timeout=90s",
+      "-run",
+      "^TestShowcfgCommand$/^defaults$",
+      "./..."
+    ],
+    "process_timeout_seconds": 110,
+    "exit_code": 0,
+    "stdout": "=== RUN   TestShowcfgCommand\n=== RUN   TestShowcfgCommand/defaults\n--- PASS: TestShowcfgCommand (0.25s)\n    --- PASS: TestShowcfgCommand/defaults (0.15s)\nPASS\nok  \texample.com/showcfg\t0.368s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-timeout=90s",
+      "-run",
+      "^TestEnvironmentRestoration$/^present_empty$/^empty_mode$",
+      "./..."
+    ],
+    "process_timeout_seconds": 110,
+    "exit_code": 0,
+    "stdout": "=== RUN   TestEnvironmentRestoration\n=== RUN   TestEnvironmentRestoration/present_empty\n=== RUN   TestEnvironmentRestoration/present_empty/empty_mode\n--- PASS: TestEnvironmentRestoration (0.00s)\n    --- PASS: TestEnvironmentRestoration/present_empty (0.00s)\n        --- PASS: TestEnvironmentRestoration/present_empty/empty_mode (0.00s)\nPASS\nok  \texample.com/showcfg\t0.118s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=5",
+      "-timeout=120s",
+      "./..."
+    ],
+    "process_timeout_seconds": 150,
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/showcfg\t2.466s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "process_timeout_seconds": 90,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "config_test.go"
+    ],
+    "process_timeout_seconds": 20,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

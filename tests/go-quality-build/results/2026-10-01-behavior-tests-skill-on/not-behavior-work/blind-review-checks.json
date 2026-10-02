@@ -1,0 +1,140 @@
+[
+  {
+    "name": "supplied changeset",
+    "command": [
+      "rtk",
+      "proxy",
+      "diff",
+      "-ru",
+      "/private/tmp/go-independent-review-eblu56g3/original",
+      "/private/tmp/go-independent-review-eblu56g3/candidate"
+    ],
+    "cwd": null,
+    "stdout": "diff -ru /private/tmp/go-independent-review-eblu56g3/original/format.go /private/tmp/go-independent-review-eblu56g3/candidate/format.go\n--- /private/tmp/go-independent-review-eblu56g3/original/format.go\t2026-10-01 17:39:57\n+++ /private/tmp/go-independent-review-eblu56g3/candidate/format.go\t2026-10-01 18:25:08\n@@ -1,4 +1,4 @@\n package label\n \n-// Format formats the string to formatted label.\n+// Format returns s enclosed in square brackets.\n func Format(s string) string { return \"[\" + s + \"]\" }\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "name": "toolchain and platform",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "go",
+      "version"
+    ],
+    "cwd": null,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "name": "build platform",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "CGO_ENABLED"
+    ],
+    "cwd": "/private/tmp/go-independent-review-eblu56g3/candidate",
+    "stdout": "darwin\narm64\n1\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "name": "gofmt check",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "/private/tmp/go-independent-review-eblu56g3/candidate/format.go",
+      "/private/tmp/go-independent-review-eblu56g3/candidate/format_test.go"
+    ],
+    "cwd": null,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "name": "original tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-eblu56g3/original",
+    "stdout": "ok  \texample.com/label\t0.207s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "name": "candidate tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-eblu56g3/candidate",
+    "stdout": "ok  \texample.com/label\t0.160s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "name": "maintenance scope comparison",
+    "command": "Python byte comparison of supplied files; replace only known changed Format doc comments and compare remaining production source",
+    "stdout": "{\"unchanged_files\": {\"README.md\": true, \"format_test.go\": true, \"go.mod\": true}, \"production_source_equal_without_changed_doc_comment\": true}",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "name": "legacy assertion mutation sensitivity",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-eblu56g3/mutation-check",
+    "stdout": "--- FAIL: TestFormat (0.00s)\n    format_test.go:7: Format = \"web\"\nFAIL\nFAIL\texample.com/label\t0.161s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "name": "source preservation",
+    "command": "Python SHA-256 comparison before and after verification",
+    "stdout": "{\"preserved\": true, \"sha256\": {\"/private/tmp/go-independent-review-eblu56g3/original/README.md\": \"9750bd801cf80aa048e2ddfcd2cc1ec9fbca127a88a79012c6e398b1cc53979c\", \"/private/tmp/go-independent-review-eblu56g3/original/format.go\": \"7ce9b5e28e13f54710ba849099df29dae061b0570d009e580a693f76da4845a1\", \"/private/tmp/go-independent-review-eblu56g3/original/format_test.go\": \"89890815f2c9c92a0eed5c6fd16a032e383feb89259bfe5ae4cc7acea3a4303c\", \"/private/tmp/go-independent-review-eblu56g3/original/go.mod\": \"8343dd1bfd30037b9bfea8a9810477b940de99bf8158bb1ff286f6770050d19b\", \"/private/tmp/go-independent-review-eblu56g3/candidate/README.md\": \"9750bd801cf80aa048e2ddfcd2cc1ec9fbca127a88a79012c6e398b1cc53979c\", \"/private/tmp/go-independent-review-eblu56g3/candidate/format.go\": \"dc76f2bb8cb409943488e39ff345dd9e9473cebc974ef4c1224b9cb8faa2cd32\", \"/private/tmp/go-independent-review-eblu56g3/candidate/format_test.go\": \"89890815f2c9c92a0eed5c6fd16a032e383feb89259bfe5ae4cc7acea3a4303c\", \"/private/tmp/go-independent-review-eblu56g3/candidate/go.mod\": \"8343dd1bfd30037b9bfea8a9810477b940de99bf8158bb1ff286f6770050d19b\"}}",
+    "stderr": "",
+    "exit_code": 0
+  }
+]

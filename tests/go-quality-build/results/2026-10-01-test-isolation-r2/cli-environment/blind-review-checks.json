@@ -1,0 +1,257 @@
+{
+  "checks": [
+    {
+      "name": "runtime",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "INDEXER_ENDPOINT=review-parent-not-a-url",
+        "INDEXER_MODE=review-parent-invalid-mode",
+        "go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-independent-review-ahytbhzi/changeset-2/candidate",
+      "non_secret_env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "INDEXER_ENDPOINT": "review-parent-not-a-url",
+        "INDEXER_MODE": "review-parent-invalid-mode"
+      },
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "exit_code": 0,
+      "elapsed_seconds": 0.011
+    },
+    {
+      "name": "candidate_polluted_parent_race_repeated_shuffle",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "INDEXER_ENDPOINT=review-parent-not-a-url",
+        "INDEXER_MODE=review-parent-invalid-mode",
+        "go",
+        "test",
+        "-race",
+        "-count=3",
+        "-shuffle=on",
+        "-timeout=45s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-ahytbhzi/changeset-2/candidate",
+      "non_secret_env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "INDEXER_ENDPOINT": "review-parent-not-a-url",
+        "INDEXER_MODE": "review-parent-invalid-mode"
+      },
+      "stdout": "ok  \texample.com/showcfg\t1.988s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+      "stderr": "",
+      "exit_code": 0,
+      "elapsed_seconds": 2.205
+    },
+    {
+      "name": "focused_explicit_command_child",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "INDEXER_ENDPOINT=review-parent-not-a-url",
+        "INDEXER_MODE=review-parent-invalid-mode",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=45s",
+        "-run",
+        "^TestShowcfg$/^cases$/^explicit_https_write$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-ahytbhzi/changeset-2/candidate",
+      "non_secret_env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "INDEXER_ENDPOINT": "review-parent-not-a-url",
+        "INDEXER_MODE": "review-parent-invalid-mode"
+      },
+      "stdout": "ok  \texample.com/showcfg\t0.396s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+      "stderr": "",
+      "exit_code": 0,
+      "elapsed_seconds": 0.555
+    },
+    {
+      "name": "empty_treated_as_unset",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "INDEXER_ENDPOINT=review-parent-not-a-url",
+        "INDEXER_MODE=review-parent-invalid-mode",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=45s",
+        "-run",
+        "^(TestLoadFromEnv|TestShowcfg)$/^(empty_endpoint|cases)$/^empty_endpoint$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-ahytbhzi/changeset-2/verification-empty_treated_as_unset",
+      "non_secret_env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "INDEXER_ENDPOINT": "review-parent-not-a-url",
+        "INDEXER_MODE": "review-parent-invalid-mode"
+      },
+      "mutation": {
+        "file": "/private/tmp/go-independent-review-ahytbhzi/changeset-2/verification-empty_treated_as_unset/config.go",
+        "before": "endpoint, present := os.LookupEnv(\"INDEXER_ENDPOINT\")\n\tif !present {",
+        "after": "endpoint, present := os.LookupEnv(\"INDEXER_ENDPOINT\")\n\tif !present || endpoint == \"\" {"
+      },
+      "stdout": "--- FAIL: TestShowcfg (0.29s)\n    --- FAIL: TestShowcfg/cases (0.00s)\n        --- FAIL: TestShowcfg/cases/empty_endpoint (0.19s)\n            command_test.go:50: showcfg error = <nil>; want exit 2; stderr=\"\"\n            command_test.go:53: failure stdout = \"{\\\"endpoint\\\":\\\"http://127.0.0.1:9090\\\",\\\"mode\\\":\\\"read\\\"}\\n\"; want empty\n            command_test.go:56: failure stderr = \"\"; want diagnostic naming INDEXER_ENDPOINT\n--- FAIL: TestLoadFromEnv (0.00s)\n    --- FAIL: TestLoadFromEnv/empty_endpoint (0.00s)\n        config_test.go:53: LoadFromEnv error = <nil>; want diagnostic naming INDEXER_ENDPOINT\n        config_test.go:56: LoadFromEnv on failure = showcfg.Config{Endpoint:\"http://127.0.0.1:9090\", Mode:\"read\"}; want zero Config\nFAIL\nFAIL\texample.com/showcfg\t0.617s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "elapsed_seconds": 0.81,
+      "expected_nonzero": true
+    },
+    {
+      "name": "wrong_configuration_exit",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "INDEXER_ENDPOINT=review-parent-not-a-url",
+        "INDEXER_MODE=review-parent-invalid-mode",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=45s",
+        "-run",
+        "^TestShowcfg$/^cases$/^unsupported_mode$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-ahytbhzi/changeset-2/verification-wrong_configuration_exit",
+      "non_secret_env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "INDEXER_ENDPOINT": "review-parent-not-a-url",
+        "INDEXER_MODE": "review-parent-invalid-mode"
+      },
+      "mutation": {
+        "file": "/private/tmp/go-independent-review-ahytbhzi/changeset-2/verification-wrong_configuration_exit/cmd/showcfg/main.go",
+        "before": "fmt.Fprintln(os.Stderr, err)\n\t\tos.Exit(2)\n\t}\n\tif err := json.NewEncoder",
+        "after": "fmt.Fprintln(os.Stderr, err)\n\t\tos.Exit(1)\n\t}\n\tif err := json.NewEncoder"
+      },
+      "stdout": "--- FAIL: TestShowcfg (0.23s)\n    --- FAIL: TestShowcfg/cases (0.00s)\n        --- FAIL: TestShowcfg/cases/unsupported_mode (0.14s)\n            command_test.go:50: showcfg error = exit status 1; want exit 2; stderr=\"invalid INDEXER_MODE \\\"delete\\\"\\n\"\nFAIL\nFAIL\texample.com/showcfg\t0.411s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "elapsed_seconds": 0.574,
+      "expected_nonzero": true
+    },
+    {
+      "name": "environment_cleanup_missing",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "INDEXER_ENDPOINT=review-parent-not-a-url",
+        "INDEXER_MODE=review-parent-invalid-mode",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=45s",
+        "-run",
+        "^TestEnvironmentRestored$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-ahytbhzi/changeset-2/verification-environment_cleanup_missing",
+      "non_secret_env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "INDEXER_ENDPOINT": "review-parent-not-a-url",
+        "INDEXER_MODE": "review-parent-invalid-mode"
+      },
+      "mutation": {
+        "file": "/private/tmp/go-independent-review-ahytbhzi/changeset-2/verification-environment_cleanup_missing/config_test.go",
+        "before": "t.Setenv(key, value.value)",
+        "after": "if err := os.Setenv(key, value.value); err != nil { t.Fatal(err) }"
+      },
+      "stdout": "--- FAIL: TestEnvironmentRestored (0.00s)\n    --- FAIL: TestEnvironmentRestored/unset (0.00s)\n        config_test.go:98: INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:99: INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:99: INDEXER_MODE = showcfg_test.envValue{value:\"\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    --- FAIL: TestEnvironmentRestored/present_empty (0.00s)\n        config_test.go:98: INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:99: INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:98: INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:99: INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:98: INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n    --- FAIL: TestEnvironmentRestored/present_value (0.00s)\n        config_test.go:98: INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"parent-sentinel\", present:true}\n        config_test.go:99: INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"parent-sentinel\", present:true}\n        config_test.go:98: INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"parent-sentinel\", present:true}\n        config_test.go:99: INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"parent-sentinel\", present:true}\n        config_test.go:98: INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"parent-sentinel\", present:true}\n        config_test.go:99: INDEXER_MODE = showcfg_test.envValue{value:\"\", present:true}; want showcfg_test.envValue{value:\"parent-sentinel\", present:true}\nFAIL\nFAIL\texample.com/showcfg\t0.171s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "elapsed_seconds": 0.342,
+      "expected_nonzero": true
+    },
+    {
+      "name": "standard_library_minimum_version_vet",
+      "argv": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "vet",
+        "-stdversion",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-ahytbhzi/changeset-2/candidate",
+      "non_secret_env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0,
+      "elapsed_seconds": 0.094
+    }
+  ],
+  "reviewer_setup_events": [
+    {
+      "stage": "wrong_command_exit mutation setup",
+      "result": "AssertionError because the reviewer setup incorrectly required exactly one occurrence of os.Exit(2); the command has two error branches. No original or candidate source changed. Retried with the configuration-error branch explicitly targeted.",
+      "exit_code": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 17, in <module>\n  File \"<stdin>\", line 10, in mutation\nAssertionError\n"
+    }
+  ],
+  "source_integrity": {
+    "before_sha256": {
+      "original/README.md": "ccc78d092abcfcef5d49c294f9da4978e4c32aa8b6449ac2f6132f23632432df",
+      "original/cmd/showcfg/main.go": "3959cf1b861e050db483ed4bffd1803d4a2e767366294624e30d46a2df224ec8",
+      "original/config.go": "fa3a3d3e5567ea07e6ccaeb74760f499a3ebab6a4732dcefd336935f1b91e4b3",
+      "original/config_test.go": "d6ed2e1ac39786be35547f6150fba270cb7b7100fc04be09984c359f523a3514",
+      "original/go.mod": "b1217148ca155453db59050c312de14fca2a65a4c879c98c89946ca12c64177e",
+      "candidate/README.md": "ccc78d092abcfcef5d49c294f9da4978e4c32aa8b6449ac2f6132f23632432df",
+      "candidate/cmd/showcfg/main.go": "3959cf1b861e050db483ed4bffd1803d4a2e767366294624e30d46a2df224ec8",
+      "candidate/command_test.go": "9662829448b0ad81ccf8fba342efe2f4e639af3700b6d5dda0e16eacc590ec46",
+      "candidate/config.go": "fa3a3d3e5567ea07e6ccaeb74760f499a3ebab6a4732dcefd336935f1b91e4b3",
+      "candidate/config_test.go": "92776f427c1d258e1660d669418d87e9838d808cba779cf52a40d078fc363469",
+      "candidate/go.mod": "b1217148ca155453db59050c312de14fca2a65a4c879c98c89946ca12c64177e"
+    },
+    "after_sha256": {
+      "original/README.md": "ccc78d092abcfcef5d49c294f9da4978e4c32aa8b6449ac2f6132f23632432df",
+      "original/cmd/showcfg/main.go": "3959cf1b861e050db483ed4bffd1803d4a2e767366294624e30d46a2df224ec8",
+      "original/config.go": "fa3a3d3e5567ea07e6ccaeb74760f499a3ebab6a4732dcefd336935f1b91e4b3",
+      "original/config_test.go": "d6ed2e1ac39786be35547f6150fba270cb7b7100fc04be09984c359f523a3514",
+      "original/go.mod": "b1217148ca155453db59050c312de14fca2a65a4c879c98c89946ca12c64177e",
+      "candidate/README.md": "ccc78d092abcfcef5d49c294f9da4978e4c32aa8b6449ac2f6132f23632432df",
+      "candidate/cmd/showcfg/main.go": "3959cf1b861e050db483ed4bffd1803d4a2e767366294624e30d46a2df224ec8",
+      "candidate/command_test.go": "9662829448b0ad81ccf8fba342efe2f4e639af3700b6d5dda0e16eacc590ec46",
+      "candidate/config.go": "fa3a3d3e5567ea07e6ccaeb74760f499a3ebab6a4732dcefd336935f1b91e4b3",
+      "candidate/config_test.go": "92776f427c1d258e1660d669418d87e9838d808cba779cf52a40d078fc363469",
+      "candidate/go.mod": "b1217148ca155453db59050c312de14fca2a65a4c879c98c89946ca12c64177e"
+    },
+    "unchanged": true
+  }
+}

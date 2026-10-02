@@ -1,0 +1,2297 @@
+[
+  {
+    "label": "toolchain",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "label": "baseline:library-file-fixtures:clean",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/library-file-fixtures",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.217s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.366
+  },
+  {
+    "label": "baseline:library-file-fixtures:vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/library-file-fixtures",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.081
+  },
+  {
+    "label": "baseline:library-file-fixtures:gofmt",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/library-file-fixtures",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.009
+  },
+  {
+    "label": "baseline:library-file-fixtures:race-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-shuffle=104729",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/library-file-fixtures",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/filestore\t1.214s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 1.376
+  },
+  {
+    "label": "baseline:file:focused-0",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^alpha$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/library-file-fixtures",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    store_test.go:70: beta: final Get = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3690054895/002/same-key: no such file or directory; want \"beta\"\n    store_test.go:70: empty: final Get = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3690054895/003/same-key: no such file or directory; want \"\"\nFAIL\nFAIL\texample.com/filestore\t0.200s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 0.326
+  },
+  {
+    "label": "baseline:file:focused-1",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^alpha$/^replacements$/^value-1$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/library-file-fixtures",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    store_test.go:70: alpha: final Get = \"alpha replacement\", <nil>; want \"alpha\"\n    store_test.go:70: beta: final Get = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3204637722/002/same-key: no such file or directory; want \"beta\"\n    store_test.go:70: empty: final Get = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3204637722/003/same-key: no such file or directory; want \"\"\nFAIL\nFAIL\texample.com/filestore\t0.134s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 0.257
+  },
+  {
+    "label": "baseline:fixture-parent-teardown:patch",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/library-file-fixtures/mutations/fixture-parent-teardown/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/baseline/library-file-fixtures/fixture-parent-teardown",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  {
+    "label": "baseline:fixture-parent-teardown:compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/baseline/library-file-fixtures/fixture-parent-teardown",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.175s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.326
+  },
+  {
+    "label": "baseline:fixture-parent-teardown:signal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/baseline/library-file-fixtures/fixture-parent-teardown",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    --- FAIL: TestStoreIndependentInstances/instances (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/empty (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/empty/replacements (0.00s)\n                --- FAIL: TestStoreIndependentInstances/instances/empty/replacements/value-0 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances224188010/003/same-key: no such file or directory\n                --- FAIL: TestStoreIndependentInstances/instances/empty/replacements/value-1 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances224188010/003/same-key: no such file or directory\n                --- FAIL: TestStoreIndependentInstances/instances/empty/replacements/value-2 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances224188010/003/same-key: no such file or directory\n        --- FAIL: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/beta/replacements (0.00s)\n                --- FAIL: TestStoreIndependentInstances/instances/beta/replacements/value-0 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances224188010/002/same-key: no such file or directory\n                --- FAIL: TestStoreIndependentInstances/instances/beta/replacements/value-1 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances224188010/002/same-key: no such file or directory\n                --- FAIL: TestStoreIndependentInstances/instances/beta/replacements/value-2 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances224188010/002/same-key: no such file or directory\n        --- FAIL: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/replacements (0.00s)\n                --- FAIL: TestStoreIndependentInstances/instances/alpha/replacements/value-0 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances224188010/001/same-key: no such file or directory\n                --- FAIL: TestStoreIndependentInstances/instances/alpha/replacements/value-1 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances224188010/001/same-key: no such file or directory\n                --- FAIL: TestStoreIndependentInstances/instances/alpha/replacements/value-2 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances224188010/001/same-key: no such file or directory\n    store_test.go:75: alpha: final Get = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances224188010/001/same-key: no such file or directory; want \"alpha\"\n    store_test.go:75: beta: final Get = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances224188010/002/same-key: no such file or directory; want \"beta\"\n    store_test.go:75: empty: final Get = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances224188010/003/same-key: no such file or directory; want \"\"\nFAIL\nFAIL\texample.com/filestore\t0.121s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 0.236
+  },
+  {
+    "label": "baseline:store-shared-root:patch",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/library-file-fixtures/mutations/store-shared-root/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/baseline/library-file-fixtures/store-shared-root",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  {
+    "label": "baseline:store-shared-root:compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/baseline/library-file-fixtures/store-shared-root",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.170s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.318
+  },
+  {
+    "label": "baseline:store-shared-root:signal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/baseline/library-file-fixtures/store-shared-root",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    --- FAIL: TestStoreIndependentInstances/instances (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/replacements (0.00s)\n                --- FAIL: TestStoreIndependentInstances/instances/alpha/replacements/value-1 (0.00s)\n                    store_test.go:57: Get = \"beta replacementt\", <nil>; want \"alpha replacement\"\n                --- FAIL: TestStoreIndependentInstances/instances/alpha/replacements/value-2 (0.00s)\n                    store_test.go:57: Get = \"\", <nil>; want \"alpha\"\n        --- FAIL: TestStoreIndependentInstances/instances/empty (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/empty/replacements (0.00s)\n                --- FAIL: TestStoreIndependentInstances/instances/empty/replacements/value-0 (0.00s)\n                    store_test.go:57: Get = \"beta replacementt\", <nil>; want \"\"\n                --- FAIL: TestStoreIndependentInstances/instances/empty/replacements/value-1 (0.00s)\n                    store_test.go:57: Get = \"\", <nil>; want \"line one\\nline two\\x00\"\n        --- FAIL: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/beta/replacements (0.00s)\n                --- FAIL: TestStoreIndependentInstances/instances/beta/replacements/value-0 (0.00s)\n                    store_test.go:57: Get = \"alpha\", <nil>; want \"beta\"\n                --- FAIL: TestStoreIndependentInstances/instances/beta/replacements/value-1 (0.00s)\n                    store_test.go:57: Get = \"\", <nil>; want \"beta replacement\"\n                --- FAIL: TestStoreIndependentInstances/instances/beta/replacements/value-2 (0.00s)\n                    store_test.go:57: Get = \"\", <nil>; want \"beta\"\n    store_test.go:70: alpha: final Get = \"\", <nil>; want \"alpha\"\n    store_test.go:70: beta: final Get = \"\", <nil>; want \"beta\"\nFAIL\nFAIL\texample.com/filestore\t0.119s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 0.234
+  },
+  {
+    "label": "baseline:library-file-fixtures:source-preserved",
+    "equal": true,
+    "hashes": {
+      "store_test.go": "7dac5a208e88a906d2a3ae934803f59f9bb8919307624046da3b4a033eca411d",
+      "go.mod": "a01bd52ca12cb3fb06203c3d132732ff7cf72450576be33158d2690c29b78e97",
+      "store.go": "74a5e9db0f5a3f6136c252d0be23742c2ebffbc1a1a9884793cdbb1981f92504",
+      "README.md": "df19712c89bd7f5bb0eab796eebfb1851f219e527c6e17a5cd7b06515253ba4e"
+    }
+  },
+  {
+    "label": "baseline:cli-environment:clean",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/cli-environment",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/showcfg\t0.469s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.633
+  },
+  {
+    "label": "baseline:cli-environment:vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/cli-environment",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.083
+  },
+  {
+    "label": "baseline:cli-environment:gofmt",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/cli-environment",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.008
+  },
+  {
+    "label": "baseline:cli-environment:race-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-shuffle=104729",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/cli-environment",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/showcfg\t3.888s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 4.09
+  },
+  {
+    "label": "baseline:environment-leak:patch",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/cli-environment/mutations/environment-leak/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/baseline/cli-environment/environment-leak",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.019
+  },
+  {
+    "label": "baseline:environment-leak:compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/baseline/cli-environment/environment-leak",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/showcfg\t0.179s [no tests to run]\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.37
+  },
+  {
+    "label": "baseline:environment-leak:signal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/baseline/cli-environment/environment-leak",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestLoadFromEnv (0.00s)\n    config_test.go:114: endpoint environment changed after \"http endpoint with default mode\": showcfg_test.envValue{value:\"http://example.invalid:8080/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n--- FAIL: TestEnvironmentRestoration (0.00s)\n    --- FAIL: TestEnvironmentRestoration/unset (0.00s)\n        config_test.go:151: endpoint after child \"supplied\" = showcfg_test.envValue{value:\"https://child.invalid\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:154: mode after child \"supplied\" = showcfg_test.envValue{value:\"read\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    --- FAIL: TestEnvironmentRestoration/empty (0.00s)\n        config_test.go:151: endpoint after child \"unset\" = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:154: mode after child \"unset\" = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:151: endpoint after child \"supplied\" = showcfg_test.envValue{value:\"https://child.invalid\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:154: mode after child \"supplied\" = showcfg_test.envValue{value:\"read\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n    --- FAIL: TestEnvironmentRestoration/supplied (0.00s)\n        config_test.go:151: endpoint after child \"unset\" = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:154: mode after child \"unset\" = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:151: endpoint after child \"supplied\" = showcfg_test.envValue{value:\"https://child.invalid\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:154: mode after child \"supplied\" = showcfg_test.envValue{value:\"read\", present:true}; want showcfg_test.envValue{value:\"write\", present:true}\nFAIL\nFAIL\texample.com/showcfg\t0.401s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 0.523
+  },
+  {
+    "label": "baseline:cli-environment:source-preserved",
+    "equal": true,
+    "hashes": {
+      "config.go": "fa3a3d3e5567ea07e6ccaeb74760f499a3ebab6a4732dcefd336935f1b91e4b3",
+      "go.mod": "b1217148ca155453db59050c312de14fca2a65a4c879c98c89946ca12c64177e",
+      "command_test.go": "4cbe5e40f5f571a23377c50c8f876a4eb58f9dc8eeb3e497432674589b020bcf",
+      "README.md": "ccc78d092abcfcef5d49c294f9da4978e4c32aa8b6449ac2f6132f23632432df",
+      "config_test.go": "b0faf38fce123ec3c07a38d178c64bfa9cc9e29d772771a2cf6380bf07bea545",
+      "cmd/showcfg/main.go": "3959cf1b861e050db483ed4bffd1803d4a2e767366294624e30d46a2df224ec8"
+    }
+  },
+  {
+    "label": "baseline:worker-timing:clean",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/worker-timing",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/poller\t0.258s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.417
+  },
+  {
+    "label": "baseline:worker-timing:vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/worker-timing",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.084
+  },
+  {
+    "label": "baseline:worker-timing:gofmt",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/worker-timing",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.009
+  },
+  {
+    "label": "baseline:worker-timing:race-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-shuffle=104729",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/worker-timing",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/poller\t2.029s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 2.213
+  },
+  {
+    "label": "baseline:poll-discard-context:patch",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/worker-timing/mutations/poll-discard-context/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/baseline/worker-timing/poll-discard-context",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.022
+  },
+  {
+    "label": "baseline:poll-discard-context:compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/baseline/worker-timing/poll-discard-context",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/poller\t0.178s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.332
+  },
+  {
+    "label": "baseline:poll-discard-context:signal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/baseline/worker-timing/poll-discard-context",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestCallerContext (0.00s)\n    poll_test.go:163: callback context = context.Background, want caller context context.Background.WithValue(poller_test.contextKey, caller value).WithCancel\n--- FAIL: TestCallbackErrorDuringCancellation (4.00s)\n    poll_test.go:146: timed out waiting for Poll return\n    poll_test.go:32: timed out waiting for Poll teardown\n--- FAIL: TestCancellationWaitsForCleanupAndPreservesCallerResource (4.00s)\n    poll_test.go:287: timed out waiting for callback cancellation\n    poll_test.go:32: timed out waiting for Poll teardown\n--- FAIL: TestIndependentInvocations (6.00s)\n    poll_test.go:353: timed out waiting for first invocation cancellation\n    poll_test.go:32: timed out waiting for Poll teardown\n    poll_test.go:32: timed out waiting for Poll teardown\nFAIL\nFAIL\texample.com/poller\t6.124s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 6.251
+  },
+  {
+    "label": "baseline:poll-start-relative:patch",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/worker-timing/mutations/poll-start-relative/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/baseline/worker-timing/poll-start-relative",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.02
+  },
+  {
+    "label": "baseline:poll-start-relative:compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/baseline/worker-timing/poll-start-relative",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/poller\t0.176s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.331
+  },
+  {
+    "label": "baseline:poll-start-relative:signal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/baseline/worker-timing/poll-start-relative",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestRecurrenceAfterCompletion (0.06s)\n    poll_test.go:234: callback 2 started 1.958\u00b5s after preceding completion, want at least 20ms\n    poll_test.go:234: callback 3 started 19.981667ms after preceding completion, want at least 20ms\nFAIL\nFAIL\texample.com/poller\t0.181s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 0.297
+  },
+  {
+    "label": "baseline:worker-timing:source-preserved",
+    "equal": true,
+    "hashes": {
+      "go.mod": "a7aa1456ec43a9e34590246526baefddcb794ce46b06e2e893147f769899738d",
+      "poll_test.go": "6280ba199c974c6c777e9c53d24861c3c3ed29b952e7490f5894695a84446256",
+      "README.md": "a8b458db577e2c868a7923297f6e9b87c546164f2e18f9bc78d34a05f3599181",
+      "poll.go": "cac1ee3ceb250f0c8b9d800ec2f55277b11d0a614e51086f151b64a2c4cad491"
+    }
+  },
+  {
+    "label": "baseline:not-isolation-work:clean",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/not-isolation-work",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/clamp\t0.174s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.316
+  },
+  {
+    "label": "baseline:not-isolation-work:vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/not-isolation-work",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.074
+  },
+  {
+    "label": "baseline:not-isolation-work:gofmt",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/baseline/not-isolation-work",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.008
+  },
+  {
+    "label": "baseline:not-isolation-work:source-preserved",
+    "equal": true,
+    "hashes": {
+      "go.mod": "6159f8c50c24e8a65f078eb935b56655ab3da9e77bd2c62ba41b955b40bb319d",
+      "clamp_test.go": "2f2a5e5f7a4ef9bd1850fce7ea579a1a791eda60575109a2eb7d93443b1be80d",
+      "README.md": "6f83be8f1fb4bae7ae3a4118e64cbe65b2975efc99abcc7a450264a41f80a41c",
+      "clamp.go": "26a25065ebe8bbef18fa8b3c338de00db25fa10d7bc4f06c7bd51af2524f40f2"
+    }
+  },
+  {
+    "label": "skill-on:library-file-fixtures:clean",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/library-file-fixtures",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.178s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.32
+  },
+  {
+    "label": "skill-on:library-file-fixtures:vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/library-file-fixtures",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.079
+  },
+  {
+    "label": "skill-on:library-file-fixtures:gofmt",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/library-file-fixtures",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.008
+  },
+  {
+    "label": "skill-on:library-file-fixtures:race-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-shuffle=104729",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/library-file-fixtures",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/filestore\t1.219s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 1.385
+  },
+  {
+    "label": "skill-on:file:focused-0",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^alpha$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/library-file-fixtures",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/filestore\t1.162s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 1.308
+  },
+  {
+    "label": "skill-on:file:focused-1",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^alpha$/^shorter$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/library-file-fixtures",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/filestore\t1.165s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 1.311
+  },
+  {
+    "label": "skill-on:fixture-parent-teardown:patch",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/library-file-fixtures/mutations/fixture-parent-teardown/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/library-file-fixtures/fixture-parent-teardown",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.02
+  },
+  {
+    "label": "skill-on:fixture-parent-teardown:compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/library-file-fixtures/fixture-parent-teardown",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.176s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.331
+  },
+  {
+    "label": "skill-on:fixture-parent-teardown:signal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/library-file-fixtures/fixture-parent-teardown",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    --- FAIL: TestStoreIndependentInstances/instances (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/beta/initial (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3771072748/002/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/beta/shorter (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3771072748/002/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/beta/empty (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3771072748/002/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3771072748/002/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/beta/repeat (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3771072748/002/same-key: no such file or directory\n        --- FAIL: TestStoreIndependentInstances/instances/gamma (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/initial (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3771072748/003/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/shorter (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3771072748/003/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/empty (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3771072748/003/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/replacement (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3771072748/003/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/repeat (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3771072748/003/same-key: no such file or directory\n        --- FAIL: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/initial (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3771072748/001/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/shorter (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3771072748/001/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/empty (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3771072748/001/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3771072748/001/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/repeat (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3771072748/001/same-key: no such file or directory\nFAIL\nFAIL\texample.com/filestore\t0.122s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 0.238
+  },
+  {
+    "label": "skill-on:store-shared-root:patch",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/library-file-fixtures/mutations/store-shared-root/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/library-file-fixtures/store-shared-root",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  {
+    "label": "skill-on:store-shared-root:compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/library-file-fixtures/store-shared-root",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.168s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.314
+  },
+  {
+    "label": "skill-on:store-shared-root:signal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/library-file-fixtures/store-shared-root",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    --- FAIL: TestStoreIndependentInstances/instances (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/gamma (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/initial (0.00s)\n                store_test.go:72: Get = \"beta initial longer valuee\"; want \"gamma initial longer value\"\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/shorter (0.00s)\n                store_test.go:72: Get = \"betaa\"; want \"gamma\"\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/replacement (0.00s)\n                store_test.go:72: Get = \"alpha replacement\"; want \"gamma replacement\"\n        --- FAIL: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/initial (0.00s)\n                store_test.go:72: Get = \"\"; want \"alpha initial longer value\"\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/shorter (0.00s)\n                store_test.go:72: Get = \"betaa\"; want \"alpha\"\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\n                store_test.go:72: Get = \"beta replacement\"; want \"alpha replacement\"\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/repeat (0.00s)\n                store_test.go:72: Get = \"beta replacement\"; want \"alpha replacement\"\n        --- FAIL: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/beta/initial (0.00s)\n                store_test.go:72: Get = \"beta initial longer valuee\"; want \"beta initial longer value\"\n            --- FAIL: TestStoreIndependentInstances/instances/beta/shorter (0.00s)\n                store_test.go:72: Get = \"betaa\"; want \"beta\"\n            --- FAIL: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\n                store_test.go:72: Get = \"\"; want \"beta replacement\"\n    store_test.go:91: alpha persisted Get = \"beta replacement\"; want \"alpha replacement\"\n    store_test.go:91: gamma persisted Get = \"beta replacement\"; want \"gamma replacement\"\nFAIL\nFAIL\texample.com/filestore\t0.118s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 0.232
+  },
+  {
+    "label": "skill-on:shared-root:one-slot",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-parallel=1",
+      "-run",
+      "^TestStoreIndependentInstances$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/library-file-fixtures/store-shared-root",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    store_test.go:91: alpha persisted Get = \"beta replacement\"; want \"alpha replacement\"\n    store_test.go:91: gamma persisted Get = \"beta replacement\"; want \"gamma replacement\"\nFAIL\nFAIL\texample.com/filestore\t0.121s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 0.235
+  },
+  {
+    "label": "skill-on:library-file-fixtures:source-preserved",
+    "equal": true,
+    "hashes": {
+      "store_test.go": "06bbf5bcc954775810a8927f34c9b9faa69bc81d63c015fe8aa97884dda6fa0c",
+      "go.mod": "a01bd52ca12cb3fb06203c3d132732ff7cf72450576be33158d2690c29b78e97",
+      "store.go": "74a5e9db0f5a3f6136c252d0be23742c2ebffbc1a1a9884793cdbb1981f92504",
+      "README.md": "df19712c89bd7f5bb0eab796eebfb1851f219e527c6e17a5cd7b06515253ba4e"
+    }
+  },
+  {
+    "label": "skill-on:cli-environment:clean",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/cli-environment",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/showcfg\t0.452s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.615
+  },
+  {
+    "label": "skill-on:cli-environment:vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/cli-environment",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.086
+  },
+  {
+    "label": "skill-on:cli-environment:gofmt",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/cli-environment",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.011
+  },
+  {
+    "label": "skill-on:cli-environment:race-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-shuffle=104729",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/cli-environment",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/showcfg\t4.106s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 4.322
+  },
+  {
+    "label": "skill-on:environment-leak:patch",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/cli-environment/mutations/environment-leak/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/cli-environment/environment-leak",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.024
+  },
+  {
+    "label": "skill-on:environment-leak:compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/cli-environment/environment-leak",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/showcfg\t0.176s [no tests to run]\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.339
+  },
+  {
+    "label": "skill-on:environment-leak:signal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/cli-environment/environment-leak",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestLoadFromEnv (0.00s)\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_MODE = showcfg_test.envValue{value:\"read\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid/api?limit=10\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"ftp://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http:///api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://%zz\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_MODE = showcfg_test.envValue{value:\"delete\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_MODE = showcfg_test.envValue{value:\"Read\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_MODE = showcfg_test.envValue{value:\" read \", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n--- FAIL: TestEnvironmentRestoration (0.00s)\n    --- FAIL: TestEnvironmentRestoration/unset (0.00s)\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"read\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid/api?limit=10\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"ftp://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http:///api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://%zz\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"delete\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"Read\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\" read \", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    --- FAIL: TestEnvironmentRestoration/present_empty (0.00s)\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"read\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid/api?limit=10\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"ftp://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http:///api\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://%zz\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"delete\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"Read\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\" read \", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n    --- FAIL: TestEnvironmentRestoration/present_values (0.00s)\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"read\", present:true}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid/api?limit=10\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"ftp://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http:///api\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://%zz\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:true}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"delete\", present:true}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"Read\", present:true}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\" read \", present:true}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\nFAIL\nFAIL\texample.com/showcfg\t0.404s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 0.529
+  },
+  {
+    "label": "skill-on:cli-environment:source-preserved",
+    "equal": true,
+    "hashes": {
+      "config.go": "fa3a3d3e5567ea07e6ccaeb74760f499a3ebab6a4732dcefd336935f1b91e4b3",
+      "go.mod": "b1217148ca155453db59050c312de14fca2a65a4c879c98c89946ca12c64177e",
+      "README.md": "ccc78d092abcfcef5d49c294f9da4978e4c32aa8b6449ac2f6132f23632432df",
+      "config_test.go": "b8fd686531cf36aaf2e99695f975e91861cd8ccb99d910f0f1403a661d1ff341",
+      "cmd/showcfg/main.go": "3959cf1b861e050db483ed4bffd1803d4a2e767366294624e30d46a2df224ec8"
+    }
+  },
+  {
+    "label": "skill-on:worker-timing:clean",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/worker-timing",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/poller\t0.335s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.491
+  },
+  {
+    "label": "skill-on:worker-timing:vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/worker-timing",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.081
+  },
+  {
+    "label": "skill-on:worker-timing:gofmt",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/worker-timing",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.009
+  },
+  {
+    "label": "skill-on:worker-timing:race-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-shuffle=104729",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/worker-timing",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/poller\t2.823s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 3.01
+  },
+  {
+    "label": "skill-on:poll-discard-context:patch",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/worker-timing/mutations/poll-discard-context/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/worker-timing/poll-discard-context",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.019
+  },
+  {
+    "label": "skill-on:poll-discard-context:compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/worker-timing/poll-discard-context",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/poller\t0.177s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.333
+  },
+  {
+    "label": "skill-on:poll-discard-context:signal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/worker-timing/poll-discard-context",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestCancellationDuringCallbackCleanup (5.00s)\n    poll_test.go:206: callback did not receive the caller's context\n    poll_test.go:410: Poll did not join during cleanup\n--- FAIL: TestCallbackErrorConcurrentWithCancellation (10.00s)\n    poll_test.go:247: timed out waiting for Poll completion\n    poll_test.go:410: Poll did not join during cleanup\n--- FAIL: TestFixtureTeardown (10.00s)\n    poll_test.go:288: timed out waiting for Poll completion\n    poll_test.go:410: Poll did not join during cleanup\n    poll_test.go:268: callback still owns fixture; cannot safely close it\n--- FAIL: TestIndependentInvocations (0.00s)\n    --- FAIL: TestIndependentInvocations/beta (10.00s)\n        poll_test.go:376: timed out waiting for Poll completion\n        poll_test.go:410: Poll did not join during cleanup\n    --- FAIL: TestIndependentInvocations/alpha (10.00s)\n        poll_test.go:376: timed out waiting for Poll completion\n        poll_test.go:410: Poll did not join during cleanup\n--- FAIL: TestConcurrentInvocations (15.00s)\n    poll_test.go:327: timed out waiting for Poll completion\n    poll_test.go:410: Poll did not join during cleanup\n    poll_test.go:410: Poll did not join during cleanup\nFAIL\nFAIL\texample.com/poller\t15.126s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 15.252
+  },
+  {
+    "label": "skill-on:poll-start-relative:patch",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/worker-timing/mutations/poll-start-relative/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/worker-timing/poll-start-relative",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.024
+  },
+  {
+    "label": "skill-on:poll-start-relative:compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/worker-timing/poll-start-relative",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/poller\t0.172s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.326
+  },
+  {
+    "label": "skill-on:poll-start-relative:signal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/ordinary/skill-on/worker-timing/poll-start-relative",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestRecurrence (0.08s)\n    poll_test.go:168: callback 2 started 16.708\u00b5s after completion, want at least 40ms\nFAIL\nFAIL\texample.com/poller\t0.199s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 0.318
+  },
+  {
+    "label": "skill-on:worker-timing:source-preserved",
+    "equal": true,
+    "hashes": {
+      "go.mod": "a7aa1456ec43a9e34590246526baefddcb794ce46b06e2e893147f769899738d",
+      "poll_test.go": "16ee10d91e57e5517c0fa2e29848eef6ad5d8b451a6f735a49b0dead8c3d385a",
+      "README.md": "a8b458db577e2c868a7923297f6e9b87c546164f2e18f9bc78d34a05f3599181",
+      "poll.go": "cac1ee3ceb250f0c8b9d800ec2f55277b11d0a614e51086f151b64a2c4cad491"
+    }
+  },
+  {
+    "label": "skill-on:not-isolation-work:clean",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/not-isolation-work",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/clamp\t0.179s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.323
+  },
+  {
+    "label": "skill-on:not-isolation-work:vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/not-isolation-work",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.075
+  },
+  {
+    "label": "skill-on:not-isolation-work:gofmt",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/ordinary/skill-on/not-isolation-work",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.008
+  },
+  {
+    "label": "skill-on:not-isolation-work:source-preserved",
+    "equal": true,
+    "hashes": {
+      "go.mod": "6159f8c50c24e8a65f078eb935b56655ab3da9e77bd2c62ba41b955b40bb319d",
+      "clamp_test.go": "6e72fd148f09856b76bcba34c2b538b777f7fe3dda5c4d2480fb5f61df4e0218",
+      "README.md": "6f83be8f1fb4bae7ae3a4118e64cbe65b2975efc99abcc7a450264a41f80a41c",
+      "clamp.go": "c74249b0947a049651f6ea29b0aa6f2a4146f4969628f2b5be1407672ac75125"
+    }
+  },
+  {
+    "label": "exact-example:race",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/example",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/isolationillustration\t1.189s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 1.338
+  },
+  {
+    "label": "exact-example:stdversion",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/example",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.075
+  },
+  {
+    "label": "example-premature-release:compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/example-premature-release",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/isolationillustration\t0.173s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.308
+  },
+  {
+    "label": "example-premature-release:signal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/example-premature-release",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestBorrowedFixture (0.00s)\n    example_test.go:41: borrower fixture use: stat /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestBorrowedFixture3603315268/001/borrowed1167309200: file already closed\n    example_test.go:17: close fixture: close /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestBorrowedFixture3603315268/001/borrowed1167309200: file already closed\nFAIL\nFAIL\texample.com/isolationillustration\t0.119s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 0.236
+  },
+  {
+    "label": "draft-quick-validate",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "python3",
+      "-B",
+      "/Users/jb/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+      "docs/go-quality-build/drafts/go-test-isolation"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "Skill is valid!\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.034
+  },
+  {
+    "label": "repository-validate",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "python3",
+      "-B",
+      "scripts/validate.py"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "PASS: 10 skills; matching grading/report contracts; 120 valid evaluation cases\nPASS: 25 valid build evaluation cases\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.05
+  }
+]

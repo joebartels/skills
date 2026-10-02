@@ -1,0 +1,10 @@
+--- a/host.go
++++ b/host.go
+@@ -32,7 +32,6 @@
+ 		cancel()
+ 	case <-ctx.Done():
+ 		cancel()
+-		workerErr = <-done
+ 	}
+ 	return errors.Join(workerErr, release())
+ }

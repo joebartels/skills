@@ -1,0 +1,305 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.009
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-s",
+      "-w",
+      "index.go",
+      "refresh.go",
+      "serve.go",
+      "index_test.go",
+      "refresh_test.go",
+      "serve_test.go",
+      "cmd/indexer/main.go",
+      "cmd/indexer/main_test.go"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.008
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshRealHTTPCancellation (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 34 [running]:\ntesting.tRunner.func1.2({0x104b13de0, 0x1cab47990130})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x104b13de0?, 0x1cab47990130?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x104b9e820, 0x1cab479ac0a0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer_test.TestRefreshRealHTTPCancellation(0x1cab4780a248)\n\t/private/tmp/go-combined-author-vsgga4k8/task-3/module/refresh_test.go:202 +0xd4\ntesting.tRunner(0x1cab4780a248, 0x104b9a6f8)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer\t0.244s\n--- FAIL: TestCommandContracts (0.43s)\n    --- FAIL: TestCommandContracts/watch-first-refresh-failure (0.00s)\n    --- FAIL: TestCommandContracts/watch-recurrence-and-termination (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 73 [running]:\ntesting.tRunner.func1.2({0x1009788a0, 0x6ede99b20110})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1009788a0?, 0x6ede99b20110?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x100a04aa0, 0x6ede9a084030})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer/cmd/indexer.TestCommandContracts.func10(0x6ede99d49688)\n\t/private/tmp/go-combined-author-vsgga4k8/task-3/module/cmd/indexer/main_test.go:165 +0x134\ntesting.tRunner(0x6ede99d49688, 0x6ede99d36480)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 36\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer/cmd/indexer\t0.608s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.864
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "sandbox": "approved require_escalated; unchanged source after listener denial",
+    "stdout": "ok  \texample.com/indexer\t0.424s\nok  \texample.com/indexer/cmd/indexer\t0.577s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.777
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-s",
+      "-w",
+      "index_test.go",
+      "cmd/indexer/main_test.go"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.007
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.119
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=5",
+      "-timeout=120s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "sandbox": "approved require_escalated; real loopback HTTP tests",
+    "stdout": "ok  \texample.com/indexer\t1.852s\nok  \texample.com/indexer/cmd/indexer\t3.663s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 3.986
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=45s",
+      "-run",
+      "^TestCommandContracts$/^startup$/^watch-zero$",
+      "./cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "sandbox": "approved require_escalated; real loopback HTTP tests",
+    "stdout": "ok  \texample.com/indexer/cmd/indexer\t0.580s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.818
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=45s",
+      "-run",
+      "^TestRefreshRejectionKeepsExactPriorBytes$/^later-invalid$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "sandbox": "approved require_escalated; real loopback HTTP tests",
+    "stdout": "ok  \texample.com/indexer\t0.208s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.44
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=45s",
+      "-run",
+      "^TestApplyCSVRejectedReplacementKeepsPrefix$/^blank$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "sandbox": "approved require_escalated; real loopback HTTP tests",
+    "stdout": "ok  \texample.com/indexer\t0.168s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.356
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=90s",
+      "-gcflags=example.com/indexer/...=-lang=go1.22",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "sandbox": "approved require_escalated; real loopback HTTP tests",
+    "stdout": "ok  \texample.com/indexer\t0.333s\nok  \texample.com/indexer/cmd/indexer\t0.797s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.072
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-timeout=45s",
+      "-run",
+      "TestPutWriteFailureKeepsOld|TestRefreshPublicationFailureKeepsPriorFile",
+      "."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "sandbox": "approved require_escalated; real loopback HTTP tests",
+    "stdout": "=== RUN   TestPutWriteFailureKeepsOld\n=== PAUSE TestPutWriteFailureKeepsOld\n=== RUN   TestRefreshPublicationFailureKeepsPriorFile\n=== PAUSE TestRefreshPublicationFailureKeepsPriorFile\n=== CONT  TestPutWriteFailureKeepsOld\n=== CONT  TestRefreshPublicationFailureKeepsPriorFile\n--- PASS: TestPutWriteFailureKeepsOld (0.00s)\n--- PASS: TestRefreshPublicationFailureKeepsPriorFile (0.00s)\nPASS\nok  \texample.com/indexer\t0.175s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.368
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "env",
+      "-json",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION",
+      "GOTOOLCHAIN",
+      "GOCACHE",
+      "GOFLAGS",
+      "CGO_ENABLED"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "{\n\t\"CGO_ENABLED\": \"1\",\n\t\"GOARCH\": \"arm64\",\n\t\"GOCACHE\": \"/private/tmp/go-quality-testing-cache\",\n\t\"GOFLAGS\": \"\",\n\t\"GOOS\": \"darwin\",\n\t\"GOTOOLCHAIN\": \"local\",\n\t\"GOVERSION\": \"go1.26.5\"\n}\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "index.go",
+      "refresh.go",
+      "serve.go",
+      "index_test.go",
+      "refresh_test.go",
+      "serve_test.go",
+      "cmd/indexer/main.go",
+      "cmd/indexer/main_test.go"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.007
+  }
+]

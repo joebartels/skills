@@ -1,0 +1,86 @@
+{
+  "semantic_id": "process-success-on-error",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "fd61805da209a35c71caafe76ad463bdfb37b011febdb8a4f62d46110068062f",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-y9hdiu6i/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.429s\nok  \texample.com/indexer/cmd/indexer\t0.954s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.216
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-final/behavior-only/mutations/process-success-on-error/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-y9hdiu6i/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.014
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-y9hdiu6i/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.166s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.283s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.516
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-y9hdiu6i/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.383s\n--- FAIL: TestCommandProcesses (0.55s)\n    --- FAIL: TestCommandProcesses/put_contract (0.22s)\n        process_test.go:35: [put /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessesput_contract3876352206/001 Alpha bad]: exit 0 (want 2), stdout \"\", stderr \"invalid record\\n\"\n    --- FAIL: TestCommandProcesses/apply_rejected_prefix_alpha,\"__\"_ (0.01s)\n        process_test.go:49: [apply --dir /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessesapply_rejected_prefix_alpha,___366396908/001]: exit 0 (want 2), stdout \"\", stderr \"CSV row 3: invalid record\\n\"\n    --- FAIL: TestCommandProcesses/apply_rejected_prefix_alpha,replacement,extra_ (0.01s)\n        process_test.go:49: [apply --dir /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessesapply_rejected_prefix_alpha,replacement,ext781442116/001]: exit 0 (want 2), stdout \"\", stderr \"CSV row 3: record on line 3: wrong number of fields\\n\"\n    --- FAIL: TestCommandProcesses/apply_usage (0.00s)\n        process_test.go:57: [apply]: exit 0 (want 2), stdout \"\", stderr \"usage: indexer apply --dir DIR\\n\"\n    --- FAIL: TestCommandProcesses/watch_startup_rejection (0.00s)\n        process_test.go:69: [watch]: exit 0 (want 2), stdout \"\", stderr \"usage: indexer watch --url URL --file PATH --interval DURATION (HTTP/HTTPS URL and positive interval required)\\n\"\n    --- FAIL: TestCommandProcesses/watch_failed_first_refresh (0.01s)\n        process_test.go:84: [watch --url http://127.0.0.1:50323 --file /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcesseswatch_failed_first_refresh4061038613/001/snapshot --interval 5ms]: exit 0 (want 2), stdout \"\", stderr \"fetch records: status 206\\n\"\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t0.847s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.055
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

@@ -1,0 +1,247 @@
+--- a/README.md
++++ b/README.md
+@@ -10,3 +10,48 @@
+ produce us%2Fwest/web%20blue. Empty fields, malformed escapes and wire strings
+ with the wrong segment count are rejected. Both encode and decode must preserve
+ their independent consumer contract. No third-party dependencies are needed.
++
++## Usage
++
++```go
++package main
++
++import (
++    "fmt"
++    "log"
++
++    "example.com/keycodec"
++)
++
++func main() {
++    key := keycodec.Key{Region: "us/west", Name: "web blue"}
++    wire, err := keycodec.Encode(key)
++    if err != nil {
++        log.Fatal(err)
++    }
++    fmt.Println(wire) // us%2Fwest/web%20blue
++
++    decoded, err := keycodec.Decode(wire)
++    if err != nil {
++        log.Fatal(err)
++    }
++    fmt.Printf("region=%q name=%q\n", decoded.Region, decoded.Name)
++    // region="us/west" name="web blue"
++}
++```
++
++Fields are values, not pre-escaped strings: a literal `%2F` is encoded as `%252F`
++and decoded back to `%2F`. Decoding splits on the unescaped separator before
++unescaping each field exactly once. Lowercase hexadecimal escapes are accepted.
++A `+` remains a literal plus, while a space is encoded as `%20`.
++
++Invalid inputs return `ErrInvalidKey` (also detectable with `errors.Is`). Encode
++returns an empty string on failure; Decode returns the zero `Key`. No partially
++decoded key is returned when either segment has a malformed percent escape.
++
++The exported type and function signatures are unchanged for the minor release.
++Existing simple keys such as `east/web` retain their wire representation. Encode
++now escapes characters such as spaces and Unicode that the old implementation
++emitted literally, and newly accepts slash and percent within a field. Consumers
++should use Decode to recover field values instead of splitting and interpreting
++the wire directly.
+--- /dev/null
++++ b/codec_contract_test.go
+@@ -0,0 +1,144 @@
++package keycodec_test
++
++import (
++	"errors"
++	"fmt"
++	"testing"
++
++	"example.com/keycodec"
++)
++
++// These assignments also check the existing API from a consumer package.
++var (
++	_ func(keycodec.Key) (string, error) = keycodec.Encode
++	_ func(string) (keycodec.Key, error) = keycodec.Decode
++)
++
++func TestEncode(t *testing.T) {
++	tests := []struct {
++		name string
++		key  keycodec.Key
++		wire string
++	}{
++		{"legacy", keycodec.Key{Region: "east", Name: "web"}, "east/web"},
++		{"region slash", keycodec.Key{Region: "us/west", Name: "web"}, "us%2Fwest/web"},
++		{"name slash", keycodec.Key{Region: "east", Name: "web/blue"}, "east/web%2Fblue"},
++		{"both slashes", keycodec.Key{Region: "/", Name: "/"}, "%2F/%2F"},
++		{"region space", keycodec.Key{Region: "us west", Name: "web"}, "us%20west/web"},
++		{"name space", keycodec.Key{Region: "east", Name: "web blue"}, "east/web%20blue"},
++		{"percent", keycodec.Key{Region: "100%", Name: "%2F"}, "100%25/%252F"},
++		{"Unicode", keycodec.Key{Region: "日本", Name: "café"}, "%E6%97%A5%E6%9C%AC/caf%C3%A9"},
++		{"path plus", keycodec.Key{Region: "a+b", Name: "c+d"}, "a+b/c+d"},
++		{"reserved", keycodec.Key{Region: "a?b", Name: "c#d"}, "a%3Fb/c%23d"},
++		{"combined", keycodec.Key{Region: "us/west", Name: "web blue"}, "us%2Fwest/web%20blue"},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			got, err := keycodec.Encode(tt.key)
++			if err != nil || got != tt.wire {
++				t.Fatalf("Encode(%#v) = %q, %v; want %q, nil", tt.key, got, err, tt.wire)
++			}
++		})
++	}
++}
++
++func TestDecode(t *testing.T) {
++	tests := []struct {
++		name string
++		wire string
++		key  keycodec.Key
++	}{
++		{"legacy", "east/web", keycodec.Key{Region: "east", Name: "web"}},
++		{"region slash", "us%2Fwest/web", keycodec.Key{Region: "us/west", Name: "web"}},
++		{"name slash", "east/web%2Fblue", keycodec.Key{Region: "east", Name: "web/blue"}},
++		{"both slashes", "%2F/%2F", keycodec.Key{Region: "/", Name: "/"}},
++		{"spaces", "%20west/web%20", keycodec.Key{Region: " west", Name: "web "}},
++		{"percent", "100%25/%252F", keycodec.Key{Region: "100%", Name: "%2F"}},
++		{"Unicode", "%E6%97%A5%E6%9C%AC/caf%C3%A9", keycodec.Key{Region: "日本", Name: "café"}},
++		{"literal plus", "a+b/c+d", keycodec.Key{Region: "a+b", Name: "c+d"}},
++		{"escaped plus", "a%2Bb/c%2Bd", keycodec.Key{Region: "a+b", Name: "c+d"}},
++		{"lowercase hex", "us%2fwest/caf%c3%a9", keycodec.Key{Region: "us/west", Name: "café"}},
++		{"escaped unreserved", "%65ast/%77eb", keycodec.Key{Region: "east", Name: "web"}},
++		{"reserved", "a%3Fb/c%23d", keycodec.Key{Region: "a?b", Name: "c#d"}},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			got, err := keycodec.Decode(tt.wire)
++			if err != nil || got != tt.key {
++				t.Fatalf("Decode(%q) = %#v, %v; want %#v, nil", tt.wire, got, err, tt.key)
++			}
++		})
++	}
++}
++
++func TestEncodeInvalidKey(t *testing.T) {
++	for _, key := range []keycodec.Key{{}, {Region: "east"}, {Name: "web"}} {
++		t.Run(fmt.Sprintf("%q/%q", key.Region, key.Name), func(t *testing.T) {
++			got, err := keycodec.Encode(key)
++			if got != "" || !errors.Is(err, keycodec.ErrInvalidKey) {
++				t.Fatalf("Encode(%#v) = %q, %v; want empty result and ErrInvalidKey", key, got, err)
++			}
++		})
++	}
++}
++
++func TestDecodeInvalidKey(t *testing.T) {
++	wires := []string{
++		"", "east", "/", "/web", "east/", "east/web/blue", "/east/web", "east/web/",
++		"east//web", "%/web", "east/%", "%2/web", "east/%2", "%GG/web", "east/%GG",
++		"%2X/web", "east/%X2", "valid%20region/bad%", "bad%/valid%20name",
++	}
++	for _, wire := range wires {
++		t.Run(wire, func(t *testing.T) {
++			got, err := keycodec.Decode(wire)
++			if got != (keycodec.Key{}) || !errors.Is(err, keycodec.ErrInvalidKey) {
++				t.Fatalf("Decode(%q) = %#v, %v; want zero Key and ErrInvalidKey", wire, got, err)
++			}
++		})
++	}
++}
++
++func Example() {
++	key := keycodec.Key{Region: "us/west", Name: "web blue"}
++	wire, err := keycodec.Encode(key)
++	if err != nil {
++		panic(err)
++	}
++	fmt.Println(wire)
++	decoded, err := keycodec.Decode(wire)
++	if err != nil {
++		panic(err)
++	}
++	fmt.Printf("region=%q name=%q\n", decoded.Region, decoded.Name)
++	// Output:
++	// us%2Fwest/web%20blue
++	// region="us/west" name="web blue"
++}
++
++func FuzzRoundTrip(f *testing.F) {
++	for _, key := range []keycodec.Key{
++		{Region: "east", Name: "web"},
++		{Region: "us/west", Name: "web blue"},
++		{Region: "日本%", Name: "café+/%2F"},
++		{},
++	} {
++		f.Add(key.Region, key.Name)
++	}
++	f.Fuzz(func(t *testing.T, region, name string) {
++		key := keycodec.Key{Region: region, Name: name}
++		wire, err := keycodec.Encode(key)
++		if region == "" || name == "" {
++			if wire != "" || !errors.Is(err, keycodec.ErrInvalidKey) {
++				t.Fatalf("Encode(%#v) = %q, %v; want empty result and ErrInvalidKey", key, wire, err)
++			}
++			return
++		}
++		if err != nil {
++			t.Fatalf("Encode(%#v): %v", key, err)
++		}
++		got, err := keycodec.Decode(wire)
++		if err != nil || got != key {
++			t.Fatalf("Decode(Encode(%#v)) = %#v, %v", key, got, err)
++		}
++	})
++}
+--- a/key.go
++++ b/key.go
+@@ -2,27 +2,42 @@
+ 
+ import (
+ 	"errors"
++	"net/url"
+ 	"strings"
+ )
+ 
++// ErrInvalidKey indicates an empty field, malformed escape, or invalid segment count.
+ var ErrInvalidKey = errors.New("invalid key")
+ 
++// Key identifies a name within a region. Both fields must be nonempty.
+ type Key struct {
+ 	Region string
+ 	Name   string
+ }
+ 
++// Encode joins the individually URL path-escaped fields with one slash.
++// On failure it returns an empty string and ErrInvalidKey.
+ func Encode(k Key) (string, error) {
+-	if k.Region == "" || k.Name == "" || strings.ContainsAny(k.Region+k.Name, "/%") {
++	if k.Region == "" || k.Name == "" {
+ 		return "", ErrInvalidKey
+ 	}
+-	return k.Region + "/" + k.Name, nil
++	return url.PathEscape(k.Region) + "/" + url.PathEscape(k.Name), nil
+ }
+ 
++// Decode splits a wire key into two segments, then URL path-unescapes each once.
++// On failure it returns a zero Key and ErrInvalidKey.
+ func Decode(wire string) (Key, error) {
+ 	p := strings.Split(wire, "/")
+-	if len(p) != 2 || p[0] == "" || p[1] == "" || strings.Contains(wire, "%") {
++	if len(p) != 2 || p[0] == "" || p[1] == "" {
+ 		return Key{}, ErrInvalidKey
+ 	}
+-	return Key{Region: p[0], Name: p[1]}, nil
++	region, err := url.PathUnescape(p[0])
++	if err != nil {
++		return Key{}, ErrInvalidKey
++	}
++	name, err := url.PathUnescape(p[1])
++	if err != nil {
++		return Key{}, ErrInvalidKey
++	}
++	return Key{Region: region, Name: name}, nil
+ }

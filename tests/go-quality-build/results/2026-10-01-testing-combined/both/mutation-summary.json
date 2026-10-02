@@ -1,0 +1,75 @@
+[
+  {
+    "semantic_id": "direct-snapshot-truncation",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "refresh_test.go:184: old reader = \"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"new\\\"}]\\n\", <nil>"
+    ],
+    "classification": "detected compiled behavior regression; no compiler/overall timeout credit",
+    "scope": "candidate suite only; helper shared by Put/Refresh for direct publication"
+  },
+  {
+    "semantic_id": "discarded-caller-context",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "serve_test.go:54: callback did not receive caller context",
+      "serve_test.go:54: callback did not receive caller context",
+      "serve_test.go:54: callback did not receive caller context"
+    ],
+    "classification": "detected compiled behavior regression; no compiler/overall timeout credit",
+    "scope": "candidate suite only; helper shared by Put/Refresh for direct publication"
+  },
+  {
+    "semantic_id": "host-release-before-join",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "serve_test.go:183: Serve returned while cleanup was held: release overtook cleanup",
+      "serve_test.go:183: Serve returned while cleanup was held: release overtook cleanup"
+    ],
+    "classification": "detected compiled behavior regression; no compiler/overall timeout credit",
+    "scope": "candidate suite only; helper shared by Put/Refresh for direct publication"
+  },
+  {
+    "semantic_id": "omitted-text-validation",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "apply_test.go:95: rejected row succeeded",
+      "apply_test.go:95: rejected row succeeded",
+      "process_test.go:58: [apply --dir /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessContractsapply_validation_prefix450638874/001]: status 0, stdout \"\", stderr \"\"; want status 2 and matching streams"
+    ],
+    "classification": "detected compiled behavior regression; no compiler/overall timeout credit",
+    "scope": "candidate suite only; helper shared by Put/Refresh for direct publication"
+  },
+  {
+    "semantic_id": "process-success-on-error",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "process_test.go:32: [put /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessContractsput_rejection_preserves_value3552358951/001 ../alpha bad]: status 0, stdout \"\", stderr \"invalid record\\n\"; want status 2 and matching streams",
+      "process_test.go:46: [apply --dir /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessContractsapply_write_failure_prefix565465744/001]: status 0, stdout \"\", stderr \"CSV row 2: rename /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessContractsapply_write_failure_prefix565465744/001/.record-18886453 /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessContractsapply_write_failure_prefix565465744/001/beta: file exists\\n\"; want status 2 and matching streams",
+      "process_test.go:58: [apply --dir /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessContractsapply_validation_prefix22376079/001]: status 0, stdout \"\", stderr \"CSV row 2: invalid record\\n\"; want status 2 and matching streams"
+    ],
+    "classification": "detected compiled behavior regression; no compiler/overall timeout credit",
+    "scope": "candidate suite only; helper shared by Put/Refresh for direct publication"
+  },
+  {
+    "semantic_id": "start-relative-recurrence",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "serve_test.go:134: delay after completion = 1.083\u00b5s; want at least 40ms"
+    ],
+    "classification": "detected compiled behavior regression; no compiler/overall timeout credit",
+    "scope": "candidate suite only; helper shared by Put/Refresh for direct publication"
+  }
+]

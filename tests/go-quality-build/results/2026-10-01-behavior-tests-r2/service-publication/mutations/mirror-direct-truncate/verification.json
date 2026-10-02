@@ -1,0 +1,86 @@
+{
+  "semantic_id": "mirror-direct-truncate",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "abab2b13fb1aafa4e9d0fdc880edbd54afcbeba29411b8c3607a32cb86288eb6",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-92omgj58/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.227s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.471
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-r2/service-publication/mutations/mirror-direct-truncate/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-92omgj58/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.014
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-92omgj58/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.204s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.451
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-92omgj58/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshReplacesSnapshotWithoutTruncatingOpenHandle (0.00s)\n    refresh_unix_test.go:52: already-open old handle = \"[{\\\"code\\\":\\\"new\\\",\\\"label\\\":\\\"First replacement\\\"}]\", want \"old snapshot with exact spaces and a newline\\n\"\nFAIL\nFAIL\texample.com/mirror\t0.182s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.37
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

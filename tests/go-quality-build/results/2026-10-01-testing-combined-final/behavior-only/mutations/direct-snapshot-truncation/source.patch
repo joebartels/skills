@@ -1,0 +1,11 @@
+--- a/index.go
++++ b/index.go
+@@ -42,7 +42,7 @@
+ 	if err = f.Close(); err != nil {
+ 		return err
+ 	}
+-	return os.Rename(f.Name(), path)
++	return os.WriteFile(path, data, 0600)
+ }
+ func (i *Index) Get(key string) (string, error) {
+ 	if !keyPattern.MatchString(key) {

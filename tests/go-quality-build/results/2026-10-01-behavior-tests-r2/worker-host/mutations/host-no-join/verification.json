@@ -1,0 +1,86 @@
+{
+  "semantic_id": "host-no-join",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "b8f8135a039592d025aabb0100e1121506cd88096db7f7bca9c4f8a181992f86",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-k4cvkd3y/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.604s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.793
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-r2/worker-host/mutations/host-no-join/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-k4cvkd3y/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-k4cvkd3y/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.208s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.362
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-k4cvkd3y/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRunCancellationWaitsForCallbackCleanup (0.00s)\n    --- FAIL: TestRunCancellationWaitsForCallbackCleanup/successful_callback_cleanup (0.00s)\n        host_test.go:255: release ran before callback cleanup finished\n    --- FAIL: TestRunCancellationWaitsForCallbackCleanup/independent_callback_failure (0.00s)\n        host_test.go:255: release ran before callback cleanup finished\n    --- FAIL: TestRunCancellationWaitsForCallbackCleanup/joined_cancellation_and_callback_failure (0.00s)\n        host_test.go:255: release ran before callback cleanup finished\nFAIL\nFAIL\texample.com/sweeper\t0.417s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.537
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

@@ -1,0 +1,246 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^alpha$/^first$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-test-isolation-r3/library-file-fixtures",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/filestore\t1.169s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.297,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "library-file-fixtures focused leaf"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r3/library-file-fixtures/mutations/store-shared-root/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/shared-root-7egf5t_0/module",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.021,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "library-file-fixtures shared-root apply"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/shared-root-7egf5t_0/module",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/filestore\t0.178s [no tests to run]\n",
+    "stderr": "",
+    "elapsed_seconds": 0.325,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "library-file-fixtures shared-root compile"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-parallel=1",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/shared-root-7egf5t_0/module",
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    store_test.go:72: alpha persisted Get = \"B\\n\", <nil>; want \"A\"\n    store_test.go:72: gamma persisted Get = \"B\\n\", <nil>; want \"\u03b3\\x00\"\nFAIL\nFAIL\texample.com/filestore\t0.128s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.252,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "library-file-fixtures shared-root parallel1 assertion"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^alpha$/^initial$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-test-isolation-r3/file-repeat",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/filestore\t1.141s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.275,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "file-repeat focused leaf"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r3/file-repeat/mutations/store-shared-root/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/shared-root-1730v14k/module",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.021,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "file-repeat shared-root apply"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/shared-root-1730v14k/module",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/filestore\t0.173s [no tests to run]\n",
+    "stderr": "",
+    "elapsed_seconds": 0.323,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "file-repeat shared-root compile"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-parallel=1",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/shared-root-1730v14k/module",
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    store_test.go:87: alpha: Get after children = \"beta\\nreplacement\\x00\"; want \"alpha replacement\"\n    store_test.go:87: gamma: Get after children = \"beta\\nreplacement\\x00\"; want \"gamma replacement\"\nFAIL\nFAIL\texample.com/filestore\t0.128s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.246,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "file-repeat shared-root parallel1 assertion"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=3",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/illustration",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/illustration\t1.183s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.344,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "unchanged Go1.22 illustration on host"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/illustration",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.081,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "illustration vet"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.009,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "actual toolchain"
+  }
+]

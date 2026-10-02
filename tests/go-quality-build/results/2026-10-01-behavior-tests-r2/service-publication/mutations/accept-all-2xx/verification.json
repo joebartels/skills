@@ -1,0 +1,86 @@
+{
+  "semantic_id": "accept-all-2xx",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "98bdc961c270ee87e10cc1c616eb7f5903bc40b20ce14c3172e68a4d14ed3350",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-naqeg3a2/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.178s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.422
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-r2/service-publication/mutations/accept-all-2xx/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-naqeg3a2/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-naqeg3a2/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.202s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.449
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-naqeg3a2/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes (0.01s)\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/partial_content_with_valid_body (0.00s)\n        refresh_test.go:127: Refresh succeeded for rejected response\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/created_with_valid_body (0.00s)\n        refresh_test.go:127: Refresh succeeded for rejected response\nFAIL\nFAIL\texample.com/mirror\t0.184s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.368
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

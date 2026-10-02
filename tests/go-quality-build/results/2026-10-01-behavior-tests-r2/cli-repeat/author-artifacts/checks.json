@@ -1,0 +1,236 @@
+[
+  {
+    "label": "baseline",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=45s",
+      "-run",
+      "TestBatchSuccess|TestWritesBeforeReadingNextRow|TestPartialWriteRetainsAcceptedReplacement",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-6/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 90,
+    "elapsed_seconds": 0.579,
+    "stdout": "--- FAIL: TestBatchSuccess (0.00s)\n    batch_test.go:43: directory entries = [- web], want 3 files\n--- FAIL: TestWritesBeforeReadingNextRow (0.00s)\n    batch_test.go:108: directory entries = [- first], want 2 files\n--- FAIL: TestPartialWriteRetainsAcceptedReplacement (0.26s)\n    write_failure_unix_test.go:35: CLI code=0 stdout=\"\" stderr=\"\"; want code=2, empty stdout, diagnostic only on failure\nFAIL\nFAIL\texample.com/ledgerload\t0.434s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "label": "format",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "main.go",
+      "main_test.go",
+      "batch_test.go",
+      "write_failure_unix_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-6/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 90,
+    "elapsed_seconds": 0.007,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=45s",
+      "-v",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-6/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 90,
+    "elapsed_seconds": 0.914,
+    "stdout": "=== RUN   TestBatchSuccess\n--- PASS: TestBatchSuccess (0.00s)\n=== RUN   TestBatchStopsAtInvalidReplacement\n=== RUN   TestBatchStopsAtInvalidReplacement/empty_ID\n=== RUN   TestBatchStopsAtInvalidReplacement/dot\n=== RUN   TestBatchStopsAtInvalidReplacement/dot_dot\n=== RUN   TestBatchStopsAtInvalidReplacement/slash\n=== RUN   TestBatchStopsAtInvalidReplacement/backslash\n=== RUN   TestBatchStopsAtInvalidReplacement/zero\n=== RUN   TestBatchStopsAtInvalidReplacement/negative\n=== RUN   TestBatchStopsAtInvalidReplacement/empty_quantity\n=== RUN   TestBatchStopsAtInvalidReplacement/hexadecimal\n=== RUN   TestBatchStopsAtInvalidReplacement/fraction\n=== RUN   TestBatchStopsAtInvalidReplacement/space\n=== RUN   TestBatchStopsAtInvalidReplacement/overflow\n=== RUN   TestBatchStopsAtInvalidReplacement/missing_field\n=== RUN   TestBatchStopsAtInvalidReplacement/extra_field\n=== RUN   TestBatchStopsAtInvalidReplacement/malformed_quote\n--- PASS: TestBatchStopsAtInvalidReplacement (0.01s)\n    --- PASS: TestBatchStopsAtInvalidReplacement/empty_ID (0.00s)\n    --- PASS: TestBatchStopsAtInvalidReplacement/dot (0.00s)\n    --- PASS: TestBatchStopsAtInvalidReplacement/dot_dot (0.00s)\n    --- PASS: TestBatchStopsAtInvalidReplacement/slash (0.00s)\n    --- PASS: TestBatchStopsAtInvalidReplacement/backslash (0.00s)\n    --- PASS: TestBatchStopsAtInvalidReplacement/zero (0.00s)\n    --- PASS: TestBatchStopsAtInvalidReplacement/negative (0.00s)\n    --- PASS: TestBatchStopsAtInvalidReplacement/empty_quantity (0.00s)\n    --- PASS: TestBatchStopsAtInvalidReplacement/hexadecimal (0.00s)\n    --- PASS: TestBatchStopsAtInvalidReplacement/fraction (0.00s)\n    --- PASS: TestBatchStopsAtInvalidReplacement/space (0.00s)\n    --- PASS: TestBatchStopsAtInvalidReplacement/overflow (0.00s)\n    --- PASS: TestBatchStopsAtInvalidReplacement/missing_field (0.00s)\n    --- PASS: TestBatchStopsAtInvalidReplacement/extra_field (0.00s)\n    --- PASS: TestBatchStopsAtInvalidReplacement/malformed_quote (0.00s)\n=== RUN   TestFirstInvalidRowDoesNotWrite\n--- PASS: TestFirstInvalidRowDoesNotWrite (0.00s)\n=== RUN   TestWritesBeforeReadingNextRow\n--- PASS: TestWritesBeforeReadingNextRow (0.00s)\n=== RUN   TestReadFailureRetainsPrefix\n--- PASS: TestReadFailureRetainsPrefix (0.00s)\n=== RUN   TestFileFailureRetainsPrefix\n--- PASS: TestFileFailureRetainsPrefix (0.00s)\n=== RUN   TestCLIContract\n=== RUN   TestCLIContract/single_record\n=== RUN   TestCLIContract/batch_and_duplicate\n=== RUN   TestCLIContract/empty_input\n=== RUN   TestCLIContract/invalid_first_row\n=== RUN   TestCLIContract/invalid_replacement\n=== RUN   TestCLIContract/malformed_CSV\n=== RUN   TestCLIContract/missing_dir\n=== RUN   TestCLIContract/positional_argument\n=== RUN   TestCLIContract/unknown_flag\n=== RUN   TestCLIContract/directory_creation\n=== RUN   TestCLIContract/directory_failure\n=== RUN   TestCLIContract/file_failure\n--- PASS: TestCLIContract (0.30s)\n    --- PASS: TestCLIContract/single_record (0.16s)\n    --- PASS: TestCLIContract/batch_and_duplicate (0.00s)\n    --- PASS: TestCLIContract/empty_input (0.00s)\n    --- PASS: TestCLIContract/invalid_first_row (0.00s)\n    --- PASS: TestCLIContract/invalid_replacement (0.00s)\n    --- PASS: TestCLIContract/malformed_CSV (0.00s)\n    --- PASS: TestCLIContract/missing_dir (0.00s)\n    --- PASS: TestCLIContract/positional_argument (0.00s)\n    --- PASS: TestCLIContract/unknown_flag (0.00s)\n    --- PASS: TestCLIContract/directory_creation (0.00s)\n    --- PASS: TestCLIContract/directory_failure (0.00s)\n    --- PASS: TestCLIContract/file_failure (0.00s)\n=== RUN   TestSingleRecord\n--- PASS: TestSingleRecord (0.00s)\n=== RUN   TestFileSizeLimitHelper\n--- PASS: TestFileSizeLimitHelper (0.00s)\n=== RUN   TestPartialWriteRetainsAcceptedReplacement\n--- PASS: TestPartialWriteRetainsAcceptedReplacement (0.21s)\nPASS\nok  \texample.com/ledgerload\t0.764s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "direct-write-mutation",
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "/private/tmp/go-fresh-author-mm5bi5gc/task-6/report/check_direct_write_mutation.py"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-6/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 90,
+    "elapsed_seconds": 0.696,
+    "stdout": "Temporary direct-write mutation; inner command: ['rtk', 'proxy', 'go', 'test', '-timeout=30s', '-run', '^TestPartialWriteRetainsAcceptedReplacement$', './...']\n--- FAIL: TestPartialWriteRetainsAcceptedReplacement (0.27s)\n    write_failure_unix_test.go:36: web = \"12\", <nil>; want \"7\\n\"\nFAIL\nFAIL\texample.com/ledgerload\t0.477s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "label": "vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-6/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 90,
+    "elapsed_seconds": 0.074,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "race",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-6/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 90,
+    "elapsed_seconds": 1.874,
+    "stdout": "ok  \texample.com/ledgerload\t1.685s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "toolchain-and-tools",
+    "command": [
+      "rtk",
+      "proxy",
+      "sh",
+      "-c",
+      "go version; command -v staticcheck || true"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-6/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 90,
+    "elapsed_seconds": 0.012,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "final-format",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "batch_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-6/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 90,
+    "elapsed_seconds": 0.007,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "final-race-suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-6/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 90,
+    "elapsed_seconds": 1.868,
+    "stdout": "ok  \texample.com/ledgerload\t1.686s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "final-vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-6/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 90,
+    "elapsed_seconds": 0.073,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "final-format-check",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "main.go",
+      "main_test.go",
+      "batch_test.go",
+      "write_failure_unix_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-6/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 90,
+    "elapsed_seconds": 0.007,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  }
+]

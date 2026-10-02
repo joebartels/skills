@@ -1,0 +1,11 @@
+--- a/serve.go
++++ b/serve.go
+@@ -20,7 +20,7 @@
+ 		if ctx.Err() != nil {
+ 			return nil
+ 		}
+-		if err := refresh(ctx); err != nil {
++		if err := func() error { result := make(chan error, 1); go func() { result <- refresh(ctx) }(); select { case e := <-result: return e; case <-ctx.Done(): return nil } }(); err != nil {
+ 			return err
+ 		}
+ 		timer := time.NewTimer(interval)

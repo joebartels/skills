@@ -1,0 +1,23 @@
+{
+  "label": "approved unchanged-source race listener rerun",
+  "command": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-race",
+    "-count=1",
+    "-timeout=30s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-2/verification",
+  "env": {
+    "GOCACHE": "/private/tmp/go-quality-testing-cache",
+    "GOTOOLCHAIN": "local"
+  },
+  "stdout": "ok  \texample.com/mirror\t2.229s\n",
+  "stderr": "",
+  "exit_code": 0,
+  "sandbox_permissions": "require_escalated",
+  "purpose": "allow existing httptest loopback listener without source changes"
+}

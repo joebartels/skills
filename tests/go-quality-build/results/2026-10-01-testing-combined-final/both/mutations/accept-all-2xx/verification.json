@@ -1,0 +1,86 @@
+{
+  "semantic_id": "accept-all-2xx",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "30bb7f5bac9d2f710f7117291c2ef9925ca246288c53057da0c3e2b9d98d8077",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-xvr6h0ip/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.524s\nok  \texample.com/indexer/cmd/indexer\t0.691s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.964
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-final/both/mutations/accept-all-2xx/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-xvr6h0ip/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-xvr6h0ip/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.384s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.439s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.699
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-xvr6h0ip/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshSuccessAndRejections (0.00s)\n    --- FAIL: TestRefreshSuccessAndRejections/partial_content_is_rejected (0.00s)\n        refresh_test.go:79: rejected response succeeded\n    --- FAIL: TestRefreshSuccessAndRejections/no_content (0.00s)\n        refresh_test.go:79: rejected response succeeded\nFAIL\nFAIL\texample.com/indexer\t0.342s\n--- FAIL: TestWatchFirstFailureProcess (0.00s)\n    --- FAIL: TestWatchFirstFailureProcess/status (5.00s)\n        main_test.go:196: command deadline exceeded: context deadline exceeded; stderr=\n--- FAIL: TestWatchLaterFailureProcess (5.00s)\n    main_test.go:333: command deadline exceeded: context deadline exceeded; stderr=\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t10.776s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 10.998
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

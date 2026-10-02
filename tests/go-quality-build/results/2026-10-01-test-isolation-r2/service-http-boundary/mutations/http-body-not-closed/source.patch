@@ -1,0 +1,10 @@
+--- a/fetch.go
++++ b/fetch.go
+@@ -24,7 +24,6 @@
+ 	if err != nil {
+ 		return Metadata{}, err
+ 	}
+-	defer response.Body.Close()
+ 	if response.StatusCode != http.StatusOK {
+ 		return Metadata{}, fmt.Errorf("metadata HTTP status %d", response.StatusCode)
+ 	}

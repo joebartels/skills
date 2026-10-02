@@ -1,0 +1,15 @@
+--- a/poll.go
++++ b/poll.go
+@@ -19,11 +19,6 @@
+ 			return err
+ 		}
+ 		timer := time.NewTimer(interval)
+-		select {
+-		case <-ctx.Done():
+-			timer.Stop()
+-			return nil
+-		case <-timer.C:
+-		}
++		<-timer.C
+ 	}
+ }

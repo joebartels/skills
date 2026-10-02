@@ -1,0 +1,68 @@
+{
+  "offered_names": [
+    "go-api-contracts",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries",
+    "go-test-isolation"
+  ],
+  "opened_skills": [
+    {
+      "name": "go-api-contracts",
+      "path": "/private/tmp/go-fresh-author-_5871z_7/task-1/guidance/go-api-contracts/SKILL.md",
+      "reason": "The task adds exported operation behavior and CLI/wire/file/error contracts while preserving existing function signatures, Put semantics, JSON tags, stream behavior and Go1.22 support."
+    },
+    {
+      "name": "go-core-style",
+      "path": "/private/tmp/go-fresh-author-_5871z_7/task-1/guidance/go-core-style/SKILL.md",
+      "reason": "All implementation and regression-test work is Go. Applied standard-library dependencies, direct error handling, gofmt and vet without adding abstractions or dependencies."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "path": "/private/tmp/go-fresh-author-_5871z_7/task-1/guidance/go-interfaces-and-composition/SKILL.md",
+      "reason": "Refresh borrows a caller client/context; Serve owns callback/release order; the command wires signal cancellation and client release. Existing function dependencies suffice; no new interface or constructor is needed."
+    },
+    {
+      "name": "go-package-boundaries",
+      "path": "/private/tmp/go-fresh-author-_5871z_7/task-1/guidance/go-package-boundaries/SKILL.md",
+      "reason": "CSV ingestion, snapshot publication and lifecycle responsibilities are implemented under the existing indexer facade, with argument and process concerns in cmd/indexer. Shared invariants and the small scope justify keeping the current packages."
+    },
+    {
+      "name": "go-test-isolation",
+      "path": "/private/tmp/go-fresh-author-_5871z_7/task-1/guidance/go-test-isolation/SKILL.md",
+      "reason": "Tests own temporary paths, controlled transport bodies, local HTTP servers, callback gates, timers and real child processes. Applied bounded synchronization, cancellation/join cleanup and independently selectable subtests."
+    }
+  ],
+  "opened_references": [
+    {
+      "path": "/private/tmp/go-fresh-author-_5871z_7/task-1/guidance/go-test-isolation/references/isolation-patterns.md",
+      "reason": "Relevant to callback/server/process lifetime, failure cleanup, focused subtest selection and Go1.22 timing control."
+    }
+  ],
+  "unopened_offered_skills": [],
+  "other_reference_decisions": [
+    {
+      "path": "/private/tmp/go-fresh-author-_5871z_7/task-1/guidance/go-package-boundaries/references/package-maps.md",
+      "opened": false,
+      "reason": "No package split or comparison of project shapes was needed; the existing package owners fit the request."
+    }
+  ],
+  "opened_task_inputs": [
+    "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/isolation-only/dispatch.txt",
+    "/private/tmp/go-fresh-author-_5871z_7/task-1/module/README.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-1/module/index.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-1/module/refresh.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-1/module/serve.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-1/module/index_test.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-1/module/cmd/indexer/main.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-1/module/cmd/indexer/main_test.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-1/module/go.mod"
+  ],
+  "generated_test_files": [
+    "/private/tmp/go-fresh-author-_5871z_7/task-1/module/index_regression_test.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-1/module/refresh_test.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-1/module/serve_test.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-1/module/cmd/indexer/process_test.go"
+  ],
+  "scope": "Only the standalone dispatch, assigned module and relevant offered guidance/reference were inspected. No delegation, repository/design/evaluation inputs, other author workspaces, dependency installation, commits or external service changes."
+}

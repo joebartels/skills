@@ -1,0 +1,47 @@
+package indexer_test
+
+import (
+	"context"
+	"errors"
+	"example.com/indexer"
+	"fmt"
+	"testing"
+	"time"
+)
+
+type diagnosticCauseError struct{ details []string }
+
+func (e diagnosticCauseError) Error() string { return "shutdown cause" }
+
+func TestDiagnosticNonComparableCause(t *testing.T) {
+	for _, joined := range []bool{false, true} {
+		t.Run(fmt.Sprintf("joined=%v", joined), func(t *testing.T) {
+			ctx, cancel := context.WithCancelCause(context.Background())
+			defer cancel(nil)
+			cause := diagnosticCauseError{details: []string{"shutdown"}}
+			independent := errors.New("independent callback failure")
+			completed, releasedAfterCompletion := false, false
+			releases := 0
+			defer func() {
+				if p := recover(); p != nil {
+					t.Errorf("Serve panicked for valid non-comparable cancellation cause: %v", p)
+				}
+				if releases != 1 || !releasedAfterCompletion {
+					t.Errorf("release count/order = %d/%v, want 1/true", releases, releasedAfterCompletion)
+				}
+			}()
+			err := indexer.Serve(ctx, time.Hour, func(context.Context) error {
+				cancel(cause)
+				completed = true
+				wrapped := fmt.Errorf("fetch stopped: %w", cause)
+				if joined {
+					return errors.Join(wrapped, independent)
+				}
+				return wrapped
+			}, func() error { releases++; releasedAfterCompletion = completed; return nil })
+			if joined && !errors.Is(err, independent) {
+				t.Errorf("independent failure lost: %v", err)
+			}
+		})
+	}
+}

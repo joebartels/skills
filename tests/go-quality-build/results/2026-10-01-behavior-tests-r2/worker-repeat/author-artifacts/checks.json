@@ -1,0 +1,302 @@
+{
+  "toolchain": {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-7/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "exit_code": 0,
+    "combined_output": "go version go1.26.5 darwin/arm64\n",
+    "supported_module_version": "1.22",
+    "exact_go_1_22_exercised": false
+  },
+  "checks": [
+    {
+      "name": "baseline original one-shot source rejects new lifecycle tests",
+      "command": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "test",
+        "-timeout=20s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-7/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "deadline": {
+        "go_test_timeout_seconds": 20
+      },
+      "expected_exit_code": 1,
+      "exit_code": 1,
+      "stdout": null,
+      "stderr": null,
+      "combined_output": "--- FAIL: TestRunRejectsNonpositiveIntervalsBeforeWork (0.00s)\n    --- FAIL: TestRunRejectsNonpositiveIntervalsBeforeWork/0s (0.00s)\n        lifecycle_test.go:81: sweeps = 1, releases = 1; want neither resource effect\n    --- FAIL: TestRunRejectsNonpositiveIntervalsBeforeWork/-1ns (0.00s)\n        lifecycle_test.go:81: sweeps = 1, releases = 1; want neither resource effect\n--- FAIL: TestRunAlreadyCanceledDoesNotSweep (0.00s)\n    lifecycle_test.go:99: Run = <nil>, sweeps = 1, releases = 1; want nil, 0, 1\n--- FAIL: TestRunStartsImmediatelyAndCancelsBetweenCycles (0.00s)\n    lifecycle_test.go:126: sweeps = 1, releases = 1, canceled before release = false\n--- FAIL: TestRunWaitsFullIntervalAfterSuccessfulCompletion (2.08s)\n    lifecycle_test.go:173: timed out waiting for later successful sweep\n--- FAIL: TestRunPreservesIndependentWorkAndReleaseErrors (0.00s)\n    --- FAIL: TestRunPreservesIndependentWorkAndReleaseErrors/both_failures (0.00s)\n        lifecycle_test.go:231: Run = sweep failed\n            callback context still live at release, want release cause\n--- FAIL: TestRunInstancesAreIndependentlyOwned (2.00s)\n    lifecycle_test.go:335: timed out waiting for both instances recurring\nFAIL\nFAIL\texample.com/sweeper\t4.364s\nFAIL\n",
+      "output_capture": "exec_command returns combined stdout/stderr; separate streams were not available",
+      "wall_time_seconds": 4.39014125
+    },
+    {
+      "name": "initial implementation race-enabled verbose suite",
+      "command": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "test",
+        "-v",
+        "-race",
+        "-timeout=45s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-7/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "deadline": {
+        "go_test_timeout_seconds": 45
+      },
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "stdout": null,
+      "stderr": null,
+      "combined_output": "=== RUN   TestSweepFailureReleases\n--- PASS: TestSweepFailureReleases (0.00s)\n=== RUN   TestRunRejectsNonpositiveIntervalsBeforeWork\n=== RUN   TestRunRejectsNonpositiveIntervalsBeforeWork/0s\n=== RUN   TestRunRejectsNonpositiveIntervalsBeforeWork/-1ns\n--- PASS: TestRunRejectsNonpositiveIntervalsBeforeWork (0.00s)\n    --- PASS: TestRunRejectsNonpositiveIntervalsBeforeWork/0s (0.00s)\n    --- PASS: TestRunRejectsNonpositiveIntervalsBeforeWork/-1ns (0.00s)\n=== RUN   TestRunAlreadyCanceledDoesNotSweep\n--- PASS: TestRunAlreadyCanceledDoesNotSweep (0.00s)\n=== RUN   TestRunStartsImmediatelyAndCancelsBetweenCycles\n--- PASS: TestRunStartsImmediatelyAndCancelsBetweenCycles (0.00s)\n=== RUN   TestRunWaitsFullIntervalAfterSuccessfulCompletion\n--- PASS: TestRunWaitsFullIntervalAfterSuccessfulCompletion (0.16s)\n=== RUN   TestRunPreservesIndependentWorkAndReleaseErrors\n=== RUN   TestRunPreservesIndependentWorkAndReleaseErrors/normal_cancellation\n=== RUN   TestRunPreservesIndependentWorkAndReleaseErrors/work_failure\n=== RUN   TestRunPreservesIndependentWorkAndReleaseErrors/release_failure\n=== RUN   TestRunPreservesIndependentWorkAndReleaseErrors/both_failures\n--- PASS: TestRunPreservesIndependentWorkAndReleaseErrors (0.00s)\n    --- PASS: TestRunPreservesIndependentWorkAndReleaseErrors/normal_cancellation (0.00s)\n    --- PASS: TestRunPreservesIndependentWorkAndReleaseErrors/work_failure (0.00s)\n    --- PASS: TestRunPreservesIndependentWorkAndReleaseErrors/release_failure (0.00s)\n    --- PASS: TestRunPreservesIndependentWorkAndReleaseErrors/both_failures (0.00s)\n=== RUN   TestRunWaitsForCanceledCallbackCleanup\n=== RUN   TestRunWaitsForCanceledCallbackCleanup/nil_result\n=== RUN   TestRunWaitsForCanceledCallbackCleanup/callback_cancellation_error\n=== RUN   TestRunWaitsForCanceledCallbackCleanup/independent_failure\n=== RUN   TestRunWaitsForCanceledCallbackCleanup/joined_cancellation_and_failure\n--- PASS: TestRunWaitsForCanceledCallbackCleanup (0.10s)\n    --- PASS: TestRunWaitsForCanceledCallbackCleanup/nil_result (0.03s)\n    --- PASS: TestRunWaitsForCanceledCallbackCleanup/callback_cancellation_error (0.03s)\n    --- PASS: TestRunWaitsForCanceledCallbackCleanup/independent_failure (0.03s)\n    --- PASS: TestRunWaitsForCanceledCallbackCleanup/joined_cancellation_and_failure (0.03s)\n=== RUN   TestRunInstancesAreIndependentlyOwned\n--- PASS: TestRunInstancesAreIndependentlyOwned (0.04s)\nPASS\nok  \texample.com/sweeper\t1.468s\n",
+      "output_capture": "exec_command returns combined stdout/stderr; separate streams were not available",
+      "wall_time_seconds": 1.5335185839999999
+    },
+    {
+      "name": "initial vet",
+      "command": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-7/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "deadline": {
+        "explicit_process_deadline": false
+      },
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "stdout": null,
+      "stderr": null,
+      "combined_output": "",
+      "output_capture": "exec_command returns combined stdout/stderr; separate streams were not available",
+      "wall_time_seconds": 0.000006041
+    },
+    {
+      "name": "temporary shortened-interval mutation proves timing assertion",
+      "command": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "test",
+        "-run",
+        "^TestRunWaitsFullIntervalAfterSuccessfulCompletion$",
+        "-count=1",
+        "-timeout=10s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-7/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "deadline": {
+        "go_test_timeout_seconds": 10
+      },
+      "expected_exit_code": 1,
+      "exit_code": 1,
+      "stdout": null,
+      "stderr": null,
+      "combined_output": "--- FAIL: TestRunWaitsFullIntervalAfterSuccessfulCompletion (0.08s)\n    lifecycle_test.go:185: cycle 2 started 33.167µs after completion, want at least 40ms\nFAIL\nFAIL\texample.com/sweeper\t0.254s\nFAIL\n",
+      "output_capture": "exec_command returns combined stdout/stderr; separate streams were not available",
+      "wall_time_seconds": 0.276402583,
+      "mutation": "Only time.NewTimer(interval) was temporarily replaced by time.NewTimer(time.Nanosecond); restored immediately after this check.",
+      "meaningful_failure": "cycle 2 started 33.167µs after completion, want at least 40ms"
+    },
+    {
+      "name": "final restored source race repeat shuffled suite",
+      "command": [
+        "rtk",
+        "proxy",
+        "env",
+        "GOCACHE=/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN=local",
+        "go",
+        "test",
+        "-race",
+        "-shuffle=on",
+        "-count=30",
+        "-timeout=45s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-7/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "deadline": {
+        "go_test_timeout_seconds": 45
+      },
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "stdout": null,
+      "stderr": null,
+      "combined_output": "ok  \texample.com/sweeper\t11.140s\n",
+      "output_capture": "exec_command returns combined stdout/stderr; separate streams were not available"
+    },
+    {
+      "name": "final bounded vet",
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-c",
+        "import os, subprocess; env = dict(os.environ, GOCACHE=\"/private/tmp/go-quality-testing-cache\", GOTOOLCHAIN=\"local\"); result = subprocess.run([\"go\", \"vet\", \"./...\"], env=env, timeout=30); raise SystemExit(result.returncode)"
+      ],
+      "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-7/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "deadline": {
+        "subprocess_timeout_seconds": 30
+      },
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "stdout": null,
+      "stderr": null,
+      "combined_output": "",
+      "output_capture": "exec_command returns combined stdout/stderr; separate streams were not available",
+      "wall_time_seconds": 0.02838025,
+      "executed_subprocess_command": [
+        "go",
+        "vet",
+        "./..."
+      ]
+    },
+    {
+      "name": "final formatting",
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-l",
+        "host.go",
+        "worker.go",
+        "host_test.go",
+        "lifecycle_test.go"
+      ],
+      "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-7/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "deadline": {
+        "tool_returned_immediately": true
+      },
+      "expected_exit_code": 0,
+      "exit_code": 0,
+      "stdout": null,
+      "stderr": null,
+      "combined_output": "",
+      "output_capture": "exec_command returns combined stdout/stderr; separate streams were not available",
+      "wall_time_seconds": 0.000006
+    },
+    {
+      "name": "staticcheck availability",
+      "command": [
+        "rtk",
+        "proxy",
+        "which",
+        "staticcheck"
+      ],
+      "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-7/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "deadline": {
+        "tool_returned_immediately": true
+      },
+      "expected_exit_code": 1,
+      "exit_code": 1,
+      "stdout": null,
+      "stderr": null,
+      "combined_output": "",
+      "output_capture": "exec_command returns combined stdout/stderr; separate streams were not available",
+      "wall_time_seconds": 0.000006333,
+      "meaning": "staticcheck was not installed; no installation was attempted"
+    }
+  ],
+  "formatting_mutations": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-w",
+        "lifecycle_test.go"
+      ],
+      "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-7/module",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-w",
+        "host.go",
+        "worker.go",
+        "lifecycle_test.go"
+      ],
+      "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-7/module",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-w",
+        "lifecycle_test.go"
+      ],
+      "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-7/module",
+      "exit_code": 0
+    }
+  ],
+  "boundaries": {
+    "network_listeners": "No listeners or network operations required or exercised.",
+    "dependencies": "Standard library only; no dependencies/tools installed.",
+    "supported_go": "go.mod remains go 1.22; code uses APIs available at that version. Actual runtime checks used local Go 1.26.5."
+  }
+}

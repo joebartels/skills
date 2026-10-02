@@ -1,0 +1,101 @@
+[
+  {
+    "label": "focused alpha",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^alpha$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-focused-check-x7ik_p8f/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "patch": null,
+    "stdout": "ok  \texample.com/filestore\t1.190s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.3525071250041947
+  },
+  {
+    "label": "focused replacement gamma",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^gamma$/^replacement$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-focused-check-_rb27_fq/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "patch": null,
+    "stdout": "ok  \texample.com/filestore\t1.147s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.3245762920705602
+  },
+  {
+    "label": "focused no instance match",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^missing$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-focused-check-y0mcxshw/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "patch": null,
+    "stdout": "ok  \texample.com/filestore\t0.179s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.3370730000315234
+  },
+  {
+    "label": "shared-root signal at parallel1",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-parallel=1",
+      "-timeout=30s",
+      "-run",
+      "^TestStoreIndependentInstances$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-focused-check-4j26hv24/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "patch": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r2/library-file-fixtures/mutations/store-shared-root/source.patch",
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    store_test.go:72: alpha persisted Get = \"B\\n\", <nil>; want \"A\"\n    store_test.go:72: gamma persisted Get = \"B\\n\", <nil>; want \"\u03b3\\x00\"\nFAIL\nFAIL\texample.com/filestore\t0.172s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.31639887497294694
+  }
+]

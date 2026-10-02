@@ -1,0 +1,25 @@
+--- a/worker.go
++++ b/worker.go
+@@ -6,6 +6,8 @@
+ )
+ 
+ func periodic(ctx context.Context, interval time.Duration, sweep func(context.Context) error) error {
++	ticker := time.NewTicker(interval)
++	defer ticker.Stop()
+ 	for {
+ 		if ctx.Err() != nil {
+ 			return nil
+@@ -14,12 +16,10 @@
+ 			return err
+ 		}
+ 
+-		timer := time.NewTimer(interval)
+ 		select {
+ 		case <-ctx.Done():
+-			timer.Stop()
+ 			return nil
+-		case <-timer.C:
++		case <-ticker.C:
+ 		}
+ 	}
+ }

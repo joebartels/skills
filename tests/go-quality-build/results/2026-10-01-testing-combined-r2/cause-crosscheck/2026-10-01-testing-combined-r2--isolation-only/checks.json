@@ -1,0 +1,94 @@
+{
+  "kind": "independent contract reproduction; no candidate repair; no prescribed nil versus returned cause",
+  "candidate_run": "2026-10-01-testing-combined-r2",
+  "case": "isolation-only",
+  "candidate_sha256": {
+    "index.go": "8e8fcb77a667130517ffd41a4c6fb1c4401218707c49c373c516a157a13b03c6",
+    "go.mod": "6ad6c1c685b8d95d2f5e38dff9fd806cbca1f647c684b5823237f6d260b17b56",
+    "index_test.go": "a9286677be97a8ed48d60a6428c01ba5a2cab646edab2607df05b41b8c101968",
+    "serve.go": "5448d3fdde72a473e52d8dc1fe69a1f685f55affeb124fdf43174049de90a124",
+    "serve_test.go": "d323fbe322663f07c4d178576787b4ffc80e683be17d9bfbcd44d4298c61da48",
+    "README.md": "4c64d29f9e5586a08f7f6a6d74ba34e723299125c267a23ccacc3c42c2ecc44c",
+    "refresh.go": "405abf21ee6959a26573206f71ff8b466e54c7324b14447413f912071b24c4af",
+    "refresh_test.go": "f50208e89a91ff9e3df598b1d54ae266de5d80e1de2073255df3657a4d237b78",
+    "cmd/indexer/main.go": "12d15b8d4b0143368226e6edf9cf40ec54a3c54c57d4e4ddf5aaf564de7341fa",
+    "cmd/indexer/main_test.go": "9482104b18267a8663ec775bb504a1d97cc52396e219387d3bc24a77a2225033"
+  },
+  "probe_added_sha256": {
+    "index.go": "8e8fcb77a667130517ffd41a4c6fb1c4401218707c49c373c516a157a13b03c6",
+    "go.mod": "6ad6c1c685b8d95d2f5e38dff9fd806cbca1f647c684b5823237f6d260b17b56",
+    "index_test.go": "a9286677be97a8ed48d60a6428c01ba5a2cab646edab2607df05b41b8c101968",
+    "serve.go": "5448d3fdde72a473e52d8dc1fe69a1f685f55affeb124fdf43174049de90a124",
+    "serve_test.go": "d323fbe322663f07c4d178576787b4ffc80e683be17d9bfbcd44d4298c61da48",
+    "README.md": "4c64d29f9e5586a08f7f6a6d74ba34e723299125c267a23ccacc3c42c2ecc44c",
+    "refresh.go": "405abf21ee6959a26573206f71ff8b466e54c7324b14447413f912071b24c4af",
+    "refresh_test.go": "f50208e89a91ff9e3df598b1d54ae266de5d80e1de2073255df3657a4d237b78",
+    "diagnostic_cause_test.go": "852b312ca45da4cdda98dbc5e1b59205796d97c10564e4d577800a95d9f6db78",
+    "cmd/indexer/main.go": "12d15b8d4b0143368226e6edf9cf40ec54a3c54c57d4e4ddf5aaf564de7341fa",
+    "cmd/indexer/main_test.go": "9482104b18267a8663ec775bb504a1d97cc52396e219387d3bc24a77a2225033"
+  },
+  "reconstruction": "exact",
+  "checks": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-w",
+        "diagnostic_cause_test.go"
+      ],
+      "cwd": "/private/tmp/go-cause-crosscheck-ryrf5bwf/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.008
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-cause-crosscheck-ryrf5bwf/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/indexer\t0.215s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.363s [no tests to run]\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.645
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestDiagnosticNonComparableCause$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-cause-crosscheck-ryrf5bwf/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "--- FAIL: TestDiagnosticNonComparableCause (0.00s)\n    --- FAIL: TestDiagnosticNonComparableCause/joined=false (0.00s)\n        diagnostic_cause_test.go:27: Serve panicked for valid non-comparable cancellation cause: runtime error: comparing uncomparable type indexer_test.diagnosticCauseError\n    --- FAIL: TestDiagnosticNonComparableCause/joined=true (0.00s)\n        diagnostic_cause_test.go:27: Serve panicked for valid non-comparable cancellation cause: runtime error: comparing uncomparable type indexer_test.diagnosticCauseError\nFAIL\nFAIL\texample.com/indexer\t0.175s\nok  \texample.com/indexer/cmd/indexer\t0.300s [no tests to run]\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "duration_seconds": 0.51
+    }
+  ]
+}

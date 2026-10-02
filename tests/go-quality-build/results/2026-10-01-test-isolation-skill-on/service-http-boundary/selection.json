@@ -1,0 +1,51 @@
+{
+  "offered_guidance_names": [
+    "go-api-contracts",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries",
+    "go-test-isolation"
+  ],
+  "guidance_decisions": [
+    {
+      "name": "go-api-contracts",
+      "selected": false,
+      "reason": "Only tests for an established Fetch contract are added; no exported API, supported contract, or compatibility behavior is created or changed."
+    },
+    {
+      "name": "go-core-style",
+      "selected": true,
+      "reason": "Writing Go tests; applied standard-library fixtures, private state, clear failure checks, gofmt, vet, and race verification."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "selected": false,
+      "reason": "Production dependency wiring, constructors, interfaces, and response ownership stay unchanged. Test fixture ownership and composition are covered by the selected isolation guidance."
+    },
+    {
+      "name": "go-package-boundaries",
+      "selected": false,
+      "reason": "No package creation, relocation, responsibility change, or production import-direction change."
+    },
+    {
+      "name": "go-test-isolation",
+      "selected": true,
+      "reason": "The tests use HTTP transport/body doubles, local server fixtures, cancellation workers, channels, timers, resource lifetimes, and parallel subtests."
+    }
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-testing-author-iu16ahig/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-testing-author-iu16ahig/guidance/go-test-isolation/SKILL.md"
+  ],
+  "opened_reference_paths": [
+    "/private/tmp/go-testing-author-iu16ahig/guidance/go-test-isolation/references/isolation-patterns.md"
+  ],
+  "reference_relevance": "Read for Go 1.22 event synchronization, fixture ownership, early-failure cleanup, HTTP boundary fidelity, and individually selectable parallel cases.",
+  "other_opened_inputs": [
+    "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/service-http-boundary/dispatch.txt",
+    "/private/tmp/go-testing-author-iu16ahig/service-http-boundary/README.md",
+    "/private/tmp/go-testing-author-iu16ahig/service-http-boundary/fetch.go",
+    "/private/tmp/go-testing-author-iu16ahig/service-http-boundary/fetch_test.go",
+    "/private/tmp/go-testing-author-iu16ahig/service-http-boundary/go.mod"
+  ]
+}

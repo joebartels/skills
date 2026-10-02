@@ -1,0 +1,51 @@
+--- a/store_test.go
++++ b/store_test.go
+@@ -2,6 +2,7 @@
+ 
+ import (
+ 	"testing"
++ "os"
+ 
+ 	"example.com/filestore"
+ )
+@@ -33,10 +34,12 @@
+ 		lastValue string
+ 		wrote     bool
+ 	}
+-	cases := []instanceCase{
++	roots := []string{}
++ newStore := func() *filestore.Store { root := t.TempDir(); roots = append(roots, root); return filestore.New(root) }
++ cases := []instanceCase{
+ 		{
+ 			name:  "alpha",
+-			store: filestore.New(t.TempDir()),
++			store: newStore(),
+ 			values: []valueCase{
+ 				{name: "initial", value: "alpha first"},
+ 				{name: "replacement", value: "alpha replacement"},
+@@ -44,7 +47,7 @@
+ 		},
+ 		{
+ 			name:  "beta",
+-			store: filestore.New(t.TempDir()),
++			store: newStore(),
+ 			values: []valueCase{
+ 				{name: "initial", value: "beta first"},
+ 				{name: "replacement", value: "beta replacement\nwith another line"},
+@@ -52,7 +55,7 @@
+ 		},
+ 		{
+ 			name:  "empty",
+-			store: filestore.New(t.TempDir()),
++			store: newStore(),
+ 			values: []valueCase{
+ 				{name: "initial", value: "before empty"},
+ 				{name: "replacement", value: ""},
+@@ -63,6 +66,7 @@
+ 	// The group waits for parallel instances before the parent reads their files.
+ 	// Roots belong to the parent so they survive the group and these final checks.
+ 	t.Run("instances", func(t *testing.T) {
++ defer func() { for _, root := range roots { os.RemoveAll(root) } }()
+ 		for i := range cases {
+ 			tc := &cases[i]
+ 			t.Run(tc.name, func(t *testing.T) {

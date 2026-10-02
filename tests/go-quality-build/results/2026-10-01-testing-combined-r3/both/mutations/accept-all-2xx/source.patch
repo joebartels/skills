@@ -1,0 +1,11 @@
+--- a/refresh.go
++++ b/refresh.go
+@@ -34,7 +34,7 @@
+ 		return fmt.Errorf("fetch records: %w", err)
+ 	}
+ 	defer response.Body.Close()
+-	if response.StatusCode != http.StatusOK {
++	if response.StatusCode < 200 || response.StatusCode >= 300 {
+ 		return fmt.Errorf("fetch records: status %d; want 200", response.StatusCode)
+ 	}
+ 	data, err := io.ReadAll(response.Body)

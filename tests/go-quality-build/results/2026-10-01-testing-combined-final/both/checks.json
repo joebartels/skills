@@ -1,0 +1,491 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "index.go",
+      "refresh.go",
+      "serve.go",
+      "index_test.go",
+      "refresh_test.go",
+      "serve_test.go",
+      "write_failure_posix_test.go",
+      "cmd/indexer/main.go",
+      "cmd/indexer/main_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 30,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 90,
+    "stdout": "--- FAIL: TestRefreshTransportCancellation (0.00s)\n--- FAIL: TestRefreshRejectsRedirectWithoutChangingClient (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 83 [running]:\ntesting.tRunner.func1.2({0x1034b48c0, 0x2f5727b94020})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1034b48c0?, 0x2f5727b94020?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1035419e0, 0x2f5727b92000})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer_test.TestRefreshTransportCancellation(0x2f5727cd2488)\n\t/private/tmp/go-fresh-author-s21flpf_/task-2/module/refresh_test.go:237 +0xa4\ntesting.tRunner(0x2f5727cd2488, 0x10353d698)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer\t0.255s\n--- FAIL: TestWatchFirstFailureProcess (0.00s)\n    --- FAIL: TestWatchFirstFailureProcess/status (0.00s)\n--- FAIL: TestWatchFirstFailureProcess (0.00s)\n    --- FAIL: TestWatchFirstFailureProcess/validation (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 10 [running]:\ntesting.tRunner.func1.2({0x1047e8b20, 0x798f2499e150})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1047e8b20?, 0x798f2499e150?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x104875460, 0x798f24502080})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer/cmd/indexer.TestWatchFirstFailureProcess.func1(0x798f245c8248)\n\t/private/tmp/go-fresh-author-s21flpf_/task-2/module/cmd/indexer/main_test.go:185 +0xc0\ntesting.tRunner(0x798f245c8248, 0x798f2459e270)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 9\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 11 [running]:\ntesting.tRunner.func1.2({0x1047e8b20, 0x798f2451a1d0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1047e8b20?, 0x798f2451a1d0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x104875460, 0x798f249a8080})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer/cmd/indexer.TestWatchFirstFailureProcess.func1(0x798f245c8488)\n\t/private/tmp/go-fresh-author-s21flpf_/task-2/module/cmd/indexer/main_test.go:185 +0xc0\ntesting.tRunner(0x798f245c8488, 0x798f2459e2d0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 9\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer/cmd/indexer\t0.800s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 90,
+    "boundary": "approved unchanged-source rerun with local listeners outside restrictive sandbox",
+    "stdout": "ok  \texample.com/indexer\t0.347s\nok  \texample.com/indexer/cmd/indexer\t0.808s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "index.go",
+      "refresh.go",
+      "serve.go",
+      "index_test.go",
+      "refresh_test.go",
+      "serve_test.go",
+      "write_failure_posix_test.go",
+      "cmd/indexer/main.go",
+      "cmd/indexer/main_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "PATH": "/Users/jb/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/Applications/Wireshark.app/Contents/MacOS:/usr/local/go/bin:/opt/homebrew/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/jb/.codex/tmp/arg0/codex-arg0jTqIUU:/Users/jb/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/jb/.local/bin:/Users/jb/Library/Android/sdk/platform-tools:/Users/jb/development/flutter/bin:/opt/homebrew/opt/libpq/bin:/Users/jb/Downloads/google-cloud-sdk/bin:/opt/homebrew/sbin:/Users/jb/Library/Application Support/JetBrains/Toolbox/scripts:/Users/jb/.orbstack/bin:/Users/jb/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS:/Users/jb/Library/Application Support/JetBrains/Toolbox/scripts:/Users/jb/.orbstack/bin",
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOENV": "off",
+      "TMPDIR": "/private/tmp"
+    },
+    "deadline_seconds": 30,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-run=^TestPartialWriteRetainsPriorBytes$",
+      "-timeout=20s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "PATH": "/Users/jb/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/Applications/Wireshark.app/Contents/MacOS:/usr/local/go/bin:/opt/homebrew/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/jb/.codex/tmp/arg0/codex-arg0jTqIUU:/Users/jb/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/jb/.local/bin:/Users/jb/Library/Android/sdk/platform-tools:/Users/jb/development/flutter/bin:/opt/homebrew/opt/libpq/bin:/Users/jb/Downloads/google-cloud-sdk/bin:/opt/homebrew/sbin:/Users/jb/Library/Application Support/JetBrains/Toolbox/scripts:/Users/jb/.orbstack/bin:/Users/jb/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS:/Users/jb/Library/Application Support/JetBrains/Toolbox/scripts:/Users/jb/.orbstack/bin",
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOENV": "off",
+      "TMPDIR": "/private/tmp"
+    },
+    "deadline_seconds": 45,
+    "stdout": "FAIL\texample.com/indexer [build failed]\nFAIL\n",
+    "stderr": "# example.com/indexer_test [example.com/indexer.test]\n./refresh_test.go:11:2: could not import runtime (open : no such file or directory)\n",
+    "exit_code": 1
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-run=^TestPartialWriteRetainsPriorBytes$/csv$",
+      "-timeout=20s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "PATH": "/Users/jb/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/Library/Apple/usr/bin:/Applications/Wireshark.app/Contents/MacOS:/usr/local/go/bin:/opt/homebrew/bin:/Applications/ChatGPT.app/Contents/Resources/codex-cli/codex-path:/Users/jb/.codex/tmp/arg0/codex-arg0jTqIUU:/Users/jb/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/jb/.local/bin:/Users/jb/Library/Android/sdk/platform-tools:/Users/jb/development/flutter/bin:/opt/homebrew/opt/libpq/bin:/Users/jb/Downloads/google-cloud-sdk/bin:/opt/homebrew/sbin:/Users/jb/Library/Application Support/JetBrains/Toolbox/scripts:/Users/jb/.orbstack/bin:/Users/jb/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources:/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS:/Users/jb/Library/Application Support/JetBrains/Toolbox/scripts:/Users/jb/.orbstack/bin",
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOENV": "off",
+      "TMPDIR": "/private/tmp"
+    },
+    "deadline_seconds": 45,
+    "purpose": "temporary counterexample: replace atomic publication with truncating os.WriteFile; expected meaningful retained-value assertion failure",
+    "stdout": "FAIL\texample.com/indexer [build failed]\nFAIL\n",
+    "stderr": "# example.com/indexer_test [example.com/indexer.test]\n./refresh_test.go:11:2: could not import runtime (open : no such file or directory)\n",
+    "exit_code": 1
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "env",
+      "GOROOT",
+      "GOOS",
+      "GOARCH",
+      "CGO_ENABLED",
+      "GOENV",
+      "GOTOOLDIR"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 45,
+    "stdout": "/opt/homebrew/Cellar/go/1.26.5/libexec\ndarwin\narm64\n1\n/Users/jb/Library/Application Support/go/env\n/opt/homebrew/Cellar/go/1.26.5/libexec/pkg/tool/darwin_arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-run=^TestPartialWriteRetainsPriorBytes$",
+      "-timeout=20s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 45,
+    "stdout": "=== RUN   TestPartialWriteRetainsPriorBytes\n=== RUN   TestPartialWriteRetainsPriorBytes/put\n=== PAUSE TestPartialWriteRetainsPriorBytes/put\n=== RUN   TestPartialWriteRetainsPriorBytes/csv\n=== PAUSE TestPartialWriteRetainsPriorBytes/csv\n=== RUN   TestPartialWriteRetainsPriorBytes/refresh\n=== PAUSE TestPartialWriteRetainsPriorBytes/refresh\n=== CONT  TestPartialWriteRetainsPriorBytes/put\n=== CONT  TestPartialWriteRetainsPriorBytes/csv\n=== CONT  TestPartialWriteRetainsPriorBytes/refresh\n=== NAME  TestPartialWriteRetainsPriorBytes/put\n    write_failure_posix_test.go:43: bounded child output: partial write rejected: write /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestPartialWriteRetainsPriorBytesput251433400/001/.record-643072232: file too large\n        PASS\n=== NAME  TestPartialWriteRetainsPriorBytes/csv\n    write_failure_posix_test.go:43: bounded child output: partial write rejected: CSV row 3: write /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestPartialWriteRetainsPriorBytescsv2574384846/001/.record-668411147: file too large\n        PASS\n=== NAME  TestPartialWriteRetainsPriorBytes/refresh\n    write_failure_posix_test.go:43: bounded child output: partial write rejected: refresh publish: write /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestPartialWriteRetainsPriorBytesrefresh3880985810/001/.record-3031236850: file too large\n        PASS\n--- PASS: TestPartialWriteRetainsPriorBytes (0.00s)\n    --- PASS: TestPartialWriteRetainsPriorBytes/put (0.01s)\n    --- PASS: TestPartialWriteRetainsPriorBytes/csv (0.01s)\n    --- PASS: TestPartialWriteRetainsPriorBytes/refresh (0.01s)\nPASS\nok  \texample.com/indexer\t0.214s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-run=^TestPartialWriteRetainsPriorBytes$/csv$",
+      "-timeout=20s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 45,
+    "purpose": "temporary counterexample using truncating os.WriteFile; expected meaningful retained-value assertion failure, rerun with normal compiler environment",
+    "stdout": "=== RUN   TestPartialWriteRetainsPriorBytes\n=== RUN   TestPartialWriteRetainsPriorBytes/csv\n=== PAUSE TestPartialWriteRetainsPriorBytes/csv\n=== CONT  TestPartialWriteRetainsPriorBytes/csv\n    write_failure_posix_test.go:43: bounded child output: partial write rejected: CSV row 3: write /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestPartialWriteRetainsPriorBytescsv380308673/001/alpha: file too large\n        PASS\n    write_failure_posix_test.go:48: file /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestPartialWriteRetainsPriorBytescsv380308673/001/alpha = \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", <nil>; want \"accepted replacement\"\n--- FAIL: TestPartialWriteRetainsPriorBytes (0.00s)\n    --- FAIL: TestPartialWriteRetainsPriorBytes/csv (0.01s)\nFAIL\nFAIL\texample.com/indexer\t0.181s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 45,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 45,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "sh",
+      "-c",
+      "command -v staticcheck"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 45,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 120,
+    "boundary": "approved local-listener run",
+    "source_sha256": {
+      "cmd/indexer/main.go": "8cabf596f0c7a383d05972216c6a56fc0954ef942cec2b64ea28f6b8b16dd854",
+      "cmd/indexer/main_test.go": "6e64e7603b3db8b1cca87fcdf617d5b7d069fddfcc2481ae5ed5c223dc70a8b6",
+      "index.go": "c98af4ef68b1b980f0f8d6937e39fcc63ce69c4f3ac7a9a356c2207e69d4f233",
+      "index_test.go": "fb6ac3d0d791d35b4ef10634ea1153f60658f580a4a5dd51b80b575065168138",
+      "refresh.go": "c440a97bb1541a1f74b9f3480d36f571b65d1428b3e1a135c432d5064ff027d1",
+      "refresh_test.go": "6978bcaced6140fb0c109517bab57259a8d0e71115cf1376ad578489da35b209",
+      "serve.go": "126b84f80e024a214a4301cf4975348949e7f942479b942e2cb7e86ec439fd03",
+      "serve_test.go": "417cf8545036fc1603171da53f751b5cf9f034032fd63a41553b932536d71f30",
+      "write_failure_posix_test.go": "3593119bcf6a3836b8dc1c0942db5affc603996c98ae9cf80dbb09cc77291a03"
+    },
+    "stdout": "ok  \texample.com/indexer\t4.963s\nok  \texample.com/indexer/cmd/indexer\t1.890s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestRefreshSuccessAndRejections$/partial_content_is_rejected$",
+      "-timeout=20s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 45,
+    "boundary": "approved local-listener run",
+    "source_sha256": {
+      "cmd/indexer/main.go": "8cabf596f0c7a383d05972216c6a56fc0954ef942cec2b64ea28f6b8b16dd854",
+      "cmd/indexer/main_test.go": "6e64e7603b3db8b1cca87fcdf617d5b7d069fddfcc2481ae5ed5c223dc70a8b6",
+      "index.go": "c98af4ef68b1b980f0f8d6937e39fcc63ce69c4f3ac7a9a356c2207e69d4f233",
+      "index_test.go": "fb6ac3d0d791d35b4ef10634ea1153f60658f580a4a5dd51b80b575065168138",
+      "refresh.go": "c440a97bb1541a1f74b9f3480d36f571b65d1428b3e1a135c432d5064ff027d1",
+      "refresh_test.go": "6978bcaced6140fb0c109517bab57259a8d0e71115cf1376ad578489da35b209",
+      "serve.go": "126b84f80e024a214a4301cf4975348949e7f942479b942e2cb7e86ec439fd03",
+      "serve_test.go": "417cf8545036fc1603171da53f751b5cf9f034032fd63a41553b932536d71f30",
+      "write_failure_posix_test.go": "3593119bcf6a3836b8dc1c0942db5affc603996c98ae9cf80dbb09cc77291a03"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.171s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestServeCancellationJoinsCleanup$/joined_cancellation_and_independent_error$",
+      "-timeout=20s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 45,
+    "boundary": "approved local-listener run",
+    "source_sha256": {
+      "cmd/indexer/main.go": "8cabf596f0c7a383d05972216c6a56fc0954ef942cec2b64ea28f6b8b16dd854",
+      "cmd/indexer/main_test.go": "6e64e7603b3db8b1cca87fcdf617d5b7d069fddfcc2481ae5ed5c223dc70a8b6",
+      "index.go": "c98af4ef68b1b980f0f8d6937e39fcc63ce69c4f3ac7a9a356c2207e69d4f233",
+      "index_test.go": "fb6ac3d0d791d35b4ef10634ea1153f60658f580a4a5dd51b80b575065168138",
+      "refresh.go": "c440a97bb1541a1f74b9f3480d36f571b65d1428b3e1a135c432d5064ff027d1",
+      "refresh_test.go": "6978bcaced6140fb0c109517bab57259a8d0e71115cf1376ad578489da35b209",
+      "serve.go": "126b84f80e024a214a4301cf4975348949e7f942479b942e2cb7e86ec439fd03",
+      "serve_test.go": "417cf8545036fc1603171da53f751b5cf9f034032fd63a41553b932536d71f30",
+      "write_failure_posix_test.go": "3593119bcf6a3836b8dc1c0942db5affc603996c98ae9cf80dbb09cc77291a03"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.211s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestWatchFirstFailureProcess$/validation$",
+      "-timeout=20s",
+      "./cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 45,
+    "boundary": "approved local-listener run",
+    "source_sha256": {
+      "cmd/indexer/main.go": "8cabf596f0c7a383d05972216c6a56fc0954ef942cec2b64ea28f6b8b16dd854",
+      "cmd/indexer/main_test.go": "6e64e7603b3db8b1cca87fcdf617d5b7d069fddfcc2481ae5ed5c223dc70a8b6",
+      "index.go": "c98af4ef68b1b980f0f8d6937e39fcc63ce69c4f3ac7a9a356c2207e69d4f233",
+      "index_test.go": "fb6ac3d0d791d35b4ef10634ea1153f60658f580a4a5dd51b80b575065168138",
+      "refresh.go": "c440a97bb1541a1f74b9f3480d36f571b65d1428b3e1a135c432d5064ff027d1",
+      "refresh_test.go": "6978bcaced6140fb0c109517bab57259a8d0e71115cf1376ad578489da35b209",
+      "serve.go": "126b84f80e024a214a4301cf4975348949e7f942479b942e2cb7e86ec439fd03",
+      "serve_test.go": "417cf8545036fc1603171da53f751b5cf9f034032fd63a41553b932536d71f30",
+      "write_failure_posix_test.go": "3593119bcf6a3836b8dc1c0942db5affc603996c98ae9cf80dbb09cc77291a03"
+    },
+    "stdout": "ok  \texample.com/indexer/cmd/indexer\t0.588s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "serve_test.go",
+      "cmd/indexer/main_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 45,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 45,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "index.go",
+      "refresh.go",
+      "serve.go",
+      "index_test.go",
+      "refresh_test.go",
+      "serve_test.go",
+      "write_failure_posix_test.go",
+      "cmd/indexer/main.go",
+      "cmd/indexer/main_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 45,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-s21flpf_/task-2/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "deadline_seconds": 120,
+    "boundary": "approved local-listener run of final sources",
+    "source_sha256": {
+      "cmd/indexer/main.go": "8cabf596f0c7a383d05972216c6a56fc0954ef942cec2b64ea28f6b8b16dd854",
+      "cmd/indexer/main_test.go": "049af8ceaef16623698a6a6d62e8cd4ff8ca3de3a2d3a38b2d51854da469a84a",
+      "index.go": "c98af4ef68b1b980f0f8d6937e39fcc63ce69c4f3ac7a9a356c2207e69d4f233",
+      "index_test.go": "fb6ac3d0d791d35b4ef10634ea1153f60658f580a4a5dd51b80b575065168138",
+      "refresh.go": "c440a97bb1541a1f74b9f3480d36f571b65d1428b3e1a135c432d5064ff027d1",
+      "refresh_test.go": "6978bcaced6140fb0c109517bab57259a8d0e71115cf1376ad578489da35b209",
+      "serve.go": "126b84f80e024a214a4301cf4975348949e7f942479b942e2cb7e86ec439fd03",
+      "serve_test.go": "d2914d58f68fa44ba926a0461d800117f682e3ea5fd0ff73f98a797520474ee9",
+      "write_failure_posix_test.go": "3593119bcf6a3836b8dc1c0942db5affc603996c98ae9cf80dbb09cc77291a03"
+    },
+    "stdout": "ok  \texample.com/indexer\t2.453s\nok  \texample.com/indexer/cmd/indexer\t1.909s\n",
+    "stderr": "",
+    "exit_code": 0
+  }
+]

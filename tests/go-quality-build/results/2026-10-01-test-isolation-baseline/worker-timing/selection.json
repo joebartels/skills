@@ -1,0 +1,41 @@
+{
+  "offered_guidance_names": [
+    "go-api-contracts",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries"
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-testing-author-y6_tmx1p/guidance/go-core-style/SKILL.md"
+  ],
+  "opened_reference_paths": [],
+  "opened_task_paths": [
+    "/private/tmp/go-testing-author-y6_tmx1p/worker-timing/README.md",
+    "/private/tmp/go-testing-author-y6_tmx1p/worker-timing/go.mod",
+    "/private/tmp/go-testing-author-y6_tmx1p/worker-timing/poll.go",
+    "/private/tmp/go-testing-author-y6_tmx1p/worker-timing/poll_test.go"
+  ],
+  "decisions": [
+    {
+      "name": "go-api-contracts",
+      "selected": false,
+      "reason": "The existing exported Poll API and contract remain unchanged; tests exercise the README contract without changing compatibility or release behavior."
+    },
+    {
+      "name": "go-core-style",
+      "selected": true,
+      "reason": "Writing Go tests requires idiomatic error handling, clear synchronization, per-test state, and explicit goroutine lifecycle ownership. Read the offered SKILL.md; no linked reference files were opened."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "selected": false,
+      "reason": "No production interface, dependency, constructor, options API, wiring, or ownership design changes. Local test fixtures observe existing cancellation and resource ownership."
+    },
+    {
+      "name": "go-package-boundaries",
+      "selected": false,
+      "reason": "No package movement, responsibility change, or import ownership change; tests stay in the existing poller_test package."
+    }
+  ],
+  "unavailable_guidance": "The two testing-writing skills were unavailable and were not opened."
+}

@@ -1,0 +1,180 @@
+{
+  "scope": "Task 6 final package structural verification; raw source.patch evidence excluded from whitespace check",
+  "checks": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test*.py"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "",
+      "stderr": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.066s\n\nOK\n",
+      "exit_code": 0,
+      "duration_seconds": 0.0984920000191778
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/go-quality-build",
+        "-p",
+        "test_*.py"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "",
+      "stderr": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.016s\n\nOK\n",
+      "exit_code": 0,
+      "duration_seconds": 0.05842837493401021
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/go-quality-review/test_layout.py"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "",
+      "stderr": ".\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "exit_code": 0,
+      "duration_seconds": 0.029387291986495256
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/go-quality-review/go-quality-report/evals/test_grade.py"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "",
+      "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.000s\n\nOK\n",
+      "exit_code": 0,
+      "duration_seconds": 0.03001987503375858
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "scripts/validate.py"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "PASS: 10 skills; matching grading/report contracts; 120 valid evaluation cases\nPASS: 26 valid build evaluation cases\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.0454564590472728
+    },
+    {
+      "command": [
+        "rtk",
+        "claude",
+        "plugin",
+        "validate",
+        "./plugins/go-quality-build"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "Validating plugin manifest: /Users/jb/.codex/worktrees/b633/skills/plugins/go-quality-build/.claude-plugin/plugin.json\n\n\u2714 Validation passed\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.16671695793047547
+    },
+    {
+      "command": [
+        "rtk",
+        "claude",
+        "plugin",
+        "validate",
+        "."
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "Validating marketplace manifest: /Users/jb/.codex/worktrees/b633/skills/.claude-plugin/marketplace.json\n\n\u2714 Validation passed\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.16901987500023097
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "/Users/jb/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+        "plugins/go-quality-build/skills/go-test-isolation"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "Skill is valid!\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.025495417066849768
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "/Users/jb/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+        "plugins/go-quality-build/skills/go-behavior-tests"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "Skill is valid!\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.02443899994250387
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "git",
+        "diff",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)**/source.patch"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.01368920796085149
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "git",
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)**/source.patch"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.010578499990515411
+    }
+  ]
+}

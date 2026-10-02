@@ -1,0 +1,86 @@
+{
+  "semantic_id": "http-body-not-closed",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "2807ecbcf6fc4d8fabb909fdeda5be1aede31706d28a654c0a12bcf9c2c34068",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-bz6yfl2f/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.200s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.44
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r2/service-http-boundary/mutations/http-body-not-closed/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-bz6yfl2f/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-bz6yfl2f/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.208s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.461
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-bz6yfl2f/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestFetchResponse (0.00s)\n    --- FAIL: TestFetchResponse/trailing_garbage (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/server_status (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/malformed_json (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/empty_body (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/null (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/trailing_object (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/array (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/read_failure_after_complete_json (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/no_content_status (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/empty_name (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/client_status (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/zero_revision (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/whitespace_name (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/surrounding_json_whitespace (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/read_failure_before_data (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/redirect_status (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/created_status (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/wrong_name_type (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/negative_revision (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/missing_revision (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/success (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/preserves_name_bytes (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/fractional_revision (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/wrong_revision_type (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n    --- FAIL: TestFetchResponse/missing_name (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\n--- FAIL: TestFetchCancellation (0.00s)\n    --- FAIL: TestFetchCancellation/while_reading_response (0.00s)\n        fetch_test.go:364: canceled response body closed 0 times, want 1\nFAIL\nFAIL\texample.com/metadata\t0.162s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.348
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

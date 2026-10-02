@@ -1,0 +1,301 @@
+[
+  {
+    "name": "version",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 15,
+    "elapsed_seconds": 0.008942667045630515,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false,
+    "execution_boundary": "sandbox"
+  },
+  {
+    "name": "format",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "index.go",
+      "refresh.go",
+      "serve.go",
+      "apply_test.go",
+      "refresh_test.go",
+      "serve_test.go",
+      "cmd/indexer/main.go",
+      "cmd/indexer/process_test.go"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 15,
+    "elapsed_seconds": 0.007307750056497753,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false,
+    "execution_boundary": "sandbox"
+  },
+  {
+    "name": "test",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 120,
+    "elapsed_seconds": 1.1728853329550475,
+    "stdout": "ok  \texample.com/indexer\t0.750s\n--- FAIL: TestCommandWatchLifecycle (0.19s)\n    --- FAIL: TestCommandWatchLifecycle/recurs_and_joins_on_interrupt (0.00s)\n        process_test.go:206: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/recurs_and_joins_on_terminated (0.00s)\n        process_test.go:206: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/interrupt_cancels_in_flight_request (0.00s)\n        process_test.go:229: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/first_status_failure (0.00s)\n        process_test.go:271: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/first_decode_failure (0.00s)\n        process_test.go:271: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/first_validation_failure (0.00s)\n        process_test.go:271: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\n    --- FAIL: TestCommandWatchLifecycle/later_failure_retains_last_successful_refresh (0.00s)\n        process_test.go:289: local HTTP listener required for command integration: listen tcp 127.0.0.1:0: bind: operation not permitted\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t0.917s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "timed_out": false,
+    "execution_boundary": "sandbox-localhost-listeners-denied",
+    "source_stage": "initial implementation"
+  },
+  {
+    "name": "test",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 120,
+    "elapsed_seconds": 1.5999392080120742,
+    "stdout": "ok  \texample.com/indexer\t(cached)\n--- FAIL: TestCommandWatchLifecycle (0.76s)\n    --- FAIL: TestCommandWatchLifecycle/interrupt_cancels_in_flight_request (0.01s)\n        process_test.go:253: watch: exit=2 stdout=\"\" stderr=\"fetch records: Get \\\"http://127.0.0.1:60309\\\": interrupt signal received\\n\"; want 0\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t1.414s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "timed_out": false,
+    "execution_boundary": "approved-localhost-listeners",
+    "source_stage": "unchanged-source rerun of initial implementation",
+    "unchanged_source_from_check_index": 2
+  },
+  {
+    "name": "format",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "index.go",
+      "refresh.go",
+      "serve.go",
+      "apply_test.go",
+      "refresh_test.go",
+      "serve_test.go",
+      "cmd/indexer/main.go",
+      "cmd/indexer/process_test.go"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 15,
+    "elapsed_seconds": 0.008655750076286495,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false,
+    "execution_boundary": "sandbox",
+    "source_stage": "final implementation after cancellation-cause regression fix"
+  },
+  {
+    "name": "format-check",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 15,
+    "elapsed_seconds": 0.007922334014438093,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false,
+    "execution_boundary": "sandbox",
+    "source_stage": "final implementation after cancellation-cause regression fix"
+  },
+  {
+    "name": "vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 120,
+    "elapsed_seconds": 0.14557316701393574,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false,
+    "execution_boundary": "sandbox",
+    "source_stage": "final implementation after cancellation-cause regression fix"
+  },
+  {
+    "name": "tools",
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-c",
+      "import shutil; print(\"staticcheck=\" + str(shutil.which(\"staticcheck\")))"
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 15,
+    "elapsed_seconds": 0.019724625046364963,
+    "stdout": "staticcheck=None\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false,
+    "execution_boundary": "sandbox",
+    "source_stage": "final implementation after cancellation-cause regression fix"
+  },
+  {
+    "name": "test-approved",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 120,
+    "elapsed_seconds": 1.9625460000243038,
+    "stdout": "ok  \texample.com/indexer\t0.637s\nok  \texample.com/indexer/cmd/indexer\t1.717s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false,
+    "execution_boundary": "approved-localhost-listeners",
+    "source_stage": "final implementation after cancellation-cause regression fix"
+  },
+  {
+    "name": "race",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 120,
+    "elapsed_seconds": 2.7855923749739304,
+    "stdout": "ok  \texample.com/indexer\t1.775s\nok  \texample.com/indexer/cmd/indexer\t2.451s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false,
+    "execution_boundary": "approved-localhost-listeners",
+    "source_stage": "final implementation after cancellation-cause regression fix"
+  },
+  {
+    "name": "repeat",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=5",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 120,
+    "elapsed_seconds": 7.928285375004634,
+    "stdout": "ok  \texample.com/indexer\t3.114s\nok  \texample.com/indexer/cmd/indexer\t7.689s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false,
+    "execution_boundary": "approved-localhost-listeners",
+    "source_stage": "final implementation after cancellation-cause regression fix"
+  },
+  {
+    "name": "coverage",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-coverprofile=/private/tmp/go-combined-author-vsgga4k8/task-1/report/coverage.out",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-combined-author-vsgga4k8/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_deadline_seconds": 120,
+    "elapsed_seconds": 1.9155665829312056,
+    "stdout": "ok  \texample.com/indexer\t0.577s\tcoverage: 91.6% of statements\nok  \texample.com/indexer/cmd/indexer\t1.553s\tcoverage: 17.1% of statements\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timed_out": false,
+    "execution_boundary": "approved-localhost-listeners",
+    "source_stage": "final implementation after cancellation-cause regression fix"
+  }
+]

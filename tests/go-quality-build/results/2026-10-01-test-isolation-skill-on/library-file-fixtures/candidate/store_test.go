@@ -1,0 +1,94 @@
+package filestore_test
+
+import (
+	"testing"
+
+	"example.com/filestore"
+)
+
+func TestStoreSerialChildren(t *testing.T) {
+	store := filestore.New(t.TempDir())
+	for _, value := range []string{"first", "replacement"} {
+		t.Run(value, func(t *testing.T) {
+			if err := store.Put("same-key", value); err != nil {
+				t.Fatal(err)
+			}
+			got, err := store.Get("same-key")
+			if err != nil || got != value {
+				t.Fatalf("Get = %q, %v; want %q", got, err, value)
+			}
+		})
+	}
+}
+
+func TestStoreIndependentInstances(t *testing.T) {
+	t.Parallel()
+
+	instances := []struct {
+		name      string
+		root      string
+		lastValue string
+		written   bool
+	}{
+		{name: "alpha"},
+		{name: "beta"},
+		{name: "gamma"},
+	}
+	for i := range instances {
+		// The parent owns each root through the post-group persistence check.
+		instances[i].root = t.TempDir()
+	}
+
+	// This group waits for its parallel children before the parent reads files.
+	t.Run("instances", func(t *testing.T) {
+		for i := range instances {
+			instance := &instances[i]
+			t.Run(instance.name, func(t *testing.T) {
+				t.Parallel()
+				store := filestore.New(instance.root)
+				values := []struct {
+					name  string
+					value string
+				}{
+					{name: "initial", value: instance.name + " initial longer value"},
+					{name: "shorter", value: instance.name},
+					{name: "empty", value: ""},
+					{name: "replacement", value: instance.name + " replacement"},
+					{name: "repeat", value: instance.name + " replacement"},
+				}
+				// Replacements of one key stay serial within an independent root.
+				for _, value := range values {
+					t.Run(value.name, func(t *testing.T) {
+						if err := store.Put("same-key", value.value); err != nil {
+							t.Fatalf("Put: %v", err)
+						}
+						instance.lastValue = value.value
+						instance.written = true
+						got, err := store.Get("same-key")
+						if err != nil {
+							t.Fatalf("Get: %v", err)
+						}
+						if got != value.value {
+							t.Fatalf("Get = %q; want %q", got, value.value)
+						}
+					})
+				}
+			})
+		}
+	})
+
+	for _, instance := range instances {
+		// Focused -run selection can omit entire instances or earlier values.
+		if !instance.written {
+			continue
+		}
+		got, err := filestore.New(instance.root).Get("same-key")
+		if err != nil {
+			t.Errorf("%s persisted Get: %v", instance.name, err)
+			continue
+		}
+		if got != instance.lastValue {
+			t.Errorf("%s persisted Get = %q; want %q", instance.name, got, instance.lastValue)
+		}
+	}
+}

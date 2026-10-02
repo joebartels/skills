@@ -1,0 +1,134 @@
+{
+  "environment": {
+    "GOCACHE": "/private/tmp/go-quality-testing-cache",
+    "GOTOOLCHAIN": "local"
+  },
+  "checks": [
+    {
+      "name": "go-version",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "version"
+      ],
+      "timeout_seconds": 10,
+      "exit_code": 0,
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "elapsed_seconds": 0.008645875030197203
+    },
+    {
+      "name": "baseline-tests",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-timeout=15s",
+        "./..."
+      ],
+      "timeout_seconds": 90,
+      "exit_code": 0,
+      "stdout": "ok  \texample.com/poller\t0.218s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.3513749160338193
+    },
+    {
+      "name": "format",
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-s",
+        "-w",
+        "."
+      ],
+      "timeout_seconds": 10,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.007921457989141345
+    },
+    {
+      "name": "staticcheck",
+      "command": [
+        "rtk",
+        "proxy",
+        "staticcheck",
+        "./..."
+      ],
+      "status": "not-run",
+      "reason": "staticcheck is not installed; task prohibits installing tools"
+    },
+    {
+      "name": "format-diff",
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-d",
+        "."
+      ],
+      "timeout_seconds": 10,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.008202165947295725
+    },
+    {
+      "name": "vet",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "timeout_seconds": 60,
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.08565270795952529
+    },
+    {
+      "name": "race-tests",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-v",
+        "-race",
+        "-cover",
+        "-timeout=15s",
+        "./..."
+      ],
+      "timeout_seconds": 90,
+      "exit_code": 0,
+      "stdout": "=== RUN   TestCancellation\n=== PAUSE TestCancellation\n=== RUN   TestAlreadyCanceled\n=== PAUSE TestAlreadyCanceled\n=== RUN   TestInvalidInterval\n=== PAUSE TestInvalidInterval\n=== RUN   TestCallbackError\n=== PAUSE TestCallbackError\n=== RUN   TestCallbackErrorDuringCancellation\n=== PAUSE TestCallbackErrorDuringCancellation\n=== RUN   TestCallerContext\n=== PAUSE TestCallerContext\n=== RUN   TestRecurrenceAfterCompletion\n=== PAUSE TestRecurrenceAfterCompletion\n=== RUN   TestCancellationWaitsForCleanupAndPreservesCallerResource\n=== PAUSE TestCancellationWaitsForCleanupAndPreservesCallerResource\n=== RUN   TestIndependentInvocations\n=== PAUSE TestIndependentInvocations\n=== CONT  TestCancellation\n=== CONT  TestRecurrenceAfterCompletion\n=== CONT  TestCancellationWaitsForCleanupAndPreservesCallerResource\n=== CONT  TestCallerContext\n=== CONT  TestInvalidInterval\n=== RUN   TestInvalidInterval/0s\n=== CONT  TestCallbackErrorDuringCancellation\n=== CONT  TestCallbackError\n=== CONT  TestAlreadyCanceled\n=== CONT  TestIndependentInvocations\n--- PASS: TestCancellation (0.00s)\n--- PASS: TestCallerContext (0.00s)\n--- PASS: TestCallbackError (0.00s)\n--- PASS: TestCallbackErrorDuringCancellation (0.00s)\n--- PASS: TestAlreadyCanceled (0.00s)\n=== RUN   TestInvalidInterval/-1ns\n=== RUN   TestInvalidInterval/-1s\n--- PASS: TestInvalidInterval (0.00s)\n    --- PASS: TestInvalidInterval/0s (0.00s)\n    --- PASS: TestInvalidInterval/-1ns (0.00s)\n    --- PASS: TestInvalidInterval/-1s (0.00s)\n--- PASS: TestIndependentInvocations (0.01s)\n--- PASS: TestCancellationWaitsForCleanupAndPreservesCallerResource (0.03s)\n--- PASS: TestRecurrenceAfterCompletion (0.09s)\nPASS\ncoverage: 100.0% of statements\nok  \texample.com/poller\t1.334s\tcoverage: 100.0% of statements\n",
+      "stderr": "",
+      "elapsed_seconds": 1.561370583018288
+    },
+    {
+      "name": "repeated-shuffled-race-tests",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-count=50",
+        "-shuffle=on",
+        "-cpu=1,2,4",
+        "-timeout=45s",
+        "./..."
+      ],
+      "timeout_seconds": 90,
+      "exit_code": 0,
+      "stdout": "ok  \texample.com/poller\t14.107s\n",
+      "stderr": "",
+      "elapsed_seconds": 14.286750916973688
+    }
+  ]
+}

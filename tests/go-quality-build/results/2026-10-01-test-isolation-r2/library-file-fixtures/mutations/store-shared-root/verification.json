@@ -1,0 +1,86 @@
+{
+  "semantic_id": "store-shared-root",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "7884626be81007d8ff7d6483349ad7165cf5e0a1758c76193f40daaa73e99ad2",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-ek95wsyt/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.165s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.337
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r2/library-file-fixtures/mutations/store-shared-root/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-ek95wsyt/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-ek95wsyt/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.136s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.28
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-ek95wsyt/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    --- FAIL: TestStoreIndependentInstances/instances (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/initial (0.00s)\n                store_test.go:83: Get = \"\"; want \"alpha first\"\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\n                store_test.go:83: Get = \"\"; want \"alpha replacement\"\n        --- FAIL: TestStoreIndependentInstances/instances/empty (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/empty/initial (0.00s)\n                store_test.go:83: Get = \"\"; want \"before empty\"\n        --- FAIL: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/beta/initial (0.00s)\n                store_test.go:83: Get = \"alpha replacement\"; want \"beta first\"\n    store_test.go:102: alpha: Get after children finish = \"beta replacement\\nwith another line\"; want \"alpha replacement\"\n    store_test.go:102: empty: Get after children finish = \"beta replacement\\nwith another line\"; want \"\"\nFAIL\nFAIL\texample.com/filestore\t0.126s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.238
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

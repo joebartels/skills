@@ -1,0 +1,86 @@
+{
+  "semantic_id": "cli-success-exit",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "2ac8e15fc9011c854036016c209da58cfd045f5dbe41781cb7aa4b797e1d6e36",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-pe31zie0/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t1.169s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.368
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-r2/cli-repeat/mutations/cli-success-exit/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-pe31zie0/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.016
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-pe31zie0/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.359s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.516
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-pe31zie0/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCLIContract (0.41s)\n    --- FAIL: TestCLIContract/invalid_first_row (0.00s)\n        batch_test.go:218: CLI code=0 stdout=\"\" stderr=\"record 1: invalid quantity \\\"0\\\"\\n\"; want code=2, empty stdout, diagnostic only on failure\n    --- FAIL: TestCLIContract/invalid_replacement (0.00s)\n        batch_test.go:218: CLI code=0 stdout=\"\" stderr=\"record 2: invalid quantity \\\"0\\\"\\n\"; want code=2, empty stdout, diagnostic only on failure\n    --- FAIL: TestCLIContract/malformed_CSV (0.00s)\n        batch_test.go:218: CLI code=0 stdout=\"\" stderr=\"read record 2: record on line 2; parse error on line 3, column 9: extraneous or missing \\\" in quoted-field\\n\"; want code=2, empty stdout, diagnostic only on failure\n    --- FAIL: TestCLIContract/missing_dir (0.00s)\n        batch_test.go:218: CLI code=0 stdout=\"\" stderr=\"--dir required and no positional arguments allowed\\n\"; want code=2, empty stdout, diagnostic only on failure\n    --- FAIL: TestCLIContract/empty_dir (0.00s)\n        batch_test.go:218: CLI code=0 stdout=\"\" stderr=\"--dir required and no positional arguments allowed\\n\"; want code=2, empty stdout, diagnostic only on failure\n    --- FAIL: TestCLIContract/missing_flag_value (0.00s)\n        batch_test.go:218: CLI code=0 stdout=\"\" stderr=\"flag needs an argument: -dir\\nUsage of ledgerload:\\n  -dir string\\n    \\trecord directory\\nflag needs an argument: -dir\\n\"; want code=2, empty stdout, diagnostic only on failure\n    --- FAIL: TestCLIContract/positional_argument (0.00s)\n        batch_test.go:218: CLI code=0 stdout=\"\" stderr=\"--dir required and no positional arguments allowed\\n\"; want code=2, empty stdout, diagnostic only on failure\n    --- FAIL: TestCLIContract/unknown_flag (0.00s)\n        batch_test.go:218: CLI code=0 stdout=\"\" stderr=\"flag provided but not defined: -unknown\\nUsage of ledgerload:\\n  -dir string\\n    \\trecord directory\\nflag provided but not defined: -unknown\\n\"; want code=2, empty stdout, diagnostic only on failure\n    --- FAIL: TestCLIContract/directory_failure (0.00s)\n        batch_test.go:239: CLI code=0 stdout=\"\" stderr=\"record 1: create directory: mkdir /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIContractdirectory_failure2439396689/001/file: not a directory\\n\"; want code=2, empty stdout, diagnostic only on failure\n    --- FAIL: TestCLIContract/file_failure (0.00s)\n        batch_test.go:252: CLI code=0 stdout=\"\" stderr=\"record 2: write \\\"blocked\\\": rename /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIContractfile_failure1915133463/001/.ledgerload-3224837124 /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIContractfile_failure1915133463/001/blocked: file exists\\n\"; want code=2, empty stdout, diagnostic only on failure\n--- FAIL: TestPartialWriteRetainsAcceptedReplacement (0.28s)\n    write_failure_unix_test.go:35: CLI code=0 stdout=\"\" stderr=\"record 2: write \\\"web\\\": write /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestPartialWriteRetainsAcceptedReplacement2044605558/002/.ledgerload-921458403: file too large\\n\"; want code=2, empty stdout, diagnostic only on failure\nFAIL\nFAIL\texample.com/ledgerload\t0.903s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.018
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

@@ -1,0 +1,88 @@
+{
+  "semantic_id": "http-ignore-cancellation",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "65fac6692caedb972c27518c6ee7e0152f0d22efd9996ed69e8f5e662c081ee2",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-qkux8pdo/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.203s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.439
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/service-http-boundary/mutations/http-ignore-cancellation/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-qkux8pdo/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-qkux8pdo/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.200s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.434
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-qkux8pdo/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestFetchCancellation (10.00s)\n    --- FAIL: TestFetchCancellation/before_response_headers (5.00s)\n        fetch_test.go:343: Fetch did not return after caller cancellation\n    --- FAIL: TestFetchCancellation/while_reading_response_body (5.00s)\n        fetch_test.go:343: Fetch did not return after caller cancellation\nFAIL\nFAIL\texample.com/metadata\t10.171s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 10.367
+  },
+  "classification": "detected by meaningful ownership/cancellation assertions",
+  "controller_interpretation": "Named started in-flight Fetch cancellation tests fail their finite caller-cancellation return checks in both header/read phases. Clean suite and compile checks pass; this is a controlled contract wait failure, not an unrelated crash or overall harness timeout.",
+  "verification_environment": "automatically approved local-loopback execution"
+}

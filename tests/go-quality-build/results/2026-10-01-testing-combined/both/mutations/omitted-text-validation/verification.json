@@ -1,0 +1,86 @@
+{
+  "semantic_id": "omitted-text-validation",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "7461734468bb7a28d10f64460553f199e7097507cdeba7180eaaafa963d45bb9",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-ys9pbj7n/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.445s\nok  \texample.com/indexer/cmd/indexer\t1.910s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 2.182
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined/both/mutations/omitted-text-validation/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-ys9pbj7n/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.021
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-ys9pbj7n/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.215s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.362s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.625
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-ys9pbj7n/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestApplyCSVRejectedReplacementRetainsPrefix (0.00s)\n    --- FAIL: TestApplyCSVRejectedReplacementRetainsPrefix/empty_text (0.00s)\n        apply_test.go:95: rejected row succeeded\n    --- FAIL: TestApplyCSVRejectedReplacementRetainsPrefix/unicode_whitespace (0.00s)\n        apply_test.go:95: rejected row succeeded\n--- FAIL: TestRefreshRejectionsRetainBytesAndCloseBody (0.00s)\n    --- FAIL: TestRefreshRejectionsRetainBytesAndCloseBody/blank_text (0.00s)\n        refresh_test.go:92: Refresh = <nil>; want rejection with cause invalid record\n    --- FAIL: TestRefreshRejectionsRetainBytesAndCloseBody/later_invalid_record (0.00s)\n        refresh_test.go:92: Refresh = <nil>; want rejection with cause invalid record\nFAIL\nFAIL\texample.com/indexer\t0.403s\n--- FAIL: TestCommandProcessContracts (0.51s)\n    --- FAIL: TestCommandProcessContracts/apply_validation_prefix (0.01s)\n        process_test.go:58: [apply --dir /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandProcessContractsapply_validation_prefix450638874/001]: status 0, stdout \"\", stderr \"\"; want status 2 and matching streams\n--- FAIL: TestWatchProcessContracts (11.06s)\n    --- FAIL: TestWatchProcessContracts/first_validation_failure (10.00s)\n        process_test.go:105: command timed out: context deadline exceeded\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t11.870s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 12.081
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

@@ -1,0 +1,86 @@
+{
+  "semantic_id": "direct-snapshot-truncation",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "1b73964b39b6b45fff637e28962fb0fcbeb11999e817fc538ed52beab4cb30f6",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-aumcipc1/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.598s\nok  \texample.com/indexer/cmd/indexer\t1.845s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 2.101
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined/architecture-only/mutations/direct-snapshot-truncation/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-aumcipc1/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.014
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-aumcipc1/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.190s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.346s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.604
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-aumcipc1/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshPublishesExactArrayAndRetainsOpenSnapshot (0.00s)\n    --- FAIL: TestRefreshPublishesExactArrayAndRetainsOpenSnapshot/ordered_records (0.00s)\n        refresh_test.go:79: open snapshot = \"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"  first\\\\n \\\"},{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"two\\\"},{\\\"key\\\":\\\"beta\\\",\\\"text\\\":\\\"\u00e9\\\"}]\\n\", <nil>; want \"old snapshot with exact\\nbytes\\x00\"\n    --- FAIL: TestRefreshPublishesExactArrayAndRetainsOpenSnapshot/empty (0.00s)\n        refresh_test.go:79: open snapshot = \"[]\\n\", <nil>; want \"old snapshot with exact\\nbytes\\x00\"\nFAIL\nFAIL\texample.com/indexer\t0.518s\nok  \texample.com/indexer/cmd/indexer\t1.699s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.892
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

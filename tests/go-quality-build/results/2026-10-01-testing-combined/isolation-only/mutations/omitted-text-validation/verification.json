@@ -1,0 +1,86 @@
+{
+  "semantic_id": "omitted-text-validation",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "3a99c405f39ddbc516803e63387d2ee835064c6954c938f37af64015425d0f19",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-7o0veawl/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.358s\nok  \texample.com/indexer/cmd/indexer\t0.871s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.142
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined/isolation-only/mutations/omitted-text-validation/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-7o0veawl/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-7o0veawl/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.352s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.207s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.611
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-7o0veawl/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshRejectionKeepsExactPriorBytes (0.00s)\n    --- FAIL: TestRefreshRejectionKeepsExactPriorBytes/later-invalid (0.01s)\n        refresh_test.go:112: Refresh = <nil>; want rejection (invalid=true)\n    --- FAIL: TestRefreshRejectionKeepsExactPriorBytes/blank (0.01s)\n        refresh_test.go:112: Refresh = <nil>; want rejection (invalid=true)\n--- FAIL: TestApplyCSVRejectedReplacementKeepsPrefix (0.00s)\n    --- FAIL: TestApplyCSVRejectedReplacementKeepsPrefix/blank (0.00s)\n        index_test.go:92: ApplyCSV = <nil>; want rejection (invalid=true)\nFAIL\nFAIL\texample.com/indexer\t0.296s\n--- FAIL: TestCommandContracts (0.22s)\n    --- FAIL: TestCommandContracts/apply-rejected-prefix (0.22s)\n        main_test.go:78: process = exit 0 stdout=\"\" stderr=\"\"; want exit 2, no stdout, diagnostic only on failure\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t0.801s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.008
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

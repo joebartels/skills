@@ -1,0 +1,77 @@
+[
+  {
+    "label": "focused repeat instance",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^beta$",
+      "-count=1",
+      "-timeout=30s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-focused-check-d1cu0_8r/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "patch": null,
+    "stdout": "ok  \texample.com/filestore\t1.329s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.5259392498992383
+  },
+  {
+    "label": "focused repeat empty replacement leaf",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^gamma$/^replacement$",
+      "-count=1",
+      "-timeout=30s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-focused-check-r831w4n1/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "patch": null,
+    "stdout": "ok  \texample.com/filestore\t1.189s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.35274312493857
+  },
+  {
+    "label": "deterministic repeat shared-root sensitivity",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-parallel=1",
+      "-run",
+      "^TestStoreIndependentInstances$",
+      "-count=1",
+      "-timeout=30s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-focused-check-ivk8kkul/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "patch": ".superpowers/sdd/2026-10-01-go-quality-build-testing-group/isolation-mutations/2026-10-01-test-isolation-r2/file-repeat/store-shared-root.patch",
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    store_test.go:82: alpha: reopened Get(\"same-key\") = \"beta\", <nil>; want \"alpha\"\n    store_test.go:86: alpha: file = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances1855003307/001/same-key: no such file or directory; want \"alpha\"\n    store_test.go:82: gamma: reopened Get(\"same-key\") = \"beta\", <nil>; want \"\"\n    store_test.go:86: gamma: file = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances1855003307/003/same-key: no such file or directory; want \"\"\n    store_test.go:86: beta: file = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances1855003307/002/same-key: no such file or directory; want \"beta\"\nFAIL\nFAIL\texample.com/filestore\t0.237s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.40015604195650667
+  }
+]

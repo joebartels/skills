@@ -1,0 +1,19 @@
+--- a/poll.go
++++ b/poll.go
+@@ -3,11 +3,16 @@
+ import (
+ 	"context"
+ 	"errors"
++	"sync"
+ 	"time"
+ )
+ 
++var pollMu sync.Mutex
++
+ // Poll runs sequential completion-relative cycles until cancellation or failure.
+ func Poll(ctx context.Context, interval time.Duration, callback func(context.Context) error) error {
++	pollMu.Lock()
++	defer pollMu.Unlock()
+ 	if interval <= 0 {
+ 		return errors.New("poll interval must be positive")
+ 	}

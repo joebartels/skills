@@ -1,0 +1,86 @@
+{
+  "semantic_id": "cli-discard-prefix",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "126f0a2490e87d882f6a3fdbc077d2786851c69fc091298d38cb6572bc19a6ce",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-r4v0yr0l/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.730s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.905
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-r2/cli-partial-failure/mutations/cli-discard-prefix/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-r4v0yr0l/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.011
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-r4v0yr0l/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.142s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.307
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-r4v0yr0l/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCLIBatches (0.29s)\n    --- FAIL: TestCLIBatches/zero (0.00s)\n        main_test.go:131: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIBatcheszero1545361495/001: no such file or directory\n    --- FAIL: TestCLIBatches/negative (0.00s)\n        main_test.go:131: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIBatchesnegative2616099650/001: no such file or directory\n    --- FAIL: TestCLIBatches/fraction (0.00s)\n        main_test.go:131: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIBatchesfraction2644191445/001: no such file or directory\n    --- FAIL: TestCLIBatches/hex (0.00s)\n        main_test.go:131: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIBatcheshex4142487543/001: no such file or directory\n    --- FAIL: TestCLIBatches/space (0.00s)\n        main_test.go:131: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIBatchesspace2412753439/001: no such file or directory\n    --- FAIL: TestCLIBatches/overflow (0.00s)\n        main_test.go:131: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIBatchesoverflow607748735/001: no such file or directory\n    --- FAIL: TestCLIBatches/missing_quantity (0.00s)\n        main_test.go:131: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIBatchesmissing_quantity966507629/001: no such file or directory\n    --- FAIL: TestCLIBatches/invalid_replacement (0.00s)\n        main_test.go:131: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIBatchesinvalid_replacement2161552095/001: no such file or directory\n    --- FAIL: TestCLIBatches/invalid_first_row (0.00s)\n        main_test.go:137: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIBatchesinvalid_first_row1309803655/001: no such file or directory\nFAIL\nFAIL\texample.com/ledgerload\t0.784s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.904
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

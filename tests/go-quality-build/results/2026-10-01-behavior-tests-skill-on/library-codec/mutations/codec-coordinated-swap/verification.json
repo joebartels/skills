@@ -1,0 +1,87 @@
+{
+  "semantic_id": "codec-coordinated-swap",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "aaed5dabd43a5ad6bcb085dabb489b4263cf271fa36375a29a4e3e4635f4412b",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-cpd1hc5k/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/keycodec\t0.579s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.821
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/library-codec/mutations/codec-coordinated-swap/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-cpd1hc5k/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-cpd1hc5k/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/keycodec\t0.292s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.473
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-cpd1hc5k/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestEncode (0.00s)\n    --- FAIL: TestEncode/simple (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"east\", Name:\"web\"}) = \"web/east\", want \"east/web\"\n    --- FAIL: TestEncode/slashes (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"us/west\", Name:\"web/blue\"}) = \"web%2Fblue/us%2Fwest\", want \"us%2Fwest/web%2Fblue\"\n    --- FAIL: TestEncode/spaces (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"us west\", Name:\"web blue\"}) = \"web%20blue/us%20west\", want \"us%20west/web%20blue\"\n    --- FAIL: TestEncode/percent (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"us%west\", Name:\"web%blue\"}) = \"web%25blue/us%25west\", want \"us%25west/web%25blue\"\n    --- FAIL: TestEncode/escaped-looking_values (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"%2F\", Name:\"%20\"}) = \"%2520/%252F\", want \"%252F/%2520\"\n    --- FAIL: TestEncode/Unicode (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"\u65e5\u672c\", Name:\"caf\u00e9\"}) = \"caf%C3%A9/%E6%97%A5%E6%9C%AC\", want \"%E6%97%A5%E6%9C%AC/caf%C3%A9\"\n    --- FAIL: TestEncode/literal_plus (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"us+west\", Name:\"web+blue\"}) = \"web+blue/us+west\", want \"us+west/web+blue\"\n    --- FAIL: TestEncode/URL_punctuation (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"us?west\", Name:\"web#blue\"}) = \"web%23blue/us%3Fwest\", want \"us%3Fwest/web%23blue\"\n    --- FAIL: TestEncode/escaped_fields_only (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"/\", Name:\"%\"}) = \"%25/%2F\", want \"%2F/%25\"\n    --- FAIL: TestEncode/README_example (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"us/west\", Name:\"web blue\"}) = \"web%20blue/us%2Fwest\", want \"us%2Fwest/web%20blue\"\n--- FAIL: TestDecode (0.00s)\n    --- FAIL: TestDecode/simple (0.00s)\n        key_test.go:94: Decode(\"east/web\") = keycodec.Key{Region:\"web\", Name:\"east\"}, want keycodec.Key{Region:\"east\", Name:\"web\"}\n    --- FAIL: TestDecode/slashes (0.00s)\n        key_test.go:94: Decode(\"us%2Fwest/web%2Fblue\") = keycodec.Key{Region:\"web/blue\", Name:\"us/west\"}, want keycodec.Key{Region:\"us/west\", Name:\"web/blue\"}\n    --- FAIL: TestDecode/spaces (0.00s)\n        key_test.go:94: Decode(\"us%20west/web%20blue\") = keycodec.Key{Region:\"web blue\", Name:\"us west\"}, want keycodec.Key{Region:\"us west\", Name:\"web blue\"}\n    --- FAIL: TestDecode/percent (0.00s)\n        key_test.go:94: Decode(\"us%25west/web%25blue\") = keycodec.Key{Region:\"web%blue\", Name:\"us%west\"}, want keycodec.Key{Region:\"us%west\", Name:\"web%blue\"}\n    --- FAIL: TestDecode/one_unescape (0.00s)\n        key_test.go:94: Decode(\"%252F/%2520\") = keycodec.Key{Region:\"%20\", Name:\"%2F\"}, want keycodec.Key{Region:\"%2F\", Name:\"%20\"}\n    --- FAIL: TestDecode/Unicode (0.00s)\n        key_test.go:94: Decode(\"%E6%97%A5%E6%9C%AC/caf%C3%A9\") = keycodec.Key{Region:\"caf\u00e9\", Name:\"\u65e5\u672c\"}, want keycodec.Key{Region:\"\u65e5\u672c\", Name:\"caf\u00e9\"}\n    --- FAIL: TestDecode/literal_plus (0.00s)\n        key_test.go:94: Decode(\"us+west/web+blue\") = keycodec.Key{Region:\"web+blue\", Name:\"us+west\"}, want keycodec.Key{Region:\"us+west\", Name:\"web+blue\"}\n    --- FAIL: TestDecode/escaped_plus (0.00s)\n        key_test.go:94: Decode(\"us%2Bwest/web%2Bblue\") = keycodec.Key{Region:\"web+blue\", Name:\"us+west\"}, want keycodec.Key{Region:\"us+west\", Name:\"web+blue\"}\n    --- FAIL: TestDecode/URL_punctuation (0.00s)\n        key_test.go:94: Decode(\"us%3Fwest/web%23blue\") = keycodec.Key{Region:\"web#blue\", Name:\"us?west\"}, want keycodec.Key{Region:\"us?west\", Name:\"web#blue\"}\n    --- FAIL: TestDecode/lowercase_escapes (0.00s)\n        key_test.go:94: Decode(\"us%2fwest/caf%c3%a9\") = keycodec.Key{Region:\"caf\u00e9\", Name:\"us/west\"}, want keycodec.Key{Region:\"us/west\", Name:\"caf\u00e9\"}\n    --- FAIL: TestDecode/escaped_fields_only (0.00s)\n        key_test.go:94: Decode(\"%2F/%25\") = keycodec.Key{Region:\"%\", Name:\"/\"}, want keycodec.Key{Region:\"/\", Name:\"%\"}\n    --- FAIL: TestDecode/legacy_unescaped_values (0.00s)\n        key_test.go:94: Decode(\"us west/caf\u00e9\") = keycodec.Key{Region:\"caf\u00e9\", Name:\"us west\"}, want keycodec.Key{Region:\"us west\", Name:\"caf\u00e9\"}\n--- FAIL: ExampleEncode (0.00s)\ngot:\nweb%20blue/us%2Fwest\nwant:\nus%2Fwest/web%20blue\n--- FAIL: ExampleDecode (0.00s)\ngot:\nRegion: \"web blue\", Name: \"us/west\"\nwant:\nRegion: \"us/west\", Name: \"web blue\"\nFAIL\nFAIL\texample.com/keycodec\t0.344s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.466
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "Independent literal wire/value oracles fail despite coordinated encode/decode swap preserving round trips."
+}

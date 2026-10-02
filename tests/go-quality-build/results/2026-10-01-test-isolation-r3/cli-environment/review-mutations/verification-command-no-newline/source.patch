@@ -1,0 +1,13 @@
+--- a/cmd/showcfg/main.go
++++ b/cmd/showcfg/main.go
+@@ -14,7 +14,9 @@
+ 		fmt.Fprintln(os.Stderr, err)
+ 		os.Exit(2)
+ 	}
+-	if err := json.NewEncoder(os.Stdout).Encode(config); err != nil {
++	data, marshalErr := json.Marshal(config)
++	if marshalErr != nil { panic(marshalErr) }
++	if _, err := os.Stdout.Write(data); err != nil {
+ 		fmt.Fprintln(os.Stderr, err)
+ 		os.Exit(2)
+ 	}

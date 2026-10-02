@@ -1,0 +1,86 @@
+{
+  "semantic_id": "process-success-on-error",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "a6090915ae5613b9bf95bf5548af27232e8380da3bc0053f0588afc922883851",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-4eix5wav/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.600s\nok  \texample.com/indexer/cmd/indexer\t1.645s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.9
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined/architecture-only/mutations/process-success-on-error/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-4eix5wav/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.014
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-4eix5wav/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.184s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.295s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.526
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-4eix5wav/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.546s\n--- FAIL: TestCommandPutApplyAndUsage (0.53s)\n    --- FAIL: TestCommandPutApplyAndUsage/put_existing_positional_grammar (0.24s)\n        process_test.go:75: command [\"put\" \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandPutApplyAndUsageput_existing_positional_grammar1466129406/001\" \"Alpha\" \"bad\"]: exit=0 stdout=\"\" stderr=\"invalid record\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/apply_rejected_prefix_\"alpha,\\\"_\\t\\\"\\n\" (0.01s)\n        process_test.go:87: command [\"apply\" \"--dir\" \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandPutApplyAndUsageapply_rejected_prefix_alpha,_t1420316987/001\"]: exit=0 stdout=\"\" stderr=\"CSV row 2: invalid record\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/apply_rejected_prefix_\"alpha\\n\" (0.00s)\n        process_test.go:87: command [\"apply\" \"--dir\" \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandPutApplyAndUsageapply_rejected_prefix_alphan1335848546/001\"]: exit=0 stdout=\"\" stderr=\"CSV row 2: invalid record\\nrecord on line 2: wrong number of fields\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/apply_rejected_prefix_\"alpha,three,fields\\n\" (0.00s)\n        process_test.go:87: command [\"apply\" \"--dir\" \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandPutApplyAndUsageapply_rejected_prefix_alpha,three,f1298831235/001\"]: exit=0 stdout=\"\" stderr=\"CSV row 2: invalid record\\nrecord on line 2: wrong number of fields\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/apply_write_failure (0.00s)\n        process_test.go:99: command [\"apply\" \"--dir\" \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandPutApplyAndUsageapply_write_failure4158200009/001\"]: exit=0 stdout=\"\" stderr=\"CSV row 2: rename /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandPutApplyAndUsageapply_write_failure4158200009/001/.record-1531768671 /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandPutApplyAndUsageapply_write_failure4158200009/001/beta: file exists\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_0 (0.00s)\n        process_test.go:119: command []: exit=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_1 (0.00s)\n        process_test.go:119: command [\"unknown\"]: exit=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_2 (0.00s)\n        process_test.go:119: command [\"put\"]: exit=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_3 (0.00s)\n        process_test.go:119: command [\"put\" \"a\" \"b\" \"c\" \"extra\"]: exit=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_4 (0.00s)\n        process_test.go:119: command [\"apply\"]: exit=0 stdout=\"\" stderr=\"usage: indexer apply --dir DIR\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_5 (0.00s)\n        process_test.go:119: command [\"apply\" \"--bogus\"]: exit=0 stdout=\"\" stderr=\"flag provided but not defined: -bogus\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_6 (0.00s)\n        process_test.go:119: command [\"apply\" \"--dir\" \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandPutApplyAndUsage193418091/002\" \"extra\"]: exit=0 stdout=\"\" stderr=\"usage: indexer apply --dir DIR\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_7 (0.00s)\n        process_test.go:119: command [\"watch\"]: exit=0 stdout=\"\" stderr=\"watch URL must be HTTP or HTTPS with a host\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_8 (0.00s)\n        process_test.go:119: command [\"watch\" \"--url\" \"ftp://host/x\" \"--file\" \"x\" \"--interval\" \"1s\"]: exit=0 stdout=\"\" stderr=\"watch URL must be HTTP or HTTPS with a host\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_9 (0.00s)\n        process_test.go:119: command [\"watch\" \"--url\" \"http:///missing-host\" \"--file\" \"x\" \"--interval\" \"1s\"]: exit=0 stdout=\"\" stderr=\"watch URL must be HTTP or HTTPS with a host\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_10 (0.00s)\n        process_test.go:119: command [\"watch\" \"--url\" \"http://:80\" \"--file\" \"x\" \"--interval\" \"1s\"]: exit=0 stdout=\"\" stderr=\"watch URL must be HTTP or HTTPS with a host\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_11 (0.00s)\n        process_test.go:119: command [\"watch\" \"--url\" \"https://example.invalid\" \"--file\" \"\" \"--interval\" \"1s\"]: exit=0 stdout=\"\" stderr=\"usage: indexer watch --url URL --file PATH --interval DURATION (positive)\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_12 (0.00s)\n        process_test.go:119: command [\"watch\" \"--url\" \"https://example.invalid\" \"--file\" \"x\" \"--interval\" \"0\"]: exit=0 stdout=\"\" stderr=\"usage: indexer watch --url URL --file PATH --interval DURATION (positive)\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_13 (0.00s)\n        process_test.go:119: command [\"watch\" \"--url\" \"https://example.invalid\" \"--file\" \"x\" \"--interval\" \"-1s\"]: exit=0 stdout=\"\" stderr=\"usage: indexer watch --url URL --file PATH --interval DURATION (positive)\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_14 (0.00s)\n        process_test.go:119: command [\"watch\" \"--url\" \"https://example.invalid\" \"--file\" \"x\" \"--interval\" \"bad\"]: exit=0 stdout=\"\" stderr=\"invalid value \\\"bad\\\" for flag -interval: parse error\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_15 (0.00s)\n        process_test.go:119: command [\"watch\" \"--url\" \"https://example.invalid\" \"--file\" \"x\"]: exit=0 stdout=\"\" stderr=\"usage: indexer watch --url URL --file PATH --interval DURATION (positive)\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandPutApplyAndUsage/invalid_startup_16 (0.00s)\n        process_test.go:119: command [\"watch\" \"--url\" \"https://example.invalid\" \"--file\" \"x\" \"--interval\" \"1s\" \"extra\"]: exit=0 stdout=\"\" stderr=\"usage: indexer watch --url URL --file PATH --interval DURATION (positive)\\n\"; want exit=2, no stdout, appropriate stderr\n--- FAIL: TestCommandWatchLifecycle (0.77s)\n    --- FAIL: TestCommandWatchLifecycle/first_status_failure (0.01s)\n        process_test.go:290: command [\"watch\" \"--url\" \"http://127.0.0.1:61753\" \"--file\" \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandWatchLifecyclefirst_status_failure1687018925/001/records.json\" \"--interval\" \"20ms\"]: exit=0 stdout=\"\" stderr=\"fetch records: HTTP status 503\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandWatchLifecycle/first_decode_failure (0.01s)\n        process_test.go:290: command [\"watch\" \"--url\" \"http://127.0.0.1:61755\" \"--file\" \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandWatchLifecyclefirst_decode_failure632969832/001/records.json\" \"--interval\" \"20ms\"]: exit=0 stdout=\"\" stderr=\"decode records: unexpected trailing JSON\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandWatchLifecycle/first_validation_failure (0.01s)\n        process_test.go:290: command [\"watch\" \"--url\" \"http://127.0.0.1:61757\" \"--file\" \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandWatchLifecyclefirst_validation_failure4097625446/001/records.json\" \"--interval\" \"20ms\"]: exit=0 stdout=\"\" stderr=\"record 1: invalid record\\n\"; want exit=2, no stdout, appropriate stderr\n    --- FAIL: TestCommandWatchLifecycle/later_failure_retains_last_successful_refresh (0.03s)\n        process_test.go:307: command [\"watch\" \"--url\" \"http://127.0.0.1:61759\" \"--file\" \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandWatchLifecyclelater_failure_retains_last_successful_2996888189/001/records.json\" \"--interval\" \"20ms\"]: exit=0 stdout=\"\" stderr=\"fetch records: HTTP status 503\\n\"; want exit=2, no stdout, appropriate stderr\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t1.573s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.77
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

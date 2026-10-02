@@ -1,0 +1,50 @@
+[
+  {
+    "test": "TestStoreIndependentInstances",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestStoreIndependentInstances$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolated-tests-n44k6b8c/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t1.215s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.396
+  },
+  {
+    "test": "TestStoreSerialChildren",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestStoreSerialChildren$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolated-tests-n44k6b8c/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t1.158s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.29
+  }
+]

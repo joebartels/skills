@@ -1,0 +1,86 @@
+{
+  "semantic_id": "process-success-on-error",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "1cfcdb50f9881a676991b6d5f895568228006081dbbe75c1c89b5f5ed8c399fc",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-i8wir31x/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.554s\nok  \texample.com/indexer/cmd/indexer\t0.996s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.26
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/both/mutations/process-success-on-error/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-i8wir31x/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-i8wir31x/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.172s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.288s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.522
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-i8wir31x/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.529s\n--- FAIL: TestCLIProcessContracts (0.58s)\n    --- FAIL: TestCLIProcessContracts/put_remains_positional (0.24s)\n        process_test.go:33: process = status 0, stdout \"\", stderr \"invalid record\\n\"; want status 2 and conventional streams\n    --- FAIL: TestCLIProcessContracts/put_usage (0.01s)\n        process_test.go:39: process = status 0, stdout \"\", stderr \"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status 2 and conventional streams\n    --- FAIL: TestCLIProcessContracts/apply_prefix_after_validation (0.01s)\n        process_test.go:53: process = status 0, stdout \"\", stderr \"CSV row 2: invalid record\\n\"; want status 2 and conventional streams\n    --- FAIL: TestCLIProcessContracts/apply_prefix_after_parse (0.01s)\n        process_test.go:60: process = status 0, stdout \"\", stderr \"CSV row 2: invalid record\\nrecord on line 2: wrong number of fields\\n\"; want status 2 and conventional streams\n    --- FAIL: TestCLIProcessContracts/apply_prefix_after_publication (0.01s)\n        process_test.go:71: process = status 0, stdout \"\", stderr \"CSV row 2: rename /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIProcessContractsapply_prefix_after_publication1021983770/001/.record-690209353 /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIProcessContractsapply_prefix_after_publication1021983770/001/beta: file exists\\n\"; want status 2 and conventional streams\n    --- FAIL: TestCLIProcessContracts/startup_rejects (0.01s)\n        process_test.go:89: process = status 0, stdout \"\", stderr \"usage: indexer apply --dir DIR\\n\"; want status 2 and conventional streams\n    --- FAIL: TestCLIProcessContracts/failed_first_refresh (0.02s)\n        --- FAIL: TestCLIProcessContracts/failed_first_refresh/neighbor_status (0.01s)\n            process_test.go:114: process = status 0, stdout \"\", stderr \"fetch records: status 206; want 200\\n\"; want status 2 and conventional streams\n        --- FAIL: TestCLIProcessContracts/failed_first_refresh/decode (0.01s)\n            process_test.go:114: process = status 0, stdout \"\", stderr \"decode records: unexpected EOF\\n\"; want status 2 and conventional streams\n        --- FAIL: TestCLIProcessContracts/failed_first_refresh/validation (0.01s)\n            process_test.go:114: process = status 0, stdout \"\", stderr \"record 1: invalid record\\n\"; want status 2 and conventional streams\n    --- FAIL: TestCLIProcessContracts/failed_first_publication (0.01s)\n        process_test.go:138: process = status 0, stdout \"\", stderr \"publish records: rename /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIProcessContractsfailed_first_publication3913512719/001/.record-1745862143 /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIProcessContractsfailed_first_publication3913512719/001/snapshot: file exists\\n\"; want status 2 and conventional streams\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t0.890s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.104
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

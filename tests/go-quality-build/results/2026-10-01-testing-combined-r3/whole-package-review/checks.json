@@ -1,0 +1,739 @@
+[
+  {
+    "label": "initial status",
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "status",
+      "--porcelain=v1"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "?? tests/go-quality-build/results/2026-10-01-testing-combined-r3/whole-package-review/\n",
+    "stderr": "",
+    "seconds": 0.031916333944536746
+  },
+  {
+    "label": "all evidence reconstruction",
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/controller/delivery/verify_testing_evidence.py",
+      "/private/tmp/go-testing-final-package-review/integrity.json"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "PASS 49 exact reconstructions; 2197 sealed artifact hashes; final guidance snapshot equality (runtime)\n",
+    "stderr": "",
+    "seconds": 3.252528249984607
+  },
+  {
+    "label": "python3 -B -m unittest discover -s tests -p test*.py",
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test*.py"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.070s\n\nOK\n",
+    "seconds": 0.10516179201658815
+  },
+  {
+    "label": "python3 -B -m unittest discover -s tests/go-quality-build -p test_*.py",
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/go-quality-build",
+      "-p",
+      "test_*.py"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.015s\n\nOK\n",
+    "seconds": 0.055627916008234024
+  },
+  {
+    "label": "python3 -B tests/go-quality-review/test_layout.py",
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "tests/go-quality-review/test_layout.py"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ".\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+    "seconds": 0.02959220902994275
+  },
+  {
+    "label": "python3 -B tests/go-quality-review/go-quality-report/evals/test_grade.py",
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "tests/go-quality-review/go-quality-report/evals/test_grade.py"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.000s\n\nOK\n",
+    "seconds": 0.03099050000309944
+  },
+  {
+    "label": "python3 -B scripts/validate.py",
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "scripts/validate.py"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "PASS: 10 skills; matching grading/report contracts; 120 valid evaluation cases\nPASS: 26 valid build evaluation cases\n",
+    "stderr": "",
+    "seconds": 0.045335917035117745
+  },
+  {
+    "label": "whole range whitespace with exact raw exclusions",
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "diff",
+      "--check",
+      "b76df28ed15a177d436672d47a5d30f6634900c7",
+      "f48c68ddbdd31931cad3522aa6f9f1f17ea86d06",
+      "--",
+      ".",
+      ":(exclude)**/source.patch",
+      ":(exclude)tests/go-quality-build/results/2026-10-01-testing-combined/both/blind-review.md",
+      ":(exclude)tests/go-quality-build/results/2026-10-01-testing-combined/both/review-artifacts/inspection-transcript.json"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 2,
+    "stdout": "tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/blind-review.md:106: new blank line at EOF.\ntests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/review-artifacts/check_source_preserved.py:8: new blank line at EOF.\ntests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/review-artifacts/run_check.py:18: new blank line at EOF.\ntests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/review-artifacts/setup_mutations.py:22: new blank line at EOF.\ntests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/review-artifacts/setup_verification.py:9: new blank line at EOF.\ntests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/review-artifacts/validate_artifacts.py:15: new blank line at EOF.\ntests/go-quality-build/results/2026-10-01-test-isolation-r3/library-file-fixtures/author-artifacts/store_test.diff:5: trailing whitespace.\n+ \ntests/go-quality-build/results/2026-10-01-test-isolation-r3/library-file-fixtures/author-artifacts/store_test.diff:8: space before tab in indent.\n+ \t\"testing\"\ntests/go-quality-build/results/2026-10-01-test-isolation-r3/library-file-fixtures/author-artifacts/store_test.diff:9: trailing whitespace.\n+ \ntests/go-quality-build/results/2026-10-01-test-isolation-r3/library-file-fixtures/author-artifacts/store_test.diff:10: space before tab in indent.\n+ \t\"example.com/filestore\"\ntests/go-quality-build/results/2026-10-01-test-isolation-r3/library-file-fixtures/author-artifacts/store_test.diff:12: trailing whitespace.\n+ \ntests/go-quality-build/results/2026-10-01-test-isolation-r3/library-file-fixtures/author-artifacts/store_test.diff:21: space before tab in indent.\n+ \tfor _, value := range []string{\"first\", \"replacement\"} {\ntests/go-quality-build/results/2026-10-01-test-isolation-r3/library-file-fixtures/author-artifacts/store_test.diff:22: space before tab in indent.\n+ \t\tt.Run(value, func(t *testing.T) {\ntests/go-quality-build/results/2026-10-01-test-isolation-r3/library-file-fixtures/author-artifacts/store_test.diff:23: space before tab in indent.\n+ \t\t\tif err := store.Put(\"same-key\", value); err != nil {\ntests/go-quality-build/results/2026-10-01-test-isolation-r3/library-file-fixtures/author-artifacts/store_test.diff:25: space before tab in indent.\n+ \t\t})\ntests/go-quality-build/results/2026-10-01-test-isolation-r3/library-file-fixtures/author-artifacts/store_test.diff:26: space before tab in indent.\n+ \t}\n",
+    "stderr": "",
+    "seconds": 0.0997937920037657
+  },
+  {
+    "label": "go version",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "seconds": 0.009580124984495342
+  },
+  {
+    "label": "library-codec candidate suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/library-codec",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/keycodec\t0.227s\n",
+    "stderr": "",
+    "seconds": 1.9509707919787616
+  },
+  {
+    "label": "library-codec held focus probes",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/library-codec",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/keycodec\t0.174s\n",
+    "stderr": "",
+    "seconds": 0.3213929160265252
+  },
+  {
+    "label": "cli-partial-failure candidate suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/cli-partial-failure",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/ledgerload\t0.754s\n",
+    "stderr": "",
+    "seconds": 0.9188132080016658
+  },
+  {
+    "label": "cli-partial-failure held focus probes",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/cli-partial-failure",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/ledgerload\t1.032s\n",
+    "stderr": "",
+    "seconds": 1.1755321670789272
+  },
+  {
+    "label": "library-file-fixtures candidate suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/library-file-fixtures",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/filestore\t0.177s\n",
+    "stderr": "",
+    "seconds": 0.3225692909909412
+  },
+  {
+    "label": "library-file-fixtures held focus probes",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/library-file-fixtures",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/filestore\t0.178s\n",
+    "stderr": "",
+    "seconds": 0.3193595000775531
+  },
+  {
+    "label": "library-file-fixtures race shuffle repeat",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/library-file-fixtures",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/filestore\t1.211s\n",
+    "stderr": "",
+    "seconds": 4.187891333014704
+  },
+  {
+    "label": "service-http-boundary candidate suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/service-http-boundary",
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestFetchCancellation (0.00s)\n    --- FAIL: TestFetchCancellation/before_headers (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 49 [running]:\ntesting.tRunner.func1.2({0x10472ffa0, 0x6687c6d900d0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x10472ffa0?, 0x6687c6d900d0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1047ba3c0, 0x6687c6d940c0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/metadata_test.TestFetchCancellation.func1(0x6687c6da6008)\n\t/private/tmp/go-testing-final-package-review/service-http-boundary/fetch_test.go:254 +0xe8\ntesting.tRunner(0x6687c6da6008, 0x6687c6d92018)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 41\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/metadata\t0.216s\nFAIL\n",
+    "stderr": "",
+    "seconds": 1.637948791962117
+  },
+  {
+    "label": "service-http-boundary held focus probes",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/service-http-boundary",
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestFinalReviewHTTPCancelAndBodyLifetime (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 42 [running]:\ntesting.tRunner.func1.2({0x1025e4020, 0x6818be7146b0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1025e4020?, 0x6818be7146b0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x10266e9e0, 0x6818be710600})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/metadata_test.TestFinalReviewHTTPCancelAndBodyLifetime(0x6818be761448)\n\t/private/tmp/go-testing-final-package-review/service-http-boundary/review_contract_test.go:50 +0x408\ntesting.tRunner(0x6818be761448, 0x10266a9b0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/metadata\t0.206s\nFAIL\n",
+    "stderr": "",
+    "seconds": 0.4366252499166876
+  },
+  {
+    "label": "worker-timing candidate suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/worker-timing",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/poller\t0.282s\n",
+    "stderr": "",
+    "seconds": 0.4400570000289008
+  },
+  {
+    "label": "worker-timing held focus probes",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/worker-timing",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/poller\t0.408s\n",
+    "stderr": "",
+    "seconds": 0.5759851660113782
+  },
+  {
+    "label": "worker-timing race shuffle repeat",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/worker-timing",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/poller\t1.880s\n",
+    "stderr": "",
+    "seconds": 2.080926667083986
+  },
+  {
+    "label": "final status",
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "status",
+      "--porcelain=v1"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "?? tests/go-quality-build/results/2026-10-01-testing-combined-r3/whole-package-review/\n",
+    "stderr": "",
+    "seconds": 0.05420666595455259
+  },
+  {
+    "label": "python3 -B /Users/jb/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/go-quality-build/skills/go-behavior-tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "/Users/jb/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+      "plugins/go-quality-build/skills/go-behavior-tests"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "Skill is valid!\n",
+    "stderr": "",
+    "seconds": 0.02600637509021908
+  },
+  {
+    "label": "python3 -B /Users/jb/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/go-quality-build/skills/go-test-isolation",
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "/Users/jb/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+      "plugins/go-quality-build/skills/go-test-isolation"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "Skill is valid!\n",
+    "stderr": "",
+    "seconds": 0.024411916034296155
+  },
+  {
+    "label": "claude plugin validate ./plugins/go-quality-build",
+    "command": [
+      "rtk",
+      "proxy",
+      "claude",
+      "plugin",
+      "validate",
+      "./plugins/go-quality-build"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "Validating plugin manifest: /Users/jb/.codex/worktrees/b633/skills/plugins/go-quality-build/.claude-plugin/plugin.json\n\n\u2714 Validation passed\n",
+    "stderr": "",
+    "seconds": 0.16455591702833772
+  },
+  {
+    "label": "claude plugin validate .",
+    "command": [
+      "rtk",
+      "proxy",
+      "claude",
+      "plugin",
+      "validate",
+      "."
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "Validating marketplace manifest: /Users/jb/.codex/worktrees/b633/skills/.claude-plugin/marketplace.json\n\n\u2714 Validation passed\n",
+    "stderr": "",
+    "seconds": 0.1691677919588983
+  },
+  {
+    "label": "whole range whitespace complete raw exclusions",
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "diff",
+      "--check",
+      "b76df28ed15a177d436672d47a5d30f6634900c7",
+      "f48c68ddbdd31931cad3522aa6f9f1f17ea86d06",
+      "--",
+      ".",
+      ":(exclude)**/source.patch",
+      ":(exclude)tests/go-quality-build/results/2026-10-01-testing-combined/both/blind-review.md",
+      ":(exclude)tests/go-quality-build/results/2026-10-01-testing-combined/both/review-artifacts/inspection-transcript.json",
+      ":(exclude)tests/go-quality-build/results/2026-10-01-test-isolation-r3/library-file-fixtures/author-artifacts/store_test.diff",
+      ":(exclude)tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/blind-review.md",
+      ":(exclude)tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/review-artifacts/check_source_preserved.py",
+      ":(exclude)tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/review-artifacts/run_check.py",
+      ":(exclude)tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/review-artifacts/setup_mutations.py",
+      ":(exclude)tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/review-artifacts/setup_verification.py",
+      ":(exclude)tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/review-artifacts/validate_artifacts.py"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "seconds": 0.09895779204089195
+  },
+  {
+    "label": "coordinated codec defect roundtrip survives",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestSimpleRoundTrip$",
+      "-count=1",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/library-codec-mutant",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/keycodec\t0.243s\n",
+    "stderr": "",
+    "seconds": 0.3968709160108119
+  },
+  {
+    "label": "library-codec mutant compiles",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/library-codec-mutant",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/keycodec\t0.139s [no tests to run]\n",
+    "stderr": "",
+    "seconds": 0.265644499915652
+  },
+  {
+    "label": "library-codec candidate-only mutation detection",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/library-codec-mutant",
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestEncode (0.00s)\n    --- FAIL: TestEncode/existing_simple_key (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"east\", Name:\"web\"}) = \"web/east\", want \"east/web\"\n    --- FAIL: TestEncode/slash_in_region (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"us/west\", Name:\"web\"}) = \"web/us%2Fwest\", want \"us%2Fwest/web\"\n    --- FAIL: TestEncode/slash_in_name (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"east\", Name:\"web/api\"}) = \"web%2Fapi/east\", want \"east/web%2Fapi\"\n    --- FAIL: TestEncode/spaces_in_both_fields (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"us west\", Name:\"web blue\"}) = \"web%20blue/us%20west\", want \"us%20west/web%20blue\"\n    --- FAIL: TestEncode/percent_in_both_fields (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"%2F\", Name:\"100%\"}) = \"100%25/%252F\", want \"%252F/100%25\"\n    --- FAIL: TestEncode/unicode_in_both_fields (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"\u6771\u4eac\", Name:\"caf\u00e9\"}) = \"caf%C3%A9/%E6%9D%B1%E4%BA%AC\", want \"%E6%9D%B1%E4%BA%AC/caf%C3%A9\"\n    --- FAIL: TestEncode/literal_plus (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"us+west\", Name:\"web+blue\"}) = \"web+blue/us+west\", want \"us+west/web+blue\"\n--- FAIL: TestDecode (0.00s)\n    --- FAIL: TestDecode/existing_simple_key (0.00s)\n        key_test.go:66: Decode(\"east/web\") = keycodec.Key{Region:\"web\", Name:\"east\"}, want keycodec.Key{Region:\"east\", Name:\"web\"}\n    --- FAIL: TestDecode/slash_in_region (0.00s)\n        key_test.go:66: Decode(\"us%2Fwest/web\") = keycodec.Key{Region:\"web\", Name:\"us/west\"}, want keycodec.Key{Region:\"us/west\", Name:\"web\"}\n    --- FAIL: TestDecode/slash_in_name (0.00s)\n        key_test.go:66: Decode(\"east/web%2Fapi\") = keycodec.Key{Region:\"web/api\", Name:\"east\"}, want keycodec.Key{Region:\"east\", Name:\"web/api\"}\n    --- FAIL: TestDecode/spaces_in_both_fields (0.00s)\n        key_test.go:66: Decode(\"us%20west/web%20blue\") = keycodec.Key{Region:\"web blue\", Name:\"us west\"}, want keycodec.Key{Region:\"us west\", Name:\"web blue\"}\n    --- FAIL: TestDecode/percent_in_both_fields (0.00s)\n        key_test.go:66: Decode(\"%252F/100%25\") = keycodec.Key{Region:\"100%\", Name:\"%2F\"}, want keycodec.Key{Region:\"%2F\", Name:\"100%\"}\n    --- FAIL: TestDecode/unicode_in_both_fields (0.00s)\n        key_test.go:66: Decode(\"%E6%9D%B1%E4%BA%AC/caf%C3%A9\") = keycodec.Key{Region:\"caf\u00e9\", Name:\"\u6771\u4eac\"}, want keycodec.Key{Region:\"\u6771\u4eac\", Name:\"caf\u00e9\"}\n    --- FAIL: TestDecode/lowercase_escapes (0.00s)\n        key_test.go:66: Decode(\"us%2fwest/caf%c3%a9\") = keycodec.Key{Region:\"caf\u00e9\", Name:\"us/west\"}, want keycodec.Key{Region:\"us/west\", Name:\"caf\u00e9\"}\n    --- FAIL: TestDecode/literal_plus (0.00s)\n        key_test.go:66: Decode(\"us+west/web+blue\") = keycodec.Key{Region:\"web+blue\", Name:\"us+west\"}, want keycodec.Key{Region:\"us+west\", Name:\"web+blue\"}\n--- FAIL: ExampleEncode (0.00s)\ngot:\nweb%20blue/us%2Fwest\nwant:\nus%2Fwest/web%20blue\n--- FAIL: ExampleDecode (0.00s)\ngot:\nregion=\"web blue\" name=\"us/west\"\nwant:\nregion=\"us/west\" name=\"web blue\"\nFAIL\nFAIL\texample.com/keycodec\t0.124s\nFAIL\n",
+    "stderr": "",
+    "seconds": 0.2447614580160007
+  },
+  {
+    "label": "cli-partial-failure mutant compiles",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/cli-partial-failure-mutant",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/ledgerload\t0.164s [no tests to run]\n",
+    "stderr": "",
+    "seconds": 0.3123948340071365
+  },
+  {
+    "label": "cli-partial-failure candidate-only mutation detection",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/cli-partial-failure-mutant",
+    "exit_code": 1,
+    "stdout": "--- FAIL: TestCLIWriteFailure (0.27s)\n    --- FAIL: TestCLIWriteFailure/first_write (0.15s)\n        main_fsize_test.go:36: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 1: write \\\"web\\\": write /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIWriteFailurefirst_write1876038315/001/.ledgerload-740117311: file too large\\n\"\n    --- FAIL: TestCLIWriteFailure/partial_duplicate_write (0.01s)\n        main_fsize_test.go:36: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: write \\\"web\\\": write /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIWriteFailurepartial_duplicate_write4225695356/001/.ledgerload-3217705528: file too large\\n\"\n--- FAIL: TestCLIBatches (0.30s)\n    --- FAIL: TestCLIBatches/empty_ID (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: invalid ID \\\"\\\"\\n\"\n    --- FAIL: TestCLIBatches/dot (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: invalid ID \\\".\\\"\\n\"\n    --- FAIL: TestCLIBatches/dot_dot (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: invalid ID \\\"..\\\"\\n\"\n    --- FAIL: TestCLIBatches/slash (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: invalid ID \\\"../escape\\\"\\n\"\n    --- FAIL: TestCLIBatches/backslash (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: invalid ID \\\"a\\\\\\\\b\\\"\\n\"\n    --- FAIL: TestCLIBatches/NUL (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: invalid ID \\\"a\\\\x00b\\\"\\n\"\n    --- FAIL: TestCLIBatches/zero (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: invalid quantity \\\"0\\\"\\n\"\n    --- FAIL: TestCLIBatches/negative (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: invalid quantity \\\"-1\\\"\\n\"\n    --- FAIL: TestCLIBatches/fraction (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: invalid quantity \\\"1.5\\\"\\n\"\n    --- FAIL: TestCLIBatches/hex (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: invalid quantity \\\"0x10\\\"\\n\"\n    --- FAIL: TestCLIBatches/space (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: invalid quantity \\\" 2\\\"\\n\"\n    --- FAIL: TestCLIBatches/overflow (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: invalid quantity \\\"99999999999999999999999999999999\\\"\\n\"\n    --- FAIL: TestCLIBatches/missing_quantity (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: invalid quantity \\\"\\\"\\n\"\n    --- FAIL: TestCLIBatches/too_few_fields (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: read CSV: record on line 2: wrong number of fields\\n\"\n    --- FAIL: TestCLIBatches/too_many_fields (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: read CSV: record on line 2: wrong number of fields\\n\"\n    --- FAIL: TestCLIBatches/malformed_CSV (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: read CSV: record on line 2; parse error on line 3, column 9: extraneous or missing \\\" in quoted-field\\n\"\n    --- FAIL: TestCLIBatches/invalid_replacement (0.00s)\n        main_test.go:130: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 2: invalid quantity \\\"no\\\"\\n\"\n    --- FAIL: TestCLIBatches/invalid_first_row (0.00s)\n        main_test.go:136: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 1: invalid quantity \\\"0\\\"\\n\"\n    --- FAIL: TestCLIBatches/usage (0.01s)\n        --- FAIL: TestCLIBatches/usage/missing_directory (0.00s)\n            main_test.go:151: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"--dir required and no positional arguments allowed\\n\"\n        --- FAIL: TestCLIBatches/usage/positional (0.00s)\n            main_test.go:151: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"--dir required and no positional arguments allowed\\n\"\n        --- FAIL: TestCLIBatches/usage/unknown_option (0.00s)\n            main_test.go:151: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"flag provided but not defined: -unknown\\nUsage of ledgerload:\\n  -dir string\\n    \\trecord directory\\nflag provided but not defined: -unknown\\n\"\n        --- FAIL: TestCLIBatches/usage/missing_option_value (0.00s)\n            main_test.go:151: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"flag needs an argument: -dir\\nUsage of ledgerload:\\n  -dir string\\n    \\trecord directory\\nflag needs an argument: -dir\\n\"\n    --- FAIL: TestCLIBatches/directory_creation_failure (0.00s)\n        main_test.go:163: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 1: create directory: mkdir /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIBatchesdirectory_creation_failure834881407/001/file: not a directory\\n\"\n    --- FAIL: TestCLIBatches/file_failure_retains_accepted_prefix (0.00s)\n        main_test.go:174: exit = 0, want 2; error = <nil>; stdout = \"\"; stderr = \"record 3: write \\\"blocked\\\": rename /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIBatchesfile_failure_retains_accepted_prefix4234829552/001/.ledgerload-3640655596 /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIBatchesfile_failure_retains_accepted_prefix4234829552/001/blocked: file exists\\n\"\nFAIL\nFAIL\texample.com/ledgerload\t0.695s\nFAIL\n",
+    "stderr": "",
+    "seconds": 0.8088917499408126
+  },
+  {
+    "label": "focused nested fixture selection",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^gamma$/^replacement$",
+      "-parallel=1",
+      "-count=1",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/library-file-fixtures",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/filestore\t0.144s\n",
+    "stderr": "",
+    "seconds": 0.2486532499315217
+  },
+  {
+    "label": "isolation-only packages",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/integrated-isolation-only",
+    "exit_code": 0,
+    "stdout": "example.com/indexer\nexample.com/indexer/cmd/indexer\n",
+    "stderr": "",
+    "seconds": 0.032944959006272256
+  },
+  {
+    "label": "isolation-only compile example.com/indexer",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-c",
+      "-o",
+      "/private/tmp/go-testing-final-package-review/integrated-isolation-only/suite0",
+      "example.com/indexer"
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/integrated-isolation-only",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "seconds": 0.30178479198366404
+  },
+  {
+    "label": "isolation-only compile example.com/indexer/cmd/indexer",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-c",
+      "-o",
+      "/private/tmp/go-testing-final-package-review/integrated-isolation-only/suite1",
+      "example.com/indexer/cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/integrated-isolation-only",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "seconds": 0.2740322499303147
+  },
+  {
+    "label": "both packages",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/integrated-both",
+    "exit_code": 0,
+    "stdout": "example.com/indexer\nexample.com/indexer/cmd/indexer\n",
+    "stderr": "",
+    "seconds": 0.027064915979281068
+  },
+  {
+    "label": "both compile example.com/indexer",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-c",
+      "-o",
+      "/private/tmp/go-testing-final-package-review/integrated-both/suite0",
+      "example.com/indexer"
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/integrated-both",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "seconds": 0.2983152500819415
+  },
+  {
+    "label": "both compile example.com/indexer/cmd/indexer",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-c",
+      "-o",
+      "/private/tmp/go-testing-final-package-review/integrated-both/suite1",
+      "example.com/indexer/cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/integrated-both",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "seconds": 0.2753981249406934
+  },
+  {
+    "label": "isolation-only compiled command suite unset GOCACHE",
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-testing-final-package-review/integrated-isolation-only/suite1",
+      "-test.count=1",
+      "-test.timeout=90s"
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/integrated-isolation-only/cmd/indexer",
+    "exit_code": 2,
+    "stdout": "--- FAIL: TestCommandProcesses (2.70s)\n    --- FAIL: TestCommandProcesses/failed_first_refresh (0.00s)\n",
+    "stderr": "panic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 129 [running]:\ntesting.tRunner.func1.2({0x100dd08e0, 0x725911d10de0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x100dd08e0?, 0x725911d10de0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x100e5c960, 0x100e58a08})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer/cmd/indexer.TestCommandProcesses.func4(0x725911dc6248)\n\t/private/tmp/go-testing-final-package-review/integrated-isolation-only/cmd/indexer/process_test.go:103 +0x44\ntesting.tRunner(0x725911dc6248, 0x725911d25338)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 21\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\n",
+    "seconds": 2.975004500010982
+  },
+  {
+    "label": "both compiled command suite unset GOCACHE",
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-testing-final-package-review/integrated-both/suite1",
+      "-test.count=1",
+      "-test.timeout=90s"
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/integrated-both/cmd/indexer",
+    "exit_code": 2,
+    "stdout": "--- FAIL: TestCLIProcessContracts (0.56s)\n    --- FAIL: TestCLIProcessContracts/failed_first_refresh (0.00s)\n        --- FAIL: TestCLIProcessContracts/failed_first_refresh/neighbor_status (0.00s)\n",
+    "stderr": "panic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 139 [running]:\ntesting.tRunner.func1.2({0x102fd0740, 0x605c0f090db0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x102fd0740?, 0x605c0f090db0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x10305c240, 0x605c0f0bb840})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer/cmd/indexer.TestCLIProcessContracts.func8.1(0x605c0f0eb8c8)\n\t/private/tmp/go-testing-final-package-review/integrated-both/cmd/indexer/process_test.go:103 +0xc8\ntesting.tRunner(0x605c0f0eb8c8, 0x605c0f0bb800)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 138\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\n",
+    "seconds": 0.7621684171026573
+  },
+  {
+    "label": "isolation-only compiled command suite unset GOCACHE",
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-testing-final-package-review/integrated-isolation-only/suite1",
+      "-test.count=1",
+      "-test.timeout=90s"
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/integrated-isolation-only/cmd/indexer",
+    "exit_code": 0,
+    "stdout": "PASS\n",
+    "stderr": "",
+    "seconds": 0.6414656250271946
+  },
+  {
+    "label": "both compiled command suite unset GOCACHE",
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-testing-final-package-review/integrated-both/suite1",
+      "-test.count=1",
+      "-test.timeout=90s"
+    ],
+    "cwd": "/private/tmp/go-testing-final-package-review/integrated-both/cmd/indexer",
+    "exit_code": 0,
+    "stdout": "PASS\n",
+    "stderr": "",
+    "seconds": 0.5891675000311807
+  }
+]

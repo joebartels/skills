@@ -1,0 +1,86 @@
+{
+  "semantic_id": "process-success-on-error",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "aeb3e17a44ed5f12addaa9776acb9b1f43429e19385546f9116e29b44db4dd75",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-mxdikk1x/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.328s\nok  \texample.com/indexer/cmd/indexer\t0.849s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.113
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined/isolation-only/mutations/process-success-on-error/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-mxdikk1x/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-mxdikk1x/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.170s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.284s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.518
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-mxdikk1x/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.293s\n--- FAIL: TestCommandContracts (0.21s)\n    --- FAIL: TestCommandContracts/startup/watch-duration (0.22s)\n        main_test.go:127: process = exit 0 stdout=\"\" stderr=\"watch arguments: invalid value \\\"bad\\\" for flag -interval: parse error\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/startup/watch-negative (0.22s)\n        main_test.go:127: process = exit 0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP_OR_HTTPS_URL --file PATH --interval POSITIVE_DURATION\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/startup/put-arity (0.23s)\n        main_test.go:127: process = exit 0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/startup/watch-extra (0.23s)\n        main_test.go:127: process = exit 0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP_OR_HTTPS_URL --file PATH --interval POSITIVE_DURATION\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/startup/watch-url-parse (0.23s)\n        main_test.go:127: process = exit 0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP_OR_HTTPS_URL --file PATH --interval POSITIVE_DURATION\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/startup/unknown (0.23s)\n        main_test.go:127: process = exit 0 stdout=\"\" stderr=\"unknown command \\\"unknown\\\"\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/startup/watch-missing (0.23s)\n        main_test.go:127: process = exit 0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP_OR_HTTPS_URL --file PATH --interval POSITIVE_DURATION\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/startup/watch-host (0.23s)\n        main_test.go:127: process = exit 0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP_OR_HTTPS_URL --file PATH --interval POSITIVE_DURATION\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/startup/apply-unknown-flag (0.23s)\n        main_test.go:127: process = exit 0 stdout=\"\" stderr=\"apply arguments: flag provided but not defined: -unknown\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/startup/apply-extra (0.23s)\n        main_test.go:127: process = exit 0 stdout=\"\" stderr=\"usage: indexer apply --dir DIR\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/startup/apply-missing-dir (0.23s)\n        main_test.go:127: process = exit 0 stdout=\"\" stderr=\"usage: indexer apply --dir DIR\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/startup/watch-zero (0.23s)\n        main_test.go:127: process = exit 0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP_OR_HTTPS_URL --file PATH --interval POSITIVE_DURATION\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/startup/missing (0.23s)\n        main_test.go:127: process = exit 0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/apply-write-prefix (0.23s)\n        main_test.go:98: process = exit 0 stdout=\"\" stderr=\"write CSV row 2: rename /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandContractsapply-write-prefix39087584/001/.record-472217631 /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandContractsapply-write-prefix39087584/001/beta: file exists\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/watch-first-refresh-failure (0.23s)\n        main_test.go:144: process = exit 0 stdout=\"\" stderr=\"fetch records: HTTP status 503\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/startup/watch-path (0.01s)\n        main_test.go:127: process = exit 0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP_OR_HTTPS_URL --file PATH --interval POSITIVE_DURATION\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/apply-parse-prefix (0.01s)\n        main_test.go:88: process = exit 0 stdout=\"\" stderr=\"read CSV row 2: parse error on line 2, column 11: extraneous or missing \\\" in quoted-field\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/put-rejection (0.01s)\n        main_test.go:61: process = exit 0 stdout=\"\" stderr=\"invalid record\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/startup/watch-scheme (0.01s)\n        main_test.go:127: process = exit 0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP_OR_HTTPS_URL --file PATH --interval POSITIVE_DURATION\\n\"; want exit 2, no stdout, diagnostic only on failure\n    --- FAIL: TestCommandContracts/apply-rejected-prefix (0.01s)\n        main_test.go:78: process = exit 0 stdout=\"\" stderr=\"CSV row 2: invalid record\\n\"; want exit 2, no stdout, diagnostic only on failure\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t0.794s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.999
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

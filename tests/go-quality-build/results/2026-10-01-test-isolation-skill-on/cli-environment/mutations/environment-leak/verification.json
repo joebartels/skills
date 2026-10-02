@@ -1,0 +1,87 @@
+{
+  "semantic_id": "environment-leak",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "944e430e59253ed2f2f9e1307df4d23462bf0d8b08de0e4f84e88f2285add1de",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-t07_g4dl/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/showcfg\t0.448s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.614
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/cli-environment/mutations/environment-leak/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-t07_g4dl/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-t07_g4dl/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/showcfg\t0.179s [no tests to run]\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.329
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-t07_g4dl/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestLoadFromEnv (0.00s)\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_MODE = showcfg_test.envValue{value:\"read\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid/api?limit=10\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"ftp://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http:///api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://%zz\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_MODE = showcfg_test.envValue{value:\"delete\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_MODE = showcfg_test.envValue{value:\"Read\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    config_test.go:127: environment INDEXER_MODE = showcfg_test.envValue{value:\" read \", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n--- FAIL: TestEnvironmentRestoration (0.00s)\n    --- FAIL: TestEnvironmentRestoration/unset (0.00s)\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"read\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid/api?limit=10\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"ftp://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http:///api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://%zz\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"delete\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"Read\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\" read \", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    --- FAIL: TestEnvironmentRestoration/present_empty (0.00s)\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"read\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid/api?limit=10\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"ftp://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http:///api\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://%zz\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"delete\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"Read\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\" read \", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"\", present:true}\n    --- FAIL: TestEnvironmentRestoration/present_values (0.00s)\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"read\", present:true}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid/api?limit=10\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"ftp://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"http:///api\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://%zz\", present:true}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"\", present:true}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"delete\", present:true}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\"Read\", present:true}; want showcfg_test.envValue{value:\"write\", present:true}\n        config_test.go:149: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"\", present:false}; want showcfg_test.envValue{value:\"https://parent.invalid\", present:true}\n        config_test.go:149: environment INDEXER_MODE = showcfg_test.envValue{value:\" read \", present:true}; want showcfg_test.envValue{value:\"write\", present:true}\nFAIL\nFAIL\texample.com/showcfg\t0.354s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.476
+  },
+  "classification": "detected test-helper sabotage",
+  "controller_interpretation": "Removing helper restoration fails explicit parent presence/value assertions. Test-only diagnosis, not production LoadFromEnv regression or uplift."
+}

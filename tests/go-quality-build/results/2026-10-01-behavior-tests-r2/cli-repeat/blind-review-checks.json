@@ -1,0 +1,182 @@
+{
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "checks": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-1/candidate",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 10
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "env",
+        "GOOS",
+        "GOARCH",
+        "GOVERSION"
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-1/candidate",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "darwin\narm64\ngo1.26.5\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 10
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=90s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-1/candidate",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/ledgerload\t0.743s\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 110
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=45s",
+        "-run",
+        "^TestWritesBeforeReadingNextRow$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-1/verification-eager-input",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "--- FAIL: TestWritesBeforeReadingNextRow (0.00s)\n    batch_test.go:99: directory entries = [], want 1 files\nFAIL\nFAIL\texample.com/ledgerload\t0.234s\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "timeout_seconds": 65,
+      "purpose": "assertion-signal mutation",
+      "mutation": {
+        "file": "main.go",
+        "replace": "reader := csv.NewReader(input)",
+        "with": "data, err := io.ReadAll(input)\n\tif err != nil { return err }\n\treader := csv.NewReader(strings.NewReader(string(data)))"
+      }
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=45s",
+        "-run",
+        "^TestPartialWriteRetainsAcceptedReplacement$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-1/verification-truncate-replacement",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "--- FAIL: TestPartialWriteRetainsAcceptedReplacement (0.34s)\n    write_failure_unix_test.go:36: web = \"12\", <nil>; want \"7\\n\"\nFAIL\nFAIL\texample.com/ledgerload\t0.474s\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "timeout_seconds": 65,
+      "purpose": "assertion-signal mutation",
+      "mutation": {
+        "file": "main.go",
+        "replace": "writeRecord(*dir, row[0], strconv.Itoa(qty)+\"\\n\")",
+        "with": "os.WriteFile(filepath.Join(*dir, row[0]), []byte(strconv.Itoa(qty)+\"\\n\"), 0o644)"
+      }
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "env",
+        "GOFLAGS",
+        "GOWORK",
+        "CGO_ENABLED"
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-1/candidate",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "\n\n1\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 10
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "diff",
+        "-ru",
+        "original",
+        "candidate"
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-1",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "Only in candidate: batch_test.go\ndiff -ru original/main.go candidate/main.go\n--- original/main.go\t2026-10-01 17:38:18\n+++ candidate/main.go\t2026-10-01 22:33:25\n@@ -22,24 +22,49 @@\n \t\treturn fmt.Errorf(\"--dir required and no positional arguments allowed\")\n \t}\n \treader := csv.NewReader(input)\n-\trow, err := reader.Read()\n-\tif err == io.EOF {\n-\t\treturn nil\n+\treader.FieldsPerRecord = 2\n+\tfor record := 1; ; record++ {\n+\t\trow, err := reader.Read()\n+\t\tif err == io.EOF {\n+\t\t\treturn nil\n+\t\t}\n+\t\tif err != nil {\n+\t\t\treturn fmt.Errorf(\"read record %d: %w\", record, err)\n+\t\t}\n+\t\tif row[0] == \"\" || strings.ContainsAny(row[0], \"/\\\\\") || row[0] == \".\" || row[0] == \"..\" {\n+\t\t\treturn fmt.Errorf(\"record %d: invalid ID %q\", record, row[0])\n+\t\t}\n+\t\tqty, err := strconv.Atoi(row[1])\n+\t\tif err != nil || qty <= 0 {\n+\t\t\treturn fmt.Errorf(\"record %d: invalid quantity %q\", record, row[1])\n+\t\t}\n+\t\tif err := os.MkdirAll(*dir, 0o755); err != nil {\n+\t\t\treturn fmt.Errorf(\"record %d: create directory: %w\", record, err)\n+\t\t}\n+\t\tif err := writeRecord(*dir, row[0], strconv.Itoa(qty)+\"\\n\"); err != nil {\n+\t\t\treturn fmt.Errorf(\"record %d: write %q: %w\", record, row[0], err)\n+\t\t}\n \t}\n+}\n+\n+// Publish only complete records, so a failed replacement preserves earlier writes.\n+func writeRecord(dir, id, content string) error {\n+\tfile, err := os.CreateTemp(dir, \".ledgerload-*\")\n \tif err != nil {\n \t\treturn err\n \t}\n-\tif len(row) != 2 || row[0] == \"\" || strings.ContainsAny(row[0], \"/\\\\\") || row[0] == \".\" || row[0] == \"..\" {\n-\t\treturn fmt.Errorf(\"invalid record\")\n+\tdefer os.Remove(file.Name())\n+\tdefer file.Close()\n+\tif err := file.Chmod(0o644); err != nil {\n+\t\treturn err\n \t}\n-\tqty, err := strconv.Atoi(row[1])\n-\tif err != nil || qty <= 0 {\n-\t\treturn fmt.Errorf(\"invalid quantity\")\n+\tif _, err := file.WriteString(content); err != nil {\n+\t\treturn err\n \t}\n-\tif err := os.MkdirAll(*dir, 0o755); err != nil {\n+\tif err := file.Close(); err != nil {\n \t\treturn err\n \t}\n-\treturn os.WriteFile(filepath.Join(*dir, row[0]), []byte(strconv.Itoa(qty)+\"\\n\"), 0o644)\n+\treturn os.Rename(file.Name(), filepath.Join(dir, id))\n }\n \n func main() {\nOnly in candidate: write_failure_unix_test.go\n",
+      "stderr": "",
+      "exit_code": 1,
+      "timeout_seconds": 10
+    }
+  ],
+  "source_sha256_before": {
+    "original/README.md": "9b9cb46434771af31b656f3e2f5c608453676942d4e221684fa3db7e6ad44ea7",
+    "original/go.mod": "7cc2e99e3d21cbb24055f9067300830bf4072ba1b15cb5b00e4932cfcc2ebc0f",
+    "original/main.go": "f572b7f442337b89134ae9cf71bd1531c1a20c0da9121604d2690c947327f4be",
+    "original/main_test.go": "afbd7259a93b068a537f7961276a846776efe1aca9c284e3b6ef39138f1e44bd",
+    "candidate/README.md": "9b9cb46434771af31b656f3e2f5c608453676942d4e221684fa3db7e6ad44ea7",
+    "candidate/batch_test.go": "c70d57d1881da6e2b7c4aec9ab29a566fad866ec9732c22a97d6d32deb239c9a",
+    "candidate/go.mod": "7cc2e99e3d21cbb24055f9067300830bf4072ba1b15cb5b00e4932cfcc2ebc0f",
+    "candidate/main.go": "96cb436926cfa1de4bec4664e9c73471c6e21f8c63ab1c13a41e466d2272441a",
+    "candidate/main_test.go": "afbd7259a93b068a537f7961276a846776efe1aca9c284e3b6ef39138f1e44bd",
+    "candidate/write_failure_unix_test.go": "8285bb575c3a79c033439a510f52db5011a8aa95f18760e4ce8b438c53bc72aa"
+  },
+  "source_sha256_after": {
+    "original/README.md": "9b9cb46434771af31b656f3e2f5c608453676942d4e221684fa3db7e6ad44ea7",
+    "original/go.mod": "7cc2e99e3d21cbb24055f9067300830bf4072ba1b15cb5b00e4932cfcc2ebc0f",
+    "original/main.go": "f572b7f442337b89134ae9cf71bd1531c1a20c0da9121604d2690c947327f4be",
+    "original/main_test.go": "afbd7259a93b068a537f7961276a846776efe1aca9c284e3b6ef39138f1e44bd",
+    "candidate/README.md": "9b9cb46434771af31b656f3e2f5c608453676942d4e221684fa3db7e6ad44ea7",
+    "candidate/batch_test.go": "c70d57d1881da6e2b7c4aec9ab29a566fad866ec9732c22a97d6d32deb239c9a",
+    "candidate/go.mod": "7cc2e99e3d21cbb24055f9067300830bf4072ba1b15cb5b00e4932cfcc2ebc0f",
+    "candidate/main.go": "96cb436926cfa1de4bec4664e9c73471c6e21f8c63ab1c13a41e466d2272441a",
+    "candidate/main_test.go": "afbd7259a93b068a537f7961276a846776efe1aca9c284e3b6ef39138f1e44bd",
+    "candidate/write_failure_unix_test.go": "8285bb575c3a79c033439a510f52db5011a8aa95f18760e4ce8b438c53bc72aa"
+  },
+  "source_preserved": true
+}

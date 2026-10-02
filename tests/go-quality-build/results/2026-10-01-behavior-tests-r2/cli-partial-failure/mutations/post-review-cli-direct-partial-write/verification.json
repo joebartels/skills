@@ -1,0 +1,86 @@
+{
+  "semantic_id": "post-review-cli-direct-partial-write",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "4425740515dce53dad67654398dbb37be79ba75dd992a2355c862afbde924065",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-79qdheu9/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.846s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.023
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-r2/cli-partial-failure/mutations/post-review-cli-direct-partial-write/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-79qdheu9/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-79qdheu9/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.161s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.312
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-79qdheu9/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCLIWriteFailure (0.26s)\n    --- FAIL: TestCLIWriteFailure/first_write (0.15s)\n        main_fsize_test.go:37: directory entries = [- web], want only files map[] and directories []\n    --- FAIL: TestCLIWriteFailure/partial_duplicate_write (0.01s)\n        main_fsize_test.go:37: web = \"1234\", <nil>; want \"7\\n\"\nFAIL\nFAIL\texample.com/ledgerload\t0.761s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.878
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

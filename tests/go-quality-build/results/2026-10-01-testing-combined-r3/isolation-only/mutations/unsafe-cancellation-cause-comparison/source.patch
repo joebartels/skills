@@ -1,0 +1,10 @@
+--- a/serve.go
++++ b/serve.go
+@@ -22,6 +22,7 @@
+ 			return nil
+ 		}
+ 		if err := refresh(ctx); err != nil {
++ for probeErr := err; probeErr != nil; probeErr = errors.Unwrap(probeErr) { if probeErr == context.Cause(ctx) { break } }
+ 			if cancellationOnly(err, ctx.Err(), context.Cause(ctx)) {
+ 				return nil
+ 			}

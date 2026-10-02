@@ -1,0 +1,296 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "store_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "other_environment": "Inherited; omitted to avoid recording secrets.",
+    "process_timeout_seconds": 10,
+    "timed_out": false,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.007
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "store_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "other_environment": "Inherited; omitted to avoid recording secrets.",
+    "process_timeout_seconds": 10,
+    "timed_out": false,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.007
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "other_environment": "Inherited; omitted to avoid recording secrets.",
+    "process_timeout_seconds": 10,
+    "timed_out": false,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.008
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-m",
+      "-json"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "other_environment": "Inherited; omitted to avoid recording secrets.",
+    "process_timeout_seconds": 30,
+    "timed_out": false,
+    "stdout": "{\n\t\"Path\": \"example.com/filestore\",\n\t\"Main\": true,\n\t\"Dir\": \"/private/tmp/go-fresh-author-txf1lez2/task-1/module\",\n\t\"GoMod\": \"/private/tmp/go-fresh-author-txf1lez2/task-1/module/go.mod\",\n\t\"GoVersion\": \"1.22\"\n}\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.008
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "other_environment": "Inherited; omitted to avoid recording secrets.",
+    "process_timeout_seconds": 60,
+    "timed_out": false,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.083
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "other_environment": "Inherited; omitted to avoid recording secrets.",
+    "process_timeout_seconds": 60,
+    "timed_out": false,
+    "stdout": "=== RUN   TestStoreSerialChildren\n=== RUN   TestStoreSerialChildren/first\n=== RUN   TestStoreSerialChildren/replacement\n--- PASS: TestStoreSerialChildren (0.00s)\n    --- PASS: TestStoreSerialChildren/first (0.00s)\n    --- PASS: TestStoreSerialChildren/replacement (0.00s)\n=== RUN   TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/alpha\n=== PAUSE TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/beta\n=== PAUSE TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/empty\n=== PAUSE TestStoreIndependentInstances/instances/empty\n=== CONT  TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/beta/initial\n=== CONT  TestStoreIndependentInstances/instances/empty\n=== CONT  TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/empty/initial\n=== RUN   TestStoreIndependentInstances/instances/beta/replacement\n=== RUN   TestStoreIndependentInstances/instances/alpha/initial\n=== RUN   TestStoreIndependentInstances/instances/empty/replacement\n=== RUN   TestStoreIndependentInstances/instances/alpha/replacement\n--- PASS: TestStoreIndependentInstances (0.00s)\n    --- PASS: TestStoreIndependentInstances/instances (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/initial (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/empty (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/empty/initial (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/empty/replacement (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/initial (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\nPASS\nok  \texample.com/filestore\t1.188s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.362
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=30",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "other_environment": "Inherited; omitted to avoid recording secrets.",
+    "process_timeout_seconds": 60,
+    "timed_out": false,
+    "stdout": "ok  \texample.com/filestore\t1.208s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.351
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run=^TestStoreIndependentInstances$/^instances$/^alpha$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "other_environment": "Inherited; omitted to avoid recording secrets.",
+    "process_timeout_seconds": 60,
+    "timed_out": false,
+    "stdout": "ok  \texample.com/filestore\t1.160s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.309
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run=^TestStoreIndependentInstances$/^instances$/^alpha$/^initial$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "other_environment": "Inherited; omitted to avoid recording secrets.",
+    "process_timeout_seconds": 60,
+    "timed_out": false,
+    "stdout": "ok  \texample.com/filestore\t1.159s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.304
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run=^TestStoreIndependentInstances$/^instances$/^beta$/^replacement$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "other_environment": "Inherited; omitted to avoid recording secrets.",
+    "process_timeout_seconds": 60,
+    "timed_out": false,
+    "stdout": "ok  \texample.com/filestore\t1.160s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.302
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run=^TestStoreIndependentInstances$/^instances$/^empty$/^replacement$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "other_environment": "Inherited; omitted to avoid recording secrets.",
+    "process_timeout_seconds": 60,
+    "timed_out": false,
+    "stdout": "ok  \texample.com/filestore\t1.156s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.307
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-parallel=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "other_environment": "Inherited; omitted to avoid recording secrets.",
+    "process_timeout_seconds": 60,
+    "timed_out": false,
+    "stdout": "ok  \texample.com/filestore\t1.165s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.318
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-c",
+      "import shutil; print(shutil.which('staticcheck') or 'unavailable')"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "other_environment": "Inherited; omitted to avoid recording secrets.",
+    "process_timeout_seconds": 10,
+    "timed_out": false,
+    "stdout": "unavailable\n",
+    "stderr": "",
+    "exit_code": 0
+  }
+]

@@ -1,0 +1,87 @@
+{
+  "semantic_id": "cli-success-exit",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "50b5f1e3a5c58edccfb9a7f4d8e321739609fccde7c0c71c12972bc05b0eb908",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-footcfjk/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.926s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.124
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/cli-partial-failure/mutations/cli-success-exit/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-footcfjk/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-footcfjk/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.159s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.334
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-footcfjk/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCLIProcessContract (0.70s)\n    --- FAIL: TestCLIProcessContract/invalid_first_row (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"record 1 (\\\"bad\\\"): invalid quantity \\\"0\\\"\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/invalid_duplicate (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"record 2 (\\\"keep\\\"): invalid quantity \\\"-9\\\"\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/malformed_CSV_after_prefix (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"read record 2: record on line 2; parse error on line 3, column 9: extraneous or missing \\\" in quoted-field\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/missing_directory (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"--dir required and no positional arguments allowed\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/empty_directory_option (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"--dir required and no positional arguments allowed\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/positional_argument (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"--dir required and no positional arguments allowed\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/unknown_flag (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"flag provided but not defined: -unknown\\nUsage of ledgerload:\\n  -dir string\\n    \\trecord directory\\nflag provided but not defined: -unknown\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/missing_flag_value (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"flag needs an argument: -dir\\nUsage of ledgerload:\\n  -dir string\\n    \\trecord directory\\nflag needs an argument: -dir\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/file_failure_after_prefix (0.00s)\n        main_test.go:184: process = exit 0, stdout \"\", stderr \"write record 2 (\\\"blocked\\\"): rename /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIProcessContractfile_failure_after_prefix652712217/001/.ledgerload-3251342503 /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIProcessContractfile_failure_after_prefix652712217/001/blocked: file exists\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/directory_creation_failure (0.00s)\n        main_test.go:192: process = exit 0, stdout \"\", stderr \"create record directory: mkdir /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIProcessContractdirectory_creation_failure3127686137/001/records: not a directory\\n\"; want exit 2 and empty stdout\n--- FAIL: TestCLIPartialWriteRetainsAcceptedDuplicate (0.32s)\n    write_failure_unix_test.go:38: limited executable = <nil>; stderr \"write record 2 (\\\"keep\\\"): write /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIPartialWriteRetainsAcceptedDuplicate2067142961/002/.ledgerload-2393419305: file too large\\n\"\nFAIL\nFAIL\texample.com/ledgerload\t1.287s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.401
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "Actual executable unexpectedly returns success on invalid input/write errors."
+}

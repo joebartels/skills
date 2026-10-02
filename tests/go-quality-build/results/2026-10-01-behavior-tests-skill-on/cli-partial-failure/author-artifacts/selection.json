@@ -1,0 +1,69 @@
+{
+  "offered_guidance_names": [
+    "go-api-contracts",
+    "go-behavior-tests",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries"
+  ],
+  "decisions": [
+    {
+      "name": "go-api-contracts",
+      "selected": true,
+      "reason": "The supported external CLI/file/process contract changes from one record to an ordered batch; preserve single-record bytes, arguments, exit statuses, streams, and accepted-prefix semantics.",
+      "opened_paths": [
+        "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-api-contracts/SKILL.md"
+      ]
+    },
+    {
+      "name": "go-behavior-tests",
+      "selected": true,
+      "reason": "Meaningful batch behavior and requested success/failure tests require independent persisted-file assertions, retained prefixes, rejected/later effects, actual executable outcomes, and a genuine partial-write duplicate failure.",
+      "opened_paths": [
+        "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-behavior-tests/SKILL.md",
+        "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-behavior-tests/references/behavior-observations.md"
+      ]
+    },
+    {
+      "name": "go-core-style",
+      "selected": true,
+      "reason": "Writing Go implementation and tests; retain standard-library dependencies, Go 1.22-compatible APIs, direct error handling, and formatting.",
+      "opened_paths": [
+        "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-core-style/SKILL.md"
+      ]
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "selected": true,
+      "reason": "Atomic record publication introduces owned temporary-file lifetime and cleanup. Use concrete os.File operations rather than a mock-only storage interface.",
+      "opened_paths": [
+        "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-interfaces-and-composition/SKILL.md"
+      ]
+    },
+    {
+      "name": "go-package-boundaries",
+      "selected": false,
+      "reason": "The existing main package keeps its CLI parsing and filesystem responsibility; no package creation, relocation, or import-direction change.",
+      "opened_paths": []
+    }
+  ],
+  "opened_skill_reference_paths": [
+    "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-behavior-tests/SKILL.md",
+    "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-behavior-tests/references/behavior-observations.md",
+    "/private/tmp/go-testing-author-z3h6ca5c/guidance/go-interfaces-and-composition/SKILL.md"
+  ],
+  "opened_task_files": [
+    "/private/tmp/go-testing-author-z3h6ca5c/cli-partial-failure/README.md",
+    "/private/tmp/go-testing-author-z3h6ca5c/cli-partial-failure/main.go",
+    "/private/tmp/go-testing-author-z3h6ca5c/cli-partial-failure/main_test.go",
+    "/private/tmp/go-testing-author-z3h6ca5c/cli-partial-failure/go.mod"
+  ],
+  "changed_task_files": [
+    "/private/tmp/go-testing-author-z3h6ca5c/cli-partial-failure/README.md",
+    "/private/tmp/go-testing-author-z3h6ca5c/cli-partial-failure/main.go",
+    "/private/tmp/go-testing-author-z3h6ca5c/cli-partial-failure/main_test.go",
+    "/private/tmp/go-testing-author-z3h6ca5c/cli-partial-failure/write_failure_unix_test.go"
+  ]
+}

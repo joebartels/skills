@@ -1,0 +1,105 @@
+package filestore_test
+
+import (
+	"testing"
+
+	"example.com/filestore"
+)
+
+func TestStoreSerialChildren(t *testing.T) {
+	store := filestore.New(t.TempDir())
+	for _, value := range []string{"first", "replacement"} {
+		t.Run(value, func(t *testing.T) {
+			if err := store.Put("same-key", value); err != nil {
+				t.Fatal(err)
+			}
+			got, err := store.Get("same-key")
+			if err != nil || got != value {
+				t.Fatalf("Get = %q, %v; want %q", got, err, value)
+			}
+		})
+	}
+}
+
+func TestStoreIndependentInstances(t *testing.T) {
+	type valueCase struct {
+		name  string
+		value string
+	}
+	type instanceCase struct {
+		name      string
+		store     *filestore.Store
+		values    []valueCase
+		lastValue string
+		wrote     bool
+	}
+	cases := []instanceCase{
+		{
+			name:  "alpha",
+			store: filestore.New(t.TempDir()),
+			values: []valueCase{
+				{name: "initial", value: "alpha first"},
+				{name: "replacement", value: "alpha replacement"},
+			},
+		},
+		{
+			name:  "beta",
+			store: filestore.New(t.TempDir()),
+			values: []valueCase{
+				{name: "initial", value: "beta first"},
+				{name: "replacement", value: "beta replacement\nwith another line"},
+			},
+		},
+		{
+			name:  "empty",
+			store: filestore.New(t.TempDir()),
+			values: []valueCase{
+				{name: "initial", value: "before empty"},
+				{name: "replacement", value: ""},
+			},
+		},
+	}
+
+	// The group waits for parallel instances before the parent reads their files.
+	// Roots belong to the parent so they survive the group and these final checks.
+	t.Run("instances", func(t *testing.T) {
+		for i := range cases {
+			tc := &cases[i]
+			t.Run(tc.name, func(t *testing.T) {
+				t.Parallel()
+				// Replacements within one root stay serial.
+				for _, value := range tc.values {
+					t.Run(value.name, func(t *testing.T) {
+						if err := tc.store.Put("same-key", value.value); err != nil {
+							t.Fatalf("Put: %v", err)
+						}
+						tc.lastValue = value.value
+						tc.wrote = true
+						got, err := tc.store.Get("same-key")
+						if err != nil {
+							t.Fatalf("Get: %v", err)
+						}
+						if got != value.value {
+							t.Fatalf("Get = %q; want %q", got, value.value)
+						}
+					})
+				}
+			})
+		}
+	})
+
+	for _, tc := range cases {
+		// A focused -run can omit instances or individual value cases.
+		if !tc.wrote {
+			continue
+		}
+		got, err := tc.store.Get("same-key")
+		if err != nil {
+			t.Errorf("%s: Get after children finish: %v", tc.name, err)
+			continue
+		}
+		if got != tc.lastValue {
+			t.Errorf("%s: Get after children finish = %q; want %q", tc.name, got, tc.lastValue)
+		}
+	}
+}

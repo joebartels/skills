@@ -1,0 +1,77 @@
+--- /dev/null
++++ b/reviewer_ownership_test.go
+@@ -0,0 +1,74 @@
++package indexer_test
++
++import (
++	"context"
++	"errors"
++	"io"
++	"net/http"
++	"net/http/cookiejar"
++	"net/url"
++	"path/filepath"
++	"strings"
++	"testing"
++	"time"
++
++	"example.com/indexer"
++)
++
++type ownershipTransport struct {
++	calls, idleCloses, bodyCloses int
++}
++
++func (tr *ownershipTransport) RoundTrip(r *http.Request) (*http.Response, error) {
++	tr.calls++
++	if cookie, err := r.Cookie("session"); err != nil || cookie.Value != "borrowed" {
++		return nil, errors.New("borrowed cookie jar was not used")
++	}
++	return &http.Response{StatusCode: 200, Header: make(http.Header), Body: &ownershipBody{Reader: strings.NewReader("[]"), closes: &tr.bodyCloses}}, nil
++}
++
++func (tr *ownershipTransport) CloseIdleConnections() { tr.idleCloses++ }
++
++type ownershipBody struct {
++	io.Reader
++	closes *int
++}
++
++func (body *ownershipBody) Close() error { *body.closes++; return nil }
++
++func TestReviewBorrowedClientRemainsUsable(t *testing.T) {
++	endpoint, err := url.Parse("http://records.example")
++	if err != nil { t.Fatal(err) }
++	jar, err := cookiejar.New(nil)
++	if err != nil { t.Fatal(err) }
++	jar.SetCookies(endpoint, []*http.Cookie{{Name: "session", Value: "borrowed"}})
++	transport := &ownershipTransport{}
++	client := &http.Client{Transport: transport, Jar: jar}
++	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
++	defer cancel()
++	path := filepath.Join(t.TempDir(), "records.json")
++	for n := 0; n < 2; n++ {
++		if err := indexer.Refresh(ctx, client, endpoint.String(), path); err != nil { t.Fatal(err) }
++	}
++	if transport.calls != 2 || transport.bodyCloses != 2 || transport.idleCloses != 0 {
++		t.Fatalf("requests=%d body closes=%d idle closes=%d; want 2, 2, 0", transport.calls, transport.bodyCloses, transport.idleCloses)
++	}
++	assertFile(t, path, "[]\n")
++}
++
++func TestReviewSuppliedClientTimeoutIsRetained(t *testing.T) {
++	client := &http.Client{Timeout: 25*time.Millisecond, Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
++		<-r.Context().Done()
++		return nil, r.Context().Err()
++	})}
++	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
++	defer cancel()
++	path := filepath.Join(t.TempDir(), "records.json")
++	writeFile(t, path, "prior")
++	started := time.Now()
++	err := indexer.Refresh(ctx, client, "http://records.example", path)
++	if !errors.Is(err, context.DeadlineExceeded) || time.Since(started) >= time.Second {
++		t.Fatalf("Refresh=%v elapsed=%s; supplied client deadline was not honored", err, time.Since(started))
++	}
++	assertFile(t, path, "prior")
++}

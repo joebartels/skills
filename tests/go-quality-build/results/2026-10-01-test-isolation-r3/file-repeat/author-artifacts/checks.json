@@ -1,0 +1,230 @@
+{
+  "checks": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-6/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "process_timeout_seconds": 15,
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-w",
+        "store_test.go"
+      ],
+      "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-6/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "process_timeout_seconds": 15,
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-l",
+        "store_test.go"
+      ],
+      "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-6/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "process_timeout_seconds": 15,
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-6/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "process_timeout_seconds": 120,
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-v",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-6/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "process_timeout_seconds": 120,
+      "stdout": "=== RUN   TestStoreSerialChildren\n=== RUN   TestStoreSerialChildren/first\n=== RUN   TestStoreSerialChildren/replacement\n--- PASS: TestStoreSerialChildren (0.00s)\n    --- PASS: TestStoreSerialChildren/first (0.00s)\n    --- PASS: TestStoreSerialChildren/replacement (0.00s)\n=== RUN   TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/alpha\n=== PAUSE TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/beta\n=== PAUSE TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/gamma\n=== PAUSE TestStoreIndependentInstances/instances/gamma\n=== CONT  TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/alpha/initial\n=== CONT  TestStoreIndependentInstances/instances/gamma\n=== CONT  TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/gamma/initial\n=== RUN   TestStoreIndependentInstances/instances/beta/initial\n=== RUN   TestStoreIndependentInstances/instances/alpha/repeat\n=== RUN   TestStoreIndependentInstances/instances/beta/repeat\n=== RUN   TestStoreIndependentInstances/instances/alpha/replacement\n=== RUN   TestStoreIndependentInstances/instances/gamma/repeat\n=== RUN   TestStoreIndependentInstances/instances/beta/replacement\n=== RUN   TestStoreIndependentInstances/instances/gamma/replacement\n--- PASS: TestStoreIndependentInstances (0.00s)\n    --- PASS: TestStoreIndependentInstances/instances (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/initial (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/repeat (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/initial (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/repeat (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/gamma (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/initial (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/repeat (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/replacement (0.00s)\nPASS\nok  \texample.com/filestore\t0.250s\n",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-shuffle=on",
+        "-count=20",
+        "-parallel=3",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-6/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "process_timeout_seconds": 180,
+      "stdout": "ok  \texample.com/filestore\t1.234s\n",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-count=10",
+        "-timeout=30s",
+        "-run=^TestStoreSerialChildren$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-6/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "process_timeout_seconds": 120,
+      "stdout": "ok  \texample.com/filestore\t1.176s\n",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-v",
+        "-timeout=30s",
+        "-run=^TestStoreIndependentInstances$/^instances$/^alpha$/^initial$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-6/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "process_timeout_seconds": 120,
+      "stdout": "=== RUN   TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/alpha\n=== PAUSE TestStoreIndependentInstances/instances/alpha\n=== CONT  TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/alpha/initial\n--- PASS: TestStoreIndependentInstances (0.00s)\n    --- PASS: TestStoreIndependentInstances/instances (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/initial (0.00s)\nPASS\nok  \texample.com/filestore\t1.162s\n",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-v",
+        "-timeout=30s",
+        "-run=^TestStoreIndependentInstances$/^instances$/^alpha$/^repeat$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-6/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "process_timeout_seconds": 120,
+      "stdout": "=== RUN   TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/alpha\n=== PAUSE TestStoreIndependentInstances/instances/alpha\n=== CONT  TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/alpha/repeat\n--- PASS: TestStoreIndependentInstances (0.00s)\n    --- PASS: TestStoreIndependentInstances/instances (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/repeat (0.00s)\nPASS\nok  \texample.com/filestore\t1.169s\n",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-v",
+        "-timeout=30s",
+        "-run=^TestStoreIndependentInstances$/^instances$/^beta$/^replacement$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-6/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "process_timeout_seconds": 120,
+      "stdout": "=== RUN   TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/beta\n=== PAUSE TestStoreIndependentInstances/instances/beta\n=== CONT  TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/beta/replacement\n--- PASS: TestStoreIndependentInstances (0.00s)\n    --- PASS: TestStoreIndependentInstances/instances (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\nPASS\nok  \texample.com/filestore\t1.167s\n",
+      "stderr": "",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-shuffle=on",
+        "-count=20",
+        "-timeout=30s",
+        "-run=^TestStoreIndependentInstances$/^instances$/^gamma$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-6/module",
+      "environment": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "process_timeout_seconds": 120,
+      "stdout": "ok  \texample.com/filestore\t1.205s\n",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ],
+  "staticcheck_available": false
+}

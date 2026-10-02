@@ -1,0 +1,254 @@
+[
+  {
+    "name": "go-version",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "exit_code": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": ""
+  },
+  {
+    "name": "baseline",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "=== RUN   TestCancellation\n--- PASS: TestCancellation (0.01s)\n=== RUN   TestCallbackError\n--- PASS: TestCallbackError (0.00s)\nPASS\nok  \texample.com/poller\t1.190s\n",
+    "stderr": ""
+  },
+  {
+    "name": "staticcheck-availability",
+    "command": [
+      "shutil.which",
+      "staticcheck"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "name": "format",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-s",
+      "-w",
+      "poll_test.go"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "name": "tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-timeout=30s",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "=== RUN   TestCancellation\n=== PAUSE TestCancellation\n=== RUN   TestCallbackError\n=== PAUSE TestCallbackError\n=== RUN   TestAlreadyCanceled\n=== PAUSE TestAlreadyCanceled\n=== RUN   TestInvalidInterval\n=== PAUSE TestInvalidInterval\n=== RUN   TestRecurrence\n=== PAUSE TestRecurrence\n=== RUN   TestCancellationDuringCallbackCleanup\n=== PAUSE TestCancellationDuringCallbackCleanup\n=== RUN   TestCallbackErrorConcurrentWithCancellation\n=== PAUSE TestCallbackErrorConcurrentWithCancellation\n=== RUN   TestFixtureTeardown\n=== PAUSE TestFixtureTeardown\n=== RUN   TestIndependentInvocations\n=== PAUSE TestIndependentInvocations\n=== CONT  TestCancellation\n=== CONT  TestCallbackErrorConcurrentWithCancellation\n=== CONT  TestIndependentInvocations\n=== CONT  TestFixtureTeardown\n=== RUN   TestIndependentInvocations/alpha\n=== CONT  TestCallbackError\n=== PAUSE TestIndependentInvocations/alpha\n=== CONT  TestRecurrence\n=== CONT  TestAlreadyCanceled\n=== CONT  TestInvalidInterval\n=== CONT  TestCancellationDuringCallbackCleanup\n=== RUN   TestInvalidInterval/0s\n--- PASS: TestCancellation (0.00s)\n=== RUN   TestIndependentInvocations/beta\n=== PAUSE TestInvalidInterval/0s\n--- PASS: TestCallbackErrorConcurrentWithCancellation (0.00s)\n=== PAUSE TestIndependentInvocations/beta\n--- PASS: TestCallbackError (0.00s)\n=== CONT  TestIndependentInvocations/alpha\n=== CONT  TestIndependentInvocations/beta\n--- PASS: TestAlreadyCanceled (0.00s)\n=== RUN   TestInvalidInterval/-1ns\n=== PAUSE TestInvalidInterval/-1ns\n=== CONT  TestInvalidInterval/-1ns\n=== CONT  TestInvalidInterval/0s\n--- PASS: TestInvalidInterval (0.00s)\n    --- PASS: TestInvalidInterval/-1ns (0.00s)\n    --- PASS: TestInvalidInterval/0s (0.00s)\n--- PASS: TestFixtureTeardown (0.00s)\n--- PASS: TestIndependentInvocations (0.00s)\n    --- PASS: TestIndependentInvocations/alpha (0.00s)\n    --- PASS: TestIndependentInvocations/beta (0.00s)\n--- PASS: TestCancellationDuringCallbackCleanup (0.02s)\n--- PASS: TestRecurrence (0.16s)\nPASS\nok  \texample.com/poller\t1.382s\n",
+    "stderr": ""
+  },
+  {
+    "name": "vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "name": "final-format",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-s",
+      "-w",
+      "poll_test.go"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "name": "focused-beta",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-run=^TestIndependentInvocations$/^beta$",
+      "-count=5",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "=== RUN   TestIndependentInvocations\n=== PAUSE TestIndependentInvocations\n=== CONT  TestIndependentInvocations\n=== RUN   TestIndependentInvocations/beta\n=== PAUSE TestIndependentInvocations/beta\n=== CONT  TestIndependentInvocations/beta\n--- PASS: TestIndependentInvocations (0.00s)\n    --- PASS: TestIndependentInvocations/beta (0.00s)\n=== RUN   TestIndependentInvocations\n=== PAUSE TestIndependentInvocations\n=== CONT  TestIndependentInvocations\n=== RUN   TestIndependentInvocations/beta\n=== PAUSE TestIndependentInvocations/beta\n=== CONT  TestIndependentInvocations/beta\n--- PASS: TestIndependentInvocations (0.00s)\n    --- PASS: TestIndependentInvocations/beta (0.00s)\n=== RUN   TestIndependentInvocations\n=== PAUSE TestIndependentInvocations\n=== CONT  TestIndependentInvocations\n=== RUN   TestIndependentInvocations/beta\n=== PAUSE TestIndependentInvocations/beta\n=== CONT  TestIndependentInvocations/beta\n--- PASS: TestIndependentInvocations (0.00s)\n    --- PASS: TestIndependentInvocations/beta (0.00s)\n=== RUN   TestIndependentInvocations\n=== PAUSE TestIndependentInvocations\n=== CONT  TestIndependentInvocations\n=== RUN   TestIndependentInvocations/beta\n=== PAUSE TestIndependentInvocations/beta\n=== CONT  TestIndependentInvocations/beta\n--- PASS: TestIndependentInvocations (0.00s)\n    --- PASS: TestIndependentInvocations/beta (0.00s)\n=== RUN   TestIndependentInvocations\n=== PAUSE TestIndependentInvocations\n=== CONT  TestIndependentInvocations\n=== RUN   TestIndependentInvocations/beta\n=== PAUSE TestIndependentInvocations/beta\n=== CONT  TestIndependentInvocations/beta\n--- PASS: TestIndependentInvocations (0.00s)\n    --- PASS: TestIndependentInvocations/beta (0.00s)\nPASS\nok  \texample.com/poller\t1.392s\n",
+    "stderr": ""
+  },
+  {
+    "name": "focused-alpha",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-run=^TestIndependentInvocations$/^alpha$",
+      "-count=5",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "=== RUN   TestIndependentInvocations\n=== PAUSE TestIndependentInvocations\n=== CONT  TestIndependentInvocations\n=== RUN   TestIndependentInvocations/alpha\n=== PAUSE TestIndependentInvocations/alpha\n=== CONT  TestIndependentInvocations/alpha\n--- PASS: TestIndependentInvocations (0.00s)\n    --- PASS: TestIndependentInvocations/alpha (0.00s)\n=== RUN   TestIndependentInvocations\n=== PAUSE TestIndependentInvocations\n=== CONT  TestIndependentInvocations\n=== RUN   TestIndependentInvocations/alpha\n=== PAUSE TestIndependentInvocations/alpha\n=== CONT  TestIndependentInvocations/alpha\n--- PASS: TestIndependentInvocations (0.00s)\n    --- PASS: TestIndependentInvocations/alpha (0.00s)\n=== RUN   TestIndependentInvocations\n=== PAUSE TestIndependentInvocations\n=== CONT  TestIndependentInvocations\n=== RUN   TestIndependentInvocations/alpha\n=== PAUSE TestIndependentInvocations/alpha\n=== CONT  TestIndependentInvocations/alpha\n--- PASS: TestIndependentInvocations (0.00s)\n    --- PASS: TestIndependentInvocations/alpha (0.00s)\n=== RUN   TestIndependentInvocations\n=== PAUSE TestIndependentInvocations\n=== CONT  TestIndependentInvocations\n=== RUN   TestIndependentInvocations/alpha\n=== PAUSE TestIndependentInvocations/alpha\n=== CONT  TestIndependentInvocations/alpha\n--- PASS: TestIndependentInvocations (0.00s)\n    --- PASS: TestIndependentInvocations/alpha (0.00s)\n=== RUN   TestIndependentInvocations\n=== PAUSE TestIndependentInvocations\n=== CONT  TestIndependentInvocations\n=== RUN   TestIndependentInvocations/alpha\n=== PAUSE TestIndependentInvocations/alpha\n=== CONT  TestIndependentInvocations/alpha\n--- PASS: TestIndependentInvocations (0.00s)\n    --- PASS: TestIndependentInvocations/alpha (0.00s)\nPASS\nok  \texample.com/poller\t1.494s\n",
+    "stderr": ""
+  },
+  {
+    "name": "final-vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "name": "format-check",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "poll.go",
+      "poll_test.go"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "name": "focused-recurrence",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-run=^TestRecurrence$",
+      "-count=5",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "=== RUN   TestRecurrence\n=== PAUSE TestRecurrence\n=== CONT  TestRecurrence\n--- PASS: TestRecurrence (0.16s)\n=== RUN   TestRecurrence\n=== PAUSE TestRecurrence\n=== CONT  TestRecurrence\n--- PASS: TestRecurrence (0.16s)\n=== RUN   TestRecurrence\n=== PAUSE TestRecurrence\n=== CONT  TestRecurrence\n--- PASS: TestRecurrence (0.16s)\n=== RUN   TestRecurrence\n=== PAUSE TestRecurrence\n=== CONT  TestRecurrence\n--- PASS: TestRecurrence (0.16s)\n=== RUN   TestRecurrence\n=== PAUSE TestRecurrence\n=== CONT  TestRecurrence\n--- PASS: TestRecurrence (0.16s)\nPASS\nok  \texample.com/poller\t2.007s\n",
+    "stderr": ""
+  },
+  {
+    "name": "focused-concurrent",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-run=^TestConcurrentInvocations$",
+      "-count=5",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "=== RUN   TestConcurrentInvocations\n=== PAUSE TestConcurrentInvocations\n=== CONT  TestConcurrentInvocations\n--- PASS: TestConcurrentInvocations (0.02s)\n=== RUN   TestConcurrentInvocations\n=== PAUSE TestConcurrentInvocations\n=== CONT  TestConcurrentInvocations\n--- PASS: TestConcurrentInvocations (0.02s)\n=== RUN   TestConcurrentInvocations\n=== PAUSE TestConcurrentInvocations\n=== CONT  TestConcurrentInvocations\n--- PASS: TestConcurrentInvocations (0.02s)\n=== RUN   TestConcurrentInvocations\n=== PAUSE TestConcurrentInvocations\n=== CONT  TestConcurrentInvocations\n--- PASS: TestConcurrentInvocations (0.02s)\n=== RUN   TestConcurrentInvocations\n=== PAUSE TestConcurrentInvocations\n=== CONT  TestConcurrentInvocations\n--- PASS: TestConcurrentInvocations (0.02s)\nPASS\nok  \texample.com/poller\t1.253s\n",
+    "stderr": ""
+  },
+  {
+    "name": "final-suite-race-shuffle-25",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=25",
+      "-timeout=30s",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/poller\t5.373s\n",
+    "stderr": ""
+  },
+  {
+    "name": "production-and-go-minimum-preservation",
+    "kind": "exact-text-comparison-to-initial-read",
+    "inputs": [
+      "/private/tmp/go-testing-author-iu16ahig/worker-timing/poll.go",
+      "/private/tmp/go-testing-author-iu16ahig/worker-timing/go.mod"
+    ],
+    "exit_code": 0,
+    "stdout": "poll.go and go.mod match initial contents; Go minimum remains 1.22\n",
+    "stderr": ""
+  }
+]

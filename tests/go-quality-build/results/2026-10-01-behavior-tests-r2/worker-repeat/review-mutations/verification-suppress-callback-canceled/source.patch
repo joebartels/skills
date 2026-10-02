@@ -1,0 +1,10 @@
+--- a/worker.go
++++ b/worker.go
+@@ -11,6 +11,7 @@
+ 			return nil
+ 		}
+ 		if err := sweep(ctx); err != nil {
++			if ctx.Err() != nil { return nil }
+ 			return err
+ 		}
+ 

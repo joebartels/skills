@@ -1,0 +1,27 @@
+--- a/main.go
++++ b/main.go
+@@ -54,23 +54,7 @@
+ // Publish only a complete record, so a failed duplicate cannot truncate an
+ // earlier accepted value. The temporary file stays on the same filesystem.
+ func writeRecord(dir, id string, quantity int) error {
+-	file, err := os.CreateTemp(dir, ".ledgerload-*")
+-	if err != nil {
+-		return err
+-	}
+-	defer os.Remove(file.Name())
+-	if err := file.Chmod(0o644); err != nil {
+-		file.Close()
+-		return err
+-	}
+-	if _, err := file.WriteString(strconv.Itoa(quantity) + "\n"); err != nil {
+-		file.Close()
+-		return err
+-	}
+-	if err := file.Close(); err != nil {
+-		return err
+-	}
+-	return os.Rename(file.Name(), filepath.Join(dir, id))
++	return os.WriteFile(filepath.Join(dir, id), []byte(strconv.Itoa(quantity)+"\n"), 0o644)
+ }
+ 
+ func main() {

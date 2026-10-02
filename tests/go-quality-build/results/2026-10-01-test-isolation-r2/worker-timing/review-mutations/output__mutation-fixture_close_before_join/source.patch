@@ -1,0 +1,43 @@
+--- a/poll_test.go
++++ b/poll_test.go
+@@ -401,19 +401,7 @@
+ 		}
+ 		path = fixture.Name()
+ 		var run *pollRun
+-		t.Cleanup(func() {
+-			if run != nil {
+-				select {
+-				case <-run.finished:
+-				default:
+-					t.Error("Poll still running; fixture cannot safely close")
+-					return
+-				}
+-			}
+-			if err := fixture.Close(); err != nil {
+-				t.Errorf("close fixture: %v", err)
+-			}
+-		})
++
+ 		ctx, cancel := context.WithCancel(context.Background())
+ 		started := make(chan struct{})
+ 		run = startPoll(t, ctx, cancel, time.Hour, func(context.Context) error {
+@@ -423,6 +411,19 @@
+ 			close(cleanupFinished)
+ 			return callbackErr
+ 		})
++		t.Cleanup(func() {
++			if run != nil {
++				select {
++				case <-run.finished:
++				default:
++					t.Error("Poll still running; fixture cannot safely close")
++					return
++				}
++			}
++			if err := fixture.Close(); err != nil {
++				t.Errorf("close fixture: %v", err)
++			}
++		})
+ 		waitEvent(t, started, "callback borrowing fixture")
+ 		// Return with the callback active. Cleanup itself must cancel and join
+ 		// it before closing the file or removing its directory.

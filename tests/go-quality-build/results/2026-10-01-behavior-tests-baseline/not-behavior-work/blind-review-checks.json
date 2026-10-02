@@ -1,0 +1,127 @@
+[
+  {
+    "name": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": null,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "name": "platform",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION"
+    ],
+    "cwd": null,
+    "stdout": "darwin\narm64\ngo1.26.5\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "name": "changeset",
+    "command": [
+      "rtk",
+      "proxy",
+      "diff",
+      "-ru",
+      "/private/tmp/go-independent-review-txv7p7j0/original",
+      "/private/tmp/go-independent-review-txv7p7j0/candidate"
+    ],
+    "cwd": null,
+    "stdout": "diff -ru /private/tmp/go-independent-review-txv7p7j0/original/format.go /private/tmp/go-independent-review-txv7p7j0/candidate/format.go\n--- /private/tmp/go-independent-review-txv7p7j0/original/format.go\t2026-10-01 17:39:57\n+++ /private/tmp/go-independent-review-txv7p7j0/candidate/format.go\t2026-10-01 17:51:02\n@@ -1,4 +1,4 @@\n package label\n \n-// Format formats the string to formatted label.\n+// Format returns s enclosed in square brackets.\n func Format(s string) string { return \"[\" + s + \"]\" }\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "name": "original tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-txv7p7j0/original",
+    "stdout": "ok  \texample.com/label\t0.180s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "name": "candidate tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-txv7p7j0/candidate",
+    "stdout": "ok  \texample.com/label\t0.169s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "name": "candidate formatting",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "format.go",
+      "format_test.go"
+    ],
+    "cwd": "/private/tmp/go-independent-review-txv7p7j0/candidate",
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "name": "assertion negative control",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-txv7p7j0/verification-mutant",
+    "stdout": "--- FAIL: TestFormat (0.00s)\n    format_test.go:7: Format = \"[web)\"\nFAIL\nFAIL\texample.com/label\t0.158s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  }
+]

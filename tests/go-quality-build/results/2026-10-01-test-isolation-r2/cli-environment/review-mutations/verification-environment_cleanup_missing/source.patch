@@ -1,0 +1,11 @@
+--- a/config_test.go
++++ b/config_test.go
+@@ -105,7 +105,7 @@
+ func setEnvironment(t *testing.T, key string, value envValue) {
+ 	t.Helper()
+ 	// Setenv registers restoration of both presence and value before Unsetenv.
+-	t.Setenv(key, value.value)
++	if err := os.Setenv(key, value.value); err != nil { t.Fatal(err) }
+ 	if !value.present {
+ 		if err := os.Unsetenv(key); err != nil {
+ 			t.Fatalf("unset %s: %v", key, err)

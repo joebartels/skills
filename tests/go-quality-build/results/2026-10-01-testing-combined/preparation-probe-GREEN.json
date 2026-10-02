@@ -1,0 +1,76 @@
+{
+  "scope": "Original controller-only preparation proof; never supplied to authors; not a blind candidate, assisted repair or skill uplift",
+  "checks": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/indexer-controller-green-_ok5_fs9",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/indexer\t0.835s\nok  \texample.com/indexer/cmd/indexer\t0.392s\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 1.0809607920236886
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-shuffle=42",
+        "-count=10",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/indexer-controller-green-_ok5_fs9",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/indexer\t6.797s\nok  \texample.com/indexer/cmd/indexer\t1.370s\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 7.110155291040428
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/indexer-controller-green-_ok5_fs9",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.12948137510102242
+    }
+  ],
+  "source_sha256": {
+    "index.go": "03a69a9fe8871ebe962c7af69c14ac307d54f805f4bd2f042b8a145d6bcd0543",
+    "go.mod": "6ad6c1c685b8d95d2f5e38dff9fd806cbca1f647c684b5823237f6d260b17b56",
+    "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+    "serve.go": "b25bd5e6beae8f98e67a97dddb2c8bbbfb48ca8b1bf2377c038dbac5f5d8e99e",
+    "README.md": "4c64d29f9e5586a08f7f6a6d74ba34e723299125c267a23ccacc3c42c2ecc44c",
+    "refresh.go": "1318d56f820a8310fd2eee4a88a603b37cdc167f315238209b90bd1679742ea6",
+    "controller_contract_test.go": "6273968c6020198fbc89a6590116e4da5bbc140da95600c93d185acbe35d0389",
+    "cmd/indexer/main.go": "eded208925846a08ede0ccb8d45f72c59d64707afd22c1bc4f79d050de369108",
+    "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f"
+  }
+}

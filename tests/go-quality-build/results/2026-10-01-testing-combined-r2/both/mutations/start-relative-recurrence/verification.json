@@ -1,0 +1,86 @@
+{
+  "semantic_id": "start-relative-recurrence",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "3bd649aa3acaed58dcc45b9592c8aa8ea0cff735fe5de4f20a1f77f2102a8db2",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-u0maxugq/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.528s\nok  \texample.com/indexer/cmd/indexer\t1.031s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.319
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r2/both/mutations/start-relative-recurrence/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-u0maxugq/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.019
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-u0maxugq/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.197s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.576s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.838
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-u0maxugq/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestServeRecursAfterCompletionWithoutOverlap (0.08s)\n    serve_test.go:208: next callback after 4.25\u00b5s; want at least 40ms from completion\nFAIL\nFAIL\texample.com/indexer\t0.295s\nok  \texample.com/indexer/cmd/indexer\t1.174s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.39
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

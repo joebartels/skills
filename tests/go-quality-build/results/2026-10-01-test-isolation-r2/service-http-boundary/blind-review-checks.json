@@ -1,0 +1,296 @@
+[
+  {
+    "label": "runtime",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.01
+  },
+  {
+    "label": "platform",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION",
+      "GOTOOLCHAIN"
+    ],
+    "cwd": "/private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "darwin\narm64\ngo1.26.5\nlocal\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.01
+  },
+  {
+    "label": "candidate full suite",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "./...",
+      "-count=1",
+      "-timeout=40s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestFetchRejectedRedirect (0.00s)\n--- FAIL: TestFetchHTTPRequest (0.00s)\n--- FAIL: TestFetchCancellation (0.00s)\n    --- FAIL: TestFetchCancellation/while_reading_response (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 20 [running]:\ntesting.tRunner.func1.2({0x1047abde0, 0x14aa57496220})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1047abde0?, 0x14aa57496220?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x104836040, 0x14aa574961f0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/metadata_test.TestFetchRejectedRedirect(0x14aa57524488)\n\t/private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate/fetch_test.go:216 +0x80\ntesting.tRunner(0x14aa57524488, 0x1048320f0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 19 [running]:\ntesting.tRunner.func1.2({0x1047abde0, 0x14aa57518460})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1047abde0?, 0x14aa57518460?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x104836040, 0x14aa576164e0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/metadata_test.TestFetchHTTPRequest(0x14aa57524248)\n\t/private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate/fetch_test.go:181 +0x88\ntesting.tRunner(0x14aa57524248, 0x1048320e0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/metadata\t0.340s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.591
+  },
+  {
+    "label": "candidate race shuffled repeated",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "./...",
+      "-count=10",
+      "-shuffle=on",
+      "-timeout=60s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "-test.shuffle 1790909674844694000\n--- FAIL: TestFetchRejectedRedirect (0.00s)\n--- FAIL: TestFetchHTTPRequest (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 24 [running]:\ntesting.tRunner.func1.2({0x104989200, 0xc00041a1e0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x2b8\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x460\npanic({0x104989200?, 0xc00041a1e0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0x13c\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x104a18b00, 0xc00003a050})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x30\nexample.com/metadata_test.TestFetchRejectedRedirect(0xc00016cfc8)\n\t/private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate/fetch_test.go:216 +0xb8\ntesting.tRunner(0xc00016cfc8, 0x104a14570)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x168\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x7c0\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 22 [running]:\ntesting.tRunner.func1.2({0x104989200, 0xc000280040})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x2b8\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x460\npanic({0x104989200?, 0xc000280040?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0x13c\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x104a18b00, 0xc00011a620})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x30\nexample.com/metadata_test.TestFetchHTTPRequest(0xc00016cb48)\n\t/private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate/fetch_test.go:181 +0xb0\ntesting.tRunner(0xc00016cb48, 0x104a14560)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x168\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x7c0\nFAIL\texample.com/metadata\t0.221s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.508
+  },
+  {
+    "label": "mutation: missing response close",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "./...",
+      "-run",
+      "^TestFetchResponse$/^success$",
+      "-count=1",
+      "-timeout=35s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-46wnhnrc/changeset-1/verification-missing-response-close",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestFetchResponse (0.00s)\n    --- FAIL: TestFetchResponse/success (0.00s)\n        fetch_test.go:97: response body closed 0 times, want 1\nFAIL\nFAIL\texample.com/metadata\t0.199s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.436
+  },
+  {
+    "label": "mutation: ignored supplied context",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "./...",
+      "-run",
+      "^TestFetchCancellation$",
+      "-count=1",
+      "-timeout=35s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-46wnhnrc/changeset-1/verification-ignored-supplied-context",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestFetchCancellation (0.00s)\n    --- FAIL: TestFetchCancellation/before_headers (0.00s)\n    --- FAIL: TestFetchCancellation/while_reading_response (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 36 [running]:\ntesting.tRunner.func1.2({0x102c73de0, 0x29dee8e94610})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x102c73de0?, 0x29dee8e94610?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x102cfe040, 0x29dee8ea6ac0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/metadata_test.TestFetchCancellation.func1(0x29dee8ee46c8)\n\t/private/tmp/go-independent-review-46wnhnrc/changeset-1/verification-ignored-supplied-context/fetch_test.go:276 +0x114\ntesting.tRunner(0x29dee8ee46c8, 0x29dee8e96420)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 35\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/metadata\t0.191s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.429
+  },
+  {
+    "label": "mutation: trailing JSON accepted",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "./...",
+      "-run",
+      "^TestFetchResponse$/^trailing_",
+      "-count=1",
+      "-timeout=35s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-46wnhnrc/changeset-1/verification-trailing-JSON-accepted",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestFetchResponse (0.00s)\n    --- FAIL: TestFetchResponse/trailing_garbage (0.00s)\n        fetch_test.go:100: Fetch metadata = metadata.Metadata{Name:\"first\", Revision:1}, want metadata.Metadata{Name:\"\", Revision:0}\n        fetch_test.go:109: Fetch error = nil, want failure\n    --- FAIL: TestFetchResponse/trailing_object (0.00s)\n        fetch_test.go:100: Fetch metadata = metadata.Metadata{Name:\"first\", Revision:1}, want metadata.Metadata{Name:\"\", Revision:0}\n        fetch_test.go:109: Fetch error = nil, want failure\nFAIL\nFAIL\texample.com/metadata\t0.321s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.572
+  },
+  {
+    "label": "approved unchanged-source full suite with listeners",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "./...",
+      "-count=1",
+      "-timeout=40s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.201s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.388,
+    "sandbox_permissions": "require_escalated"
+  },
+  {
+    "label": "approved unchanged-source race shuffled repeated with listeners",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "./...",
+      "-race",
+      "-count=10",
+      "-shuffle=on",
+      "-timeout=60s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/metadata\t1.197s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.416,
+    "sandbox_permissions": "require_escalated"
+  },
+  {
+    "label": "module-version stdlib vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.121
+  },
+  {
+    "label": "mutation ignored context focused transport assertion",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "./...",
+      "-run",
+      "^TestFetchTransportError$",
+      "-count=1",
+      "-timeout=30s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-46wnhnrc/changeset-1/verification-ignored-supplied-context",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestFetchTransportError (0.00s)\n    fetch_test.go:147: request does not carry the supplied context\nFAIL\nFAIL\texample.com/metadata\t0.170s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.358
+  },
+  {
+    "label": "supplied changeset diff",
+    "argv": [
+      "rtk",
+      "proxy",
+      "diff",
+      "-ru",
+      "/private/tmp/go-independent-review-46wnhnrc/changeset-1/original",
+      "/private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate"
+    ],
+    "cwd": "/private/tmp/go-independent-review-46wnhnrc/changeset-1",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "diff -ru /private/tmp/go-independent-review-46wnhnrc/changeset-1/original/fetch_test.go /private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate/fetch_test.go\n--- /private/tmp/go-independent-review-46wnhnrc/changeset-1/original/fetch_test.go\t2026-10-01 19:05:22\n+++ /private/tmp/go-independent-review-46wnhnrc/changeset-1/candidate/fetch_test.go\t2026-10-01 21:43:58\n@@ -2,24 +2,384 @@\n \n import (\n \t\"context\"\n+\t\"errors\"\n+\t\"fmt\"\n \t\"io\"\n \t\"net/http\"\n+\t\"net/http/httptest\"\n+\t\"strconv\"\n \t\"strings\"\n+\t\"sync\"\n+\t\"sync/atomic\"\n \t\"testing\"\n+\t\"time\"\n \n \t\"example.com/metadata\"\n )\n \n+// These bounds diagnose stalled work; readiness is always signaled by events.\n+const waitLimit = 10 * time.Second\n+\n type roundTrip func(*http.Request) (*http.Response, error)\n \n func (f roundTrip) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }\n \n-func TestFetchMetadata(t *testing.T) {\n-\tclient := &http.Client{Transport: roundTrip(func(*http.Request) (*http.Response, error) {\n-\t\treturn &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(`{\"name\":\"first\",\"revision\":1}`))}, nil\n+type trackedBody struct {\n+\treader io.Reader\n+\tcloses int\n+}\n+\n+func (b *trackedBody) Read(p []byte) (int, error) {\n+\treturn b.reader.Read(p)\n+}\n+\n+func (b *trackedBody) Close() error {\n+\tb.closes++\n+\treturn nil\n+}\n+\n+type errorReader struct{ err error }\n+\n+func (r errorReader) Read([]byte) (int, error) { return 0, r.err }\n+\n+// The handwritten transport isolates response validation, read errors, and body\n+// ownership. It does not simulate HTTP framing or network cancellation.\n+func TestFetchResponse(t *testing.T) {\n+\tt.Parallel()\n+\treadFailure := errors.New(\"injected response read failure\")\n+\tcases := []struct {\n+\t\tname    string\n+\t\tstatus  int\n+\t\tbody    string\n+\t\treadErr error\n+\t\twant    metadata.Metadata\n+\t\twantErr bool\n+\t}{\n+\t\t{name: \"success\", status: 200, body: `{\"name\":\"first\",\"revision\":1}`, want: metadata.Metadata{Name: \"first\", Revision: 1}},\n+\t\t{name: \"preserves_name_bytes\", status: 200, body: `{\"name\":\" \\tBj\u00f6rk\\n \",\"revision\":7}`, want: metadata.Metadata{Name: \" \\tBj\u00f6rk\\n \", Revision: 7}},\n+\t\t{name: \"surrounding_json_whitespace\", status: 200, body: \" \\n{\\\"name\\\":\\\"first\\\",\\\"revision\\\":1}\\t\\n\", want: metadata.Metadata{Name: \"first\", Revision: 1}},\n+\t\t{name: \"created_status\", status: 201, body: `{\"name\":\"first\",\"revision\":1}`, wantErr: true},\n+\t\t{name: \"no_content_status\", status: 204, wantErr: true},\n+\t\t{name: \"redirect_status\", status: 302, body: `{\"name\":\"first\",\"revision\":1}`, wantErr: true},\n+\t\t{name: \"client_status\", status: 400, body: `{\"name\":\"first\",\"revision\":1}`, wantErr: true},\n+\t\t{name: \"server_status\", status: 503, body: `{\"name\":\"first\",\"revision\":1}`, wantErr: true},\n+\t\t{name: \"empty_body\", status: 200, wantErr: true},\n+\t\t{name: \"malformed_json\", status: 200, body: `{\"name\":\"first\",\"revision\":`, wantErr: true},\n+\t\t{name: \"null\", status: 200, body: `null`, wantErr: true},\n+\t\t{name: \"array\", status: 200, body: `[{\"name\":\"first\",\"revision\":1}]`, wantErr: true},\n+\t\t{name: \"trailing_object\", status: 200, body: `{\"name\":\"first\",\"revision\":1} {\"name\":\"second\",\"revision\":2}`, wantErr: true},\n+\t\t{name: \"trailing_garbage\", status: 200, body: `{\"name\":\"first\",\"revision\":1} garbage`, wantErr: true},\n+\t\t{name: \"missing_name\", status: 200, body: `{\"revision\":1}`, wantErr: true},\n+\t\t{name: \"empty_name\", status: 200, body: `{\"name\":\"\",\"revision\":1}`, wantErr: true},\n+\t\t{name: \"whitespace_name\", status: 200, body: `{\"name\":\" \\t\\n\\u2003 \",\"revision\":1}`, wantErr: true},\n+\t\t{name: \"wrong_name_type\", status: 200, body: `{\"name\":42,\"revision\":1}`, wantErr: true},\n+\t\t{name: \"missing_revision\", status: 200, body: `{\"name\":\"first\"}`, wantErr: true},\n+\t\t{name: \"zero_revision\", status: 200, body: `{\"name\":\"first\",\"revision\":0}`, wantErr: true},\n+\t\t{name: \"negative_revision\", status: 200, body: `{\"name\":\"first\",\"revision\":-1}`, wantErr: true},\n+\t\t{name: \"fractional_revision\", status: 200, body: `{\"name\":\"first\",\"revision\":1.5}`, wantErr: true},\n+\t\t{name: \"wrong_revision_type\", status: 200, body: `{\"name\":\"first\",\"revision\":\"1\"}`, wantErr: true},\n+\t\t{name: \"read_failure_before_data\", status: 200, readErr: readFailure, wantErr: true},\n+\t\t{name: \"read_failure_after_complete_json\", status: 200, body: `{\"name\":\"first\",\"revision\":1}`, readErr: readFailure, wantErr: true},\n+\t}\n+\tfor _, tc := range cases {\n+\t\tt.Run(tc.name, func(t *testing.T) {\n+\t\t\tt.Parallel()\n+\t\t\tvar reader io.Reader = strings.NewReader(tc.body)\n+\t\t\tif tc.readErr != nil {\n+\t\t\t\treader = io.MultiReader(reader, errorReader{tc.readErr})\n+\t\t\t}\n+\t\t\tbody := &trackedBody{reader: reader}\n+\t\t\tclient := &http.Client{Transport: roundTrip(func(*http.Request) (*http.Response, error) {\n+\t\t\t\treturn &http.Response{StatusCode: tc.status, Body: body}, nil\n+\t\t\t})}\n+\t\t\tgot, err := metadata.Fetch(context.Background(), client, \"http://example.invalid/catalog\")\n+\t\t\tif body.closes != 1 {\n+\t\t\t\tt.Errorf(\"response body closed %d times, want 1\", body.closes)\n+\t\t\t}\n+\t\t\tif got != tc.want {\n+\t\t\t\tt.Errorf(\"Fetch metadata = %#v, want %#v\", got, tc.want)\n+\t\t\t}\n+\t\t\tif !tc.wantErr {\n+\t\t\t\tif err != nil {\n+\t\t\t\t\tt.Errorf(\"Fetch error = %v, want nil\", err)\n+\t\t\t\t}\n+\t\t\t\treturn\n+\t\t\t}\n+\t\t\tif err == nil {\n+\t\t\t\tt.Fatal(\"Fetch error = nil, want failure\")\n+\t\t\t}\n+\t\t\tif err.Error() == \"\" {\n+\t\t\t\tt.Error(\"Fetch returned an empty error message\")\n+\t\t\t}\n+\t\t\tif tc.status != http.StatusOK && !strings.Contains(err.Error(), strconv.Itoa(tc.status)) {\n+\t\t\t\tt.Errorf(\"Fetch error %q does not identify HTTP status %d\", err, tc.status)\n+\t\t\t}\n+\t\t\tif tc.readErr != nil && !errors.Is(err, tc.readErr) {\n+\t\t\t\tt.Errorf(\"Fetch error = %v, want underlying read error %v\", err, tc.readErr)\n+\t\t\t}\n+\t\t})\n+\t}\n+}\n+\n+func TestFetchTransportError(t *testing.T) {\n+\tt.Parallel()\n+\twantErr := errors.New(\"injected transport failure\")\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tt.Cleanup(cancel)\n+\tvar request *http.Request\n+\tcalls := 0\n+\tclient := &http.Client{Transport: roundTrip(func(r *http.Request) (*http.Response, error) {\n+\t\trequest = r\n+\t\tcalls++\n+\t\treturn nil, wantErr\n \t})}\n-\tgot, err := metadata.Fetch(context.Background(), client, \"http://example.invalid/catalog\")\n-\tif err != nil || got.Name != \"first\" || got.Revision != 1 {\n-\t\tt.Fatalf(\"Fetch = %#v, %v\", got, err)\n+\tgot, err := metadata.Fetch(ctx, client, \"http://example.invalid/catalog?revision=1\")\n+\tif got != (metadata.Metadata{}) {\n+\t\tt.Errorf(\"Fetch metadata = %#v, want zero\", got)\n+\t}\n+\tif !errors.Is(err, wantErr) {\n+\t\tt.Errorf(\"Fetch error = %v, want underlying transport error %v\", err, wantErr)\n+\t}\n+\tif calls != 1 {\n+\t\tt.Fatalf(\"transport called %d times, want 1\", calls)\n+\t}\n+\tif request.Context() != ctx {\n+\t\tt.Error(\"request does not carry the supplied context\")\n+\t}\n+}\n+\n+func TestFetchInvalidURL(t *testing.T) {\n+\tt.Parallel()\n+\tfor _, endpoint := range []string{\"://bad\", \"http://example.invalid/%zz\"} {\n+\t\tt.Run(endpoint, func(t *testing.T) {\n+\t\t\tt.Parallel()\n+\t\t\tcalls := 0\n+\t\t\tclient := &http.Client{Transport: roundTrip(func(*http.Request) (*http.Response, error) {\n+\t\t\t\tcalls++\n+\t\t\t\treturn nil, errors.New(\"unexpected transport call\")\n+\t\t\t})}\n+\t\t\tgot, err := metadata.Fetch(context.Background(), client, endpoint)\n+\t\t\tif got != (metadata.Metadata{}) || err == nil || err.Error() == \"\" {\n+\t\t\t\tt.Errorf(\"Fetch = %#v, %v; want zero metadata and useful error\", got, err)\n+\t\t\t}\n+\t\t\tif calls != 0 {\n+\t\t\t\tt.Errorf(\"invalid URL reached transport %d times, want 0\", calls)\n+\t\t\t}\n+\t\t})\n+\t}\n+}\n+\n+// A local server and the real HTTP transport verify the request on the wire.\n+func TestFetchHTTPRequest(t *testing.T) {\n+\tt.Parallel()\n+\ttype observation struct {\n+\t\tmethod   string\n+\t\turi      string\n+\t\twriteErr error\n+\t}\n+\tobserved := make(chan observation, 1)\n+\tserver := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n+\t\t_, err := io.WriteString(w, `{\"name\":\" \\tBj\u00f6rk\\n \",\"revision\":7}`)\n+\t\tobserved <- observation{method: r.Method, uri: r.RequestURI, writeErr: err}\n+\t}))\n+\tt.Cleanup(server.Close)\n+\tclient := server.Client()\n+\tt.Cleanup(client.CloseIdleConnections)\n+\tctx, cancel := context.WithTimeout(context.Background(), waitLimit)\n+\tt.Cleanup(cancel)\n+\tconst pathQuery = \"/catalog/space%20name?label=a%2Fb&label=c+d&empty=\"\n+\tgot, err := metadata.Fetch(ctx, client, server.URL+pathQuery)\n+\tif err != nil {\n+\t\tt.Fatalf(\"Fetch: %v\", err)\n+\t}\n+\tif want := (metadata.Metadata{Name: \" \\tBj\u00f6rk\\n \", Revision: 7}); got != want {\n+\t\tt.Errorf(\"Fetch metadata = %#v, want %#v\", got, want)\n+\t}\n+\tselect {\n+\tcase request := <-observed:\n+\t\tif request.method != http.MethodGet || request.uri != pathQuery {\n+\t\t\tt.Errorf(\"wire request = %s %q, want GET %q\", request.method, request.uri, pathQuery)\n+\t\t}\n+\t\tif request.writeErr != nil {\n+\t\t\tt.Errorf(\"server response write: %v\", request.writeErr)\n+\t\t}\n+\tcase <-time.After(waitLimit):\n+\t\tt.Fatal(\"server did not report its completed request\")\n+\t}\n+}\n+\n+// This server checks actual client redirect policy: the caller can reject a\n+// redirect without following it, and Fetch must report that original status.\n+func TestFetchRejectedRedirect(t *testing.T) {\n+\tt.Parallel()\n+\tvar targetRequests atomic.Int32\n+\tserver := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n+\t\tif r.URL.Path == \"/catalog\" {\n+\t\t\thttp.Redirect(w, r, \"/target\", http.StatusFound)\n+\t\t\treturn\n+\t\t}\n+\t\ttargetRequests.Add(1)\n+\t\t_, _ = io.WriteString(w, `{\"name\":\"redirected\",\"revision\":1}`)\n+\t}))\n+\tt.Cleanup(server.Close)\n+\tclient := server.Client()\n+\tclient.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }\n+\tt.Cleanup(client.CloseIdleConnections)\n+\tctx, cancel := context.WithTimeout(context.Background(), waitLimit)\n+\tt.Cleanup(cancel)\n+\tgot, err := metadata.Fetch(ctx, client, server.URL+\"/catalog\")\n+\tif got != (metadata.Metadata{}) || err == nil {\n+\t\tt.Fatalf(\"Fetch = %#v, %v; want zero metadata and redirect status error\", got, err)\n+\t}\n+\tif !strings.Contains(err.Error(), \"302\") {\n+\t\tt.Errorf(\"Fetch error %q does not identify original HTTP status 302\", err)\n+\t}\n+\tif got := targetRequests.Load(); got != 0 {\n+\t\tt.Errorf(\"redirect target received %d requests, want 0\", got)\n+\t}\n+}\n+\n+type signalingBody struct {\n+\tio.ReadCloser\n+\tstarted chan struct{}\n+\tonce    sync.Once\n+\tcloses  atomic.Int32\n+}\n+\n+func (b *signalingBody) Read(p []byte) (int, error) {\n+\tb.once.Do(func() { close(b.started) })\n+\treturn b.ReadCloser.Read(p)\n+}\n+\n+func (b *signalingBody) Close() error {\n+\tb.closes.Add(1)\n+\treturn b.ReadCloser.Close()\n+}\n+\n+// Real local sockets carry the request and cancellation. The body wrapper only\n+// signals when Fetch starts reading; all reads and closes reach the real body.\n+func TestFetchCancellation(t *testing.T) {\n+\tt.Parallel()\n+\tfor _, tc := range []struct {\n+\t\tname      string\n+\t\tstartBody bool\n+\t}{\n+\t\t{name: \"before_headers\"},\n+\t\t{name: \"while_reading_response\", startBody: true},\n+\t} {\n+\t\tt.Run(tc.name, func(t *testing.T) {\n+\t\t\tt.Parallel()\n+\t\t\thandlerStarted := make(chan struct{})\n+\t\t\thandlerFinished := make(chan struct{})\n+\t\t\thandlerResult := make(chan error, 1)\n+\t\t\trelease := make(chan struct{})\n+\t\t\tserver := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {\n+\t\t\t\tdefer close(handlerFinished)\n+\t\t\t\tclose(handlerStarted)\n+\t\t\t\tif tc.startBody {\n+\t\t\t\t\tif _, err := io.WriteString(w, `{\"name\":\"`); err != nil {\n+\t\t\t\t\t\thandlerResult <- fmt.Errorf(\"write partial response: %w\", err)\n+\t\t\t\t\t\treturn\n+\t\t\t\t\t}\n+\t\t\t\t\tw.(http.Flusher).Flush()\n+\t\t\t\t}\n+\t\t\t\tselect {\n+\t\t\t\tcase <-r.Context().Done():\n+\t\t\t\t\thandlerResult <- r.Context().Err()\n+\t\t\t\tcase <-release:\n+\t\t\t\t\thandlerResult <- errors.New(\"handler released before request cancellation\")\n+\t\t\t\t}\n+\t\t\t}))\n+\t\t\tt.Cleanup(server.Close)\n+\t\t\ttransport := &http.Transport{}\n+\t\t\tt.Cleanup(transport.CloseIdleConnections)\n+\t\t\treadStarted := make(chan struct{})\n+\t\t\tbodies := make(chan *signalingBody, 1)\n+\t\t\tclient := &http.Client{\n+\t\t\t\tTimeout: waitLimit,\n+\t\t\t\tTransport: roundTrip(func(r *http.Request) (*http.Response, error) {\n+\t\t\t\t\tresponse, err := transport.RoundTrip(r)\n+\t\t\t\t\tif err != nil {\n+\t\t\t\t\t\treturn nil, err\n+\t\t\t\t\t}\n+\t\t\t\t\tbody := &signalingBody{ReadCloser: response.Body, started: readStarted}\n+\t\t\t\t\tresponse.Body = body\n+\t\t\t\t\tbodies <- body\n+\t\t\t\t\treturn response, nil\n+\t\t\t\t}),\n+\t\t\t}\n+\t\t\tctx, cancel := context.WithCancel(context.Background())\n+\t\t\ttype result struct {\n+\t\t\t\tmetadata metadata.Metadata\n+\t\t\t\terr      error\n+\t\t\t}\n+\t\t\tfetchResult := make(chan result, 1)\n+\t\t\tfetchFinished := make(chan struct{})\n+\t\t\t// Registered before starting the worker or making any assertions. Release\n+\t\t\t// gates, cancel and join work before closing the transport and server.\n+\t\t\tt.Cleanup(func() {\n+\t\t\t\tclose(release)\n+\t\t\t\tcancel()\n+\t\t\t\twaitForSignal(t, fetchFinished, \"Fetch cleanup\")\n+\t\t\t\tselect {\n+\t\t\t\tcase <-handlerStarted:\n+\t\t\t\t\twaitForSignal(t, handlerFinished, \"handler cleanup\")\n+\t\t\t\tdefault:\n+\t\t\t\t\t// Server.Close joins any handler that starts after this check;\n+\t\t\t\t\t// the closed release gate lets that handler finish immediately.\n+\t\t\t\t}\n+\t\t\t})\n+\t\t\tgo func() {\n+\t\t\t\tdefer close(fetchFinished)\n+\t\t\t\tgot, err := metadata.Fetch(ctx, client, server.URL+\"/catalog\")\n+\t\t\t\tfetchResult <- result{metadata: got, err: err}\n+\t\t\t}()\n+\t\t\tif !waitForSignal(t, handlerStarted, \"HTTP request arrival\") {\n+\t\t\t\treturn\n+\t\t\t}\n+\t\t\tif tc.startBody && !waitForSignal(t, readStarted, \"response body read start\") {\n+\t\t\t\treturn\n+\t\t\t}\n+\t\t\tcancel()\n+\t\t\tif !waitForSignal(t, fetchFinished, \"Fetch after caller cancellation\") {\n+\t\t\t\treturn\n+\t\t\t}\n+\t\t\tgot := <-fetchResult\n+\t\t\tif got.metadata != (metadata.Metadata{}) {\n+\t\t\t\tt.Errorf(\"Fetch metadata = %#v, want zero\", got.metadata)\n+\t\t\t}\n+\t\t\tif !errors.Is(got.err, context.Canceled) {\n+\t\t\t\tt.Errorf(\"Fetch error = %v, want context.Canceled\", got.err)\n+\t\t\t}\n+\t\t\tif !waitForSignal(t, handlerFinished, \"server request cancellation\") {\n+\t\t\t\treturn\n+\t\t\t}\n+\t\t\tif err := <-handlerResult; !errors.Is(err, context.Canceled) {\n+\t\t\t\tt.Errorf(\"server request ended with %v, want context.Canceled\", err)\n+\t\t\t}\n+\t\t\tif tc.startBody {\n+\t\t\t\tselect {\n+\t\t\t\tcase body := <-bodies:\n+\t\t\t\t\tif got := body.closes.Load(); got != 1 {\n+\t\t\t\t\t\tt.Errorf(\"canceled response body closed %d times, want 1\", got)\n+\t\t\t\t\t}\n+\t\t\t\tdefault:\n+\t\t\t\t\tt.Error(\"Fetch did not acquire a response body\")\n+\t\t\t\t}\n+\t\t\t}\n+\t\t})\n+\t}\n+}\n+\n+func waitForSignal(t *testing.T, done <-chan struct{}, operation string) bool {\n+\tt.Helper()\n+\ttimer := time.NewTimer(waitLimit)\n+\tdefer timer.Stop()\n+\tselect {\n+\tcase <-done:\n+\t\treturn true\n+\tcase <-timer.C:\n+\t\tt.Errorf(\"timed out waiting for %s\", operation)\n+\t\treturn false\n \t}\n }\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.009
+  },
+  {
+    "label": "unchanged production/module/documentation bytes",
+    "files": {
+      "fetch.go": {
+        "original_sha256": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+        "candidate_sha256": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+        "equal": true
+      },
+      "go.mod": {
+        "original_sha256": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3",
+        "candidate_sha256": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3",
+        "equal": true
+      },
+      "README.md": {
+        "original_sha256": "5e52eb6593abf19cb5eff5217737defefdfa9c96535433ad69aede1a898c5da6",
+        "candidate_sha256": "5e52eb6593abf19cb5eff5217737defefdfa9c96535433ad69aede1a898c5da6",
+        "equal": true
+      }
+    }
+  }
+]

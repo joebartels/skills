@@ -1,0 +1,11 @@
+--- a/fetch.go
++++ b/fetch.go
+@@ -16,7 +16,7 @@
+ 
+ // Fetch reads complete validated metadata from endpoint.
+ func Fetch(ctx context.Context, client *http.Client, endpoint string) (Metadata, error) {
+-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
++	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, endpoint, nil)
+ 	if err != nil {
+ 		return Metadata{}, err
+ 	}

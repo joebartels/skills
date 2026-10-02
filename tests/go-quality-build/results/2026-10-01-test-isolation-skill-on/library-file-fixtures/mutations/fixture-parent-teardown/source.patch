@@ -1,0 +1,18 @@
+--- a/store_test.go
++++ b/store_test.go
+@@ -1,6 +1,7 @@
+ package filestore_test
+ 
+ import (
++	"os"
+ 	"testing"
+ 
+ 	"example.com/filestore"
+@@ -41,6 +42,7 @@
+ 
+ 	// This group waits for its parallel children before the parent reads files.
+ 	t.Run("instances", func(t *testing.T) {
++		defer func() { for _, instance := range instances { os.RemoveAll(instance.root) } }()
+ 		for i := range instances {
+ 			instance := &instances[i]
+ 			t.Run(instance.name, func(t *testing.T) {

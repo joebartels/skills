@@ -1,0 +1,15 @@
+--- a/host.go
++++ b/host.go
+@@ -24,7 +24,11 @@
+ 		done <- periodic(workerCtx, interval, sweep)
+ 	}()
+ 
+-	err := <-done
++	var err error
++	select {
++	case err = <-done:
++	case <-ctx.Done():
++	}
+ 	cancel()
+ 	return errors.Join(err, release())
+ }

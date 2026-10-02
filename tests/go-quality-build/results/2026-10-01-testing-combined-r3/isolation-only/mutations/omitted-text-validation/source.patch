@@ -1,0 +1,11 @@
+--- a/index.go
++++ b/index.go
+@@ -62,7 +62,7 @@
+ }
+ 
+ func validRecord(key, text string) bool {
+-	return keyPattern.MatchString(key) && strings.TrimSpace(text) != ""
++	return keyPattern.MatchString(key) && strings.TrimSpace(text) != "\x00"
+ }
+ 
+ // writeAtomic publishes only after the complete replacement is closed. Keeping

@@ -1,0 +1,213 @@
+[
+  {
+    "label": "toolchain",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOMAXPROCS=2",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-b3sit8qm/verification",
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "platform",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOMAXPROCS=2",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION",
+      "CGO_ENABLED"
+    ],
+    "cwd": "/private/tmp/go-independent-review-b3sit8qm/verification",
+    "stdout": "darwin\narm64\ngo1.26.5\n1\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "candidate all tests and seed cases",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOMAXPROCS=2",
+      "go",
+      "test",
+      "-v",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-b3sit8qm/verification",
+    "stdout": "=== RUN   TestSimpleRoundTrip\n--- PASS: TestSimpleRoundTrip (0.00s)\n=== RUN   TestEncode\n=== RUN   TestEncode/legacy\n=== RUN   TestEncode/region_slash\n=== RUN   TestEncode/name_slash\n=== RUN   TestEncode/both_slashes\n=== RUN   TestEncode/region_space\n=== RUN   TestEncode/name_space\n=== RUN   TestEncode/percent\n=== RUN   TestEncode/Unicode\n=== RUN   TestEncode/path_plus\n=== RUN   TestEncode/reserved\n=== RUN   TestEncode/combined\n--- PASS: TestEncode (0.00s)\n    --- PASS: TestEncode/legacy (0.00s)\n    --- PASS: TestEncode/region_slash (0.00s)\n    --- PASS: TestEncode/name_slash (0.00s)\n    --- PASS: TestEncode/both_slashes (0.00s)\n    --- PASS: TestEncode/region_space (0.00s)\n    --- PASS: TestEncode/name_space (0.00s)\n    --- PASS: TestEncode/percent (0.00s)\n    --- PASS: TestEncode/Unicode (0.00s)\n    --- PASS: TestEncode/path_plus (0.00s)\n    --- PASS: TestEncode/reserved (0.00s)\n    --- PASS: TestEncode/combined (0.00s)\n=== RUN   TestDecode\n=== RUN   TestDecode/legacy\n=== RUN   TestDecode/region_slash\n=== RUN   TestDecode/name_slash\n=== RUN   TestDecode/both_slashes\n=== RUN   TestDecode/spaces\n=== RUN   TestDecode/percent\n=== RUN   TestDecode/Unicode\n=== RUN   TestDecode/literal_plus\n=== RUN   TestDecode/escaped_plus\n=== RUN   TestDecode/lowercase_hex\n=== RUN   TestDecode/escaped_unreserved\n=== RUN   TestDecode/reserved\n--- PASS: TestDecode (0.00s)\n    --- PASS: TestDecode/legacy (0.00s)\n    --- PASS: TestDecode/region_slash (0.00s)\n    --- PASS: TestDecode/name_slash (0.00s)\n    --- PASS: TestDecode/both_slashes (0.00s)\n    --- PASS: TestDecode/spaces (0.00s)\n    --- PASS: TestDecode/percent (0.00s)\n    --- PASS: TestDecode/Unicode (0.00s)\n    --- PASS: TestDecode/literal_plus (0.00s)\n    --- PASS: TestDecode/escaped_plus (0.00s)\n    --- PASS: TestDecode/lowercase_hex (0.00s)\n    --- PASS: TestDecode/escaped_unreserved (0.00s)\n    --- PASS: TestDecode/reserved (0.00s)\n=== RUN   TestEncodeInvalidKey\n=== RUN   TestEncodeInvalidKey/\"\"/\"\"\n=== RUN   TestEncodeInvalidKey/\"east\"/\"\"\n=== RUN   TestEncodeInvalidKey/\"\"/\"web\"\n--- PASS: TestEncodeInvalidKey (0.00s)\n    --- PASS: TestEncodeInvalidKey/\"\"/\"\" (0.00s)\n    --- PASS: TestEncodeInvalidKey/\"east\"/\"\" (0.00s)\n    --- PASS: TestEncodeInvalidKey/\"\"/\"web\" (0.00s)\n=== RUN   TestDecodeInvalidKey\n=== RUN   TestDecodeInvalidKey/#00\n=== RUN   TestDecodeInvalidKey/east\n=== RUN   TestDecodeInvalidKey//\n=== RUN   TestDecodeInvalidKey//web\n=== RUN   TestDecodeInvalidKey/east/\n=== RUN   TestDecodeInvalidKey/east/web/blue\n=== RUN   TestDecodeInvalidKey//east/web\n=== RUN   TestDecodeInvalidKey/east/web/\n=== RUN   TestDecodeInvalidKey/east//web\n=== RUN   TestDecodeInvalidKey/%/web\n=== RUN   TestDecodeInvalidKey/east/%\n=== RUN   TestDecodeInvalidKey/%2/web\n=== RUN   TestDecodeInvalidKey/east/%2\n=== RUN   TestDecodeInvalidKey/%GG/web\n=== RUN   TestDecodeInvalidKey/east/%GG\n=== RUN   TestDecodeInvalidKey/%2X/web\n=== RUN   TestDecodeInvalidKey/east/%X2\n=== RUN   TestDecodeInvalidKey/valid%20region/bad%\n=== RUN   TestDecodeInvalidKey/bad%/valid%20name\n--- PASS: TestDecodeInvalidKey (0.00s)\n    --- PASS: TestDecodeInvalidKey/#00 (0.00s)\n    --- PASS: TestDecodeInvalidKey/east (0.00s)\n    --- PASS: TestDecodeInvalidKey// (0.00s)\n    --- PASS: TestDecodeInvalidKey//web (0.00s)\n    --- PASS: TestDecodeInvalidKey/east/ (0.00s)\n    --- PASS: TestDecodeInvalidKey/east/web/blue (0.00s)\n    --- PASS: TestDecodeInvalidKey//east/web (0.00s)\n    --- PASS: TestDecodeInvalidKey/east/web/ (0.00s)\n    --- PASS: TestDecodeInvalidKey/east//web (0.00s)\n    --- PASS: TestDecodeInvalidKey/%/web (0.00s)\n    --- PASS: TestDecodeInvalidKey/east/% (0.00s)\n    --- PASS: TestDecodeInvalidKey/%2/web (0.00s)\n    --- PASS: TestDecodeInvalidKey/east/%2 (0.00s)\n    --- PASS: TestDecodeInvalidKey/%GG/web (0.00s)\n    --- PASS: TestDecodeInvalidKey/east/%GG (0.00s)\n    --- PASS: TestDecodeInvalidKey/%2X/web (0.00s)\n    --- PASS: TestDecodeInvalidKey/east/%X2 (0.00s)\n    --- PASS: TestDecodeInvalidKey/valid%20region/bad% (0.00s)\n    --- PASS: TestDecodeInvalidKey/bad%/valid%20name (0.00s)\n=== RUN   FuzzRoundTrip\n=== RUN   FuzzRoundTrip/seed#0\n=== RUN   FuzzRoundTrip/seed#1\n=== RUN   FuzzRoundTrip/seed#2\n=== RUN   FuzzRoundTrip/seed#3\n--- PASS: FuzzRoundTrip (0.00s)\n    --- PASS: FuzzRoundTrip/seed#0 (0.00s)\n    --- PASS: FuzzRoundTrip/seed#1 (0.00s)\n    --- PASS: FuzzRoundTrip/seed#2 (0.00s)\n    --- PASS: FuzzRoundTrip/seed#3 (0.00s)\n=== RUN   Example\n--- PASS: Example (0.00s)\nPASS\nok  \texample.com/keycodec\t0.185s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "finite native fuzz",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOMAXPROCS=2",
+      "go",
+      "test",
+      "-run=^$",
+      "-fuzz=^FuzzRoundTrip$",
+      "-fuzztime=5s",
+      "-parallel=2",
+      "-timeout=30s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-b3sit8qm/verification",
+    "stdout": "fuzz: elapsed: 0s, gathering baseline coverage: 0/30 completed\nfuzz: elapsed: 0s, gathering baseline coverage: 30/30 completed, now fuzzing with 2 workers\nfuzz: elapsed: 3s, execs: 626172 (208704/sec), new interesting: 0 (total: 30)\nfuzz: elapsed: 5s, execs: 1060946 (215717/sec), new interesting: 0 (total: 30)\nPASS\nok  \texample.com/keycodec\t5.200s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "query pair still passes roundtrip",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOMAXPROCS=2",
+      "go",
+      "test",
+      "-run=^(TestSimpleRoundTrip|FuzzRoundTrip)$",
+      "-count=1",
+      "-timeout=30s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-b3sit8qm/mutation-query-pair",
+    "stdout": "PASS\nok  \texample.com/keycodec\t0.180s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "independent wire assertions kill query pair",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOMAXPROCS=2",
+      "go",
+      "test",
+      "-run=^(TestEncode|TestDecode)$",
+      "-count=1",
+      "-timeout=30s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-b3sit8qm/mutation-query-pair",
+    "stdout": "--- FAIL: TestEncode (0.00s)\n    --- FAIL: TestEncode/region_space (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"us west\", Name:\"web\"}) = \"us+west/web\", <nil>; want \"us%20west/web\", nil\n    --- FAIL: TestEncode/name_space (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"east\", Name:\"web blue\"}) = \"east/web+blue\", <nil>; want \"east/web%20blue\", nil\n    --- FAIL: TestEncode/path_plus (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"a+b\", Name:\"c+d\"}) = \"a%2Bb/c%2Bd\", <nil>; want \"a+b/c+d\", nil\n    --- FAIL: TestEncode/combined (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"us/west\", Name:\"web blue\"}) = \"us%2Fwest/web+blue\", <nil>; want \"us%2Fwest/web%20blue\", nil\n--- FAIL: TestDecode (0.00s)\n    --- FAIL: TestDecode/literal_plus (0.00s)\n        codec_contract_test.go:68: Decode(\"a+b/c+d\") = keycodec.Key{Region:\"a b\", Name:\"c d\"}, <nil>; want keycodec.Key{Region:\"a+b\", Name:\"c+d\"}, nil\nFAIL\nexit status 1\nFAIL\texample.com/keycodec\t0.123s\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "label": "zero-result assertions kill partial decode",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOMAXPROCS=2",
+      "go",
+      "test",
+      "-run=^TestDecodeInvalidKey$",
+      "-count=1",
+      "-timeout=30s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-b3sit8qm/mutation-partial-decode",
+    "stdout": "--- FAIL: TestDecodeInvalidKey (0.00s)\n    --- FAIL: TestDecodeInvalidKey/east/% (0.00s)\n        codec_contract_test.go:95: Decode(\"east/%\") = keycodec.Key{Region:\"east\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/east/%2 (0.00s)\n        codec_contract_test.go:95: Decode(\"east/%2\") = keycodec.Key{Region:\"east\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/east/%GG (0.00s)\n        codec_contract_test.go:95: Decode(\"east/%GG\") = keycodec.Key{Region:\"east\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/east/%X2 (0.00s)\n        codec_contract_test.go:95: Decode(\"east/%X2\") = keycodec.Key{Region:\"east\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/valid%20region/bad% (0.00s)\n        codec_contract_test.go:95: Decode(\"valid%20region/bad%\") = keycodec.Key{Region:\"valid region\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\nFAIL\nexit status 1\nFAIL\texample.com/keycodec\t0.175s\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "label": "sentinel assertions kill lookalike errors",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOMAXPROCS=2",
+      "go",
+      "test",
+      "-run=^(TestEncodeInvalidKey|TestDecodeInvalidKey)$",
+      "-count=1",
+      "-timeout=30s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-b3sit8qm/mutation-error-identity",
+    "stdout": "--- FAIL: TestEncodeInvalidKey (0.00s)\n    --- FAIL: TestEncodeInvalidKey/\"\"/\"\" (0.00s)\n        codec_contract_test.go:79: Encode(keycodec.Key{Region:\"\", Name:\"\"}) = \"\", invalid key; want empty result and ErrInvalidKey\n    --- FAIL: TestEncodeInvalidKey/\"east\"/\"\" (0.00s)\n        codec_contract_test.go:79: Encode(keycodec.Key{Region:\"east\", Name:\"\"}) = \"\", invalid key; want empty result and ErrInvalidKey\n    --- FAIL: TestEncodeInvalidKey/\"\"/\"web\" (0.00s)\n        codec_contract_test.go:79: Encode(keycodec.Key{Region:\"\", Name:\"web\"}) = \"\", invalid key; want empty result and ErrInvalidKey\n--- FAIL: TestDecodeInvalidKey (0.00s)\n    --- FAIL: TestDecodeInvalidKey/#00 (0.00s)\n        codec_contract_test.go:95: Decode(\"\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/east (0.00s)\n        codec_contract_test.go:95: Decode(\"east\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey// (0.00s)\n        codec_contract_test.go:95: Decode(\"/\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey//web (0.00s)\n        codec_contract_test.go:95: Decode(\"/web\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/east/ (0.00s)\n        codec_contract_test.go:95: Decode(\"east/\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/east/web/blue (0.00s)\n        codec_contract_test.go:95: Decode(\"east/web/blue\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey//east/web (0.00s)\n        codec_contract_test.go:95: Decode(\"/east/web\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/east/web/ (0.00s)\n        codec_contract_test.go:95: Decode(\"east/web/\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/east//web (0.00s)\n        codec_contract_test.go:95: Decode(\"east//web\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/%/web (0.00s)\n        codec_contract_test.go:95: Decode(\"%/web\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/east/% (0.00s)\n        codec_contract_test.go:95: Decode(\"east/%\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/%2/web (0.00s)\n        codec_contract_test.go:95: Decode(\"%2/web\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/east/%2 (0.00s)\n        codec_contract_test.go:95: Decode(\"east/%2\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/%GG/web (0.00s)\n        codec_contract_test.go:95: Decode(\"%GG/web\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/east/%GG (0.00s)\n        codec_contract_test.go:95: Decode(\"east/%GG\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/%2X/web (0.00s)\n        codec_contract_test.go:95: Decode(\"%2X/web\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/east/%X2 (0.00s)\n        codec_contract_test.go:95: Decode(\"east/%X2\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/valid%20region/bad% (0.00s)\n        codec_contract_test.go:95: Decode(\"valid%20region/bad%\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\n    --- FAIL: TestDecodeInvalidKey/bad%/valid%20name (0.00s)\n        codec_contract_test.go:95: Decode(\"bad%/valid%20name\") = keycodec.Key{Region:\"\", Name:\"\"}, invalid key; want zero Key and ErrInvalidKey\nFAIL\nexit status 1\nFAIL\texample.com/keycodec\t0.188s\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "label": "original and candidate source unchanged",
+    "before_sha256": {
+      "original": {
+        "go.mod": "a61f2ef6e6aa5b224eca8a2dd122a73b2c1d33b930975eecf6b3f70b7d54ef51",
+        "key_test.go": "8e79056acef2529702e56e8ba9769d34381289cb30b730a455923b4c170f4689",
+        "key.go": "3ccaaf4335c73eccaf601a756814ef04665194ae536f196ad4dc514e159f1584",
+        "README.md": "e43d6fce2717ba0e2b06e6df46fd864104ff3cc1f63eb43c7dcdb110c75da158"
+      },
+      "candidate": {
+        "go.mod": "a61f2ef6e6aa5b224eca8a2dd122a73b2c1d33b930975eecf6b3f70b7d54ef51",
+        "key_test.go": "8e79056acef2529702e56e8ba9769d34381289cb30b730a455923b4c170f4689",
+        "key.go": "cd5fcb29de3e43fde229cb863de36bdd6eb72234cfefef80a92b139a2bc05e7a",
+        "README.md": "2b27a9a6c02f01d4d578fb443bb017513a403b1b18824833638bba06949c87c3",
+        "codec_contract_test.go": "ad58b9773c029f05c87ccbdf24f0169d6fc00592f4c1d5718b053fefea9a9997"
+      }
+    },
+    "after_sha256": {
+      "original": {
+        "go.mod": "a61f2ef6e6aa5b224eca8a2dd122a73b2c1d33b930975eecf6b3f70b7d54ef51",
+        "key_test.go": "8e79056acef2529702e56e8ba9769d34381289cb30b730a455923b4c170f4689",
+        "key.go": "3ccaaf4335c73eccaf601a756814ef04665194ae536f196ad4dc514e159f1584",
+        "README.md": "e43d6fce2717ba0e2b06e6df46fd864104ff3cc1f63eb43c7dcdb110c75da158"
+      },
+      "candidate": {
+        "go.mod": "a61f2ef6e6aa5b224eca8a2dd122a73b2c1d33b930975eecf6b3f70b7d54ef51",
+        "key_test.go": "8e79056acef2529702e56e8ba9769d34381289cb30b730a455923b4c170f4689",
+        "key.go": "cd5fcb29de3e43fde229cb863de36bdd6eb72234cfefef80a92b139a2bc05e7a",
+        "README.md": "2b27a9a6c02f01d4d578fb443bb017513a403b1b18824833638bba06949c87c3",
+        "codec_contract_test.go": "ad58b9773c029f05c87ccbdf24f0169d6fc00592f4c1d5718b053fefea9a9997"
+      }
+    },
+    "equal": true
+  }
+]

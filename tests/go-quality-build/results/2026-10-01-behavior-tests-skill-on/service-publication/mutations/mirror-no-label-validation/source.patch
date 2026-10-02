@@ -1,0 +1,11 @@
+--- a/mirror.go
++++ b/mirror.go
+@@ -53,7 +53,7 @@
+ 		return errors.New("snapshot must be a JSON array")
+ 	}
+ 	for i, item := range items {
+-		if strings.TrimSpace(item.Code) == "" || strings.TrimSpace(item.Label) == "" {
++		if strings.TrimSpace(item.Code) == "" {
+ 			return fmt.Errorf("snapshot item %d has a blank code or label", i)
+ 		}
+ 	}

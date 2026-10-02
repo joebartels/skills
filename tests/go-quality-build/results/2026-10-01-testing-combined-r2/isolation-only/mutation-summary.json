@@ -1,0 +1,102 @@
+[
+  {
+    "semantic_id": "automatic-redirect-following",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "refresh_test.go:146: requests=1, caller policy calls=1"
+    ],
+    "classification": "policy-hook restoration observation; not alone credited as wire-following evidence",
+    "no_outer_timeout_credit": true
+  },
+  {
+    "semantic_id": "automatic-redirect-following-forced",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "refresh_test.go:143: redirect accepted"
+    ],
+    "classification": "compiled meaningful candidate-only regression detection",
+    "no_outer_timeout_credit": true
+  },
+  {
+    "semantic_id": "direct-snapshot-truncation",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "refresh_test.go:207: old reader = \"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"new\\\"}]\\n\", <nil>"
+    ],
+    "classification": "compiled meaningful candidate-only regression detection",
+    "no_outer_timeout_credit": true
+  },
+  {
+    "semantic_id": "discarded-caller-context",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "serve_test.go:102: Serve = callback context changed, releases=1; want <nil>",
+      "serve_test.go:102: Serve = callback context changed, releases=1; want <nil>",
+      "serve_test.go:102: Serve = callback context changed, releases=1; want independent cleanup failure",
+      "serve_test.go:102: Serve = callback context changed, releases=1; want <nil>"
+    ],
+    "classification": "compiled meaningful candidate-only regression detection",
+    "no_outer_timeout_credit": true
+  },
+  {
+    "semantic_id": "host-release-before-join",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "serve_test.go:102: Serve = <nil>, releases=1; want independent cleanup failure",
+      "serve_test.go:102: Serve = <nil>, releases=1; want independent cleanup failure",
+      "serve_test.go:143: release overtook callback cleanup",
+      "serve_test.go:304: Serve = <nil>, releases=1"
+    ],
+    "classification": "compiled meaningful candidate-only regression detection",
+    "no_outer_timeout_credit": true
+  },
+  {
+    "semantic_id": "omitted-text-validation",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "index_test.go:93: ApplyCSV = <nil>; validation identity want true",
+      "index_test.go:93: ApplyCSV = <nil>; validation identity want true",
+      "refresh_test.go:96: Refresh = <nil>; validation identity want true",
+      "refresh_test.go:96: Refresh = <nil>; validation identity want true"
+    ],
+    "classification": "compiled meaningful candidate-only regression detection",
+    "no_outer_timeout_credit": true
+  },
+  {
+    "semantic_id": "process-success-on-error",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "main_test.go:139: process code=0 stdout=\"\" stderr=\"mkdir /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandPutAndApplyProcessesput_filesystem_failure1031940266/001/file: not a directory\\n\"; want code=2, no stdout and matching diagnostic convention",
+      "main_test.go:120: process code=0 stdout=\"\" stderr=\"CSV row 2: invalid record\\n\"; want code=2, no stdout and matching diagnostic convention",
+      "main_test.go:129: process code=0 stdout=\"\" stderr=\"CSV row 2: parse error on line 2, column 11: extraneous or missing \\\" in quoted-field\\n\"; want code=2, no stdout and matching diagnostic convention",
+      "main_test.go:107: process code=0 stdout=\"\" stderr=\"invalid record\\n\"; want code=2, no stdout and matching diagnostic convention"
+    ],
+    "classification": "compiled meaningful candidate-only regression detection",
+    "no_outer_timeout_credit": true
+  },
+  {
+    "semantic_id": "start-relative-recurrence",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "serve_test.go:211: next callback began 7.167\u00b5s after completion; want >= 50ms"
+    ],
+    "classification": "compiled meaningful candidate-only regression detection",
+    "no_outer_timeout_credit": true
+  }
+]

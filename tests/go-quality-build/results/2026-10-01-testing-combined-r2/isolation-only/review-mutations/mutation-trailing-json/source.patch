@@ -1,0 +1,24 @@
+--- a/refresh.go
++++ b/refresh.go
+@@ -4,7 +4,6 @@
+ 	"context"
+ 	"encoding/json"
+ 	"fmt"
+-	"io"
+ 	"net/http"
+ )
+ 
+@@ -45,13 +44,6 @@
+ 	if records == nil {
+ 		return fmt.Errorf("decode snapshot: expected a JSON array")
+ 	}
+-	var trailing any
+-	if err := decoder.Decode(&trailing); err != io.EOF {
+-		if err == nil {
+-			return fmt.Errorf("decode snapshot: trailing JSON value")
+-		}
+-		return fmt.Errorf("decode snapshot trailing data: %w", err)
+-	}
+ 	for n, record := range records {
+ 		if err := validateRecord(record.Key, record.Text); err != nil {
+ 			return fmt.Errorf("snapshot record %d: %w", n+1, err)

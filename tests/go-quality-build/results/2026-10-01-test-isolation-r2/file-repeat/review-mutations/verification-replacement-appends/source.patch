@@ -1,0 +1,15 @@
+--- a/store.go
++++ b/store.go
+@@ -29,7 +29,11 @@
+ 	if !validKey(key) {
+ 		return fmt.Errorf("invalid key %q", key)
+ 	}
+-	return os.WriteFile(filepath.Join(s.root, key), []byte(value), 0o600)
++	file, err := os.OpenFile(filepath.Join(s.root, key), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o600)
++	if err != nil { return err }
++	defer file.Close()
++	_, err = file.WriteString(value)
++	return err
+ }
+ 
+ // Get returns the complete value for key.

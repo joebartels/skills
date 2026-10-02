@@ -1,0 +1,88 @@
+{
+  "semantic_id": "mirror-no-label-validation",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "0b3a4f0f42f235958732e5948cc81cc04d540763ee90e27dd46b51add73f4e1e",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-_dy6e08n/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.234s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.478
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/mutations/mirror-no-label-validation/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-_dy6e08n/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.014
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-_dy6e08n/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.211s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.459
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-_dy6e08n/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshRejectsResponsesAndRetainsExactBytes (0.01s)\n    --- FAIL: TestRefreshRejectsResponsesAndRetainsExactBytes/empty_label (0.00s)\n        refresh_test.go:145: Refresh accepted an invalid response\n    --- FAIL: TestRefreshRejectsResponsesAndRetainsExactBytes/blank_label (0.00s)\n        refresh_test.go:145: Refresh accepted an invalid response\n    --- FAIL: TestRefreshRejectsResponsesAndRetainsExactBytes/invalid_later_item (0.00s)\n        refresh_test.go:145: Refresh accepted an invalid response\n--- FAIL: TestRefreshRetainsLastAcceptedSnapshot (0.00s)\n    refresh_test.go:316: replacement 1 succeeded, want rejection\nFAIL\nFAIL\texample.com/mirror\t0.178s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.362
+  },
+  "classification": "detected by meaningful behavioral assertion",
+  "controller_interpretation": "Blank label acceptance violates rejection and exact retained snapshot assertions.",
+  "execution_permission": "approved local loopback evaluation outside restricted sandbox"
+}

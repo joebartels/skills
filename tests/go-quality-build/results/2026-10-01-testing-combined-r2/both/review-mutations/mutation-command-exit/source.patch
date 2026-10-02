@@ -1,0 +1,10 @@
+--- a/cmd/indexer/main.go
++++ b/cmd/indexer/main.go
+@@ -72,6 +72,6 @@
+ 	defer stop()
+ 	if err := runContext(ctx, os.Args[1:], os.Stdin); err != nil {
+ 		fmt.Fprintln(os.Stderr, err)
+-		os.Exit(2)
++		os.Exit(1)
+ 	}
+ }

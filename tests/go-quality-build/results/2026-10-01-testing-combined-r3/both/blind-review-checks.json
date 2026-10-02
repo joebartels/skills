@@ -1,0 +1,271 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-xcpv8czo/candidate",
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.010851860046386719
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION",
+      "GOTOOLCHAIN"
+    ],
+    "cwd": "/private/tmp/go-independent-review-xcpv8czo/candidate",
+    "stdout": "darwin\narm64\ngo1.26.5\nlocal\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.009193897247314453
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "./...",
+      "-count=1",
+      "-timeout=60s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-xcpv8czo/candidate",
+    "stdout": "--- FAIL: TestRefreshRejectsRedirectWithoutChangingClient (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 68 [running]:\ntesting.tRunner.func1.2({0x1011849c0, 0x15a5083982b0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1011849c0?, 0x15a5083982b0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x101211da0, 0x15a50839a1b0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer_test.TestRefreshRejectsRedirectWithoutChangingClient(0x15a5083c46c8)\n\t/private/tmp/go-independent-review-xcpv8czo/candidate/refresh_test.go:162 +0x90\ntesting.tRunner(0x15a5083c46c8, 0x10120db00)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer\t0.284s\n--- FAIL: TestCLIProcessContracts (0.54s)\n    --- FAIL: TestCLIProcessContracts/failed_first_refresh (0.00s)\n        --- FAIL: TestCLIProcessContracts/failed_first_refresh/neighbor_status (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 155 [running]:\ntesting.tRunner.func1.2({0x10076c740, 0x59c303990b20})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x10076c740?, 0x59c303990b20?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1007f8240, 0x59c30399f240})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer/cmd/indexer.TestCLIProcessContracts.func8.1(0x59c3039b4d88)\n\t/private/tmp/go-independent-review-xcpv8czo/candidate/cmd/indexer/process_test.go:103 +0xc8\ntesting.tRunner(0x59c3039b4d88, 0x59c30399f200)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 154\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer/cmd/indexer\t0.960s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.2189440727233887
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "./...",
+      "-count=1",
+      "-timeout=60s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-xcpv8czo/candidate",
+    "stdout": "--- FAIL: TestRefreshRejectsRedirectWithoutChangingClient (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 68 [running]:\ntesting.tRunner.func1.2({0x1012e5e40, 0xc000590260})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x2b8\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x460\npanic({0x1012e5e40?, 0xc000590260?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0x13c\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1013789e0, 0xc000592198})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x30\nexample.com/indexer_test.TestRefreshRejectsRedirectWithoutChangingClient(0xc0005bc6c8)\n\t/private/tmp/go-independent-review-xcpv8czo/candidate/refresh_test.go:162 +0x118\ntesting.tRunner(0xc0005bc6c8, 0x101374100)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x168\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x7c0\nFAIL\texample.com/indexer\t0.238s\n--- FAIL: TestCLIProcessContracts (0.52s)\n    --- FAIL: TestCLIProcessContracts/failed_first_refresh (0.00s)\n        --- FAIL: TestCLIProcessContracts/failed_first_refresh/neighbor_status (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 130 [running]:\ntesting.tRunner.func1.2({0x105719be0, 0xc00031c080})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x2b8\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x460\npanic({0x105719be0?, 0xc00031c080?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0x13c\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1057aaf60, 0xc000328040})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x30\nexample.com/indexer/cmd/indexer.TestCLIProcessContracts.func8.1(0xc000322248)\n\t/private/tmp/go-independent-review-xcpv8czo/candidate/cmd/indexer/process_test.go:103 +0x114\ntesting.tRunner(0xc000322248, 0xc000328000)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x168\ncreated by testing.(*T).Run in goroutine 129\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x7c0\nFAIL\texample.com/indexer/cmd/indexer\t0.904s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.2244091033935547
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "./...",
+      "-count=1",
+      "-timeout=60s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-xcpv8czo/candidate",
+    "stdout": "ok  \texample.com/indexer\t0.718s\nok  \texample.com/indexer/cmd/indexer\t1.017s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.205979824066162,
+    "sandbox_permissions": "require_escalated"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "./...",
+      "-count=1",
+      "-timeout=60s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-xcpv8czo/candidate",
+    "stdout": "ok  \texample.com/indexer\t4.590s\nok  \texample.com/indexer/cmd/indexer\t1.862s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 4.823868751525879,
+    "sandbox_permissions": "require_escalated"
+  },
+  {
+    "label": "Go minimum API check",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-xcpv8czo/candidate",
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.12439894676208496
+  },
+  {
+    "label": "repeated isolated filesystem and lifecycle checks",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=5",
+      "-timeout=30s",
+      "-run",
+      "^(TestServe|TestApplyCSV|TestRefreshPublishesSnapshot|TestRefreshRejectionsRetainSnapshot|TestRefreshFetchAndPublicationFailures|TestIndependentIndexes|TestPutArbitraryText|TestAtomicRetentionAfterPartialWrite|TestAtomicWriteLimitHelper|TestExistingPutAndReplace)",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-xcpv8czo/candidate",
+    "stdout": "ok  \texample.com/indexer\t18.295s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 18.515976190567017
+  },
+  {
+    "label": "mutation: non-atomic publication must fail",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "^(TestRefreshPublishesSnapshot|TestAtomicRetentionAfterPartialWrite)$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-xcpv8czo/mutation-direct-publication",
+    "stdout": "--- FAIL: TestRefreshPublishesSnapshot (0.00s)\n    --- FAIL: TestRefreshPublishesSnapshot/empty_array (0.00s)\n        refresh_test.go:62: open reader = \"[]\\n\", <nil>; want old snapshot \"old bytes\\n\\x00end\"\n    --- FAIL: TestRefreshPublishesSnapshot/ordered_records (0.00s)\n        refresh_test.go:62: open reader = \"[{\\\"key\\\":\\\"beta\\\",\\\"text\\\":\\\" line \\\\n \\\"},{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"one\\\"},{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"two\\\"}]\\n\", <nil>; want old snapshot \"old bytes\\n\\x00end\"\n--- FAIL: TestAtomicRetentionAfterPartialWrite (0.02s)\n    --- FAIL: TestAtomicRetentionAfterPartialWrite/put (0.01s)\n        retention_unix_test.go:34: partial-write child (put): exit status 1\n            --- FAIL: TestAtomicWriteLimitHelper (0.00s)\n                retention_unix_test.go:80: file \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestAtomicRetentionAfterPartialWriteput3203039240/001/alpha\" = \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", <nil>; want \"prior bytes\"\n            FAIL\n    --- FAIL: TestAtomicRetentionAfterPartialWrite/apply (0.01s)\n        retention_unix_test.go:34: partial-write child (apply): exit status 1\n            --- FAIL: TestAtomicWriteLimitHelper (0.00s)\n                retention_unix_test.go:80: file \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestAtomicRetentionAfterPartialWriteapply23208244/001/alpha\" = \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", <nil>; want \"accepted\"\n            FAIL\n    --- FAIL: TestAtomicRetentionAfterPartialWrite/refresh (0.01s)\n        retention_unix_test.go:34: partial-write child (refresh): exit status 1\n            --- FAIL: TestAtomicWriteLimitHelper (0.00s)\n                retention_unix_test.go:80: file \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestAtomicRetentionAfterPartialWriterefresh202186198/001/alpha\" = \"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", <nil>; want \"prior bytes\"\n            FAIL\nFAIL\nFAIL\texample.com/indexer\t0.227s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.48367881774902344
+  },
+  {
+    "label": "mutation: joined independent cancellation failure must survive",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "^TestServeCancellationJoinsCleanup/joined_independent_failure$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-xcpv8czo/mutation-discard-independent-error",
+    "stdout": "--- FAIL: TestServeCancellationJoinsCleanup (0.02s)\n    --- FAIL: TestServeCancellationJoinsCleanup/joined_independent_failure (0.02s)\n        serve_test.go:143: Serve = <nil>; want independent and cancellation identities\nFAIL\nFAIL\texample.com/indexer\t0.216s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.47201991081237793
+  },
+  {
+    "label": "mutation: response body ownership assertions",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "^(TestRefreshPublishesSnapshot|TestRefreshRejectionsRetainSnapshot)$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-xcpv8czo/mutation-forget-body-close",
+    "stdout": "--- FAIL: TestRefreshPublishesSnapshot (0.00s)\n    --- FAIL: TestRefreshPublishesSnapshot/ordered_records (0.00s)\n        refresh_test.go:65: requests = 1, body closes = 0; want 1 each\n    --- FAIL: TestRefreshPublishesSnapshot/empty_array (0.00s)\n        refresh_test.go:65: requests = 1, body closes = 0; want 1 each\n--- FAIL: TestRefreshRejectionsRetainSnapshot (0.00s)\n    --- FAIL: TestRefreshRejectionsRetainSnapshot/partial_success_status (0.00s)\n        refresh_test.go:114: body closes = 0; want 1\n    --- FAIL: TestRefreshRejectionsRetainSnapshot/object (0.00s)\n        refresh_test.go:114: body closes = 0; want 1\n    --- FAIL: TestRefreshRejectionsRetainSnapshot/trailing_junk (0.00s)\n        refresh_test.go:114: body closes = 0; want 1\n    --- FAIL: TestRefreshRejectionsRetainSnapshot/malformed (0.00s)\n        refresh_test.go:114: body closes = 0; want 1\n    --- FAIL: TestRefreshRejectionsRetainSnapshot/read_after_valid_data (0.00s)\n        refresh_test.go:114: body closes = 0; want 1\n    --- FAIL: TestRefreshRejectionsRetainSnapshot/server_status (0.00s)\n        refresh_test.go:114: body closes = 0; want 1\n    --- FAIL: TestRefreshRejectionsRetainSnapshot/invalid_later_record (0.00s)\n        refresh_test.go:114: body closes = 0; want 1\n    --- FAIL: TestRefreshRejectionsRetainSnapshot/bad_key (0.00s)\n        refresh_test.go:114: body closes = 0; want 1\n    --- FAIL: TestRefreshRejectionsRetainSnapshot/null (0.00s)\n        refresh_test.go:114: body closes = 0; want 1\n    --- FAIL: TestRefreshRejectionsRetainSnapshot/blank (0.00s)\n        refresh_test.go:114: body closes = 0; want 1\n    --- FAIL: TestRefreshRejectionsRetainSnapshot/second_JSON (0.00s)\n        refresh_test.go:114: body closes = 0; want 1\nFAIL\nFAIL\texample.com/indexer\t0.211s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.4890141487121582
+  },
+  {
+    "label": "mutation: real process failure status must remain 2",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "^TestCLIProcessContracts/(put_usage|apply_prefix_after_validation|startup_rejects)$",
+      "./cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-independent-review-xcpv8czo/mutation-wrong-process-status",
+    "stdout": "--- FAIL: TestCLIProcessContracts (0.45s)\n    --- FAIL: TestCLIProcessContracts/put_usage (0.22s)\n        process_test.go:39: process = status 1, stdout \"\", stderr \"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status 2 and conventional streams\n    --- FAIL: TestCLIProcessContracts/apply_prefix_after_validation (0.01s)\n        process_test.go:53: process = status 1, stdout \"\", stderr \"CSV row 2: invalid record\\n\"; want status 2 and conventional streams\n    --- FAIL: TestCLIProcessContracts/startup_rejects (0.01s)\n        process_test.go:89: process = status 1, stdout \"\", stderr \"usage: indexer apply --dir DIR\\n\"; want status 2 and conventional streams\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t0.642s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.9027738571166992
+  },
+  {
+    "label": "mutation: release must not overtake in-flight callback cleanup",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "^TestServeCancellationJoinsCleanup$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-xcpv8czo/mutation-release-before-join",
+    "stdout": "--- FAIL: TestServeCancellationJoinsCleanup (0.00s)\n    --- FAIL: TestServeCancellationJoinsCleanup/nil (0.00s)\n        serve_test.go:129: release overtook callback cleanup\n    --- FAIL: TestServeCancellationJoinsCleanup/ordinary_cancellation (0.00s)\n        serve_test.go:129: release overtook callback cleanup\n    --- FAIL: TestServeCancellationJoinsCleanup/joined_independent_failure (0.00s)\n        serve_test.go:131: Serve returned before callback cleanup\n    --- FAIL: TestServeCancellationJoinsCleanup/noncomparable_failure (0.00s)\n        serve_test.go:129: release overtook callback cleanup\nFAIL\nFAIL\texample.com/indexer\t0.200s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.4583721160888672
+  }
+]

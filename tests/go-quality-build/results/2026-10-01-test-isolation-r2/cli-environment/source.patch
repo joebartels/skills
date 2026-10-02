@@ -1,0 +1,240 @@
+--- /dev/null
++++ b/command_test.go
+@@ -0,0 +1,105 @@
++package showcfg_test
++
++import (
++	"bytes"
++	"context"
++	"encoding/json"
++	"errors"
++	"io"
++	"os"
++	"os/exec"
++	"path/filepath"
++	"strings"
++	"testing"
++	"time"
++)
++
++func TestShowcfg(t *testing.T) {
++	endpoint, endpointPresent := os.LookupEnv("INDEXER_ENDPOINT")
++	mode, modePresent := os.LookupEnv("INDEXER_MODE")
++	binary := filepath.Join(t.TempDir(), "showcfg")
++	ctx, cancel := context.WithTimeout(context.Background(), 45*time.Second)
++	defer cancel()
++	build := exec.CommandContext(ctx, "go", "build", "-o", binary, "./cmd/showcfg")
++	build.WaitDelay = 2 * time.Second
++	if output, err := build.CombinedOutput(); err != nil {
++		t.Fatalf("build showcfg: %v (context: %v)\n%s", err, ctx.Err(), output)
++	}
++
++	// The grouping Run waits for parallel children before parent assertions.
++	// The parent's TempDir remains available through all descendants.
++	t.Run("cases", func(t *testing.T) {
++		for _, tc := range configurationCases() {
++			t.Run(tc.name, func(t *testing.T) {
++				t.Parallel()
++				ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
++				defer cancel()
++				command := exec.CommandContext(ctx, binary)
++				command.WaitDelay = 2 * time.Second
++				command.Env = childEnvironment(tc.endpoint, tc.mode)
++				var stdout, stderr bytes.Buffer
++				command.Stdout = &stdout
++				command.Stderr = &stderr
++				err := command.Run()
++				if ctx.Err() != nil {
++					t.Fatalf("showcfg deadline: %v; stdout=%q stderr=%q", ctx.Err(), stdout.String(), stderr.String())
++				}
++				if tc.errorKey != "" {
++					var exitError *exec.ExitError
++					if !errors.As(err, &exitError) || exitError.ExitCode() != 2 {
++						t.Errorf("showcfg error = %v; want exit 2; stderr=%q", err, stderr.String())
++					}
++					if stdout.Len() != 0 {
++						t.Errorf("failure stdout = %q; want empty", stdout.String())
++					}
++					if !strings.Contains(stderr.String(), tc.errorKey) {
++						t.Errorf("failure stderr = %q; want diagnostic naming %s", stderr.String(), tc.errorKey)
++					}
++					return
++				}
++				if err != nil {
++					t.Fatalf("showcfg: %v; stderr=%q", err, stderr.String())
++				}
++				if stderr.Len() != 0 {
++					t.Errorf("success stderr = %q; want empty", stderr.String())
++				}
++				output := stdout.String()
++				if !strings.HasSuffix(output, "\n") || strings.Count(output, "\n") != 1 {
++					t.Errorf("stdout = %q; want one JSON value followed by one newline", output)
++				}
++				decoder := json.NewDecoder(strings.NewReader(output))
++				var got map[string]string
++				if err := decoder.Decode(&got); err != nil {
++					t.Fatalf("decode stdout %q: %v", output, err)
++				}
++				if len(got) != 2 || got["endpoint"] != tc.want.Endpoint || got["mode"] != tc.want.Mode {
++					t.Errorf("stdout JSON = %#v; want endpoint=%q and mode=%q", got, tc.want.Endpoint, tc.want.Mode)
++				}
++				var extra any
++				if err := decoder.Decode(&extra); err != io.EOF {
++					t.Errorf("after Config JSON: value=%#v error=%v; want EOF", extra, err)
++				}
++			})
++		}
++	})
++	assertEnvironment(t, "INDEXER_ENDPOINT", envValue{endpoint, endpointPresent})
++	assertEnvironment(t, "INDEXER_MODE", envValue{mode, modePresent})
++}
++
++func childEnvironment(endpoint, mode envValue) []string {
++	environment := make([]string, 0, len(os.Environ())+2)
++	for _, entry := range os.Environ() {
++		key, _, _ := strings.Cut(entry, "=")
++		if strings.EqualFold(key, "INDEXER_ENDPOINT") || strings.EqualFold(key, "INDEXER_MODE") {
++			continue
++		}
++		environment = append(environment, entry)
++	}
++	if endpoint.present {
++		environment = append(environment, "INDEXER_ENDPOINT="+endpoint.value)
++	}
++	if mode.present {
++		environment = append(environment, "INDEXER_MODE="+mode.value)
++	}
++	return environment
++}
+--- a/config_test.go
++++ b/config_test.go
+@@ -1,17 +1,122 @@
+ package showcfg_test
+ 
+ import (
++	"os"
++	"strings"
+ 	"testing"
+ 
+ 	"example.com/showcfg"
+ )
+ 
+-func TestExplicitConfiguration(t *testing.T) {
+-	t.Setenv("INDEXER_ENDPOINT", "https://example.invalid/api")
+-	t.Setenv("INDEXER_MODE", "write")
+-	got, err := showcfg.LoadFromEnv()
+-	want := showcfg.Config{Endpoint: "https://example.invalid/api", Mode: "write"}
+-	if err != nil || got != want {
+-		t.Fatalf("LoadFromEnv = %#v, %v; want %#v", got, err, want)
++type envValue struct {
++	value   string
++	present bool
++}
++
++type configCase struct {
++	name     string
++	endpoint envValue
++	mode     envValue
++	want     showcfg.Config
++	errorKey string
++}
++
++func configurationCases() []configCase {
++	return []configCase{
++		{name: "defaults", want: showcfg.Config{Endpoint: "http://127.0.0.1:9090", Mode: "read"}},
++		{name: "explicit_http_read", endpoint: envValue{"http://example.invalid:8080/api", true}, mode: envValue{"read", true}, want: showcfg.Config{Endpoint: "http://example.invalid:8080/api", Mode: "read"}},
++		{name: "explicit_https_write", endpoint: envValue{"https://example.invalid/api", true}, mode: envValue{"write", true}, want: showcfg.Config{Endpoint: "https://example.invalid/api", Mode: "write"}},
++		{name: "endpoint_only", endpoint: envValue{"https://example.invalid/api", true}, want: showcfg.Config{Endpoint: "https://example.invalid/api", Mode: "read"}},
++		{name: "mode_only", mode: envValue{"write", true}, want: showcfg.Config{Endpoint: "http://127.0.0.1:9090", Mode: "write"}},
++		{name: "empty_endpoint", endpoint: envValue{"", true}, errorKey: "INDEXER_ENDPOINT"},
++		{name: "unsupported_scheme", endpoint: envValue{"ftp://example.invalid/api", true}, errorKey: "INDEXER_ENDPOINT"},
++		{name: "missing_host", endpoint: envValue{"https:///api", true}, errorKey: "INDEXER_ENDPOINT"},
++		{name: "relative_endpoint", endpoint: envValue{"/api", true}, errorKey: "INDEXER_ENDPOINT"},
++		{name: "malformed_endpoint", endpoint: envValue{"https://example.invalid/%zz", true}, errorKey: "INDEXER_ENDPOINT"},
++		{name: "empty_mode", mode: envValue{"", true}, errorKey: "INDEXER_MODE"},
++		{name: "unsupported_mode", mode: envValue{"delete", true}, errorKey: "INDEXER_MODE"},
++		{name: "uppercase_mode", mode: envValue{"READ", true}, errorKey: "INDEXER_MODE"},
++		{name: "whitespace_mode", mode: envValue{" write ", true}, errorKey: "INDEXER_MODE"},
++		{name: "valid_endpoint_invalid_mode", endpoint: envValue{"https://example.invalid/api", true}, mode: envValue{"invalid", true}, errorKey: "INDEXER_MODE"},
+ 	}
+ }
++
++// These tests stay serial because LoadFromEnv reads process-wide state.
++func TestLoadFromEnv(t *testing.T) {
++	for _, tc := range configurationCases() {
++		t.Run(tc.name, func(t *testing.T) {
++			setEnvironment(t, "INDEXER_ENDPOINT", tc.endpoint)
++			setEnvironment(t, "INDEXER_MODE", tc.mode)
++			got, err := showcfg.LoadFromEnv()
++			if tc.errorKey != "" {
++				if err == nil || !strings.Contains(err.Error(), tc.errorKey) {
++					t.Errorf("LoadFromEnv error = %v; want diagnostic naming %s", err, tc.errorKey)
++				}
++				if got != (showcfg.Config{}) {
++					t.Errorf("LoadFromEnv on failure = %#v; want zero Config", got)
++				}
++			} else if err != nil || got != tc.want {
++				t.Errorf("LoadFromEnv = %#v, %v; want %#v, nil", got, err, tc.want)
++			}
++			assertEnvironment(t, "INDEXER_ENDPOINT", tc.endpoint)
++			assertEnvironment(t, "INDEXER_MODE", tc.mode)
++		})
++	}
++}
++
++func TestEnvironmentRestored(t *testing.T) {
++	for _, tc := range []struct {
++		name  string
++		state envValue
++	}{
++		{name: "unset"},
++		{name: "present_empty", state: envValue{"", true}},
++		{name: "present_value", state: envValue{"parent-sentinel", true}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			setEnvironment(t, "INDEXER_ENDPOINT", tc.state)
++			setEnvironment(t, "INDEXER_MODE", tc.state)
++			for _, child := range []configCase{
++				{name: "unset", want: showcfg.Config{Endpoint: "http://127.0.0.1:9090", Mode: "read"}},
++				{name: "supplied", endpoint: envValue{"https://example.invalid/api", true}, mode: envValue{"write", true}, want: showcfg.Config{Endpoint: "https://example.invalid/api", Mode: "write"}},
++				{name: "malformed", mode: envValue{"", true}, errorKey: "INDEXER_MODE"},
++			} {
++				t.Run(child.name, func(t *testing.T) {
++					setEnvironment(t, "INDEXER_ENDPOINT", child.endpoint)
++					setEnvironment(t, "INDEXER_MODE", child.mode)
++					got, err := showcfg.LoadFromEnv()
++					if child.errorKey != "" {
++						if err == nil || got != (showcfg.Config{}) {
++							t.Errorf("LoadFromEnv = %#v, %v; want zero Config and error", got, err)
++						}
++						return
++					}
++					if err != nil || got != child.want {
++						t.Errorf("LoadFromEnv = %#v, %v; want %#v, nil", got, err, child.want)
++					}
++				})
++				assertEnvironment(t, "INDEXER_ENDPOINT", tc.state)
++				assertEnvironment(t, "INDEXER_MODE", tc.state)
++			}
++		})
++	}
++}
++
++func setEnvironment(t *testing.T, key string, value envValue) {
++	t.Helper()
++	// Setenv registers restoration of both presence and value before Unsetenv.
++	t.Setenv(key, value.value)
++	if !value.present {
++		if err := os.Unsetenv(key); err != nil {
++			t.Fatalf("unset %s: %v", key, err)
++		}
++	}
++}
++
++func assertEnvironment(t *testing.T, key string, want envValue) {
++	t.Helper()
++	value, present := os.LookupEnv(key)
++	if got := (envValue{value, present}); got != want {
++		t.Errorf("%s = %#v; want %#v", key, got, want)
++	}
++}

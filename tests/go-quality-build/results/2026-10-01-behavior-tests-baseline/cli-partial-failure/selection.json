@@ -1,0 +1,43 @@
+{
+  "offered_guidance": [
+    "go-api-contracts",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries"
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-testing-author-7r8p3riu/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-testing-author-7r8p3riu/guidance/go-core-style/SKILL.md"
+  ],
+  "opened_reference_paths": [],
+  "decisions": [
+    {
+      "name": "go-api-contracts",
+      "selected": true,
+      "reason": "The supported CLI changes from a single record to streamed ordered batches; retained writes, duplicate replacement, normalized file contents, stdout/stderr and exit codes are consumer contracts."
+    },
+    {
+      "name": "go-core-style",
+      "selected": true,
+      "reason": "This is Go implementation and test writing; use standard-library dependencies, explicit early error returns, contextual errors and gofmt."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "selected": false,
+      "reason": "No interface, constructor, options, dependency wiring or resource ownership change is necessary; keep the existing io.Reader/io.Writer boundary and synchronous file writes."
+    },
+    {
+      "name": "go-package-boundaries",
+      "selected": false,
+      "reason": "The existing command package already owns CSV import and file writes; the change extends its supported record count without creating, moving or splitting packages or responsibilities."
+    }
+  ],
+  "opened_task_files": [
+    "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/cli-partial-failure/dispatch.txt",
+    "/private/tmp/go-testing-author-7r8p3riu/cli-partial-failure/README.md",
+    "/private/tmp/go-testing-author-7r8p3riu/cli-partial-failure/go.mod",
+    "/private/tmp/go-testing-author-7r8p3riu/cli-partial-failure/main.go",
+    "/private/tmp/go-testing-author-7r8p3riu/cli-partial-failure/main_test.go"
+  ],
+  "unavailable_guidance": "The two new testing-writing skills were unavailable and were not opened."
+}

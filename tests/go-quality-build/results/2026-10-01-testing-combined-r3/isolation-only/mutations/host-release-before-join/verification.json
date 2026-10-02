@@ -1,0 +1,86 @@
+{
+  "semantic_id": "host-release-before-join",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "323f5117bc0d5e1227da3a1b32eb26a11ecbbddf1aabb29995e865919216a20a",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-qyml_j47/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.393s\nok  \texample.com/indexer/cmd/indexer\t1.051s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.306
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/isolation-only/mutations/host-release-before-join/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-qyml_j47/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-qyml_j47/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.205s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.379s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.639
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-qyml_j47/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestServeCancellationWaitsForCleanup (0.00s)\n    --- FAIL: TestServeCancellationWaitsForCleanup/nil (0.00s)\n        serve_test.go:207: release overtook callback cleanup\n    --- FAIL: TestServeCancellationWaitsForCleanup/parent_cause (0.00s)\n        serve_test.go:207: release overtook callback cleanup\n    --- FAIL: TestServeCancellationWaitsForCleanup/independent_error (0.00s)\n        serve_test.go:207: release overtook callback cleanup\n    --- FAIL: TestServeCancellationWaitsForCleanup/context_error (0.00s)\n        serve_test.go:207: release overtook callback cleanup\n    --- FAIL: TestServeCancellationWaitsForCleanup/wrapped_context_error (0.00s)\n        serve_test.go:207: release overtook callback cleanup\n    --- FAIL: TestServeCancellationWaitsForCleanup/joined_context_error (0.00s)\n        serve_test.go:207: release overtook callback cleanup\nFAIL\nFAIL\texample.com/indexer\t0.361s\nok  \texample.com/indexer/cmd/indexer\t1.222s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.426
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

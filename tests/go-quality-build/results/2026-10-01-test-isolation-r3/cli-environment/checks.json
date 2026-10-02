@@ -1,0 +1,179 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-2/module",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-2/module",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "INDEXER_ENDPOINT": "hostile invoking endpoint",
+      "INDEXER_MODE": "hostile invoking mode"
+    },
+    "stdout": "=== RUN   TestShowcfgCommand\n=== RUN   TestShowcfgCommand/defaults\n=== RUN   TestShowcfgCommand/explicit_https_write\n=== RUN   TestShowcfgCommand/explicit_http_read\n=== RUN   TestShowcfgCommand/endpoint_only\n=== RUN   TestShowcfgCommand/mode_only\n=== RUN   TestShowcfgCommand/empty_endpoint\n=== RUN   TestShowcfgCommand/malformed_endpoint\n=== RUN   TestShowcfgCommand/missing_scheme\n=== RUN   TestShowcfgCommand/missing_host\n=== RUN   TestShowcfgCommand/unsupported_scheme\n=== RUN   TestShowcfgCommand/empty_mode\n=== RUN   TestShowcfgCommand/unknown_mode\n=== RUN   TestShowcfgCommand/uppercase_mode\n=== RUN   TestShowcfgCommand/whitespace_mode\n--- PASS: TestShowcfgCommand (0.30s)\n    --- PASS: TestShowcfgCommand/defaults (0.16s)\n    --- PASS: TestShowcfgCommand/explicit_https_write (0.00s)\n    --- PASS: TestShowcfgCommand/explicit_http_read (0.00s)\n    --- PASS: TestShowcfgCommand/endpoint_only (0.00s)\n    --- PASS: TestShowcfgCommand/mode_only (0.00s)\n    --- PASS: TestShowcfgCommand/empty_endpoint (0.00s)\n    --- PASS: TestShowcfgCommand/malformed_endpoint (0.00s)\n    --- PASS: TestShowcfgCommand/missing_scheme (0.00s)\n    --- PASS: TestShowcfgCommand/missing_host (0.00s)\n    --- PASS: TestShowcfgCommand/unsupported_scheme (0.00s)\n    --- PASS: TestShowcfgCommand/empty_mode (0.00s)\n    --- PASS: TestShowcfgCommand/unknown_mode (0.00s)\n    --- PASS: TestShowcfgCommand/uppercase_mode (0.00s)\n    --- PASS: TestShowcfgCommand/whitespace_mode (0.00s)\n=== RUN   TestLoadFromEnv\n=== RUN   TestLoadFromEnv/defaults\n=== RUN   TestLoadFromEnv/explicit_https_write\n=== RUN   TestLoadFromEnv/explicit_http_read\n=== RUN   TestLoadFromEnv/endpoint_only\n=== RUN   TestLoadFromEnv/mode_only\n=== RUN   TestLoadFromEnv/empty_endpoint\n=== RUN   TestLoadFromEnv/malformed_endpoint\n=== RUN   TestLoadFromEnv/missing_scheme\n=== RUN   TestLoadFromEnv/missing_host\n=== RUN   TestLoadFromEnv/unsupported_scheme\n=== RUN   TestLoadFromEnv/empty_mode\n=== RUN   TestLoadFromEnv/unknown_mode\n=== RUN   TestLoadFromEnv/uppercase_mode\n=== RUN   TestLoadFromEnv/whitespace_mode\n--- PASS: TestLoadFromEnv (0.00s)\n    --- PASS: TestLoadFromEnv/defaults (0.00s)\n    --- PASS: TestLoadFromEnv/explicit_https_write (0.00s)\n    --- PASS: TestLoadFromEnv/explicit_http_read (0.00s)\n    --- PASS: TestLoadFromEnv/endpoint_only (0.00s)\n    --- PASS: TestLoadFromEnv/mode_only (0.00s)\n    --- PASS: TestLoadFromEnv/empty_endpoint (0.00s)\n    --- PASS: TestLoadFromEnv/malformed_endpoint (0.00s)\n    --- PASS: TestLoadFromEnv/missing_scheme (0.00s)\n    --- PASS: TestLoadFromEnv/missing_host (0.00s)\n    --- PASS: TestLoadFromEnv/unsupported_scheme (0.00s)\n    --- PASS: TestLoadFromEnv/empty_mode (0.00s)\n    --- PASS: TestLoadFromEnv/unknown_mode (0.00s)\n    --- PASS: TestLoadFromEnv/uppercase_mode (0.00s)\n    --- PASS: TestLoadFromEnv/whitespace_mode (0.00s)\n=== RUN   TestConfigurationEnvironmentRestoration\n=== RUN   TestConfigurationEnvironmentRestoration/unset\n=== RUN   TestConfigurationEnvironmentRestoration/unset/child\n=== RUN   TestConfigurationEnvironmentRestoration/present_empty\n=== RUN   TestConfigurationEnvironmentRestoration/present_empty/child\n=== RUN   TestConfigurationEnvironmentRestoration/present_value\n=== RUN   TestConfigurationEnvironmentRestoration/present_value/child\n--- PASS: TestConfigurationEnvironmentRestoration (0.00s)\n    --- PASS: TestConfigurationEnvironmentRestoration/unset (0.00s)\n        --- PASS: TestConfigurationEnvironmentRestoration/unset/child (0.00s)\n    --- PASS: TestConfigurationEnvironmentRestoration/present_empty (0.00s)\n        --- PASS: TestConfigurationEnvironmentRestoration/present_empty/child (0.00s)\n    --- PASS: TestConfigurationEnvironmentRestoration/present_value (0.00s)\n        --- PASS: TestConfigurationEnvironmentRestoration/present_value/child (0.00s)\nPASS\nok  \texample.com/showcfg\t0.538s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timeout_seconds": 150,
+    "elapsed_seconds": 0.694
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=90s",
+      "-run=^TestLoadFromEnv$/^defaults$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-2/module",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "INDEXER_ENDPOINT": "hostile invoking endpoint",
+      "INDEXER_MODE": "hostile invoking mode"
+    },
+    "stdout": "ok  \texample.com/showcfg\t0.136s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timeout_seconds": 150,
+    "elapsed_seconds": 0.254
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=90s",
+      "-run=^TestShowcfgCommand$/^empty_mode$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-2/module",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "INDEXER_ENDPOINT": "hostile invoking endpoint",
+      "INDEXER_MODE": "hostile invoking mode"
+    },
+    "stdout": "ok  \texample.com/showcfg\t0.329s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timeout_seconds": 150,
+    "elapsed_seconds": 0.449
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=90s",
+      "-run=^TestConfigurationEnvironmentRestoration$/^present_empty$/^child$",
+      "."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-2/module",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "INDEXER_ENDPOINT": "hostile invoking endpoint",
+      "INDEXER_MODE": "hostile invoking mode"
+    },
+    "stdout": "ok  \texample.com/showcfg\t0.122s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timeout_seconds": 150,
+    "elapsed_seconds": 0.241
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=5",
+      "-timeout=120s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-2/module",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "INDEXER_ENDPOINT": "hostile invoking endpoint",
+      "INDEXER_MODE": "hostile invoking mode"
+    },
+    "stdout": "ok  \texample.com/showcfg\t2.472s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "timeout_seconds": 150,
+    "elapsed_seconds": 2.66
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-2/module",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "INDEXER_ENDPOINT": "hostile invoking endpoint",
+      "INDEXER_MODE": "hostile invoking mode"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "timeout_seconds": 150,
+    "elapsed_seconds": 0.076
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "config_test.go",
+      "command_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-2/module",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "timeout_seconds": 60,
+    "elapsed_seconds": 0.007
+  }
+]

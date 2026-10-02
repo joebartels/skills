@@ -1,0 +1,25 @@
+--- a/serve.go
++++ b/serve.go
+@@ -21,11 +21,18 @@
+ 		if ctx.Err() != nil {
+ 			return nil
+ 		}
+-		if err := refresh(ctx); err != nil {
+-			if cancellationOnly(err, ctx.Err(), context.Cause(ctx)) {
+-				return nil
++		result := make(chan error, 1)
++		go func() { result <- refresh(ctx) }()
++		select {
++		case <-ctx.Done():
++			return nil // MUTATION: release before callback cleanup returns
++		case callbackErr := <-result:
++			if callbackErr != nil {
++				if cancellationOnly(callbackErr, ctx.Err(), context.Cause(ctx)) {
++					return nil
++				}
++				return callbackErr
+ 			}
+-			return err
+ 		}
+ 		timer := time.NewTimer(interval)
+ 		select {

@@ -1,0 +1,10 @@
+--- a/store_test.go
++++ b/store_test.go
+@@ -46,6 +46,7 @@
+ 	}
+ 	written := make(chan writtenValue, len(cases))
+ 	t.Run("instances", func(t *testing.T) {
++ defer func() { for _, tc := range cases { os.RemoveAll(tc.root) } }()
+ 		for _, tc := range cases {
+ 			t.Run(tc.name, func(t *testing.T) {
+ 				t.Parallel()

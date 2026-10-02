@@ -1,0 +1,10 @@
+--- a/refresh.go
++++ b/refresh.go
+@@ -23,7 +23,6 @@
+ 	// A redirect is a rejected status, not permission to make another GET. Copy
+ 	// the supplied client's policy without modifying its shared configuration.
+ 	oneRequestClient := *client
+-	oneRequestClient.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
+ 	response, err := oneRequestClient.Do(request)
+ 	if err != nil {
+ 		return fmt.Errorf("fetch: %w", err)

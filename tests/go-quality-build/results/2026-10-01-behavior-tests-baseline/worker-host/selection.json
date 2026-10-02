@@ -1,0 +1,45 @@
+{
+  "offered_guidance_names": [
+    "go-api-contracts",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries"
+  ],
+  "guidance_decisions": [
+    {
+      "name": "go-api-contracts",
+      "selected": true,
+      "reason": "Selected: Run is an exported function whose lifecycle, cancellation, and error contract changes. Preserved its exact function type and documented callback-error precedence."
+    },
+    {
+      "name": "go-core-style",
+      "selected": true,
+      "reason": "Selected: implementing Go code and tests. Used guard clauses, standard-library dependencies, explicit errors, local state, owned goroutine completion, gofmt, race checks, and go vet."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "selected": true,
+      "reason": "Selected: the host now owns a periodic worker, child context, cancellation, completion, and resource release. Kept function dependencies and avoided new interfaces or options."
+    },
+    {
+      "name": "go-package-boundaries",
+      "selected": false,
+      "reason": "Not selected: existing host and worker remain in the same package with the same ownership and import direction. Periodic lifecycle behavior does not require a package-boundary redesign."
+    }
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-testing-author-7r8p3riu/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-testing-author-7r8p3riu/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-testing-author-7r8p3riu/guidance/go-interfaces-and-composition/SKILL.md"
+  ],
+  "opened_reference_paths": [],
+  "opened_task_files": [
+    "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/worker-host/dispatch.txt",
+    "/private/tmp/go-testing-author-7r8p3riu/worker-host/README.md",
+    "/private/tmp/go-testing-author-7r8p3riu/worker-host/go.mod",
+    "/private/tmp/go-testing-author-7r8p3riu/worker-host/host.go",
+    "/private/tmp/go-testing-author-7r8p3riu/worker-host/worker.go",
+    "/private/tmp/go-testing-author-7r8p3riu/worker-host/host_test.go"
+  ],
+  "testing_writing_guidance": "The two new testing-writing skills were unavailable; neither was opened. No other writing or review skill was opened."
+}

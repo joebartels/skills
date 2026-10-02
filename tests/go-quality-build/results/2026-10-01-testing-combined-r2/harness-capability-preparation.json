@@ -1,0 +1,112 @@
+{
+  "scope": "Read-only local harness capability preparation during Task 5; does not establish runtime loading or automatic routing. Tool outputs are combined streams.",
+  "checks": [
+    {
+      "command": "rtk proxy codex --version",
+      "i": 0,
+      "chunk_id": "76d9ff",
+      "wall_time_seconds": 0.000004791,
+      "exit_code": 0,
+      "original_token_count": 31,
+      "output": "WARNING: proceeding, even though we could not create PATH aliases: Operation not permitted (os error 1)\ncodex-cli 0.157.0\n"
+    },
+    {
+      "command": "rtk proxy codex plugin --help",
+      "i": 1,
+      "chunk_id": "81e53a",
+      "wall_time_seconds": 0.000003959,
+      "exit_code": 0,
+      "original_token_count": 325,
+      "output": "WARNING: proceeding, even though we could not create PATH aliases: Operation not permitted (os error 1)\nManage Codex plugins\n\nUsage: codex plugin [OPTIONS] <COMMAND>\n\nCommands:\n  add          Install a plugin from a configured or remote marketplace\n  list         List plugins available from configured and remote marketplaces\n  marketplace  Add, list, upgrade, or remove configured plugin marketplaces\n  remove       Uninstall a plugin and remove its local cache\n  help         Print this message or the help of the given subcommand(s)\n\nOptions:\n  -c, --config <key=value>\n          Override a configuration value that would otherwise be loaded from `~/.codex/config.toml`.\n          Use a dotted path (`foo.bar.baz`) to override nested values. The `value` portion is parsed\n          as TOML. If it fails to parse as TOML, the raw string is used as a literal.\n          \n          Examples: - `-c model=\"o3\"` - `-c 'sandbox_permissions=[\"disk-full-read-access\"]'` - `-c\n          shell_environment_policy.inherit=all`\n\n      --enable <FEATURE>\n          Enable a feature (repeatable). Equivalent to `-c features.<name>=true`\n\n      --disable <FEATURE>\n          Disable a feature (repeatable). Equivalent to `-c features.<name>=false`\n\n  -h, --help\n          Print help (see a summary with '-h')\n"
+    },
+    {
+      "command": "rtk proxy opencode --version",
+      "i": 2,
+      "chunk_id": "f921c8",
+      "wall_time_seconds": 0.246938541,
+      "exit_code": 0,
+      "original_token_count": 2,
+      "output": "1.18.7\n"
+    },
+    {
+      "command": "rtk proxy opencode --help",
+      "i": 3,
+      "chunk_id": "5c02a7",
+      "wall_time_seconds": 0.24986725,
+      "exit_code": 0,
+      "original_token_count": 1072,
+      "output": "⠀                                ▄     \n█▀▀█ █▀▀█ █▀▀█ █▀▀▄ █▀▀▀ █▀▀█ █▀▀█ █▀▀█\n█  █ █  █ █▀▀▀ █  █ █    █  █ █  █ █▀▀▀\n▀▀▀▀ █▀▀▀ ▀▀▀▀ ▀  ▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀ ▀▀▀▀\n\nCommands:\n  opencode completion          generate shell completion script\n  opencode acp                 start ACP (Agent Client Protocol) server\n  opencode mcp                 manage MCP (Model Context Protocol) servers\n  opencode [project]           start opencode tui                                          [default]\n  opencode attach <url>        attach to a running opencode server\n  opencode run [message..]     run opencode with a message\n  opencode debug               debugging and troubleshooting tools\n  opencode providers           manage AI providers and credentials                   [aliases: auth]\n  opencode agent               manage agents\n  opencode upgrade [target]    upgrade opencode to the latest or a specific version\n  opencode uninstall           uninstall opencode and remove all related files\n  opencode serve               starts a headless opencode server\n  opencode web                 start opencode server and open web interface\n  opencode models [provider]   list all available models\n  opencode stats               show token usage and cost statistics\n  opencode export [sessionID]  export session data as JSON\n  opencode import <file>       import session data from JSON file or URL\n  opencode github              manage GitHub agent\n  opencode pr <number>         fetch and checkout a GitHub PR branch, then run opencode\n  opencode session             manage sessions\n  opencode plugin <module>     install plugin and update config                      [aliases: plug]\n  opencode db                  database tools\n\nPositionals:\n  project  path to start opencode in                                                        [string]\n\nOptions:\n  -h, --help          show help                                                            [boolean]\n  -v, --version       show version number                                                  [boolean]\n      --print-logs    print logs to stderr                                                 [boolean]\n      --log-level     log level                 [string] [choices: \"DEBUG\", \"INFO\", \"WARN\", \"ERROR\"]\n      --pure          run without external plugins                                         [boolean]\n      --port          port to listen on                                        [number] [default: 0]\n      --hostname      hostname to listen on                          [string] [default: \"127.0.0.1\"]\n      --mdns          enable mDNS service discovery (defaults hostname to 0.0.0.0)\n                                                                          [boolean] [default: false]\n      --mdns-domain   custom domain name for mDNS service (default: opencode.local)\n                                                                [string] [default: \"opencode.local\"]\n      --cors          additional domains to allow for CORS                     [array] [default: []]\n  -m, --model         model to use in the format of provider/model                          [string]\n  -c, --continue      continue the last session                                            [boolean]\n  -s, --session       session id to continue                                                [string]\n      --fork          fork the session when continuing (use with --continue or --session)  [boolean]\n      --prompt        prompt to use                                                         [string]\n      --agent         agent to use                                                          [string]\n      --auto          auto-approve permissions that are not explicitly denied (dangerous!)\n                                                                          [boolean] [default: false]\n      --mini          start the minimal interactive interface             [boolean] [default: false]\n      --no-replay     disable mini session history replay on resume and after resize       [boolean]\n      --replay-limit  cap visible mini replay to the newest N messages                      [number]\n"
+    },
+    {
+      "command": "rtk proxy codex plugin list --help",
+      "chunk_id": "531051",
+      "wall_time_seconds": 0.000005584,
+      "exit_code": 0,
+      "original_token_count": 333,
+      "output": "WARNING: proceeding, even though we could not create PATH aliases: Operation not permitted (os error 1)\nList plugins available from configured and remote marketplaces\n\nUsage: codex plugin list [OPTIONS]\n\nOptions:\n  -c, --config <key=value>\n          Override a configuration value that would otherwise be loaded from `~/.codex/config.toml`.\n          Use a dotted path (`foo.bar.baz`) to override nested values. The `value` portion is parsed\n          as TOML. If it fails to parse as TOML, the raw string is used as a literal.\n          \n          Examples: - `-c model=\"o3\"` - `-c 'sandbox_permissions=[\"disk-full-read-access\"]'` - `-c\n          shell_environment_policy.inherit=all`\n\n  -m, --marketplace <MARKETPLACE>\n          Only list plugins from this marketplace name\n\n      --enable <FEATURE>\n          Enable a feature (repeatable). Equivalent to `-c features.<name>=true`\n\n      --json\n          Output plugin list as JSON\n\n      --available\n          Include uninstalled marketplace plugins in the JSON output\n\n      --disable <FEATURE>\n          Disable a feature (repeatable). Equivalent to `-c features.<name>=false`\n\n  -h, --help\n          Print help (see a summary with '-h')\n\nExamples:\n  codex plugin list\n  codex plugin list --marketplace debug\n  codex plugin list --json\n  codex plugin list --available --json\n"
+    },
+    {
+      "command": "rtk proxy codex plugin marketplace --help",
+      "chunk_id": "037364",
+      "wall_time_seconds": 0.000005459,
+      "exit_code": 0,
+      "original_token_count": 334,
+      "output": "WARNING: proceeding, even though we could not create PATH aliases: Operation not permitted (os error 1)\nAdd, list, upgrade, or remove configured plugin marketplaces\n\nUsage: codex plugin marketplace [OPTIONS] <COMMAND>\n\nCommands:\n  add      Add a local or Git marketplace to the configured marketplace sources\n  list     List plugin marketplaces Codex is currently considering and their roots\n  upgrade  Refresh configured Git marketplace snapshots\n  remove   Remove a configured marketplace source by name\n  help     Print this message or the help of the given subcommand(s)\n\nOptions:\n  -c, --config <key=value>\n          Override a configuration value that would otherwise be loaded from `~/.codex/config.toml`.\n          Use a dotted path (`foo.bar.baz`) to override nested values. The `value` portion is parsed\n          as TOML. If it fails to parse as TOML, the raw string is used as a literal.\n          \n          Examples: - `-c model=\"o3\"` - `-c 'sandbox_permissions=[\"disk-full-read-access\"]'` - `-c\n          shell_environment_policy.inherit=all`\n\n      --enable <FEATURE>\n          Enable a feature (repeatable). Equivalent to `-c features.<name>=true`\n\n      --disable <FEATURE>\n          Disable a feature (repeatable). Equivalent to `-c features.<name>=false`\n\n  -h, --help\n          Print help (see a summary with '-h')\n"
+    },
+    {
+      "command": "rtk proxy opencode debug --help",
+      "chunk_id": "14f397",
+      "wall_time_seconds": 0.078412625,
+      "exit_code": 0,
+      "original_token_count": 342,
+      "output": "opencode debug\n\ndebugging and troubleshooting tools\n\nCommands:\n  opencode debug config        show resolved configuration\n  opencode debug lsp           LSP debugging utilities\n  opencode debug rg            ripgrep debugging utilities\n  opencode debug file          file system debugging utilities\n  opencode debug scrap         list all known projects\n  opencode debug skill         list all available skills\n  opencode debug snapshot      snapshot debugging utilities\n  opencode debug startup       print startup timing\n  opencode debug agent <name>  show agent configuration details\n  opencode debug v2            debug v2 catalog and built-in plugins\n  opencode debug info          show debug information\n  opencode debug paths         show global paths (data, config, cache, state)\n  opencode debug wait          wait indefinitely (for debugging)\n\nOptions:\n  -h, --help        show help                                                              [boolean]\n  -v, --version     show version number                                                    [boolean]\n      --print-logs  print logs to stderr                                                   [boolean]\n      --log-level   log level                   [string] [choices: \"DEBUG\", \"INFO\", \"WARN\", \"ERROR\"]\n      --pure        run without external plugins                                           [boolean]"
+    },
+    {
+      "command": "rtk proxy opencode debug v2 --help",
+      "chunk_id": "5c504d",
+      "wall_time_seconds": 0.086178625,
+      "exit_code": 0,
+      "original_token_count": 143,
+      "output": "opencode debug v2\n\ndebug v2 catalog and built-in plugins\n\nOptions:\n  -h, --help        show help                                                              [boolean]\n  -v, --version     show version number                                                    [boolean]\n      --print-logs  print logs to stderr                                                   [boolean]\n      --log-level   log level                   [string] [choices: \"DEBUG\", \"INFO\", \"WARN\", \"ERROR\"]\n      --pure        run without external plugins                                           [boolean]"
+    },
+    {
+      "command": "rtk proxy opencode debug skill --help",
+      "chunk_id": "68f79b",
+      "wall_time_seconds": 0.086552292,
+      "exit_code": 0,
+      "original_token_count": 141,
+      "output": "opencode debug skill\n\nlist all available skills\n\nOptions:\n  -h, --help        show help                                                              [boolean]\n  -v, --version     show version number                                                    [boolean]\n      --print-logs  print logs to stderr                                                   [boolean]\n      --log-level   log level                   [string] [choices: \"DEBUG\", \"INFO\", \"WARN\", \"ERROR\"]\n      --pure        run without external plugins                                           [boolean]"
+    },
+    {
+      "command": "rtk proxy codex plugin list --marketplace joebartels-skills --available --json",
+      "chunk_id": "f22247",
+      "wall_time_seconds": 0.000006084,
+      "exit_code": 0,
+      "original_token_count": 37,
+      "output": "WARNING: proceeding, even though we could not create PATH aliases: Operation not permitted (os error 1)\n{\n  \"installed\": [],\n  \"available\": []\n}\n"
+    },
+    {
+      "command": "rtk proxy opencode debug skill --pure",
+      "exit_code": 1,
+      "output": "\u001b[91m\u001b[1mError: \u001b[0mUnexpected error\n\nUnknown: FileSystem.open (/Users/jb/.local/share/opencode/log/opencode.log)\n",
+      "scope": "restricted attempt"
+    },
+    {
+      "command": "rtk proxy opencode debug skill --pure > .superpowers/sdd/2026-10-01-go-quality-build-testing-group/opencode-discovery-raw.json",
+      "exit_code": 1,
+      "output": "\u001b[91m\u001b[1mError: \u001b[0mConfiguration is invalid at /Users/jb/.codex/worktrees/b633/skills/opencode.json\n↳ Expected object | undefined, got [\"./plugins/go-quality-build/skills\",\"./plugins/go-quality-review/skills\"] skills\n",
+      "scope": "automatically approved unchanged-config attempt; no installation"
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://opencode.ai/v2/docs/skills",
+      "checked": "2026-10-01",
+      "finding": "Official V2 sources documentation supports the skills array and active-working-directory relative paths; installed 1.18.7 discovery rejects that config. Documentation agreement is not V2 runtime loading."
+    }
+  ],
+  "limits": [
+    "Codex CLI 0.157.0 configured marketplace list returns empty installed/available sets; no package loading proved.",
+    "OpenCode 1.18.7 rejects repository V2 skills array; no configuration changed and no tool installed."
+  ]
+}

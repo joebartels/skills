@@ -1,0 +1,86 @@
+{
+  "semantic_id": "post-review-cli-direct-partial-write",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "03b848db9a6d523e17d50ee6689aacb3080d6cd065eb4d473fe766f383d31e35",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-0xy3yhhw/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.949s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.147
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-r2/cli-repeat/mutations/post-review-cli-direct-partial-write/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-0xy3yhhw/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.014
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-0xy3yhhw/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.141s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.339
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-0xy3yhhw/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestPartialWriteRetainsAcceptedReplacement (0.33s)\n    write_failure_unix_test.go:36: web = \"12\", <nil>; want \"7\\n\"\nFAIL\nFAIL\texample.com/ledgerload\t1.096s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.215
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

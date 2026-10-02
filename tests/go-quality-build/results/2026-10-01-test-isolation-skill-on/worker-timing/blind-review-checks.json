@@ -1,0 +1,379 @@
+[
+  {
+    "name": "toolchain",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.00938079203478992,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "runtime",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION",
+      "CGO_ENABLED",
+      "GOROOT"
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "darwin\narm64\ngo1.26.5\n1\n/opt/homebrew/Cellar/go/1.26.5/libexec\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.008712625014595687,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "original-baseline",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe/original",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/poller\t0.225s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.3615752080222592,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "candidate-normal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/poller\t0.392s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.5536107500083745,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "candidate-race-repeat-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-shuffle=20261001",
+      "-timeout=40s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/poller\t2.825s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 3.023600750020705,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "candidate-alpha-alone",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-run=^TestIndependentInvocations$/^alpha$",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/poller\t1.166s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.3091944170882925,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "candidate-beta-alone",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-run=^TestIndependentInvocations$/^beta$",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/poller\t1.162s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.2951794589171186,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "candidate-vet-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.07226725004147738,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "production-contract-config-unchanged",
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-c",
+      "import hashlib,pathlib; b=pathlib.Path(\"/private/tmp/go-independent-review-4qorzxhe\"); [(print(f,hashlib.sha256((b/\"original\"/f).read_bytes()).hexdigest()), None if (b/\"original\"/f).read_bytes()==(b/\"candidate\"/f).read_bytes() else (_ for _ in ()).throw(AssertionError(f))) for f in (\"poll.go\",\"go.mod\",\"README.md\")]"
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "poll.go cac1ee3ceb250f0c8b9d800ec2f55277b11d0a614e51086f151b64a2c4cad491\ngo.mod a7aa1456ec43a9e34590246526baefddcb794ce46b06e2e893147f769899738d\nREADME.md a8b458db577e2c868a7923297f6e9b87c546164f2e18f9bc78d34a05f3599181\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.023421374964527786,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "mutation-start-relative",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-run=^TestRecurrence$",
+      "-timeout=15s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe/mutations/start-relative",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestRecurrence (0.08s)\n    poll_test.go:168: callback 2 started 1.625\u00b5s after completion, want at least 40ms\nFAIL\nFAIL\texample.com/poller\t0.333s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.4774500409839675,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "mutation-early-return",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-run=^TestCancellationDuringCallbackCleanup$",
+      "-timeout=15s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe/mutations/async-return-on-cancel",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestCancellationDuringCallbackCleanup (0.00s)\n    poll_test.go:215: Poll returned while callback cleanup was blocked\nFAIL\nFAIL\texample.com/poller\t0.142s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.30313799995929,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "mutation-cancellation-masks-error",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-run=^TestCallbackErrorConcurrentWithCancellation$",
+      "-timeout=15s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe/mutations/cancellation-masks-error",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestCallbackErrorConcurrentWithCancellation (0.00s)\n    poll_test.go:248: Poll = <nil>, want original callback error callback failed during cancellation\nFAIL\nFAIL\texample.com/poller\t0.134s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.2876062080031261,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "mutation-wrapped-error",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-run=^TestCallbackError$",
+      "-timeout=15s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe/mutations/wrapped-error",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestCallbackError (0.00s)\n    poll_test.go:49: Poll = callback: poll failed, want original callback error poll failed\nFAIL\nFAIL\texample.com/poller\t0.136s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.3027676249621436,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "forced-early-fatal-cleanup",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-v",
+      "-count=1",
+      "-run=^TestCancellationDuringCallbackCleanup$",
+      "-timeout=15s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe/mutations/forced-early-fatal",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "=== RUN   TestCancellationDuringCallbackCleanup\n=== PAUSE TestCancellationDuringCallbackCleanup\n=== CONT  TestCancellationDuringCallbackCleanup\n    poll_test.go:224: review probe: intentional early Fatal while callback cleanup is blocked\n    poll_test.go:201: review probe: early Fatal released callback cleanup gate and joined Poll\n--- FAIL: TestCancellationDuringCallbackCleanup (0.00s)\nFAIL\nFAIL\texample.com/poller\t0.148s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.3296340829692781,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "forced-early-fatal-with-broken-stop",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-count=1",
+      "-run=^TestCancellationDuringCallbackCleanup$",
+      "-timeout=15s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe/mutations/forced-early-fatal-no-gate-release",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "=== RUN   TestCancellationDuringCallbackCleanup\n=== PAUSE TestCancellationDuringCallbackCleanup\n=== CONT  TestCancellationDuringCallbackCleanup\n    poll_test.go:221: review probe: intentional early Fatal while callback cleanup is blocked\n    poll_test.go:422: Poll did not join during cleanup\n    poll_test.go:194: review probe: worker still running after helper cleanup\n    poll_test.go:200: review probe: callback cleanup still blocked\n--- FAIL: TestCancellationDuringCallbackCleanup (5.00s)\nFAIL\nFAIL\texample.com/poller\t5.168s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 5.321643291972578,
+    "timeout_seconds": 60
+  },
+  {
+    "name": "final-source-integrity",
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-c",
+      "import hashlib,pathlib; b=pathlib.Path(\"/private/tmp/go-independent-review-4qorzxhe\"); [(print(str(p.relative_to(b)),hashlib.sha256(p.read_bytes()).hexdigest())) for d in (\"original\",\"candidate\") for p in sorted((b/d).iterdir()) if p.is_file()]; assert all((b/\"original\"/f).read_bytes()==(b/\"candidate\"/f).read_bytes() for f in (\"poll.go\",\"README.md\",\"go.mod\"))"
+    ],
+    "cwd": "/private/tmp/go-independent-review-4qorzxhe",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "original/README.md a8b458db577e2c868a7923297f6e9b87c546164f2e18f9bc78d34a05f3599181\noriginal/go.mod a7aa1456ec43a9e34590246526baefddcb794ce46b06e2e893147f769899738d\noriginal/poll.go cac1ee3ceb250f0c8b9d800ec2f55277b11d0a614e51086f151b64a2c4cad491\noriginal/poll_test.go 99f20687d301daa8e80e3b749b474570398c588b7eb6f88fd05cec1e73b3af7d\ncandidate/README.md a8b458db577e2c868a7923297f6e9b87c546164f2e18f9bc78d34a05f3599181\ncandidate/go.mod a7aa1456ec43a9e34590246526baefddcb794ce46b06e2e893147f769899738d\ncandidate/poll.go cac1ee3ceb250f0c8b9d800ec2f55277b11d0a614e51086f151b64a2c4cad491\ncandidate/poll_test.go 16ee10d91e57e5517c0fa2e29848eef6ad5d8b451a6f735a49b0dead8c3d385a\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.02549204195383936,
+    "timeout_seconds": 60
+  }
+]

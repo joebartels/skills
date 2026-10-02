@@ -1,0 +1,246 @@
+[
+  {
+    "name": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-4q0updp4/verification",
+    "exit_code": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.011808749986812472
+  },
+  {
+    "name": "platform",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION",
+      "GONOSUMDB",
+      "GOPROXY"
+    ],
+    "cwd": "/private/tmp/go-independent-review-4q0updp4/verification",
+    "exit_code": 0,
+    "stdout": "darwin\narm64\ngo1.26.5\n\nhttps://proxy.golang.org,direct\n",
+    "stderr": "",
+    "elapsed_seconds": 0.00968995806761086
+  },
+  {
+    "name": "baseline-suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4q0updp4/verification",
+    "exit_code": 0,
+    "stdout": "=== RUN   TestSingleRecord\n--- PASS: TestSingleRecord (0.00s)\n=== RUN   TestRunBatchSuccess\n=== RUN   TestRunBatchSuccess/empty\n=== RUN   TestRunBatchSuccess/ordered_records\n=== RUN   TestRunBatchSuccess/duplicate_replaces\n=== RUN   TestRunBatchSuccess/CSV_and_normalization\n--- PASS: TestRunBatchSuccess (0.00s)\n    --- PASS: TestRunBatchSuccess/empty (0.00s)\n    --- PASS: TestRunBatchSuccess/ordered_records (0.00s)\n    --- PASS: TestRunBatchSuccess/duplicate_replaces (0.00s)\n    --- PASS: TestRunBatchSuccess/CSV_and_normalization (0.00s)\n=== RUN   TestRunStopsAtInvalidRow\n=== RUN   TestRunStopsAtInvalidRow/too_few_fields\n=== RUN   TestRunStopsAtInvalidRow/too_many_fields\n=== RUN   TestRunStopsAtInvalidRow/empty_ID\n=== RUN   TestRunStopsAtInvalidRow/dot_ID\n=== RUN   TestRunStopsAtInvalidRow/dot_dot_ID\n=== RUN   TestRunStopsAtInvalidRow/slash_ID\n=== RUN   TestRunStopsAtInvalidRow/backslash_ID\n=== RUN   TestRunStopsAtInvalidRow/empty_quantity\n=== RUN   TestRunStopsAtInvalidRow/zero_quantity\n=== RUN   TestRunStopsAtInvalidRow/negative_duplicate\n=== RUN   TestRunStopsAtInvalidRow/fractional_quantity\n=== RUN   TestRunStopsAtInvalidRow/nondecimal_quantity\n=== RUN   TestRunStopsAtInvalidRow/space_in_quantity\n=== RUN   TestRunStopsAtInvalidRow/overflow_quantity\n=== RUN   TestRunStopsAtInvalidRow/malformed_CSV\n--- PASS: TestRunStopsAtInvalidRow (0.01s)\n    --- PASS: TestRunStopsAtInvalidRow/too_few_fields (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/too_many_fields (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/empty_ID (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/dot_ID (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/dot_dot_ID (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/slash_ID (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/backslash_ID (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/empty_quantity (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/zero_quantity (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/negative_duplicate (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/fractional_quantity (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/nondecimal_quantity (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/space_in_quantity (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/overflow_quantity (0.00s)\n    --- PASS: TestRunStopsAtInvalidRow/malformed_CSV (0.00s)\n=== RUN   TestRunRejectsFirstRowWithoutWrites\n--- PASS: TestRunRejectsFirstRowWithoutWrites (0.00s)\n=== RUN   TestRunStopsAtFileFailure\n--- PASS: TestRunStopsAtFileFailure (0.00s)\n=== RUN   TestRunDirectoryFailure\n--- PASS: TestRunDirectoryFailure (0.00s)\n=== RUN   TestRunInputFailureRetainsPrefix\n--- PASS: TestRunInputFailureRetainsPrefix (0.00s)\n=== RUN   TestRunPublishesBeforeReadingNextRecord\n--- PASS: TestRunPublishesBeforeReadingNextRecord (0.00s)\n=== RUN   TestCLIProcessContract\n=== RUN   TestCLIProcessContract/empty\n=== RUN   TestCLIProcessContract/single_record\n=== RUN   TestCLIProcessContract/batch_and_duplicate\n=== RUN   TestCLIProcessContract/invalid_first_row\n=== RUN   TestCLIProcessContract/invalid_duplicate\n=== RUN   TestCLIProcessContract/malformed_CSV_after_prefix\n=== RUN   TestCLIProcessContract/missing_directory\n=== RUN   TestCLIProcessContract/empty_directory_option\n=== RUN   TestCLIProcessContract/positional_argument\n=== RUN   TestCLIProcessContract/unknown_flag\n=== RUN   TestCLIProcessContract/missing_flag_value\n=== RUN   TestCLIProcessContract/file_failure_after_prefix\n=== RUN   TestCLIProcessContract/directory_creation_failure\n--- PASS: TestCLIProcessContract (0.29s)\n    --- PASS: TestCLIProcessContract/empty (0.14s)\n    --- PASS: TestCLIProcessContract/single_record (0.00s)\n    --- PASS: TestCLIProcessContract/batch_and_duplicate (0.00s)\n    --- PASS: TestCLIProcessContract/invalid_first_row (0.00s)\n    --- PASS: TestCLIProcessContract/invalid_duplicate (0.00s)\n    --- PASS: TestCLIProcessContract/malformed_CSV_after_prefix (0.00s)\n    --- PASS: TestCLIProcessContract/missing_directory (0.00s)\n    --- PASS: TestCLIProcessContract/empty_directory_option (0.00s)\n    --- PASS: TestCLIProcessContract/positional_argument (0.00s)\n    --- PASS: TestCLIProcessContract/unknown_flag (0.00s)\n    --- PASS: TestCLIProcessContract/missing_flag_value (0.00s)\n    --- PASS: TestCLIProcessContract/file_failure_after_prefix (0.00s)\n    --- PASS: TestCLIProcessContract/directory_creation_failure (0.00s)\n=== RUN   TestCLIPartialWriteRetainsAcceptedDuplicate\n--- PASS: TestCLIPartialWriteRetainsAcceptedDuplicate (0.21s)\n=== RUN   TestFileSizeLimitHelper\n--- PASS: TestFileSizeLimitHelper (0.00s)\nPASS\nok  \texample.com/ledgerload\t0.680s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.8354933749651536
+  },
+  {
+    "name": "shuffled-repeat-suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=3",
+      "-shuffle=on",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4q0updp4/verification",
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/ledgerload\t1.565s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.6770808330038562
+  },
+  {
+    "name": "mutation-prevalidate",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-count=1",
+      "-run",
+      "^TestRunPublishesBeforeReadingNextRecord$",
+      "-timeout=60s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4q0updp4/mutation-prevalidate",
+    "exit_code": 1,
+    "stdout": "=== RUN   TestRunPublishesBeforeReadingNextRecord\n    main_test.go:141: first record not published before next read: \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestRunPublishesBeforeReadingNextRecord1144762731/001/first: no such file or directory\n--- FAIL: TestRunPublishesBeforeReadingNextRecord (0.00s)\nFAIL\nFAIL\texample.com/ledgerload\t0.178s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.33061499998439103
+  },
+  {
+    "name": "mutation-direct-write",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-count=1",
+      "-run",
+      "^TestCLIPartialWriteRetainsAcceptedDuplicate$",
+      "-timeout=60s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4q0updp4/mutation-direct-write",
+    "exit_code": 1,
+    "stdout": "=== RUN   TestCLIPartialWriteRetainsAcceptedDuplicate\n    write_failure_unix_test.go:41: /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIPartialWriteRetainsAcceptedDuplicate2172382984/002/keep = \"12\", <nil>; want \"1\\n\"\n--- FAIL: TestCLIPartialWriteRetainsAcceptedDuplicate (0.26s)\nFAIL\nFAIL\texample.com/ledgerload\t0.424s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.5759390839375556
+  },
+  {
+    "name": "mutation-exit-code",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-count=1",
+      "-run",
+      "^TestCLIProcessContract/invalid_duplicate$",
+      "-timeout=60s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4q0updp4/mutation-exit-code",
+    "exit_code": 1,
+    "stdout": "=== RUN   TestCLIProcessContract\n=== RUN   TestCLIProcessContract/invalid_duplicate\n    main_test.go:174: process = exit 1, stdout \"\", stderr \"record 2 (\\\"keep\\\"): invalid quantity \\\"-9\\\"\\n\"; want exit 2 and empty stdout\n--- FAIL: TestCLIProcessContract (0.27s)\n    --- FAIL: TestCLIProcessContract/invalid_duplicate (0.15s)\nFAIL\nFAIL\texample.com/ledgerload\t0.498s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.6499909999547526
+  },
+  {
+    "name": "linux-amd64-compile",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOOS=linux",
+      "GOARCH=amd64",
+      "go",
+      "test",
+      "-c",
+      "-o",
+      "/private/tmp/go-independent-review-4q0updp4/output/ledgerload-linux-amd64.test",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-4q0updp4/verification",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 1.6164267919957638
+  },
+  {
+    "name": "candidate-baseline-integrity",
+    "command": [
+      "rtk",
+      "proxy",
+      "diff",
+      "-ru",
+      "/private/tmp/go-independent-review-4q0updp4/candidate",
+      "/private/tmp/go-independent-review-4q0updp4/verification"
+    ],
+    "cwd": "/private/tmp/go-independent-review-4q0updp4",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.0059333330718800426
+  },
+  {
+    "name": "reviewed-diff",
+    "command": [
+      "rtk",
+      "proxy",
+      "diff",
+      "-ru",
+      "/private/tmp/go-independent-review-4q0updp4/original",
+      "/private/tmp/go-independent-review-4q0updp4/candidate"
+    ],
+    "cwd": "/private/tmp/go-independent-review-4q0updp4",
+    "exit_code": 1,
+    "stdout": "diff -ru /private/tmp/go-independent-review-4q0updp4/original/README.md /private/tmp/go-independent-review-4q0updp4/candidate/README.md\n--- /private/tmp/go-independent-review-4q0updp4/original/README.md\t2026-10-01 17:38:18\n+++ /private/tmp/go-independent-review-4q0updp4/candidate/README.md\t2026-10-01 18:23:11\n@@ -1,13 +1,15 @@\n # ledgerload\n \n ledgerload --dir DIR reads stdin CSV rows id,quantity (no header).\n-The old command imports one record. Extend it to a streamed ordered batch.\n+Records are imported as a streamed batch in input order.\n IDs must be nonempty simple file names (no slash/backslash, \".\" or \"..\").\n Quantity must be a base-10 positive integer. Each accepted record writes\n DIR/id as the normalized decimal quantity plus newline. Duplicate IDs replace.\n Stop at the first invalid row, malformed CSV or file failure. Retain all writes\n in the accepted prefix and do not write later rows. Do not prevalidate the\n entire batch and discard already accepted records.\n+Each record is published only after its complete contents have been written,\n+so a failed replacement retains the previous accepted value for that ID.\n \n Success exits 0 without stdout. Invalid input, usage and I/O failure exit 2,\n with a useful stderr diagnostic and no success stdout. Missing --dir and\ndiff -ru /private/tmp/go-independent-review-4q0updp4/original/main.go /private/tmp/go-independent-review-4q0updp4/candidate/main.go\n--- /private/tmp/go-independent-review-4q0updp4/original/main.go\t2026-10-01 17:38:18\n+++ /private/tmp/go-independent-review-4q0updp4/candidate/main.go\t2026-10-01 18:22:45\n@@ -22,24 +22,55 @@\n \t\treturn fmt.Errorf(\"--dir required and no positional arguments allowed\")\n \t}\n \treader := csv.NewReader(input)\n-\trow, err := reader.Read()\n-\tif err == io.EOF {\n-\t\treturn nil\n+\treader.FieldsPerRecord = 2\n+\tdirReady := false\n+\tfor record := 1; ; record++ {\n+\t\trow, err := reader.Read()\n+\t\tif err == io.EOF {\n+\t\t\treturn nil\n+\t\t}\n+\t\tif err != nil {\n+\t\t\treturn fmt.Errorf(\"read record %d: %w\", record, err)\n+\t\t}\n+\t\tif row[0] == \"\" || strings.ContainsAny(row[0], \"/\\\\\") || row[0] == \".\" || row[0] == \"..\" {\n+\t\t\treturn fmt.Errorf(\"record %d: invalid record ID %q\", record, row[0])\n+\t\t}\n+\t\tqty, err := strconv.Atoi(row[1])\n+\t\tif err != nil || qty <= 0 {\n+\t\t\treturn fmt.Errorf(\"record %d (%q): invalid quantity %q\", record, row[0], row[1])\n+\t\t}\n+\t\tif !dirReady {\n+\t\t\tif err := os.MkdirAll(*dir, 0o755); err != nil {\n+\t\t\t\treturn fmt.Errorf(\"create record directory: %w\", err)\n+\t\t\t}\n+\t\t\tdirReady = true\n+\t\t}\n+\t\tif err := writeRecord(*dir, row[0], qty); err != nil {\n+\t\t\treturn fmt.Errorf(\"write record %d (%q): %w\", record, row[0], err)\n+\t\t}\n \t}\n+}\n+\n+// Publish only a complete record, so a failed duplicate cannot truncate an\n+// earlier accepted value. The temporary file stays on the same filesystem.\n+func writeRecord(dir, id string, quantity int) error {\n+\tfile, err := os.CreateTemp(dir, \".ledgerload-*\")\n \tif err != nil {\n \t\treturn err\n \t}\n-\tif len(row) != 2 || row[0] == \"\" || strings.ContainsAny(row[0], \"/\\\\\") || row[0] == \".\" || row[0] == \"..\" {\n-\t\treturn fmt.Errorf(\"invalid record\")\n+\tdefer os.Remove(file.Name())\n+\tif err := file.Chmod(0o644); err != nil {\n+\t\tfile.Close()\n+\t\treturn err\n \t}\n-\tqty, err := strconv.Atoi(row[1])\n-\tif err != nil || qty <= 0 {\n-\t\treturn fmt.Errorf(\"invalid quantity\")\n+\tif _, err := file.WriteString(strconv.Itoa(quantity) + \"\\n\"); err != nil {\n+\t\tfile.Close()\n+\t\treturn err\n \t}\n-\tif err := os.MkdirAll(*dir, 0o755); err != nil {\n+\tif err := file.Close(); err != nil {\n \t\treturn err\n \t}\n-\treturn os.WriteFile(filepath.Join(*dir, row[0]), []byte(strconv.Itoa(qty)+\"\\n\"), 0o644)\n+\treturn os.Rename(file.Name(), filepath.Join(dir, id))\n }\n \n func main() {\ndiff -ru /private/tmp/go-independent-review-4q0updp4/original/main_test.go /private/tmp/go-independent-review-4q0updp4/candidate/main_test.go\n--- /private/tmp/go-independent-review-4q0updp4/original/main_test.go\t2026-10-01 17:38:18\n+++ /private/tmp/go-independent-review-4q0updp4/candidate/main_test.go\t2026-10-01 18:21:15\n@@ -1,11 +1,17 @@\n package main\n \n import (\n+\t\"bytes\"\n+\t\"context\"\n+\t\"errors\"\n+\t\"fmt\"\n \t\"io\"\n \t\"os\"\n+\t\"os/exec\"\n \t\"path/filepath\"\n \t\"strings\"\n \t\"testing\"\n+\t\"time\"\n )\n \n func TestSingleRecord(t *testing.T) {\n@@ -13,8 +19,302 @@\n \tif err := run([]string{\"--dir\", dir}, strings.NewReader(\"web,7\\n\"), io.Discard); err != nil {\n \t\tt.Fatal(err)\n \t}\n-\tgot, err := os.ReadFile(filepath.Join(dir, \"web\"))\n-\tif err != nil || string(got) != \"7\\n\" {\n-\t\tt.Fatalf(\"record = %q, %v\", got, err)\n+\tassertRecords(t, dir, map[string]string{\"web\": \"7\\n\"})\n+}\n+\n+func TestRunBatchSuccess(t *testing.T) {\n+\tfor _, tc := range []struct {\n+\t\tname  string\n+\t\tinput string\n+\t\twant  map[string]string\n+\t}{\n+\t\t{\"empty\", \"\", nil},\n+\t\t{\"ordered records\", \"web,7\\napi,12\\nworker,3\", map[string]string{\"web\": \"7\\n\", \"api\": \"12\\n\", \"worker\": \"3\\n\"}},\n+\t\t{\"duplicate replaces\", \"web,7\\napi,12\\nweb,9\\n\", map[string]string{\"web\": \"9\\n\", \"api\": \"12\\n\"}},\n+\t\t{\"CSV and normalization\", \"\\\"web\\\",0007\\r\\n\\\"two,words\\\",+012\\r\\n\", map[string]string{\"web\": \"7\\n\", \"two,words\": \"12\\n\"}},\n+\t} {\n+\t\tt.Run(tc.name, func(t *testing.T) {\n+\t\t\tdir := filepath.Join(t.TempDir(), \"new\", \"records\")\n+\t\t\tif err := run([]string{\"--dir\", dir}, strings.NewReader(tc.input), io.Discard); err != nil {\n+\t\t\t\tt.Fatal(err)\n+\t\t\t}\n+\t\t\tassertRecords(t, dir, tc.want)\n+\t\t})\n+\t}\n+}\n+\n+func TestRunStopsAtInvalidRow(t *testing.T) {\n+\tfor _, tc := range []struct {\n+\t\tname string\n+\t\trow  string\n+\t}{\n+\t\t{\"too few fields\", \"bad\"},\n+\t\t{\"too many fields\", \"bad,1,extra\"},\n+\t\t{\"empty ID\", \",1\"},\n+\t\t{\"dot ID\", \".,1\"},\n+\t\t{\"dot dot ID\", \"..,1\"},\n+\t\t{\"slash ID\", \"nested/bad,1\"},\n+\t\t{\"backslash ID\", \"nested\\\\bad,1\"},\n+\t\t{\"empty quantity\", \"bad,\"},\n+\t\t{\"zero quantity\", \"bad,0\"},\n+\t\t{\"negative duplicate\", \"keep,-9\"},\n+\t\t{\"fractional quantity\", \"bad,1.5\"},\n+\t\t{\"nondecimal quantity\", \"bad,0x10\"},\n+\t\t{\"space in quantity\", \"bad, 1\"},\n+\t\t{\"overflow quantity\", \"bad,999999999999999999999999999999\"},\n+\t\t{\"malformed CSV\", \"bad,\\\"unterminated\"},\n+\t} {\n+\t\tt.Run(tc.name, func(t *testing.T) {\n+\t\t\tdir := t.TempDir()\n+\t\t\twriteFixture(t, filepath.Join(dir, \"keep\"), \"11\\n\")\n+\t\t\tinput := \"first,3\\nkeep,5\\n\" + tc.row + \"\\nlater,7\\n\"\n+\t\t\tif err := run([]string{\"--dir\", dir}, strings.NewReader(input), io.Discard); err == nil {\n+\t\t\t\tt.Fatal(\"run succeeded with invalid input\")\n+\t\t\t}\n+\t\t\tassertRecords(t, dir, map[string]string{\"first\": \"3\\n\", \"keep\": \"5\\n\"})\n+\t\t})\n+\t}\n+}\n+\n+func TestRunRejectsFirstRowWithoutWrites(t *testing.T) {\n+\tdir := filepath.Join(t.TempDir(), \"records\")\n+\tif err := run([]string{\"--dir\", dir}, strings.NewReader(\"bad,0\\nlater,7\\n\"), io.Discard); err == nil {\n+\t\tt.Fatal(\"run succeeded with invalid first row\")\n+\t}\n+\tassertRecords(t, dir, nil)\n+}\n+\n+func TestRunStopsAtFileFailure(t *testing.T) {\n+\tdir := t.TempDir()\n+\tblocked := filepath.Join(dir, \"blocked\")\n+\tif err := os.Mkdir(blocked, 0o755); err != nil {\n+\t\tt.Fatal(err)\n+\t}\n+\tinput := \"first,3\\nfirst,5\\nblocked,9\\nlater,7\\n\"\n+\tif err := run([]string{\"--dir\", dir}, strings.NewReader(input), io.Discard); err == nil {\n+\t\tt.Fatal(\"run succeeded writing over a directory\")\n+\t}\n+\tassertFile(t, filepath.Join(dir, \"first\"), \"5\\n\")\n+\tassertNames(t, dir, []string{\"blocked\", \"first\"})\n+\tinfo, err := os.Stat(blocked)\n+\tif err != nil || !info.IsDir() {\n+\t\tt.Fatalf(\"blocked path = %v, %v; want unchanged directory\", info, err)\n+\t}\n+}\n+\n+func TestRunDirectoryFailure(t *testing.T) {\n+\tdir := filepath.Join(t.TempDir(), \"records\")\n+\twriteFixture(t, dir, \"existing file\\n\")\n+\tif err := run([]string{\"--dir\", dir}, strings.NewReader(\"first,3\\nlater,7\\n\"), io.Discard); err == nil {\n+\t\tt.Fatal(\"run succeeded with a file as its directory\")\n+\t}\n+\tassertFile(t, dir, \"existing file\\n\")\n+}\n+\n+func TestRunInputFailureRetainsPrefix(t *testing.T) {\n+\tdir := t.TempDir()\n+\tinputErr := errors.New(\"input interrupted\")\n+\tinput := io.MultiReader(strings.NewReader(\"first,3\\nkeep,5\\n\"), errorReader{inputErr})\n+\terr := run([]string{\"--dir\", dir}, input, io.Discard)\n+\tif err == nil || !strings.Contains(err.Error(), inputErr.Error()) {\n+\t\tt.Fatalf(\"run error = %v, want useful input diagnostic\", err)\n+\t}\n+\tassertRecords(t, dir, map[string]string{\"first\": \"3\\n\", \"keep\": \"5\\n\"})\n+}\n+\n+func TestRunPublishesBeforeReadingNextRecord(t *testing.T) {\n+\tdir := t.TempDir()\n+\tobserved := false\n+\tinput := &observedReader{\n+\t\tprefix: strings.NewReader(\"first,3\\n\"),\n+\t\tsuffix: strings.NewReader(\"second,7\\n\"),\n+\t\tobserve: func() error {\n+\t\t\tobserved = true\n+\t\t\tgot, err := os.ReadFile(filepath.Join(dir, \"first\"))\n+\t\t\tif err != nil || string(got) != \"3\\n\" {\n+\t\t\t\treturn fmt.Errorf(\"first record not published before next read: %q, %v\", got, err)\n+\t\t\t}\n+\t\t\treturn nil\n+\t\t},\n+\t}\n+\tif err := run([]string{\"--dir\", dir}, input, io.Discard); err != nil {\n+\t\tt.Fatal(err)\n+\t}\n+\tif !observed {\n+\t\tt.Fatal(\"did not read the second record\")\n+\t}\n+\tassertRecords(t, dir, map[string]string{\"first\": \"3\\n\", \"second\": \"7\\n\"})\n+}\n+\n+func TestCLIProcessContract(t *testing.T) {\n+\tbinary := buildCLI(t)\n+\tfor _, tc := range []struct {\n+\t\tname       string\n+\t\tinput      string\n+\t\targs       func(string) []string\n+\t\tcode       int\n+\t\tdiagnostic string\n+\t\twant       map[string]string\n+\t}{\n+\t\t{\"empty\", \"\", dirArgs, 0, \"\", nil},\n+\t\t{\"single record\", \"web,7\\n\", dirArgs, 0, \"\", map[string]string{\"web\": \"7\\n\"}},\n+\t\t{\"batch and duplicate\", \"web,7\\napi,12\\nweb,9\\n\", dirArgs, 0, \"\", map[string]string{\"web\": \"9\\n\", \"api\": \"12\\n\"}},\n+\t\t{\"invalid first row\", \"bad,0\\nlater,7\\n\", dirArgs, 2, \"quantity\", nil},\n+\t\t{\"invalid duplicate\", \"keep,5\\nkeep,-9\\nlater,7\\n\", dirArgs, 2, \"quantity\", map[string]string{\"keep\": \"5\\n\"}},\n+\t\t{\"malformed CSV after prefix\", \"keep,5\\nbad,\\\"unterminated\\nlater,7\\n\", dirArgs, 2, \"quote\", map[string]string{\"keep\": \"5\\n\"}},\n+\t\t{\"missing directory\", \"web,7\\n\", func(string) []string { return nil }, 2, \"dir\", nil},\n+\t\t{\"empty directory option\", \"web,7\\n\", func(string) []string { return []string{\"--dir\", \"\"} }, 2, \"dir\", nil},\n+\t\t{\"positional argument\", \"web,7\\n\", func(dir string) []string { return []string{\"--dir\", dir, \"extra\"} }, 2, \"positional\", nil},\n+\t\t{\"unknown flag\", \"web,7\\n\", func(string) []string { return []string{\"--unknown\"} }, 2, \"unknown\", nil},\n+\t\t{\"missing flag value\", \"web,7\\n\", func(string) []string { return []string{\"--dir\"} }, 2, \"argument\", nil},\n+\t} {\n+\t\tt.Run(tc.name, func(t *testing.T) {\n+\t\t\tdir := filepath.Join(t.TempDir(), \"records\")\n+\t\t\tcode, stdout, stderr := runCLI(t, binary, tc.args(dir), tc.input)\n+\t\t\tassertProcess(t, code, stdout, stderr, tc.code, tc.diagnostic)\n+\t\t\tassertRecords(t, dir, tc.want)\n+\t\t})\n+\t}\n+\tt.Run(\"file failure after prefix\", func(t *testing.T) {\n+\t\tdir := t.TempDir()\n+\t\tif err := os.Mkdir(filepath.Join(dir, \"blocked\"), 0o755); err != nil {\n+\t\t\tt.Fatal(err)\n+\t\t}\n+\t\tcode, stdout, stderr := runCLI(t, binary, dirArgs(dir), \"first,3\\nblocked,9\\nlater,7\\n\")\n+\t\tassertProcess(t, code, stdout, stderr, 2, \"blocked\")\n+\t\tassertFile(t, filepath.Join(dir, \"first\"), \"3\\n\")\n+\t\tassertNames(t, dir, []string{\"blocked\", \"first\"})\n+\t})\n+\tt.Run(\"directory creation failure\", func(t *testing.T) {\n+\t\tdir := filepath.Join(t.TempDir(), \"records\")\n+\t\twriteFixture(t, dir, \"existing file\\n\")\n+\t\tcode, stdout, stderr := runCLI(t, binary, dirArgs(dir), \"first,3\\nlater,7\\n\")\n+\t\tassertProcess(t, code, stdout, stderr, 2, \"records\")\n+\t\tassertFile(t, dir, \"existing file\\n\")\n+\t})\n+}\n+\n+type errorReader struct{ err error }\n+\n+func (r errorReader) Read([]byte) (int, error) { return 0, r.err }\n+\n+type observedReader struct {\n+\tprefix  *strings.Reader\n+\tsuffix  *strings.Reader\n+\tobserve func() error\n+}\n+\n+func (r *observedReader) Read(p []byte) (int, error) {\n+\tif r.prefix.Len() > 0 {\n+\t\treturn r.prefix.Read(p)\n+\t}\n+\tif r.observe != nil {\n+\t\tobserve := r.observe\n+\t\tr.observe = nil\n+\t\tif err := observe(); err != nil {\n+\t\t\treturn 0, err\n+\t\t}\n+\t}\n+\treturn r.suffix.Read(p)\n+}\n+\n+func dirArgs(dir string) []string { return []string{\"--dir\", dir} }\n+\n+func writeFixture(t *testing.T, path, value string) {\n+\tt.Helper()\n+\tif err := os.WriteFile(path, []byte(value), 0o644); err != nil {\n+\t\tt.Fatal(err)\n+\t}\n+}\n+\n+func assertFile(t *testing.T, path, want string) {\n+\tt.Helper()\n+\tgot, err := os.ReadFile(path)\n+\tif err != nil || string(got) != want {\n+\t\tt.Fatalf(\"%s = %q, %v; want %q\", path, got, err, want)\n+\t}\n+}\n+\n+func assertRecords(t *testing.T, dir string, want map[string]string) {\n+\tt.Helper()\n+\tentries, err := os.ReadDir(dir)\n+\tif errors.Is(err, os.ErrNotExist) && len(want) == 0 {\n+\t\treturn\n+\t}\n+\tif err != nil {\n+\t\tt.Fatal(err)\n+\t}\n+\tif len(entries) != len(want) {\n+\t\tt.Fatalf(\"entries = %v, want records %v\", entries, want)\n+\t}\n+\tfor _, entry := range entries {\n+\t\tvalue, ok := want[entry.Name()]\n+\t\tif !ok {\n+\t\t\tt.Fatalf(\"unexpected entry %q\", entry.Name())\n+\t\t}\n+\t\tassertFile(t, filepath.Join(dir, entry.Name()), value)\n+\t}\n+}\n+\n+func assertNames(t *testing.T, dir string, want []string) {\n+\tt.Helper()\n+\tentries, err := os.ReadDir(dir)\n+\tif err != nil {\n+\t\tt.Fatal(err)\n+\t}\n+\tgot := make([]string, len(entries))\n+\tfor i, entry := range entries {\n+\t\tgot[i] = entry.Name()\n+\t}\n+\tif fmt.Sprint(got) != fmt.Sprint(want) {\n+\t\tt.Fatalf(\"entries = %v, want %v\", got, want)\n+\t}\n+}\n+\n+func buildCLI(t *testing.T) string {\n+\tt.Helper()\n+\tbinary := filepath.Join(t.TempDir(), \"ledgerload\")\n+\tctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)\n+\tdefer cancel()\n+\tcmd := exec.CommandContext(ctx, \"go\", \"build\", \"-o\", binary, \".\")\n+\tcmd.Env = append(os.Environ(), \"GOTOOLCHAIN=local\", \"GOCACHE=/private/tmp/go-quality-testing-cache\")\n+\tif output, err := cmd.CombinedOutput(); err != nil {\n+\t\tt.Fatalf(\"build executable: %v (%v)\\n%s\", err, ctx.Err(), output)\n+\t}\n+\treturn binary\n+}\n+\n+func runCLI(t *testing.T, binary string, args []string, input string) (int, string, string) {\n+\tt.Helper()\n+\tctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)\n+\tdefer cancel()\n+\tcmd := exec.CommandContext(ctx, binary, args...)\n+\tcmd.Stdin = strings.NewReader(input)\n+\tvar stdout, stderr bytes.Buffer\n+\tcmd.Stdout, cmd.Stderr = &stdout, &stderr\n+\terr := cmd.Run()\n+\tif ctx.Err() != nil {\n+\t\tt.Fatalf(\"executable exceeded deadline: %v\", ctx.Err())\n+\t}\n+\tif err == nil {\n+\t\treturn 0, stdout.String(), stderr.String()\n+\t}\n+\tvar exitErr *exec.ExitError\n+\tif !errors.As(err, &exitErr) {\n+\t\tt.Fatalf(\"start executable: %v\", err)\n+\t}\n+\treturn exitErr.ExitCode(), stdout.String(), stderr.String()\n+}\n+\n+func assertProcess(t *testing.T, code int, stdout, stderr string, wantCode int, diagnostic string) {\n+\tt.Helper()\n+\tif code != wantCode || stdout != \"\" {\n+\t\tt.Fatalf(\"process = exit %d, stdout %q, stderr %q; want exit %d and empty stdout\", code, stdout, stderr, wantCode)\n+\t}\n+\tif wantCode == 0 && stderr != \"\" {\n+\t\tt.Fatalf(\"success stderr = %q, want empty\", stderr)\n+\t}\n+\tif wantCode != 0 && (strings.TrimSpace(stderr) == \"\" || !strings.Contains(stderr, diagnostic)) {\n+\t\tt.Fatalf(\"failure stderr = %q, want useful %q diagnostic\", stderr, diagnostic)\n \t}\n }\nOnly in /private/tmp/go-independent-review-4q0updp4/candidate: write_failure_unix_test.go\n",
+    "stderr": ""
+  },
+  {
+    "name": "review-source-digests",
+    "files": [
+      {
+        "path": "/private/tmp/go-independent-review-4q0updp4/original/README.md",
+        "sha256": "9b9cb46434771af31b656f3e2f5c608453676942d4e221684fa3db7e6ad44ea7"
+      },
+      {
+        "path": "/private/tmp/go-independent-review-4q0updp4/original/go.mod",
+        "sha256": "7cc2e99e3d21cbb24055f9067300830bf4072ba1b15cb5b00e4932cfcc2ebc0f"
+      },
+      {
+        "path": "/private/tmp/go-independent-review-4q0updp4/original/main.go",
+        "sha256": "f572b7f442337b89134ae9cf71bd1531c1a20c0da9121604d2690c947327f4be"
+      },
+      {
+        "path": "/private/tmp/go-independent-review-4q0updp4/original/main_test.go",
+        "sha256": "afbd7259a93b068a537f7961276a846776efe1aca9c284e3b6ef39138f1e44bd"
+      },
+      {
+        "path": "/private/tmp/go-independent-review-4q0updp4/candidate/README.md",
+        "sha256": "93126f41063ff1fa9b9025670b1cf63334dd8e7b35ad98bad513d43718318b5b"
+      },
+      {
+        "path": "/private/tmp/go-independent-review-4q0updp4/candidate/go.mod",
+        "sha256": "7cc2e99e3d21cbb24055f9067300830bf4072ba1b15cb5b00e4932cfcc2ebc0f"
+      },
+      {
+        "path": "/private/tmp/go-independent-review-4q0updp4/candidate/main.go",
+        "sha256": "3750f6bb7439378e66a2554f746171f59ec95ab5351a0fdaf10d40334e304848"
+      },
+      {
+        "path": "/private/tmp/go-independent-review-4q0updp4/candidate/main_test.go",
+        "sha256": "bfd7ae2c9101d9703b330f8b021ee41a0fa6efba82570d1c6eb03ffda19ebd77"
+      },
+      {
+        "path": "/private/tmp/go-independent-review-4q0updp4/candidate/write_failure_unix_test.go",
+        "sha256": "1a2a793736e4bf95b1152f5c7a802f6686c8a872cc944a16b8fe30df783195c6"
+      }
+    ]
+  }
+]

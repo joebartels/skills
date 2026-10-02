@@ -1,0 +1,60 @@
+{
+  "reason": "controller/author test-name collision, not candidate failure or semantic probe change",
+  "mapping": [
+    {
+      "frozen_path": "tests/go-quality-build/go-test-isolation/evals/controller-probes/cli-environment/contract_test.go",
+      "frozen_sha256": "84bff83c8c2dc3e96bf48c456719c71f170a52b9b4158b60accf21e470f8bf11",
+      "renamed_sha256": "15aa8926244e46739becd5380502ce8b8a5648e596dc6048fb858e5dc6d9550c",
+      "identifier_map": {
+        "TestEnvironmentRestored": "TestController84bff83cEnvironmentRestored",
+        "TestChildConfiguration": "TestController84bff83cChildConfiguration"
+      },
+      "semantic_equivalence": "exact bytes restored by inverse top-level test function name mapping; bodies unchanged"
+    }
+  ],
+  "checks": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-namespaced-probe-poszg5qj/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/showcfg\t0.179s [no tests to run]\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.37763754196930677,
+      "kind": "withheld-contract-probes-namespaced"
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-namespaced-probe-poszg5qj/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/showcfg\t0.583s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.7038992920424789,
+      "kind": "withheld-contract-probes-namespaced"
+    }
+  ]
+}
