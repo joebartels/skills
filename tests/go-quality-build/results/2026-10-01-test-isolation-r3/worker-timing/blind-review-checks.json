@@ -1,0 +1,303 @@
+[
+  {
+    "id": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/candidate",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "id": "runtime",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION",
+      "GOTOOLCHAIN"
+    ],
+    "cwd": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/candidate",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "darwin\narm64\ngo1.26.5\nlocal\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "id": "original-tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "./...",
+      "-count=1",
+      "-timeout=20s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/original",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.235s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "id": "candidate-tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "./...",
+      "-count=1",
+      "-timeout=20s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/candidate",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.301s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "id": "candidate-race-repeat-shuffle",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "./...",
+      "-count=10",
+      "-shuffle=on",
+      "-timeout=45s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/candidate",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t2.229s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "id": "candidate-stdversion",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/candidate",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "id": "mutation-fixed-rate",
+    "purpose": "Replace completion-relative waiting with a ticker started before callback 1.",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "./...",
+      "-run",
+      "^TestRecurrence$",
+      "-count=1",
+      "-timeout=20s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/probes/fixed-rate",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRecurrence (0.05s)\n    poll_test.go:219: callback 2 started 4.25\u00b5s after completion, want at least 25ms\nFAIL\nFAIL\texample.com/poller\t0.383s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit": "nonzero test assertion failure",
+    "mutated_source": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/probes/fixed-rate/poll.go"
+  },
+  {
+    "id": "mutation-early-return",
+    "purpose": "Return on cancellation while the active callback remains in blocked cleanup.",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "./...",
+      "-run",
+      "^TestFixtureTeardown$",
+      "-count=1",
+      "-timeout=20s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/probes/early-return",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestFixtureTeardown (0.00s)\n    poll_test.go:298: Poll returned <nil> while callback cleanup was blocked\n    poll_test.go:253: fixture contents = \"active\\ncleanup\\n\", want callback work, cleanup, and caller work\nFAIL\nFAIL\texample.com/poller\t0.142s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit": "nonzero test assertion failure",
+    "mutated_source": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/probes/early-return/poll.go"
+  },
+  {
+    "id": "mutation-serialized-invocations",
+    "purpose": "Serialize all invocations behind one package-level mutex.",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "./...",
+      "-run",
+      "^TestIndependentInvocations$/^callback_error$",
+      "-count=1",
+      "-timeout=20s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/probes/serialized-invocations",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestIndependentInvocations (0.00s)\n    --- FAIL: TestIndependentInvocations/callback_error (6.00s)\n        poll_test.go:340: timed out waiting for fast invocation recurrence\n        poll_test.go:32: timed out waiting for Poll during cleanup\nFAIL\nFAIL\texample.com/poller\t6.175s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit": "nonzero test assertion failure",
+    "mutated_source": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/probes/serialized-invocations/poll.go"
+  },
+  {
+    "id": "mutation-cancellation-hides-error",
+    "purpose": "Suppress the callback error if its context has also been canceled.",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "./...",
+      "-run",
+      "^TestCallbackErrorDuringCancellation$",
+      "-count=1",
+      "-timeout=20s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/probes/cancellation-hides-error",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCallbackErrorDuringCancellation (0.00s)\n    poll_test.go:118: Poll = <nil>, want unchanged callback error callback failed while canceled\nFAIL\nFAIL\texample.com/poller\t0.178s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit": "nonzero test assertion failure",
+    "mutated_source": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/probes/cancellation-hides-error/poll.go"
+  },
+  {
+    "id": "mutation-ignores-wait-cancellation",
+    "purpose": "Ignore cancellation while waiting for the next cycle.",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "./...",
+      "-run",
+      "^TestCancellation$",
+      "-count=1",
+      "-timeout=20s"
+    ],
+    "cwd": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/probes/ignores-wait-cancellation",
+    "env_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCancellation (6.00s)\n    poll_test.go:88: timed out waiting for Poll cancellation\n    poll_test.go:32: timed out waiting for Poll during cleanup\nFAIL\nFAIL\texample.com/poller\t6.177s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit": "nonzero test assertion failure",
+    "mutated_source": "/private/tmp/go-independent-review-ho4jzoxu/changeset-1/probes/ignores-wait-cancellation/poll.go"
+  },
+  {
+    "id": "source-preservation",
+    "before": {
+      "original/README.md": "a8b458db577e2c868a7923297f6e9b87c546164f2e18f9bc78d34a05f3599181",
+      "original/go.mod": "a7aa1456ec43a9e34590246526baefddcb794ce46b06e2e893147f769899738d",
+      "original/poll.go": "cac1ee3ceb250f0c8b9d800ec2f55277b11d0a614e51086f151b64a2c4cad491",
+      "original/poll_test.go": "99f20687d301daa8e80e3b749b474570398c588b7eb6f88fd05cec1e73b3af7d",
+      "candidate/README.md": "a8b458db577e2c868a7923297f6e9b87c546164f2e18f9bc78d34a05f3599181",
+      "candidate/go.mod": "a7aa1456ec43a9e34590246526baefddcb794ce46b06e2e893147f769899738d",
+      "candidate/poll.go": "cac1ee3ceb250f0c8b9d800ec2f55277b11d0a614e51086f151b64a2c4cad491",
+      "candidate/poll_test.go": "c1c0fb2d15b598ce8c3c38ab8d286f19f77629eefbd7f3f82c1deb6756d3dc27"
+    },
+    "after": {
+      "original/README.md": "a8b458db577e2c868a7923297f6e9b87c546164f2e18f9bc78d34a05f3599181",
+      "original/go.mod": "a7aa1456ec43a9e34590246526baefddcb794ce46b06e2e893147f769899738d",
+      "original/poll.go": "cac1ee3ceb250f0c8b9d800ec2f55277b11d0a614e51086f151b64a2c4cad491",
+      "original/poll_test.go": "99f20687d301daa8e80e3b749b474570398c588b7eb6f88fd05cec1e73b3af7d",
+      "candidate/README.md": "a8b458db577e2c868a7923297f6e9b87c546164f2e18f9bc78d34a05f3599181",
+      "candidate/go.mod": "a7aa1456ec43a9e34590246526baefddcb794ce46b06e2e893147f769899738d",
+      "candidate/poll.go": "cac1ee3ceb250f0c8b9d800ec2f55277b11d0a614e51086f151b64a2c4cad491",
+      "candidate/poll_test.go": "c1c0fb2d15b598ce8c3c38ab8d286f19f77629eefbd7f3f82c1deb6756d3dc27"
+    },
+    "unchanged": true
+  }
+]

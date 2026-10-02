@@ -27,6 +27,8 @@ for name,suite in run_suites.items():
     r=subprocess.run(['rtk','proxy','git','apply',str(arc/'source.patch')],cwd=dest,capture_output=True,text=True);assert r.returncode==0,(name,c['id'],r.stderr)
    assert hashes(dest)==c['source_sha256'],(name,c['id'],'reconstruction')
   verification=json.loads((arc/'verification.json').read_text());assert all(v.get('exit_code',0)==0 for v in verification),(name,c['id'],'failed candidate checks')
+  for v in verification:
+   if v.get('command',[])[2:4]==['gofmt','-l']:assert not v.get('stdout','').strip(),(name,c['id'],'unformatted candidate')
   detail['cases'].append({'id':c['id'],'files':len(c['source_sha256']),'reconstruction':'exact','input_commit':'verified','direct_candidate_checks':'all recorded exits 0'})
  records.append(detail)
 for name,run in [('go-behavior-tests','2026-10-01-behavior-tests-skill-on'),('go-test-isolation','2026-10-01-test-isolation-skill-on')]:

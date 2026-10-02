@@ -1,0 +1,15 @@
+--- a/cmd/showcfg/main.go
++++ b/cmd/showcfg/main.go
+@@ -12,10 +12,10 @@
+ 	config, err := showcfg.LoadFromEnv()
+ 	if err != nil {
+ 		fmt.Fprintln(os.Stderr, err)
+-		os.Exit(2)
++		os.Exit(1)
+ 	}
+ 	if err := json.NewEncoder(os.Stdout).Encode(config); err != nil {
+ 		fmt.Fprintln(os.Stderr, err)
+-		os.Exit(2)
++		os.Exit(1)
+ 	}
+ }

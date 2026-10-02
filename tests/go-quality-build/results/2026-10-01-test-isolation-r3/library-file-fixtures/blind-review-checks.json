@@ -1,0 +1,249 @@
+[
+  {
+    "label": "runtime",
+    "cwd": "/private/tmp/go-independent-review-rsmu419x/changeset-1/candidate",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "elapsed_seconds": 0.01
+  },
+  {
+    "label": "baseline race repeated shuffled",
+    "cwd": "/private/tmp/go-independent-review-rsmu419x/changeset-1/candidate",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-count=5",
+      "-shuffle=on",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t1.236s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "elapsed_seconds": 1.422
+  },
+  {
+    "label": "focused replacement only",
+    "cwd": "/private/tmp/go-independent-review-rsmu419x/changeset-1/candidate",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-run=^TestStoreIndependentInstances$/^instances$/^beta$/^replacement$",
+      "-count=2",
+      "-timeout=30s",
+      "-v",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/beta\n=== PAUSE TestStoreIndependentInstances/instances/beta\n=== CONT  TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/beta/replacement\n--- PASS: TestStoreIndependentInstances (0.00s)\n    --- PASS: TestStoreIndependentInstances/instances (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\n=== RUN   TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/beta\n=== PAUSE TestStoreIndependentInstances/instances/beta\n=== CONT  TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/beta/replacement\n--- PASS: TestStoreIndependentInstances (0.00s)\n    --- PASS: TestStoreIndependentInstances/instances (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\nPASS\nok  \texample.com/filestore\t1.159s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "elapsed_seconds": 1.283
+  },
+  {
+    "label": "focused first only",
+    "cwd": "/private/tmp/go-independent-review-rsmu419x/changeset-1/candidate",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-run=^TestStoreIndependentInstances$/^instances$/^gamma$/^first$",
+      "-timeout=30s",
+      "-v",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/gamma\n=== PAUSE TestStoreIndependentInstances/instances/gamma\n=== CONT  TestStoreIndependentInstances/instances/gamma\n=== RUN   TestStoreIndependentInstances/instances/gamma/first\n--- PASS: TestStoreIndependentInstances (0.00s)\n    --- PASS: TestStoreIndependentInstances/instances (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/gamma (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/first (0.00s)\nPASS\nok  \texample.com/filestore\t0.230s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "elapsed_seconds": 0.384
+  },
+  {
+    "label": "language stdlib compatibility vet",
+    "cwd": "/private/tmp/go-independent-review-rsmu419x/changeset-1/candidate",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "elapsed_seconds": 0.074
+  },
+  {
+    "label": "mutation shared root",
+    "cwd": "/private/tmp/go-independent-review-rsmu419x/changeset-1/verification-shared-root",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-run=^TestStoreIndependentInstances$",
+      "-parallel=1",
+      "-timeout=30s",
+      "-v",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/alpha\n=== PAUSE TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/beta\n=== PAUSE TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/gamma\n=== PAUSE TestStoreIndependentInstances/instances/gamma\n=== CONT  TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/alpha/first\n=== RUN   TestStoreIndependentInstances/instances/alpha/replacement\n=== CONT  TestStoreIndependentInstances/instances/gamma\n=== RUN   TestStoreIndependentInstances/instances/gamma/first\n=== RUN   TestStoreIndependentInstances/instances/gamma/replacement\n=== CONT  TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/beta/first\n=== RUN   TestStoreIndependentInstances/instances/beta/replacement\n=== NAME  TestStoreIndependentInstances\n    store_test.go:72: alpha persisted Get = \"B\\n\", <nil>; want \"A\"\n    store_test.go:72: gamma persisted Get = \"B\\n\", <nil>; want \"\u03b3\\x00\"\n--- FAIL: TestStoreIndependentInstances (0.00s)\n    --- PASS: TestStoreIndependentInstances/instances (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/first (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/gamma (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/first (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/replacement (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/first (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\nFAIL\nFAIL\texample.com/filestore\t0.216s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "elapsed_seconds": 0.374
+  },
+  {
+    "label": "mutation append replacement",
+    "cwd": "/private/tmp/go-independent-review-rsmu419x/changeset-1/verification-append-put",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-run=^TestStoreIndependentInstances$",
+      "-timeout=30s",
+      "-v",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/alpha\n=== PAUSE TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/beta\n=== PAUSE TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/gamma\n=== PAUSE TestStoreIndependentInstances/instances/gamma\n=== CONT  TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/alpha/first\n=== CONT  TestStoreIndependentInstances/instances/gamma\n=== RUN   TestStoreIndependentInstances/instances/gamma/first\n=== CONT  TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/beta/first\n=== RUN   TestStoreIndependentInstances/instances/alpha/replacement\n    store_test.go:57: Get = \"alpha initial valueA\", <nil>; want \"A\"\n=== RUN   TestStoreIndependentInstances/instances/gamma/replacement\n=== RUN   TestStoreIndependentInstances/instances/beta/replacement\n=== NAME  TestStoreIndependentInstances/instances/gamma/replacement\n    store_test.go:57: Get = \"gamma initial value\u03b3\\x00\", <nil>; want \"\u03b3\\x00\"\n=== NAME  TestStoreIndependentInstances/instances/beta/replacement\n    store_test.go:57: Get = \"beta initial valueB\\n\", <nil>; want \"B\\n\"\n=== NAME  TestStoreIndependentInstances\n    store_test.go:72: alpha persisted Get = \"alpha initial valueA\", <nil>; want \"A\"\n    store_test.go:72: beta persisted Get = \"beta initial valueB\\n\", <nil>; want \"B\\n\"\n    store_test.go:72: gamma persisted Get = \"gamma initial value\u03b3\\x00\", <nil>; want \"\u03b3\\x00\"\n--- FAIL: TestStoreIndependentInstances (0.00s)\n    --- FAIL: TestStoreIndependentInstances/instances (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/first (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/gamma (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/first (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/replacement (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/first (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\nFAIL\nFAIL\texample.com/filestore\t0.248s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "elapsed_seconds": 0.398
+  },
+  {
+    "label": "mutation nontruncating Put original",
+    "cwd": "/private/tmp/go-independent-review-rsmu419x/changeset-1/verification-nontruncating-original",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-v",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestStoreSerialChildren\n=== RUN   TestStoreSerialChildren/first\n=== RUN   TestStoreSerialChildren/replacement\n--- PASS: TestStoreSerialChildren (0.00s)\n    --- PASS: TestStoreSerialChildren/first (0.00s)\n    --- PASS: TestStoreSerialChildren/replacement (0.00s)\nPASS\nok  \texample.com/filestore\t0.249s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "elapsed_seconds": 0.393
+  },
+  {
+    "label": "mutation nontruncating Put candidate",
+    "cwd": "/private/tmp/go-independent-review-rsmu419x/changeset-1/verification-nontruncating-candidate",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-v",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestStoreSerialChildren\n=== RUN   TestStoreSerialChildren/first\n=== RUN   TestStoreSerialChildren/replacement\n--- PASS: TestStoreSerialChildren (0.00s)\n    --- PASS: TestStoreSerialChildren/first (0.00s)\n    --- PASS: TestStoreSerialChildren/replacement (0.00s)\n=== RUN   TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/alpha\n=== PAUSE TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/beta\n=== PAUSE TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/gamma\n=== PAUSE TestStoreIndependentInstances/instances/gamma\n=== CONT  TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/alpha/first\n=== CONT  TestStoreIndependentInstances/instances/gamma\n=== RUN   TestStoreIndependentInstances/instances/gamma/first\n=== CONT  TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/beta/first\n=== RUN   TestStoreIndependentInstances/instances/alpha/replacement\n=== RUN   TestStoreIndependentInstances/instances/beta/replacement\n=== RUN   TestStoreIndependentInstances/instances/gamma/replacement\n=== NAME  TestStoreIndependentInstances/instances/alpha/replacement\n    store_test.go:57: Get = \"Alpha initial value\", <nil>; want \"A\"\n=== NAME  TestStoreIndependentInstances/instances/beta/replacement\n    store_test.go:57: Get = \"B\\nta initial value\", <nil>; want \"B\\n\"\n=== NAME  TestStoreIndependentInstances/instances/gamma/replacement\n    store_test.go:57: Get = \"\u03b3\\x00ma initial value\", <nil>; want \"\u03b3\\x00\"\n=== NAME  TestStoreIndependentInstances\n    store_test.go:72: alpha persisted Get = \"Alpha initial value\", <nil>; want \"A\"\n    store_test.go:72: beta persisted Get = \"B\\nta initial value\", <nil>; want \"B\\n\"\n    store_test.go:72: gamma persisted Get = \"\u03b3\\x00ma initial value\", <nil>; want \"\u03b3\\x00\"\n--- FAIL: TestStoreIndependentInstances (0.00s)\n    --- FAIL: TestStoreIndependentInstances/instances (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/first (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/first (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/gamma (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/first (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/replacement (0.00s)\nFAIL\nFAIL\texample.com/filestore\t0.175s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "elapsed_seconds": 0.331
+  },
+  {
+    "label": "final supplied source diff",
+    "cwd": "/private/tmp/go-independent-review-rsmu419x/changeset-1",
+    "command": [
+      "rtk",
+      "proxy",
+      "diff",
+      "-ru",
+      "original",
+      "candidate"
+    ],
+    "environment_overrides": {},
+    "stdout": "diff -ru original/store_test.go candidate/store_test.go\n--- original/store_test.go\t2026-10-01 19:05:22\n+++ candidate/store_test.go\t2026-10-01 22:59:24\n@@ -1,19 +1,13 @@\n package filestore_test\n \n import (\n-\t\"os\"\n \t\"testing\"\n \n \t\"example.com/filestore\"\n )\n \n func TestStoreSerialChildren(t *testing.T) {\n-\troot, err := os.MkdirTemp(\"\", \"store-test-\")\n-\tif err != nil {\n-\t\tt.Fatal(err)\n-\t}\n-\tdefer os.RemoveAll(root)\n-\tstore := filestore.New(root)\n+\tstore := filestore.New(t.TempDir())\n \tfor _, value := range []string{\"first\", \"replacement\"} {\n \t\tt.Run(value, func(t *testing.T) {\n \t\t\tif err := store.Put(\"same-key\", value); err != nil {\n@@ -24,5 +18,58 @@\n \t\t\t\tt.Fatalf(\"Get = %q, %v; want %q\", got, err, value)\n \t\t\t}\n \t\t})\n+\t}\n+}\n+\n+func TestStoreIndependentInstances(t *testing.T) {\n+\tcases := []struct {\n+\t\tname   string\n+\t\tvalues []string\n+\t\troot   string\n+\t\twant   string\n+\t\twrote  bool\n+\t}{\n+\t\t{name: \"alpha\", values: []string{\"alpha initial value\", \"A\"}},\n+\t\t{name: \"beta\", values: []string{\"beta initial value\", \"B\\n\"}},\n+\t\t{name: \"gamma\", values: []string{\"gamma initial value\", \"\\u03b3\\x00\"}},\n+\t}\n+\tfor i := range cases {\n+\t\tcases[i].root = t.TempDir()\n+\t}\n+\n+\t// The group joins its parallel children before the persistence checks.\n+\tt.Run(\"instances\", func(t *testing.T) {\n+\t\tfor i := range cases {\n+\t\t\tinstance := &cases[i]\n+\t\t\tt.Run(instance.name, func(t *testing.T) {\n+\t\t\t\tt.Parallel()\n+\t\t\t\tstore := filestore.New(instance.root)\n+\t\t\t\tfor i, value := range instance.values {\n+\t\t\t\t\tname := []string{\"first\", \"replacement\"}[i]\n+\t\t\t\t\tt.Run(name, func(t *testing.T) {\n+\t\t\t\t\t\tif err := store.Put(\"same-key\", value); err != nil {\n+\t\t\t\t\t\t\tt.Fatal(err)\n+\t\t\t\t\t\t}\n+\t\t\t\t\t\tinstance.want = value\n+\t\t\t\t\t\tinstance.wrote = true\n+\t\t\t\t\t\tgot, err := store.Get(\"same-key\")\n+\t\t\t\t\t\tif err != nil || got != value {\n+\t\t\t\t\t\t\tt.Fatalf(\"Get = %q, %v; want %q\", got, err, value)\n+\t\t\t\t\t\t}\n+\t\t\t\t\t})\n+\t\t\t\t}\n+\t\t\t})\n+\t\t}\n+\t})\n+\n+\tfor _, instance := range cases {\n+\t\t// A focused -run may execute only one instance or one value case.\n+\t\tif !instance.wrote {\n+\t\t\tcontinue\n+\t\t}\n+\t\tgot, err := filestore.New(instance.root).Get(\"same-key\")\n+\t\tif err != nil || got != instance.want {\n+\t\t\tt.Errorf(\"%s persisted Get = %q, %v; want %q\", instance.name, got, err, instance.want)\n+\t\t}\n \t}\n }\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1
+  }
+]

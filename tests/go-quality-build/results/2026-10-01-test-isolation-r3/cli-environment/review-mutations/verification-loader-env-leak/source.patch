@@ -1,0 +1,10 @@
+--- a/config.go
++++ b/config.go
+@@ -28,5 +28,7 @@
+ 	if mode != "read" && mode != "write" {
+ 		return Config{}, fmt.Errorf("invalid INDEXER_MODE %q", mode)
+ 	}
++	os.Setenv("INDEXER_ENDPOINT", endpoint)
++	os.Setenv("INDEXER_MODE", mode)
+ 	return Config{Endpoint: endpoint, Mode: mode}, nil
+ }
