@@ -1,0 +1,3 @@
+# Native catalog isolation check
+
+Startup scan warnings show that `skip_host_skill_discovery` alone does not establish absence of host metadata. Official [configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference) documents per-skill `skills.config` enablement; the [skills guide](https://learn.chatgpt.com/docs/build-skills) gives a disabled SKILL.md path entry. The reference describes folder paths while the example uses SKILL.md paths, so this isolated diagnostic supplies both forms for observed host roots, without changing user files or credential locations. Actual visible catalog behavior must still be checked; configuration generation alone is not isolation evidence.

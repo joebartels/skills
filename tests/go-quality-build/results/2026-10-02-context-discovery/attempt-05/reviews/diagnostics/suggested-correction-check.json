@@ -1,0 +1,25 @@
+{
+  "label": "suggested-cancellation-snapshot-correction",
+  "cwd": "/private/tmp/packet-02-review-diagnostics/snapshot-correction",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-mod=readonly",
+    "-run",
+    "TestReview|TestSequential|TestAlready|TestParent|TestTotal|TestFailure|TestStatus|TestEmpty",
+    "-count=1",
+    "-timeout=30s",
+    "./..."
+  ],
+  "environment_overrides": {
+    "GOWORK": "off",
+    "GOTOOLCHAIN": "local",
+    "GOCACHE": "/private/tmp/packet-02-go-cache"
+  },
+  "status": 0,
+  "stdout": "ok  \texample.com/stages\t1.019s\n",
+  "stderr": "",
+  "elapsed_seconds": 1.226
+}

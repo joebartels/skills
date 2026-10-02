@@ -1,0 +1,251 @@
+--- a/stages.go
++++ b/stages.go
+@@ -2,6 +2,7 @@
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
+ 	"io"
+ 	"net/http"
+@@ -10,28 +11,52 @@
+ 
+ // FetchAll obtains complete response bodies in endpoint order.
+ func FetchAll(ctx context.Context, client *http.Client, endpoints []string, total, stage time.Duration) (bodies [][]byte, err error) {
++	totalCtx, cancelTotal := context.WithTimeout(ctx, total)
++	defer cancelTotal()
++
+ 	for _, endpoint := range endpoints {
+-		request, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
+-		if err != nil {
+-			return bodies, err
++		stageCtx, cancelStage := context.WithTimeout(totalCtx, stage)
++		if stageCtx.Err() != nil {
++			stageErr := stageError(stageCtx.Err(), stageCtx)
++			cancelStage()
++			return bodies, stageErr
+ 		}
+-		response, err := client.Do(request)
+-		if err != nil {
+-			return bodies, err
++		request, requestErr := http.NewRequestWithContext(stageCtx, http.MethodGet, endpoint, nil)
++		if requestErr != nil {
++			cancelStage()
++			return bodies, requestErr
+ 		}
++		response, requestErr := client.Do(request)
++		if requestErr != nil {
++			requestErr = stageError(requestErr, stageCtx)
++			cancelStage()
++			return bodies, requestErr
++		}
++
+ 		if response.StatusCode != http.StatusOK {
+-			response.Body.Close()
+-			return bodies, fmt.Errorf("status %d", response.StatusCode)
++			closeErr := response.Body.Close()
++			stageErr := stageError(errors.Join(fmt.Errorf("status %d", response.StatusCode), closeErr), stageCtx)
++			cancelStage()
++			return bodies, stageErr
+ 		}
+-		body, err := io.ReadAll(response.Body)
++		body, readErr := io.ReadAll(response.Body)
+ 		closeErr := response.Body.Close()
+-		if err != nil {
+-			return bodies, err
+-		}
+-		if closeErr != nil {
+-			return bodies, closeErr
++		if readErr != nil || closeErr != nil {
++			stageErr := stageError(errors.Join(readErr, closeErr), stageCtx)
++			cancelStage()
++			return bodies, stageErr
+ 		}
+ 		bodies = append(bodies, body)
++		cancelStage()
+ 	}
+ 	return bodies, nil
+ }
++
++// stageError preserves operation failures and the cancellation state observed
++// at the stage's failure decision, including a custom context cause.
++func stageError(operationErr error, ctx context.Context) error {
++	if operationErr == nil {
++		return nil
++	}
++	return errors.Join(operationErr, ctx.Err(), context.Cause(ctx))
++}
+--- a/stages_test.go
++++ b/stages_test.go
+@@ -2,6 +2,7 @@
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"io"
+ 	"net/http"
+ 	"strings"
+@@ -13,12 +14,162 @@
+ 
+ func (f transportFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+ 
++type trackingBody struct {
++	reader   io.Reader
++	readErr  error
++	closeErr error
++	closed   bool
++}
++
++func (b *trackingBody) Read(p []byte) (int, error) {
++	if b.readErr != nil {
++		return 0, b.readErr
++	}
++	return b.reader.Read(p)
++}
++
++func (b *trackingBody) Close() error {
++	b.closed = true
++	return b.closeErr
++}
++
++func response(r *http.Request, status int, body io.ReadCloser) *http.Response {
++	return &http.Response{StatusCode: status, Body: body, Header: make(http.Header), Request: r}
++}
++
+ func TestSequentialBodies(t *testing.T) {
+ 	client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
+-		return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(r.URL.Path)), Header: make(http.Header), Request: r}, nil
++		return response(r, http.StatusOK, io.NopCloser(strings.NewReader(r.URL.Path))), nil
+ 	})}
+ 	got, err := FetchAll(context.Background(), client, []string{"http://example.test/first", "http://example.test/second"}, time.Second, time.Second)
+ 	if err != nil || len(got) != 2 || string(got[0]) != "/first" || string(got[1]) != "/second" {
+ 		t.Fatalf("bodies=%q err=%v", got, err)
+ 	}
+ }
++
++func TestAlreadyCanceledStartsNoRequest(t *testing.T) {
++	ctx, cancel := context.WithCancel(context.Background())
++	cancel()
++	calls := 0
++	client := &http.Client{Transport: transportFunc(func(*http.Request) (*http.Response, error) {
++		calls++
++		return nil, errors.New("unexpected request")
++	})}
++	got, err := FetchAll(ctx, client, []string{"http://example.test/"}, time.Second, time.Second)
++	if err == nil || calls != 0 || len(got) != 0 {
++		t.Fatalf("bodies=%q err=%v calls=%d", got, err, calls)
++	}
++}
++
++func TestParentDeadlineBoundsEachStageAndPreservesPrefix(t *testing.T) {
++	parent, cancel := context.WithTimeout(context.Background(), 250*time.Millisecond)
++	defer cancel()
++	calls := 0
++	client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++		calls++
++		if calls == 1 {
++			return response(r, http.StatusOK, io.NopCloser(strings.NewReader("first"))), nil
++		}
++		deadline, ok := r.Context().Deadline()
++		if !ok || time.Until(deadline) > 120*time.Millisecond {
++			t.Errorf("second stage deadline=%v, want bounded by configured stage", deadline)
++		}
++		<-r.Context().Done()
++		return nil, r.Context().Err()
++	})}
++	got, err := FetchAll(parent, client, []string{"http://example.test/first", "http://example.test/second"}, time.Second, 80*time.Millisecond)
++	if !errors.Is(err, context.DeadlineExceeded) || len(got) != 1 || string(got[0]) != "first" || calls != 2 {
++		t.Fatalf("bodies=%q err=%v calls=%d", got, err, calls)
++	}
++}
++
++func TestTotalBudgetIsNotRestartedAndParentDeadlineWins(t *testing.T) {
++	calls := 0
++	secondRemaining := time.Duration(0)
++	client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++		calls++
++		deadline, ok := r.Context().Deadline()
++		if !ok {
++			return nil, errors.New("missing deadline")
++		}
++		remaining := time.Until(deadline)
++		if calls == 1 {
++			if remaining > 180*time.Millisecond {
++				t.Errorf("first stage exceeds total budget: %v", remaining)
++			}
++			return response(r, http.StatusOK, io.NopCloser(strings.NewReader("first"))), nil
++		}
++		secondRemaining = remaining
++		<-r.Context().Done()
++		return nil, r.Context().Err()
++	})}
++	started := time.Now()
++	got, err := FetchAll(context.Background(), client, []string{"http://example.test/first", "http://example.test/second"}, 60*time.Millisecond, time.Second)
++	if !errors.Is(err, context.DeadlineExceeded) || len(got) != 1 || calls != 2 || time.Since(started) > 500*time.Millisecond {
++		t.Fatalf("bodies=%q err=%v calls=%d elapsed=%v", got, err, calls, time.Since(started))
++	}
++	if secondRemaining <= 0 || secondRemaining > 60*time.Millisecond {
++		t.Fatalf("second stage remaining total budget=%v", secondRemaining)
++	}
++}
++
++func TestFailureRetainsPrefixAndClosesEveryResponseBody(t *testing.T) {
++	readErr := errors.New("read failed")
++	closeErr := errors.New("close failed")
++	first := &trackingBody{reader: strings.NewReader("accepted")}
++	second := &trackingBody{readErr: readErr, closeErr: closeErr}
++	calls := 0
++	client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++		calls++
++		if calls == 1 {
++			return response(r, http.StatusOK, first), nil
++		}
++		return response(r, http.StatusOK, second), nil
++	})}
++	got, err := FetchAll(context.Background(), client, []string{"http://example.test/first", "http://example.test/second", "http://example.test/third"}, time.Second, time.Second)
++	if !errors.Is(err, readErr) || !errors.Is(err, closeErr) || len(got) != 1 || string(got[0]) != "accepted" {
++		t.Fatalf("bodies=%q err=%v", got, err)
++	}
++	if !first.closed || !second.closed || calls != 2 {
++		t.Fatalf("closed=(%v,%v) calls=%d", first.closed, second.closed, calls)
++	}
++}
++
++func TestStatusAndCloseFailuresRemainInspectable(t *testing.T) {
++	statusCloseErr := errors.New("status body close failed")
++	body := &trackingBody{reader: strings.NewReader("ignored"), closeErr: statusCloseErr}
++	client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++		return response(r, http.StatusPartialContent, body), nil
++	})}
++	got, err := FetchAll(context.Background(), client, []string{"http://example.test/"}, time.Second, time.Second)
++	if err == nil || !strings.Contains(err.Error(), "status 206") || !errors.Is(err, statusCloseErr) || len(got) != 0 || !body.closed {
++		t.Fatalf("bodies=%q err=%v closed=%v", got, err, body.closed)
++	}
++}
++
++func TestFailurePreservesIndependentErrorAndCustomCancellationCause(t *testing.T) {
++	operationErr := errors.New("transport failure")
++	cause := errors.New("caller stopped for a custom reason")
++	ctx, cancel := context.WithCancelCause(context.Background())
++	defer cancel(nil)
++	client := &http.Client{Transport: transportFunc(func(*http.Request) (*http.Response, error) {
++		cancel(cause)
++		return nil, operationErr
++	})}
++	got, err := FetchAll(ctx, client, []string{"http://example.test/"}, time.Second, time.Second)
++	if !errors.Is(err, operationErr) || !errors.Is(err, context.Canceled) || !errors.Is(err, cause) || len(got) != 0 {
++		t.Fatalf("bodies=%q err=%v", got, err)
++	}
++}
++
++func TestEmptyEndpointsSucceedWithoutCalls(t *testing.T) {
++	calls := 0
++	client := &http.Client{Transport: transportFunc(func(*http.Request) (*http.Response, error) {
++		calls++
++		return nil, errors.New("unexpected request")
++	})}
++	got, err := FetchAll(context.Background(), client, nil, time.Second, time.Second)
++	if err != nil || len(got) != 0 || calls != 0 {
++		t.Fatalf("bodies=%q err=%v calls=%d", got, err, calls)
++	}
++}

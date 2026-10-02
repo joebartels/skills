@@ -1,0 +1,5 @@
+- go-api-contracts — `r0/go-api-contracts/SKILL.md`
+- go-behavior-tests — `r0/go-behavior-tests/SKILL.md`
+- go-interfaces-and-composition — `r0/go-interfaces-and-composition/SKILL.md`
+- go-package-boundaries — `r0/go-package-boundaries/SKILL.md`
+- go-test-isolation — `r0/go-test-isolation/SKILL.md`

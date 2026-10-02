@@ -1,0 +1,226 @@
+{
+  "reconstruction_hashes_match": true,
+  "ordinary_checks": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "apply",
+        "/Users/jb/.codex/worktrees/ed95/skills/tests/go-quality-build/results/2026-10-02-context-discovery/attempt-06/source.patch"
+      ],
+      "cwd": "/private/tmp/go-check-uv0gyko5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.013
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-check-uv0gyko5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "elapsed_seconds": 0.009
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-uv0gyko5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.025
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-uv0gyko5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/rangecheck\t0.206s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.372
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-uv0gyko5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.067
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-l",
+        "."
+      ],
+      "cwd": "/private/tmp/go-check-uv0gyko5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.007
+    }
+  ],
+  "held_contract_checks": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-uv0gyko5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/rangecheck\t0.203s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.367
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-uv0gyko5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/rangecheck\t0.139s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.362
+    }
+  ],
+  "mutation_sensitivity": [
+    {
+      "id": "control-upper-regression",
+      "file": "range.go",
+      "old": "value <= high",
+      "new": "value < high",
+      "compile": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^$",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-mutation-dr4pgflp",
+        "environment_overrides": {
+          "GOCACHE": "/private/tmp/go-quality-context-cache",
+          "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+        },
+        "status": 0,
+        "stdout": "ok  \texample.com/rangecheck\t0.295s [no tests to run]\n",
+        "stderr": "",
+        "elapsed_seconds": 0.444
+      },
+      "author_tests": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-count=1",
+          "-timeout=30s",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-mutation-dr4pgflp",
+        "environment_overrides": {
+          "GOCACHE": "/private/tmp/go-quality-context-cache",
+          "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+        },
+        "status": 1,
+        "stdout": "--- FAIL: TestInclusiveInterval (0.00s)\n    range_test.go:7: inclusive interval behavior changed\nFAIL\nFAIL\texample.com/rangecheck\t0.122s\nFAIL\n",
+        "stderr": "",
+        "elapsed_seconds": 0.268
+      },
+      "held_tests": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^TestInclusiveUpperBound$",
+          "-count=1",
+          "-timeout=30s",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-mutation-dr4pgflp",
+        "environment_overrides": {
+          "GOCACHE": "/private/tmp/go-quality-context-cache",
+          "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+        },
+        "status": 1,
+        "stdout": "--- FAIL: TestInclusiveUpperBound (0.00s)\n    contract_controller_test.go:11: value=6 got=false want=true\nFAIL\nFAIL\texample.com/rangecheck\t0.196s\nFAIL\n",
+        "stderr": "",
+        "elapsed_seconds": 0.461
+      }
+    }
+  ]
+}

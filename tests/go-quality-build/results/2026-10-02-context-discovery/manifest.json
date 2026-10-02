@@ -6,7 +6,77 @@
   "primary_case": "library-call-cause",
   "author_ceiling": 16,
   "group_ceiling": 36,
-  "attempts": [],
+  "attempts": [
+    {
+      "attempt": 1,
+      "case": "library-call-cause",
+      "profile": "reference",
+      "arm": "baseline",
+      "status": "failed",
+      "directory": "attempt-01",
+      "workspace": "/private/tmp/go-task-dui_buc6",
+      "exit_code": 2,
+      "elapsed_seconds": 0.018
+    },
+    {
+      "attempt": 2,
+      "case": "service-total-budget",
+      "profile": "reference",
+      "arm": "baseline",
+      "status": "failed",
+      "directory": "attempt-02",
+      "workspace": "/private/tmp/go-task-ya7_s8do",
+      "exit_code": 2,
+      "elapsed_seconds": 0.018
+    },
+    {
+      "attempt": 3,
+      "case": "not-context-work",
+      "profile": "reference",
+      "arm": "baseline",
+      "status": "failed",
+      "directory": "attempt-03",
+      "workspace": "/private/tmp/go-task-zcq56mdf",
+      "exit_code": 2,
+      "elapsed_seconds": 0.018
+    },
+    {
+      "attempt": 4,
+      "case": "library-call-cause",
+      "profile": "reference",
+      "arm": "baseline",
+      "retry_of": 1,
+      "status": "completed",
+      "directory": "attempt-04",
+      "workspace": "/private/tmp/go-task-mvam02bo",
+      "exit_code": 0,
+      "elapsed_seconds": 58.686
+    },
+    {
+      "attempt": 5,
+      "case": "service-total-budget",
+      "profile": "reference",
+      "arm": "baseline",
+      "retry_of": 2,
+      "status": "completed",
+      "directory": "attempt-05",
+      "workspace": "/private/tmp/go-task-s9sehndx",
+      "exit_code": 0,
+      "elapsed_seconds": 118.228
+    },
+    {
+      "attempt": 6,
+      "case": "not-context-work",
+      "profile": "reference",
+      "arm": "baseline",
+      "retry_of": 3,
+      "status": "completed",
+      "directory": "attempt-06",
+      "workspace": "/private/tmp/go-task-6nj9j2nc",
+      "exit_code": 0,
+      "elapsed_seconds": 30.668
+    }
+  ],
   "profiles": {
     "reference": {
       "harness": "Codex CLI 0.157.0",
@@ -97,7 +167,8 @@
     "Claude native profile unavailable",
     "OpenCode package v2 integration not established",
     "Go1.22 cgo/default-link HTTP path limited on host",
-    "Other platforms and all schedules unverified"
+    "Other platforms and all schedules unverified",
+    "Three CLI argument failures consumed author slots; no other-native implementation pair fits remaining matched-gate budget if drafting proceeds. Native selection capability remains separately measurable."
   ],
   "codex_argv_template": [
     "codex",
@@ -134,5 +205,117 @@
     "lost-custom-cause",
     "lost-total-budget",
     "unbounded-finalization"
-  ]
+  ],
+  "preparation_commit": "4e35044ad0d58acd54023b9fda92aa812c8fb60e",
+  "settings_correction": "First three attempts rejected incompatible --sandbox workspace-write plus --approve-for-me before model contact. Retain failures. Corrected --approve-for-me alone supplies workspace-write with automatic review; one retry per original attempt.",
+  "revised_slot_budget": {
+    "failed_discovery": 3,
+    "discovery_retries": 3,
+    "reference_exposure": 3,
+    "transfer_pair": 2,
+    "alternate_model_pair": 2,
+    "alternate_reasoning_pair": 2,
+    "remaining_revision_or_probe_author_slot": 1,
+    "native_pairs": 0
+  },
+  "attempt_count": 6,
+  "group_attempt_count_at_stage": 6,
+  "host_discovery_observation": "skip_host_skill_discovery was requested, but startup stderr still reports a host skill scan. Observed reads are from allowed catalog; full host-metadata absence is unproven. Explicit-catalog result only, not strict native discovery isolation.",
+  "neutral_review_mapping": {
+    "packet-01": {
+      "attempt": 4,
+      "source_hashes": "attempt-04/source-hashes.json",
+      "cards_pending": false,
+      "frozen_card_hashes": {
+        "evidence.md": "2e0885cf866486020297e5986c1a51d530e490c75ff4f343870dbaa7ae73eeb5",
+        "code-quality-and-idioms.md": "5d66a37628da98c26ae37e4fbb9dc24efdd54e450b30f4f7998030d11da177c9",
+        "testing.md": "7ed0e5811db727eecba7d4102d346768bd46a7ae9b3afc061c0439a19871aa84",
+        "checks.json": "d0ded457746dac2f8cd788e2078e02cf6d0bb945471c309af126fcd674669610",
+        "correctness-and-compatibility.md": "e926cc62e87f4fcaffa3120e57bd75f902f0924b6e6eaf1763e7c01045f1fd3b",
+        "applicability-and-coverage.md": "e33b20861e29a54617107da2059931b2a6a8551f48144add3515644e4bff4f1b",
+        "unsafe-cause-equality.patch": "cfbd4dddb331dc2949bfb43478620f50cdd1d1c03b597171a523cf256f049d63",
+        "architecture-and-design.md": "73d81486be5fb7f07234802235fffb93d8ae06e81401d390cbf49d4564141de3",
+        "observability-and-resilience.md": "4ef523b517e29847e374e951809634be11e9e9dc5c474be3a55f25155b85d42b",
+        "dependencies-and-reproducibility.md": "7c37c2d6ae458b29f5cd528cc3607b99c8870ab0a72b566ef0ed1a8f6498cb6a",
+        "handoff.md": "5610c8079027b6bc14df83c8fc0aeb5154531fbcadd98522ece8487e39a0254a",
+        "reviewer_contract_test.go": "600e4dbb3a2458169cba4898bc6ff61f51f95b2d4d62e92820e35c9d0a042bf6",
+        "performance-and-resource-management.md": "5563a66cce725c1a69619596547954d3b9d813bd2554829f4418c59296003b3c"
+      }
+    },
+    "packet-02": {
+      "attempt": 5,
+      "source_hashes": "attempt-05/source-hashes.json",
+      "cards_pending": false,
+      "frozen_card_hashes": {
+        "evidence.md": "184c76b23c0169ec271daa859fcd3e9da9815732a2174ac2de5cecc6c5c10b7a",
+        "code-quality-and-idioms.md": "7238b95f9f6c3c59cc643383e64d226a7ecccab22a3751683994ec66ba89ed2d",
+        "testing.md": "2de7d293a32ff0aa565c4093f4a22ccddd78cf2f5065025000f76122d94adb01",
+        "deployment-and-operations.md": "896ed09e88a49d77175186be10e7d71bb13f3915baea44f03017ae968f9d3fca",
+        "correctness-and-compatibility.md": "4ddf27f459ad041947e0ffb588ef9255156713b2f20f89c34e0f07edfb0d1ecd",
+        "architecture-and-design.md": "3f611dcfbf10a983362831f41b37dc0725f97823d6d1299ac454be4714a9ec32",
+        "coverage.md": "6b6c6a45fc803471d590a4df8617a4c3ab3eee39f483f3297389ad3900897227",
+        "observability-and-resilience.md": "8e7d3e5b44e77519e800709cdc36d6d5822462b13a907455260cd4da641f36f5",
+        "dependencies-and-reproducibility.md": "0d6dfca2add782554f15d5fdf354cdc88c37771e5ffa3e7728e58c9f2b7f5943",
+        "handoff.md": "f11371970d6497906243c0ee9a912fac1e6d202ed0fa08af8dddaa3acadfca1f",
+        "security.md": "0473c70a8cabd5b61d34d43d31b708a37c8f7750cc9c6ad4e7a8d6632a5b0633",
+        "performance-and-resource-management.md": "ddb24ca4fee125a05d38b033e5dfb79cf482614ce4f2ee90688e5ad0ea9eda29",
+        "diagnostics/run_diagnostics.py": "fd12559deddd83bc5f73fa5f6dc17bd9c41187ba4abb5101b89d3f276f1c9298",
+        "diagnostics/suggested-correction-check.json": "20c543fbf6abb6b89ce4031044b4b423d062aaeb02955cef2df9e86f119e38d0",
+        "diagnostics/check_suggested_correction.py": "a47c0dca6f429381b6734ca55810843a0edce9079757f7a54f51db948cc434cc",
+        "diagnostics/stress_snapshot_test.go": "f53742813e70d0430794936c6a197aeab579cdba40ae485cd3e7c457b577d149",
+        "diagnostics/run_followup.py": "25187d89116d5d2087fa9b1c886248cc356d233c926900c00d7a0474a13d7f03",
+        "diagnostics/candidate-sha256.json": "4d2c208f6aaeb0509d29045ade08c351f896d0817e69e8f70ef74433c93216e4",
+        "diagnostics/executed-checks.json": "bf81b9edc2cf11d3b5b4eeafb55df8ce272c4c16a8e2f79293218fc345b1ba8b",
+        "diagnostics/review_contract_test.go": "ea8e4be282a98771e18873b69e335504135f9ecc3e06b28e25aa85cc9625c01d"
+      }
+    },
+    "packet-03": {
+      "attempt": 6,
+      "source_hashes": "attempt-06/source-hashes.json",
+      "cards_pending": false,
+      "frozen_card_hashes": {
+        "code-quality-and-idioms.md": "b003948561c33fb9d97dfa7f77d4fc2d2d1b24d7ff225dc6d02e4f12d5e02a90",
+        "testing.md": "57491dc26a98beda62f9cd5762d63b8eed11e4c1180b924b709fbd482dc9a980",
+        "correctness-and-compatibility.md": "7ed8ab57fb2892ed1b08ef83f10167b87f5a2e2a5239c723c071219cc2e8f3f8",
+        "applicability-and-coverage.md": "40152ca53637164504805a116741378d916c9842206dab12347a5bfb153964ec",
+        "reviewer-verification.json": "cd47af626ff454e8f82bbc8d4fa083c794fc85c6ab7180352d91190b541a78f9",
+        "dependencies-and-reproducibility.md": "cb4c1f27db24c00121c70b58e9b7ef457264a2f7e0a4bda7a9966c80f60d9758",
+        "handoff.md": "f9ece9d0af5d062ee521cfbb0996f37da44d314ded65552c501a1c6859e48845",
+        "reviewer_contract_test.go": "3bcaf20b92195e8d5f15c5ed871597881fcbb97d369023e8fe295d8fdeb94a1b"
+      }
+    }
+  },
+  "mutation_limits": [
+    "The first service mutation failed compilation because totalCtx became unused. Preserved initial raw check; rerun with an explicit unused-variable binding compiles and fails both author and held tests. Only the compiled rerun supplies sensitivity."
+  ],
+  "selection_probe_count": 2,
+  "selection_probe_types": [
+    "native catalog capability (initial non-following override)",
+    "native catalog capability (followed host aliases)"
+  ],
+  "checked_future_isolation": {
+    "override": "preparation/host-skill-disable-followed-override.txt",
+    "override_sha256": "ed201c2ac72758098918828a75762b08338d9a4eeb1d715e20a3b8f110b69527",
+    "evidence": "preparation/catalog-followed-report.md",
+    "result": "initial native catalog self-report contains exactly five local comparator names; no tool calls requested or made",
+    "first_diagnostic": "non-following inventory leaves host metadata; retained failed isolation observation"
+  },
+  "future_author_allocation": {
+    "discovery_attempts_already_spent": 6,
+    "checked_reference_baseline_reruns": 3,
+    "checked_reference_exposures": 3,
+    "checked_transfer_pair": 2,
+    "checked_alternate_model_pair": 2,
+    "total": 16,
+    "alternate_reasoning_implementation_pair": 0,
+    "other_native_implementation_pairs": 0
+  },
+  "comparison_isolation_limit": "Original discovery has unproven host metadata isolation. Do not credit its comparisons as matched benefit under the checked future setup. New baselines/exposures must share the followed host-disable override and native local allowed catalog.",
+  "review_freeze": "All three neutral cards complete and hashed before arm disclosure. Raw independent probes/supplementary mutations retained; reviewer diagnostic repairs are not authors.",
+  "discovery_disposition": "Relevant defects confirmed; proceed to context draft and checked matched study. Original discovery outcomes supply weakness hypotheses, not matched uplift under changed isolation.",
+  "topic_coverage": {
+    "library": "attempt-04/reviews/applicability-and-coverage.md",
+    "service": "attempt-05/reviews/coverage.md",
+    "control": "attempt-06/reviews/applicability-and-coverage.md"
+  }
 }

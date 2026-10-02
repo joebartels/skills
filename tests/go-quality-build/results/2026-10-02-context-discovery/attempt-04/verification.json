@@ -1,0 +1,316 @@
+{
+  "reconstruction_hashes_match": true,
+  "ordinary_checks": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "apply",
+        "/Users/jb/.codex/worktrees/ed95/skills/tests/go-quality-build/results/2026-10-02-context-discovery/attempt-04/source.patch"
+      ],
+      "cwd": "/private/tmp/go-check-tocy1f0t",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.014
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-check-tocy1f0t",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "elapsed_seconds": 0.009
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-tocy1f0t",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.052
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-tocy1f0t",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/process\t0.308s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.479
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-tocy1f0t",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.106
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-l",
+        "."
+      ],
+      "cwd": "/private/tmp/go-check-tocy1f0t",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.01
+    }
+  ],
+  "held_contract_checks": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-tocy1f0t",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 1,
+      "stdout": "--- FAIL: TestCanceledBeforeStart (0.00s)\n    contract_controller_test.go:22: calls=0 accepted=0 err=<nil> cause=custom cancellation\nFAIL\nFAIL\texample.com/process\t0.146s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 0.385
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-tocy1f0t",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 1,
+      "stdout": "--- FAIL: TestCanceledBeforeStart (0.00s)\n    contract_controller_test.go:22: calls=0 accepted=0 err=<nil> cause=custom cancellation\nFAIL\nFAIL\texample.com/process\t0.137s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 0.333
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-shuffle=on",
+        "-count=3",
+        "-timeout=60s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-tocy1f0t",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 1,
+      "stdout": "-test.shuffle 1790974034664796000\n--- FAIL: TestCanceledBeforeStart (0.00s)\n    contract_controller_test.go:22: calls=0 accepted=0 err=<nil> cause=custom cancellation\n--- FAIL: TestCanceledBeforeStart (0.00s)\n    contract_controller_test.go:22: calls=0 accepted=0 err=<nil> cause=custom cancellation\n--- FAIL: TestCanceledBeforeStart (0.00s)\n    contract_controller_test.go:22: calls=0 accepted=0 err=<nil> cause=custom cancellation\nFAIL\nFAIL\texample.com/process\t0.216s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 0.443
+    }
+  ],
+  "mutation_sensitivity": [
+    {
+      "id": "unsafe-cause-equality",
+      "file": "process.go",
+      "old": "return accepted, errors.Join(callbackErr, cancellationError(ctx))",
+      "new": "if cause := context.Cause(ctx); cause != nil && cause != callbackErr { return accepted, errors.Join(callbackErr, cancellationError(ctx)) }; return accepted, errors.Join(callbackErr, ctx.Err())",
+      "compile": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^$",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-mutation-nrorr4eb",
+        "environment_overrides": {
+          "GOCACHE": "/private/tmp/go-quality-context-cache",
+          "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+        },
+        "status": 0,
+        "stdout": "ok  \texample.com/process\t0.163s [no tests to run]\n",
+        "stderr": "",
+        "elapsed_seconds": 0.423
+      },
+      "author_tests": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-count=1",
+          "-timeout=30s",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-mutation-nrorr4eb",
+        "environment_overrides": {
+          "GOCACHE": "/private/tmp/go-quality-context-cache",
+          "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+        },
+        "status": 0,
+        "stdout": "ok  \texample.com/process\t0.247s\n",
+        "stderr": "",
+        "elapsed_seconds": 0.422
+      },
+      "held_tests": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^TestCauseReturnedByCallback$",
+          "-count=1",
+          "-timeout=30s",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-mutation-nrorr4eb",
+        "environment_overrides": {
+          "GOCACHE": "/private/tmp/go-quality-context-cache",
+          "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+        },
+        "status": 1,
+        "stdout": "--- FAIL: TestCauseReturnedByCallback (0.00s)\n    contract_controller_test.go:92: Process panicked for a legal non-comparable cause: runtime error: comparing uncomparable type process.listCause\nFAIL\nFAIL\texample.com/process\t0.268s\nFAIL\n",
+        "stderr": "",
+        "elapsed_seconds": 0.467
+      }
+    },
+    {
+      "id": "lost-custom-cause",
+      "file": "process.go",
+      "old": "context.Cause(ctx)",
+      "new": "nil",
+      "compile": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^$",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-mutation-zrdx0441",
+        "environment_overrides": {
+          "GOCACHE": "/private/tmp/go-quality-context-cache",
+          "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+        },
+        "status": 0,
+        "stdout": "ok  \texample.com/process\t0.278s [no tests to run]\n",
+        "stderr": "",
+        "elapsed_seconds": 0.412
+      },
+      "author_tests": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-count=1",
+          "-timeout=30s",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-mutation-zrdx0441",
+        "environment_overrides": {
+          "GOCACHE": "/private/tmp/go-quality-context-cache",
+          "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+        },
+        "status": 1,
+        "stdout": "--- FAIL: TestProcessCancellationAndResults (0.00s)\n    --- FAIL: TestProcessCancellationAndResults/already_canceled (0.00s)\n        process_test.go:38: accepted=0, calls=0, err=context canceled, cause=custom cancellation cause\n    --- FAIL: TestProcessCancellationAndResults/between_jobs_preserves_accepted_prefix_and_cause (0.00s)\n        process_test.go:62: accepted=1, seen=[2], err=context canceled, cause=custom cancellation cause\n    --- FAIL: TestProcessCancellationAndResults/callback_and_observed_cancellation_errors_are_retained (0.00s)\n        process_test.go:84: accepted=0, err=callback failed\n            context canceled, cause=custom cancellation cause\nFAIL\nFAIL\texample.com/process\t0.114s\nFAIL\n",
+        "stderr": "",
+        "elapsed_seconds": 0.221
+      },
+      "held_tests": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^TestCustomCauseAndIndependentFailure$",
+          "-count=1",
+          "-timeout=30s",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-mutation-zrdx0441",
+        "environment_overrides": {
+          "GOCACHE": "/private/tmp/go-quality-context-cache",
+          "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+        },
+        "status": 1,
+        "stdout": "--- FAIL: TestCustomCauseAndIndependentFailure (0.00s)\n    contract_controller_test.go:63: accepted=1 err=independent apply failure\n        context canceled cause=custom cancellation\nFAIL\nFAIL\texample.com/process\t0.156s\nFAIL\n",
+        "stderr": "",
+        "elapsed_seconds": 0.292
+      }
+    }
+  ]
+}
