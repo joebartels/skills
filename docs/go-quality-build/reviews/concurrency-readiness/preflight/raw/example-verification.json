@@ -1,0 +1,348 @@
+{
+  "scope": "Exact inline example with package/import wrapper; preflight semantics only",
+  "behavioral_utility_claim": false,
+  "checks": [
+    {
+      "id": "minimum-version",
+      "command": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "version"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills/docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+      "exit_code": 0,
+      "elapsed_seconds": 0.009104750002734363,
+      "environment_overrides": {
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOCACHE": "/private/tmp/concurrency-preflight-minimum-cache",
+        "GOMODCACHE": "/private/tmp/concurrency-preflight-modcache"
+      },
+      "stdout": "minimum-version.stdout.txt",
+      "stderr": "minimum-version.stderr.txt"
+    },
+    {
+      "id": "minimum-environment",
+      "command": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "env",
+        "GOVERSION",
+        "GOROOT",
+        "GOOS",
+        "GOARCH",
+        "GOTOOLCHAIN"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills/docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+      "exit_code": 0,
+      "elapsed_seconds": 0.008096541976556182,
+      "environment_overrides": {
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOCACHE": "/private/tmp/concurrency-preflight-minimum-cache",
+        "GOMODCACHE": "/private/tmp/concurrency-preflight-modcache"
+      },
+      "stdout": "minimum-environment.stdout.txt",
+      "stderr": "minimum-environment.stderr.txt"
+    },
+    {
+      "id": "minimum-build",
+      "command": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "build",
+        "./..."
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills/docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+      "exit_code": 0,
+      "elapsed_seconds": 0.7170517919585109,
+      "environment_overrides": {
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOCACHE": "/private/tmp/concurrency-preflight-minimum-cache",
+        "GOMODCACHE": "/private/tmp/concurrency-preflight-modcache"
+      },
+      "stdout": "minimum-build.stdout.txt",
+      "stderr": "minimum-build.stderr.txt"
+    },
+    {
+      "id": "minimum-test",
+      "command": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-count=1",
+        "-timeout=20s",
+        "./..."
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills/docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+      "exit_code": 0,
+      "elapsed_seconds": 0.9943391670240089,
+      "environment_overrides": {
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOCACHE": "/private/tmp/concurrency-preflight-minimum-cache",
+        "GOMODCACHE": "/private/tmp/concurrency-preflight-modcache"
+      },
+      "stdout": "minimum-test.stdout.txt",
+      "stderr": "minimum-test.stderr.txt"
+    },
+    {
+      "id": "minimum-vet",
+      "command": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills/docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+      "exit_code": 0,
+      "elapsed_seconds": 0.32680695794988424,
+      "environment_overrides": {
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOCACHE": "/private/tmp/concurrency-preflight-minimum-cache",
+        "GOMODCACHE": "/private/tmp/concurrency-preflight-modcache"
+      },
+      "stdout": "minimum-vet.stdout.txt",
+      "stderr": "minimum-vet.stderr.txt"
+    },
+    {
+      "id": "minimum-race-shuffle",
+      "command": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-race",
+        "-shuffle=on",
+        "-count=5",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills/docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+      "exit_code": 0,
+      "elapsed_seconds": 3.5719674160936847,
+      "environment_overrides": {
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOCACHE": "/private/tmp/concurrency-preflight-minimum-cache",
+        "GOMODCACHE": "/private/tmp/concurrency-preflight-modcache"
+      },
+      "stdout": "minimum-race-shuffle.stdout.txt",
+      "stderr": "minimum-race-shuffle.stderr.txt"
+    },
+    {
+      "id": "minimum-format",
+      "command": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/gofmt",
+        "-d",
+        "totals.go",
+        "totals_test.go"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills/docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+      "exit_code": 0,
+      "elapsed_seconds": 0.1733195420820266,
+      "environment_overrides": {
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOCACHE": "/private/tmp/concurrency-preflight-minimum-cache",
+        "GOMODCACHE": "/private/tmp/concurrency-preflight-modcache"
+      },
+      "stdout": "minimum-format.stdout.txt",
+      "stderr": "minimum-format.stderr.txt",
+      "format_diff_empty": true
+    },
+    {
+      "id": "host-version",
+      "command": [
+        "rtk",
+        "proxy",
+        "/opt/homebrew/Cellar/go/1.26.5/libexec/bin/go",
+        "version"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills/docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+      "exit_code": 0,
+      "elapsed_seconds": 0.013762625050731003,
+      "environment_overrides": {
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOCACHE": "/private/tmp/concurrency-preflight-host-cache",
+        "GOMODCACHE": "/private/tmp/concurrency-preflight-modcache"
+      },
+      "stdout": "host-version.stdout.txt",
+      "stderr": "host-version.stderr.txt"
+    },
+    {
+      "id": "host-environment",
+      "command": [
+        "rtk",
+        "proxy",
+        "/opt/homebrew/Cellar/go/1.26.5/libexec/bin/go",
+        "env",
+        "GOVERSION",
+        "GOROOT",
+        "GOOS",
+        "GOARCH",
+        "GOTOOLCHAIN"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills/docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+      "exit_code": 0,
+      "elapsed_seconds": 0.011211915989406407,
+      "environment_overrides": {
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOCACHE": "/private/tmp/concurrency-preflight-host-cache",
+        "GOMODCACHE": "/private/tmp/concurrency-preflight-modcache"
+      },
+      "stdout": "host-environment.stdout.txt",
+      "stderr": "host-environment.stderr.txt"
+    },
+    {
+      "id": "host-build",
+      "command": [
+        "rtk",
+        "proxy",
+        "/opt/homebrew/Cellar/go/1.26.5/libexec/bin/go",
+        "build",
+        "./..."
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills/docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+      "exit_code": 0,
+      "elapsed_seconds": 0.8011115409899503,
+      "environment_overrides": {
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOCACHE": "/private/tmp/concurrency-preflight-host-cache",
+        "GOMODCACHE": "/private/tmp/concurrency-preflight-modcache"
+      },
+      "stdout": "host-build.stdout.txt",
+      "stderr": "host-build.stderr.txt"
+    },
+    {
+      "id": "host-test",
+      "command": [
+        "rtk",
+        "proxy",
+        "/opt/homebrew/Cellar/go/1.26.5/libexec/bin/go",
+        "test",
+        "-count=1",
+        "-timeout=20s",
+        "./..."
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills/docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+      "exit_code": 0,
+      "elapsed_seconds": 1.1411919579841197,
+      "environment_overrides": {
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOCACHE": "/private/tmp/concurrency-preflight-host-cache",
+        "GOMODCACHE": "/private/tmp/concurrency-preflight-modcache"
+      },
+      "stdout": "host-test.stdout.txt",
+      "stderr": "host-test.stderr.txt"
+    },
+    {
+      "id": "host-vet",
+      "command": [
+        "rtk",
+        "proxy",
+        "/opt/homebrew/Cellar/go/1.26.5/libexec/bin/go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills/docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+      "exit_code": 0,
+      "elapsed_seconds": 0.38191312504932284,
+      "environment_overrides": {
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOCACHE": "/private/tmp/concurrency-preflight-host-cache",
+        "GOMODCACHE": "/private/tmp/concurrency-preflight-modcache"
+      },
+      "stdout": "host-vet.stdout.txt",
+      "stderr": "host-vet.stderr.txt"
+    },
+    {
+      "id": "host-race-shuffle",
+      "command": [
+        "rtk",
+        "proxy",
+        "/opt/homebrew/Cellar/go/1.26.5/libexec/bin/go",
+        "test",
+        "-race",
+        "-shuffle=on",
+        "-count=5",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills/docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+      "exit_code": 0,
+      "elapsed_seconds": 4.178110667038709,
+      "environment_overrides": {
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOCACHE": "/private/tmp/concurrency-preflight-host-cache",
+        "GOMODCACHE": "/private/tmp/concurrency-preflight-modcache"
+      },
+      "stdout": "host-race-shuffle.stdout.txt",
+      "stderr": "host-race-shuffle.stderr.txt"
+    },
+    {
+      "id": "host-format",
+      "command": [
+        "rtk",
+        "proxy",
+        "/opt/homebrew/Cellar/go/1.26.5/libexec/bin/gofmt",
+        "-d",
+        "totals.go",
+        "totals_test.go"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills/docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+      "exit_code": 0,
+      "elapsed_seconds": 0.008757542003877461,
+      "environment_overrides": {
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOCACHE": "/private/tmp/concurrency-preflight-host-cache",
+        "GOMODCACHE": "/private/tmp/concurrency-preflight-modcache"
+      },
+      "stdout": "host-format.stdout.txt",
+      "stderr": "host-format.stderr.txt",
+      "format_diff_empty": true
+    },
+    {
+      "id": "skill-validator",
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "/Users/jb/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+        "/Users/jb/.codex/worktrees/ed95/skills/tests/go-quality-build/go-concurrency-and-ownership/draft"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills",
+      "exit_code": 0,
+      "elapsed_seconds": 0.02886050008237362,
+      "environment_overrides": {
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOCACHE": "/private/tmp/concurrency-preflight-host-cache",
+        "GOMODCACHE": "/private/tmp/concurrency-preflight-modcache"
+      },
+      "stdout": "skill-validator.stdout.txt",
+      "stderr": "skill-validator.stderr.txt"
+    }
+  ],
+  "example_sources": {
+    "go.mod": "261455eb7b6d71aabe5e084ff732c33d6de0deeac9334da0cdd88cf240f845a7",
+    "totals.go": "a31ff17968feee517377d6a6c886e6d9bd31d2631065ac0c1ad18ba8ee14c342",
+    "totals_test.go": "ef2c1166c6a42104ea3f3a745460b9c934230b05a0c6b1454729988037ad06fb"
+  }
+}

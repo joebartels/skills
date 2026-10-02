@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-run",
+    "^TestReview",
+    "-count=1",
+    "-timeout=30s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-supplementary-5dns2292",
+  "status": 1,
+  "stdout": "--- FAIL: TestReviewStopJoinAllCausesAndCloseCompletion (0.06s)\n    supplementary_contract_test.go:160: missing context canceled in open\n        run\n        close\npanic: test timed out after 30s\n\trunning tests:\n\t\tTestReviewAcquiredLeaseWhoseRunNeverStarts (30s)\n\ngoroutine 40 [running]:\ntesting.(*M).startAlarm.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2802 +0x2cc\ncreated by time.goFunc\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/time/sleep.go:215 +0x38\n\ngoroutine 1 [chan receive]:\ntesting.(*T).Run(0x1957f54f4008, {0x1007d85d1?, 0x3952e18800783e90?}, 0x10092efb0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2109 +0x3bc\ntesting.runTests.func1(0x1957f54f4008)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2585 +0x40\ntesting.tRunner(0x1957f54f4008, 0x1957f54edc48)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ntesting.runTests({0x1007d5d1f, 0x21}, {0x1007d5d1f, 0x21}, 0x1957f549e270, {0x100956340, 0xa, 0xa}, {0x8080808069470b2c?, 0x1007d0682?, ...})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2583 +0x3f0\ntesting.(*M).Run(0x1957f549c780)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2443 +0x578\nmain.main()\n\t_testmain.go:64 +0x80\n\ngoroutine 39 [chan receive]:\nexample.com/service-owned-workers.TestReviewAcquiredLeaseWhoseRunNeverStarts.func1({0x100931458?, 0x1957f551a280?}, 0x1957f5528528?)\n\t/private/tmp/go-supplementary-5dns2292/supplementary_contract_test.go:178 +0x14c\nexample.com/service-owned-workers.Serve({0x1009313b0, 0x100981be0}, 0x1957f551e200, 0x2, 0x1957f5498f28)\n\t/private/tmp/go-supplementary-5dns2292/host.go:66 +0x270\nexample.com/service-owned-workers.TestReviewAcquiredLeaseWhoseRunNeverStarts(0x1957f5520488)\n\t/private/tmp/go-supplementary-5dns2292/supplementary_contract_test.go:176 +0xf0\ntesting.tRunner(0x1957f5520488, 0x10092efb0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/service-owned-workers\t30.109s\nFAIL\n",
+  "stderr": "",
+  "limit": "Controller-only raw diagnostic; baseline-specific acquired-before-start check assumes concurrent Open calls and hangs a permitted serial Open policy. Not an author outcome or promotion counter. Earlier canceled-cleanup check also exposes a controller-only supplementary coverage gap; no original frozen check is altered."
+}

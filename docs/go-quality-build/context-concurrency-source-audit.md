@@ -1,7 +1,7 @@
 # Context and concurrency source audit
 
 **Date:** 2026-10-02
-**Status:** Section-level authoring audit complete; original wording/examples selected. Context is an exact-byte reviewed draft outside runtime. Concurrency discovery is underway; no concurrency guidance or runtime addition exists. No upstream text or code imported.
+**Status:** Section-level authoring audit complete; original wording/examples selected. Context is an exact-byte reviewed draft outside runtime. Concurrency discovery justifies an original exact-byte draft; independent preflight accepts it before exposure. Neither candidate is promoted yet. No upstream text or code imported.
 
 The [approved design](../superpowers/specs/2026-10-02-go-quality-build-context-concurrency-design.md) and [scoped source review](next-group-source-review.md) define this bounded audit. The [file inventory](context-concurrency-source-inventory.json) records the exact revisions, SHA-256 values and sizes for 16 guidance files and four root licenses retrieved during planning. All 20 local captures reverified against that inventory before this audit. Temporary captures are conveniences, not runtime or replay dependencies; retrieve each repository/path at its recorded revision to reproduce the inventory.
 
@@ -61,8 +61,13 @@ Primary documentation was checked during planning and rechecked for version-sens
 
 Audit decisions match existing API/package/composition/testing ownership and the unchanged all-nine review contract. General error representation/aliasing drafts stay non-installable; necessary cancellation inspection and synchronization rules remain locally usable. Outcome reviews still judge actual correctness, idioms, ownership, budget, resource and test contracts rather than this section inventory. Structural/source checks do not prove effectiveness, native routing or actual Go 1.22 execution.
 
-Current action: finish the independently reviewed concurrency discovery disposition before drafting. Original fixtures/probes/comparator and native settings are frozen. No useful source decision requires expanding repository discovery now.
+Current action: execute the frozen concurrency matched study after accepting preflight. Original fixtures/probes/comparator and native settings are frozen. No useful source decision requires expanding repository discovery now.
 
 ## Context draft use before exposure
 
 The first context snapshot (`6368240e5a000cd8f056afa5980099317882d8ebcefa0e1f29921975ccc4627d`) applies the audited propagation, cancellation/budget, value and deliberate finalization decisions in original wording with one original helper. No upstream text/code copied; distribution notice obligations remain zero. Preflight corrected explicit cancel transfer and metadata scope before freeze. Current primary context docs and official Go API records support stated floors/AfterFunc semantics. Independent exact-byte review accepts this guidance as a focused reviewed draft; the [context study](../../tests/go-quality-build/results/2026-10-02-context-study/comparison.md) rejects promotion after strong primary ties and tested regressions. It remains outside runtime. Fresh concurrency fixture/controller code is original; no upstream text/code or new dependency/notice obligation is introduced.
+
+
+## Concurrency draft before exposure
+
+Exact original draft0ab21aee46b9446356b455d59776263a8160fcf2a0c3b5050c2b1792ecf13002 expresses audited invariant/publication, bounded dispatch/supervision, completion/release and closure decisions. No upstream prose/code imported, no new references/dependencies/notices. Independent preflight accepts this exact guidance against eight comparator/23 review files and20 pinned captures, with minimum/current example checks. This is guidance acceptance, not behavioral benefit or runtime promotion; the fixed primary and unseen transfer study remain pending.

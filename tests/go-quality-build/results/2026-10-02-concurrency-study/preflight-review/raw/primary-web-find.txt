@@ -1,0 +1,464 @@
+sync package - sync - Go Packages (https://pkg.go.dev/sync)
+citeturn16view0 [wordlim: 200] Crawled: today; Content type: text/html; Source: find({"ref_id":"https://pkg.go.dev/sync","pattern":"must not be copied"}); Total lines: 947
+L208: ## cite90†Image Documentation cite32†¶ L209: 
+L210: ### Overview cite33†¶ L211: 
+L212: Package sync provides basic synchronization primitives such as mutual exclusion locks. Other than the cite70†Once and cite83†WaitGroup types, most are intended for use by low-level library routines. Higher-level synchronization is better done via channels and communication.
+L213: 
+L214: Values containing the types defined in this package should not be copied.
+L387: A Cond must not be copied after first use.
+L388: 
+L389: In the terminology of cite96†the Go memory model†go.dev , Cond arranges that a call to cite51†Cond.Broadcast or cite52†Cond.Signal “synchronizes before” any Wait call that it unblocks.
+L390: 
+L391: For many simple use cases, users will be better off using channels than a Cond (Broadcast corresponds to closing a channel, and Signal corresponds to sending on a channel).
+L442: The Map type is specialized. Most code should use a plain Go map instead, with separate locking or coordination, for better type safety and to make it easier to maintain other invariants along with the map content.
+L443: The Map type is optimized for two common use cases: (1) when the entry for a given key is only ever written once but read many times, as in caches that only grow, or (2) when multiple goroutines read, write, and overwrite entries for disjoint sets of keys. In these two cases, use of a Map may significantly reduce lock contention compared to a Go map paired with a separate cite66†Mutex or cite75†RWMutex .
+L444: 
+L445: The zero Map is empty and ready for use. A Map must not be copied after first use.
+L446: In the terminology of cite96†the Go memory model†go.dev , Map arranges that a write operation “synchronizes before” any read operation that observes the effect of the write, where read and write operations are defined as follows.
+L447: cite60†Map.Load , cite61†Map.LoadAndDelete , cite62†Map.LoadOrStore , cite65†Map.Swap , cite58†Map.CompareAndSwap , and cite57†Map.CompareAndDelete are read operations; cite59†Map.Delete , cite61†Map.LoadAndDelete , cite64†Map.Store , and cite65†Map.Swap are write operations; cite62†Map.LoadOrStore is a write operation when it returns loaded set to false; cite58†Map.CompareAndSwap is a write operation when it returns swapped set to true; and cite57†Map.CompareAndDelete is a write operation when it returns deleted set to true.
+L494: #### func (*Map) cite114†Store†cs.opensource.google cite64†¶ added in go1.9
+L495: 
+L496:     func (m *cite55†Map ) Store(key, value cite93†any )
+L497: 
+L498: Store sets the value for a key.
+L499: 
+L500: #### func (*Map) cite115†Swap†cs.opensource.google cite65†¶ added in go1.20
+L501: 
+L502:     func (m *cite55†Map ) Swap(key, value cite93†any ) (previous cite93†any , loaded cite107†bool )
+L503: 
+L504: Swap swaps the value for a key and returns the previous value if any. The loaded result reports whether the key was present.
+L505: #### type cite116†Mutex†cs.opensource.google cite66†¶ L506: 
+L507:     type Mutex struct {
+L508:     	// contains filtered or unexported fields
+L509:     }
+L510: 
+L511: A Mutex is a mutual exclusion lock. The zero value for a Mutex is an unlocked mutex.
+L512: 
+L513: A Mutex must not be copied after first use.
+L514: In the terminology of cite96†the Go memory model†go.dev , the n'th call to cite69†Mutex.Unlock “synchronizes before” the m'th call to cite67†Mutex.Lock for any n < m. A successful call to cite68†Mutex.TryLock is equivalent to a call to Lock. A failed call to TryLock does not establish any “synchronizes before” relation at all.
+L515: #### func (*Mutex) cite117†Lock†cs.opensource.google cite67†¶ L516: 
+L517:     func (m *cite66†Mutex ) Lock()
+L518: 
+L519: Lock locks m. If the lock is already in use, the calling goroutine blocks until the mutex is available.
+L520: #### func (*Mutex) cite118†TryLock†cs.opensource.google cite68†¶ added in go1.18
+L521: 
+L522:     func (m *cite66†Mutex ) TryLock() cite107†bool L523: 
+L524: TryLock tries to lock m and reports whether it succeeded.
+L525: 
+L526: Note that while correct uses of TryLock do exist, they are rare, and use of TryLock is often a sign of a deeper problem in a particular use of mutexes.
+L527: #### func (*Mutex) cite119†Unlock†cs.opensource.google cite69†¶ L528: 
+L529:     func (m *cite66†Mutex ) Unlock()
+L530: 
+L531: Unlock unlocks m. It is a run-time error if m is not locked on entry to Unlock.
+L532: 
+L533: A locked cite66†Mutex is not associated with a particular goroutine. It is allowed for one goroutine to lock a Mutex and then arrange for another goroutine to unlock it.
+L534: #### type cite120†Once†cs.opensource.google cite70†¶ L535: 
+L536:     type Once struct {
+L537:     	// contains filtered or unexported fields
+L538:     }
+L539: 
+L540: Once is an object that will perform exactly one action.
+L541: 
+L542: A Once must not be copied after first use.
+L543: 
+L544: In the terminology of cite96†the Go memory model†go.dev , the return from f “synchronizes before” the return from any call of once.Do(f).
+L545: Example cite36†¶ L546: 
+L547:     package main
+L548: 
+L549:     import (
+L550:     	"fmt"
+L551:     	"sync"
+L552:     )
+L553: 
+L554:     func main() {
+L555:     	var once sync.Once
+L556:     	onceBody := func() {
+L557:     		fmt.Println("Only once")
+L558:     	}
+L559:     	done := make(chan bool)
+L560:     	for range 10 {
+L561:     		go func() {
+L562:     			once.Do(onceBody)
+L563:     			done <- true
+L564:     		}()
+L565:     	}
+L566:     	for range 10 {
+L567:     		<-done
+L568:     	}
+L569:     }
+L570: 
+L571: 
+L572:     Output:
+L573:     Only once
+L574: 
+L575: 
+L576: [Button: Share] [Button: Format] [Button: Run]
+L577: #### func (*Once) cite121†Do†cs.opensource.google cite71†¶ L578: 
+L579:     func (o *cite70†Once ) Do(f func())
+L580: 
+L581: Do calls the function f if and only if Do is being called for the first time for this instance of cite70†Once . In other words, given
+L582: 
+L583:     var once Once
+L584: 
+L585: 
+L586: if once.Do(f) is called multiple times, only the first call will invoke f, even if f has a different value in each invocation. A new instance of Once is required for each function to execute.
+L587: Do is intended for initialization that must be run exactly once. Since f is niladic, it may be necessary to use a function literal to capture the arguments to a function to be invoked by Do:
+L588: 
+L589:     config.once.Do(func() { config.init(filename) })
+L590: 
+L591: 
+L592: Because no call to Do returns until the one call to f returns, if f causes Do to be called, it will deadlock.
+L593: 
+L594: If f panics, Do considers it to have returned; future calls of Do return without calling f.
+L595: #### type cite122†Pool†cs.opensource.google cite72†¶ added in go1.3
+L596: 
+L597:     type Pool struct {
+L598: 
+L599:     	// New optionally specifies a function to generate
+L600:     	// a value when Get would otherwise return nil.
+L601:     	// It may not be changed concurrently with calls to Get.
+L602:     	New func() cite93†any L603:     	// contains filtered or unexported fields
+L604:     }
+L605: 
+L606: A Pool is a set of temporary objects that may be individually saved and retrieved.
+L607: Any item stored in the Pool may be removed automatically at any time without notification. If the Pool holds the only reference when this happens, the item might be deallocated.
+L608: 
+L609: A Pool is safe for use by multiple goroutines simultaneously.
+L610: 
+L611: Pool's purpose is to cache allocated but unused items for later reuse, relieving pressure on the garbage collector. That is, it makes it easy to build efficient, thread-safe free lists. However, it is not suitable for all free lists.
+L612: An appropriate use of a Pool is to manage a group of temporary items silently shared among and potentially reused by concurrent independent clients of a package. Pool provides a way to amortize allocation overhead across many clients.
+L613: 
+L614: An example of good use of a Pool is in the fmt package, which maintains a dynamically-sized store of temporary output buffers. The store scales under load (when many goroutines are actively printing) and shrinks when quiescent.
+L615: On the other hand, a free list maintained as part of a short-lived object is not a suitable use for a Pool, since the overhead does not amortize well in that scenario. It is more efficient to have such objects implement their own free list.
+L616: 
+L617: A Pool must not be copied after first use.
+L618: In the terminology of cite96†the Go memory model†go.dev , a call to Put(x) “synchronizes before” a call to cite73†Pool.Get returning that same value x. Similarly, a call to New returning x “synchronizes before” a call to Get returning that same value x.
+L619: Example cite39†¶ L620: 
+L621:     package main
+L622: 
+L623:     import (
+L624:     	"bytes"
+L625:     	"io"
+L626:     	"os"
+L627:     	"sync"
+L628:     	"time"
+L629:     )
+L630: 
+L631:     var bufPool = sync.Pool{
+L632:     	New: func() any {
+L633:     		// The Pool's New function should generally only return pointer
+L634:     		// types, since a pointer can be put into the return interface
+L635:     		// value without an allocation:
+L636:     		return new(bytes.Buffer)
+L637:     	},
+L638:     }
+L639: 
+L640:     // timeNow is a fake version of time.Now for tests.
+L641:     func timeNow() time.Time {
+L642:     	return time.Unix(1136214245, 0)
+L643:     }
+L644: 
+L645:     func Log(w io.Writer, key, val string) {
+L646:     	b := bufPool.Get().(*bytes.Buffer)
+L647:     	b.Reset()
+L648:     	// Replace this with time.Now() in a real logger.
+L649:     	b.WriteString(timeNow().UTC().Format(time.RFC3339))
+L650:     	b.WriteByte(' ')
+L651:     	b.WriteString(key)
+L652:     	b.WriteByte('=')
+L653:     	b.WriteString(val)
+L654:     	w.Write(b.Bytes())
+L655:     	bufPool.Put(b)
+L656:     }
+L657: 
+L658:     func main() {
+L659:     	Log(os.Stdout, "path", "/search?q=flowers")
+L660:     }
+L661: 
+L662: 
+L663:     Output:
+L664:     2006-01-02T15:04:05Z path=/search?q=flowers
+L665: [Button: Share] [Button: Format] [Button: Run]
+L666: #### func (*Pool) cite123†Get†cs.opensource.google cite73†¶ added in go1.3
+L667: 
+L668:     func (p *cite72†Pool ) Get() cite93†any L669: 
+L670: Get selects an arbitrary item from the cite72†Pool , removes it from the Pool, and returns it to the caller. Get may choose to ignore the pool and treat it as empty. Callers should not assume any relation between values passed to cite74†Pool.Put and the values returned by Get.
+L671: 
+L672: If Get would otherwise return nil and p.New is non-nil, Get returns the result of calling p.New.
+L673: #### func (*Pool) cite124†Put†cs.opensource.google cite74†¶ added in go1.3
+L674: 
+L675:     func (p *cite72†Pool ) Put(x cite93†any )
+L676: 
+L677: Put adds x to the pool.
+L678: #### type cite125†RWMutex†cs.opensource.google cite75†¶ L679: 
+L680:     type RWMutex struct {
+L681:     	// contains filtered or unexported fields
+L682:     }
+L683: 
+L684: A RWMutex is a reader/writer mutual exclusion lock. The lock can be held by an arbitrary number of readers or a single writer. The zero value for a RWMutex is an unlocked mutex.
+L685: 
+L686: A RWMutex must not be copied after first use.
+L687: If any goroutine calls cite76†RWMutex.Lock while the lock is already held by one or more readers, concurrent calls to cite77†RWMutex.RLock will block until the writer has acquired (and released) the lock, to ensure that the lock eventually becomes available to the writer. Note that this prohibits recursive read-locking. A cite77†RWMutex.RLock cannot be upgraded into a cite76†RWMutex.Lock , nor can a cite76†RWMutex.Lock be downgraded into a cite77†RWMutex.RLock .
+L688: In the terminology of cite96†the Go memory model†go.dev , the n'th call to cite82†RWMutex.Unlock “synchronizes before” the m'th call to Lock for any n < m, just as for cite66†Mutex . For any call to RLock, there exists an n such that the n'th call to Unlock “synchronizes before” that call to RLock, and the corresponding call to cite79†RWMutex.RUnlock “synchronizes before” the n+1'th call to Lock.
+L689: #### func (*RWMutex) cite126†Lock†cs.opensource.google cite76†¶ L690: 
+L691:     func (rw *cite75†RWMutex ) Lock()
+L692: 
+L693: Lock locks rw for writing. If the lock is already locked for reading or writing, Lock blocks until the lock is available.
+L694: #### func (*RWMutex) cite127†RLock†cs.opensource.google cite77†¶ L695: 
+L696:     func (rw *cite75†RWMutex ) RLock()
+L697: 
+L698: RLock locks rw for reading.
+L699: 
+L700: It should not be used for recursive read locking; a blocked Lock call excludes new readers from acquiring the lock. See the documentation on the cite75†RWMutex type.
+L701: #### func (*RWMutex) cite128†RLocker†cs.opensource.google cite78†¶ L702: 
+L703:     func (rw *cite75†RWMutex ) RLocker() cite54†Locker L704: 
+L705: RLocker returns a cite54†Locker interface that implements the cite129†Locker.Lock and cite130†Locker.Unlock methods by calling rw.RLock and rw.RUnlock.
+L706: #### func (*RWMutex) cite131†RUnlock†cs.opensource.google cite79†¶ L707: 
+L708:     func (rw *cite75†RWMutex ) RUnlock()
+L709: 
+L710: RUnlock undoes a single cite77†RWMutex.RLock call; it does not affect other simultaneous readers. It is a run-time error if rw is not locked for reading on entry to RUnlock.
+L711: #### func (*RWMutex) cite132†TryLock†cs.opensource.google cite80†¶ added in go1.18
+L712: 
+L713:     func (rw *cite75†RWMutex ) TryLock() cite107†bool L714: 
+L715: TryLock tries to lock rw for writing and reports whether it succeeded.
+L716: 
+L717: Note that while correct uses of TryLock do exist, they are rare, and use of TryLock is often a sign of a deeper problem in a particular use of mutexes.
+L725: #### func (*RWMutex) cite134†Unlock†cs.opensource.google cite82†¶ L726: 
+L727:     func (rw *cite75†RWMutex ) Unlock()
+L728: 
+L729: Unlock unlocks rw for writing. It is a run-time error if rw is not locked for writing on entry to Unlock.
+L730: 
+L731: As with Mutexes, a locked cite75†RWMutex is not associated with a particular goroutine. One goroutine may cite77†RWMutex.RLock (cite76†RWMutex.Lock ) a RWMutex and then arrange for another goroutine to cite79†RWMutex.RUnlock (cite82†RWMutex.Unlock ) it.
+L732: #### type cite135†WaitGroup†cs.opensource.google cite83†¶ L733: 
+L734:     type WaitGroup struct {
+L735:     	// contains filtered or unexported fields
+L736:     }
+L737: 
+L738: A WaitGroup is a counting semaphore typically used to wait for a group of goroutines or tasks to finish.
+L739: Typically, a main goroutine will start tasks, each in a new goroutine, by calling cite86†WaitGroup.Go and then wait for all tasks to complete by calling cite87†WaitGroup.Wait . For example:
+L740: 
+L741:     var wg sync.WaitGroup
+L742:     wg.Go(task1)
+L743:     wg.Go(task2)
+L744:     wg.Wait()
+L745: 
+L746: 
+L747: A WaitGroup may also be used for tracking tasks without using Go to start new goroutines by using cite84†WaitGroup.Add and cite85†WaitGroup.Done .
+L748: The previous example can be rewritten using explicitly created goroutines along with Add and Done:
+L749: 
+L750:     var wg sync.WaitGroup
+L751:     wg.Add(1)
+L752:     go func() {
+L753:     	defer wg.Done()
+L754:     	task1()
+L755:     }()
+L756:     wg.Add(1)
+L757:     go func() {
+L758:     	defer wg.Done()
+L759:     	task2()
+L760:     }()
+L761:     wg.Wait()
+L762: 
+L763: 
+L764: This pattern is common in code that predates cite86†WaitGroup.Go .
+L765: 
+L766: A WaitGroup must not be copied after first use.
+L767: 
+L768: Example cite40†¶ L769: This example fetches several URLs concurrently, using a WaitGroup to block until all the fetches are complete.
+L770: 
+L771:     package main
+L772: 
+L773:     import (
+L774:     	"sync"
+L775:     )
+L776: 
+L777:     type httpPkg struct{}
+L778: 
+L779:     func (httpPkg) Get(url string) {}
+L780: 
+L781:     var http httpPkg
+L782: 
+L783:     func main() {
+L784:     	var wg sync.WaitGroup
+L785:     	var urls = []string{
+L786:     		"http://www.golang.org/",
+L787:     		"http://www.google.com/",
+L788:     		"http://www.example.com/",
+L789:     	}
+L790:     	for _, url := range urls {
+L863: #### func (*WaitGroup) cite139†Go†cs.opensource.google cite86†¶ added in go1.25.0
+L864: 
+L865:     func (wg *cite83†WaitGroup ) Go(f func())
+L866: 
+L867: Go calls f in a new goroutine and adds that task to the cite83†WaitGroup . When f returns, the task is removed from the WaitGroup.
+L868: 
+L869: The function f must not panic.
+--------------------------------------------------------------------------------
+sync package - sync - Go Packages (https://pkg.go.dev/sync)
+citeturn16view1 [wordlim: 200] Crawled: today; Content type: text/html; Source: find({"ref_id":"https://pkg.go.dev/sync","pattern":"func (wg *WaitGroup) Go"}); Total lines: 947
+L250:     * cite80†func (rw *RWMutex) TryLock() bool L251:     * cite81†func (rw *RWMutex) TryRLock() bool L252:     * cite82†func (rw *RWMutex) Unlock() L253:   * cite83†type WaitGroup L254:   *     * cite84†func (wg *WaitGroup) Add(delta int) L255:     * cite85†func (wg *WaitGroup) Done() L256:     * cite86†func (wg *WaitGroup) Go(f func()) L257:     * cite87†func (wg *WaitGroup) Wait() L739: Typically, a main goroutine will start tasks, each in a new goroutine, by calling cite86†WaitGroup.Go and then wait for all tasks to complete by calling cite87†WaitGroup.Wait . For example:
+L740: 
+L741:     var wg sync.WaitGroup
+L742:     wg.Go(task1)
+L743:     wg.Go(task2)
+L744:     wg.Wait()
+L745: 
+L746: 
+L747: A WaitGroup may also be used for tracking tasks without using Go to start new goroutines by using cite84†WaitGroup.Add and cite85†WaitGroup.Done .
+L748: The previous example can be rewritten using explicitly created goroutines along with Add and Done:
+L749: 
+L750:     var wg sync.WaitGroup
+L751:     wg.Add(1)
+L752:     go func() {
+L753:     	defer wg.Done()
+L754:     	task1()
+L755:     }()
+L756:     wg.Add(1)
+L757:     go func() {
+L758:     	defer wg.Done()
+L759:     	task2()
+L760:     }()
+L761:     wg.Wait()
+L762: 
+L763: 
+L764: This pattern is common in code that predates cite86†WaitGroup.Go .
+L765: 
+L766: A WaitGroup must not be copied after first use.
+L767: 
+L768: Example cite40†¶ L806: This example is equivalent to the main example, but uses Add/Done instead of Go.
+L807: 
+L808:     package main
+L809: 
+L810:     import (
+L811:     	"sync"
+L812:     )
+L813: 
+L814:     type httpPkg struct{}
+L815: 
+L816:     func (httpPkg) Get(url string) {}
+L817: 
+L818:     var http httpPkg
+L819: 
+L820:     func main() {
+L821:     	var wg sync.WaitGroup
+L822:     	var urls = []string{
+L823:     		"http://www.golang.org/",
+L824:     		"http://www.google.com/",
+L825:     		"http://www.example.com/",
+L826:     	}
+L827:     	for _, url := range urls {
+L828:     		// Increment the WaitGroup counter.
+L829:     		wg.Add(1)
+L830:     		// Launch a goroutine to fetch the URL.
+L831:     		go func(url string) {
+L832:     			// Decrement the counter when the goroutine completes.
+L833:     			defer wg.Done()
+L834:     			// Fetch the URL.
+L835:     			http.Get(url)
+L836:     		}(url)
+L837:     	}
+L838:     	// Wait for all HTTP fetches to complete.
+L839:     	wg.Wait()
+L840:     }
+L841: 
+L842: 
+L843:     Output:
+L844: [Button: Share] [Button: Format] [Button: Run]
+L845: #### func (*WaitGroup) cite136†Add†cs.opensource.google cite84†¶ L846: 
+L847:     func (wg *cite83†WaitGroup ) Add(delta cite137†int )
+L848: 
+L849: Add adds delta, which may be negative, to the cite83†WaitGroup task counter. If the counter becomes zero, all goroutines blocked on cite87†WaitGroup.Wait are released. If the counter goes negative, Add panics.
+L850: 
+L851: Callers should prefer cite86†WaitGroup.Go .
+L852: Note that calls with a positive delta that occur when the counter is zero must happen before a Wait. Calls with a negative delta, or calls with a positive delta that start when the counter is greater than zero, may happen at any time. Typically this means the calls to Add should execute before the statement creating the goroutine or other event to be waited for. If a WaitGroup is reused to wait for several independent sets of events, new Add calls must happen after all previous Wait calls have returned.
+L853: See the WaitGroup example.
+L854: #### func (*WaitGroup) cite138†Done†cs.opensource.google cite85†¶ L855: 
+L856:     func (wg *cite83†WaitGroup ) Done()
+L857: 
+L858: Done decrements the cite83†WaitGroup task counter by one. It is equivalent to Add(-1).
+L859: 
+L860: Callers should prefer cite86†WaitGroup.Go .
+L861: 
+L862: In the terminology of cite96†the Go memory model†go.dev , a call to Done "synchronizes before" the return of any Wait call that it unblocks.
+L863: #### func (*WaitGroup) cite139†Go†cs.opensource.google cite86†¶ added in go1.25.0
+L864: 
+L865:     func (wg *cite83†WaitGroup ) Go(f func())
+L866: 
+L867: Go calls f in a new goroutine and adds that task to the cite83†WaitGroup . When f returns, the task is removed from the WaitGroup.
+L868: 
+L869: The function f must not panic.
+L870: If the WaitGroup is empty, Go must happen before a cite87†WaitGroup.Wait . Typically, this simply means Go is called to start tasks before Wait is called. If the WaitGroup is not empty, Go may happen at any time. This means a goroutine started by Go may itself call Go. If a WaitGroup is reused to wait for several independent sets of tasks, new Go calls must happen after all previous Wait calls have returned.
+L871: In the terminology of cite96†the Go memory model†go.dev , the return from f "synchronizes before" the return of any Wait call that it unblocks.
+L872: #### func (*WaitGroup) cite140†Wait†cs.opensource.google cite87†¶ L873: 
+L874:     func (wg *cite83†WaitGroup ) Wait()
+L875: 
+L876: Wait blocks until the cite83†WaitGroup task counter is zero.
+L877: ## cite141†Image Source Files cite88†¶ L878: 
+L879: cite142†View all Source files†cs.opensource.google L880:   * cite143†cond.go†cs.opensource.google L881:   * cite144†map.go†cs.opensource.google L882:   * cite145†mutex.go†cs.opensource.google L883:   * cite146†once.go†cs.opensource.google L884:   * cite147†oncefunc.go†cs.opensource.google L885:   * cite148†pool.go†cs.opensource.google L886:   * cite149†poolqueue.go†cs.opensource.google L887:   * cite150†runtime.go†cs.opensource.google L888:   * cite151†runtime2.go†cs.opensource.google L889:   * cite152†rwmutex.go†cs.opensource.google L890:   * cite153†waitgroup.go†cs.opensource.google L891: ## cite154†Image Directories cite89†¶ L892: 
+L893: [Button: Show internal ] [Button: Expand all ]
+L894: 
+L895: Path  | Synopsis
+L896: --- | ---
+L897: cite155†atomic Package atomic provides low-level atomic memory primitives useful for implementing synchronization algorithms.  | Package atomic provides low-level atomic memory primitives useful for implementing synchronization algorithms.
+L898: 
+L899: Click to show internal directories.
+L900: 
+L901: Click to hide internal directories.
+L902: 
+L903: cite156†Why Go†go.dev cite4†Use Cases†go.dev cite3†Case Studies†go.dev L904: cite157†Get Started†learn.go.dev cite158†Playground†play.golang.org cite159†Tour†tour.golang.org cite160†Stack Overflow†stackoverflow.com cite17†Help†go.dev L905: 
+L906: cite12†Packages cite9†Standard Library cite161†Sub-repositories cite162†About Go Packages cite11†pkg.go.dev API L907: 
+L908: cite163†About†go.dev cite164†Download†go.dev cite16†Blog†go.dev cite165†Issue Tracker†github.com cite166†Release Notes†go.dev cite167†Brand Guidelines†go.dev cite168†Code of Conduct†go.dev --------------------------------------------------------------------------------
+errgroup package - golang.org/x/sync/errgroup - Go Packages (https://pkg.go.dev/golang.org/x/sync/errgroup)
+citeturn16view2 [wordlim: 200] Crawled: today; Content type: text/html; Source: find({"ref_id":"https://pkg.go.dev/golang.org/x/sync/errgroup","pattern":"It blocks until"}); Total lines: 518
+L426: #### func cite60†WithContext†cs.opensource.google cite48†¶ L427: 
+L428:     func WithContext(ctx cite61†context .cite62†Context ) (*cite47†Group , cite61†context .cite62†Context )
+L429: 
+L430: WithContext returns a new Group and an associated Context derived from ctx.
+L431: 
+L432: The derived Context is canceled the first time a function passed to Go returns a non-nil error or the first time Wait returns, whichever occurs first.
+L433: #### func (*Group) cite63†Go†cs.opensource.google cite49†¶ L434: 
+L435:     func (g *cite47†Group ) Go(f func() cite64†error )
+L436: 
+L437: Go calls the given function in a new goroutine.
+L438: 
+L439: The first call to Go must happen before a Wait. It blocks until the new goroutine can be added without the number of goroutines in the group exceeding the configured limit.
+L440: 
+L441: The first goroutine in the group that returns a non-nil error will cancel the associated Context, if any. The error will be returned by Wait.
+L442: #### func (*Group) cite65†SetLimit†cs.opensource.google cite50†¶ L443: 
+L444:     func (g *cite47†Group ) SetLimit(n cite66†int )
+L445: 
+L446: SetLimit limits the number of active goroutines in this group to at most n. A negative value indicates no limit. A limit of zero will prevent any new goroutines from being added.
+L447: 
+L448: Any subsequent call to the Go method will block until it can add an active goroutine without exceeding the configured limit.
+L449: 
+L450: The limit must not be modified while any goroutines in the group are active.
+L451: #### func (*Group) cite67†TryGo†cs.opensource.google cite51†¶ L452: 
+L453:     func (g *cite47†Group ) TryGo(f func() cite64†error ) cite68†bool L454: 
+L455: TryGo calls the given function in a new goroutine only if the number of active goroutines in the group is currently below the configured limit.
+L456: 
+L457: The return value reports whether the goroutine was started.
+L458: #### func (*Group) cite69†Wait†cs.opensource.google cite52†¶ L459: 
+L460:     func (g *cite47†Group ) Wait() cite64†error L461: 
+L462: Wait blocks until all function calls from the Go method have returned, then returns the first non-nil error (if any) from them.
+L463: ## cite70†Image Source Files cite53†¶ L464: 
+L465: cite71†View all Source files†cs.opensource.google L466: 
+L467:   * cite72†errgroup.go†cs.opensource.google L468: 
+L469: Click to show internal directories.
+L470: 
+L471: Click to hide internal directories.
+L472: 
+L473: cite73†Why Go†go.dev cite4†Use Cases†go.dev cite3†Case Studies†go.dev L474: 
+L475: cite74†Get Started†learn.go.dev cite75†Playground†play.golang.org cite76†Tour†tour.golang.org cite77†Stack Overflow†stackoverflow.com cite17†Help†go.dev L476: 
+L477: cite12†Packages cite9†Standard Library cite78†Sub-repositories cite79†About Go Packages cite11†pkg.go.dev API --------------------------------------------------------------------------------
+Go Concurrency Patterns: Pipelines and cancellation - The Go Programming Language (https://go.dev/blog/pipelines)
+citeturn16view3 [wordlim: 200] Crawled: today; Content type: text/html; Source: find({"ref_id":"https://go.dev/blog/pipelines","pattern":"Stopping short"}); Total lines: 615
+L220: ## Stopping short
+L221: 
+L222: There is a pattern to our pipeline functions:
+L223: 
+L224:   * stages close their outbound channels when all the send operations are done.
+L225:   * stages keep receiving values from inbound channels until those channels are closed.
+L226: 
+L227: This pattern allows each receiving stage to be written as a `range` loop and ensures that all goroutines exit once all values have been successfully sent downstream.
+L228: But in real pipelines, stages don’t always receive all the inbound values. Sometimes this is by design: the receiver may only need a subset of values to make progress. More often, a stage exits early because an inbound value represents an error in an earlier stage. In either case the receiver should not have to wait for the remaining values to arrive, and we want earlier stages to stop producing values that later stages don’t need.
+

@@ -1,0 +1,81 @@
+{
+  "raw_reviewer_probe_sha256": "458eda5b490fb11cf23189b03031b05bff08ac094ab8ab4bf8bb1dc89fc21e49",
+  "adapted_probe_sha256": "42db449d9abbf0b4b4a7d08fe28b2d2b55c0e84ba0fb6351918210ed34ce4335",
+  "adaptation": "Retain only the two portable independent cause checks and their event/completion helpers; rename baseline testLease to standalone supplementaryLease with equivalent callbacks; format. No retained assertion/behavior changed.",
+  "selected_pattern": "^TestReview(AvailableJobWithOpenInput|RunFailureCancelsPendingOpen)$",
+  "limit": "Supplementary only; not replacement for original four frozen mutation targets/primary held observation. Full reviewer suite has baseline-specific concurrent-Open assumptions; excluded from cross-implementation checks.",
+  "checks": [
+    {
+      "source": "baseline",
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestReview(AvailableJobWithOpenInput|RunFailureCancelsPendingOpen)$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-supplementary-final-j6fg9zlv",
+      "status": 1,
+      "stdout": "--- FAIL: TestReviewAvailableJobWithOpenInput (0.25s)\n    supplementary_contract_test.go:59: available job did not start with capacity 2 and caller input left open\n--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)\n    supplementary_contract_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required\nFAIL\nFAIL\texample.com/service-owned-workers\t0.790s\nFAIL\n",
+      "stderr": ""
+    },
+    {
+      "source": "baseline",
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-run",
+        "^TestReview(AvailableJobWithOpenInput|RunFailureCancelsPendingOpen)$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-supplementary-final-uetagr5q",
+      "status": 1,
+      "stdout": "--- FAIL: TestReviewAvailableJobWithOpenInput (0.25s)\n    supplementary_contract_test.go:59: available job did not start with capacity 2 and caller input left open\n--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)\n    supplementary_contract_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required\nFAIL\nFAIL\texample.com/service-owned-workers\t0.673s\nFAIL\n",
+      "stderr": ""
+    },
+    {
+      "source": "controller",
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestReview(AvailableJobWithOpenInput|RunFailureCancelsPendingOpen)$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-supplementary-final-yzhbjlvr",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.183s\n",
+      "stderr": ""
+    },
+    {
+      "source": "controller",
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-run",
+        "^TestReview(AvailableJobWithOpenInput|RunFailureCancelsPendingOpen)$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-supplementary-final-xpwn5sn2",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.159s\n",
+      "stderr": ""
+    }
+  ]
+}

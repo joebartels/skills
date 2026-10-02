@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-02",
+  "review": "independent exact concurrency guidance preflight",
+  "scope": "Exact uninstalled concurrency draft; accepted design, five-skill comparator, unchanged review guidance, source/notice semantics and actual example toolchains",
+  "target": {
+    "path": "tests/go-quality-build/go-concurrency-and-ownership/draft/SKILL.md",
+    "sha256": "0ab21aee46b9446356b455d59776263a8160fcf2a0c3b5050c2b1792ecf13002",
+    "bytes": 5274,
+    "words": 756
+  },
+  "disposition": "Accept",
+  "accepted_for": "Exact snapshot freeze and candidate exposure",
+  "required_guidance_changes": [],
+  "material_findings": [],
+  "optional_guidance_changes": [],
+  "administrative_followup": {
+    "owner": "controller",
+    "action": "Update canonical README status and dated work log, and source-audit authoring stage description, with exact preflight artifacts and results before finishing the stage.",
+    "requires_draft_revision": false,
+    "controller_notified": true
+  },
+  "preserved_contracts": {
+    "comparator_revision": "0d0a339b27cd1ff7ff3cc177f28a9a4455f91a96",
+    "build_skill_files_unchanged": 8,
+    "review_skill_files_unchanged": 23,
+    "source_license_captures_verified": 20,
+    "frozen_eval_probe_files_verified": 23,
+    "primary_case": "service-owned-workers",
+    "primary_cause": "F1 full-cohort prefill stalls available first work on sparse open input",
+    "distinct_secondary_cause": "F2 delayed Run-failure observation leaves cooperative acquisition pending",
+    "frozen_mutation_set": [
+      "split compound publication",
+      "skipped Run join before cohort release",
+      "unresponsive input/admission",
+      "omitted coordinated stopping on normal early consumer completion"
+    ],
+    "context_neighbor_available_in_individual_comparator": false,
+    "context_neighbor_sha256": "6368240e5a000cd8f056afa5980099317882d8ebcefa0e1f29921975ccc4627d"
+  },
+  "verification": {
+    "quick_validate": "pass",
+    "go1.22.12": "build/test/vet/race-shuffle5/gofmt pass on actual toolchain",
+    "go1.26.5": "build/test/vet/race-shuffle5/gofmt pass on actual toolchain",
+    "platform": "darwin/arm64",
+    "toolchain_switching": "GOTOOLCHAIN=local",
+    "dependency_fetching": "GOPROXY=off",
+    "raw_successful_commands": 15,
+    "evidence": "raw/example-verification.json"
+  },
+  "notice_disposition": "No substantial upstream prose/code import found; no new distributed notice obligation established",
+  "behavioral_utility_claim": false,
+  "promotion_claim": false,
+  "native_selection_claim": false,
+  "limits": [
+    "Guidance acceptance does not establish matched author benefit or promotion.",
+    "Example verification covers actual Go1.22.12 and1.26.5 on darwin/arm64, not every platform or interleaving.",
+    "No native discovery/loading probes or author behavioral trials were run by this reviewer.",
+    "The minimum distribution lacks later API-history files; WaitGroup.Go floor checked against official host history and current primary documentation.",
+    "The source-overlap heuristic is supporting inspection evidence, not a legal threshold or proof of authorship.",
+    "An initial input lookup missed the evals root; retained separately and replaced by a count-enforced23-file hash check."
+  ]
+}
