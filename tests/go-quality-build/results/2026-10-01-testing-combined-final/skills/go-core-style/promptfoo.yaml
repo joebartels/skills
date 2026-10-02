@@ -1,0 +1,48 @@
+description: "Evaluation suite for verifying LLM adherence to Go Core Philosophy & Style"
+
+prompts:
+  - "Review the following Go code for idiomatic style and core philosophy violations:\n\n{{code}}"
+
+providers:
+  - id: "openai:gpt-4o"
+    config:
+      temperature: 0
+
+tests:
+  - description: "Detects deeply nested if/else statements and suggests guard clauses"
+    vars:
+      code: |
+        func FetchData(id string) (*Data, error) {
+            if id != "" {
+                d, err := db.Find(id)
+                if err == nil {
+                    return d, nil
+                } else {
+                    return nil, err
+                }
+            } else {
+                return nil, errors.New("empty id")
+            }
+        }
+    assert:
+      - type: contains
+        value: "guard clause"
+      - type: contains
+        value: "line of sight"
+      - type: llm-rubric
+        value: "Recommends returning early for empty ID and returning fmt.Errorf with %w wrapping for db.Find error."
+
+  - description: "Flags Getter 'Get' prefix and 'ServiceImpl' anti-pattern"
+    vars:
+      code: |
+        type UserServiceImpl struct {
+            name string
+        }
+        func (u *UserServiceImpl) GetName() string {
+            return u.name
+        }
+    assert:
+      - type: not-contains
+        value: "looks good"
+      - type: llm-rubric
+        value: "Flags the 'Get' prefix on GetName() and the 'Impl' suffix on UserServiceImpl as non-idiomatic Go."
