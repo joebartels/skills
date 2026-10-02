@@ -1,0 +1,17 @@
+--- a/poll.go
++++ b/poll.go
+@@ -15,8 +15,12 @@
+ 		if ctx.Err() != nil {
+ 			return nil
+ 		}
+-		if err := callback(ctx); err != nil {
+-			return err
++		callbackDone := make(chan error, 1)
++		go func() { callbackDone <- callback(ctx) }()
++		select {
++		case <-ctx.Done(): return nil
++		case err := <-callbackDone:
++			if err != nil { return err }
+ 		}
+ 		timer := time.NewTimer(interval)
+ 		select {

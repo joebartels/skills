@@ -569,3 +569,10 @@ After each meaningful stage and before finishing a task, update the status above
 - Seven single/control/repeat and two integrated exact wrappers/snapshots match frozen task, input, common architecture/style guidance and inherited settings. Behavior draft equals both snapshots, quick/local-link checks pass, and Go examples are byte-identical to revision 1. Fresh authors receive no findings, probes or repairs. Final both uses isolation revision 2; behavior-only withholds it.
 - All isolation revision-2 neutral outcomes are preserved: first file/environment/HTTP/file repeat Testing A+/Correctness A/Architecture not applicable; worker Testing A+/Correctness not applicable (test-only diff)/Architecture A; control Testing A/Correctness A/Architecture not applicable. Integrated isolation-only remains Testing B/Correctness B/Architecture A+ and both Testing B/Correctness A+/Architecture A+. No universal grade promise or cancellation of findings.
 - Next: complete behavior revision-2 authors, candidate-only regression sensitivity and neutral outcomes, then assess exact guidance promotion and close Task 5.
+
+#### 2026-10-01 — Isolation revision-2 archives sealed with mixed outcomes
+
+- 2026-10-01-test-isolation-r2: 261 artifact hashes; checksum-index SHA-256 `5504d60d4ed57b0554ab77b632b011dff0e87b618c02bf9ffdf863a071b09ec9`.
+- 2026-10-01-testing-combined-r2: 175 artifact hashes; checksum-index SHA-256 `201f25af73b4a7cb63bb8461c6a2146ba9c7afac4b00e536aa8dd61a363fa26b`.
+- All 32 current candidates reconstruct exactly and available old/new seals verify. Neutral reviewer mutation source reconstructions are preserved, including nested worker/control verification modules. Independent no-panic/order/independent-error crosschecks compile and fail first-pass architecture/revised isolation; revised both passes. First-pass sealed bytes are unchanged.
+- Evaluated revision-2 isolation remains pending promotion; behavior owner's nine fresh final trials are running. Next: archive final behavior authors and neutral outcomes, then exact-guidance promotion assessment.

@@ -1,0 +1,98 @@
+{
+  "kind": "independent contract reproduction; no candidate repair; no prescribed nil versus returned cause",
+  "candidate_run": "2026-10-01-testing-combined",
+  "case": "architecture-only",
+  "candidate_sha256": {
+    "index.go": "aaa7d41a33a825ebd7d9cd565e8a476ffde210c9264fd8abfce5b7914eb9e330",
+    "go.mod": "6ad6c1c685b8d95d2f5e38dff9fd806cbca1f647c684b5823237f6d260b17b56",
+    "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+    "apply_test.go": "2499f8993001a054828bc598c18fa79cbf70e6c9ce24675a1eaa356665c91749",
+    "serve.go": "6eb441e4e362d5963be3e5ed568b4917d5011625121c9720f61b03b7f0ad4aa2",
+    "serve_test.go": "0d990ca90dea1cd9abac988e571ae36ecff5b72b8a235f304cdc7e4df42a7e17",
+    "README.md": "4c64d29f9e5586a08f7f6a6d74ba34e723299125c267a23ccacc3c42c2ecc44c",
+    "refresh.go": "8820b9222a1f688cf79f8aabd289e6abf28066fb16cd9da93f72146e4683e407",
+    "refresh_test.go": "29f8b821eb1e60c77264727c620e5120fc02e69e161aa6bd2deac6512f1ee7fc",
+    "cmd/indexer/process_test.go": "5085143bc764e77068834bed4cb77752d6c2008e2d52a0a7db87682a3e48a5a8",
+    "cmd/indexer/main.go": "4071bbfd70e6e10b005766864eaa5ff8ba8fb56959d5b3605399f5c426bac079",
+    "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f"
+  },
+  "probe_added_sha256": {
+    "index.go": "aaa7d41a33a825ebd7d9cd565e8a476ffde210c9264fd8abfce5b7914eb9e330",
+    "go.mod": "6ad6c1c685b8d95d2f5e38dff9fd806cbca1f647c684b5823237f6d260b17b56",
+    "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+    "apply_test.go": "2499f8993001a054828bc598c18fa79cbf70e6c9ce24675a1eaa356665c91749",
+    "serve.go": "6eb441e4e362d5963be3e5ed568b4917d5011625121c9720f61b03b7f0ad4aa2",
+    "serve_test.go": "0d990ca90dea1cd9abac988e571ae36ecff5b72b8a235f304cdc7e4df42a7e17",
+    "README.md": "4c64d29f9e5586a08f7f6a6d74ba34e723299125c267a23ccacc3c42c2ecc44c",
+    "refresh.go": "8820b9222a1f688cf79f8aabd289e6abf28066fb16cd9da93f72146e4683e407",
+    "refresh_test.go": "29f8b821eb1e60c77264727c620e5120fc02e69e161aa6bd2deac6512f1ee7fc",
+    "diagnostic_cause_test.go": "852b312ca45da4cdda98dbc5e1b59205796d97c10564e4d577800a95d9f6db78",
+    "cmd/indexer/process_test.go": "5085143bc764e77068834bed4cb77752d6c2008e2d52a0a7db87682a3e48a5a8",
+    "cmd/indexer/main.go": "4071bbfd70e6e10b005766864eaa5ff8ba8fb56959d5b3605399f5c426bac079",
+    "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f"
+  },
+  "reconstruction": "exact",
+  "checks": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-w",
+        "diagnostic_cause_test.go"
+      ],
+      "cwd": "/private/tmp/go-cause-crosscheck-9g4g1rkg/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.011
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-cause-crosscheck-9g4g1rkg/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/indexer\t0.236s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.380s [no tests to run]\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.665
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestDiagnosticNonComparableCause$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-cause-crosscheck-9g4g1rkg/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "--- FAIL: TestDiagnosticNonComparableCause (0.00s)\n    --- FAIL: TestDiagnosticNonComparableCause/joined=false (0.00s)\n        diagnostic_cause_test.go:27: Serve panicked for valid non-comparable cancellation cause: runtime error: comparing uncomparable type indexer_test.diagnosticCauseError\n    --- FAIL: TestDiagnosticNonComparableCause/joined=true (0.00s)\n        diagnostic_cause_test.go:27: Serve panicked for valid non-comparable cancellation cause: runtime error: comparing uncomparable type indexer_test.diagnosticCauseError\nFAIL\nFAIL\texample.com/indexer\t0.174s\nok  \texample.com/indexer/cmd/indexer\t0.294s [no tests to run]\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "duration_seconds": 0.499
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "semantic_id": "omitted-text-validation",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "30c4ae687856caca92951ce4df36d47fa4077e3d25ebb1e95b38afbf9fe6fec1",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-aewc42mp/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.361s\nok  \texample.com/indexer/cmd/indexer\t1.214s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.498
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r2/both/mutations/omitted-text-validation/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-aewc42mp/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.021
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-aewc42mp/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.355s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.420s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.687
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-aewc42mp/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestApplyCSVRejectedReplacementRetainsPrefix (0.00s)\n    --- FAIL: TestApplyCSVRejectedReplacementRetainsPrefix/blank_text (0.00s)\n        index_test.go:89: expected rejection\n    --- FAIL: TestApplyCSVRejectedReplacementRetainsPrefix/unicode_whitespace (0.00s)\n        index_test.go:89: expected rejection\n--- FAIL: TestRefreshRejectionsKeepExactPriorBytes (0.00s)\n    --- FAIL: TestRefreshRejectionsKeepExactPriorBytes/late_invalid_record (0.00s)\n        refresh_test.go:121: accepted rejected response\n    --- FAIL: TestRefreshRejectionsKeepExactPriorBytes/blank_text (0.00s)\n        refresh_test.go:121: accepted rejected response\nFAIL\nFAIL\texample.com/indexer\t0.336s\n--- FAIL: TestApplyProcess (0.02s)\n    main_test.go:75: status/stdout/stderr = 0/\"\"/\"\"; want status 2 and empty stdout\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t1.140s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.351
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

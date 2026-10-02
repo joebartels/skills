@@ -1,0 +1,263 @@
+[
+  {
+    "name": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-77k7qpuq/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.009334087371826172
+  },
+  {
+    "name": "full-suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-77k7qpuq/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshRealRequestCancellation (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 45 [running]:\ntesting.tRunner.func1.2({0x100c0c7a0, 0x1af5119b8980})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x100c0c7a0?, 0x1af5119b8980?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x100c99340, 0x1af5119826f0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer_test.TestRefreshRealRequestCancellation(0x1af5119dbb08)\n\t/private/tmp/go-independent-review-77k7qpuq/verification/refresh_test.go:200 +0xa0\ntesting.tRunner(0x1af5119dbb08, 0x100c951e8)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer\t0.227s\n--- FAIL: TestWatchFirstRefreshFailure (0.00s)\n--- FAIL: TestWatchRecursAndTerminatesAfterSuccess (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 61 [running]:\ntesting.tRunner.func1.2({0x103014b00, 0xc9de9d9e040})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x103014b00?, 0xc9de9d9e040?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1030a0e20, 0xc9de9c86020})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer/cmd/indexer.TestWatchFirstRefreshFailure(0xc9de97ad448)\n\t/private/tmp/go-independent-review-77k7qpuq/verification/cmd/indexer/main_test.go:126 +0x80\ntesting.tRunner(0xc9de97ad448, 0x10309ce20)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 62 [running]:\ntesting.tRunner.func1.2({0x103014b00, 0xc9de9f84060})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x103014b00?, 0xc9de9f84060?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1030a0e20, 0xc9de9da00f0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer/cmd/indexer.TestWatchRecursAndTerminatesAfterSuccess(0xc9de97ad688)\n\t/private/tmp/go-independent-review-77k7qpuq/verification/cmd/indexer/main_test.go:144 +0xa0\ntesting.tRunner(0xc9de97ad688, 0x10309ce30)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer/cmd/indexer\t0.751s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 1.0240368843078613
+  },
+  {
+    "name": "full-suite-localhost",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-77k7qpuq/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.335s\nok  \texample.com/indexer/cmd/indexer\t1.100s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.309739112854004
+  },
+  {
+    "name": "race-shuffled-repeat",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=5",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-77k7qpuq/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t7.172s\nok  \texample.com/indexer/cmd/indexer\t3.960s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 7.583801031112671
+  },
+  {
+    "name": "mutation-direct-write",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^Test(PublicationWriteFailure|RefreshPOSIXOpenReaderKeepsOldSnapshot)$",
+      "-count=1",
+      "-timeout=10s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-77k7qpuq/mutation-direct-write",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestPublicationWriteFailure (0.00s)\n    --- FAIL: TestPublicationWriteFailure/put (0.01s)\n        write_failure_unix_test.go:73: file /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestPublicationWriteFailureput3262660186/001/beta = \"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\", <nil>; want \"exact old bytes\\x00\\n\"\n    --- FAIL: TestPublicationWriteFailure/apply (0.01s)\n        write_failure_unix_test.go:71: file /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestPublicationWriteFailureapply2348233862/001/beta = \"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\", <nil>; want \"accepted\"\n    --- FAIL: TestPublicationWriteFailure/refresh (0.01s)\n        write_failure_unix_test.go:73: file /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestPublicationWriteFailurerefresh1350060374/001/beta = \"[{\\\"key\\\":\\\"beta\\\",\\\"text\\\":\\\"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz\", <nil>; want \"exact old bytes\\x00\\n\"\n--- FAIL: TestRefreshPOSIXOpenReaderKeepsOldSnapshot (0.00s)\n    refresh_test.go:249: old reader = \"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"new snapshot\\\"}]\\n\", <nil>; want \"complete old snapshot\\n\"\nFAIL\nFAIL\texample.com/indexer\t0.216s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.48321104049682617
+  },
+  {
+    "name": "mutation-early-release",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestServeWaitsForCancellationCleanup$",
+      "-count=1",
+      "-timeout=10s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-77k7qpuq/mutation-early-release",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestServeWaitsForCancellationCleanup (0.00s)\n    --- FAIL: TestServeWaitsForCancellationCleanup/callback_cancellation_error (0.00s)\n        serve_test.go:138: Serve returned during cleanup: release before callback cleanup\n    --- FAIL: TestServeWaitsForCancellationCleanup/independent_callback_error (0.00s)\n        serve_test.go:138: Serve returned during cleanup: release before callback cleanup\n    --- FAIL: TestServeWaitsForCancellationCleanup/successful_cleanup (0.00s)\n        serve_test.go:138: Serve returned during cleanup: release before callback cleanup\nFAIL\nFAIL\texample.com/indexer\t0.196s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.4682199954986572
+  },
+  {
+    "name": "mutation-command-exit",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestStartupRejectionsAreProcessFailures$",
+      "-count=1",
+      "-timeout=35s",
+      "./cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-independent-review-77k7qpuq/mutation-command-exit",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestStartupRejectionsAreProcessFailures (0.00s)\n    --- FAIL: TestStartupRejectionsAreProcessFailures/put_usage (0.22s)\n        main_test.go:118: status/stdout/stderr = 1/\"\"/\"usage: indexer put DIR KEY TEXT\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_malformed_interval (0.22s)\n        main_test.go:118: status/stdout/stderr = 1/\"\"/\"invalid value \\\"bad\\\" for flag -interval: parse error\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_negative_interval (0.22s)\n        main_test.go:118: status/stdout/stderr = 1/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_missing_host (0.22s)\n        main_test.go:118: status/stdout/stderr = 1/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/apply_extra_argument (0.22s)\n        main_test.go:118: status/stdout/stderr = 1/\"\"/\"usage: indexer apply --dir DIR\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_zero_interval (0.22s)\n        main_test.go:118: status/stdout/stderr = 1/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_wrong_scheme (0.22s)\n        main_test.go:118: status/stdout/stderr = 1/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/missing_command (0.22s)\n        main_test.go:118: status/stdout/stderr = 1/\"\"/\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_missing_values (0.22s)\n        main_test.go:118: status/stdout/stderr = 1/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/apply_unknown_option (0.22s)\n        main_test.go:118: status/stdout/stderr = 1/\"\"/\"flag provided but not defined: -unknown\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/unknown_command (0.22s)\n        main_test.go:118: status/stdout/stderr = 1/\"\"/\"unknown command: unknown\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_missing_file (0.22s)\n        main_test.go:118: status/stdout/stderr = 1/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/apply_missing_directory (0.22s)\n        main_test.go:118: status/stdout/stderr = 1/\"\"/\"usage: indexer apply --dir DIR\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_extra_argument (0.22s)\n        main_test.go:118: status/stdout/stderr = 1/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\n    --- FAIL: TestStartupRejectionsAreProcessFailures/watch_empty_hostname (0.22s)\n        main_test.go:118: status/stdout/stderr = 1/\"\"/\"usage: indexer watch --url HTTP_URL --file PATH --interval POSITIVE_DURATION\\n\"; want status 2 and empty stdout\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t0.654s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.920971155166626
+  },
+  {
+    "name": "stdversion-vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-77k7qpuq/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.12689208984375
+  },
+  {
+    "name": "mutation-status-range-full-suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-77k7qpuq/mutation-status-range",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.403s\nok  \texample.com/indexer/cmd/indexer\t1.266s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 1.5471198558807373
+  },
+  {
+    "name": "original-exact-status-probe",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestReviewerNon200SuccessStatusPreservesPriorBytes$",
+      "-count=1",
+      "-v",
+      "-timeout=10s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-77k7qpuq/reviewer-status-probe",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestReviewerNon200SuccessStatusPreservesPriorBytes\n    review_status_probe_test.go:25: status=206 error=fetch status: 206 retained=\"prior complete snapshot\\x00\\n\"\n--- PASS: TestReviewerNon200SuccessStatusPreservesPriorBytes (0.00s)\nPASS\nok  \texample.com/indexer\t0.206s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.4603137969970703
+  },
+  {
+    "name": "widened-status-probe",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestReviewerNon200SuccessStatusPreservesPriorBytes$",
+      "-count=1",
+      "-v",
+      "-timeout=10s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-77k7qpuq/mutation-status-range",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestReviewerNon200SuccessStatusPreservesPriorBytes\n    review_status_probe_test.go:25: status=206 error=<nil> retained=\"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"partial result\\\"}]\\n\"\n    review_status_probe_test.go:27: non-200 status rejection: err=<nil> readErr=<nil> bytes=\"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"partial result\\\"}]\\n\"; want error and \"prior complete snapshot\\x00\\n\"\n--- FAIL: TestReviewerNon200SuccessStatusPreservesPriorBytes (0.00s)\nFAIL\nFAIL\texample.com/indexer\t0.201s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.45421695709228516
+  },
+  {
+    "name": "candidate-preserved",
+    "command": [
+      "rtk",
+      "proxy",
+      "diff",
+      "-rq",
+      "candidate",
+      "verification"
+    ],
+    "cwd": "/private/tmp/go-independent-review-77k7qpuq",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.0065081119537353516
+  }
+]

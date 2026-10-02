@@ -1,0 +1,15 @@
+--- a/store.go
++++ b/store.go
+@@ -10,7 +10,11 @@
+ type Store struct{ root string }
+ 
+ // New creates a store using root. Callers own the root's lifetime.
+-func New(root string) *Store { return &Store{root: root} }
++var firstRoot string
++func New(root string) *Store {
++	if firstRoot == "" { firstRoot = root }
++	return &Store{root: firstRoot}
++}
+ 
+ func validKey(key string) bool {
+ 	if key == "" {

@@ -1,0 +1,420 @@
+[
+  {
+    "label": "format",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "gofmt",
+      "-w",
+      "fetch_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "started_at": "2026-10-02T02:42:58.859365+00:00",
+    "process_timeout_seconds": 150,
+    "source_sha256": {
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "fetch_test.go": "c637ef4e0fb0eb0d9aaf5799763410656cd591f2946c5f7badc114bf9d37f1b8",
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3"
+    },
+    "timed_out": false,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.009
+  },
+  {
+    "label": "sandbox-full",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "started_at": "2026-10-02T02:42:58.940885+00:00",
+    "process_timeout_seconds": 150,
+    "source_sha256": {
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "fetch_test.go": "c637ef4e0fb0eb0d9aaf5799763410656cd591f2946c5f7badc114bf9d37f1b8",
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3"
+    },
+    "timed_out": false,
+    "stdout": "--- FAIL: TestFetchRejectedRedirect (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 36 [running]:\ntesting.tRunner.func1.2({0x1013dbe00, 0x543631010570})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1013dbe00?, 0x543631010570?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x101466080, 0x543631010520})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/metadata_test.TestFetchRejectedRedirect(0x54363110a6c8)\n\t/private/tmp/go-fresh-author-txf1lez2/task-3/module/fetch_test.go:221 +0x80\ntesting.tRunner(0x54363110a6c8, 0x101462130)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/metadata\t0.203s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.438
+  },
+  {
+    "label": "approved-local-sockets-full",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "started_at": "2026-10-02T02:43:16.759892+00:00",
+    "process_timeout_seconds": 150,
+    "source_sha256": {
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "fetch_test.go": "c637ef4e0fb0eb0d9aaf5799763410656cd591f2946c5f7badc114bf9d37f1b8",
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3"
+    },
+    "timed_out": false,
+    "stdout": "ok  \texample.com/metadata\t0.154s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.348
+  },
+  {
+    "label": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "started_at": "2026-10-02T02:43:58.752565+00:00",
+    "process_timeout_seconds": 150,
+    "source_sha256": {
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "fetch_test.go": "b29a3b759187a31b92d5acea7ac8eaf32dd619afd327ceeaf93ab33b1506a06d",
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3"
+    },
+    "timed_out": false,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "label": "format-final",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "gofmt",
+      "-w",
+      "fetch_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "started_at": "2026-10-02T02:43:58.835174+00:00",
+    "process_timeout_seconds": 150,
+    "source_sha256": {
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "fetch_test.go": "b29a3b759187a31b92d5acea7ac8eaf32dd619afd327ceeaf93ab33b1506a06d",
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3"
+    },
+    "timed_out": false,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.009
+  },
+  {
+    "label": "vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "started_at": "2026-10-02T02:43:58.916597+00:00",
+    "process_timeout_seconds": 150,
+    "source_sha256": {
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "fetch_test.go": "b29a3b759187a31b92d5acea7ac8eaf32dd619afd327ceeaf93ab33b1506a06d",
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3"
+    },
+    "timed_out": false,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.115
+  },
+  {
+    "label": "format-check",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "gofmt",
+      "-l",
+      "fetch_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "started_at": "2026-10-02T02:44:00.265714+00:00",
+    "process_timeout_seconds": 150,
+    "source_sha256": {
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "fetch_test.go": "b29a3b759187a31b92d5acea7ac8eaf32dd619afd327ceeaf93ab33b1506a06d",
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3"
+    },
+    "timed_out": false,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "label": "staticcheck-availability",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "python3",
+      "-c",
+      "import shutil; print(shutil.which('staticcheck') or 'staticcheck unavailable')"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "started_at": "2026-10-02T02:44:00.348058+00:00",
+    "process_timeout_seconds": 150,
+    "source_sha256": {
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "fetch_test.go": "b29a3b759187a31b92d5acea7ac8eaf32dd619afd327ceeaf93ab33b1506a06d",
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3"
+    },
+    "timed_out": false,
+    "stdout": "staticcheck unavailable\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.021
+  },
+  {
+    "label": "sandbox-unit-race",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestFetch(Response|TransportError|InvalidURL)$",
+      "-count=20",
+      "-shuffle=5031",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "started_at": "2026-10-02T02:43:59.079602+00:00",
+    "process_timeout_seconds": 150,
+    "source_sha256": {
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "fetch_test.go": "b29a3b759187a31b92d5acea7ac8eaf32dd619afd327ceeaf93ab33b1506a06d",
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3"
+    },
+    "timed_out": false,
+    "stdout": "ok  \texample.com/metadata\t1.241s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.514
+  },
+  {
+    "label": "approved-local-sockets-race-shuffle",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-count=20",
+      "-shuffle=73423",
+      "-timeout=90s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "started_at": "2026-10-02T02:44:34.469732+00:00",
+    "process_timeout_seconds": 150,
+    "source_sha256": {
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "fetch_test.go": "b29a3b759187a31b92d5acea7ac8eaf32dd619afd327ceeaf93ab33b1506a06d",
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3"
+    },
+    "timed_out": false,
+    "stdout": "ok  \texample.com/metadata\t1.262s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.483
+  },
+  {
+    "label": "approved-focused-body-cancellation",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestFetchCancellation/while_reading_response$",
+      "-count=20",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "started_at": "2026-10-02T02:44:38.611130+00:00",
+    "process_timeout_seconds": 150,
+    "source_sha256": {
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "fetch_test.go": "b29a3b759187a31b92d5acea7ac8eaf32dd619afd327ceeaf93ab33b1506a06d",
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3"
+    },
+    "timed_out": false,
+    "stdout": "ok  \texample.com/metadata\t1.187s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.409
+  },
+  {
+    "label": "approved-focused-header-cancellation",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestFetchCancellation/before_headers$",
+      "-count=20",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "started_at": "2026-10-02T02:44:42.346349+00:00",
+    "process_timeout_seconds": 150,
+    "source_sha256": {
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "fetch_test.go": "b29a3b759187a31b92d5acea7ac8eaf32dd619afd327ceeaf93ab33b1506a06d",
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3"
+    },
+    "timed_out": false,
+    "stdout": "ok  \texample.com/metadata\t1.200s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.418
+  },
+  {
+    "label": "focused-response-lifetime",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestFetchResponse/read_failure_after_complete_json$",
+      "-count=20",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-txf1lez2/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "started_at": "2026-10-02T02:44:43.824665+00:00",
+    "process_timeout_seconds": 150,
+    "source_sha256": {
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "fetch_test.go": "b29a3b759187a31b92d5acea7ac8eaf32dd619afd327ceeaf93ab33b1506a06d",
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3"
+    },
+    "timed_out": false,
+    "stdout": "ok  \texample.com/metadata\t1.231s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.449
+  }
+]

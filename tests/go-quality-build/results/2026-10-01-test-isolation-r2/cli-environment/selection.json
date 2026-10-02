@@ -1,0 +1,56 @@
+{
+  "offered_names": [
+    "go-api-contracts",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries",
+    "go-test-isolation"
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-fresh-author-txf1lez2/task-2/guidance/go-test-isolation/SKILL.md",
+    "/private/tmp/go-fresh-author-txf1lez2/task-2/guidance/go-core-style/SKILL.md"
+  ],
+  "opened_reference_paths": [
+    "/private/tmp/go-fresh-author-txf1lez2/task-2/guidance/go-test-isolation/references/isolation-patterns.md"
+  ],
+  "selection_reasons": {
+    "go-test-isolation": {
+      "selected": true,
+      "reason": "Tests mutate process environment and exercise actual child processes. Its guidance applies to serial environment mutation, absent versus present-empty restoration, filtered child environments, parent fixture lifetime, focused subtests and bounded execution. The isolation patterns reference was relevant to command boundary selection and parallel descendant lifetime."
+    },
+    "go-core-style": {
+      "selected": true,
+      "reason": "The task writes Go test code. Applied standard-library dependencies, explicit error handling, small private helpers, gofmt, go vet and race validation. Staticcheck was unavailable and no tools were installed."
+    },
+    "go-api-contracts": {
+      "selected": false,
+      "reason": "The existing exported API and CLI contracts are tested without creating or changing either contract."
+    },
+    "go-interfaces-and-composition": {
+      "selected": false,
+      "reason": "No production interface, constructor, dependency wiring, options API or resource lifecycle is changed. Test-only process fixtures are handled by isolation guidance."
+    },
+    "go-package-boundaries": {
+      "selected": false,
+      "reason": "No package responsibility, import ownership or production package boundary is changed."
+    }
+  },
+  "other_opened_runtime_instruction_paths": [
+    {
+      "path": "/Users/jb/.codex/RTK.md",
+      "reason": "Read the inherited command wrapper instruction before executing task commands."
+    },
+    {
+      "path": "/Users/jb/.agents/skills/superpowers/using-superpowers/SKILL.md",
+      "reason": "Opened during initial runtime instruction handling; its SUBAGENT-STOP directs dispatched subagents to ignore it. It supplied no task writing guidance and no other Superpowers skills were opened."
+    }
+  ],
+  "opened_task_input_paths": [
+    "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r2/cli-environment/dispatch.txt",
+    "/private/tmp/go-fresh-author-txf1lez2/task-2/module/README.md",
+    "/private/tmp/go-fresh-author-txf1lez2/task-2/module/config.go",
+    "/private/tmp/go-fresh-author-txf1lez2/task-2/module/config_test.go",
+    "/private/tmp/go-fresh-author-txf1lez2/task-2/module/go.mod",
+    "/private/tmp/go-fresh-author-txf1lez2/task-2/module/cmd/showcfg/main.go"
+  ]
+}

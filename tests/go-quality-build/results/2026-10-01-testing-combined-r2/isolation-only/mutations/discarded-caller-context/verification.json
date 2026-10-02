@@ -1,0 +1,86 @@
+{
+  "semantic_id": "discarded-caller-context",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "3ca0c3a5a14e4cc439e7eb5eddf96fd585203a8732a5cf85dffe0e5286e5455a",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-tbzm9elf/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.367s\nok  \texample.com/indexer/cmd/indexer\t2.023s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 2.298
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r2/isolation-only/mutations/discarded-caller-context/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-tbzm9elf/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.016
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-tbzm9elf/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.197s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.374s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.643
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-tbzm9elf/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestServeCancellationErrorPrecedence (0.00s)\n    --- FAIL: TestServeCancellationErrorPrecedence/context_error (0.00s)\n        serve_test.go:102: Serve = callback context changed, releases=1; want <nil>\n    --- FAIL: TestServeCancellationErrorPrecedence/nil (0.00s)\n        serve_test.go:102: Serve = callback context changed, releases=1; want <nil>\n    --- FAIL: TestServeCancellationErrorPrecedence/independent_error (0.00s)\n        serve_test.go:102: Serve = callback context changed, releases=1; want independent cleanup failure\n    --- FAIL: TestServeCancellationErrorPrecedence/wrapped_context (0.00s)\n        serve_test.go:102: Serve = callback context changed, releases=1; want <nil>\n    --- FAIL: TestServeCancellationErrorPrecedence/joined_independent (0.00s)\n        serve_test.go:102: Serve = callback context changed, releases=1; want independent cleanup failure\n--- FAIL: TestServeParentCancellationCause (0.00s)\n    --- FAIL: TestServeParentCancellationCause/ordinary_cause (0.00s)\n        serve_test.go:304: Serve = fetch: %!w(<nil>), releases=1\n    --- FAIL: TestServeParentCancellationCause/cause_with_context_error (0.00s)\n        serve_test.go:304: Serve = fetch: %!w(<nil>), releases=1\n--- FAIL: TestServeRecursAfterCompletionWithoutOverlap (5.00s)\n    serve_test.go:195: timed out waiting for first callback startup\n--- FAIL: TestServeIndependentRuns (5.00s)\n    serve_test.go:251: timed out waiting for first instance startup\n--- FAIL: TestServeCancellationJoinsCleanupBeforeRelease (5.00s)\n    serve_test.go:134: timed out waiting for callback startup\nFAIL\nFAIL\texample.com/indexer\t5.182s\n--- FAIL: TestWatchRecurrenceAndSignalProcesses (0.20s)\n    --- FAIL: TestWatchRecurrenceAndSignalProcesses/termination (5.23s)\n        main_test.go:288: timed out waiting for in-flight HTTP cancellation\n    --- FAIL: TestWatchRecurrenceAndSignalProcesses/interrupt (5.23s)\n        main_test.go:288: timed out waiting for in-flight HTTP cancellation\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t6.937s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 7.154
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

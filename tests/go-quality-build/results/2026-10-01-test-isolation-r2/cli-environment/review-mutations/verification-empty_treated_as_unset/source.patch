@@ -1,0 +1,11 @@
+--- a/config.go
++++ b/config.go
+@@ -14,7 +14,7 @@
+ // LoadFromEnv reads configuration from the current process environment.
+ func LoadFromEnv() (Config, error) {
+ 	endpoint, present := os.LookupEnv("INDEXER_ENDPOINT")
+-	if !present {
++	if !present || endpoint == "" {
+ 		endpoint = "http://127.0.0.1:9090"
+ 	}
+ 	u, err := url.Parse(endpoint)

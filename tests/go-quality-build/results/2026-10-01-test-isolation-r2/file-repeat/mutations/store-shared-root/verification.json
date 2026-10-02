@@ -1,0 +1,86 @@
+{
+  "semantic_id": "store-shared-root",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "7884626be81007d8ff7d6483349ad7165cf5e0a1758c76193f40daaa73e99ad2",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-xw81zzs5/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.177s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.326
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r2/file-repeat/mutations/store-shared-root/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-xw81zzs5/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-xw81zzs5/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.184s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.336
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-xw81zzs5/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    --- FAIL: TestStoreIndependentInstances/instances (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/initial (0.00s)\n                store_test.go:63: Get(\"same-key\") = \"beta-initiall\", <nil>; want \"alpha-initial\"\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\n                store_test.go:63: Get(\"same-key\") = \"\", <nil>; want \"alpha\"\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/repeat (0.00s)\n                store_test.go:63: Get(\"same-key\") = \"\", <nil>; want \"alpha\"\n        --- FAIL: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/beta/initial (0.00s)\n                store_test.go:63: Get(\"same-key\") = \"\", <nil>; want \"beta-initial\"\n            --- FAIL: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\n                store_test.go:63: Get(\"same-key\") = \"\", <nil>; want \"beta\"\n        --- FAIL: TestStoreIndependentInstances/instances/gamma (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/initial (0.00s)\n                store_test.go:63: Get(\"same-key\") = \"beta-initiall\", <nil>; want \"gamma-initial\"\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/repeat (0.00s)\n                store_test.go:63: Get(\"same-key\") = \"beta\", <nil>; want \"\"\n    store_test.go:86: beta: file = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances874317965/002/same-key: no such file or directory; want \"beta\"\n    store_test.go:82: gamma: reopened Get(\"same-key\") = \"beta\", <nil>; want \"\"\n    store_test.go:86: gamma: file = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances874317965/003/same-key: no such file or directory; want \"\"\nFAIL\nFAIL\texample.com/filestore\t0.122s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.241
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

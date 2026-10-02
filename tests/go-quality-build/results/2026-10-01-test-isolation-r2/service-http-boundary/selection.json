@@ -1,0 +1,30 @@
+{
+  "offered_names": [
+    "go-api-contracts",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries",
+    "go-test-isolation"
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-fresh-author-txf1lez2/task-3/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-fresh-author-txf1lez2/task-3/guidance/go-test-isolation/SKILL.md"
+  ],
+  "opened_reference_paths": [
+    "/private/tmp/go-fresh-author-txf1lez2/task-3/guidance/go-test-isolation/references/isolation-patterns.md"
+  ],
+  "decisions": [
+    {"name": "go-api-contracts", "opened": false, "reason": "Tests observe the established README contract without creating or changing an exported API or supported external contract."},
+    {"name": "go-core-style", "opened": true, "reason": "Writing Go test code benefits from idiomatic names, simple helpers, explicit errors, state ownership and formatting."},
+    {"name": "go-interfaces-and-composition", "opened": false, "reason": "No production interface, dependency wiring, constructor or resource-lifecycle decision changes; fixture ownership is covered by test-isolation guidance."},
+    {"name": "go-package-boundaries", "opened": false, "reason": "The existing external test package and production package retain their responsibilities and import direction."},
+    {"name": "go-test-isolation", "opened": true, "reason": "Tests use handwritten HTTP transports, tracked response bodies, local HTTP servers, concurrent workers, cancellation events and parallel subtests. The reference covers fixture boundary selection, focused leaf execution, cleanup and Go 1.22 timing."}
+  ],
+  "opened_task_files": [
+    "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r2/service-http-boundary/dispatch.txt",
+    "/private/tmp/go-fresh-author-txf1lez2/task-3/module/README.md",
+    "/private/tmp/go-fresh-author-txf1lez2/task-3/module/fetch.go",
+    "/private/tmp/go-fresh-author-txf1lez2/task-3/module/fetch_test.go",
+    "/private/tmp/go-fresh-author-txf1lez2/task-3/module/go.mod"
+  ]
+}

@@ -1,0 +1,28 @@
+[
+  {
+    "semantic_id": "premature-parent-teardown",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "store_test.go:78: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3280260612/001/same-key: no such file or directory",
+      "store_test.go:78: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3280260612/001/same-key: no such file or directory",
+      "store_test.go:78: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3280260612/003/same-key: no such file or directory"
+    ],
+    "classification": "test-fixture/helper sabotage",
+    "no_overall_timeout_or_compile_credit": true
+  },
+  {
+    "semantic_id": "store-shared-root",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "store_test.go:83: Get = \"\"; want \"alpha first\"",
+      "store_test.go:83: Get = \"\"; want \"alpha replacement\"",
+      "store_test.go:83: Get = \"\"; want \"before empty\""
+    ],
+    "classification": "compiled production regression",
+    "no_overall_timeout_or_compile_credit": true
+  }
+]

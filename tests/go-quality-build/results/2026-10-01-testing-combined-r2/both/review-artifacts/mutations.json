@@ -1,0 +1,22 @@
+[
+  {
+    "name": "mutation-direct-write",
+    "file": "index.go",
+    "change": "Replace temporary-file-and-rename publisher with direct os.WriteFile destination overwrite."
+  },
+  {
+    "name": "mutation-early-release",
+    "file": "serve.go",
+    "change": "Return on parent cancellation before joining the running callback; deferred release can overtake cleanup."
+  },
+  {
+    "name": "mutation-command-exit",
+    "file": "cmd/indexer/main.go",
+    "change": "Change process failure status from 2 to 1 while leaving command helpers unchanged."
+  },
+  {
+    "name": "mutation-status-range",
+    "file": "refresh.go",
+    "change": "Broaden the status acceptance condition from exactly 200 to every 2xx response."
+  }
+]

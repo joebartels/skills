@@ -1,0 +1,144 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r2/worker-timing/source.patch"
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-9lgsq5yy/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.011
+  },
+  {
+    "kind": "patch-reconstruction",
+    "result": "byte-for-byte",
+    "file_count": 4
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-9lgsq5yy/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.301s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.456
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-9lgsq5yy/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.085
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-9lgsq5yy/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.007
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-9lgsq5yy/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t1.321s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.496
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-shuffle=on",
+      "-count=10",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-9lgsq5yy/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t1.387s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.508
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-9lgsq5yy/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "FAIL\texample.com/poller [build failed]\nFAIL\n",
+    "stderr": "# example.com/poller_test [example.com/poller.test]\n./poll_test.go:155:6: TestCompletionRelativeRecurrence redeclared in this block\n\t./controller_contract_test.go:14:6: other declaration of TestCompletionRelativeRecurrence\n",
+    "exit_code": 1,
+    "duration_seconds": 0.075,
+    "kind": "withheld-contract-probes"
+  }
+]

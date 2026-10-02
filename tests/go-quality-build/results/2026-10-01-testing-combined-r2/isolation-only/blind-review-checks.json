@@ -1,0 +1,267 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-y9l6zknd/verification",
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.011
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION"
+    ],
+    "cwd": "/private/tmp/go-independent-review-y9l6zknd/verification",
+    "stdout": "darwin\narm64\ngo1.26.5\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.01
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=60s",
+      "-v",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-y9l6zknd/verification",
+    "stdout": "=== RUN   TestExistingPutAndReplace\n=== PAUSE TestExistingPutAndReplace\n=== RUN   TestIndependentIndexRoots\n=== PAUSE TestIndependentIndexRoots\n=== RUN   TestApplyCSVSuccess\n=== PAUSE TestApplyCSVSuccess\n=== RUN   TestApplyCSVRejectedPrefix\n=== RUN   TestApplyCSVRejectedPrefix/blank_replacement\n=== PAUSE TestApplyCSVRejectedPrefix/blank_replacement\n=== RUN   TestApplyCSVRejectedPrefix/unicode_blank\n=== PAUSE TestApplyCSVRejectedPrefix/unicode_blank\n=== RUN   TestApplyCSVRejectedPrefix/invalid_key\n=== PAUSE TestApplyCSVRejectedPrefix/invalid_key\n=== RUN   TestApplyCSVRejectedPrefix/one_field\n=== PAUSE TestApplyCSVRejectedPrefix/one_field\n=== RUN   TestApplyCSVRejectedPrefix/three_fields\n=== PAUSE TestApplyCSVRejectedPrefix/three_fields\n=== RUN   TestApplyCSVRejectedPrefix/malformed_quote\n=== PAUSE TestApplyCSVRejectedPrefix/malformed_quote\n=== CONT  TestApplyCSVRejectedPrefix/blank_replacement\n=== CONT  TestApplyCSVRejectedPrefix/one_field\n=== CONT  TestApplyCSVRejectedPrefix/invalid_key\n=== CONT  TestApplyCSVRejectedPrefix/malformed_quote\n=== CONT  TestApplyCSVRejectedPrefix/unicode_blank\n=== CONT  TestApplyCSVRejectedPrefix/three_fields\n--- PASS: TestApplyCSVRejectedPrefix (0.00s)\n    --- PASS: TestApplyCSVRejectedPrefix/blank_replacement (0.00s)\n    --- PASS: TestApplyCSVRejectedPrefix/one_field (0.00s)\n    --- PASS: TestApplyCSVRejectedPrefix/invalid_key (0.00s)\n    --- PASS: TestApplyCSVRejectedPrefix/malformed_quote (0.00s)\n    --- PASS: TestApplyCSVRejectedPrefix/three_fields (0.00s)\n    --- PASS: TestApplyCSVRejectedPrefix/unicode_blank (0.00s)\n=== RUN   TestApplyCSVReadAndWriteFailure\n=== RUN   TestApplyCSVReadAndWriteFailure/reader\n=== PAUSE TestApplyCSVReadAndWriteFailure/reader\n=== RUN   TestApplyCSVReadAndWriteFailure/publication\n=== PAUSE TestApplyCSVReadAndWriteFailure/publication\n=== CONT  TestApplyCSVReadAndWriteFailure/reader\n=== CONT  TestApplyCSVReadAndWriteFailure/publication\n--- PASS: TestApplyCSVReadAndWriteFailure (0.00s)\n    --- PASS: TestApplyCSVReadAndWriteFailure/reader (0.00s)\n    --- PASS: TestApplyCSVReadAndWriteFailure/publication (0.00s)\n=== RUN   TestPutWriteFailurePreservesPriorFile\n--- PASS: TestPutWriteFailurePreservesPriorFile (0.00s)\n=== RUN   TestRefreshResponseContracts\n=== RUN   TestRefreshResponseContracts/ordered_text_and_duplicates\n=== PAUSE TestRefreshResponseContracts/ordered_text_and_duplicates\n=== RUN   TestRefreshResponseContracts/empty\n=== PAUSE TestRefreshResponseContracts/empty\n=== RUN   TestRefreshResponseContracts/null\n=== PAUSE TestRefreshResponseContracts/null\n=== RUN   TestRefreshResponseContracts/object\n=== PAUSE TestRefreshResponseContracts/object\n=== RUN   TestRefreshResponseContracts/truncated\n=== PAUSE TestRefreshResponseContracts/truncated\n=== RUN   TestRefreshResponseContracts/trailing_value\n=== PAUSE TestRefreshResponseContracts/trailing_value\n=== RUN   TestRefreshResponseContracts/trailing_junk\n=== PAUSE TestRefreshResponseContracts/trailing_junk\n=== RUN   TestRefreshResponseContracts/invalid_key\n=== PAUSE TestRefreshResponseContracts/invalid_key\n=== RUN   TestRefreshResponseContracts/blank_text\n=== PAUSE TestRefreshResponseContracts/blank_text\n=== RUN   TestRefreshResponseContracts/missing_text\n=== PAUSE TestRefreshResponseContracts/missing_text\n=== RUN   TestRefreshResponseContracts/late_validation\n=== PAUSE TestRefreshResponseContracts/late_validation\n=== RUN   TestRefreshResponseContracts/read_before_data\n=== PAUSE TestRefreshResponseContracts/read_before_data\n=== RUN   TestRefreshResponseContracts/read_after_array\n=== PAUSE TestRefreshResponseContracts/read_after_array\n=== RUN   TestRefreshResponseContracts/redirect\n=== PAUSE TestRefreshResponseContracts/redirect\n=== RUN   TestRefreshResponseContracts/other_success_status\n=== PAUSE TestRefreshResponseContracts/other_success_status\n=== RUN   TestRefreshResponseContracts/server_error\n=== PAUSE TestRefreshResponseContracts/server_error\n=== CONT  TestRefreshResponseContracts/ordered_text_and_duplicates\n=== CONT  TestRefreshResponseContracts/blank_text\n=== CONT  TestRefreshResponseContracts/read_after_array\n=== CONT  TestRefreshResponseContracts/truncated\n=== CONT  TestRefreshResponseContracts/late_validation\n=== CONT  TestRefreshResponseContracts/missing_text\n=== CONT  TestRefreshResponseContracts/trailing_junk\n=== CONT  TestRefreshResponseContracts/read_before_data\n=== CONT  TestRefreshResponseContracts/invalid_key\n=== CONT  TestRefreshResponseContracts/trailing_value\n=== CONT  TestRefreshResponseContracts/null\n=== CONT  TestRefreshResponseContracts/other_success_status\n=== CONT  TestRefreshResponseContracts/server_error\n=== CONT  TestRefreshResponseContracts/redirect\n=== CONT  TestRefreshResponseContracts/object\n=== CONT  TestRefreshResponseContracts/empty\n--- PASS: TestRefreshResponseContracts (0.00s)\n    --- PASS: TestRefreshResponseContracts/blank_text (0.00s)\n    --- PASS: TestRefreshResponseContracts/read_after_array (0.00s)\n    --- PASS: TestRefreshResponseContracts/invalid_key (0.00s)\n    --- PASS: TestRefreshResponseContracts/trailing_junk (0.00s)\n    --- PASS: TestRefreshResponseContracts/redirect (0.00s)\n    --- PASS: TestRefreshResponseContracts/ordered_text_and_duplicates (0.01s)\n    --- PASS: TestRefreshResponseContracts/null (0.00s)\n    --- PASS: TestRefreshResponseContracts/truncated (0.01s)\n    --- PASS: TestRefreshResponseContracts/other_success_status (0.00s)\n    --- PASS: TestRefreshResponseContracts/missing_text (0.01s)\n    --- PASS: TestRefreshResponseContracts/read_before_data (0.01s)\n    --- PASS: TestRefreshResponseContracts/late_validation (0.01s)\n    --- PASS: TestRefreshResponseContracts/server_error (0.00s)\n    --- PASS: TestRefreshResponseContracts/object (0.00s)\n    --- PASS: TestRefreshResponseContracts/trailing_value (0.01s)\n    --- PASS: TestRefreshResponseContracts/empty (0.00s)\n=== RUN   TestRefreshFetchFailureRetainsDestination\n=== PAUSE TestRefreshFetchFailureRetainsDestination\n=== RUN   TestRefreshRedirectDoesNotFollowOrMutateClient\n=== PAUSE TestRefreshRedirectDoesNotFollowOrMutateClient\n=== RUN   TestRefreshNetworkCancellation\n=== PAUSE TestRefreshNetworkCancellation\n=== RUN   TestRefreshAtomicSnapshot\n=== PAUSE TestRefreshAtomicSnapshot\n=== RUN   TestRefreshPublicationFailureClosesBody\n=== PAUSE TestRefreshPublicationFailureClosesBody\n=== RUN   TestRefreshWriteFailurePreservesPriorBytes\n--- PASS: TestRefreshWriteFailurePreservesPriorBytes (0.00s)\n=== RUN   TestServeStartupContracts\n=== RUN   TestServeStartupContracts/0s\n=== PAUSE TestServeStartupContracts/0s\n=== RUN   TestServeStartupContracts/-1s\n=== PAUSE TestServeStartupContracts/-1s\n=== RUN   TestServeStartupContracts/already_canceled\n=== PAUSE TestServeStartupContracts/already_canceled\n=== CONT  TestServeStartupContracts/0s\n=== CONT  TestServeStartupContracts/already_canceled\n=== CONT  TestServeStartupContracts/-1s\n--- PASS: TestServeStartupContracts (0.00s)\n    --- PASS: TestServeStartupContracts/0s (0.00s)\n    --- PASS: TestServeStartupContracts/already_canceled (0.00s)\n    --- PASS: TestServeStartupContracts/-1s (0.00s)\n=== RUN   TestServeCallbackAndReleaseErrors\n=== RUN   TestServeCallbackAndReleaseErrors/callback\n=== PAUSE TestServeCallbackAndReleaseErrors/callback\n=== RUN   TestServeCallbackAndReleaseErrors/both\n=== PAUSE TestServeCallbackAndReleaseErrors/both\n=== CONT  TestServeCallbackAndReleaseErrors/callback\n=== CONT  TestServeCallbackAndReleaseErrors/both\n--- PASS: TestServeCallbackAndReleaseErrors (0.00s)\n    --- PASS: TestServeCallbackAndReleaseErrors/callback (0.00s)\n    --- PASS: TestServeCallbackAndReleaseErrors/both (0.00s)\n=== RUN   TestServeCancellationErrorPrecedence\n=== RUN   TestServeCancellationErrorPrecedence/nil\n=== PAUSE TestServeCancellationErrorPrecedence/nil\n=== RUN   TestServeCancellationErrorPrecedence/context_error\n=== PAUSE TestServeCancellationErrorPrecedence/context_error\n=== RUN   TestServeCancellationErrorPrecedence/wrapped_context\n=== PAUSE TestServeCancellationErrorPrecedence/wrapped_context\n=== RUN   TestServeCancellationErrorPrecedence/independent_error\n=== PAUSE TestServeCancellationErrorPrecedence/independent_error\n=== RUN   TestServeCancellationErrorPrecedence/joined_independent\n=== PAUSE TestServeCancellationErrorPrecedence/joined_independent\n=== CONT  TestServeCancellationErrorPrecedence/nil\n=== CONT  TestServeCancellationErrorPrecedence/independent_error\n=== CONT  TestServeCancellationErrorPrecedence/wrapped_context\n=== CONT  TestServeCancellationErrorPrecedence/joined_independent\n=== CONT  TestServeCancellationErrorPrecedence/context_error\n--- PASS: TestServeCancellationErrorPrecedence (0.00s)\n    --- PASS: TestServeCancellationErrorPrecedence/independent_error (0.00s)\n    --- PASS: TestServeCancellationErrorPrecedence/nil (0.00s)\n    --- PASS: TestServeCancellationErrorPrecedence/wrapped_context (0.00s)\n    --- PASS: TestServeCancellationErrorPrecedence/joined_independent (0.00s)\n    --- PASS: TestServeCancellationErrorPrecedence/context_error (0.00s)\n=== RUN   TestServeCancellationJoinsCleanupBeforeRelease\n=== PAUSE TestServeCancellationJoinsCleanupBeforeRelease\n=== RUN   TestServeRecursAfterCompletionWithoutOverlap\n=== PAUSE TestServeRecursAfterCompletionWithoutOverlap\n=== RUN   TestServeIndependentRuns\n=== PAUSE TestServeIndependentRuns\n=== RUN   TestServeParentCancellationCause\n=== PAUSE TestServeParentCancellationCause\n=== CONT  TestExistingPutAndReplace\n=== CONT  TestRefreshAtomicSnapshot\n=== CONT  TestRefreshFetchFailureRetainsDestination\n=== CONT  TestServeRecursAfterCompletionWithoutOverlap\n=== CONT  TestRefreshNetworkCancellation\n=== CONT  TestServeParentCancellationCause\n=== RUN   TestServeParentCancellationCause/ordinary_cause\n=== CONT  TestServeIndependentRuns\n=== CONT  TestRefreshRedirectDoesNotFollowOrMutateClient\n=== CONT  TestRefreshPublicationFailureClosesBody\n=== PAUSE TestServeParentCancellationCause/ordinary_cause\n=== RUN   TestServeParentCancellationCause/cause_with_context_error\n=== PAUSE TestServeParentCancellationCause/cause_with_context_error\n=== RUN   TestServeParentCancellationCause/cause_with_independent_error\n=== PAUSE TestServeParentCancellationCause/cause_with_independent_error\n=== CONT  TestServeParentCancellationCause/ordinary_cause\n=== CONT  TestServeCancellationJoinsCleanupBeforeRelease\n=== CONT  TestServeParentCancellationCause/cause_with_independent_error\n=== CONT  TestServeParentCancellationCause/cause_with_context_error\n--- PASS: TestServeParentCancellationCause (0.00s)\n    --- PASS: TestServeParentCancellationCause/ordinary_cause (0.00s)\n    --- PASS: TestServeParentCancellationCause/cause_with_independent_error (0.00s)\n    --- PASS: TestServeParentCancellationCause/cause_with_context_error (0.00s)\n=== CONT  TestApplyCSVSuccess\n=== CONT  TestIndependentIndexRoots\n--- FAIL: TestRefreshRedirectDoesNotFollowOrMutateClient (0.00s)\n--- FAIL: TestRefreshNetworkCancellation (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 37 [running]:\ntesting.tRunner.func1.2({0x100b8ffc0, 0x27c589f10170})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x100b8ffc0?, 0x27c589f10170?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x100c1b220, 0x27c589f10140})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer_test.TestRefreshRedirectDoesNotFollowOrMutateClient(0x27c589e64b48)\n\t/private/tmp/go-independent-review-y9l6zknd/verification/refresh_test.go:123 +0x8c\ntesting.tRunner(0x27c589e64b48, 0x100c17068)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 38 [running]:\ntesting.tRunner.func1.2({0x100b8ffc0, 0x27c58a290510})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x100b8ffc0?, 0x27c58a290510?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x100c1b220, 0x27c589c9a318})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer_test.TestRefreshNetworkCancellation(0x27c589e64d88)\n\t/private/tmp/go-independent-review-y9l6zknd/verification/refresh_test.go:157 +0xa0\ntesting.tRunner(0x27c589e64d88, 0x100c17058)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer\t0.236s\n=== RUN   TestExistingPut\n--- PASS: TestExistingPut (0.00s)\n=== RUN   TestCommandPutAndApplyProcesses\n=== RUN   TestCommandPutAndApplyProcesses/legacy_put_dash_arguments\n=== PAUSE TestCommandPutAndApplyProcesses/legacy_put_dash_arguments\n=== RUN   TestCommandPutAndApplyProcesses/apply_success\n=== PAUSE TestCommandPutAndApplyProcesses/apply_success\n=== RUN   TestCommandPutAndApplyProcesses/apply_accepted_prefix\n=== PAUSE TestCommandPutAndApplyProcesses/apply_accepted_prefix\n=== RUN   TestCommandPutAndApplyProcesses/apply_parse_failure\n=== PAUSE TestCommandPutAndApplyProcesses/apply_parse_failure\n=== RUN   TestCommandPutAndApplyProcesses/put_filesystem_failure\n=== PAUSE TestCommandPutAndApplyProcesses/put_filesystem_failure\n=== CONT  TestCommandPutAndApplyProcesses/legacy_put_dash_arguments\n=== CONT  TestCommandPutAndApplyProcesses/apply_parse_failure\n=== CONT  TestCommandPutAndApplyProcesses/apply_success\n=== CONT  TestCommandPutAndApplyProcesses/apply_accepted_prefix\n=== CONT  TestCommandPutAndApplyProcesses/put_filesystem_failure\n--- PASS: TestCommandPutAndApplyProcesses (0.22s)\n    --- PASS: TestCommandPutAndApplyProcesses/put_filesystem_failure (0.22s)\n    --- PASS: TestCommandPutAndApplyProcesses/apply_accepted_prefix (0.22s)\n    --- PASS: TestCommandPutAndApplyProcesses/apply_parse_failure (0.22s)\n    --- PASS: TestCommandPutAndApplyProcesses/apply_success (0.22s)\n    --- PASS: TestCommandPutAndApplyProcesses/legacy_put_dash_arguments (0.22s)\n=== RUN   TestCommandInvalidStartupProcesses\n=== RUN   TestCommandInvalidStartupProcesses/missing_command\n=== PAUSE TestCommandInvalidStartupProcesses/missing_command\n=== RUN   TestCommandInvalidStartupProcesses/unknown_command\n=== PAUSE TestCommandInvalidStartupProcesses/unknown_command\n=== RUN   TestCommandInvalidStartupProcesses/put_usage\n=== PAUSE TestCommandInvalidStartupProcesses/put_usage\n=== RUN   TestCommandInvalidStartupProcesses/apply_missing_dir\n=== PAUSE TestCommandInvalidStartupProcesses/apply_missing_dir\n=== RUN   TestCommandInvalidStartupProcesses/apply_empty_dir\n=== PAUSE TestCommandInvalidStartupProcesses/apply_empty_dir\n=== RUN   TestCommandInvalidStartupProcesses/apply_unknown_flag\n=== PAUSE TestCommandInvalidStartupProcesses/apply_unknown_flag\n=== RUN   TestCommandInvalidStartupProcesses/apply_extra_argument\n=== PAUSE TestCommandInvalidStartupProcesses/apply_extra_argument\n=== RUN   TestCommandInvalidStartupProcesses/watch_missing_options\n=== PAUSE TestCommandInvalidStartupProcesses/watch_missing_options\n=== RUN   TestCommandInvalidStartupProcesses/watch_relative_url\n=== PAUSE TestCommandInvalidStartupProcesses/watch_relative_url\n=== RUN   TestCommandInvalidStartupProcesses/watch_ftp\n=== PAUSE TestCommandInvalidStartupProcesses/watch_ftp\n=== RUN   TestCommandInvalidStartupProcesses/watch_no_host\n=== PAUSE TestCommandInvalidStartupProcesses/watch_no_host\n=== RUN   TestCommandInvalidStartupProcesses/watch_empty_hostname\n=== PAUSE TestCommandInvalidStartupProcesses/watch_empty_hostname\n=== RUN   TestCommandInvalidStartupProcesses/watch_bad_url\n=== PAUSE TestCommandInvalidStartupProcesses/watch_bad_url\n=== RUN   TestCommandInvalidStartupProcesses/watch_empty_path\n=== PAUSE TestCommandInvalidStartupProcesses/watch_empty_path\n=== RUN   TestCommandInvalidStartupProcesses/watch_zero\n=== PAUSE TestCommandInvalidStartupProcesses/watch_zero\n=== RUN   TestCommandInvalidStartupProcesses/watch_negative\n=== PAUSE TestCommandInvalidStartupProcesses/watch_negative\n=== RUN   TestCommandInvalidStartupProcesses/watch_bad_duration\n=== PAUSE TestCommandInvalidStartupProcesses/watch_bad_duration\n=== RUN   TestCommandInvalidStartupProcesses/watch_unknown_flag\n=== PAUSE TestCommandInvalidStartupProcesses/watch_unknown_flag\n=== RUN   TestCommandInvalidStartupProcesses/watch_extra_argument\n=== PAUSE TestCommandInvalidStartupProcesses/watch_extra_argument\n=== CONT  TestCommandInvalidStartupProcesses/missing_command\n=== CONT  TestCommandInvalidStartupProcesses/apply_extra_argument\n=== CONT  TestCommandInvalidStartupProcesses/watch_bad_duration\n=== CONT  TestCommandInvalidStartupProcesses/watch_empty_path\n=== CONT  TestCommandInvalidStartupProcesses/watch_ftp\n=== CONT  TestCommandInvalidStartupProcesses/watch_empty_hostname\n=== CONT  TestCommandInvalidStartupProcesses/watch_relative_url\n=== CONT  TestCommandInvalidStartupProcesses/watch_missing_options\n=== CONT  TestCommandInvalidStartupProcesses/watch_extra_argument\n=== CONT  TestCommandInvalidStartupProcesses/apply_missing_dir\n=== CONT  TestCommandInvalidStartupProcesses/watch_bad_url\n=== CONT  TestCommandInvalidStartupProcesses/apply_unknown_flag\n=== CONT  TestCommandInvalidStartupProcesses/apply_empty_dir\n=== CONT  TestCommandInvalidStartupProcesses/watch_unknown_flag\n=== CONT  TestCommandInvalidStartupProcesses/watch_negative\n=== CONT  TestCommandInvalidStartupProcesses/unknown_command\n=== CONT  TestCommandInvalidStartupProcesses/put_usage\n=== CONT  TestCommandInvalidStartupProcesses/watch_zero\n=== CONT  TestCommandInvalidStartupProcesses/watch_no_host\n--- PASS: TestCommandInvalidStartupProcesses (0.20s)\n    --- PASS: TestCommandInvalidStartupProcesses/apply_missing_dir (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/watch_empty_hostname (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/watch_unknown_flag (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/watch_negative (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/watch_ftp (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/apply_extra_argument (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/put_usage (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/watch_empty_path (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/watch_bad_duration (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/missing_command (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/watch_bad_url (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/apply_empty_dir (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/apply_unknown_flag (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/watch_relative_url (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/watch_extra_argument (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/watch_zero (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/unknown_command (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/watch_missing_options (0.19s)\n    --- PASS: TestCommandInvalidStartupProcesses/watch_no_host (0.01s)\n=== RUN   TestWatchFirstRefreshFailureProcesses\n=== RUN   TestWatchFirstRefreshFailureProcesses/status\n=== PAUSE TestWatchFirstRefreshFailureProcesses/status\n=== RUN   TestWatchFirstRefreshFailureProcesses/malformed\n=== PAUSE TestWatchFirstRefreshFailureProcesses/malformed\n=== RUN   TestWatchFirstRefreshFailureProcesses/validation\n=== PAUSE TestWatchFirstRefreshFailureProcesses/validation\n=== CONT  TestWatchFirstRefreshFailureProcesses/status\n=== CONT  TestWatchFirstRefreshFailureProcesses/validation\n=== CONT  TestWatchFirstRefreshFailureProcesses/malformed\n--- FAIL: TestWatchFirstRefreshFailureProcesses (0.38s)\n    --- FAIL: TestWatchFirstRefreshFailureProcesses/validation (0.00s)\n    --- FAIL: TestWatchFirstRefreshFailureProcesses/malformed (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 230 [running]:\ntesting.tRunner.func1.2({0x1007f0960, 0x2cb3edc94150})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1007f0960?, 0x2cb3edc94150?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x10087cec0, 0x2cb3ee032040})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/indexer/cmd/indexer.TestWatchFirstRefreshFailureProcesses.func1(0x2cb3edf8d8c8)\n\t/private/tmp/go-independent-review-y9l6zknd/verification/cmd/indexer/main_test.go:192 +0xcc\ntesting.tRunner(0x2cb3edf8d8c8, 0x2cb3edd28080)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 205\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/indexer/cmd/indexer\t1.377s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 1.64
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-y9l6zknd/verification",
+    "stdout": "--- FAIL: TestRefreshNetworkCancellation (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 83 [running]:\ntesting.tRunner.func1.2({0x102c113e0, 0xc0003b0000})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x2b8\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x460\npanic({0x102c113e0?, 0xc0003b0000?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0x13c\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x102ca1d80, 0xc0005120a8})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x30\nexample.com/indexer_test.TestRefreshNetworkCancellation(0xc00043e488)\n\t/private/tmp/go-independent-review-y9l6zknd/verification/refresh_test.go:157 +0xfc\ntesting.tRunner(0xc00043e488, 0x102c9d578)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x168\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x7c0\nFAIL\texample.com/indexer\t0.402s\n--- FAIL: TestWatchFirstRefreshFailureProcesses (0.40s)\n    --- FAIL: TestWatchFirstRefreshFailureProcesses/validation (0.00s)\n    --- FAIL: TestWatchFirstRefreshFailureProcesses/status (0.00s)\n    --- FAIL: TestWatchFirstRefreshFailureProcesses/malformed (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 46 [running]:\ntesting.tRunner.func1.2({0x102891de0, 0xc0006900a0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x2b8\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x460\npanic({0x102891de0?, 0xc0006900a0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0x13c\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x102923aa0, 0xc0004ac200})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x30\nexample.com/indexer/cmd/indexer.TestWatchFirstRefreshFailureProcesses.func1(0xc00035cd88)\n\t/private/tmp/go-independent-review-y9l6zknd/verification/cmd/indexer/main_test.go:192 +0x11c\ntesting.tRunner(0xc00035cd88, 0xc0004ac180)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x168\ncreated by testing.(*T).Run in goroutine 309\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x7c0\nFAIL\texample.com/indexer/cmd/indexer\t1.148s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 1.472
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-y9l6zknd/verification",
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.123
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-y9l6zknd/verification",
+    "sandbox": "require_escalated for loopback httptest listeners",
+    "stdout": "ok  \texample.com/indexer\t0.320s\nok  \texample.com/indexer/cmd/indexer\t1.855s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 2.056
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-y9l6zknd/verification",
+    "sandbox": "require_escalated for loopback httptest listeners",
+    "stdout": "ok  \texample.com/indexer\t1.360s\nok  \texample.com/indexer/cmd/indexer\t2.912s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 3.143
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=5",
+      "-shuffle=on",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-y9l6zknd/verification",
+    "sandbox": "require_escalated for loopback httptest listeners",
+    "stdout": "ok  \texample.com/indexer\t1.110s\nok  \texample.com/indexer/cmd/indexer\t8.036s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 8.23
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-run",
+      "TestRefreshResponseContracts",
+      "-count=1",
+      "-timeout=15s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-y9l6zknd/mutation-trailing-json",
+    "mutation": "Remove the trailing-input decode so valid arrays followed by extra data are accepted.",
+    "stdout": "--- FAIL: TestRefreshResponseContracts (0.00s)\n    --- FAIL: TestRefreshResponseContracts/trailing_junk (0.01s)\n        refresh_test.go:96: Refresh = <nil>; validation identity want false\n    --- FAIL: TestRefreshResponseContracts/read_after_array (0.01s)\n        refresh_test.go:96: Refresh = <nil>; validation identity want false\n    --- FAIL: TestRefreshResponseContracts/trailing_value (0.01s)\n        refresh_test.go:96: Refresh = <nil>; validation identity want false\nFAIL\nFAIL\texample.com/indexer\t0.284s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.539
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-run",
+      "TestRefreshAtomicSnapshot",
+      "-count=1",
+      "-timeout=15s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-y9l6zknd/mutation-in-place",
+    "mutation": "Replace publication rename with an in-place destination write; old file descriptors observe changed bytes.",
+    "stdout": "--- FAIL: TestRefreshAtomicSnapshot (0.00s)\n    refresh_test.go:207: old reader = \"[{\\\"key\\\":\\\"alpha\\\",\\\"text\\\":\\\"new\\\"}]\\n\", <nil>\nFAIL\nFAIL\texample.com/indexer\t0.207s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.464
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-run",
+      "TestServeCancellationJoinsCleanupBeforeRelease",
+      "-count=1",
+      "-timeout=15s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-y9l6zknd/mutation-early-release",
+    "mutation": "Release immediately after interval validation, before callback cleanup.",
+    "stdout": "--- FAIL: TestServeCancellationJoinsCleanupBeforeRelease (0.00s)\n    serve_test.go:143: release overtook callback cleanup\nFAIL\nFAIL\texample.com/indexer\t0.217s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.472
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-run",
+      "TestServeCallbackAndReleaseErrors",
+      "-count=1",
+      "-timeout=15s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-y9l6zknd/mutation-discard-callback-error",
+    "mutation": "Discard callback errors during release instead of joining identities.",
+    "stdout": "--- FAIL: TestServeCallbackAndReleaseErrors (0.00s)\n    --- FAIL: TestServeCallbackAndReleaseErrors/callback (0.00s)\n        serve_test.go:70: Serve = <nil>, calls=1, releases=1\n    --- FAIL: TestServeCallbackAndReleaseErrors/both (0.00s)\n        serve_test.go:70: Serve = release failed, calls=1, releases=1\nFAIL\nFAIL\texample.com/indexer\t0.205s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.464
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-run",
+      "TestReviewNonComparableCancellationCause",
+      "-count=1",
+      "-timeout=10s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-review-y9l6zknd/reproduction-cause-error",
+    "reproduction": "Valid non-comparable error value used as context cancellation cause and returned wrapped by callback. Candidate production source is unmodified.",
+    "stdout": "--- FAIL: TestReviewNonComparableCancellationCause (0.00s)\n    cause_error_test.go:17: Serve panicked for valid callback/cause error: runtime error: comparing uncomparable type indexer_test.reviewCauseError; releases=1\nFAIL\nFAIL\texample.com/indexer\t0.195s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.448
+  }
+]

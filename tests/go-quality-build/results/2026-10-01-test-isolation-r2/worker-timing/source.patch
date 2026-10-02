@@ -1,0 +1,460 @@
+--- a/poll_test.go
++++ b/poll_test.go
+@@ -3,33 +3,440 @@
+ import (
+ 	"context"
+ 	"errors"
++	"os"
++	"sync"
++	"sync/atomic"
+ 	"testing"
+ 	"time"
+ 
+ 	"example.com/poller"
+ )
+ 
++// Bounds diagnose stalled work; callback events establish readiness.
++const waitLimit = 5 * time.Second
++
++type pollRun struct {
++	finished chan struct{}
++	err      error // Read only after finished closes.
++}
++
++func startPoll(t *testing.T, ctx context.Context, cancel context.CancelFunc, interval time.Duration, callback func(context.Context) error) *pollRun {
++	t.Helper()
++	run := &pollRun{finished: make(chan struct{})}
++	// Own cancellation and joining before starting work or making assertions.
++	t.Cleanup(func() {
++		cancel()
++		timer := time.NewTimer(waitLimit)
++		defer timer.Stop()
++		select {
++		case <-run.finished:
++		case <-timer.C:
++			t.Error("Poll did not finish during cleanup")
++		}
++	})
++	go func() {
++		run.err = poller.Poll(ctx, interval, callback)
++		close(run.finished)
++	}()
++	return run
++}
++
++func (run *pollRun) wait(t *testing.T) error {
++	t.Helper()
++	waitEvent(t, run.finished, "Poll completion")
++	return run.err
++}
++
++func waitEvent(t *testing.T, event <-chan struct{}, name string) {
++	t.Helper()
++	timer := time.NewTimer(waitLimit)
++	defer timer.Stop()
++	select {
++	case <-event:
++	case <-timer.C:
++		t.Fatalf("timed out waiting for %s", name)
++	}
++}
++
+ func TestCancellation(t *testing.T) {
++	t.Parallel()
+ 	ctx, cancel := context.WithCancel(context.Background())
+-	defer cancel()
+-	done := make(chan error, 1)
+-	go func() { done <- poller.Poll(ctx, time.Hour, func(context.Context) error { return nil }) }()
+-	time.Sleep(5 * time.Millisecond)
++	started := make(chan struct{})
++	var calls atomic.Int32
++	run := startPoll(t, ctx, cancel, time.Hour, func(context.Context) error {
++		if calls.Add(1) == 1 {
++			close(started)
++		}
++		return nil
++	})
++	waitEvent(t, started, "first callback")
+ 	cancel()
++	if err := run.wait(t); err != nil {
++		t.Fatalf("Poll after cancellation = %v, want nil", err)
++	}
++	if got := calls.Load(); got != 1 {
++		t.Fatalf("callback calls = %d, want 1", got)
++	}
++}
++
++func TestCallbackError(t *testing.T) {
++	t.Parallel()
++	want := errors.New("poll failed")
++	ctx, cancel := context.WithCancel(context.Background())
++	run := startPoll(t, ctx, cancel, time.Hour, func(context.Context) error { return want })
++	err := run.wait(t)
++	if err != want || !errors.Is(err, want) {
++		t.Fatalf("Poll = %v, want original callback error %v", err, want)
++	}
++}
++
++func TestAlreadyCanceled(t *testing.T) {
++	t.Parallel()
++	ctx, cancel := context.WithCancel(context.Background())
++	cancel()
++	var calls atomic.Int32
++	run := startPoll(t, ctx, cancel, time.Hour, func(context.Context) error {
++		calls.Add(1)
++		return nil
++	})
++	if err := run.wait(t); err != nil {
++		t.Fatalf("Poll with canceled context = %v, want nil", err)
++	}
++	if got := calls.Load(); got != 0 {
++		t.Fatalf("callback calls = %d, want 0", got)
++	}
++}
++
++func TestInvalidInterval(t *testing.T) {
++	t.Parallel()
++	for _, tc := range []struct {
++		name     string
++		interval time.Duration
++	}{
++		{name: "zero", interval: 0},
++		{name: "negative", interval: -time.Second},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++			ctx, cancel := context.WithCancel(context.Background())
++			var calls atomic.Int32
++			run := startPoll(t, ctx, cancel, tc.interval, func(context.Context) error {
++				calls.Add(1)
++				return errors.New("unexpected callback")
++			})
++			if err := run.wait(t); err == nil {
++				t.Fatal("Poll accepted a nonpositive interval")
++			}
++			if got := calls.Load(); got != 0 {
++				t.Fatalf("callback calls = %d, want 0", got)
++			}
++		})
++	}
++}
++
++type cycleEvent struct {
++	cycle int32
++	at    time.Time
++}
++
++func nextCycle(t *testing.T, events <-chan cycleEvent, name string) cycleEvent {
++	t.Helper()
++	timer := time.NewTimer(waitLimit)
++	defer timer.Stop()
+ 	select {
+-	case err := <-done:
++	case event := <-events:
++		return event
++	case <-timer.C:
++		t.Fatalf("timed out waiting for %s", name)
++		return cycleEvent{}
++	}
++}
++
++func TestCompletionRelativeRecurrence(t *testing.T) {
++	t.Parallel()
++	const interval = 30 * time.Millisecond
++	ctx, cancel := context.WithCancel(context.Background())
++	started := make(chan cycleEvent, 4)
++	completed := make(chan cycleEvent, 4)
++	firstRelease := make(chan struct{})
++	secondRelease := make(chan struct{})
++	var calls, active atomic.Int32
++	want := errors.New("three cycles complete")
++	run := startPoll(t, ctx, cancel, interval, func(callbackCtx context.Context) error {
++		cycle := calls.Add(1)
++		concurrent := active.Add(1) != 1
++		defer func() {
++			active.Add(-1)
++			// This final event precedes actual return, conservatively checking
++			// the minimum interval. A release gate is not completion.
++			completed <- cycleEvent{cycle: cycle, at: time.Now()}
++		}()
++		started <- cycleEvent{cycle: cycle, at: time.Now()}
++		if concurrent {
++			return errors.New("overlapping callbacks")
++		}
++		var release <-chan struct{}
++		switch cycle {
++		case 1:
++			release = firstRelease
++		case 2:
++			release = secondRelease
++		default:
++			return want
++		}
++		select {
++		case <-release:
++		case <-callbackCtx.Done():
++		}
++		return nil
++	})
++
++	first := nextCycle(t, started, "first callback start")
++	if first.cycle != 1 {
++		t.Fatalf("first cycle = %d, want 1", first.cycle)
++	}
++	// Readiness is observed before holding this callback beyond one interval.
++	hold := time.NewTimer(2 * interval)
++	t.Cleanup(func() { hold.Stop() })
++	select {
++	case event := <-started:
++		t.Fatalf("cycle %d started while the first callback was blocked", event.cycle)
++	case <-hold.C:
++	}
++	close(firstRelease)
++	firstDone := nextCycle(t, completed, "first callback completion")
++	second := nextCycle(t, started, "second callback start")
++	if firstDone.cycle != 1 || second.cycle != 2 {
++		t.Fatalf("completion/start cycles = %d/%d, want 1/2", firstDone.cycle, second.cycle)
++	}
++	if elapsed := second.at.Sub(firstDone.at); elapsed < interval {
++		t.Fatalf("second callback started %v after completion, want at least %v", elapsed, interval)
++	}
++	close(secondRelease)
++	secondDone := nextCycle(t, completed, "second callback completion")
++	third := nextCycle(t, started, "third callback start")
++	if secondDone.cycle != 2 || third.cycle != 3 {
++		t.Fatalf("completion/start cycles = %d/%d, want 2/3", secondDone.cycle, third.cycle)
++	}
++	if elapsed := third.at.Sub(secondDone.at); elapsed < interval {
++		t.Fatalf("third callback started %v after completion, want at least %v", elapsed, interval)
++	}
++	if err := run.wait(t); err != want {
++		t.Fatalf("Poll = %v, want %v", err, want)
++	}
++	if got := calls.Load(); got != 3 {
++		t.Fatalf("callback calls = %d, want 3", got)
++	}
++}
++
++func TestCallbackErrorWinsCancellation(t *testing.T) {
++	t.Parallel()
++	ctx, cancel := context.WithCancel(context.Background())
++	started := make(chan struct{})
++	want := errors.New("callback failed during cancellation")
++	run := startPoll(t, ctx, cancel, time.Hour, func(callbackCtx context.Context) error {
++		close(started)
++		select {
++		case <-callbackCtx.Done():
++		case <-ctx.Done():
++		}
++		return want
++	})
++	waitEvent(t, started, "active callback")
++	cancel()
++	if err := run.wait(t); err != want {
++		t.Fatalf("Poll = %v, want original callback error %v", err, want)
++	}
++}
++
++func TestFixtureTeardown(t *testing.T) {
++	t.Parallel()
++	var fixture *os.File
++	var fixturePath string
++	if !t.Run("callback_cleanup", func(t *testing.T) {
++		var err error
++		fixture, err = os.CreateTemp(t.TempDir(), "callback-")
+ 		if err != nil {
+ 			t.Fatal(err)
+ 		}
+-	case <-time.After(time.Second):
+-		t.Fatal("Poll did not stop after cancellation")
+-	}
+-}
+-
+-func TestCallbackError(t *testing.T) {
+-	want := errors.New("poll failed")
+-	err := poller.Poll(context.Background(), time.Hour, func(context.Context) error { return want })
+-	if !errors.Is(err, want) {
+-		t.Fatalf("Poll = %v, want callback cause", err)
+-	}
+-}
++		fixturePath = fixture.Name()
++		var run *pollRun
++		// LIFO cleanup joins the worker before closing its borrowed fixture.
++		t.Cleanup(func() {
++			if run != nil {
++				select {
++				case <-run.finished:
++				default:
++					t.Error("Poll still running; fixture cannot safely close")
++					return
++				}
++			}
++			if err := fixture.Close(); err != nil {
++				t.Errorf("close fixture: %v", err)
++			}
++		})
++		type contextKey struct{}
++		ctx, cancel := context.WithCancel(context.WithValue(context.Background(), contextKey{}, "caller"))
++		started := make(chan struct{})
++		cleanupStarted := make(chan struct{})
++		releaseCleanup := make(chan struct{})
++		var releaseOnce sync.Once
++		release := func() { releaseOnce.Do(func() { close(releaseCleanup) }) }
++		var callbackCtx context.Context
++		var cleanupErr error
++		run = startPoll(t, ctx, cancel, time.Hour, func(received context.Context) error {
++			callbackCtx = received
++			close(started)
++			select {
++			case <-received.Done():
++			case <-ctx.Done():
++			}
++			close(cleanupStarted)
++			<-releaseCleanup
++			_, cleanupErr = fixture.WriteString("callback cleanup finished\n")
++			return cleanupErr
++		})
++		// Open the test gate before cancel/join, including early fatal exits.
++		t.Cleanup(release)
++		waitEvent(t, started, "callback borrowing fixture")
++		if callbackCtx != ctx || callbackCtx.Value(contextKey{}) != "caller" {
++			t.Fatal("callback did not receive the caller's context")
++		}
++		cancel()
++		waitEvent(t, cleanupStarted, "callback cleanup")
++		// Cleanup is already observed and cannot finish before release.
++		observation := time.NewTimer(20 * time.Millisecond)
++		t.Cleanup(func() { observation.Stop() })
++		select {
++		case <-run.finished:
++			t.Fatal("Poll returned while callback cleanup was blocked")
++		case <-observation.C:
++		}
++		release()
++		if err := run.wait(t); err != nil {
++			t.Fatalf("Poll after cancellation = %v, want nil", err)
++		}
++		if callbackCtx.Err() != context.Canceled {
++			t.Fatalf("callback context error = %v, want cancellation", callbackCtx.Err())
++		}
++		if cleanupErr != nil {
++			t.Fatalf("callback fixture cleanup: %v", cleanupErr)
++		}
++		if _, err := fixture.Stat(); err != nil {
++			t.Fatalf("caller fixture closed before owner teardown: %v", err)
++		}
++		data, err := os.ReadFile(fixturePath)
++		if err != nil {
++			t.Fatal(err)
++		}
++		if string(data) != "callback cleanup finished\n" {
++			t.Fatalf("fixture data = %q, want callback cleanup output", data)
++		}
++	}) {
++		return
++	}
++	if _, err := fixture.Stat(); !errors.Is(err, os.ErrClosed) {
++		t.Fatalf("fixture after owner cleanup = %v, want closed", err)
++	}
++	if _, err := os.Stat(fixturePath); !errors.Is(err, os.ErrNotExist) {
++		t.Fatalf("fixture path after owner cleanup = %v, want removed", err)
++	}
++}
++
++func TestIndependentInvocations(t *testing.T) {
++	t.Parallel()
++	firstCtx, cancelFirst := context.WithCancel(context.Background())
++	secondCtx, cancelSecond := context.WithCancel(context.Background())
++	firstStarted := make(chan struct{})
++	secondStarted := make(chan struct{})
++	secondRelease := make(chan struct{})
++	want := errors.New("second invocation complete")
++	first := startPoll(t, firstCtx, cancelFirst, time.Hour, func(context.Context) error {
++		close(firstStarted)
++		<-firstCtx.Done()
++		return nil
++	})
++	second := startPoll(t, secondCtx, cancelSecond, time.Hour, func(context.Context) error {
++		close(secondStarted)
++		select {
++		case <-secondRelease:
++			return want
++		case <-secondCtx.Done():
++			return nil
++		}
++	})
++	waitEvent(t, firstStarted, "first invocation")
++	waitEvent(t, secondStarted, "second invocation")
++	cancelFirst()
++	if err := first.wait(t); err != nil {
++		t.Fatalf("first Poll = %v, want nil", err)
++	}
++	observation := time.NewTimer(20 * time.Millisecond)
++	t.Cleanup(func() { observation.Stop() })
++	select {
++	case <-second.finished:
++		t.Fatal("second Poll stopped when the first invocation was canceled")
++	case <-observation.C:
++	}
++	close(secondRelease)
++	if err := second.wait(t); err != want {
++		t.Fatalf("second Poll = %v, want its callback error %v", err, want)
++	}
++	if err := secondCtx.Err(); err != nil {
++		t.Fatalf("second caller context = %v, want uncanceled", err)
++	}
++}
++
++func TestFixtureCleanupOnReturn(t *testing.T) {
++	t.Parallel()
++	var fixture *os.File
++	var path string
++	var callbackErr error
++	cleanupFinished := make(chan struct{})
++	if !t.Run("owned", func(t *testing.T) {
++		var err error
++		fixture, err = os.CreateTemp(t.TempDir(), "cleanup-")
++		if err != nil {
++			t.Fatal(err)
++		}
++		path = fixture.Name()
++		var run *pollRun
++		t.Cleanup(func() {
++			if run != nil {
++				select {
++				case <-run.finished:
++				default:
++					t.Error("Poll still running; fixture cannot safely close")
++					return
++				}
++			}
++			if err := fixture.Close(); err != nil {
++				t.Errorf("close fixture: %v", err)
++			}
++		})
++		ctx, cancel := context.WithCancel(context.Background())
++		started := make(chan struct{})
++		run = startPoll(t, ctx, cancel, time.Hour, func(context.Context) error {
++			close(started)
++			<-ctx.Done()
++			_, callbackErr = fixture.WriteString("teardown used the open fixture\n")
++			close(cleanupFinished)
++			return callbackErr
++		})
++		waitEvent(t, started, "callback borrowing fixture")
++		// Return with the callback active. Cleanup itself must cancel and join
++		// it before closing the file or removing its directory.
++	}) {
++		return
++	}
++	waitEvent(t, cleanupFinished, "callback cleanup during subtest teardown")
++	if callbackErr != nil {
++		t.Fatalf("callback cleanup could not use its fixture: %v", callbackErr)
++	}
++	if _, err := fixture.Stat(); !errors.Is(err, os.ErrClosed) {
++		t.Fatalf("fixture after teardown = %v, want closed", err)
++	}
++	if _, err := os.Stat(path); !errors.Is(err, os.ErrNotExist) {
++		t.Fatalf("fixture path after teardown = %v, want removed", err)
++	}
++}

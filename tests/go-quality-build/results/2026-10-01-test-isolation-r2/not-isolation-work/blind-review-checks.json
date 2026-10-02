@@ -1,0 +1,251 @@
+{
+  "changeset": "/private/tmp/go-independent-review-85l0o0s_/changeset-2",
+  "environment": {
+    "GOCACHE": "/private/tmp/go-quality-testing-cache",
+    "GOTOOLCHAIN": "local",
+    "GOPROXY": "off"
+  },
+  "checks": [
+    {
+      "label": "toolchain",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/output/verification",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:56:03.643483+00:00",
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 60
+    },
+    {
+      "label": "platform_and_cgo",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "env",
+        "GOOS",
+        "GOARCH",
+        "CGO_ENABLED",
+        "GOVERSION",
+        "GOMOD"
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/output/verification",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:56:03.653383+00:00",
+      "stdout": "darwin\narm64\n1\ngo1.26.5\n/private/tmp/go-independent-review-85l0o0s_/changeset-2/output/verification/go.mod\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 60
+    },
+    {
+      "label": "supplied_diff",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "diff",
+        "-ru",
+        "/private/tmp/go-independent-review-85l0o0s_/changeset-2/original",
+        "/private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate"
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-2",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:56:03.663609+00:00",
+      "stdout": "diff -ru /private/tmp/go-independent-review-85l0o0s_/changeset-2/original/clamp.go /private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate/clamp.go\n--- /private/tmp/go-independent-review-85l0o0s_/changeset-2/original/clamp.go\t2026-10-01 19:05:22\n+++ /private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate/clamp.go\t2026-10-01 21:42:29\n@@ -2,8 +2,8 @@\n \n // Clamp bounds value to the inclusive low/high interval.\n func Clamp(value, low, high int) int {\n-\tif value <= low {\n-\t\treturn low + 1\n+\tif value < low {\n+\t\treturn low\n \t}\n \tif value > high {\n \t\treturn high\ndiff -ru /private/tmp/go-independent-review-85l0o0s_/changeset-2/original/clamp_test.go /private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate/clamp_test.go\n--- /private/tmp/go-independent-review-85l0o0s_/changeset-2/original/clamp_test.go\t2026-10-01 19:05:22\n+++ /private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate/clamp_test.go\t2026-10-01 21:41:56\n@@ -11,3 +11,11 @@\n \t\tt.Fatalf(\"Clamp = %d, want 5\", got)\n \t}\n }\n+\n+func TestLowerBound(t *testing.T) {\n+\tfor _, value := range []int{0, 1} {\n+\t\tif got := clamp.Clamp(value, 1, 9); got != 1 {\n+\t\t\tt.Errorf(\"Clamp(%d, 1, 9) = %d, want 1\", value, got)\n+\t\t}\n+\t}\n+}\n",
+      "stderr": "",
+      "exit_code": 1,
+      "timeout_seconds": 60
+    },
+    {
+      "label": "candidate_tests",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/output/verification",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:56:03.670856+00:00",
+      "stdout": "ok  \texample.com/clamp\t0.218s\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 60
+    },
+    {
+      "label": "ordinary_repeated_shuffled",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-count=20",
+        "-shuffle=on",
+        "-timeout=20s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/output/verification",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:56:04.047240+00:00",
+      "stdout": "ok  \texample.com/clamp\t0.106s\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 60
+    },
+    {
+      "label": "mutation_original_lower_bound",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-count=1",
+        "-run=^TestLowerBound$",
+        "-timeout=20s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/output/mutation-original_lower_bound",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:57:55.337091+00:00",
+      "stdout": "--- FAIL: TestLowerBound (0.00s)\n    clamp_test.go:18: Clamp(0, 1, 9) = 2, want 1\n    clamp_test.go:18: Clamp(1, 1, 9) = 2, want 1\nFAIL\nFAIL\texample.com/clamp\t0.204s\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "timeout_seconds": 60
+    },
+    {
+      "label": "review_boundary_probe",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-count=1",
+        "-run=^TestReviewSupportedBoundaries$",
+        "-timeout=20s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/output/boundary-probe",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:57:55.707517+00:00",
+      "stdout": "ok  \texample.com/clamp\t0.138s\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 60
+    },
+    {
+      "label": "effective_minimum_standard_library_check",
+      "command_argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "-stdversion",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/output/verification",
+      "env_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off"
+      },
+      "started_at": "2026-10-02T02:58:47.187651+00:00",
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 60
+    }
+  ],
+  "operations": [
+    {
+      "kind": "disposable_copy",
+      "source": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate",
+      "destination": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/output/verification"
+    },
+    {
+      "kind": "disposable_copy",
+      "source": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate",
+      "destination": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/output/mutation-original_lower_bound"
+    },
+    {
+      "kind": "mutation",
+      "name": "original_lower_bound",
+      "source": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/original/clamp.go",
+      "path": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/output/mutation-original_lower_bound/clamp.go",
+      "purpose": "run candidate regression against the original faulty branch"
+    },
+    {
+      "kind": "disposable_copy",
+      "source": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate",
+      "destination": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/output/boundary-probe"
+    },
+    {
+      "kind": "review_probe",
+      "path": "/private/tmp/go-independent-review-85l0o0s_/changeset-2/output/boundary-probe/review_boundary_test.go",
+      "source": "package clamp_test\n\nimport (\n    \"testing\"\n    \"example.com/clamp\"\n)\n\nfunc TestReviewSupportedBoundaries(t *testing.T) {\n    max := int(^uint(0) >> 1)\n    min := -max - 1\n    cases := []struct{ value, low, high, want int }{\n        {-8, -5, 3, -5}, {-5, -5, 3, -5}, {3, -5, 3, 3},\n        {8, -5, 3, 3}, {7, 7, 7, 7}, {6, 7, 7, 7}, {8, 7, 7, 7},\n        {min, min, max, min}, {max, min, max, max},\n        {min, min+1, max, min+1}, {max, min, max-1, max-1},\n    }\n    for _, tc := range cases {\n        if got := clamp.Clamp(tc.value, tc.low, tc.high); got != tc.want {\n            t.Errorf(\"Clamp(%d,%d,%d)=%d,want %d\", tc.value,tc.low,tc.high,got,tc.want)\n        }\n    }\n}\n",
+      "purpose": "verify inclusive, degenerate, negative and native-int extreme supported ranges"
+    }
+  ],
+  "source_hashes": {
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-2/original/README.md": "6f83be8f1fb4bae7ae3a4118e64cbe65b2975efc99abcc7a450264a41f80a41c",
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-2/original/clamp.go": "1531f4f12762a8de67afad06945345c7814fd5cb2bc07d5dca56e12acab66824",
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-2/original/clamp_test.go": "4ee58de54175701b8b223487e181d74a32c55c593878c63b3b124b731781bc3f",
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-2/original/go.mod": "6159f8c50c24e8a65f078eb935b56655ab3da9e77bd2c62ba41b955b40bb319d",
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate/README.md": "6f83be8f1fb4bae7ae3a4118e64cbe65b2975efc99abcc7a450264a41f80a41c",
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate/clamp.go": "c74249b0947a049651f6ea29b0aa6f2a4146f4969628f2b5be1407672ac75125",
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate/clamp_test.go": "659b2b689748976126efcd00b86f2039e9f794d82bb9e35b11bc8efc322ddbcb",
+    "/private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate/go.mod": "6159f8c50c24e8a65f078eb935b56655ab3da9e77bd2c62ba41b955b40bb319d"
+  },
+  "source_integrity": {
+    "match": true,
+    "actual_sha256": {
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-2/original/README.md": "6f83be8f1fb4bae7ae3a4118e64cbe65b2975efc99abcc7a450264a41f80a41c",
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-2/original/clamp.go": "1531f4f12762a8de67afad06945345c7814fd5cb2bc07d5dca56e12acab66824",
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-2/original/clamp_test.go": "4ee58de54175701b8b223487e181d74a32c55c593878c63b3b124b731781bc3f",
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-2/original/go.mod": "6159f8c50c24e8a65f078eb935b56655ab3da9e77bd2c62ba41b955b40bb319d",
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate/README.md": "6f83be8f1fb4bae7ae3a4118e64cbe65b2975efc99abcc7a450264a41f80a41c",
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate/clamp.go": "c74249b0947a049651f6ea29b0aa6f2a4146f4969628f2b5be1407672ac75125",
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate/clamp_test.go": "659b2b689748976126efcd00b86f2039e9f794d82bb9e35b11bc8efc322ddbcb",
+      "/private/tmp/go-independent-review-85l0o0s_/changeset-2/candidate/go.mod": "6159f8c50c24e8a65f078eb935b56655ab3da9e77bd2c62ba41b955b40bb319d"
+    }
+  }
+}

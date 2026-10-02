@@ -1,0 +1,77 @@
+[
+  {
+    "label": "focused instance",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^alpha$",
+      "-count=1",
+      "-timeout=30s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-focused-check-8zaoqw6w/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "patch": null,
+    "stdout": "ok  \texample.com/filestore\t1.179s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.3512460000347346
+  },
+  {
+    "label": "focused shorter replacement leaf",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^empty$/^replacement$",
+      "-count=1",
+      "-timeout=30s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-focused-check-vjdv3q2g/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "patch": null,
+    "stdout": "ok  \texample.com/filestore\t1.150s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.3676348329754546
+  },
+  {
+    "label": "deterministic shared-root persistence sensitivity",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-parallel=1",
+      "-run",
+      "^TestStoreIndependentInstances$",
+      "-count=1",
+      "-timeout=30s",
+      "."
+    ],
+    "cwd": "/private/tmp/go-focused-check-oqgmub8h/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "patch": ".superpowers/sdd/2026-10-01-go-quality-build-testing-group/isolation-mutations/2026-10-01-test-isolation-r2/library-file-fixtures/store-shared-root.patch",
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    store_test.go:102: alpha: Get after children finish = \"beta replacement\\nwith another line\"; want \"alpha replacement\"\n    store_test.go:102: empty: Get after children finish = \"beta replacement\\nwith another line\"; want \"\"\nFAIL\nFAIL\texample.com/filestore\t0.179s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.3256145000923425
+  }
+]

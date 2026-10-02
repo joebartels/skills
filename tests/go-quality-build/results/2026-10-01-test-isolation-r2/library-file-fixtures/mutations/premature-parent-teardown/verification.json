@@ -1,0 +1,86 @@
+{
+  "semantic_id": "premature-parent-teardown",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "550b04e0a50303265eb31b4b62bcfcf0b1a89c4f0baf48fb51f3cb3d77ac16d3",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-pt6w6rnb/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.153s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.304
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r2/library-file-fixtures/mutations/premature-parent-teardown/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-pt6w6rnb/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.025
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-pt6w6rnb/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.207s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.36
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-pt6w6rnb/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    --- FAIL: TestStoreIndependentInstances/instances (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/initial (0.00s)\n                store_test.go:78: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3280260612/001/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\n                store_test.go:78: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3280260612/001/same-key: no such file or directory\n        --- FAIL: TestStoreIndependentInstances/instances/empty (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/empty/initial (0.00s)\n                store_test.go:78: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3280260612/003/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/empty/replacement (0.00s)\n                store_test.go:78: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3280260612/003/same-key: no such file or directory\n        --- FAIL: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/beta/initial (0.00s)\n                store_test.go:78: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3280260612/002/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\n                store_test.go:78: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances3280260612/002/same-key: no such file or directory\nFAIL\nFAIL\texample.com/filestore\t0.111s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.253
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

@@ -1,0 +1,15 @@
+[
+  {
+    "semantic_id": "environment-leak",
+    "clean": 0,
+    "compiled": 0,
+    "result": 1,
+    "meaningful_assertions": [
+      "config_test.go:98: INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid/api\", present:true}; want showcfg_test.envValue{value:\"\", present:false}",
+      "config_test.go:99: INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:false}",
+      "config_test.go:99: INDEXER_MODE = showcfg_test.envValue{value:\"\", present:true}; want showcfg_test.envValue{value:\"\", present:false}"
+    ],
+    "classification": "test-fixture/helper sabotage",
+    "no_overall_timeout_or_compile_credit": true
+  }
+]

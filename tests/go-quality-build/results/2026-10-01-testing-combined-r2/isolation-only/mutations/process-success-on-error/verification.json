@@ -1,0 +1,86 @@
+{
+  "semantic_id": "process-success-on-error",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "c14cc55165883e68fb288c5977ae9bafe42b713ee5938391db8969223a511f24",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-bw5hvu50/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.369s\nok  \texample.com/indexer/cmd/indexer\t2.052s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 2.331
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r2/isolation-only/mutations/process-success-on-error/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-bw5hvu50/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-bw5hvu50/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.159s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.276s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.523
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-bw5hvu50/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.332s\n--- FAIL: TestCommandPutAndApplyProcesses (0.22s)\n    --- FAIL: TestCommandPutAndApplyProcesses/put_filesystem_failure (0.22s)\n        main_test.go:139: process code=0 stdout=\"\" stderr=\"mkdir /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCommandPutAndApplyProcessesput_filesystem_failure1031940266/001/file: not a directory\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandPutAndApplyProcesses/apply_accepted_prefix (0.22s)\n        main_test.go:120: process code=0 stdout=\"\" stderr=\"CSV row 2: invalid record\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandPutAndApplyProcesses/apply_parse_failure (0.22s)\n        main_test.go:129: process code=0 stdout=\"\" stderr=\"CSV row 2: parse error on line 2, column 11: extraneous or missing \\\" in quoted-field\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandPutAndApplyProcesses/legacy_put_dash_arguments (0.23s)\n        main_test.go:107: process code=0 stdout=\"\" stderr=\"invalid record\\n\"; want code=2, no stdout and matching diagnostic convention\n--- FAIL: TestCommandInvalidStartupProcesses (0.20s)\n    --- FAIL: TestCommandInvalidStartupProcesses/watch_extra_argument (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP(S)_URL --file PATH --interval POSITIVE_DURATION\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/watch_negative (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP(S)_URL --file PATH --interval POSITIVE_DURATION\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/unknown_command (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"unknown command \\\"unknown\\\"\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/watch_bad_url (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP(S)_URL --file PATH --interval POSITIVE_DURATION\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/watch_empty_path (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP(S)_URL --file PATH --interval POSITIVE_DURATION\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/watch_relative_url (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP(S)_URL --file PATH --interval POSITIVE_DURATION\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/missing_command (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/apply_unknown_flag (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"apply: flag provided but not defined: -unknown\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/watch_ftp (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP(S)_URL --file PATH --interval POSITIVE_DURATION\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/watch_no_host (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP(S)_URL --file PATH --interval POSITIVE_DURATION\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/watch_missing_options (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP(S)_URL --file PATH --interval POSITIVE_DURATION\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/watch_empty_hostname (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP(S)_URL --file PATH --interval POSITIVE_DURATION\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/apply_missing_dir (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"usage: indexer apply --dir DIR\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/apply_empty_dir (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"usage: indexer apply --dir DIR\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/watch_bad_duration (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"watch: invalid value \\\"soon\\\" for flag -interval: parse error\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/put_usage (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/watch_zero (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"usage: indexer watch --url HTTP(S)_URL --file PATH --interval POSITIVE_DURATION\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/watch_unknown_flag (0.18s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"watch: flag provided but not defined: -unknown\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestCommandInvalidStartupProcesses/apply_extra_argument (0.01s)\n        main_test.go:173: process code=0 stdout=\"\" stderr=\"usage: indexer apply --dir DIR\\n\"; want code=2, no stdout and matching diagnostic convention\n--- FAIL: TestWatchFirstRefreshFailureProcesses (0.20s)\n    --- FAIL: TestWatchFirstRefreshFailureProcesses/malformed (0.19s)\n        main_test.go:203: process code=0 stdout=\"\" stderr=\"decode snapshot: unexpected EOF\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestWatchFirstRefreshFailureProcesses/status (0.19s)\n        main_test.go:203: process code=0 stdout=\"\" stderr=\"fetch snapshot: HTTP status 500\\n\"; want code=2, no stdout and matching diagnostic convention\n    --- FAIL: TestWatchFirstRefreshFailureProcesses/validation (0.19s)\n        main_test.go:203: process code=0 stdout=\"\" stderr=\"snapshot record 1: invalid record\\n\"; want code=2, no stdout and matching diagnostic convention\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t1.947s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 2.168
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}
