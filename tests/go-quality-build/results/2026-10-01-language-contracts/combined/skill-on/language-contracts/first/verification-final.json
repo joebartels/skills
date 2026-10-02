@@ -1,0 +1,137 @@
+[
+  {
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=45s",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/batchview\t1.300s\nok  \texample.com/batchview/cmd/batchview\t3.064s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=45s",
+      "-run",
+      "^TestContract",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/batchview\t1.194s\nok  \texample.com/batchview/cmd/batchview\t1.328s [no tests to run]\n",
+    "stderr": "",
+    "probe_sha256": "3e366279938845567214bd2b553f4de7db0d51c15e4bdfbe8990139223252cbc"
+  },
+  {
+    "command": [
+      "go",
+      "build",
+      "./cmd/batchview"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "batchview",
+      "-input",
+      "out",
+      "a"
+    ],
+    "exit_code": 0,
+    "observed_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "output": [
+      {
+        "key": "a",
+        "tags": {
+          "data": "b25l"
+        }
+      }
+    ]
+  },
+  {
+    "command": [
+      "batchview",
+      "-input",
+      "all"
+    ],
+    "exit_code": 0,
+    "observed_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "output": [
+      {
+        "key": "a",
+        "tags": {
+          "data": "b25l"
+        }
+      },
+      {
+        "key": "b",
+        "tags": {
+          "data": "dHdv"
+        }
+      }
+    ]
+  },
+  {
+    "command": [
+      "batchview",
+      "malformed",
+      "partial"
+    ],
+    "exit_code": 0,
+    "observed_status": 1,
+    "stdout": "",
+    "stderr": "malformed item\n",
+    "output": [
+      {
+        "key": "a",
+        "tags": {
+          "data": "b25l"
+        }
+      }
+    ]
+  },
+  {
+    "command": [
+      "batchview",
+      "-input",
+      "absent/out"
+    ],
+    "exit_code": 0,
+    "observed_status": 1,
+    "stdout": "",
+    "stderr": "open absent/out: no such file or directory\n",
+    "output": null
+  },
+  {
+    "command": [
+      "batchview"
+    ],
+    "exit_code": 0,
+    "observed_status": 2,
+    "stdout": "",
+    "stderr": "usage: batchview INPUT OUTPUT [PREFIX]\n",
+    "output": null
+  }
+]

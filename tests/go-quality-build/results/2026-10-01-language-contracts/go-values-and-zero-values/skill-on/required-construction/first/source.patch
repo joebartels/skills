@@ -1,0 +1,81 @@
+diff --git a/README.md b/README.md
+index 163e088994b4a8f57de2570dd0f5f3f4c0f3f291..d754550348e53967bf294d26aa7a282826b90f5c 100644
+--- a/README.md
++++ b/README.md
+@@ -1,8 +1,8 @@
+ # signedcounter
+ Go 1.22 package. Counter requires a validated secret key via New; its zero value
+ is intentionally unsupported. A constructed counter owns its key and may be
+-shared by goroutines. The internal mutex must not be copied after first use.
+-Add Count() uint64 for concurrent-safe observation of the number of Sign calls.
++shared by goroutines. Count returns the number of Sign calls and is safe to call
++concurrently with Sign. The internal mutex must not be copied after first use.
+ Keep the constructor precondition and existing Sign signatures/behavior. Do not
+-make callers normalize keys or start using a zero Counter. Add tests and short
+-accurate docs. There is no requirement for a clone or alternate constructor.
++make callers normalize keys or start using a zero Counter. There is no
++requirement for a clone or alternate constructor.
+diff --git a/counter.go b/counter.go
+index 4fb3daa00d41e7366140193136f352d0fbe2e35e..2455569871c324fe32c111c268854937786883d5 100644
+--- a/counter.go
++++ b/counter.go
+@@ -30,3 +30,11 @@ func (c *Counter) Sign(data []byte) []byte {
+ 	m.Write(data)
+ 	return m.Sum(nil)
+ }
++
++// Count returns the number of Sign calls made on c.
++// It is safe to call concurrently with Sign and other Count calls.
++func (c *Counter) Count() uint64 {
++	c.mu.Lock()
++	defer c.mu.Unlock()
++	return c.count
++}
+diff --git a/counter_test.go b/counter_test.go
+index 4cbf261677209547a2cace18d11eccc2fe919a26..d196ca6ea18176b1d5bb0db8324beb7a0f8ba315 100644
+--- a/counter_test.go
++++ b/counter_test.go
+@@ -1,6 +1,9 @@
+ package signedcounter
+ 
+-import "testing"
++import (
++	"sync"
++	"testing"
++)
+ 
+ func TestNew(t *testing.T) {
+ 	if _, err := New(nil); err == nil {
+@@ -13,4 +16,32 @@ func TestNew(t *testing.T) {
+ 	if len(c.Sign(nil)) != 32 {
+ 		t.Fatal("invalid signature")
+ 	}
++	if got := c.Count(); got != 1 {
++		t.Fatalf("Count() = %d, want 1", got)
++	}
++}
++
++func TestCountConcurrentWithSign(t *testing.T) {
++	c, err := New([]byte("sixteen-byte-key!"))
++	if err != nil {
++		t.Fatal(err)
++	}
++
++	const calls = 100
++	var wg sync.WaitGroup
++	wg.Add(calls * 2)
++	for range calls {
++		go func() {
++			defer wg.Done()
++			c.Sign(nil)
++		}()
++		go func() {
++			defer wg.Done()
++			_ = c.Count()
++		}()
++	}
++	wg.Wait()
++	if got := c.Count(); got != calls {
++		t.Fatalf("Count() = %d, want %d", got, calls)
++	}
+ }

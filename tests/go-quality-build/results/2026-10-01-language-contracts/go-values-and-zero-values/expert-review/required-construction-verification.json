@@ -1,0 +1,43 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=45s",
+      "-v",
+      "./..."
+    ],
+    "status": 0,
+    "stdout": "=== RUN   TestCount\n--- PASS: TestCount (0.00s)\n=== RUN   TestCountConcurrent\n--- PASS: TestCountConcurrent (0.00s)\n=== RUN   TestNew\n--- PASS: TestNew (0.00s)\n=== RUN   TestContractCount\n--- PASS: TestContractCount (0.00s)\n=== RUN   TestReviewerKeyOwnershipAndConstructorBoundary\n--- PASS: TestReviewerKeyOwnershipAndConstructorBoundary (0.00s)\n=== RUN   TestReviewerCountMonotonicUnderConcurrentSigning\n--- PASS: TestReviewerCountMonotonicUnderConcurrentSigning (0.01s)\nPASS\nok  \texample.com/signedcounter\t1.473s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "counter_test.go",
+      "counter.go"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

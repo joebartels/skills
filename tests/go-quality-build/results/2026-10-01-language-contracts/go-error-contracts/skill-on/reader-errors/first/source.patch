@@ -1,0 +1,203 @@
+diff --git a/README.md b/README.md
+index 2aa92708d84fc79ef19262345f33f91b64fae3d8..f644948c622ede17b97022274ce26d0606d12192 100644
+--- a/README.md
++++ b/README.md
+@@ -1,8 +1,16 @@
+ # recordload
+-Go 1.22 library. Load reads key=value records in order. Blank lines are ignored.
+-The current task adds comment lines beginning with # and reports malformed records
+-using an exported *LineError with Line (one-based physical line) and Text fields.
+-Load returns the valid prefix on malformed input or read failure. The caller's
+-reader errors remain inspectable. Process bytes returned alongside a read error;
+-EOF is normal completion. Successful errors are nil interfaces. No line-size cap
+-is promised. Empty keys and values are accepted. Readers are borrowed.
++
++`recordload` is a Go 1.22 library. `Load` reads `key=value` records in input
++order. Empty lines and lines whose first character is `#` are ignored. Keys and
++values may be empty; the first `=` separates them. Lines are counted by physical
++line, starting at one.
++
++Malformed records return the valid prefix and an exported `*LineError`. Its
++`Line` field is the one-based physical line number and its `Text` field contains
++the malformed line. Callers can use `errors.As` to inspect it. Read failures
++also return the records parsed from all bytes supplied by the reader and preserve
++the reader's error for `errors.Is` and `errors.As`. If malformed input and a
++read failure occur together, both errors remain inspectable. EOF completes the
++load normally, and successful calls return a nil error.
++
++The reader is borrowed and is not closed. No line-size cap is promised.
+diff --git a/api_test.go b/api_test.go
+new file mode 100644
+index 0000000000000000000000000000000000000000..d2436115445e043dfab888a1ed9442c77e8bc734
+--- /dev/null
++++ b/api_test.go
+@@ -0,0 +1,23 @@
++package recordload_test
++
++import (
++	"errors"
++	"strings"
++	"testing"
++
++	"example.com/recordload"
++)
++
++func TestExportedLineErrorContract(t *testing.T) {
++	got, err := recordload.Load(strings.NewReader("ok=value\nmalformed\n"))
++	var lineErr *recordload.LineError
++	if !errors.As(err, &lineErr) {
++		t.Fatalf("Load() error = %v, want *recordload.LineError", err)
++	}
++	if lineErr.Line != 2 || lineErr.Text != "malformed" {
++		t.Fatalf("LineError = %#v", lineErr)
++	}
++	if len(got) != 1 || got[0] != (recordload.Record{Key: "ok", Value: "value"}) {
++		t.Fatalf("Load() prefix = %#v", got)
++	}
++}
+diff --git a/load.go b/load.go
+index 160eef8d4c78f71d4497ebc98bb3bd37ea34cc82..869c76f896e060f440269a534ac26fad861b7704 100644
+--- a/load.go
++++ b/load.go
+@@ -1,6 +1,7 @@
+ package recordload
+ 
+ import (
++	"errors"
+ 	"fmt"
+ 	"io"
+ 	"strings"
+@@ -8,21 +9,37 @@ import (
+ 
+ type Record struct{ Key, Value string }
+ 
++// LineError reports a malformed record on a physical input line.
++type LineError struct {
++	Line int
++	Text string
++}
++
++func (e *LineError) Error() string {
++	return fmt.Sprintf("line %d: malformed record %q", e.Line, e.Text)
++}
++
++// Load reads key=value records in order. Blank lines and lines beginning with
++// # are ignored. It returns the valid prefix if the input contains a malformed
++// record or the reader fails. A reader error remains inspectable with
++// errors.Is/errors.As; if malformed input and a reader error occur together,
++// both errors are returned.
+ func Load(r io.Reader) ([]Record, error) {
+ 	data, err := io.ReadAll(r)
+-	if err != nil {
+-		return nil, err
+-	}
+ 	var records []Record
+ 	for n, text := range strings.Split(string(data), "\n") {
+-		if text == "" {
++		if text == "" || strings.HasPrefix(text, "#") {
+ 			continue
+ 		}
+ 		key, value, ok := strings.Cut(text, "=")
+ 		if !ok {
+-			return records, fmt.Errorf("line %d: malformed record", n+1)
++			lineErr := &LineError{Line: n + 1, Text: text}
++			if err != nil {
++				return records, errors.Join(lineErr, err)
++			}
++			return records, lineErr
+ 		}
+ 		records = append(records, Record{Key: key, Value: value})
+ 	}
+-	return records, nil
++	return records, err
+ }
+diff --git a/load_test.go b/load_test.go
+index e378a0b616ae2bca00ba850d450e2fef7bda2d20..e7ff4749137b00725a64b2af32767169c6adaf36 100644
+--- a/load_test.go
++++ b/load_test.go
+@@ -1,6 +1,8 @@
+ package recordload
+ 
+ import (
++	"errors"
++	"io"
+ 	"strings"
+ 	"testing"
+ )
+@@ -11,3 +13,76 @@ func TestLoad(t *testing.T) {
+ 		t.Fatalf("%v %v", got, err)
+ 	}
+ }
++
++func TestLoadCommentsAndBlankLines(t *testing.T) {
++	got, err := Load(strings.NewReader("# heading\n\na=1\n# between\nb=2\n"))
++	if err != nil || len(got) != 2 || got[0] != (Record{Key: "a", Value: "1"}) || got[1] != (Record{Key: "b", Value: "2"}) {
++		t.Fatalf("Load() = %#v, %v", got, err)
++	}
++}
++
++func TestLoadMalformedLineReturnsValidPrefix(t *testing.T) {
++	got, err := Load(strings.NewReader("# heading\na=1\n\nbroken\nc=3\n"))
++	var lineErr *LineError
++	if !errors.As(err, &lineErr) {
++		t.Fatalf("Load() error = %v, want *LineError", err)
++	}
++	if lineErr.Line != 4 || lineErr.Text != "broken" {
++		t.Fatalf("LineError = %#v, want line 4 and text %q", lineErr, "broken")
++	}
++	if len(got) != 1 || got[0] != (Record{Key: "a", Value: "1"}) {
++		t.Fatalf("Load() prefix = %#v, want one valid record", got)
++	}
++}
++
++type dataAndErrorReader struct {
++	data []byte
++	err  error
++}
++
++func (r dataAndErrorReader) Read(p []byte) (int, error) {
++	return copy(p, r.data), r.err
++}
++
++func TestLoadProcessesBytesReturnedWithReadError(t *testing.T) {
++	readErr := errors.New("source failed")
++	got, err := Load(dataAndErrorReader{data: []byte("a=1\nb=2\n"), err: readErr})
++	if !errors.Is(err, readErr) {
++		t.Fatalf("Load() error = %v, want wrapped source error", err)
++	}
++	if len(got) != 2 || got[1] != (Record{Key: "b", Value: "2"}) {
++		t.Fatalf("Load() records = %#v, want both records from returned bytes", got)
++	}
++}
++
++func TestLoadPreservesMalformedAndReadErrors(t *testing.T) {
++	readErr := errors.New("source failed")
++	got, err := Load(dataAndErrorReader{data: []byte("a=1\nbroken\nc=3\n"), err: readErr})
++	var lineErr *LineError
++	if !errors.Is(err, readErr) || !errors.As(err, &lineErr) {
++		t.Fatalf("Load() error = %v, want source error and *LineError", err)
++	}
++	if lineErr.Line != 2 || len(got) != 1 {
++		t.Fatalf("Load() = %#v, %#v, want line 2 and one-record prefix", got, lineErr)
++	}
++}
++
++func TestLoadReadFailureReturnsValidPrefix(t *testing.T) {
++	readErr := errors.New("source failed")
++	got, err := Load(readerThenError{reader: strings.NewReader("a=1\n"), err: readErr})
++	if !errors.Is(err, readErr) || len(got) != 1 {
++		t.Fatalf("Load() = %#v, %v, want one record and source error", got, err)
++	}
++}
++
++type readerThenError struct {
++	reader io.Reader
++	err    error
++}
++
++func (r readerThenError) Read(p []byte) (int, error) {
++	if stringsReader, ok := r.reader.(*strings.Reader); ok && stringsReader.Len() > 0 {
++		return stringsReader.Read(p)
++	}
++	return 0, r.err
++}

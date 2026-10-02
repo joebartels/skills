@@ -1,0 +1,94 @@
+diff --git a/README.md b/README.md
+index 0c32ad914be21ebca751afd8b4e20a65af3b514a..39db256f9b934c773e6fde739e4820771fb7a206 100644
+--- a/README.md
++++ b/README.md
+@@ -6,4 +6,5 @@ It writes only selected rows in input order and returns the selected row count o
+ success. On failure, the count is the number of selected rows submitted to the CSV
+ encoder before the observed failure; buffered encoding is not durable per-row
+ acknowledgment. A nil keep selects everything. Do not close the borrowed writer.
+-Keep WriteRows behavior and signature. No automatic retries or new dependency.
++Underlying writer errors remain inspectable. Keep WriteRows behavior and
++signature. No automatic retries or new dependency.
+diff --git a/csv.go b/csv.go
+index efd806560842fc0b3f816d9562d7912647d4b644..73be1dedcb30253c55efcfe643711f1435f6d829 100644
+--- a/csv.go
++++ b/csv.go
+@@ -6,3 +6,27 @@ import (
+ )
+ 
+ func WriteRows(w io.Writer, rows [][]string) error { return csv.NewWriter(w).WriteAll(rows) }
++
++// WriteSelected writes each row for which keep returns true, preserving input
++// order. A nil keep function selects every row. It returns the number of
++// selected rows submitted to the CSV encoder before an observed failure.
++// Because CSV output is buffered, this count does not acknowledge durable
++// output per row. WriteSelected does not close w.
++func WriteSelected(w io.Writer, rows [][]string, keep func([]string) bool) (int, error) {
++	writer := csv.NewWriter(w)
++	count := 0
++	for _, row := range rows {
++		if keep != nil && !keep(row) {
++			continue
++		}
++		count++
++		if err := writer.Write(row); err != nil {
++			return count, err
++		}
++	}
++	writer.Flush()
++	if err := writer.Error(); err != nil {
++		return count, err
++	}
++	return count, nil
++}
+diff --git a/csv_test.go b/csv_test.go
+index 588410cc60fb97988a7d63b180d13f0398f542c8..94ddc41460085cad4b51e50c500bd26dcc807e74 100644
+--- a/csv_test.go
++++ b/csv_test.go
+@@ -2,12 +2,46 @@ package csvselect
+ 
+ import (
+ 	"bytes"
++	"errors"
++	"io"
++	"strings"
+ 	"testing"
+ )
+ 
++var _ func(io.Writer, [][]string, func([]string) bool) (int, error) = WriteSelected
++
+ func TestWriteRows(t *testing.T) {
+ 	var w bytes.Buffer
+ 	if err := WriteRows(&w, [][]string{{"a", "b"}}); err != nil || w.String() != "a,b\n" {
+ 		t.Fatalf("%q %v", w.String(), err)
+ 	}
+ }
++
++func TestWriteSelected(t *testing.T) {
++	rows := [][]string{{"a", "1"}, {"b", "2"}, {"c", "3"}}
++	var w bytes.Buffer
++	count, err := WriteSelected(&w, rows, func(row []string) bool { return row[0] != "b" })
++	if err != nil || count != 2 || w.String() != "a,1\nc,3\n" {
++		t.Fatalf("count=%d output=%q err=%v", count, w.String(), err)
++	}
++}
++
++func TestWriteSelectedNilPredicateSelectsAll(t *testing.T) {
++	var w bytes.Buffer
++	count, err := WriteSelected(&w, [][]string{{"a"}, {"b"}}, nil)
++	if err != nil || count != 2 || w.String() != "a\nb\n" {
++		t.Fatalf("count=%d output=%q err=%v", count, w.String(), err)
++	}
++}
++
++type failWriter struct{ err error }
++
++func (w failWriter) Write([]byte) (int, error) { return 0, w.err }
++
++func TestWriteSelectedReturnsCountAndUnderlyingErrorOnFlushFailure(t *testing.T) {
++	wantErr := errors.New("write failed")
++	count, err := WriteSelected(failWriter{err: wantErr}, [][]string{{strings.Repeat("x", 5000)}, {"later"}}, nil)
++	if count != 1 || !errors.Is(err, wantErr) {
++		t.Fatalf("count=%d err=%v", count, err)
++	}
++}

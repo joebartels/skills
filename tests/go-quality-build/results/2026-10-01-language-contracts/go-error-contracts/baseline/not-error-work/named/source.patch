@@ -1,0 +1,35 @@
+diff --git a/pages.go b/pages.go
+index ca34bfffc56e9c72818486cabcc5482ecc473377..7d7f81438b84f6b1cfb4c45c61aa37115c496ef2 100644
+--- a/pages.go
++++ b/pages.go
+@@ -1,3 +1,9 @@
+ package paging
+ 
+-func pages(items, size int) int { return items/size + 1 }
++func pages(items, size int) int {
++	count := items / size
++	if items%size != 0 {
++		count++
++	}
++	return count
++}
+diff --git a/pages_test.go b/pages_test.go
+index 41fd0962a88958b99662aa78e71f8196d30090bd..3e9d206c22b552cc57de4b9e85910fb6aad9194c 100644
+--- a/pages_test.go
++++ b/pages_test.go
+@@ -7,3 +7,15 @@ func TestPartial(t *testing.T) {
+ 		t.Fatal("partial page")
+ 	}
+ }
++
++func TestExactMultiple(t *testing.T) {
++	if pages(4, 2) != 2 {
++		t.Fatal("exact multiple overcounted")
++	}
++}
++
++func TestZeroItems(t *testing.T) {
++	if pages(0, 2) != 0 {
++		t.Fatal("zero items should need no pages")
++	}
++}

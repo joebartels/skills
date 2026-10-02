@@ -1,0 +1,42 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "status": 0,
+    "stdout": "=== RUN   TestContractDomainExposure\n--- PASS: TestContractDomainExposure (0.00s)\n=== RUN   TestContractDirectSentinelAndValidation\n--- PASS: TestContractDirectSentinelAndValidation (0.00s)\n=== RUN   TestMissing\n--- PASS: TestMissing (0.00s)\n=== RUN   TestBlankKeyRejectedBeforeBackend\n--- PASS: TestBlankKeyRejectedBeforeBackend (0.00s)\n=== RUN   TestUnavailableIncludesSafeLookupContext\n--- PASS: TestUnavailableIncludesSafeLookupContext (0.00s)\n=== RUN   TestReviewerWrappedMissingAndSuccess\n--- PASS: TestReviewerWrappedMissingAndSuccess (0.00s)\nPASS\nok  \texample.com/accountlookup\t1.562s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "lookup_test.go",
+      "lookup.go"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,121 @@
+diff --git a/graph.go b/graph.go
+index 4dbc80098fda1eb492f2ea9a0ac8c09552bffcdf..d1964c0d3b45f24d0d85fe04539afc281f084ddb 100644
+--- a/graph.go
++++ b/graph.go
+@@ -7,8 +7,47 @@ type Node struct {
+ }
+ type Graph struct{ Root *Node }
+ 
+-// RootView returns the original node for caller-owned in-place editing.
++// RootView returns the borrowed original node for caller-owned in-place editing.
+ func (g Graph) RootView() *Node { return g.Root }
++
++// Fork returns an independently editable copy of the graph reachable from g.
++// Shared links and cycles are preserved within the fork. The returned graph
++// owns its nodes, maps, link slices, and byte payloads.
++func (g Graph) Fork() Graph {
++	if g.Root == nil {
++		return Graph{}
++	}
++	return Graph{Root: cloneNode(g.Root, make(map[*Node]*Node))}
++}
++
++func cloneNode(n *Node, clones map[*Node]*Node) *Node {
++	if n == nil {
++		return nil
++	}
++	if clone, ok := clones[n]; ok {
++		return clone
++	}
++	clone := &Node{Name: n.Name}
++	clones[n] = clone
++	if n.Values != nil {
++		clone.Values = make(map[string][]byte, len(n.Values))
++		for key, value := range n.Values {
++			if value != nil {
++				clone.Values[key] = append([]byte{}, value...)
++			} else {
++				clone.Values[key] = nil
++			}
++		}
++	}
++	if n.Links != nil {
++		clone.Links = make([]*Node, len(n.Links))
++		for i, link := range n.Links {
++			clone.Links[i] = cloneNode(link, clones)
++		}
++	}
++	return clone
++}
++
+ func (g Graph) Name() string {
+ 	if g.Root == nil {
+ 		return ""
+diff --git a/graph_test.go b/graph_test.go
+index 35dc9d6f28fd77c110a9f9859c64dd212196cb45..739dc6373d4d6499e7850812a3a010063289a060 100644
+--- a/graph_test.go
++++ b/graph_test.go
+@@ -11,3 +11,63 @@ func TestView(t *testing.T) {
+ 	}
+ 	var _ interface{ Name() string } = Graph{}
+ }
++
++func TestForkPreservesLayoutAndOwnsMutableData(t *testing.T) {
++	shared := &Node{Name: "shared", Values: map[string][]byte{"payload": {1, 2}}}
++	root := &Node{
++		Name:   "root",
++		Values: map[string][]byte{"empty": {}, "nil": nil},
++		Links:  []*Node{shared, shared, nil},
++	}
++	shared.Links = []*Node{root}
++
++	original := Graph{Root: root}
++	fork := original.Fork()
++	if fork.Root == root || fork.Root.Links[0] != fork.Root.Links[1] {
++		t.Fatal("fork did not preserve independent node identity and sharing")
++	}
++	if fork.Root.Links[0].Links[0] != fork.Root || fork.Root.Links[2] != nil {
++		t.Fatal("fork did not preserve cycle or nil link")
++	}
++	if fork.Root.Values["empty"] == nil || fork.Root.Values["nil"] != nil {
++		t.Fatal("fork changed nil versus non-nil empty map values")
++	}
++
++	fork.Root.Name = "draft"
++	fork.Root.Values["new"] = []byte{3}
++	fork.Root.Values["empty"] = append(fork.Root.Values["empty"], 4)
++	fork.Root.Links[0].Values["payload"][0] = 9
++	fork.Root.Links[0].Name = "draft shared"
++	if root.Name != "root" || root.Values["new"] != nil || len(root.Values["empty"]) != 0 || shared.Values["payload"][0] != 1 || shared.Name != "shared" {
++		t.Fatal("editing the fork changed the original graph")
++	}
++
++	root.Name = "source edit"
++	root.Values["payload"] = []byte{5}
++	shared.Links = nil
++	if fork.Root.Name != "draft" || fork.Root.Links[0].Values["payload"][0] != 9 || fork.Root.Links[0].Links[0] != fork.Root {
++		t.Fatal("editing the original graph changed the fork")
++	}
++}
++
++func TestForkNilAndEmptyCollections(t *testing.T) {
++	var zero Graph
++	if got := zero.Fork(); got.Root != nil {
++		t.Fatal("fork of zero graph has a root")
++	}
++	nilCollections := (Graph{Root: &Node{}}).Fork().Root
++	if nilCollections == nil || nilCollections.Values != nil || nilCollections.Links != nil {
++		t.Fatal("fork changed nil collections")
++	}
++
++	original := Graph{Root: &Node{Values: map[string][]byte{}, Links: []*Node{}}}
++	fork := original.Fork()
++	if fork.Root == original.Root || fork.Root.Values == nil || fork.Root.Links == nil {
++		t.Fatal("fork did not preserve independently owned empty collections")
++	}
++	fork.Root.Values["x"] = []byte{1}
++	fork.Root.Links = append(fork.Root.Links, &Node{})
++	if len(original.Root.Values) != 0 || len(original.Root.Links) != 0 {
++		t.Fatal("editing fork collections changed the original")
++	}
++}

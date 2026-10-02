@@ -1,0 +1,82 @@
+[
+  {
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/lineexport\t1.188s\nok  \texample.com/lineexport/cmd/lineexport\t2.713s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestContract",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/lineexport\t1.331s\nok  \texample.com/lineexport/cmd/lineexport\t1.312s [no tests to run]\n",
+    "stderr": "",
+    "probe_sha256": "eab967b506f4ff4ada1f4bc4295ca4c728ead9bb78f482bfbd8801cb90350477"
+  },
+  {
+    "command": [
+      "go",
+      "build",
+      "./cmd/lineexport"
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "lineexport",
+      "-input",
+      "out",
+      "2"
+    ],
+    "exit_code": 0,
+    "observed_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "output": "a\nb\n"
+  },
+  {
+    "command": [
+      "lineexport",
+      "missing",
+      "bad"
+    ],
+    "exit_code": 0,
+    "observed_status": 1,
+    "stdout": "",
+    "stderr": "open missing: no such file or directory\n",
+    "output": null
+  },
+  {
+    "command": [
+      "lineexport"
+    ],
+    "exit_code": 0,
+    "observed_status": 2,
+    "stdout": "",
+    "stderr": "usage: lineexport INPUT OUTPUT [LIMIT]\n",
+    "output": null
+  }
+]

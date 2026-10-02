@@ -1,0 +1,21 @@
+package editgraph
+import "testing"
+func TestContractFork(t *testing.T) {
+ var _ interface{Name() string}=Graph{}.Fork()
+ leaf:=&Node{Name:"leaf",Values:map[string][]byte{"v":[]byte("one")},Links:[]*Node{}}
+ root:=&Node{Name:"root",Values:map[string][]byte{},Links:[]*Node{leaf,leaf,nil}}
+ g:=Graph{Root:root};f:=g.Fork()
+ if f.Root==root || f.Root.Links[0]==leaf || f.Root.Links[0]!=f.Root.Links[1] || f.Root.Links[2]!=nil {t.Fatal("ownership or shared-target identity")}
+ fl:=f.Root.Links[0]; fl.Values["v"][0]='X'; fl.Name="edited";fl.Links=append(fl.Links,f.Root)
+ if string(leaf.Values["v"])!="one" || leaf.Name!="leaf" || len(leaf.Links)!=0 {t.Fatal("fork changed original")}
+ leaf.Values["v"][1]='Y';root.Links[0]=nil
+ if string(fl.Values["v"])!="Xne" || f.Root.Links[0]!=fl {t.Fatal("original changed fork")}
+ if f.Root.Values==nil || fl.Links==nil {t.Fatal("empty became nil")}
+ f.RootView().Name="borrowed";if f.Name()!="borrowed" {t.Fatal("RootView unexpectedly copied")}
+ if (Graph{}).Fork().Root!=nil {t.Fatal("zero graph changed")}
+}
+func TestContractCycles(t *testing.T) {
+ n:=&Node{Name:"cycle"};n.Links=[]*Node{n}
+ f:= (Graph{Root:n}).Fork()
+ if f.Root==n || f.Root.Links[0]!=f.Root || f.Root.Values!=nil {t.Fatal("cycle/nilness layout lost")}
+}

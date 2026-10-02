@@ -1,0 +1,509 @@
+diff --git a/README.md b/README.md
+index c1d9469e7284a576f2803e20d95c6922cdcc1f3a..6046d31a69055a749e1685383937d21bcbb5182c 100644
+--- a/README.md
++++ b/README.md
+@@ -12,3 +12,30 @@ CLI: lineexport INPUT OUTPUT [LIMIT]. Success is exit 0 without stdout; failure
+ exit 1 with stderr and no success message. Invalid usage exits 2. Accepted prefix
+ may already exist on failure; no atomic-publication promise. Paths are positional,
+ including names beginning with -. No external dependency is needed.
++
++## Usage
++
++```sh
++lineexport input.txt output.txt       # all records
++lineexport input.txt output.txt 0     # all records
++lineexport input.txt output.txt 10    # at most ten records
++lineexport -input.txt -output.txt 2   # paths beginning with '-' are positional
++```
++
++LIMIT is an optional nonnegative integer. A malformed, negative, or overflowing
++limit is invalid usage (exit 2), checked before opening or truncating files.
++Successful exports produce no stdout or stderr. Read, write, open, and writer
++finalization failures exit 1 and print the error to stderr. Output is created or
++truncated on a valid invocation; a failure can leave a partially accepted prefix.
++
++Library callers can use `Export(r, w)` for unlimited output or
++`ExportLimit(r, w, limit)` for a prefix. Both return the number of fully written
++records and close the owned writer exactly once, even when the limit is invalid.
++They leave the borrowed reader open. Empty lines and a final record without a
++newline count; output records end in a newline. Existing Scanner behavior is
++preserved, including CRLF normalization and the default token size limit.
++
++A single read, write, or Close failure is returned as the original error, so
++direct equality continues to work. When copying and Close independently fail,
++use `errors.Is` or `errors.As` to inspect either cause. A short write with no error
++is reported as `io.ErrShortWrite` and does not count as a fully accepted record.
+diff --git a/cmd/lineexport/main.go b/cmd/lineexport/main.go
+index ac00e4bb8e2b52a02686c8174d4c08f9e3b0a6ea..f9a59d44fa246da6a86bbeb4b1c49acb6f13e58c 100644
+--- a/cmd/lineexport/main.go
++++ b/cmd/lineexport/main.go
+@@ -1,30 +1,48 @@
+ package main
+ 
+ import (
+-	"example.com/lineexport"
+ 	"fmt"
+ 	"os"
++	"strconv"
++
++	"example.com/lineexport"
+ )
+ 
+ func main() {
+-	if len(os.Args) != 3 {
+-		fmt.Fprintln(os.Stderr, "usage: lineexport INPUT OUTPUT")
+-		os.Exit(2)
++	os.Exit(run(os.Args[1:]))
++}
++
++func run(args []string) int {
++	if len(args) != 2 && len(args) != 3 {
++		fmt.Fprintln(os.Stderr, "usage: lineexport INPUT OUTPUT [LIMIT]")
++		return 2
++	}
++	limit := 0
++	if len(args) == 3 {
++		var err error
++		limit, err = strconv.Atoi(args[2])
++		if err != nil || limit < 0 {
++			fmt.Fprintln(os.Stderr, "LIMIT must be a nonnegative integer")
++			fmt.Fprintln(os.Stderr, "usage: lineexport INPUT OUTPUT [LIMIT]")
++			return 2
++		}
+ 	}
+-	r, err := os.Open(os.Args[1])
++
++	r, err := os.Open(args[0])
+ 	if err != nil {
+ 		fmt.Fprintln(os.Stderr, err)
+-		os.Exit(1)
++		return 1
+ 	}
+ 	defer r.Close()
+-	w, err := os.Create(os.Args[2])
++	w, err := os.Create(args[1])
+ 	if err != nil {
+ 		fmt.Fprintln(os.Stderr, err)
+-		os.Exit(1)
++		return 1
+ 	}
+-	_, err = lineexport.Export(r, w)
++	_, err = lineexport.ExportLimit(r, w, limit)
+ 	if err != nil {
+ 		fmt.Fprintln(os.Stderr, err)
+-		os.Exit(1)
++		return 1
+ 	}
++	return 0
+ }
+diff --git a/cmd/lineexport/main_test.go b/cmd/lineexport/main_test.go
+new file mode 100644
+index 0000000000000000000000000000000000000000..0899aa14be8f3494793d941f473b3492a3d8ff8c
+--- /dev/null
++++ b/cmd/lineexport/main_test.go
+@@ -0,0 +1,133 @@
++package main_test
++
++import (
++	"bytes"
++	"errors"
++	"fmt"
++	"os"
++	"os/exec"
++	"path/filepath"
++	"strings"
++	"testing"
++)
++
++var binary string
++
++func TestMain(m *testing.M) {
++	dir, err := os.MkdirTemp("", "lineexport-cli-test-")
++	if err != nil {
++		fmt.Fprintln(os.Stderr, err)
++		os.Exit(1)
++	}
++	binary = filepath.Join(dir, "lineexport")
++	cmd := exec.Command("go", "build", "-o", binary, ".")
++	if output, err := cmd.CombinedOutput(); err != nil {
++		fmt.Fprintf(os.Stderr, "build CLI: %v\n%s", err, output)
++		os.RemoveAll(dir)
++		os.Exit(1)
++	}
++	code := m.Run()
++	os.RemoveAll(dir)
++	os.Exit(code)
++}
++
++func invoke(t *testing.T, dir string, wantCode int, args ...string) string {
++	t.Helper()
++	cmd := exec.Command(binary, args...)
++	cmd.Dir = dir
++	var stdout, stderr bytes.Buffer
++	cmd.Stdout, cmd.Stderr = &stdout, &stderr
++	err := cmd.Run()
++	code := 0
++	if err != nil {
++		var exitErr *exec.ExitError
++		if !errors.As(err, &exitErr) {
++			t.Fatalf("run CLI: %v", err)
++		}
++		code = exitErr.ExitCode()
++	}
++	if code != wantCode || stdout.Len() != 0 {
++		t.Fatalf("exit=%d want=%d stdout=%q stderr=%q", code, wantCode, stdout.String(), stderr.String())
++	}
++	if wantCode == 0 && stderr.Len() != 0 || wantCode != 0 && stderr.Len() == 0 {
++		t.Fatalf("unexpected stderr for exit %d: %q", code, stderr.String())
++	}
++	return stderr.String()
++}
++
++func putFile(t *testing.T, dir, name, content string) {
++	t.Helper()
++	if err := os.WriteFile(filepath.Join(dir, name), []byte(content), 0600); err != nil {
++		t.Fatal(err)
++	}
++}
++
++func wantFile(t *testing.T, dir, name, want string) {
++	t.Helper()
++	data, err := os.ReadFile(filepath.Join(dir, name))
++	if err != nil || string(data) != want {
++		t.Fatalf("file=%q content=%q want=%q err=%v", name, data, want, err)
++	}
++}
++
++func TestCLIExport(t *testing.T) {
++	for _, tt := range []struct {
++		name, limit, want string
++	}{
++		{"existing invocation", "", "a\n\nb\n"},
++		{"zero unlimited", "0", "a\n\nb\n"},
++		{"one", "1", "a\n"},
++		{"empty record counts", "2", "a\n\n"},
++		{"past EOF", "9", "a\n\nb\n"},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			dir := t.TempDir()
++			putFile(t, dir, "-input", "a\n\nb")
++			args := []string{"-input", "-output"}
++			if tt.limit != "" {
++				args = append(args, tt.limit)
++			}
++			invoke(t, dir, 0, args...)
++			wantFile(t, dir, "-output", tt.want)
++		})
++	}
++}
++
++func TestCLIUsage(t *testing.T) {
++	for _, args := range [][]string{
++		nil,
++		{"input"},
++		{"input", "output", "1", "extra"},
++		{"input", "output", "-1"},
++		{"input", "output", "abc"},
++		{"input", "output", ""},
++		{"input", "output", "999999999999999999999999999999"},
++	} {
++		t.Run(strings.Join(args, "/"), func(t *testing.T) {
++			dir := t.TempDir()
++			putFile(t, dir, "input", "a\n")
++			putFile(t, dir, "output", "keep me")
++			stderr := invoke(t, dir, 2, args...)
++			if !strings.Contains(stderr, "usage: lineexport INPUT OUTPUT [LIMIT]") {
++				t.Fatalf("missing usage: %q", stderr)
++			}
++			wantFile(t, dir, "output", "keep me")
++		})
++	}
++}
++
++func TestCLIFailures(t *testing.T) {
++	dir := t.TempDir()
++	invoke(t, dir, 1, "missing", "output")
++	if _, err := os.Stat(filepath.Join(dir, "output")); !errors.Is(err, os.ErrNotExist) {
++		t.Fatalf("input open failure created output: %v", err)
++	}
++	putFile(t, dir, "input", "a\n")
++	invoke(t, dir, 1, "input", "missing-dir/output")
++
++	// Preserve the existing Scanner size limit and verify an accepted prefix
++	// remains observable when a subsequent record fails.
++	putFile(t, dir, "input", "accepted\n"+strings.Repeat("x", 100000)+"\n")
++	invoke(t, dir, 1, "input", "output")
++	wantFile(t, dir, "output", "accepted\n")
++}
+diff --git a/contracts_test.go b/contracts_test.go
+new file mode 100644
+index 0000000000000000000000000000000000000000..2ae88fcadfe43b47e068a1efa65fa3d25c4ae721
+--- /dev/null
++++ b/contracts_test.go
+@@ -0,0 +1,203 @@
++package lineexport_test
++
++import (
++	"bytes"
++	"errors"
++	"io"
++	"strings"
++	"testing"
++
++	"example.com/lineexport"
++)
++
++// Exercise the existing exported function type from an external package.
++var exportFunc func(io.Reader, io.WriteCloser) (int, error) = lineexport.Export
++
++type writer struct {
++	bytes.Buffer
++	writeErr error
++	closeErr error
++	closes   int
++	writes   int
++	failAt   int
++	short    bool
++}
++
++func (w *writer) Write(p []byte) (int, error) {
++	w.writes++
++	if w.failAt == w.writes {
++		if w.short {
++			return w.Buffer.Write(p[:len(p)-1])
++		}
++		return 0, w.writeErr
++	}
++	return w.Buffer.Write(p)
++}
++
++// Avoid inheriting bytes.Buffer.WriteString and bypassing Write's failure seam.
++func (w *writer) WriteString(s string) (int, error) { return w.Write([]byte(s)) }
++func (w *writer) Close() error {
++	w.closes++
++	return w.closeErr
++}
++
++type reader struct {
++	lines  []string
++	err    error
++	reads  int
++	closes int
++	w      *writer
++}
++
++func (r *reader) Read(p []byte) (int, error) {
++	if r.w != nil && r.reads != r.w.writes {
++		return 0, errors.New("read next record before writing previous record")
++	}
++	r.reads++
++	if len(r.lines) == 0 {
++		if r.err != nil {
++			return 0, r.err
++		}
++		return 0, io.EOF
++	}
++	line := r.lines[0]
++	n := copy(p, line)
++	if n < len(line) {
++		r.lines[0] = line[n:]
++	} else {
++		r.lines = r.lines[1:]
++	}
++	return n, nil
++}
++
++func (r *reader) Close() error { r.closes++; return nil }
++
++type writeFailure struct{}
++
++func (*writeFailure) Error() string { return "write failed" }
++
++type closeFailure struct{}
++
++func (*closeFailure) Error() string { return "close failed" }
++
++func TestExportLimitRecords(t *testing.T) {
++	tests := []struct {
++		name, input, want string
++		limit, count      int
++	}{
++		{"empty", "", "", 0, 0},
++		{"unlimited", "a\nb\nc", "a\nb\nc\n", 0, 3},
++		{"prefix", "a\nb\nc", "a\n", 1, 1},
++		{"exact", "a\nb", "a\nb\n", 2, 2},
++		{"larger", "a\nb", "a\nb\n", 5, 2},
++		{"empty records", "\na\n\n", "\na\n\n", 0, 3},
++		{"empty prefix", "\na\n", "\n", 1, 1},
++		{"CRLF compatibility", "a\r\nb\r\n", "a\nb\n", 0, 2},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			w := new(writer)
++			n, err := lineexport.ExportLimit(strings.NewReader(tt.input), w, tt.limit)
++			if n != tt.count || err != nil || w.String() != tt.want || w.closes != 1 {
++				t.Fatalf("got count=%d err=%v output=%q closes=%d", n, err, w.String(), w.closes)
++			}
++		})
++	}
++
++	w := new(writer)
++	n, err := exportFunc(strings.NewReader("a\nb"), w)
++	if n != 2 || err != nil || w.String() != "a\nb\n" || w.closes != 1 {
++		t.Fatalf("Export compatibility: count=%d err=%v output=%q closes=%d", n, err, w.String(), w.closes)
++	}
++}
++
++func TestExportLimitOrderingAndBoundary(t *testing.T) {
++	w := new(writer)
++	r := &reader{lines: []string{"a\n", "b\n"}, w: w}
++	n, err := lineexport.ExportLimit(r, w, 2)
++	if n != 2 || err != nil || r.reads != 2 || r.closes != 0 || w.closes != 1 {
++		t.Fatalf("count=%d err=%v reads=%d reader closes=%d writer closes=%d", n, err, r.reads, r.closes, w.closes)
++	}
++
++	w = new(writer)
++	r = &reader{lines: []string{"a\n"}, err: errors.New("must not read past limit")}
++	n, err = lineexport.ExportLimit(r, w, 1)
++	if n != 1 || err != nil || r.reads != 1 || w.closes != 1 {
++		t.Fatalf("limit boundary: count=%d err=%v reads=%d closes=%d", n, err, r.reads, w.closes)
++	}
++}
++
++func TestExportSingleErrorIdentity(t *testing.T) {
++	readErr := errors.New("read failed")
++	writeErr := &writeFailure{}
++	closeErr := &closeFailure{}
++	tests := []struct {
++		name string
++		r    io.Reader
++		w    *writer
++		want error
++		n    int
++	}{
++		{"read", &reader{lines: []string{"a\n"}, err: readErr}, new(writer), readErr, 1},
++		{"write", strings.NewReader("a\nb\n"), &writer{writeErr: writeErr, failAt: 2}, writeErr, 1},
++		{"close", strings.NewReader("a\n"), &writer{closeErr: closeErr}, closeErr, 1},
++		{"close empty", strings.NewReader(""), &writer{closeErr: closeErr}, closeErr, 0},
++		{"short write", strings.NewReader("a\n"), &writer{short: true, failAt: 1}, io.ErrShortWrite, 0},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			n, err := lineexport.Export(tt.r, tt.w)
++			if n != tt.n || err != tt.want || tt.w.closes != 1 {
++				t.Fatalf("count=%d err=%v want identity=%v closes=%d", n, err, tt.want, tt.w.closes)
++			}
++		})
++	}
++}
++
++func TestExportIndependentCauses(t *testing.T) {
++	readErr := errors.New("read failed")
++	writeErr := &writeFailure{}
++	closeErr := &closeFailure{}
++	tests := []struct {
++		name string
++		r    io.Reader
++		w    *writer
++		want error
++	}{
++		{"read and close", &reader{lines: []string{"a\n"}, err: readErr}, &writer{closeErr: closeErr}, readErr},
++		{"write and close", strings.NewReader("a\nb\n"), &writer{writeErr: writeErr, failAt: 2, closeErr: closeErr}, writeErr},
++		{"short and close", strings.NewReader("a\nb\n"), &writer{short: true, failAt: 2, closeErr: closeErr}, io.ErrShortWrite},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			n, err := lineexport.Export(tt.r, tt.w)
++			if n != 1 || !errors.Is(err, tt.want) || !errors.Is(err, closeErr) || tt.w.closes != 1 {
++				t.Fatalf("count=%d err=%v closes=%d", n, err, tt.w.closes)
++			}
++			var gotClose *closeFailure
++			if !errors.As(err, &gotClose) || gotClose != closeErr {
++				t.Fatalf("close type lost: %v", err)
++			}
++			if tt.want == writeErr {
++				var gotWrite *writeFailure
++				if !errors.As(err, &gotWrite) || gotWrite != writeErr {
++					t.Fatalf("write type lost: %v", err)
++				}
++			}
++		})
++	}
++}
++
++func TestExportNegativeLimit(t *testing.T) {
++	for _, closeErr := range []error{nil, &closeFailure{}} {
++		w := &writer{closeErr: closeErr}
++		r := &reader{lines: []string{"a\n"}}
++		n, err := lineexport.ExportLimit(r, w, -1)
++		if n != 0 || err == nil || r.reads != 0 || r.closes != 0 || w.writes != 0 || w.closes != 1 {
++			t.Fatalf("count=%d err=%v reads=%d writes=%d closes=%d", n, err, r.reads, w.writes, w.closes)
++		}
++		if closeErr != nil && (!errors.Is(err, closeErr) || err == closeErr) {
++			t.Fatalf("invalid limit and close should both be visible: %v", err)
++		}
++	}
++}
+diff --git a/export.go b/export.go
+index 253cfc8701067540a8944bda6287062f8fa7af63..13a6ec5b251bb69142c2a60c3110e910b1fc5f71 100644
+--- a/export.go
++++ b/export.go
+@@ -2,18 +2,52 @@ package lineexport
+ 
+ import (
+ 	"bufio"
++	"errors"
++	"fmt"
+ 	"io"
+ )
+ 
++// Export copies all records from r to w and closes w exactly once. The reader
++// remains owned by the caller. The count includes only fully written records.
+ func Export(r io.Reader, w io.WriteCloser) (int, error) {
+-	defer w.Close()
++	return ExportLimit(r, w, 0)
++}
++
++// ExportLimit copies at most limit records from r to w. Zero means unlimited;
++// a negative limit fails before reading or writing. Empty records and a final
++// unterminated record count. Each accepted record is written with a newline.
++//
++// ExportLimit closes w exactly once on every path, including invalid limits.
++// A lone read, write, or close error is returned unchanged. If copying and
++// closing both fail, the returned error exposes both causes through errors.Is
++// and errors.As. The accepted prefix may remain in w after a failure.
++func ExportLimit(r io.Reader, w io.WriteCloser, limit int) (n int, err error) {
++	defer func() {
++		closeErr := w.Close()
++		if err == nil {
++			err = closeErr
++		} else if closeErr != nil {
++			err = errors.Join(err, closeErr)
++		}
++	}()
++	if limit < 0 {
++		return 0, fmt.Errorf("lineexport: limit must be nonnegative (got %d)", limit)
++	}
++
+ 	scanner := bufio.NewScanner(r)
+-	n := 0
+-	for scanner.Scan() {
+-		if _, err := io.WriteString(w, scanner.Text()+"\n"); err != nil {
+-			return n, err
++	for limit == 0 || n < limit {
++		if !scanner.Scan() {
++			return n, scanner.Err()
++		}
++		record := scanner.Text() + "\n"
++		written, writeErr := io.WriteString(w, record)
++		if writeErr != nil {
++			return n, writeErr
++		}
++		if written != len(record) {
++			return n, io.ErrShortWrite
+ 		}
+ 		n++
+ 	}
+-	return n, scanner.Err()
++	return n, nil
+ }

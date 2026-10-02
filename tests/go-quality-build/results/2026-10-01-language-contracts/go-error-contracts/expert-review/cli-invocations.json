@@ -1,0 +1,62 @@
+[
+  {
+    "args": [
+      "-input",
+      "limited",
+      "2"
+    ],
+    "exit_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "output": "a\nb\n"
+  },
+  {
+    "args": [
+      "-input",
+      "unlimited"
+    ],
+    "exit_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "output": "a\nb\nc\n"
+  },
+  {
+    "args": [
+      "missing",
+      "bad"
+    ],
+    "exit_status": 1,
+    "stdout": "",
+    "stderr": "open missing: no such file or directory\n",
+    "output": null
+  },
+  {
+    "args": [],
+    "exit_status": 2,
+    "stdout": "",
+    "stderr": "usage: lineexport INPUT OUTPUT [LIMIT]\n",
+    "output": null
+  },
+  {
+    "args": [
+      "-input",
+      "invalid",
+      "abc"
+    ],
+    "exit_status": 2,
+    "stdout": "",
+    "stderr": "usage: lineexport INPUT OUTPUT [LIMIT]\n",
+    "output": null
+  },
+  {
+    "args": [
+      "-input",
+      "negative",
+      "-1"
+    ],
+    "exit_status": 1,
+    "stdout": "",
+    "stderr": "lineexport: limit must not be negative\n",
+    "output": ""
+  }
+]

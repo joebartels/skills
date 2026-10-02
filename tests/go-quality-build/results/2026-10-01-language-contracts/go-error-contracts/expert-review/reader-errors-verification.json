@@ -1,0 +1,43 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "status": 0,
+    "stdout": "=== RUN   TestContractReaderDataAndFailure\n--- PASS: TestContractReaderDataAndFailure (0.00s)\n=== RUN   TestContractStructuredLineAndSuccess\n--- PASS: TestContractStructuredLineAndSuccess (0.00s)\n=== RUN   TestContractLongLineAndEOF\n--- PASS: TestContractLongLineAndEOF (0.00s)\n=== RUN   TestLoad\n--- PASS: TestLoad (0.00s)\n=== RUN   TestLoadCommentsAndLineError\n--- PASS: TestLoadCommentsAndLineError (0.00s)\n=== RUN   TestLoadPreservesReaderErrorAndPartialResult\n--- PASS: TestLoadPreservesReaderErrorAndPartialResult (0.00s)\n=== RUN   TestLoadEmptyAndEmptyFields\n--- PASS: TestLoadEmptyAndEmptyFields (0.00s)\n=== RUN   TestReviewerFinalBytesEOF\n--- PASS: TestReviewerFinalBytesEOF (0.00s)\n=== RUN   TestReviewerMalformedReadErrorObservation\n    reviewer_test.go:4: prefix=[{a 1}] line_error=line 2: malformed record \"broken\" read_cause_inspectable=false\n--- PASS: TestReviewerMalformedReadErrorObservation (0.00s)\n=== RUN   TestExportedLineErrorContract\n--- PASS: TestExportedLineErrorContract (0.00s)\nPASS\nok  \texample.com/recordload\t1.185s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "api_contract_test.go",
+      "load_test.go",
+      "load.go"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

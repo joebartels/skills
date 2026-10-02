@@ -1,0 +1,43 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=45s",
+      "-v",
+      "./..."
+    ],
+    "status": 0,
+    "stdout": "=== RUN   TestContractDefaults\n--- PASS: TestContractDefaults (0.00s)\n=== RUN   TestDefault\n--- PASS: TestDefault (0.00s)\n=== RUN   TestNewKeepsFunctionType\n--- PASS: TestNewKeepsFunctionType (0.00s)\n=== RUN   TestNewUsesTenItemDefault\n--- PASS: TestNewUsesTenItemDefault (0.00s)\n=== RUN   TestNewWithLimit\n--- PASS: TestNewWithLimit (0.00s)\n=== RUN   TestNewWithLimitZeroIsUnlimited\n--- PASS: TestNewWithLimitZeroIsUnlimited (0.00s)\n=== RUN   TestNewWithLimitRejectsNegative\n--- PASS: TestNewWithLimitRejectsNegative (0.00s)\n=== RUN   TestEmptyAndAbsentItemsKeepRepresentations\n--- PASS: TestEmptyAndAbsentItemsKeepRepresentations (0.00s)\n=== RUN   TestReviewerAllConfigurationRepresentations\n--- PASS: TestReviewerAllConfigurationRepresentations (0.00s)\n=== RUN   TestReviewerBorrowedInputAndIndependentResult\n--- PASS: TestReviewerBorrowedInputAndIndependentResult (0.00s)\nPASS\nok  \texample.com/reportview\t1.321s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "view.go",
+      "view_test.go"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

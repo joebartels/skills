@@ -1,0 +1,57 @@
+package recordload
+
+import (
+    "bufio"
+    "errors"
+    "io"
+    "testing"
+)
+
+type adjudicationCause struct{ message string }
+func (e *adjudicationCause) Error() string { return e.message }
+
+type adjudicationReader struct { data string; err error; calls int }
+func (r *adjudicationReader) Read(p []byte) (int, error) {
+    r.calls++
+    if len(r.data) == 0 { return 0, io.EOF }
+    n := copy(p, r.data)
+    r.data = r.data[n:]
+    if len(r.data) == 0 { return n, r.err }
+    return n, nil
+}
+
+func TestAdjudicationObservations(t *testing.T) {
+    cause := &adjudicationCause{"terminal source failure"}
+    cases := []struct { name, data string; err error }{
+        {"malformed_with_cause", "a=1\nbroken", cause},
+        {"valid_with_cause", "a=1\nb=2", cause},
+        {"malformed_with_EOF", "a=1\nbroken", io.EOF},
+        {"valid_with_EOF", "a=1\nb=2", io.EOF},
+    }
+    for _, tc := range cases { t.Run(tc.name, func(t *testing.T) {
+        reader := &adjudicationReader{data:tc.data, err:tc.err}
+        got, err := Load(reader)
+        var typed *adjudicationCause
+        t.Logf("prefix=%#v errorType=%T error=%q IsCause=%v AsCause=%v IsEOF=%v readCalls=%d", got, err, err, errors.Is(err,cause), errors.As(err,&typed), errors.Is(err,io.EOF), reader.calls)
+    }) }
+}
+
+func TestAdjudicationReaderBoundary(t *testing.T) {
+    cause := &adjudicationCause{"terminal source failure"}
+    reader := &adjudicationReader{data:"a=1\nbroken",err:cause}
+    buffered := bufio.NewReader(reader)
+    first, err := buffered.ReadString('\n')
+    if first != "a=1\n" || err != nil { t.Fatalf("first=%q error=%v",first,err) }
+    last, err := buffered.ReadString('\n')
+    if last != "broken" || err != cause || reader.calls != 1 { t.Fatalf("last=%q error=%v calls=%d",last,err,reader.calls) }
+    t.Log("ReadString exposes malformed terminal bytes and the exact caller cause together, after one underlying Read")
+}
+
+func TestAdjudicationCauseContract(t *testing.T) {
+    cause := &adjudicationCause{"terminal source failure"}
+    got, err := Load(&adjudicationReader{data:"a=1\nbroken",err:cause})
+    var typed *adjudicationCause
+    if !errors.Is(err,cause) || !errors.As(err,&typed) || typed != cause {
+        t.Fatalf("caller cause not inspectable: prefix=%#v error=%v",got,err)
+    }
+}

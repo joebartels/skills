@@ -1,0 +1,102 @@
+diff --git a/README.md b/README.md
+index 0c32ad914be21ebca751afd8b4e20a65af3b514a..47fd8274b33795cab21712841289d28296d4c0be 100644
+--- a/README.md
++++ b/README.md
+@@ -1,9 +1,11 @@
+ # csvselect
+ Go 1.22 library. WriteRows writes valid CSV to a borrowed io.Writer; success means
+ all encoded bytes reached that writer. Underlying writer errors are inspectable.
+-Add WriteSelected(w, rows, keep) (int,error) using keep func([]string)bool.
+-It writes only selected rows in input order and returns the selected row count on
+-success. On failure, the count is the number of selected rows submitted to the CSV
+-encoder before the observed failure; buffered encoding is not durable per-row
+-acknowledgment. A nil keep selects everything. Do not close the borrowed writer.
+-Keep WriteRows behavior and signature. No automatic retries or new dependency.
++WriteSelected(w, rows, keep) (int, error), using keep func([]string) bool, writes
++only selected rows in input order. It returns the selected row count on success.
++On failure, the count includes selected rows submitted to the CSV encoder before
++the observed failure, including the row whose Write call reports an error;
++buffered encoding is not durable per-row acknowledgment. A nil keep selects
++everything. Neither function closes the borrowed writer. WriteRows retains its
++existing behavior and signature. There are no automatic retries or new
++dependencies.
+diff --git a/csv.go b/csv.go
+index efd806560842fc0b3f816d9562d7912647d4b644..07a367bd6c1a158d1db9e3d747d51124a4de0baf 100644
+--- a/csv.go
++++ b/csv.go
+@@ -6,3 +6,24 @@ import (
+ )
+ 
+ func WriteRows(w io.Writer, rows [][]string) error { return csv.NewWriter(w).WriteAll(rows) }
++
++// WriteSelected writes rows for which keep returns true, preserving input order.
++// A nil keep function selects every row. It returns the number of selected rows
++// submitted to the CSV encoder. On failure, that count includes the row whose
++// Write call reported the error; encoding may be buffered, so the count does not
++// acknowledge durable output for each row. The borrowed writer is never closed.
++func WriteSelected(w io.Writer, rows [][]string, keep func([]string) bool) (int, error) {
++	writer := csv.NewWriter(w)
++	count := 0
++	for _, row := range rows {
++		if keep != nil && !keep(row) {
++			continue
++		}
++		count++
++		if err := writer.Write(row); err != nil {
++			return count, err
++		}
++	}
++	writer.Flush()
++	return count, writer.Error()
++}
+diff --git a/csv_test.go b/csv_test.go
+index 588410cc60fb97988a7d63b180d13f0398f542c8..174db2edc37bfed5ef3f97e402a7999618ff791f 100644
+--- a/csv_test.go
++++ b/csv_test.go
+@@ -2,12 +2,46 @@ package csvselect
+ 
+ import (
+ 	"bytes"
++	"errors"
++	"io"
++	"strings"
+ 	"testing"
+ )
+ 
++var _ func(io.Writer, [][]string, func([]string) bool) (int, error) = WriteSelected
++
+ func TestWriteRows(t *testing.T) {
+ 	var w bytes.Buffer
+ 	if err := WriteRows(&w, [][]string{{"a", "b"}}); err != nil || w.String() != "a,b\n" {
+ 		t.Fatalf("%q %v", w.String(), err)
+ 	}
+ }
++
++func TestWriteSelectedFiltersInInputOrder(t *testing.T) {
++	var w bytes.Buffer
++	rows := [][]string{{"first", "1"}, {"skip", "2"}, {"third", "3"}}
++	count, err := WriteSelected(&w, rows, func(row []string) bool { return row[0] != "skip" })
++	if err != nil || count != 2 || w.String() != "first,1\nthird,3\n" {
++		t.Fatalf("count=%d output=%q err=%v", count, w.String(), err)
++	}
++}
++
++func TestWriteSelectedNilPredicateSelectsAll(t *testing.T) {
++	var w bytes.Buffer
++	count, err := WriteSelected(&w, [][]string{{"a"}, {"b"}}, nil)
++	if err != nil || count != 2 || w.String() != "a\nb\n" {
++		t.Fatalf("count=%d output=%q err=%v", count, w.String(), err)
++	}
++}
++
++type failingWriter struct{ err error }
++
++func (w failingWriter) Write([]byte) (int, error) { return 0, w.err }
++
++func TestWriteSelectedFailureCountIncludesSubmittedRow(t *testing.T) {
++	wantErr := errors.New("sink failed")
++	count, err := WriteSelected(failingWriter{wantErr}, [][]string{{strings.Repeat("x", 5000)}}, nil)
++	if count != 1 || !errors.Is(err, wantErr) {
++		t.Fatalf("count=%d err=%v", count, err)
++	}
++}

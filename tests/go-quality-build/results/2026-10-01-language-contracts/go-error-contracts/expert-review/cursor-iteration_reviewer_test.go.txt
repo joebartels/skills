@@ -1,0 +1,3 @@
+package cursorload
+import("errors";"testing")
+func TestReviewerBestEffortClose(t *testing.T){rows:=&LCCursor{values:[]string{"a"},close:errors.New("close")};got,err:=CollectMatching(rows,nil);if err!=nil||len(got)!=1||got[0]!="a"||rows.closed!=1{t.Fatal(got,err,rows.closed)}}
