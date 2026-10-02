@@ -4,7 +4,7 @@ import concurrent.futures,difflib,hashlib,json,os,shutil,subprocess,sys,tempfile
 ROOT=Path(__file__).resolve().parents[4];OUT=Path(__file__).resolve().parent
 EVALS=ROOT/"tests/go-quality-build/go-concurrency-and-ownership/evals"
 DISCOVERY=ROOT/"tests/go-quality-build/results/2026-10-02-concurrency-discovery"
-BATCHES={"reference":[(4,"library-shared-state",True,"gpt-6-luna"),(5,"service-owned-workers",True,"gpt-6-luna"),(6,"not-concurrency-work",True,"gpt-6-luna")],"transfer":[(7,"cli-pipeline-stop",False,"gpt-6-luna"),(8,"cli-pipeline-stop",True,"gpt-6-luna")],"alternate-model":[(9,"service-owned-workers",False,"gpt-6-sol"),(10,"service-owned-workers",True,"gpt-6-sol")],"alternate-reasoning":[(11,"service-owned-workers",False,"gpt-6-luna"),(12,"service-owned-workers",True,"gpt-6-luna")]}
+BATCHES={"checked-reference":[(13,"library-shared-state",False,"gpt-6-luna"),(14,"service-owned-workers",False,"gpt-6-luna"),(15,"not-concurrency-work",False,"gpt-6-luna")],"reference":[(4,"library-shared-state",True,"gpt-6-luna"),(5,"service-owned-workers",True,"gpt-6-luna"),(6,"not-concurrency-work",True,"gpt-6-luna")],"transfer":[(7,"cli-pipeline-stop",False,"gpt-6-luna"),(8,"cli-pipeline-stop",True,"gpt-6-luna")],"alternate-model":[(9,"service-owned-workers",False,"gpt-6-sol"),(10,"service-owned-workers",True,"gpt-6-sol")],"alternate-reasoning":[(11,"service-owned-workers",False,"gpt-6-luna"),(12,"service-owned-workers",True,"gpt-6-luna")]}
 assert len(sys.argv)==2 and sys.argv[1] in BATCHES
 manifest=json.loads((OUT/"manifest.json").read_text());assert manifest["guidance_frozen"]
 cases={x["id"]:x for x in json.loads((EVALS/"evals.json").read_text())["evals"]}

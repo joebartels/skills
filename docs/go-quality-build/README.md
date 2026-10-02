@@ -62,7 +62,7 @@ Test combinations of neighboring skills on the same task. Resolve contradictory 
 
 ## Work status and next steps
 
-**Current continuation:** Task4 concurrency guidance0ab21aee is independently accepted before exposure and exact snapshot/settings/slots are frozen. Final preflight artifacts are captured and hash-anchored before author launch. Three matched exposures, transfer pair, alternate-model/reasoning primary pairs are next (nine fixed launches; three discovery already spent). Context remains unavailable/unpromoted; runtime five0.2.0.
+**Current continuation:** Concurrency snapshot/settings committed42f1355; matched reference exposures4-6 dispatched (six total concurrency attempts/group22). Library/control complete; worker author and checks are running. Transfer/model/reasoning pairs remain frozen next. Context is excluded/unpromoted; runtime five0.2.0.
 
 - **Completed:** Compared the local review approach with the upstream collection; proposed candidate boundaries and the reuse and evaluation policy in this record. Added repository agent instructions and a continuation protocol so later workers maintain this record. Pinned the upstream revision for the first architecture-group audit.
 - **Written spec revised:** The first group is `go-package-boundaries`, `go-api-contracts`, and `go-interfaces-and-composition` in a peer `plugins/go-quality-build/` package. After reviewing the [first-group design spec](../superpowers/specs/2026-09-30-go-quality-build-architecture-group-design.md), the user clarified that transport and database persistence are examples, not the center of package-boundary guidance. The spec now requires package maps across libraries, CLIs, services, and workers, plus a broader component palette.
@@ -1061,3 +1061,16 @@ After each meaningful stage and before finishing a task, update the status above
 - Updated source audit for current original draft, zero imported text/code/notice/dependency obligation. Next: capture final preflight artifact hashes/commit then dispatch matched reference exposures with supported outer native launch and nested workspace-write/automatic review. No new launch/runtime/publication yet.
 
 - Final preflight [64-artifact index](reviews/concurrency-readiness/preflight/checksums.json) SHA-256 **d4639503c4138b8c9d33cd865a2619ddfdab87b6cfc03f12a04a8cf63e3ccd74** anchored outside that review folder; exact artifacts copied into study, manifest pins review/index. Canonical/source-audit stage text updated before freeze; no guidance edits.
+
+
+#### 2026-10-02 — Frozen concurrency reference exposures started
+
+- Snapshot/preflight committed42f135537cff0cf5cbbfdf3b22491c9089b4c3fc before three exact-guidance reference authors4-6. Supported outer native launch keeps nested workspace-write/automatic review. Library/control finish; worker still running; every launched attempt counts (concurrency6/16, group22/36). No launch overlap across shared-manifest batch processes.
+- Original comparator/inputs/profile are unchanged; only concurrency catalog exposure toggles. Source reconstruction and ordinary/held minimum/current verification of completed outcomes started. Transfer and alternate-model/reasoning pairs remain next under the frozen allocation. No correction/promotion verdict yet.
+
+
+#### 2026-10-02 — Concurrency reference environment correction
+
+- All three exposure authors4-6 completed; library/control reconstruction/ordinary/minimum/held checks green, service checks next. Detected wrapper environment difference before remaining profile/transfer outcomes: discovery inherits observed GOTOOLCHAIN auto; study explicitly sets local. Modules remain1.22 and compiler is the same, but exact matching is required, so original three discovery outcomes retain counterevidence and receive no matched-benefit credit.
+- Ruled a bounded reallocation: three fresh local-policy reference baselines13/14/15 paired with final-byte exposures4/5/6. All task/catalog/profile settings except candidate exposure then match. Guidance/inputs/primaryF1 unchanged; transfer7/8, alternate-model9/10 and lower-reasoning11/12 unchanged. Fifteen maximum planned attempts including old discovery, one reserve left; every launch counts. Additional affected reruns beyond remaining cap require reviewed draft/declared extension, not a fabricated pass.
+- Next: commit corrected allocation then run checked references and remaining fixed pairs sequentially across shared-manifest launchers. No new baseline, promotion or runtime claim yet.

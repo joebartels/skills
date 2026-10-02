@@ -92,7 +92,47 @@
   "author_ceiling": 16,
   "group_ceiling": 36,
   "group_authors_spent_before_candidate": 16,
-  "attempts": [],
+  "attempts": [
+    {
+      "number": 4,
+      "case": "library-shared-state",
+      "arm": "exposure",
+      "profile": "reference",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-04",
+      "exit_code": 0,
+      "elapsed_seconds": 50.014
+    },
+    {
+      "number": 5,
+      "case": "service-owned-workers",
+      "arm": "exposure",
+      "profile": "reference",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-05",
+      "exit_code": 0,
+      "elapsed_seconds": 293.171
+    },
+    {
+      "number": 6,
+      "case": "not-concurrency-work",
+      "arm": "exposure",
+      "profile": "reference",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-06",
+      "exit_code": 0,
+      "elapsed_seconds": 24.701
+    }
+  ],
   "future_author_allocation": {
     "reference_exposures": [
       4,
@@ -112,10 +152,12 @@
       12
     ],
     "revision_or_single_failed_retry_slots": [
+      16
+    ],
+    "environment_matched_reference_baselines": [
       13,
       14,
-      15,
-      16
+      15
     ]
   },
   "selection_probes_spent_before_study": 0,
@@ -140,5 +182,39 @@
     "Claude unauthenticated; target OpenCodev2 unavailable; no native implementation pair or simulated loading claim.",
     "Strong baseline ties cannot supply corrections. Require at least two independent primary corrections of fixedF1 and successful final-byte transfer/preservation/accepting review.",
     "Every author attempt/failure/retry counted; guidance revisions reopen affected final-byte gates within cap."
-  ]
+  ],
+  "reference_environment_correction": {
+    "discovery_environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-author-cache",
+      "GOMODCACHE": "/private/tmp/go-quality-author-modcache"
+    },
+    "study_environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-author-cache",
+      "GOMODCACHE": "/private/tmp/go-quality-author-modcache",
+      "GOTOOLCHAIN": "local"
+    },
+    "observed_default_policy": "auto; inherited GOTOOLCHAIN absent",
+    "discovery_matched_benefit_eligible": false,
+    "replacement_baselines": [
+      13,
+      14,
+      15
+    ],
+    "pairs": [
+      [
+        13,
+        4
+      ],
+      [
+        14,
+        5
+      ],
+      [
+        15,
+        6
+      ]
+    ],
+    "cause_and_guidance_unchanged": true,
+    "cost": "Three reserved slots spent; one remaining author slot for retry/revision, insufficient rerun budget requires reviewed-draft disposition."
+  }
 }
