@@ -1,0 +1,101 @@
+{
+  "scope": "Changeset review: neutral original snapshot to candidate-2, the complete supplied README.md, go.mod, stages.go and stages_test.go. This is a sequential outbound HTTP library function, Go minimum 1.22. Snapshot hashes: snapshot.json. No repository or planning context inspected.",
+  "coverage": [
+    {
+      "id": "architecture",
+      "status": "complete",
+      "reason": "API/dependency shape, explicit lifecycle ownership, success boundary and inspectable cancellation/error contract. All production paths inspected."
+    },
+    {
+      "id": "code-quality",
+      "status": "complete",
+      "reason": "All production/test Go, error flow, manual cancel paths, nil empty success, documentation and Go 1.22 support; gofmt and vet executed. Repeated cancel calls are clear here and are not penalized as an optional style preference."
+    },
+    {
+      "id": "correctness",
+      "status": "complete",
+      "reason": "Ordered GET/200-only acceptance; prefix; one total budget/earlier parent; stage ceiling; canceled admission; read/close context lifetime; independent failures; custom cause classification; empty result; completed success. Supplied and independent targeted checks inspect the full function."
+    },
+    {
+      "id": "testing",
+      "status": "complete",
+      "reason": "All author tests/assertions and doubles, timing, goroutine result synchronization, cleanup, supplied probes/results and frozen lost-total sensitivity. Post-exposure error combination is diagnostic evidence only."
+    },
+    {
+      "id": "security",
+      "status": "not_applicable",
+      "reason": "No changed security-relevant trust or authorization boundary is established in this bounded changeset. These edits derive budgets and aggregate errors using the supplied client, finite HTTP/HTTPS endpoints and positive durations; they do not alter destinations, redirects, TLS policy, credentials or privilege."
+    },
+    {
+      "id": "resilience",
+      "status": "complete",
+      "reason": "Total/stage deadline ownership, active cancellation, failure decisions, prefix/error containment and synchronous stage completion. Telemetry/retries/process shutdown are not owned by this function."
+    },
+    {
+      "id": "resources",
+      "status": "complete",
+      "reason": "Every body acquisition/close exit, read buffering, per-stage timer cancellation, total cancellation, client reuse and sequential in-flight work. Workload byte/concurrency profiles are unknown; no performance improvement or fixed response-size bound is claimed."
+    },
+    {
+      "id": "reproducibility",
+      "status": "complete",
+      "reason": "Compared original/candidate go.mod and all imports; standalone GOWORK=off/GOTOOLCHAIN=local/GOPROXY=off build/test/vet checks; independently executed Go 1.22.12 tests with CGO_ENABLED=0 and supplied original minimum-version check records. No external sums, vendor, local replace, generation or native inputs are required by these edits."
+    },
+    {
+      "id": "deployment",
+      "status": "not_applicable",
+      "reason": "No release workflow, process startup/shutdown, packaging, CI enforcement or deployed runtime configuration is changed by this library function implementation. The explicit Go minimum build obligation is assessed under Dependencies & Reproducibility."
+    }
+  ],
+  "findings": [
+    {
+      "id": "P1",
+      "severity": "major",
+      "cause": "failedStageError preserves a custom cause but omits the independent standard ctx.Err cancellation classification.",
+      "evidence": "candidate-2/stages.go:58-62; supplementary.log: independent transport failure and custom stop are retained, but errors.Is(err, context.Canceled) is false.",
+      "correction": "Join the observed ctx.Err alongside the operation failure and context.Cause before releasing the stage scope.",
+      "sources": [
+        "candidate-2/architecture/P1",
+        "candidate-2/code-quality/P1",
+        "candidate-2/correctness/P1",
+        "candidate-2/resilience/P1"
+      ],
+      "owner": "failedStageError implementation",
+      "classification": "newly exposed",
+      "systemic": false
+    },
+    {
+      "id": "T1",
+      "severity": "major",
+      "cause": "The author shared-total regression test fails the first stage and never observes a successful transition to stage two.",
+      "evidence": "candidate-2/stages_test.go:206-219; frozen lost-total-budget mutation compiles, author suite exits 0, and held TestTotalAndEarlierParentDeadline fails; independently repeated same statuses.",
+      "correction": "Exercise at least two completed stages and assert one total deadline across them, including earlier-parent clipping.",
+      "sources": [
+        "candidate-2/testing/T1"
+      ],
+      "owner": "Author regression tests",
+      "classification": "introduced",
+      "systemic": false
+    },
+    {
+      "id": "T2",
+      "severity": "major",
+      "cause": "The custom-cause test reader returns ctx.Err itself, masking omission of cancellation classification from the error-aggregation helper on independent failures.",
+      "evidence": "candidate-2/stages_test.go:150-175,198-202; author suite exits 0 although supplementary independent transport failure + custom-cause test fails.",
+      "correction": "Have a failing transport/read/close return an independent sentinel after custom cancellation and assert all three identities: independent failure, custom cause, and context.Canceled.",
+      "sources": [
+        "candidate-2/testing/T2"
+      ],
+      "owner": "Author regression tests",
+      "classification": "introduced",
+      "systemic": false
+    }
+  ],
+  "strengths": [
+    {
+      "id": "G1",
+      "evidence": "contract-diagnostics.log, contract-race.log and stage-ceiling-original.log pass budget/lifetime/prefix/close boundary checks; Go 1.22 minimum and standalone source tests pass."
+    }
+  ],
+  "safeguards": []
+}

@@ -1,0 +1,11 @@
+$ rtk proxy go test -run ^TestReviewStageDeadlineCeiling$ -count=1 -timeout=30s ./...
+cwd: /private/tmp/go-context-outcome-20261002/service/reviews/scratch/lost-stage-budget-1
+exit: 1
+stdout:
+--- FAIL: TestReviewStageDeadlineCeiling (0.00s)
+    review_diagnostic_test.go:73: bodies=[] err=Get "http://example.test/a": request deadline exceeds configured stage duration
+FAIL
+FAIL	example.com/stages	0.201s
+FAIL
+
+stderr:

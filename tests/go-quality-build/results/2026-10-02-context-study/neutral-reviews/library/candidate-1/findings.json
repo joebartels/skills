@@ -1,0 +1,36 @@
+{
+  "canonical_findings": [
+    {
+      "id": "T1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Author error/cause regression uses differing dynamic types and misses legal same-non-comparable cause comparison panic.",
+      "evidence": "candidate-1/process_test.go:70; independent unsafe-cause-equality compile=0 author=0 held=1; baseline provided contract=0.",
+      "correction": "[T1] Add an author regression where the callback cancels with a slice-containing legal error and returns that same cause (or another value of its same dynamic type). Assert zero/accepted-prefix result, standard cancellation classification and errors.As payload. Re-run the unchanged frozen unsafe equality mutation: it must compile and fail the author suite while baseline passes.",
+      "sources": [
+        "candidate-1/testing/T1"
+      ],
+      "primary_owner": "Testing",
+      "status": "confirmed"
+    },
+    {
+      "id": "T2",
+      "severity": "moderate",
+      "systemic": false,
+      "cause": "Canceled-empty result lacks author coverage.",
+      "evidence": "candidate-1/process_test.go:29,43; supplementary entry-check removal compile=0 author=0 held=1.",
+      "correction": "[T2] Exercise an already-canceled context with both empty and nonempty jobs, asserting zero callbacks/accepted plus cancellation classification and inspectable custom cause. The supplementary entry-check-removal mutation must fail the author suite.",
+      "sources": [
+        "candidate-1/testing/T2"
+      ],
+      "primary_owner": "Testing",
+      "status": "confirmed",
+      "efficacy_status": "supplementary, not frozen efficacy target"
+    }
+  ],
+  "reconciliation": "Two independently necessary test corrections; no production defect claimed or cross-topic duplicated count. Supplementary mutations excluded from frozen efficacy.",
+  "unconfirmed_or_optional": [
+    "Deduplicating cancellation error text, expanding exported comment, consolidating helper guards are optional preferences with no promised-behavior failure.",
+    "No demonstrated attacker, release, measured performance, or non-cooperative callback requirement in source-only scope."
+  ]
+}

@@ -1,0 +1,307 @@
+{
+  "reconstruction_hashes_match": true,
+  "ordinary_checks": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "apply",
+        "/Users/jb/.codex/worktrees/ed95/skills/tests/go-quality-build/results/2026-10-02-context-study/attempt-14/source.patch"
+      ],
+      "cwd": "/private/tmp/go-check-kttoagd5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.013
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-check-kttoagd5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "elapsed_seconds": 0.01
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-check-kttoagd5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "go version go1.22.12 darwin/arm64\n",
+      "stderr": "",
+      "elapsed_seconds": 0.01
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "build",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-kttoagd5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.132
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-kttoagd5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/finalize\t0.351s\nok  \texample.com/finalize/cmd/finalize\t1.383s\n",
+      "stderr": "",
+      "elapsed_seconds": 1.552
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-kttoagd5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.074
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-l",
+        "."
+      ],
+      "cwd": "/private/tmp/go-check-kttoagd5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.007
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-kttoagd5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 1,
+      "stdout": "ok  \texample.com/finalize\t0.268s\n--- FAIL: TestCommandInterruptFinalizesAcceptedPrefix (0.39s)\n    main_test.go:155: stderr lines=[\"context canceled\" \"context canceled\"]\nFAIL\nFAIL\texample.com/finalize/cmd/finalize\t1.105s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 1.253
+    }
+  ],
+  "held_contract_checks": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-kttoagd5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/finalize\t1.037s\nok  \texample.com/finalize/cmd/finalize\t1.433s\n",
+      "stderr": "",
+      "elapsed_seconds": 1.583
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-kttoagd5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 1,
+      "stdout": "ok  \texample.com/finalize\t1.144s\n--- FAIL: TestCommandInterruptFinalizesAcceptedPrefix (0.39s)\n    main_test.go:155: stderr lines=[\"context canceled\" \"context canceled\"]\nFAIL\nFAIL\texample.com/finalize/cmd/finalize\t1.236s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 1.38
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-shuffle=on",
+        "-count=3",
+        "-timeout=60s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-kttoagd5",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-context-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/finalize\t3.207s\nok  \texample.com/finalize/cmd/finalize\t4.118s\n",
+      "stderr": "",
+      "elapsed_seconds": 4.306
+    }
+  ],
+  "frozen_mutation_sensitivity": [
+    {
+      "id": "unbounded-finalization",
+      "substitutions": [
+        {
+          "file": "run.go",
+          "old": "context.WithTimeout(context.WithoutCancel(ctx), finalizationBudget)",
+          "new": "func() (context.Context, context.CancelFunc) { _ = finalizationBudget; return context.WithCancel(context.WithoutCancel(ctx)) }()"
+        }
+      ],
+      "compile": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^$",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-mutation-9yhi3wh_",
+        "environment_overrides": {
+          "GOCACHE": "/private/tmp/go-quality-context-cache",
+          "GOTOOLCHAIN": "local",
+          "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+        },
+        "status": 0,
+        "stdout": "ok  \texample.com/finalize\t0.295s [no tests to run]\nok  \texample.com/finalize/cmd/finalize\t0.170s [no tests to run]\n",
+        "stderr": "",
+        "elapsed_seconds": 0.454
+      },
+      "author_tests": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-count=1",
+          "-timeout=30s",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-mutation-9yhi3wh_",
+        "environment_overrides": {
+          "GOCACHE": "/private/tmp/go-quality-context-cache",
+          "GOTOOLCHAIN": "local",
+          "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+        },
+        "status": 1,
+        "stdout": "--- FAIL: TestRunFinalizationContract (1.00s)\n    --- FAIL: TestRunFinalizationContract/parent_cancellation_retains_cause_and_finalizes_detached_work (1.00s)\n        run_test.go:52: finalization did not start\nFAIL\nFAIL\texample.com/finalize\t1.128s\nok  \texample.com/finalize/cmd/finalize\t0.912s\nFAIL\n",
+        "stderr": "",
+        "elapsed_seconds": 1.258
+      },
+      "original_held_named_status": 0,
+      "held_tests": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^TestFinalizationDeadline$",
+          "-count=1",
+          "-timeout=30s",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-mutation-9yhi3wh_",
+        "environment_overrides": {
+          "GOCACHE": "/private/tmp/go-quality-context-cache",
+          "GOTOOLCHAIN": "local",
+          "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+        },
+        "status": 1,
+        "stdout": "--- FAIL: TestFinalizationDeadline (1.00s)\n    contract_controller_test.go:86: accepted=1 err=unbounded finalization\nFAIL\nFAIL\texample.com/finalize\t1.172s\nok  \texample.com/finalize/cmd/finalize\t0.268s [no tests to run]\nFAIL\n",
+        "stderr": "",
+        "elapsed_seconds": 1.336
+      },
+      "qualified": true
+    }
+  ],
+  "supplementary_after_exposure": [],
+  "supplementary_limit": "Explicit README empty-success and failure classification combinations; introduced after exposure, not frozen mutations or new benefit primary."
+}

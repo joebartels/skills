@@ -1,0 +1,35 @@
+[
+  {
+    "cmd": "rtk proxy python3 -B scripts/validate.py",
+    "status": "fulfilled",
+    "value": {
+      "chunk_id": "2939e8",
+      "wall_time_seconds": 0.00000625,
+      "exit_code": 0,
+      "original_token_count": 30,
+      "output": "PASS: 10 skills; matching grading/report contracts; 120 valid evaluation cases\nPASS: 42 valid build evaluation cases\n"
+    }
+  },
+  {
+    "cmd": "rtk claude plugin validate ./plugins/go-quality-build",
+    "status": "fulfilled",
+    "value": {
+      "chunk_id": "c04b37",
+      "wall_time_seconds": 0.332726917,
+      "exit_code": 0,
+      "original_token_count": 36,
+      "output": "Validating plugin manifest: /Users/jb/.codex/worktrees/ed95/skills/plugins/go-quality-build/.claude-plugin/plugin.json\n\n✔ Validation passed\n"
+    }
+  },
+  {
+    "cmd": "rtk claude plugin validate .",
+    "status": "fulfilled",
+    "value": {
+      "chunk_id": "59c5ad",
+      "wall_time_seconds": 0.332716333,
+      "exit_code": 0,
+      "original_token_count": 32,
+      "output": "Validating marketplace manifest: /Users/jb/.codex/worktrees/ed95/skills/.claude-plugin/marketplace.json\n\n✔ Validation passed\n"
+    }
+  }
+]

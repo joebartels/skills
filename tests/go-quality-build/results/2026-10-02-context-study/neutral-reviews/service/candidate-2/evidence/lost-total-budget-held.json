@@ -1,0 +1,26 @@
+{
+  "label": "lost-total-budget-held",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-run",
+    "^TestTotalAndEarlierParentDeadline$",
+    "-count=1",
+    "-timeout=30s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-context-outcome-20261002/service/reviews/scratch/lost-total-budget-2",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-context-outcome-20261002/service/reviews/go-cache-min",
+    "GOWORK": "off",
+    "GOTOOLCHAIN": "local",
+    "GOPROXY": "off",
+    "CGO_ENABLED": "0"
+  },
+  "status": 1,
+  "stdout": "--- FAIL: TestTotalAndEarlierParentDeadline (0.00s)\n    --- FAIL: TestTotalAndEarlierParentDeadline/total (0.00s)\n        contract_controller_test.go:41: total scope reset: [2026-10-02 16:39:41.882526 -0500 CDT m=+10.001475168 2026-10-02 16:39:41.882592 -0500 CDT m=+10.001540751]\nFAIL\nFAIL\texample.com/stages\t0.202s\nFAIL\n",
+  "stderr": "",
+  "elapsed_seconds": 0.439
+}

@@ -1,0 +1,3 @@
+Selected and opened **go-behavior-tests** and its local `behavior-observations.md` reference. The requested endpoint fix changes behavior, and a targeted test should check both endpoints against independently chosen expected values.
+
+I declined **go-api-contracts** because no exported or supported external contract was identified, and **go-context-and-deadlines**, **go-interfaces-and-composition**, **go-package-boundaries**, and **go-test-isolation** because their stated triggers are absent. I read no code or other task, and made no edits or test runs.

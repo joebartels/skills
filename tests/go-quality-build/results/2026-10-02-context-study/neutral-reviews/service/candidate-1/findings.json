@@ -1,0 +1,60 @@
+{
+  "confirmed": [
+    {
+      "id": "P1",
+      "severity": "moderate",
+      "cause": "The caller cancellation guard executes before the empty-endpoint no-op policy.",
+      "evidence": "candidate-1/stages.go:14-15; original/README.md empty-success rule; evidence/supplementary.log fails TestSupplementaryCanceledEmpty.",
+      "correction": "Return empty success before inspecting cancellation when len(endpoints)==0.",
+      "sources": [
+        "candidate-1/correctness/P1",
+        "candidate-1/code-quality/P1"
+      ],
+      "owner": "FetchAll implementation",
+      "classification": "introduced"
+    },
+    {
+      "id": "T1",
+      "severity": "major",
+      "cause": "The author suite never establishes that the stage duration is the request deadline ceiling when it is shorter than the total budget.",
+      "evidence": "candidate-1/stages_test.go:109-134 uses stage longer than total; all other supplied author stages are one second with immediate work or explicit cancellation. lost-stage-budget compile and author suite exit 0, while stage-ceiling-original exits 0 and lost-stage-budget-diagnostic exits 1.",
+      "correction": "Add a stage-shorter-than-total deadline assertion plus cooperative body/close timing verification at that stage scope.",
+      "sources": [
+        "candidate-1/testing/T1"
+      ],
+      "owner": "Author regression tests",
+      "classification": "newly exposed"
+    },
+    {
+      "id": "T2",
+      "severity": "moderate",
+      "cause": "The canceled-admission test passes nil endpoints and asserts a cancellation failure, codifying the wrong no-op result and never asking the transport to admit real work.",
+      "evidence": "candidate-1/stages_test.go:136-147; supplementary.log demonstrates required empty success fails.",
+      "correction": "Separate canceled empty success from canceled nonempty no-request admission, asserting zero calls in both.",
+      "sources": [
+        "candidate-1/testing/T2"
+      ],
+      "owner": "Author regression tests",
+      "classification": "introduced"
+    },
+    {
+      "id": "T3",
+      "severity": "moderate",
+      "cause": "Read and close failures are tested independently, so discarding close failure when reading also fails remains undetected.",
+      "evidence": "candidate-1/stages_test.go:76-78,95-96; lost-close-error-on-read compile and author suite exit 0; review-created TestReviewDualReadCloseErrors passes original and fails mutation.",
+      "correction": "Add a combined read/close failure case asserting errors.Is for both and retaining only the completed prefix.",
+      "sources": [
+        "candidate-1/testing/T3"
+      ],
+      "owner": "Author regression tests",
+      "classification": "newly exposed"
+    }
+  ],
+  "reconciliation": "Each shared implementation cause is counted once across topics. Test gaps have separate owners and corrections; they are not deduplicated with a production fix. All severities are contained; none critical/systemic. Additional mutations are diagnostics, not frozen efficacy outcomes.",
+  "rejected_or_ungraded": [
+    "No unsafe endpoint/TLS/redirect assumption from missing host policy",
+    "No unmeasured buffering/preallocation micro-optimization",
+    "No claim Context alone proves arbitrary remote work stopped",
+    "No style penalty for manual cancellation paths or small helper choices"
+  ]
+}
