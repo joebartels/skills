@@ -1,0 +1,117 @@
+{
+  "run_id": "2026-10-01-test-isolation-skill-on",
+  "stage": "prepared, authors not dispatched yet",
+  "fixture_commit": "728bb6bb74ca274ea4d5774d30cd04dba93e6fbc",
+  "author_settings": {
+    "model": "inherited session model; exact model ID not exposed by collaboration harness",
+    "reasoning": "inherited session setting; no override",
+    "fresh_context": "collaboration.spawn_agent fork_turns=none",
+    "harness": "Codex collaboration tools"
+  },
+  "host": {
+    "go": "go1.26.5",
+    "platform": "darwin/arm64",
+    "GOTOOLCHAIN": "local"
+  },
+  "control": {
+    "other_testing_skill": "go-behavior-tests absent from both arms",
+    "task_and_fixture": "frozen",
+    "review_judgments": "withheld"
+  },
+  "skill_sha256": {
+    "go-api-contracts/SKILL.md": "c655df596414850f06c66ffcb34b5c5606aa73d3381051942dc45e99cd54a0ba",
+    "go-core-style/SKILL.md": "9d2b95a44d278af73a776a010df2e7d6ba80c3d73524b39ecf69abc0e24f28ff",
+    "go-core-style/promptfoo.yaml": "0a0b94f9de5826a5732fb0ced6069513a76b082c76d97b5f8ec84c82b2bb874d",
+    "go-core-style/rules.json": "c179c62d20f6767836bdb77df3581edd28d13b3729736194de5506d74cfd4391",
+    "go-core-style/schema.json": "08d12d27d631c4617f5e047842519bcd6c7807cfdfe7654757880b4e99edef7c",
+    "go-interfaces-and-composition/SKILL.md": "41c9cd023682e006b84b37ddadf39bc37f0f01b2bfd8af7609272799906d9621",
+    "go-package-boundaries/SKILL.md": "3245b2347309d6238950be43e269c05720dbcf5132548dd661955c9e428d3ca7",
+    "go-package-boundaries/references/package-maps.md": "19c2e6f964486abe11028ba04e443fc76eb39236538ee5d9ef25400cc8ecfc7f",
+    "go-test-isolation/SKILL.md": "6c89a236e8669002b8b4f14f15dc32fedf827949cfd6efb7debfe3f471278f08",
+    "go-test-isolation/references/isolation-patterns.md": "46bc02cc0a07c31e04f6922c240c9d493783613d144fb7b79a368f16c50fbdbc"
+  },
+  "cases": [
+    {
+      "id": "library-file-fixtures",
+      "workdir": "/private/tmp/go-testing-author-iu16ahig/library-file-fixtures",
+      "reportdir": "/private/tmp/go-testing-author-iu16ahig/library-file-fixtures-report",
+      "input_sha256": {
+        "README.md": "df19712c89bd7f5bb0eab796eebfb1851f219e527c6e17a5cd7b06515253ba4e",
+        "go.mod": "a01bd52ca12cb3fb06203c3d132732ff7cf72450576be33158d2690c29b78e97",
+        "store.go": "74a5e9db0f5a3f6136c252d0be23742c2ebffbc1a1a9884793cdbb1981f92504",
+        "store_test.go": "6a655de084ba6cdfb8e5dd3253d57aac341f0bb31120b00066baa47ff799e496"
+      },
+      "dispatch_sha256": "2e29fc657f4025c72cdcc5119a7acd7b98f2be0fa4530ce3b26eef3d7467a7d6",
+      "author_task_name": "isolation_on_store",
+      "launch_sha256": "35fd3b333c388066f17bc8ca757d4f598deaa41f8cbb6b1b2d3813f110f4b147"
+    },
+    {
+      "id": "cli-environment",
+      "workdir": "/private/tmp/go-testing-author-iu16ahig/cli-environment",
+      "reportdir": "/private/tmp/go-testing-author-iu16ahig/cli-environment-report",
+      "input_sha256": {
+        "README.md": "ccc78d092abcfcef5d49c294f9da4978e4c32aa8b6449ac2f6132f23632432df",
+        "cmd/showcfg/main.go": "3959cf1b861e050db483ed4bffd1803d4a2e767366294624e30d46a2df224ec8",
+        "config.go": "fa3a3d3e5567ea07e6ccaeb74760f499a3ebab6a4732dcefd336935f1b91e4b3",
+        "config_test.go": "d6ed2e1ac39786be35547f6150fba270cb7b7100fc04be09984c359f523a3514",
+        "go.mod": "b1217148ca155453db59050c312de14fca2a65a4c879c98c89946ca12c64177e"
+      },
+      "dispatch_sha256": "e3446d3337256b1eef6b82e0ef9fd65848d028ebfd0e967351d0502f84f3412e",
+      "author_task_name": "isolation_on_env",
+      "launch_sha256": "102639740623eebc9a6c474a22cdfa4785767e5f0a657d656d14c867fb1e8eea"
+    },
+    {
+      "id": "service-http-boundary",
+      "workdir": "/private/tmp/go-testing-author-iu16ahig/service-http-boundary",
+      "reportdir": "/private/tmp/go-testing-author-iu16ahig/service-http-boundary-report",
+      "input_sha256": {
+        "README.md": "5e52eb6593abf19cb5eff5217737defefdfa9c96535433ad69aede1a898c5da6",
+        "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+        "fetch_test.go": "7b7f93721ddd485550ebac2035fe53f39b1ec834167e0da3fbe6584c2812b61a",
+        "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3"
+      },
+      "dispatch_sha256": "0609a8aa3212ab8f9047f1c0e1df9c328e9329ceaf787e0021770a3e87304302",
+      "author_task_name": "isolation_on_http",
+      "launch_sha256": "bd9cc54e13403fa452ff50655a64cb544bab8e6b944286fb99c48dc9c32a118e"
+    },
+    {
+      "id": "worker-timing",
+      "workdir": "/private/tmp/go-testing-author-iu16ahig/worker-timing",
+      "reportdir": "/private/tmp/go-testing-author-iu16ahig/worker-timing-report",
+      "input_sha256": {
+        "README.md": "a8b458db577e2c868a7923297f6e9b87c546164f2e18f9bc78d34a05f3599181",
+        "go.mod": "a7aa1456ec43a9e34590246526baefddcb794ce46b06e2e893147f769899738d",
+        "poll.go": "cac1ee3ceb250f0c8b9d800ec2f55277b11d0a614e51086f151b64a2c4cad491",
+        "poll_test.go": "99f20687d301daa8e80e3b749b474570398c588b7eb6f88fd05cec1e73b3af7d"
+      },
+      "dispatch_sha256": "83ef9eef7f1749e048c5b7e19307696eaf2b72203233fabb408d5a9556216824",
+      "author_task_name": "isolation_on_poll",
+      "launch_sha256": "f5b02b181522ede5c19ad837ce8fe7a086e577aacd82b299aa03b1262dfa451c"
+    },
+    {
+      "id": "not-isolation-work",
+      "workdir": "/private/tmp/go-testing-author-iu16ahig/not-isolation-work",
+      "reportdir": "/private/tmp/go-testing-author-iu16ahig/not-isolation-work-report",
+      "input_sha256": {
+        "README.md": "6f83be8f1fb4bae7ae3a4118e64cbe65b2975efc99abcc7a450264a41f80a41c",
+        "clamp.go": "1531f4f12762a8de67afad06945345c7814fd5cb2bc07d5dca56e12acab66824",
+        "clamp_test.go": "4ee58de54175701b8b223487e181d74a32c55c593878c63b3b124b731781bc3f",
+        "go.mod": "6159f8c50c24e8a65f078eb935b56655ab3da9e77bd2c62ba41b955b40bb319d"
+      },
+      "dispatch_sha256": "ce116c97995f3a17d80e6de31e61942da80b5b374dcc25e8d1effd631149a484",
+      "author_task_name": "isolation_on_control",
+      "launch_sha256": "890a040bafb5592f680744a4e57d1f6d4b36de2eb7003774acbaa420538950fb"
+    }
+  ],
+  "draft_revision": 1,
+  "draft_commit": "904511b076a98b3d434186389ed2de2a57c09380",
+  "skill_commits": {
+    "go-package-boundaries": "728bb6bb74ca274ea4d5774d30cd04dba93e6fbc",
+    "go-api-contracts": "728bb6bb74ca274ea4d5774d30cd04dba93e6fbc",
+    "go-interfaces-and-composition": "728bb6bb74ca274ea4d5774d30cd04dba93e6fbc",
+    "go-core-style": null,
+    "go-test-isolation": "904511b076a98b3d434186389ed2de2a57c09380"
+  },
+  "external_guidance_note": "Go core style is external; exact file hashes identify it, not a repository commit.",
+  "matched_verification": "All 21 input hashes, all task prompts, all existing guidance hashes and author settings match the sealed baseline; only isolation guidance availability differs."
+}

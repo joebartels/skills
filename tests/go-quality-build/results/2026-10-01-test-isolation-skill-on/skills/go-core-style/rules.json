@@ -1,0 +1,86 @@
+{
+  "version": "1.1.0",
+  "skill": "go-core-style",
+  "rules": [
+    {
+      "id": "GO-001",
+      "category": "Control Flow",
+      "name": "Line of Sight Alignment",
+      "severity": "ERROR",
+      "description": "Functions must avoid deep nested conditionals. Handle preconditions and errors early with guard clauses.",
+      "citation": "Dave Cheney (Line of Sight) & Uber Go Style Guide"
+    },
+    {
+      "id": "GO-002",
+      "category": "Error Handling",
+      "name": "Explicit Error Handling & Wrapping",
+      "severity": "ERROR",
+      "description": "Check errors immediately (if err != nil). Wrap error messages with context using fmt.Errorf('...: %w', err).",
+      "citation": "Effective Go & Go Proverbs"
+    },
+    {
+      "id": "GO-003",
+      "category": "Interface Design",
+      "name": "Accept Interfaces, Return Structs",
+      "severity": "WARNING",
+      "description": "Constructors and concrete functions should return struct pointers (*T). Consumers should declare narrow interfaces where consumed.",
+      "citation": "Google Go Style Guide & Three Dots Labs"
+    },
+    {
+      "id": "GO-004",
+      "category": "Naming Conventions",
+      "name": "Idiomatic Naming & No Getters Prefix",
+      "severity": "WARNING",
+      "description": "Package names must be short lowercase single-word nouns. Do not prefix getters with 'Get'. Do not use 'Impl' or 'Default' naming.",
+      "citation": "Effective Go & Google Go Style Guide"
+    },
+    {
+      "id": "GO-005",
+      "category": "Concurrency & State",
+      "name": "Goroutine Lifecycle Discipline",
+      "severity": "CRITICAL",
+      "description": "Never launch a goroutine without a deterministic exit mechanism. Avoid package-level mutable state.",
+      "citation": "Dave Cheney & Modern Architecture Patterns"
+    },
+    {
+      "id": "GO-006",
+      "category": "Data Ownership",
+      "name": "Parse, Don't Validate",
+      "severity": "WARNING",
+      "description": "Turn raw input into its typed value once, at the boundary, and pass the typed value on. Do not keep a raw string and check it again elsewhere.",
+      "citation": "Alexis King, \"Parse, don't validate\" (2019); encoding.TextUnmarshaler"
+    },
+    {
+      "id": "GO-007",
+      "category": "API Design",
+      "name": "Checks on the Producing Path",
+      "severity": "ERROR",
+      "description": "A constructor, or the Parse that returns the value a caller needs, checks its input and returns an error. Do not export a separate Assert or Validate that every caller must remember to call.",
+      "citation": "time.NewTicker (panics on a non-positive interval)"
+    },
+    {
+      "id": "GO-008",
+      "category": "Data Structures",
+      "name": "One Struct per Key",
+      "severity": "WARNING",
+      "description": "Values that share a key live in one struct in one map, not in parallel maps keyed by the same id.",
+      "citation": "discaste/go-core PR 51 review"
+    },
+    {
+      "id": "GO-009",
+      "category": "Determinism",
+      "name": "Deterministic at the Source",
+      "severity": "WARNING",
+      "description": "Where output order matters, iterate map keys in sorted order where the values are produced, instead of sorting rendered output afterwards.",
+      "citation": "The Go Programming Language Specification: map iteration order is not specified"
+    },
+    {
+      "id": "GO-010",
+      "category": "Decoding",
+      "name": "Strict Decoding",
+      "severity": "WARNING",
+      "description": "Do not enable a lenient decoding mode and patch its silent conversions with hooks; decode strictly and convert explicitly.",
+      "citation": "github.com/go-viper/mapstructure (WeaklyTypedInput)"
+    }
+  ]
+}
