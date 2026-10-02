@@ -1,0 +1,86 @@
+{
+  "semantic_id": "automatic-redirect-following",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "9d428edf855e2efe82878805b9f5b2b30e1bf0dccf371b7dcfc3d95d008aae8f",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-crhb4oth/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.544s\nok  \texample.com/indexer/cmd/indexer\t0.842s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.118
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/isolation-only/mutations/automatic-redirect-following/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-crhb4oth/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-crhb4oth/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.312s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.489s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.771
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-crhb4oth/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshRejectsRedirectWithoutChangingClient (0.01s)\n    refresh_test.go:204: accepted redirect\nFAIL\nFAIL\texample.com/indexer\t0.362s\nok  \texample.com/indexer/cmd/indexer\t0.943s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.143
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

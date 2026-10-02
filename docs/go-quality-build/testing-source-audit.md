@@ -132,3 +132,5 @@ Original assertion guidance now distinguishes an exact accepted set from convent
 ## Isolation revision 3 preparation — 2026-10-01
 
 Original conditional builder/application environment guidance responds to a verified command-test setup failure under ordinary unset GOCACHE. The owner is fixture/process environment fidelity. Primary [Go cache documentation](https://pkg.go.dev/cmd/go#hdr-Build_and_test_caching) and [environment defaults](https://pkg.go.dev/cmd/go#hdr-Environment_variables) were checked: Go normally uses a user cache default and GOCACHE overrides it with an absolute path. No substantial upstream copy or newer API; Go illustrations unchanged. Revision 3 remains a draft pending all-case/control/repeat and affected integrated gates.
+
+2026-10-01: Behavior revision 2 promoted unchanged after seven single/control/repeat and two affected integrated outcomes plus independent accepting exact-guidance review. Original wording/code and audited ownership retained; no substantial upstream copy. Historical isolation2 builder setup defect and supplementary sensitivity survivors stay visible; isolation3 gate remains open.

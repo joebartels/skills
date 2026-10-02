@@ -34,6 +34,15 @@ representation when the protocol matters.
 - Check consequential success, rejection and boundary cases. Compare concrete
   expected values derived without the implementation under test; avoid using
   its own encoder, parser or rendering helper to calculate the oracle.
+- Test the exact accepted set rather than a familiar broader category. Include
+  a success-shaped neighbor that must reject when only one status/value is
+  allowed. Keep the other fields valid so another check cannot hide wider
+  acceptance.
+- When changed branches classify interface values, challenge assumptions with
+  valid inputs. An error need not be comparable; wrapped/joined causes and an
+  independent failure during cancellation can exercise different decisions.
+  Assert the promised result and ownership after classification, rather than
+  merely observing that some error occurred.
 - For failure after successful work, inspect the accepted prefix or last good
   state and absence of later effects. Exercise failures before effects begin
   **and during effects** where the contract requires retention: a write can

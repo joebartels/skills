@@ -1,0 +1,98 @@
+{
+  "kind": "independent contract reproduction; no candidate repair; no prescribed nil versus returned cause",
+  "candidate_run": "2026-10-01-testing-combined-r3",
+  "case": "isolation-only",
+  "candidate_sha256": {
+    "index.go": "d1e427eeb715ffc38cd6de734507d6f51d61c702f2cac43ed5310edd817fe52d",
+    "go.mod": "6ad6c1c685b8d95d2f5e38dff9fd806cbca1f647c684b5823237f6d260b17b56",
+    "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+    "serve.go": "ef7894269851beb9ffe8628770e27c27241ef777c876314bd2ebb2033599601e",
+    "serve_test.go": "d374c35bdbd2e462ccc50c3c77e7627925f390e0c6a7fcfd6c1e2f9b315b3db7",
+    "README.md": "4c64d29f9e5586a08f7f6a6d74ba34e723299125c267a23ccacc3c42c2ecc44c",
+    "refresh.go": "db003ac30f3429025fe488812233fc401ce7c0bbd8e25c94cd55ce6f933d615a",
+    "index_regression_test.go": "283271edb2a8e45492cf023d9b6aefff88fa9e38340de8bba27edbf62f8f2ea8",
+    "refresh_test.go": "c3ffd116e9df3f420c763ffb53e9d2bad368c8c22231b1de9fff112b2ee83055",
+    "cmd/indexer/process_test.go": "57da99a8b85d49aaa8731fb5545a64db2450615f950aa1310056a5df5bbb1841",
+    "cmd/indexer/main.go": "25f8cbd433a2a783e34d08481546eea9c805707ba8799ffa9d11b7ef21e86c0f",
+    "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f"
+  },
+  "probe_added_sha256": {
+    "index.go": "d1e427eeb715ffc38cd6de734507d6f51d61c702f2cac43ed5310edd817fe52d",
+    "go.mod": "6ad6c1c685b8d95d2f5e38dff9fd806cbca1f647c684b5823237f6d260b17b56",
+    "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+    "serve.go": "ef7894269851beb9ffe8628770e27c27241ef777c876314bd2ebb2033599601e",
+    "serve_test.go": "d374c35bdbd2e462ccc50c3c77e7627925f390e0c6a7fcfd6c1e2f9b315b3db7",
+    "README.md": "4c64d29f9e5586a08f7f6a6d74ba34e723299125c267a23ccacc3c42c2ecc44c",
+    "refresh.go": "db003ac30f3429025fe488812233fc401ce7c0bbd8e25c94cd55ce6f933d615a",
+    "index_regression_test.go": "283271edb2a8e45492cf023d9b6aefff88fa9e38340de8bba27edbf62f8f2ea8",
+    "refresh_test.go": "c3ffd116e9df3f420c763ffb53e9d2bad368c8c22231b1de9fff112b2ee83055",
+    "diagnostic_cause_test.go": "852b312ca45da4cdda98dbc5e1b59205796d97c10564e4d577800a95d9f6db78",
+    "cmd/indexer/process_test.go": "57da99a8b85d49aaa8731fb5545a64db2450615f950aa1310056a5df5bbb1841",
+    "cmd/indexer/main.go": "25f8cbd433a2a783e34d08481546eea9c805707ba8799ffa9d11b7ef21e86c0f",
+    "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f"
+  },
+  "reconstruction": "exact",
+  "checks": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-w",
+        "diagnostic_cause_test.go"
+      ],
+      "cwd": "/private/tmp/go-cause-crosscheck-tj7mvu7z/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.008
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-cause-crosscheck-tj7mvu7z/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/indexer\t0.357s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.211s [no tests to run]\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.619
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestDiagnosticNonComparableCause$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-cause-crosscheck-tj7mvu7z/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/indexer\t0.302s\nok  \texample.com/indexer/cmd/indexer\t0.179s [no tests to run]\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.51
+    }
+  ]
+}

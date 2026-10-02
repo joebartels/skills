@@ -96,6 +96,14 @@ work-fails/close-succeeds case. Match error text exactly only when that text
 is a supported contract. Use [errors.Is/As](https://pkg.go.dev/errors) for
 promised identity/type, not for every incidental implementation error.
 
+An API accepting error values does not imply they are comparable pointer
+sentinels. When the changed path classifies callback or cancellation errors,
+use a valid custom value (for example one containing a slice) to challenge
+comparison assumptions. Include wrapped/joined forms when those decisions are
+promised, and retain an independently identifiable failure alongside cancellation.
+Use the API's supported matching/type semantics and check release/return effects;
+no universal custom-error matrix is required for unrelated paths.
+
 ## Boundaries and independent oracles
 
 - **Library:** use consumer-visible outputs and independently derived values.
@@ -111,6 +119,10 @@ promised identity/type, not for every incidental implementation error.
 - **Service:** choose the boundary claimed. A handler recorder tests handler
   outputs; real HTTP client/server checks establish protocol behavior. Check
   complete success output, independent rejected fields and retained state.
+  Distinguish the exact accepted set from conventional categories: if only
+  status 200 is accepted, a valid-body 206 rejection checks a different branch
+  than a 503 or malformed body. Select discriminating neighbors from the
+  actual contract rather than enumerating every possible status.
 - **Worker/host:** cancellation-only cases miss successful recurrence. Observe
   the later successful callback and the event from which its interval starts.
   Verify join/release through the host, after controlled callback cleanup.
