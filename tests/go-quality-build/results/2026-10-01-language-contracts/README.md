@@ -67,4 +67,43 @@ A fresh library/CLI case tests partial caller input errors, nested independent
 snapshots, intentional nil/empty results and actual process status/prefix output.
 The fixed three-skill catalog is identical; the draft-exposure arm adds both
 reviewed candidates. This checks interaction and possible harm; it does not
-establish automatic routing or a broad effectiveness estimate. Results pending.
+establish automatic routing or a broad effectiveness estimate. Both arms pass the current library/private checks and five executable CLI scenarios. The draft arm reports opening API contracts plus both candidates; the baseline opens API contracts. No interaction failure is observed in these probes. Blinded expert source/outcome review is underway.
+
+## Final-byte exposure archive
+
+All 27 authored trials are archived and reconstructable: 14 existing-catalog
+baselines and 13 draft-exposure runs. These support 12 clean matched pairs; the
+extra first value control is non-blind supplemental evidence. Two inherited-model
+error baselines remain supplemental because their exact model IDs are unavailable.
+Every clean pair uses gpt-6-luna medium and identical original inputs/existing
+catalog bytes. There are 105 successful current recorded check commands; the
+invalid first CLI verification remains excluded beside its corrected result.
+
+| Draft exposure | Case/repeat | Output files | Current checks | Provenance |
+| --- | --- | ---: | --- | --- |
+| combined | language-contracts/first | 6 | PASS | Fresh explicit exposure |
+| go-error-contracts | backend-errors/first | 4 | PASS | Fresh explicit exposure |
+| go-error-contracts | cli-completion/first | 6 | PASS | Fresh explicit exposure |
+| go-error-contracts | csv-transfer/first | 4 | PASS | Fresh explicit exposure |
+| go-error-contracts | cursor-iteration/first | 5 | PASS | Fresh explicit exposure |
+| go-error-contracts | not-error-work/first | 4 | PASS | Fresh explicit exposure |
+| go-error-contracts | reader-errors/first | 5 | PASS | Fresh explicit exposure |
+| go-values-and-zero-values | borrowed-transfer/first | 4 | PASS | Fresh explicit exposure |
+| go-values-and-zero-values | default-wire/first | 4 | PASS | Fresh explicit exposure |
+| go-values-and-zero-values | not-value-work/first | 4 | PASS | Non-blind supplemental control |
+| go-values-and-zero-values | not-value-work/isolated | 4 | PASS | Fresh explicit exposure |
+| go-values-and-zero-values | required-construction/first | 4 | PASS | Fresh explicit exposure |
+| go-values-and-zero-values | snapshot-ownership/first | 5 | PASS | Fresh explicit exposure |
+
+The isolated error and value controls report no opened skills. Applicable authors
+report opening their candidate; the combined author opens both. Selection remains
+self-reported explicit exposure, not automatic routing. Frozen reviewed hashes
+match every catalog. One prepared-only error calculation directory was never
+dispatched and is not counted as an author attempt; [inventory.json](inventory.json)
+records this distinction. Exact task/catalog prompts and author reports are
+preserved; outer dispatch messages/environment history are not full transcripts.
+
+A fresh reviewer is assessing 12 paired candidate trees with arm identities withheld
+until its initial report is frozen. Original inputs/task contracts and private probes
+are visible to the reviewer, so this is arm blinding rather than expectation blinding.
+No measured incremental benefit, broad reliability or runtime promotion is claimed.

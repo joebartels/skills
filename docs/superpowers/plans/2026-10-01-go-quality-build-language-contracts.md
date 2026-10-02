@@ -49,7 +49,7 @@ Evaluation agents consume a disposable copy of one case, the task prompt, fixed 
 ### Task 2: Error skill evaluation and promotion decision
 
 - [x] Write minimal `go-error-contracts` draft addressing demonstrated error decisions, with trigger/exclusion, concise decision table, and one useful example. References contain only conditional detail.
-- [ ] Run matched fresh skill-on cases, including the positive exposure case and non-selection control, against final bytes. Verify probes, build/tests/vet, opened skills, unnecessary changes, and output hashes.
+- [x] Run matched fresh skill-on cases, including the positive exposure case and non-selection control, against final bytes. Verify probes, build/tests/vet, opened skills, unnecessary changes, and output hashes.
 - [ ] Have an independent reviewer assess changed code and evidence using relevant existing review skills. Revise only demonstrated harmful/incomplete guidance; rerun affected cases and final controls after changes.
 - [ ] Promote if distinct benefit and controls support it; otherwise record why it is deferred. Validate runtime/frontmatter/links and archive reproducibility. Update canonical record and commit before Task 3.
 
@@ -69,7 +69,7 @@ Evaluation agents consume a disposable copy of one case, the task prompt, fixed 
 
 ### Task 5: Combined use, package verification, and final review
 
-- [ ] Create a fresh library/CLI evolution case covering errors, defaults/snapshots and accurate usage; run matched fixed-existing-skill and existing-plus-promoted-group arms in fresh contexts.
+- [x] Create a fresh library/CLI evolution case covering errors, defaults/snapshots and accurate usage; run matched fixed-existing-skill and existing-plus-promoted-group arms in fresh contexts.
 - [ ] Independently assess code and cross-skill contradictions, preserving blind output separately from any review-guided repair. Rerun affected checks if guidance changes.
 - [ ] Update root/plugin READMEs, manifests and marketplace description/version together for actual promoted skills. Do not count drafted/deferred skills as evaluated runtime content.
 - [ ] Run root/build-eval/review-layout/grade tests, repository validation, Claude package/marketplace validation, skill frontmatter validation and whitespace checks. Verify local links, fixture/output hashes and reproducible patches.

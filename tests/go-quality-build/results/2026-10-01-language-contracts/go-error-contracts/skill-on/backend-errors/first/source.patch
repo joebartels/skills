@@ -1,0 +1,108 @@
+diff --git a/lookup.go b/lookup.go
+index c7c20570e3e63961b9480b15bcf18b37428a554d..161a4aaae9f6ea47f5e02ae84413e4562d72f2c1 100644
+--- a/lookup.go
++++ b/lookup.go
+@@ -1,21 +1,30 @@
+ package accountlookup
+ 
+-import "errors"
++import (
++	"errors"
++	"fmt"
++	"strings"
++)
+ 
+ var ErrMissing = errors.New("account missing")
+ var ErrUnavailable = errors.New("account unavailable")
++var ErrInvalidKey = errors.New("invalid account key")
+ var BackendMissing = errors.New("backend missing")
+ 
+ type Backend interface{ Find(string) (string, error) }
+ type Service struct{ Backend Backend }
+ 
+ func (s Service) Lookup(key string) (string, error) {
++	if strings.TrimSpace(key) == "" {
++		return "", ErrInvalidKey
++	}
++
+ 	value, err := s.Backend.Find(key)
+ 	if errors.Is(err, BackendMissing) {
+ 		return "", ErrMissing
+ 	}
+ 	if err != nil {
+-		return "", ErrUnavailable
++		return "", fmt.Errorf("lookup account %q: %w", key, ErrUnavailable)
+ 	}
+ 	return value, nil
+ }
+diff --git a/lookup_test.go b/lookup_test.go
+index 6a6d08a179a4ada7e625c3560ef33b872ee4486d..685e80ec7b41840df83417861f1f01ef97e71002 100644
+--- a/lookup_test.go
++++ b/lookup_test.go
+@@ -1,13 +1,65 @@
+ package accountlookup
+ 
+-import "testing"
++import (
++	"errors"
++	"strings"
++	"testing"
++)
+ 
+ type missingBackend struct{}
+ 
+ func (missingBackend) Find(string) (string, error) { return "", BackendMissing }
++
++type recordingBackend struct {
++	key   string
++	value string
++	err   error
++}
++
++func (b *recordingBackend) Find(key string) (string, error) {
++	b.key = key
++	return b.value, b.err
++}
++
+ func TestMissing(t *testing.T) {
+ 	_, err := (Service{Backend: missingBackend{}}).Lookup("u")
+ 	if err != ErrMissing {
+ 		t.Fatal(err)
+ 	}
+ }
++
++func TestBlankKeyRejectedBeforeBackend(t *testing.T) {
++	backend := &recordingBackend{}
++	_, err := (Service{Backend: backend}).Lookup(" \t\n")
++	if err != ErrInvalidKey {
++		t.Fatalf("Lookup() error = %v, want ErrInvalidKey", err)
++	}
++	if backend.key != "" {
++		t.Fatalf("backend called with key %q", backend.key)
++	}
++}
++
++func TestUnavailableHasSafeLookupContext(t *testing.T) {
++	backend := &recordingBackend{err: errors.New("password=secret sql=private")}
++	_, err := (Service{Backend: backend}).Lookup("user-42")
++	if !errors.Is(err, ErrUnavailable) {
++		t.Fatalf("Lookup() error = %v, want ErrUnavailable", err)
++	}
++	if !strings.Contains(err.Error(), `lookup account "user-42"`) {
++		t.Fatalf("Lookup() error lacks operation/key context: %v", err)
++	}
++	if strings.Contains(err.Error(), "secret") || strings.Contains(err.Error(), "private") {
++		t.Fatalf("Lookup() error exposed backend diagnostics: %v", err)
++	}
++}
++
++func TestSuccessReturnsValue(t *testing.T) {
++	backend := &recordingBackend{value: "account-data"}
++	got, err := (Service{Backend: backend}).Lookup(" user-42 ")
++	if err != nil || got != "account-data" {
++		t.Fatalf("Lookup() = (%q, %v), want (%q, nil)", got, err, "account-data")
++	}
++	if backend.key != " user-42 " {
++		t.Fatalf("backend key = %q, want original key", backend.key)
++	}
++}

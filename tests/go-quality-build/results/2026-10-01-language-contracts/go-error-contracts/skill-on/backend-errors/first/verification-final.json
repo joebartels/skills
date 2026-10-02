@@ -1,0 +1,41 @@
+[
+  {
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=45s",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/accountlookup\t1.183s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=45s",
+      "-run",
+      "^TestContract",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/accountlookup\t1.191s\n",
+    "stderr": "",
+    "probe_sha256": "4aa8df12b5f063026a879e8045b2e3df8fd9783d576e4a2cffd23e8668b6abf5"
+  }
+]
