@@ -133,9 +133,83 @@ assertion. Runtime promotion remains unproven.
 
 ## Delivery verification
 
-[Final artifact verification](final-artifact-verification.json) reconstructs all
-27 patches and matches 113 input, 122 output, 129 catalog, 181 blind-source and
-23 upstream identities. [Final structural checks](final-structural-checks.json)
+[Final artifact verification](final-artifact-verification.json) records the original
+local audit: 27 reconstructed patches and 113 input, 122 output, 129 catalog,
+181 blind-source and 23 upstream identities. Its
+[captured script](final-artifact-verification.py.txt) retains the exact author-specific
+checkout and temporary paths used then; it is historical evidence and cannot be
+run unchanged from another checkout. It also writes the historical result file,
+so do not use it to replay or overwrite archived results.
+[Final structural checks](final-structural-checks.json)
 pass root/build/layout/grade tests, repository validation, both draft validators
 and Claude plugin/marketplace validation. The independent recommendation is two
 reviewed drafts plus the names/docs reference, with runtime promotion deferred.
+
+## Reconstructing archived sources from another checkout
+
+The fixtures, patches and identity manifests are sufficient to reconstruct the
+completed code. This does not reproduce model authoring, full tool transcripts,
+past review judgments or the original machine's environment. The historical audit
+capture above is not a portable verifier or a fresh-checkout test command.
+
+From the repository root, with Python 3, Git and RTK installed, this read-only
+check reconstructs all trials in an automatically cleaned temporary directory:
+
+```sh
+rtk proxy python3 -B - <<'PY'
+from pathlib import Path
+import hashlib, json, shutil, subprocess, tempfile
+root = Path.cwd()
+archive = root / 'tests/go-quality-build/results/2026-10-01-language-contracts'
+def hashes(folder):
+    return {str(p.relative_to(folder)): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in folder.rglob('*') if p.is_file() and '.git' not in p.parts}
+manifests = sorted(archive.glob('*/*/*/*/manifest.json'))
+if len(manifests) != 27:
+    raise SystemExit('expected 27 trial manifests; run from the repository root')
+with tempfile.TemporaryDirectory(prefix='go-language-replay-') as tmp:
+    for n, path in enumerate(manifests):
+        m = json.loads(path.read_text())
+        original = root / f'tests/go-quality-build/{m["skill"]}/evals/files/{m["case"]}'
+        patch = path.with_name('source.patch')
+        if hashes(original) != m['input_hashes'] or hashlib.sha256(patch.read_bytes()).hexdigest() != m['patch_sha256']:
+            raise SystemExit(f'input or patch mismatch: {path}')
+        copy = Path(tmp) / str(n)
+        shutil.copytree(original, copy)
+        subprocess.run(['rtk', 'proxy', 'git', 'apply', str(patch)], cwd=copy, check=True)
+        if hashes(copy) != m['output_hashes']:
+            raise SystemExit(f'output mismatch: {path}')
+print('PASS: 27 archived source reconstructions')
+PY
+```
+
+For the wider identity audit, derive catalog files from each manifest's skill name
+and compare its recorded SHA-256 values with the runtime architecture skills or
+candidate draft directories. Rebuild blind-review inputs using these rules, then
+compare them with `blind-review/blind-source-manifest.json`:
+
+| Blind entry | Archived source |
+| --- | --- |
+| `original/<file>` | The paired skill/case's `evals/files/<case>/<file>` |
+| `candidate-a/<file>` or `candidate-b/<file>` | The reconstructed arm/repeat selected by `blind-review/arm-map.json` |
+| `task.txt` | The case's `evals.json` prompt, followed by one newline |
+| `probe_test.go.txt` | The paired `probes/<case>_test.go.txt` bytes |
+
+The upstream corpus is not included in this archive. Obtain the exact audited
+revision explicitly in a new temporary Git repository; fetching it requires
+network access. The directory below must be unused:
+
+```sh
+rtk proxy git init --quiet /tmp/go-language-upstream-replay
+rtk proxy git -C /tmp/go-language-upstream-replay fetch --depth=1 https://github.com/samber/cc-skills-golang.git 19a0626ae8565d27a7b7bdf59d8d99d94d7e284c
+```
+
+Read each path in `docs/go-quality-build/language-contracts-upstream-manifest.json`
+with `git show <revision>:<path>` from that repository. Compare the raw bytes'
+SHA-256, Git blob SHA-1, byte count and line count with the manifest; preserve final
+newlines. No original `/private/tmp` tree is required for these steps.
+
+The separate [fresh-checkout audit](copilot-review/replay-verification.json)
+verified all 27 trials, 181 rebuilt blind identities and 23 newly fetched upstream
+files at PR head `97bc0a9`, without reading the original author checkout or scratch
+trees. It also confirms the captured original script/result remain unchanged.
