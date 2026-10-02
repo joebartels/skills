@@ -1,0 +1,7 @@
+# Checked context matched study
+
+The exact original context draft and five-skill comparator are frozen in `skills/`; hashes/profile/budget/inputs are in [manifest](manifest.json). The [preflight review](guidance-preflight-original.md) required cancel-transfer and context-value fixes; [resolution](guidance-preflight-resolution.md) records the addressed conditions before freeze. This is an authored draft, not a runtime addition or efficacy claim.
+
+At most ten new launches, after six spent discovery attempts: three checked reference baselines and their three exposures, one transfer pair and one alternate-model primary pair. Actual checked host disabling follows symlinked folders; each fresh neutral workspace receives only listed task files and the original five local native skills, plus this candidate in exposed arms. Same explicit metadata is supplied per arm; native selection-only trials are separate. No other-native/alternate-reasoning implementation pair fits16; preserve missing reuse evidence.
+
+No attempt yet. Sources will reconstruct from original inputs plus patches. Neutral outcome cards are frozen before revealing arms; independent exact-guidance/evidence review is required for disposition. Strong baseline ties preserve behavior and never supply a repeated correction. Promotion requires two independent matched primary corrections of the same confirmed relevant defect, successful final-byte transfer, preservation and accepting review.

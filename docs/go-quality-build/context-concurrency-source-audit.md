@@ -62,3 +62,7 @@ Primary documentation was checked during planning and rechecked for version-sens
 Audit decisions match existing API/package/composition/testing ownership and the unchanged all-nine review contract. General error representation/aliasing drafts stay non-installable; necessary cancellation inspection and synchronization rules remain locally usable. Outcome reviews still judge actual correctness, idioms, ownership, budget, resource and test contracts rather than this section inventory. Structural/source checks do not prove effectiveness, native routing or actual Go 1.22 execution.
 
 Next: prepare/freeze original fixtures and probes, then run discovery baselines before deciding whether new guidance is warranted. No useful source decision requires expanding repository discovery now.
+
+## Context draft use before exposure
+
+The first context snapshot (`6368240e5a000cd8f056afa5980099317882d8ebcefa0e1f29921975ccc4627d`) applies the audited propagation, cancellation/budget, value and deliberate finalization decisions in original wording with one original helper. No upstream text/code copied; distribution notice obligations remain zero. Preflight corrected explicit cancel transfer and metadata scope before freeze. Current primary context docs and official Go API records support stated floors/AfterFunc semantics. This is authored guidance outside runtime; measured effectiveness and independent final exact-byte disposition are pending.

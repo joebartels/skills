@@ -1,0 +1,5 @@
+# Preflight resolution before behavioral freeze
+
+The independent [original review](guidance-preflight-original.md) assessed its stated earlier hash and required two fixes. Both are addressed before any exposure: explicit cancel transfer now names recipient/release responsibility, preventing premature creator cancellation; context values carry needed request metadata, with ordinary dependencies/configuration explicit. Optional child-derivation and version-floor refinements are also included. The actual Go1.22 module omits API history; the official host distribution go1.20.txt/go1.21.txt and [primary context documentation](https://pkg.go.dev/context) verify the four stated helper floors. Inline example semantics are unchanged; actual minimum/host compilation checks are preserved. No controller/reviewer check supplies author benefit.
+
+This resolution verifies the identified conditions; it does not claim that the reviewer approved the changed hash. Final independent exact-guidance/evidence review remains required after outcomes. Material changes after freeze require affected reruns inside the cap or reviewed-draft disposition.
