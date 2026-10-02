@@ -1,0 +1,234 @@
+{
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "checks": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-2/candidate",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 10
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "env",
+        "GOOS",
+        "GOARCH",
+        "GOVERSION"
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-2/candidate",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "darwin\narm64\ngo1.26.5\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 10
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=45s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-2/candidate",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/sweeper\t0.695s\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 70
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-shuffle=on",
+        "-count=3",
+        "-timeout=45s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-2/candidate",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "ok  \texample.com/sweeper\t2.202s\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 70
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=25s",
+        "-run",
+        "^TestRunWaitsFullIntervalAfterSuccessfulCompletion$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-2/verification-skip-interval",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "--- FAIL: TestRunWaitsFullIntervalAfterSuccessfulCompletion (0.08s)\n    lifecycle_test.go:185: cycle 2 started 73.292\u00b5s after completion, want at least 40ms\nFAIL\nFAIL\texample.com/sweeper\t0.428s\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "timeout_seconds": 40,
+      "purpose": "assertion-signal mutation",
+      "mutation": {
+        "file": "worker.go",
+        "replace": "time.NewTimer(interval)",
+        "with": "time.NewTimer(0)"
+      }
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=25s",
+        "-run",
+        "^TestRunWaitsForCanceledCallbackCleanup$/nil_result$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-2/verification-release-without-join",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "--- FAIL: TestRunWaitsForCanceledCallbackCleanup (0.00s)\n    --- FAIL: TestRunWaitsForCanceledCallbackCleanup/nil_result (0.00s)\n        lifecycle_test.go:317: release ran before callback cleanup finished\nFAIL\nFAIL\texample.com/sweeper\t0.139s\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "timeout_seconds": 40,
+      "purpose": "assertion-signal mutation",
+      "mutation": {
+        "file": "host.go",
+        "replace": "err := runWorker(workerCtx, interval, sweep)",
+        "with": "done := make(chan error, 1)\n\tgo func() { done <- runWorker(workerCtx, interval, sweep) }()\n\tvar err error\n\tselect {\n\tcase err = <-done:\n\tcase <-workerCtx.Done():\n\t}"
+      }
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=25s",
+        "-run",
+        "^TestRunWaitsForCanceledCallbackCleanup$/callback_cancellation_error$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-2/verification-suppress-callback-canceled",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "--- FAIL: TestRunWaitsForCanceledCallbackCleanup (0.03s)\n    --- FAIL: TestRunWaitsForCanceledCallbackCleanup/callback_cancellation_error (0.03s)\n        lifecycle_test.go:329: Run = <nil>, lost callback cancellation error\nFAIL\nFAIL\texample.com/sweeper\t0.155s\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1,
+      "timeout_seconds": 40,
+      "purpose": "assertion-signal mutation",
+      "mutation": {
+        "file": "worker.go",
+        "replace": "if err := sweep(ctx); err != nil {\n\t\t\treturn err\n\t\t}",
+        "with": "if err := sweep(ctx); err != nil {\n\t\t\tif ctx.Err() != nil { return nil }\n\t\t\treturn err\n\t\t}"
+      }
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "env",
+        "GOFLAGS",
+        "GOWORK",
+        "CGO_ENABLED"
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-2/candidate",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "\n\n1\n",
+      "stderr": "",
+      "exit_code": 0,
+      "timeout_seconds": 10
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "diff",
+        "-ru",
+        "original",
+        "candidate"
+      ],
+      "cwd": "/private/tmp/go-independent-review-b_q8mpxi/changeset-2",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "diff -ru original/README.md candidate/README.md\n--- original/README.md\t2026-10-01 17:38:18\n+++ candidate/README.md\t2026-10-01 22:34:53\n@@ -7,6 +7,10 @@\n returned with its error identity preserved. Parent cancellation stops future\n cycles and is a normal nil worker result. Nonpositive intervals reject.\n \n+An error returned by the callback takes precedence over concurrent parent\n+cancellation, including a callback-returned context cancellation error.\n+Cancellation alone is normal completion when the callback returns nil.\n+\n The host owns release: cancel and wait for the worker and its callback cleanup\n before invoking release, and before returning. Invoke release exactly once\n on normal cancellation and callback failure; join any release error with the\ndiff -ru original/host.go candidate/host.go\n--- original/host.go\t2026-10-01 17:38:18\n+++ candidate/host.go\t2026-10-01 22:34:53\n@@ -6,6 +6,19 @@\n \t\"time\"\n )\n \n+// Run sweeps immediately and then waits interval after each successful sweep.\n+// Cancellation stops future sweeps and returns nil unless sweep returns an\n+// error. A sweep error takes precedence over concurrent cancellation.\n+// Run waits for sweep to finish, cancels its context, and invokes release once\n+// before returning, preserving both sweep and release errors.\n+// A nonpositive interval is rejected without invoking either callback.\n func Run(ctx context.Context, interval time.Duration, sweep func(context.Context) error, release func() error) error {\n-\treturn errors.Join(once(ctx, sweep), release())\n+\tif interval <= 0 {\n+\t\treturn errors.New(\"sweep interval must be positive\")\n+\t}\n+\n+\tworkerCtx, cancel := context.WithCancel(ctx)\n+\terr := runWorker(workerCtx, interval, sweep)\n+\tcancel()\n+\treturn errors.Join(err, release())\n }\nOnly in candidate: lifecycle_test.go\ndiff -ru original/worker.go candidate/worker.go\n--- original/worker.go\t2026-10-01 17:38:18\n+++ candidate/worker.go\t2026-10-01 22:36:04\n@@ -1,7 +1,27 @@\n package sweeper\n \n-import \"context\"\n+import (\n+\t\"context\"\n+\t\"time\"\n+)\n \n-func once(ctx context.Context, sweep func(context.Context) error) error {\n-\treturn sweep(ctx)\n+func runWorker(ctx context.Context, interval time.Duration, sweep func(context.Context) error) error {\n+\tfor {\n+\t\tif ctx.Err() != nil {\n+\t\t\treturn nil\n+\t\t}\n+\t\tif err := sweep(ctx); err != nil {\n+\t\t\treturn err\n+\t\t}\n+\n+\t\t// Start the interval after the callback finishes, so slow callbacks do\n+\t\t// not shorten the wait or overlap a later cycle.\n+\t\ttimer := time.NewTimer(interval)\n+\t\tselect {\n+\t\tcase <-ctx.Done():\n+\t\t\ttimer.Stop()\n+\t\t\treturn nil\n+\t\tcase <-timer.C:\n+\t\t}\n+\t}\n }\n",
+      "stderr": "",
+      "exit_code": 1,
+      "timeout_seconds": 10
+    }
+  ],
+  "source_sha256_before": {
+    "original/README.md": "40c0845387da1698aad2959e6e0c2be134b2c95e78d9aa862e1320bb15e6a40e",
+    "original/go.mod": "8c2eee5cd1aaa88bb71bf34122c45eed6198fc4356555ff422c767c1dd531307",
+    "original/host.go": "0c2cbe2bd75bb98970f3a592ccfb8789133a8832076b110bb4fc1a66dafb4c1e",
+    "original/host_test.go": "f1e04af3e38673ae18fcae38038096f8b762d0e436eba27e9d0a3adcab3225c6",
+    "original/worker.go": "e5847e9056e689ff7571868b489cf6a769ce7c225841df0f5ba8110591efca47",
+    "candidate/README.md": "d1939fbc635520efb27cdde83038b2b0d24d56e727cfc3bca360ad7d6f31813c",
+    "candidate/go.mod": "8c2eee5cd1aaa88bb71bf34122c45eed6198fc4356555ff422c767c1dd531307",
+    "candidate/host.go": "6fd9c0e8445331b2642c3a7b5e10fd73e4d7825257c0ad537d96345970e77641",
+    "candidate/host_test.go": "f1e04af3e38673ae18fcae38038096f8b762d0e436eba27e9d0a3adcab3225c6",
+    "candidate/lifecycle_test.go": "ce8c12d86bf0caba1c25c965e823a8dc1fc1794e02ccfea1ecd7f32cbdd5024d",
+    "candidate/worker.go": "f050ff76c306873afc353cb1017e5d49ccbfbf7204e9f0d5d74891e9683ee996"
+  },
+  "source_sha256_after": {
+    "original/README.md": "40c0845387da1698aad2959e6e0c2be134b2c95e78d9aa862e1320bb15e6a40e",
+    "original/go.mod": "8c2eee5cd1aaa88bb71bf34122c45eed6198fc4356555ff422c767c1dd531307",
+    "original/host.go": "0c2cbe2bd75bb98970f3a592ccfb8789133a8832076b110bb4fc1a66dafb4c1e",
+    "original/host_test.go": "f1e04af3e38673ae18fcae38038096f8b762d0e436eba27e9d0a3adcab3225c6",
+    "original/worker.go": "e5847e9056e689ff7571868b489cf6a769ce7c225841df0f5ba8110591efca47",
+    "candidate/README.md": "d1939fbc635520efb27cdde83038b2b0d24d56e727cfc3bca360ad7d6f31813c",
+    "candidate/go.mod": "8c2eee5cd1aaa88bb71bf34122c45eed6198fc4356555ff422c767c1dd531307",
+    "candidate/host.go": "6fd9c0e8445331b2642c3a7b5e10fd73e4d7825257c0ad537d96345970e77641",
+    "candidate/host_test.go": "f1e04af3e38673ae18fcae38038096f8b762d0e436eba27e9d0a3adcab3225c6",
+    "candidate/lifecycle_test.go": "ce8c12d86bf0caba1c25c965e823a8dc1fc1794e02ccfea1ecd7f32cbdd5024d",
+    "candidate/worker.go": "f050ff76c306873afc353cb1017e5d49ccbfbf7204e9f0d5d74891e9683ee996"
+  },
+  "source_preserved": true
+}

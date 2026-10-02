@@ -1,0 +1,13 @@
+--- a/main.go
++++ b/main.go
+@@ -21,7 +21,9 @@
+ 	if *dir == "" || fs.NArg() != 0 {
+ 		return fmt.Errorf("--dir required and no positional arguments allowed")
+ 	}
+-	reader := csv.NewReader(input)
++	data, err := io.ReadAll(input)
++	if err != nil { return err }
++	reader := csv.NewReader(strings.NewReader(string(data)))
+ 	reader.FieldsPerRecord = 2
+ 	for record := 1; ; record++ {
+ 		row, err := reader.Read()

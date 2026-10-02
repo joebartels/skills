@@ -1,0 +1,11 @@
+--- a/worker.go
++++ b/worker.go
+@@ -16,7 +16,7 @@
+ 
+ 		// Start the interval after the callback finishes, so slow callbacks do
+ 		// not shorten the wait or overlap a later cycle.
+-		timer := time.NewTimer(interval)
++		timer := time.NewTimer(0)
+ 		select {
+ 		case <-ctx.Done():
+ 			timer.Stop()

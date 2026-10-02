@@ -1,0 +1,150 @@
+{
+  "scope": "compile candidate tests with controller cache; run unchanged test binaries with GOCACHE unset and valid disposable HOME, exercising child builder defaults without outer go-test cache setup; no injected assertions",
+  "checks": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "list",
+        "-f",
+        "{{if .TestGoFiles}}{{.ImportPath}}{{else if .XTestGoFiles}}{{.ImportPath}}{{end}}",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-default-cache-syrc1jhj/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "HOME": "/Users/jb",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "example.com/indexer\nexample.com/indexer/cmd/indexer\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.034
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-c",
+        "-o",
+        "/private/tmp/go-default-cache-syrc1jhj/tests-0",
+        "example.com/indexer"
+      ],
+      "cwd": "/private/tmp/go-default-cache-syrc1jhj/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "HOME": "/Users/jb",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.308
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "list",
+        "-f",
+        "{{.Dir}}",
+        "example.com/indexer"
+      ],
+      "cwd": "/private/tmp/go-default-cache-syrc1jhj/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "HOME": "/Users/jb",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "/private/tmp/go-default-cache-syrc1jhj/module\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.027
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-default-cache-syrc1jhj/tests-0",
+        "-test.count=1",
+        "-test.timeout=30s"
+      ],
+      "cwd": "/private/tmp/go-default-cache-syrc1jhj/module",
+      "env": {
+        "GOCACHE": "<unset>",
+        "HOME": "/private/tmp/go-testing-default-home",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "PASS\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.471
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-c",
+        "-o",
+        "/private/tmp/go-default-cache-syrc1jhj/tests-1",
+        "example.com/indexer/cmd/indexer"
+      ],
+      "cwd": "/private/tmp/go-default-cache-syrc1jhj/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "HOME": "/Users/jb",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.285
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "list",
+        "-f",
+        "{{.Dir}}",
+        "example.com/indexer/cmd/indexer"
+      ],
+      "cwd": "/private/tmp/go-default-cache-syrc1jhj/module",
+      "env": {
+        "GOCACHE": "/private/tmp/go-quality-testing-cache",
+        "HOME": "/Users/jb",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "/private/tmp/go-default-cache-syrc1jhj/module/cmd/indexer\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.027
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-default-cache-syrc1jhj/tests-1",
+        "-test.count=1",
+        "-test.timeout=30s"
+      ],
+      "cwd": "/private/tmp/go-default-cache-syrc1jhj/module/cmd/indexer",
+      "env": {
+        "GOCACHE": "<unset>",
+        "HOME": "/private/tmp/go-testing-default-home",
+        "GOTOOLCHAIN": "local"
+      },
+      "stdout": "PASS\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 3.017
+    }
+  ]
+}

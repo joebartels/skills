@@ -1,0 +1,11 @@
+--- a/main.go
++++ b/main.go
+@@ -41,7 +41,7 @@
+ 		if err := os.MkdirAll(*dir, 0o755); err != nil {
+ 			return fmt.Errorf("record %d: create directory: %w", record, err)
+ 		}
+-		if err := writeRecord(*dir, row[0], strconv.Itoa(qty)+"\n"); err != nil {
++		if err := os.WriteFile(filepath.Join(*dir, row[0]), []byte(strconv.Itoa(qty)+"\n"), 0o644); err != nil {
+ 			return fmt.Errorf("record %d: write %q: %w", record, row[0], err)
+ 		}
+ 	}

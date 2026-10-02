@@ -1,3 +1,3 @@
-# Behavior revision 2 fresh evaluations
+# Behavior revision 2 evaluation archive
 
-Pending independent outcomes. Exact frozen task/input/common-guidance/settings match the recorded prior run. Behavior revision 2 adds conditional exact-set and interface/error counterexamples; final both also uses already-evaluated isolation revision 2. No repair or review feedback is supplied.
+Seven fresh author trials, neutral independent outcomes and exact source/mutation records are complete. [Comparison](comparison.md) distinguishes continued narrow benefits from already-strong controls. Revision 2 guidance is evaluated, pending its independent promotion gate. Other testing guidance is unavailable in this single suite.
