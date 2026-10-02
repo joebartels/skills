@@ -1,0 +1,44 @@
+{
+  "declared_minimum": "Go1.22-compatible APIs/source",
+  "executed_toolchain": "Go1.26.5 darwin/arm64; actual minimum unavailable",
+  "optional_examples": "No Go1.24/1.25 code example included; version-specific options are prose only.",
+  "reference_sha256": "46bc02cc0a07c31e04f6922c240c9d493783613d144fb7b79a368f16c50fbdbc",
+  "checks": [
+    {
+      "phase": "premature-close-counterexample",
+      "source": "package example_test\n\nimport (\n\t\"context\"\n\t\"os\"\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestBorrowedFixture(t *testing.T) {\n\tfile, err := os.CreateTemp(t.TempDir(), \"borrowed\")\n\tif err != nil {\n\t\tt.Fatal(err)\n\t}\n\tt.Cleanup(func() {\n\t\tif err := file.Close(); err != nil {\n\t\t\tt.Errorf(\"close fixture: %v\", err)\n\t\t}\n\t})\n\tctx, cancel := context.WithCancel(context.Background())\n\tstarted := make(chan error, 1)\n\tfinished := make(chan struct{})\n\tt.Cleanup(func() {\n\t\tcancel()\n\t\tselect {\n\t\tcase <-finished:\n\t\tcase <-time.After(5 * time.Second):\n\t\t\tt.Error(\"borrower did not finish during cleanup\")\n\t\t}\n\t})\n\tfile.Close()\n\tgo func() {\n\t\tdefer close(finished)\n\t\t_, err := file.Stat()\n\t\tstarted <- err\n\t\t<-ctx.Done()\n\t}()\n\tselect {\n\tcase err := <-started:\n\t\tif err != nil {\n\t\t\tt.Fatalf(\"borrower fixture use: %v\", err)\n\t\t}\n\tcase <-time.After(5 * time.Second):\n\t\tt.Fatal(\"borrower did not start\")\n\t}\n\tcancel()\n\tselect {\n\tcase <-finished:\n\tcase <-time.After(5 * time.Second):\n\t\tt.Fatal(\"borrower did not finish after cancellation\")\n\t}\n\tif _, err := file.Stat(); err != nil {\n\t\tt.Fatalf(\"caller fixture unavailable after join: %v\", err)\n\t}\n}\n",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-count=1",
+        "-timeout=20s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-isolation-example-qgh2p6zx",
+      "stdout": "--- FAIL: TestBorrowedFixture (0.00s)\n    example_test.go:41: borrower fixture use: stat /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestBorrowedFixture1052623929/001/borrowed1712354095: file already closed\n    example_test.go:17: close fixture: close /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestBorrowedFixture1052623929/001/borrowed1712354095: file already closed\nFAIL\nFAIL\texample.com/isolationexample\t0.233s\nFAIL\n",
+      "stderr": "",
+      "exit_code": 1
+    },
+    {
+      "phase": "exact-reference",
+      "source": "package example_test\n\nimport (\n\t\"context\"\n\t\"os\"\n\t\"testing\"\n\t\"time\"\n)\n\nfunc TestBorrowedFixture(t *testing.T) {\n\tfile, err := os.CreateTemp(t.TempDir(), \"borrowed\")\n\tif err != nil {\n\t\tt.Fatal(err)\n\t}\n\tt.Cleanup(func() {\n\t\tif err := file.Close(); err != nil {\n\t\t\tt.Errorf(\"close fixture: %v\", err)\n\t\t}\n\t})\n\tctx, cancel := context.WithCancel(context.Background())\n\tstarted := make(chan error, 1)\n\tfinished := make(chan struct{})\n\tt.Cleanup(func() {\n\t\tcancel()\n\t\tselect {\n\t\tcase <-finished:\n\t\tcase <-time.After(5 * time.Second):\n\t\t\tt.Error(\"borrower did not finish during cleanup\")\n\t\t}\n\t})\n\tgo func() {\n\t\tdefer close(finished)\n\t\t_, err := file.Stat()\n\t\tstarted <- err\n\t\t<-ctx.Done()\n\t}()\n\tselect {\n\tcase err := <-started:\n\t\tif err != nil {\n\t\t\tt.Fatalf(\"borrower fixture use: %v\", err)\n\t\t}\n\tcase <-time.After(5 * time.Second):\n\t\tt.Fatal(\"borrower did not start\")\n\t}\n\tcancel()\n\tselect {\n\tcase <-finished:\n\tcase <-time.After(5 * time.Second):\n\t\tt.Fatal(\"borrower did not finish after cancellation\")\n\t}\n\tif _, err := file.Stat(); err != nil {\n\t\tt.Fatalf(\"caller fixture unavailable after join: %v\", err)\n\t}\n}\n",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-count=1",
+        "-timeout=20s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-isolation-example-qgh2p6zx",
+      "stdout": "ok  \texample.com/isolationexample\t1.184s\n",
+      "stderr": "",
+      "exit_code": 0
+    }
+  ]
+}
