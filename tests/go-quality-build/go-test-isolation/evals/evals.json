@@ -1,0 +1,81 @@
+{
+  "skill_name": "go-test-isolation",
+  "evals": [
+    {
+      "id": "library-file-fixtures",
+      "prompt": "Extend the Store tests according to README.md with concurrent independent instances and grouped child cases. Keep the public API and supported Go version.",
+      "expected_output": "Independent same-key values and owned fixture lifetime through grouped/concurrent work.",
+      "assertions": [
+        "Distinct roots preserve independent same-key data.",
+        "Grouped child resources survive until descendants complete; no unnecessary production abstraction."
+      ],
+      "files": [
+        "files/library-file-fixtures/README.md",
+        "files/library-file-fixtures/go.mod",
+        "files/library-file-fixtures/store.go",
+        "files/library-file-fixtures/store_test.go"
+      ]
+    },
+    {
+      "id": "cli-environment",
+      "prompt": "Extend reliable configuration and actual command tests according to README.md. Cover unset, explicit and malformed values without leaking process state.",
+      "expected_output": "Restored parent environment and explicit isolated process configuration.",
+      "assertions": [
+        "Environment presence/value is controlled and restored.",
+        "Real child output/status is verified with explicit environment; no parallel global mutation."
+      ],
+      "files": [
+        "files/cli-environment/README.md",
+        "files/cli-environment/cmd/showcfg/main.go",
+        "files/cli-environment/config.go",
+        "files/cli-environment/config_test.go",
+        "files/cli-environment/go.mod"
+      ]
+    },
+    {
+      "id": "service-http-boundary",
+      "prompt": "Add high-quality reliable success, error, response-lifetime and cancellation tests for Fetch according to README.md. Keep the public API and module minimum.",
+      "expected_output": "Faithful HTTP/request/context/body observations with disclosed dependency scope.",
+      "assertions": [
+        "Supplied context cancellation reaches started in-flight request work.",
+        "Response ownership and actual protocol boundaries are checked without unsupported fake/network claims."
+      ],
+      "files": [
+        "files/service-http-boundary/README.md",
+        "files/service-http-boundary/fetch.go",
+        "files/service-http-boundary/fetch_test.go",
+        "files/service-http-boundary/go.mod"
+      ]
+    },
+    {
+      "id": "worker-timing",
+      "prompt": "Replace guessed-readiness test setup and add reliable recurrence, cancellation, teardown and independent-invocation tests for Poll according to README.md. Keep its public API and Go minimum.",
+      "expected_output": "Explicit events, joined test-owned work and correctly measured completion-relative intervals.",
+      "assertions": [
+        "Readiness/cancellation/completion are controlled rather than guessed.",
+        "Recurrence is measured from completion; test failures report through the test goroutine and cleanup joins work."
+      ],
+      "files": [
+        "files/worker-timing/README.md",
+        "files/worker-timing/go.mod",
+        "files/worker-timing/poll.go",
+        "files/worker-timing/poll_test.go"
+      ]
+    },
+    {
+      "id": "not-isolation-work",
+      "prompt": "Repair Clamp's lower-bound branch according to README.md and add a focused ordinary regression test. Keep the public API and module minimum.",
+      "expected_output": "Small pure calculation repair without isolation machinery.",
+      "assertions": [
+        "Declines isolation guidance when offered.",
+        "Uses ordinary local values/assertions without fixture, concurrency or dependency expansion."
+      ],
+      "files": [
+        "files/not-isolation-work/README.md",
+        "files/not-isolation-work/clamp.go",
+        "files/not-isolation-work/clamp_test.go",
+        "files/not-isolation-work/go.mod"
+      ]
+    }
+  ]
+}

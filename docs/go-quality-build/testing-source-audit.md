@@ -114,3 +114,7 @@ All local fixtures, probes, skill wording and examples will be original. General
 ## Promotion-review correction — 2026-10-01
 
 The initial 68-section inventory omitted the detailed testing-layout reference previously deferred by the architecture audit. Read the entire unchanged pinned reference and added all 11 sections, for 79 decisions. The existing behavior draft already follows independent access/oracle choices, optional forms/names and executable-example semantics; no evaluated guidance needs alteration. Utility/fixture/execution adaptations belong to the upcoming isolation scope. No upstream prose/example code is copied into runtime, and no new distributed license obligation is introduced. Keep the independent review's original omission finding visible.
+
+## Use status — 2026-10-01
+
+Behavior revision 1 is promoted unchanged after matched evaluation and the audit correction. The isolation fixtures/probes are original controller-authored inputs with standard-library dependencies and Go1.22 declarations. The isolation draft does not exist yet; its retained decisions remain proposed until blind baseline findings and matched skill-on evidence support utility.
