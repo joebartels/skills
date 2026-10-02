@@ -1,0 +1,108 @@
+{
+  "authorized_dispatch": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/both/dispatch.txt",
+  "offered_names": [
+    "go-api-contracts",
+    "go-behavior-tests",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries",
+    "go-test-isolation"
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-behavior-tests/SKILL.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-interfaces-and-composition/SKILL.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-package-boundaries/SKILL.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-test-isolation/SKILL.md"
+  ],
+  "opened_reference_paths": [
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-behavior-tests/references/behavior-observations.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-test-isolation/references/isolation-patterns.md"
+  ],
+  "decisions": [
+    {
+      "name": "go-api-contracts",
+      "selected": true,
+      "opened": true,
+      "reason": "The task evolves exported library behavior, CSV and JSON file formats, error identity, and real CLI grammar/status/stream contracts while preserving Go1.22 and existing function types."
+    },
+    {
+      "name": "go-behavior-tests",
+      "selected": true,
+      "opened": true,
+      "reason": "Meaningful implementation and high-quality regression tests are explicitly requested; observations include accepted prefixes, exact prior/new bytes, strict status and JSON boundaries, and independent callback/release failures."
+    },
+    {
+      "name": "go-core-style",
+      "selected": true,
+      "opened": true,
+      "reason": "Production Go and Go tests are being written; use straightforward errors, guard clauses, standard-library types, formatting, vet and race checks without installing tools."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "selected": true,
+      "opened": true,
+      "reason": "Refresh borrows a supplied HTTP client/context and owns acquired bodies; Serve owns callback completion and release; the command owns signals and client cleanup. Existing concrete clients/functions suffice."
+    },
+    {
+      "name": "go-package-boundaries",
+      "selected": true,
+      "opened": true,
+      "reason": "CSV ingestion, HTTP refresh and lifecycle responsibilities are added to the library and wired by the existing command. Keeping the two existing packages is the smallest justified placement; no split or new interface is needed."
+    },
+    {
+      "name": "go-test-isolation",
+      "selected": true,
+      "opened": true,
+      "reason": "Tests own temporary files, subprocesses, local HTTP servers, response bodies, cancellation gates, timers and goroutines; test selection, bounded joins, child-local file limits and explicit executable environments matter."
+    }
+  ],
+  "reference_decisions": [
+    {
+      "path": "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-behavior-tests/references/behavior-observations.md",
+      "opened": true,
+      "reason": "Choose retained-state observations for failures during writes, independent work/release error cases, and exact external oracles."
+    },
+    {
+      "path": "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-test-isolation/references/isolation-patterns.md",
+      "opened": true,
+      "reason": "Choose Go1.22-compatible synchronization, early-failure cleanup, fixture fidelity, timing control and focused selection checks."
+    },
+    {
+      "path": "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-package-boundaries/references/package-maps.md",
+      "opened": false,
+      "reason": "No package split or comparison of alternative project shapes was necessary."
+    }
+  ],
+  "opened_module_paths": [
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/README.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/index.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/refresh.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/serve.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/index_test.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/go.mod",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/cmd/indexer/main.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/cmd/indexer/main_test.go"
+  ],
+  "opened_files": [
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/README.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/index.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/refresh.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/serve.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/index_test.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/go.mod",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/cmd/indexer/main.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/module/cmd/indexer/main_test.go",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-behavior-tests/SKILL.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-interfaces-and-composition/SKILL.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-package-boundaries/SKILL.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-test-isolation/SKILL.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-behavior-tests/references/behavior-observations.md",
+    "/private/tmp/go-fresh-author-_5871z_7/task-2/guidance/go-test-isolation/references/isolation-patterns.md"
+  ],
+  "other_guidance_opened": [],
+  "scope": "Only the standalone dispatch, its isolated module and offered relevant guidance were inspected. No repository design record, eval JSON, controller probe, or other author workspace was inspected."
+}

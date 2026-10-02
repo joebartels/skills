@@ -1,0 +1,52 @@
+[
+  {
+    "label": "focused defaults",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestLoadFromEnv$/^defaults$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-focused-check-ixatok6s/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "patch": null,
+    "stdout": "ok  \texample.com/showcfg\t1.234s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.4273201669566333
+  },
+  {
+    "label": "focused empty value restoration",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestConfigurationEnvironmentRestoration$/^present_empty$/^child$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-focused-check-_dgucz1g/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "patch": null,
+    "stdout": "ok  \texample.com/showcfg\t1.224s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.4309757919982076
+  }
+]

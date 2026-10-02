@@ -1,0 +1,1435 @@
+--- a/cmd/indexer/main.go
++++ b/cmd/indexer/main.go
+@@ -1,19 +1,87 @@
+ package main
+ 
+ import (
++	"context"
++	"flag"
++	"fmt"
++	"io"
++	"net/http"
++	"net/url"
++	"os"
++	"os/signal"
++	"strings"
++	"syscall"
++	"time"
++
+ 	"example.com/indexer"
+-	"fmt"
+-	"os"
+ )
+ 
+ func run(args []string) error {
+-	if len(args) != 4 || args[0] != "put" {
+-		return fmt.Errorf("usage: indexer put DIR KEY TEXT")
++	return runContext(context.Background(), args, os.Stdin)
++}
++
++func runContext(ctx context.Context, args []string, stdin io.Reader) error {
++	if len(args) == 0 {
++		return fmt.Errorf("usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION")
+ 	}
+-	return indexer.Open(args[1]).Put(args[2], args[3])
++	switch args[0] {
++	case "put":
++		// Preserve the original positional grammar, including leading dashes.
++		if len(args) != 4 {
++			return fmt.Errorf("usage: indexer put DIR KEY TEXT")
++		}
++		return indexer.Open(args[1]).Put(args[2], args[3])
++	case "apply":
++		flags := flag.NewFlagSet("apply", flag.ContinueOnError)
++		flags.SetOutput(io.Discard)
++		dir := flags.String("dir", "", "index directory")
++		if err := flags.Parse(args[1:]); err != nil {
++			return err
++		}
++		if *dir == "" || flags.NArg() != 0 {
++			return fmt.Errorf("usage: indexer apply --dir DIR")
++		}
++		return indexer.Open(*dir).ApplyCSV(stdin)
++	case "watch":
++		return watch(ctx, args[1:])
++	default:
++		return fmt.Errorf("unknown command %q", args[0])
++	}
+ }
++
++func watch(ctx context.Context, args []string) error {
++	flags := flag.NewFlagSet("watch", flag.ContinueOnError)
++	flags.SetOutput(io.Discard)
++	endpoint := flags.String("url", "", "HTTP endpoint")
++	path := flags.String("file", "", "snapshot path")
++	interval := flags.Duration("interval", 0, "time between completed refreshes")
++	if err := flags.Parse(args); err != nil {
++		return err
++	}
++	if flags.NArg() != 0 || *path == "" || *interval <= 0 {
++		return fmt.Errorf("usage: indexer watch --url URL --file PATH --interval DURATION (positive interval required)")
++	}
++	parsed, err := url.Parse(*endpoint)
++	if err != nil {
++		return fmt.Errorf("invalid watch URL: %w", err)
++	}
++	parsed.Scheme = strings.ToLower(parsed.Scheme)
++	if (parsed.Scheme != "http" && parsed.Scheme != "https") || parsed.Hostname() == "" {
++		return fmt.Errorf("watch URL must use HTTP or HTTPS with a host")
++	}
++	client := &http.Client{Timeout: 30 * time.Second}
++	return indexer.Serve(ctx, *interval, func(ctx context.Context) error {
++		return indexer.Refresh(ctx, client, parsed.String(), *path)
++	}, func() error {
++		client.CloseIdleConnections()
++		return nil
++	})
++}
++
+ func main() {
+-	if err := run(os.Args[1:]); err != nil {
++	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
++	defer stop()
++	if err := runContext(ctx, os.Args[1:], os.Stdin); err != nil {
+ 		fmt.Fprintln(os.Stderr, err)
+ 		os.Exit(2)
+ 	}
+--- /dev/null
++++ b/cmd/indexer/process_test.go
+@@ -0,0 +1,333 @@
++package main
++
++import (
++	"bytes"
++	"context"
++	"errors"
++	"fmt"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"os"
++	"os/exec"
++	"path/filepath"
++	"runtime"
++	"strings"
++	"sync"
++	"sync/atomic"
++	"syscall"
++	"testing"
++	"time"
++)
++
++func TestCLIProcessContracts(t *testing.T) {
++	binary := buildCommand(t)
++	t.Run("put remains positional", func(t *testing.T) {
++		root := t.TempDir()
++		for _, text := range []string{"one", "", "  "} {
++			code, stdout, stderr := commandResult(t, binary, root, "", "put", "-records", "alpha", text)
++			assertProcess(t, code, stdout, stderr, 0)
++			assertCommandFile(t, filepath.Join(root, "-records", "alpha"), text)
++		}
++		code, stdout, stderr := commandResult(t, binary, root, "", "put", "-records", "../escape", "bad")
++		assertProcess(t, code, stdout, stderr, 2)
++		assertCommandFile(t, filepath.Join(root, "-records", "alpha"), "  ")
++	})
++	t.Run("put usage", func(t *testing.T) {
++		for _, args := range [][]string{nil, {"put"}, {"put", t.TempDir(), "alpha", "text", "extra"}, {"unknown"}} {
++			code, stdout, stderr := commandResult(t, binary, t.TempDir(), "", args...)
++			assertProcess(t, code, stdout, stderr, 2)
++		}
++	})
++	t.Run("apply success", func(t *testing.T) {
++		root := t.TempDir()
++		input := "alpha,one\nbeta,\"a,b\nnext\"\nalpha, two \n"
++		code, stdout, stderr := commandResult(t, binary, t.TempDir(), input, "apply", "--dir", root)
++		assertProcess(t, code, stdout, stderr, 0)
++		assertCommandFile(t, filepath.Join(root, "alpha"), " two ")
++		assertCommandFile(t, filepath.Join(root, "beta"), "a,b\nnext")
++	})
++	t.Run("apply prefix after validation", func(t *testing.T) {
++		root := t.TempDir()
++		code, stdout, stderr := commandResult(t, binary, t.TempDir(), "alpha,accepted\nalpha, \nlater,forbidden\n", "apply", "--dir", root)
++		assertProcess(t, code, stdout, stderr, 2)
++		assertCommandFile(t, filepath.Join(root, "alpha"), "accepted")
++		assertCommandAbsent(t, filepath.Join(root, "later"))
++	})
++	t.Run("apply prefix after parse", func(t *testing.T) {
++		root := t.TempDir()
++		code, stdout, stderr := commandResult(t, binary, t.TempDir(), "alpha,accepted\nbeta,too,many\nlater,forbidden\n", "apply", "--dir", root)
++		assertProcess(t, code, stdout, stderr, 2)
++		assertCommandFile(t, filepath.Join(root, "alpha"), "accepted")
++		assertCommandAbsent(t, filepath.Join(root, "beta"))
++		assertCommandAbsent(t, filepath.Join(root, "later"))
++	})
++	t.Run("apply prefix after publication", func(t *testing.T) {
++		root := t.TempDir()
++		if err := os.Mkdir(filepath.Join(root, "beta"), 0700); err != nil {
++			t.Fatal(err)
++		}
++		code, stdout, stderr := commandResult(t, binary, t.TempDir(), "alpha,accepted\nbeta,rejected\nlater,forbidden\n", "apply", "--dir", root)
++		assertProcess(t, code, stdout, stderr, 2)
++		assertCommandFile(t, filepath.Join(root, "alpha"), "accepted")
++		assertCommandAbsent(t, filepath.Join(root, "later"))
++	})
++	t.Run("startup rejects", func(t *testing.T) {
++		path := filepath.Join(t.TempDir(), "snapshot")
++		for _, args := range [][]string{
++			{"apply"}, {"apply", "--dir", t.TempDir(), "extra"}, {"apply", "--unknown"},
++			{"watch"},
++			{"watch", "--url", "ftp://example.test", "--file", path, "--interval", "1s"},
++			{"watch", "--url", "http:///missing", "--file", path, "--interval", "1s"},
++			{"watch", "--url", "http://example.test", "--file", "", "--interval", "1s"},
++			{"watch", "--url", "http://example.test", "--file", path, "--interval", "0s"},
++			{"watch", "--url", "http://example.test", "--file", path, "--interval", "-1s"},
++			{"watch", "--url", "http://example.test", "--file", path, "--interval", "bad"},
++			{"watch", "--url", "http://example.test", "--file", path, "--interval", "1s", "extra"},
++		} {
++			code, stdout, stderr := commandResult(t, binary, t.TempDir(), "", args...)
++			assertProcess(t, code, stdout, stderr, 2)
++		}
++	})
++	t.Run("failed first refresh", func(t *testing.T) {
++		for _, tc := range []struct {
++			name, body string
++			status     int
++		}{
++			{"neighbor status", `[{"key":"alpha","text":"new"}]`, 206},
++			{"decode", `[{`, 200},
++			{"validation", `[{"key":"alpha","text":""}]`, 200},
++		} {
++			t.Run(tc.name, func(t *testing.T) {
++				var requests atomic.Int32
++				server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++					requests.Add(1)
++					w.WriteHeader(tc.status)
++					io.WriteString(w, tc.body)
++				}))
++				t.Cleanup(server.Close)
++				path := filepath.Join(t.TempDir(), "snapshot")
++				if err := os.WriteFile(path, []byte("old bytes"), 0600); err != nil {
++					t.Fatal(err)
++				}
++				code, stdout, stderr := commandResult(t, binary, t.TempDir(), "", "watch", "--url", server.URL, "--file", path, "--interval", "20ms")
++				assertProcess(t, code, stdout, stderr, 2)
++				assertCommandFile(t, path, "old bytes")
++				if requests.Load() != 1 {
++					t.Fatalf("requests = %d; want only first failure", requests.Load())
++				}
++			})
++		}
++	})
++	t.Run("failed first publication", func(t *testing.T) {
++		var requests atomic.Int32
++		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			requests.Add(1)
++			io.WriteString(w, `[{"key":"alpha","text":"new"}]`)
++		}))
++		t.Cleanup(server.Close)
++		path := filepath.Join(t.TempDir(), "snapshot")
++		if err := os.Mkdir(path, 0700); err != nil {
++			t.Fatal(err)
++		}
++		marker := filepath.Join(path, "marker")
++		if err := os.WriteFile(marker, []byte("old"), 0600); err != nil {
++			t.Fatal(err)
++		}
++		code, stdout, stderr := commandResult(t, binary, t.TempDir(), "", "watch", "--url", server.URL, "--file", path, "--interval", "20ms")
++		assertProcess(t, code, stdout, stderr, 2)
++		assertCommandFile(t, marker, "old")
++		if requests.Load() != 1 {
++			t.Fatalf("requests = %d; want only first publication failure", requests.Load())
++		}
++	})
++	t.Run("watch recurrence and termination", func(t *testing.T) {
++		if runtime.GOOS == "windows" {
++			t.Skip("process interrupt test exercises POSIX signal handling")
++		}
++		var requests atomic.Int32
++		secondStarted, allowSecond := make(chan struct{}), make(chan struct{})
++		var unblock sync.Once
++		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			n := requests.Add(1)
++			if n == 2 {
++				close(secondStarted)
++				select {
++				case <-allowSecond:
++				case <-r.Context().Done():
++					return
++				}
++			}
++			if n > 2 {
++				<-r.Context().Done()
++				return
++			}
++			fmt.Fprintf(w, `[{"key":"alpha","text":"cycle %d"}]`, n)
++		}))
++		t.Cleanup(server.Close)
++		t.Cleanup(func() { unblock.Do(func() { close(allowSecond) }) })
++		path := filepath.Join(t.TempDir(), "snapshot")
++		cmd, stdout, stderr, finished, result := startWatch(t, binary, server.URL, path, "50ms")
++		waitCommandFile(t, path, `[{"key":"alpha","text":"cycle 1"}]`+"\n")
++		waitCommandClosed(t, secondStarted, "second successful refresh start")
++		unblock.Do(func() { close(allowSecond) })
++		waitCommandFile(t, path, `[{"key":"alpha","text":"cycle 2"}]`+"\n")
++		if err := cmd.Process.Signal(syscall.SIGTERM); err != nil {
++			t.Fatal(err)
++		}
++		waitCommandClosed(t, finished, "watch termination")
++		if err := <-result; err != nil {
++			t.Fatalf("watch wait: %v\nstdout=%q stderr=%q", err, stdout, stderr)
++		}
++		assertProcess(t, 0, stdout.String(), stderr.String(), 0)
++		if requests.Load() < 2 {
++			t.Fatalf("requests = %d; want successful recurrence", requests.Load())
++		}
++	})
++	t.Run("watch joins canceled network request", func(t *testing.T) {
++		if runtime.GOOS == "windows" {
++			t.Skip("process interrupt test exercises POSIX signal handling")
++		}
++		started, handlerDone := make(chan struct{}), make(chan struct{})
++		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			close(started)
++			<-r.Context().Done()
++			close(handlerDone)
++		}))
++		t.Cleanup(server.Close)
++		path := filepath.Join(t.TempDir(), "snapshot")
++		if err := os.WriteFile(path, []byte("old bytes"), 0600); err != nil {
++			t.Fatal(err)
++		}
++		cmd, stdout, stderr, finished, result := startWatch(t, binary, server.URL, path, "20ms")
++		waitCommandClosed(t, started, "watch HTTP request")
++		if err := cmd.Process.Signal(os.Interrupt); err != nil {
++			t.Fatal(err)
++		}
++		waitCommandClosed(t, finished, "watch cancellation")
++		if err := <-result; err != nil {
++			t.Fatalf("watch wait: %v\nstdout=%q stderr=%q", err, stdout, stderr)
++		}
++		waitCommandClosed(t, handlerDone, "server observed request cancellation")
++		assertProcess(t, 0, stdout.String(), stderr.String(), 0)
++		assertCommandFile(t, path, "old bytes")
++	})
++}
++
++func buildCommand(t *testing.T) string {
++	t.Helper()
++	binary := filepath.Join(t.TempDir(), "indexer")
++	ctx, cancel := context.WithTimeout(context.Background(), 45*time.Second)
++	defer cancel()
++	cmd := exec.CommandContext(ctx, "go", "build", "-o", binary, ".")
++	// Build inherits the caller's normal Go cache and toolchain settings; the
++	// executable below receives a separate explicit application environment.
++	cmd.Env = os.Environ()
++	if output, err := cmd.CombinedOutput(); err != nil {
++		t.Fatalf("build indexer: %v\n%s", err, output)
++	}
++	return binary
++}
++
++func commandEnv() []string {
++	var env []string
++	for _, key := range []string{"PATH", "HOME", "TMPDIR", "SYSTEMROOT"} {
++		if value, ok := os.LookupEnv(key); ok {
++			env = append(env, key+"="+value)
++		}
++	}
++	return env
++}
++
++func commandResult(t *testing.T, binary, dir, stdin string, args ...string) (int, string, string) {
++	t.Helper()
++	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
++	defer cancel()
++	cmd := exec.CommandContext(ctx, binary, args...)
++	cmd.Dir, cmd.Env, cmd.Stdin = dir, commandEnv(), strings.NewReader(stdin)
++	var stdout, stderr bytes.Buffer
++	cmd.Stdout, cmd.Stderr = &stdout, &stderr
++	err := cmd.Run()
++	if ctx.Err() != nil {
++		t.Fatalf("command exceeded deadline: %v", ctx.Err())
++	}
++	code := 0
++	if err != nil {
++		var exit *exec.ExitError
++		if !errors.As(err, &exit) {
++			t.Fatalf("start command: %v", err)
++		}
++		code = exit.ExitCode()
++	}
++	return code, stdout.String(), stderr.String()
++}
++
++func startWatch(t *testing.T, binary, endpoint, path, interval string) (*exec.Cmd, *bytes.Buffer, *bytes.Buffer, <-chan struct{}, <-chan error) {
++	t.Helper()
++	ctx, cancel := context.WithTimeout(context.Background(), 8*time.Second)
++	cmd := exec.CommandContext(ctx, binary, "watch", "--url", endpoint, "--file", path, "--interval", interval)
++	cmd.Env = commandEnv()
++	stdout, stderr := new(bytes.Buffer), new(bytes.Buffer)
++	cmd.Stdout, cmd.Stderr = stdout, stderr
++	if err := cmd.Start(); err != nil {
++		cancel()
++		t.Fatal(err)
++	}
++	finished, result := make(chan struct{}), make(chan error, 1)
++	go func() { defer close(finished); result <- cmd.Wait() }()
++	t.Cleanup(func() {
++		cancel()
++		waitCommandClosed(t, finished, "watch process cleanup")
++	})
++	return cmd, stdout, stderr, finished, result
++}
++
++func assertProcess(t *testing.T, code int, stdout, stderr string, want int) {
++	t.Helper()
++	if code != want || stdout != "" || (want == 0 && stderr != "") || (want != 0 && stderr == "") {
++		t.Fatalf("process = status %d, stdout %q, stderr %q; want status %d and conventional streams", code, stdout, stderr, want)
++	}
++}
++
++func assertCommandFile(t *testing.T, path, want string) {
++	t.Helper()
++	got, err := os.ReadFile(path)
++	if err != nil || string(got) != want {
++		t.Fatalf("file = %q, %v; want %q", got, err, want)
++	}
++}
++
++func assertCommandAbsent(t *testing.T, path string) {
++	t.Helper()
++	if _, err := os.Stat(path); !errors.Is(err, os.ErrNotExist) {
++		t.Fatalf("later file %q: %v; want absent", path, err)
++	}
++}
++
++func waitCommandFile(t *testing.T, path, want string) {
++	t.Helper()
++	deadline := time.NewTimer(3 * time.Second)
++	defer deadline.Stop()
++	ticker := time.NewTicker(time.Millisecond)
++	defer ticker.Stop()
++	for {
++		got, err := os.ReadFile(path)
++		if err == nil && string(got) == want {
++			return
++		}
++		select {
++		case <-deadline.C:
++			t.Fatalf("did not observe snapshot %q; last bytes %q, error %v", want, got, err)
++		case <-ticker.C:
++		}
++	}
++}
++
++func waitCommandClosed(t *testing.T, done <-chan struct{}, what string) {
++	t.Helper()
++	select {
++	case <-done:
++	case <-time.After(3 * time.Second):
++		t.Fatalf("timed out waiting for %s", what)
++	}
++}
+--- /dev/null
++++ b/csv_test.go
+@@ -0,0 +1,150 @@
++package indexer_test
++
++import (
++	"errors"
++	"io"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++
++	"example.com/indexer"
++)
++
++// These assignments exercise the public function types used by consumers.
++var (
++	_ func(string) *indexer.Index                  = indexer.Open
++	_ func(*indexer.Index, string, string) error   = (*indexer.Index).Put
++	_ func(*indexer.Index, string) (string, error) = (*indexer.Index).Get
++	_ func(*indexer.Index, io.Reader) error        = (*indexer.Index).ApplyCSV
++)
++
++func TestIndependentIndexes(t *testing.T) {
++	t.Parallel()
++	a, b := indexer.Open(t.TempDir()), indexer.Open(t.TempDir())
++	if err := a.Put("alpha", "one"); err != nil {
++		t.Fatal(err)
++	}
++	if err := b.Put("alpha", "two"); err != nil {
++		t.Fatal(err)
++	}
++	assertText(t, a, "alpha", "one")
++	assertText(t, b, "alpha", "two")
++}
++
++func TestPutArbitraryText(t *testing.T) {
++	t.Parallel()
++	i := indexer.Open(t.TempDir())
++	text := strings.Repeat("large text ", 1024) + "\x00\u2003\n"
++	if err := i.Put("alpha", text); err != nil {
++		t.Fatal(err)
++	}
++	assertText(t, i, "alpha", text)
++}
++
++func TestApplyCSVSuccess(t *testing.T) {
++	t.Parallel()
++	i := indexer.Open(t.TempDir())
++	input := "alpha,first\nbeta,\"comma, and\nnewline\"\nalpha, final \n"
++	if err := i.ApplyCSV(strings.NewReader(input)); err != nil {
++		t.Fatal(err)
++	}
++	assertText(t, i, "alpha", " final ")
++	assertText(t, i, "beta", "comma, and\nnewline")
++	if err := i.ApplyCSV(strings.NewReader("")); err != nil {
++		t.Fatalf("empty CSV: %v", err)
++	}
++	assertText(t, i, "alpha", " final ")
++}
++
++func TestApplyCSVRejectedPrefix(t *testing.T) {
++	for _, tc := range []struct {
++		name, row string
++		invalid   bool
++	}{
++		{"key", "Alpha,rejected\n", true},
++		{"blank replacement", "alpha, \t\u2003\n", true},
++		{"missing field", "alpha\n", true},
++		{"extra field", "alpha,rejected,extra\n", true},
++		{"malformed quote", "alpha,\"unterminated\n", false},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++			i := indexer.Open(t.TempDir())
++			if err := i.Put("alpha", "seed"); err != nil {
++				t.Fatal(err)
++			}
++			err := i.ApplyCSV(strings.NewReader("alpha,accepted\n" + tc.row + "later,forbidden\n"))
++			if err == nil {
++				t.Fatal("accepted invalid CSV")
++			}
++			if tc.invalid && !errors.Is(err, indexer.ErrInvalidRecord) {
++				t.Fatalf("error = %v; want ErrInvalidRecord", err)
++			}
++			assertText(t, i, "alpha", "accepted")
++			assertMissing(t, i, "later")
++		})
++	}
++}
++
++type failingReader struct{ err error }
++
++func (r failingReader) Read([]byte) (int, error) { return 0, r.err }
++
++func TestApplyCSVReadFailureKeepsPrefix(t *testing.T) {
++	t.Parallel()
++	i := indexer.Open(t.TempDir())
++	wantErr := errors.New("source read failed")
++	err := i.ApplyCSV(io.MultiReader(strings.NewReader("alpha,accepted\n"), failingReader{wantErr}))
++	if !errors.Is(err, wantErr) {
++		t.Fatalf("error = %v; want source failure", err)
++	}
++	assertText(t, i, "alpha", "accepted")
++}
++
++func TestApplyCSVPublicationFailureKeepsPrefix(t *testing.T) {
++	t.Parallel()
++	root := t.TempDir()
++	if err := os.Mkdir(filepath.Join(root, "beta"), 0700); err != nil {
++		t.Fatal(err)
++	}
++	marker := filepath.Join(root, "beta", "marker")
++	if err := os.WriteFile(marker, []byte("untouched"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	i := indexer.Open(root)
++	err := i.ApplyCSV(strings.NewReader("alpha,accepted\nbeta,rejected\nlater,forbidden\n"))
++	if err == nil {
++		t.Fatal("accepted replacement over directory")
++	}
++	assertText(t, i, "alpha", "accepted")
++	assertMissing(t, i, "later")
++	got, err := os.ReadFile(marker)
++	if err != nil || string(got) != "untouched" {
++		t.Fatalf("marker = %q, %v", got, err)
++	}
++	entries, err := os.ReadDir(root)
++	if err != nil {
++		t.Fatal(err)
++	}
++	for _, entry := range entries {
++		if strings.HasPrefix(entry.Name(), ".record-") {
++			t.Errorf("temporary file remains: %s", entry.Name())
++		}
++	}
++}
++
++func assertText(t *testing.T, i *indexer.Index, key, want string) {
++	t.Helper()
++	got, err := i.Get(key)
++	if err != nil || got != want {
++		t.Fatalf("Get(%q) = %q, %v; want %q", key, got, err, want)
++	}
++}
++
++func assertMissing(t *testing.T, i *indexer.Index, key string) {
++	t.Helper()
++	if got, err := i.Get(key); !errors.Is(err, os.ErrNotExist) {
++		t.Fatalf("Get(%q) = %q, %v; want absent", key, got, err)
++	}
++}
+--- a/index.go
++++ b/index.go
+@@ -1,11 +1,14 @@
+ package indexer
+ 
+ import (
++	"encoding/csv"
+ 	"errors"
++	"fmt"
+ 	"io"
+ 	"os"
+ 	"path/filepath"
+ 	"regexp"
++	"strings"
+ )
+ 
+ var ErrInvalidRecord = errors.New("invalid record")
+@@ -22,19 +25,26 @@
+ 	if err := os.MkdirAll(i.root, 0700); err != nil {
+ 		return err
+ 	}
+-	f, err := os.CreateTemp(i.root, ".record-*")
++	return writeAtomic(filepath.Join(i.root, key), []byte(text))
++}
++
++// writeAtomic publishes only a completely written and closed temporary file.
++// The temporary file shares the destination directory so rename is atomic on
++// the supported POSIX filesystem.
++func writeAtomic(path string, data []byte) error {
++	f, err := os.CreateTemp(filepath.Dir(path), ".record-*")
+ 	if err != nil {
+ 		return err
+ 	}
+ 	defer os.Remove(f.Name())
+-	if _, err = f.WriteString(text); err != nil {
++	if _, err = f.Write(data); err != nil {
+ 		f.Close()
+ 		return err
+ 	}
+ 	if err = f.Close(); err != nil {
+ 		return err
+ 	}
+-	return os.Rename(f.Name(), filepath.Join(i.root, key))
++	return os.Rename(f.Name(), path)
+ }
+ func (i *Index) Get(key string) (string, error) {
+ 	if !keyPattern.MatchString(key) {
+@@ -43,4 +53,35 @@
+ 	b, err := os.ReadFile(filepath.Join(i.root, key))
+ 	return string(b), err
+ }
+-func (i *Index) ApplyCSV(r io.Reader) error { return ErrNotImplemented }
++
++// ApplyCSV applies headerless key/text rows in order, retaining the accepted
++// prefix when a later row cannot be parsed, validated or written.
++func (i *Index) ApplyCSV(r io.Reader) error {
++	reader := csv.NewReader(r)
++	reader.FieldsPerRecord = 2
++	for row := 1; ; row++ {
++		fields, err := reader.Read()
++		if errors.Is(err, io.EOF) {
++			return nil
++		}
++		if err != nil {
++			if errors.Is(err, csv.ErrFieldCount) {
++				err = errors.Join(ErrInvalidRecord, err)
++			}
++			return fmt.Errorf("CSV row %d: %w", row, err)
++		}
++		if err := validateRecord(fields[0], fields[1]); err != nil {
++			return fmt.Errorf("CSV row %d: %w", row, err)
++		}
++		if err := i.Put(fields[0], fields[1]); err != nil {
++			return fmt.Errorf("CSV row %d: %w", row, err)
++		}
++	}
++}
++
++func validateRecord(key, text string) error {
++	if !keyPattern.MatchString(key) || strings.TrimSpace(text) == "" {
++		return ErrInvalidRecord
++	}
++	return nil
++}
+--- a/refresh.go
++++ b/refresh.go
+@@ -1,7 +1,12 @@
+ package indexer
+ 
+ import (
++	"bytes"
+ 	"context"
++	"encoding/json"
++	"errors"
++	"fmt"
++	"io"
+ 	"net/http"
+ )
+ 
+@@ -10,6 +15,58 @@
+ 	Text string `json:"text"`
+ }
+ 
++// Refresh fetches one JSON array and atomically publishes its validated records.
++// It borrows client; acquired response bodies are closed before returning.
+ func Refresh(ctx context.Context, client *http.Client, endpoint, path string) error {
+-	return ErrNotImplemented
++	request, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
++	if err != nil {
++		return fmt.Errorf("create refresh request: %w", err)
++	}
++	// A redirect is a rejected response, not permission for another GET. Copy
++	// the supplied client to retain its transport, timeout and cookie policy
++	// without changing the caller's redirect policy.
++	oneRequest := *client
++	oneRequest.CheckRedirect = func(*http.Request, []*http.Request) error {
++		return http.ErrUseLastResponse
++	}
++	response, err := oneRequest.Do(request)
++	if err != nil {
++		return fmt.Errorf("fetch records: %w", err)
++	}
++	defer response.Body.Close()
++	if response.StatusCode != http.StatusOK {
++		return fmt.Errorf("fetch records: status %d; want 200", response.StatusCode)
++	}
++	data, err := io.ReadAll(response.Body)
++	if err != nil {
++		return fmt.Errorf("read records: %w", err)
++	}
++	decoder := json.NewDecoder(bytes.NewReader(data))
++	var records []Record
++	if err := decoder.Decode(&records); err != nil {
++		return fmt.Errorf("decode records: %w", err)
++	}
++	if records == nil {
++		return errors.New("decode records: expected JSON array")
++	}
++	var trailing any
++	if err := decoder.Decode(&trailing); !errors.Is(err, io.EOF) {
++		if err != nil {
++			return fmt.Errorf("decode trailing data: %w", err)
++		}
++		return errors.New("decode records: trailing JSON value")
++	}
++	for n, record := range records {
++		if err := validateRecord(record.Key, record.Text); err != nil {
++			return fmt.Errorf("record %d: %w", n+1, err)
++		}
++	}
++	data, err = json.Marshal(records)
++	if err != nil {
++		return fmt.Errorf("encode records: %w", err)
++	}
++	if err := writeAtomic(path, append(data, '\n')); err != nil {
++		return fmt.Errorf("publish records: %w", err)
++	}
++	return nil
+ }
+--- /dev/null
++++ b/refresh_test.go
+@@ -0,0 +1,257 @@
++package indexer_test
++
++import (
++	"context"
++	"errors"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"os"
++	"path/filepath"
++	"strings"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	"example.com/indexer"
++)
++
++var _ func(context.Context, *http.Client, string, string) error = indexer.Refresh
++
++type roundTripFunc func(*http.Request) (*http.Response, error)
++
++func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
++
++type observedBody struct {
++	io.Reader
++	closes int
++}
++
++func (b *observedBody) Close() error { b.closes++; return nil }
++
++func TestRefreshPublishesSnapshot(t *testing.T) {
++	for _, tc := range []struct{ name, input, want string }{
++		{"ordered records", `[ {"key":"beta","text":" line \n "}, {"key":"alpha","text":"one"}, {"key":"alpha","text":"two"} ] `, `[{"key":"beta","text":" line \n "},{"key":"alpha","text":"one"},{"key":"alpha","text":"two"}]` + "\n"},
++		{"empty array", " [ ] \n\t", "[]\n"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++			path, old := seededSnapshot(t)
++			reader, err := os.Open(path)
++			if err != nil {
++				t.Fatal(err)
++			}
++			t.Cleanup(func() { reader.Close() })
++			ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
++			t.Cleanup(cancel)
++			body := &observedBody{Reader: strings.NewReader(tc.input)}
++			calls := 0
++			client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
++				calls++
++				if r.Method != http.MethodGet || r.URL.String() != "http://example.test/records" || r.Context() != ctx {
++					t.Errorf("request = %s %s, context forwarded = %v", r.Method, r.URL, r.Context() == ctx)
++				}
++				return &http.Response{StatusCode: 200, Body: body, Header: make(http.Header)}, nil
++			})}
++			if err := indexer.Refresh(ctx, client, "http://example.test/records", path); err != nil {
++				t.Fatal(err)
++			}
++			assertFile(t, path, tc.want)
++			gotOld, err := io.ReadAll(reader)
++			if err != nil || string(gotOld) != old {
++				t.Fatalf("open reader = %q, %v; want old snapshot %q", gotOld, err, old)
++			}
++			if calls != 1 || body.closes != 1 {
++				t.Fatalf("requests = %d, body closes = %d; want 1 each", calls, body.closes)
++			}
++		})
++	}
++}
++
++func TestRefreshRejectionsRetainSnapshot(t *testing.T) {
++	readErr := errors.New("response read failed")
++	for _, tc := range []struct {
++		name, input string
++		status      int
++		invalid     bool
++		readErr     error
++	}{
++		{"partial success status", `[{"key":"alpha","text":"new"}]`, 206, false, nil},
++		{"server status", `[{"key":"alpha","text":"new"}]`, 500, false, nil},
++		{"malformed", `[{`, 200, false, nil},
++		{"object", `{"key":"alpha","text":"new"}`, 200, false, nil},
++		{"null", `null`, 200, false, nil},
++		{"second JSON", `[{"key":"alpha","text":"new"}] []`, 200, false, nil},
++		{"trailing junk", `[{"key":"alpha","text":"new"}] junk`, 200, false, nil},
++		{"bad key", `[{"key":"Alpha","text":"new"}]`, 200, true, nil},
++		{"blank", `[{"key":"alpha","text":" \t\n\u2003"}]`, 200, true, nil},
++		{"invalid later record", `[{"key":"alpha","text":"new"},{"key":"beta","text":""}]`, 200, true, nil},
++		{"read after valid data", `[{"key":"alpha","text":"new"}]`, 200, false, readErr},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Parallel()
++			path, old := seededSnapshot(t)
++			var reader io.Reader = strings.NewReader(tc.input)
++			if tc.readErr != nil {
++				reader = io.MultiReader(reader, failingReader{tc.readErr})
++			}
++			body := &observedBody{Reader: reader}
++			client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++				return &http.Response{StatusCode: tc.status, Body: body, Header: make(http.Header)}, nil
++			})}
++			err := indexer.Refresh(context.Background(), client, "http://example.test/records", path)
++			if err == nil {
++				t.Fatal("accepted rejected response")
++			}
++			if tc.invalid && !errors.Is(err, indexer.ErrInvalidRecord) {
++				t.Fatalf("error = %v; want ErrInvalidRecord", err)
++			}
++			if tc.readErr != nil && !errors.Is(err, tc.readErr) {
++				t.Fatalf("error = %v; want response read failure", err)
++			}
++			assertFile(t, path, old)
++			if body.closes != 1 {
++				t.Errorf("body closes = %d; want 1", body.closes)
++			}
++		})
++	}
++}
++
++func TestRefreshFetchAndPublicationFailures(t *testing.T) {
++	t.Run("fetch", func(t *testing.T) {
++		path, old := seededSnapshot(t)
++		wantErr := errors.New("transport failed")
++		client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++			return nil, wantErr
++		})}
++		if err := indexer.Refresh(context.Background(), client, "http://example.test/records", path); !errors.Is(err, wantErr) {
++			t.Fatalf("error = %v; want transport failure", err)
++		}
++		assertFile(t, path, old)
++	})
++	t.Run("rename", func(t *testing.T) {
++		root := t.TempDir()
++		path := filepath.Join(root, "snapshot")
++		if err := os.Mkdir(path, 0700); err != nil {
++			t.Fatal(err)
++		}
++		marker := filepath.Join(path, "marker")
++		if err := os.WriteFile(marker, []byte("old"), 0600); err != nil {
++			t.Fatal(err)
++		}
++		body := &observedBody{Reader: strings.NewReader(`[{"key":"alpha","text":"new"}]`)}
++		client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++			return &http.Response{StatusCode: 200, Body: body, Header: make(http.Header)}, nil
++		})}
++		if err := indexer.Refresh(context.Background(), client, "http://example.test/records", path); err == nil {
++			t.Fatal("replaced directory")
++		}
++		assertFile(t, marker, "old")
++		if body.closes != 1 {
++			t.Errorf("body closes = %d; want 1", body.closes)
++		}
++		entries, err := os.ReadDir(root)
++		if err != nil || len(entries) != 1 || entries[0].Name() != "snapshot" {
++			t.Fatalf("publication left files = %v, %v", entries, err)
++		}
++	})
++}
++
++func TestRefreshRejectsRedirectWithoutChangingClient(t *testing.T) {
++	var starts, targets, redirectPolicyCalls atomic.Int32
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.URL.Path == "/start" {
++			starts.Add(1)
++			w.Header().Set("Location", "/target")
++			w.WriteHeader(http.StatusFound)
++		} else {
++			targets.Add(1)
++		}
++		io.WriteString(w, `[{"key":"alpha","text":"new"}]`)
++	}))
++	t.Cleanup(server.Close)
++	client := server.Client()
++	client.CheckRedirect = func(*http.Request, []*http.Request) error {
++		redirectPolicyCalls.Add(1)
++		return nil
++	}
++	t.Cleanup(client.CloseIdleConnections)
++	path, old := seededSnapshot(t)
++	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
++	defer cancel()
++	if err := indexer.Refresh(ctx, client, server.URL+"/start", path); err == nil {
++		t.Fatal("accepted redirect")
++	}
++	assertFile(t, path, old)
++	if starts.Load() != 1 || targets.Load() != 0 || redirectPolicyCalls.Load() != 0 {
++		t.Fatalf("starts = %d, targets = %d, caller redirect calls = %d", starts.Load(), targets.Load(), redirectPolicyCalls.Load())
++	}
++	if err := client.CheckRedirect(nil, nil); err != nil || redirectPolicyCalls.Load() != 1 {
++		t.Fatalf("caller policy changed: %v, calls %d", err, redirectPolicyCalls.Load())
++	}
++}
++
++func TestRefreshNetworkCancellation(t *testing.T) {
++	started, handlerDone := make(chan struct{}), make(chan struct{})
++	handlerRelease := make(chan struct{})
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		close(started)
++		select {
++		case <-r.Context().Done():
++		case <-handlerRelease:
++		}
++		close(handlerDone)
++	}))
++	t.Cleanup(server.Close)
++	client := server.Client()
++	t.Cleanup(client.CloseIdleConnections)
++	ctx, cancel := context.WithCancel(context.Background())
++	path, old := seededSnapshot(t)
++	result := make(chan error, 1)
++	finished := make(chan struct{})
++	t.Cleanup(func() {
++		// Rescue the fixture even if Refresh regresses to ignoring cancellation.
++		close(handlerRelease)
++		cancel()
++		waitClosed(t, finished, "Refresh cleanup")
++	})
++	go func() {
++		defer close(finished)
++		result <- indexer.Refresh(ctx, client, server.URL, path)
++	}()
++	waitClosed(t, started, "HTTP request")
++	cancel()
++	waitClosed(t, finished, "Refresh cancellation")
++	if err := <-result; !errors.Is(err, context.Canceled) {
++		t.Fatalf("error = %v; want context.Canceled", err)
++	}
++	waitClosed(t, handlerDone, "HTTP handler cancellation")
++	assertFile(t, path, old)
++}
++
++func seededSnapshot(t *testing.T) (string, string) {
++	t.Helper()
++	path := filepath.Join(t.TempDir(), "snapshot.json")
++	old := "old bytes\n\x00end"
++	if err := os.WriteFile(path, []byte(old), 0600); err != nil {
++		t.Fatal(err)
++	}
++	return path, old
++}
++
++func assertFile(t *testing.T, path, want string) {
++	t.Helper()
++	got, err := os.ReadFile(path)
++	if err != nil || string(got) != want {
++		t.Fatalf("file %q = %q, %v; want %q", path, got, err, want)
++	}
++}
++
++func waitClosed(t *testing.T, done <-chan struct{}, what string) {
++	t.Helper()
++	select {
++	case <-done:
++	case <-time.After(3 * time.Second):
++		t.Fatalf("timed out waiting for %s", what)
++	}
++}
+--- /dev/null
++++ b/retention_unix_test.go
+@@ -0,0 +1,86 @@
++//go:build unix
++
++package indexer_test
++
++import (
++	"context"
++	"errors"
++	"io"
++	"net/http"
++	"os"
++	"os/exec"
++	"os/signal"
++	"path/filepath"
++	"strings"
++	"syscall"
++	"testing"
++	"time"
++
++	"example.com/indexer"
++)
++
++func TestAtomicRetentionAfterPartialWrite(t *testing.T) {
++	for _, mode := range []string{"put", "apply", "refresh"} {
++		t.Run(mode, func(t *testing.T) {
++			binary, err := os.Executable()
++			if err != nil {
++				t.Fatal(err)
++			}
++			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
++			defer cancel()
++			cmd := exec.CommandContext(ctx, binary, "-test.run=^TestAtomicWriteLimitHelper$", "-test.timeout=4s")
++			cmd.Env = append(os.Environ(), "INDEXER_TEST_WRITE_LIMIT="+mode, "INDEXER_TEST_ROOT="+t.TempDir())
++			if output, err := cmd.CombinedOutput(); err != nil {
++				t.Fatalf("partial-write child (%s): %v\n%s", mode, err, output)
++			}
++		})
++	}
++}
++
++func TestAtomicWriteLimitHelper(t *testing.T) {
++	mode := os.Getenv("INDEXER_TEST_WRITE_LIMIT")
++	if mode == "" {
++		return
++	}
++	root := os.Getenv("INDEXER_TEST_ROOT")
++	path := filepath.Join(root, "alpha")
++	if err := os.WriteFile(path, []byte("prior bytes"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	// The limit is local to this child. Ignoring SIGXFSZ lets File.Write
++	// return its partial-write error instead of terminating the child.
++	signal.Ignore(syscall.SIGXFSZ)
++	if err := syscall.Setrlimit(syscall.RLIMIT_FSIZE, &syscall.Rlimit{Cur: 1024, Max: 1024}); err != nil {
++		t.Fatal(err)
++	}
++	i := indexer.Open(root)
++	large := strings.Repeat("x", 8192)
++	var err error
++	want := "prior bytes"
++	switch mode {
++	case "put":
++		err = i.Put("alpha", large)
++	case "apply":
++		err = i.ApplyCSV(strings.NewReader("alpha,accepted\nalpha," + large + "\nlater,forbidden\n"))
++		want = "accepted"
++	case "refresh":
++		client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++			return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(`[{"key":"alpha","text":"` + large + `"}]`)), Header: make(http.Header)}, nil
++		})}
++		err = indexer.Refresh(context.Background(), client, "http://example.test/records", path)
++	default:
++		t.Fatalf("unknown helper mode %q", mode)
++	}
++	if err == nil {
++		t.Fatal("large write succeeded under finite file-size limit")
++	}
++	if !errors.Is(err, syscall.EFBIG) && !errors.Is(err, io.ErrShortWrite) {
++		t.Fatalf("error = %v; want failure from the limited write", err)
++	}
++	assertFile(t, path, want)
++	assertMissing(t, i, "later")
++	entries, readErr := os.ReadDir(root)
++	if readErr != nil || len(entries) != 1 || entries[0].Name() != "alpha" {
++		t.Fatalf("files after failed write = %v, %v", entries, readErr)
++	}
++}
+--- a/serve.go
++++ b/serve.go
+@@ -8,6 +8,55 @@
+ 
+ var ErrInvalidInterval = errors.New("invalid interval")
+ 
+-func Serve(ctx context.Context, interval time.Duration, refresh func(context.Context) error, release func() error) error {
+-	return ErrNotImplemented
++// Serve runs refresh immediately and sequentially, waiting interval after each
++// successful completion. A valid invocation releases its resources exactly
++// once after all callbacks finish. Parent cancellation alone is successful;
++// independent callback failures and release failures retain their identities.
++func Serve(ctx context.Context, interval time.Duration, refresh func(context.Context) error, release func() error) (err error) {
++	if interval <= 0 {
++		return ErrInvalidInterval
++	}
++	defer func() { err = errors.Join(err, release()) }()
++	for {
++		if ctx.Err() != nil {
++			return nil
++		}
++		if err := refresh(ctx); err != nil {
++			if ctx.Err() != nil && onlyCancellation(err, ctx.Err()) {
++				return nil
++			}
++			return err
++		}
++		timer := time.NewTimer(interval)
++		select {
++		case <-ctx.Done():
++			timer.Stop()
++			return nil
++		case <-timer.C:
++		}
++	}
+ }
++
++// An errors.Join may contain both cancellation and an independent failure.
++// Suppress ordinary parent cancellation only when every error leaf represents
++// it; error values themselves need not be comparable.
++func onlyCancellation(err, canceled error) bool {
++	if joined, ok := err.(interface{ Unwrap() []error }); ok {
++		causes := joined.Unwrap()
++		if len(causes) == 0 {
++			return false
++		}
++		for _, cause := range causes {
++			if cause == nil || !onlyCancellation(cause, canceled) {
++				return false
++			}
++		}
++		return true
++	}
++	if wrapped, ok := err.(interface{ Unwrap() error }); ok {
++		if cause := wrapped.Unwrap(); cause != nil {
++			return onlyCancellation(cause, canceled)
++		}
++	}
++	return errors.Is(err, canceled)
++}
+--- /dev/null
++++ b/serve_test.go
+@@ -0,0 +1,279 @@
++package indexer_test
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"sync"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	"example.com/indexer"
++)
++
++var _ func(context.Context, time.Duration, func(context.Context) error, func() error) error = indexer.Serve
++
++func TestServeInvalidAndCanceledStartup(t *testing.T) {
++	for _, interval := range []time.Duration{0, -time.Second} {
++		t.Run(interval.String(), func(t *testing.T) {
++			ctx, cancel := context.WithCancel(context.Background())
++			cancel()
++			calls, releases := 0, 0
++			err := indexer.Serve(ctx, interval, func(context.Context) error { calls++; return nil }, func() error { releases++; return nil })
++			if !errors.Is(err, indexer.ErrInvalidInterval) || calls != 0 || releases != 0 {
++				t.Fatalf("Serve = %v; refreshes = %d, releases = %d", err, calls, releases)
++			}
++		})
++	}
++	t.Run("already canceled", func(t *testing.T) {
++		ctx, cancel := context.WithCancel(context.Background())
++		cancel()
++		calls, releases := 0, 0
++		err := indexer.Serve(ctx, time.Second, func(context.Context) error { calls++; return nil }, func() error { releases++; return nil })
++		if err != nil || calls != 0 || releases != 1 {
++			t.Fatalf("Serve = %v; refreshes = %d, releases = %d", err, calls, releases)
++		}
++	})
++}
++
++func TestServeErrorCombinations(t *testing.T) {
++	workErr, releaseErr := errors.New("refresh failed"), errors.New("release failed")
++	for _, tc := range []struct {
++		name          string
++		work, release error
++	}{
++		{"success", nil, nil},
++		{"work only", workErr, nil},
++		{"release only", nil, releaseErr},
++		{"both", workErr, releaseErr},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			ctx, cancel := context.WithCancel(context.Background())
++			defer cancel()
++			calls, releases := 0, 0
++			err := indexer.Serve(ctx, time.Millisecond, func(got context.Context) error {
++				calls++
++				if got != ctx {
++					t.Error("callback context was replaced")
++				}
++				if tc.work == nil {
++					cancel()
++				}
++				return tc.work
++			}, func() error { releases++; return tc.release })
++			if tc.work == nil && tc.release == nil && err != nil {
++				t.Fatalf("Serve = %v; want nil", err)
++			}
++			for _, want := range []error{tc.work, tc.release} {
++				if want != nil && !errors.Is(err, want) {
++					t.Errorf("Serve = %v; want cause %v", err, want)
++				}
++			}
++			if calls != 1 || releases != 1 {
++				t.Fatalf("refreshes = %d, releases = %d; want 1 each", calls, releases)
++			}
++		})
++	}
++}
++
++// A valid error need not have a comparable dynamic value.
++type sliceError struct{ values []string }
++
++func (e sliceError) Error() string { return fmt.Sprint(e.values) }
++
++func TestServeCancellationJoinsCleanup(t *testing.T) {
++	independent := errors.New("cleanup also failed")
++	for _, tc := range []struct {
++		name string
++		err  error
++		want error
++	}{
++		{"nil", nil, nil},
++		{"ordinary cancellation", fmt.Errorf("request: %w", context.Canceled), nil},
++		{"joined independent failure", errors.Join(context.Canceled, independent), independent},
++		{"noncomparable failure", sliceError{[]string{"failure"}}, nil},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			ctx, cancel := context.WithCancel(context.Background())
++			started, cleaning := make(chan struct{}), make(chan struct{})
++			gate, finished := make(chan struct{}), make(chan struct{})
++			released := make(chan bool, 1)
++			result := make(chan error, 1)
++			var unblock sync.Once
++			var cleanupComplete atomic.Bool
++			t.Cleanup(func() {
++				cancel()
++				unblock.Do(func() { close(gate) })
++				waitClosed(t, finished, "Serve cleanup")
++			})
++			go func() {
++				defer close(finished)
++				result <- indexer.Serve(ctx, time.Millisecond, func(got context.Context) error {
++					if got != ctx {
++						return errors.New("callback context changed")
++					}
++					close(started)
++					<-got.Done()
++					close(cleaning)
++					<-gate
++					cleanupComplete.Store(true)
++					return tc.err
++				}, func() error { released <- cleanupComplete.Load(); return nil })
++			}()
++			waitClosed(t, started, "refresh start")
++			cancel()
++			waitClosed(t, cleaning, "cooperative cleanup start")
++			select {
++			case <-released:
++				t.Fatal("release overtook callback cleanup")
++			case <-finished:
++				t.Fatal("Serve returned before callback cleanup")
++			case <-time.After(20 * time.Millisecond):
++			}
++			unblock.Do(func() { close(gate) })
++			waitClosed(t, finished, "Serve cancellation join")
++			if complete := <-released; !complete {
++				t.Fatal("release ran before callback finished cleanup")
++			}
++			err := <-result
++			switch {
++			case tc.want != nil:
++				if !errors.Is(err, tc.want) || !errors.Is(err, context.Canceled) {
++					t.Fatalf("Serve = %v; want independent and cancellation identities", err)
++				}
++			case tc.name == "noncomparable failure":
++				var got sliceError
++				if !errors.As(err, &got) || len(got.values) != 1 || got.values[0] != "failure" {
++					t.Fatalf("Serve = %v; want sliceError", err)
++				}
++			default:
++				if err != nil {
++					t.Fatalf("Serve = %v; want nil", err)
++				}
++			}
++		})
++	}
++}
++
++func TestServeUnrelatedCancellationErrorIsFailure(t *testing.T) {
++	calls := 0
++	err := indexer.Serve(context.Background(), time.Second, func(context.Context) error { return context.Canceled }, func() error { calls++; return nil })
++	if !errors.Is(err, context.Canceled) || calls != 1 {
++		t.Fatalf("Serve = %v, releases = %d; want callback error and release", err, calls)
++	}
++}
++
++func TestServeSequentialRecurrenceFromCompletion(t *testing.T) {
++	const interval = 60 * time.Millisecond
++	ctx, cancel := context.WithCancel(context.Background())
++	started := make(chan int, 4)
++	gate, finished := make(chan struct{}), make(chan struct{})
++	result := make(chan error, 1)
++	var unblock sync.Once
++	var completed, next time.Time
++	var releases int
++	t.Cleanup(func() {
++		cancel()
++		unblock.Do(func() { close(gate) })
++		waitClosed(t, finished, "recurrence cleanup")
++	})
++	go func() {
++		defer close(finished)
++		calls := 0
++		result <- indexer.Serve(ctx, interval, func(context.Context) error {
++			calls++
++			started <- calls
++			if calls == 1 {
++				<-gate
++				completed = time.Now()
++				return nil
++			}
++			next = time.Now()
++			cancel()
++			return nil
++		}, func() error { releases++; return nil })
++	}()
++	select {
++	case n := <-started:
++		if n != 1 {
++			t.Fatalf("first callback = %d", n)
++		}
++	case <-time.After(3 * time.Second):
++		t.Fatal("first callback did not start")
++	}
++	// Hold the first call for 2.5 intervals: a ticker-based implementation
++	// cannot mistake this gate for completion or use a queued old tick.
++	select {
++	case n := <-started:
++		t.Fatalf("callback %d overlapped the held first call", n)
++	case <-time.After(5 * interval / 2):
++	}
++	unblock.Do(func() { close(gate) })
++	waitClosed(t, finished, "later successful callback")
++	if err := <-result; err != nil {
++		t.Fatal(err)
++	}
++	if delta := next.Sub(completed); delta < interval {
++		t.Fatalf("next callback after %v; want at least %v from completion", delta, interval)
++	}
++	if releases != 1 {
++		t.Fatalf("releases = %d; want 1", releases)
++	}
++}
++
++func TestServeIndependentInvocations(t *testing.T) {
++	type run struct {
++		cancel   context.CancelFunc
++		calls    chan struct{}
++		finished chan struct{}
++		result   chan error
++		releases atomic.Int32
++	}
++	var runs [2]*run
++	for n := range runs {
++		ctx, cancel := context.WithCancel(context.Background())
++		r := &run{cancel: cancel, calls: make(chan struct{}, 16), finished: make(chan struct{}), result: make(chan error, 1)}
++		runs[n] = r
++		t.Cleanup(func() { r.cancel(); waitClosed(t, r.finished, "independent run cleanup") })
++		go func() {
++			defer close(r.finished)
++			r.result <- indexer.Serve(ctx, 20*time.Millisecond, func(context.Context) error {
++				select {
++				case r.calls <- struct{}{}:
++				default:
++				}
++				return nil
++			}, func() error { r.releases.Add(1); return nil })
++		}()
++	}
++	for _, r := range runs {
++		select {
++		case <-r.calls:
++		case <-time.After(3 * time.Second):
++			t.Fatal("both independent runs did not start")
++		}
++	}
++	runs[0].cancel()
++	waitClosed(t, runs[0].finished, "first run stop")
++	if err := <-runs[0].result; err != nil || runs[0].releases.Load() != 1 {
++		t.Fatalf("first run = %v, releases = %d", err, runs[0].releases.Load())
++	}
++	// Discard observations queued before the first run joined.
++	for len(runs[1].calls) != 0 {
++		<-runs[1].calls
++	}
++	select {
++	case <-runs[1].calls:
++	case <-time.After(3 * time.Second):
++		t.Fatal("second run stopped with the first")
++	}
++	if runs[1].releases.Load() != 0 {
++		t.Fatal("second run released before its cancellation")
++	}
++	runs[1].cancel()
++	waitClosed(t, runs[1].finished, "second run stop")
++	if err := <-runs[1].result; err != nil || runs[1].releases.Load() != 1 {
++		t.Fatalf("second run = %v, releases = %d", err, runs[1].releases.Load())
++	}
++}

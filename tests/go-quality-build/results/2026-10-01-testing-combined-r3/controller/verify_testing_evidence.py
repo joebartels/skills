@@ -32,10 +32,10 @@ for name,suite in run_suites.items():
 for name,run in [('go-behavior-tests','2026-10-01-behavior-tests-skill-on'),('go-test-isolation','2026-10-01-test-isolation-skill-on')]:
  if name=='go-test-isolation':
   expected=results/'2026-10-01-test-isolation-r3/skills'/name
-  current=root/('docs/go-quality-build/drafts' if '--draft-r3' in sys.argv else 'plugins/go-quality-build/skills')/name
+  current=root/('docs/go-quality-build/drafts' if '--draft-r3' in sys.argv and (root/'docs/go-quality-build/drafts'/name).exists() else 'plugins/go-quality-build/skills')/name
  else:
   expected=results/'2026-10-01-behavior-tests-r2/skills'/name
-  current=root/('docs/go-quality-build/drafts' if '--draft-r3' in sys.argv else 'plugins/go-quality-build/skills')/name
+  current=root/('docs/go-quality-build/drafts' if '--draft-r3' in sys.argv and (root/'docs/go-quality-build/drafts'/name).exists() else 'plugins/go-quality-build/skills')/name
  assert hashes(current)==hashes(expected),(name,'final guidance snapshot differs')
 if len(sys.argv)>1:Path(sys.argv[1]).write_text(json.dumps({'scope':'all selected testing-group blind candidates; exact reconstruction, frozen inputs, guidance and available archive seals','checks':records},indent=2)+'\n')
 print('PASS',sum(len(r['cases']) for r in records),'exact reconstructions;',sum(r.get('artifact_count',0) for r in records),'sealed artifact hashes; final guidance snapshot equality'+(' (draft; runtime promotion pending)' if '--draft-r3' in sys.argv else ' (runtime)'))

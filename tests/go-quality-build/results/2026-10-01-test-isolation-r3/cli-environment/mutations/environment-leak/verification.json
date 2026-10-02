@@ -1,0 +1,86 @@
+{
+  "semantic_id": "environment-leak",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "29942c6f769039089fb5548f681105a300eb93916e94107b97e5b015aa4e83e0",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-onu456yy/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/showcfg\t0.458s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.611
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-r3/cli-environment/mutations/environment-leak/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-onu456yy/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.011
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-onu456yy/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/showcfg\t0.181s [no tests to run]\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.33
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-onu456yy/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestConfigurationEnvironmentRestoration (0.00s)\n    --- FAIL: TestConfigurationEnvironmentRestoration/unset (0.00s)\n        config_test.go:122: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n        config_test.go:122: environment INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:false}\n    --- FAIL: TestConfigurationEnvironmentRestoration/present_empty (0.00s)\n        config_test.go:122: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n        config_test.go:122: environment INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"\", present:true}\n    --- FAIL: TestConfigurationEnvironmentRestoration/present_value (0.00s)\n        config_test.go:122: environment INDEXER_ENDPOINT = showcfg_test.envValue{value:\"https://example.invalid\", present:true}; want showcfg_test.envValue{value:\"parent sentinel\", present:true}\n        config_test.go:122: environment INDEXER_MODE = showcfg_test.envValue{value:\"write\", present:true}; want showcfg_test.envValue{value:\"parent sentinel\", present:true}\nFAIL\nFAIL\texample.com/showcfg\t0.381s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.502
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

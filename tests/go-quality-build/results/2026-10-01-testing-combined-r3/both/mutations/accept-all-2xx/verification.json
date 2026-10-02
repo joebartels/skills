@@ -1,0 +1,86 @@
+{
+  "semantic_id": "accept-all-2xx",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "a0c6db73024f8b602b40e26e7c8e5c3b3669068360ed330ec1443509c3bc08ec",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-fcnnafwa/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.709s\nok  \texample.com/indexer/cmd/indexer\t0.811s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.076
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-r3/both/mutations/accept-all-2xx/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-fcnnafwa/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.016
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-fcnnafwa/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.419s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.644s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.93
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-fcnnafwa/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshRejectionsRetainSnapshot (0.00s)\n    --- FAIL: TestRefreshRejectionsRetainSnapshot/partial_success_status (0.00s)\n        refresh_test.go:104: accepted rejected response\nFAIL\nFAIL\texample.com/indexer\t0.648s\n--- FAIL: TestCLIProcessContracts (5.64s)\n    --- FAIL: TestCLIProcessContracts/failed_first_refresh (5.03s)\n        --- FAIL: TestCLIProcessContracts/failed_first_refresh/neighbor_status (5.01s)\n            process_test.go:113: command exceeded deadline: context deadline exceeded\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t5.815s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 6.026
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}
