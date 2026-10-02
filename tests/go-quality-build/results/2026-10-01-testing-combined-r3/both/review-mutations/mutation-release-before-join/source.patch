@@ -1,0 +1,19 @@
+--- a/serve.go
++++ b/serve.go
+@@ -21,7 +21,15 @@
+ 		if ctx.Err() != nil {
+ 			return nil
+ 		}
+-		if err := refresh(ctx); err != nil {
++		result := make(chan error, 1)
++		go func() { result <- refresh(ctx) }()
++		var callbackErr error
++		select {
++		case <-ctx.Done():
++			return nil
++		case callbackErr = <-result:
++		}
++		if err := callbackErr; err != nil {
+ 			if ctx.Err() != nil && onlyCancellation(err, ctx.Err()) {
+ 				return nil
+ 			}

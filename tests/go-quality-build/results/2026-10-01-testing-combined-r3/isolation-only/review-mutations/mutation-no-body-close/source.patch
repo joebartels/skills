@@ -1,0 +1,11 @@
+--- a/refresh.go
++++ b/refresh.go
+@@ -34,7 +34,7 @@
+ 	if err != nil {
+ 		return fmt.Errorf("refresh fetch: %w", err)
+ 	}
+-	defer response.Body.Close()
++	// MUTATION: acquired response body not closed
+ 	if response.StatusCode != http.StatusOK {
+ 		return fmt.Errorf("refresh status: %s", response.Status)
+ 	}

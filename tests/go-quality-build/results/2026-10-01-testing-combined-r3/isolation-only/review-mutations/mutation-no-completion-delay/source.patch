@@ -1,0 +1,11 @@
+--- a/serve.go
++++ b/serve.go
+@@ -27,7 +27,7 @@
+ 			}
+ 			return err
+ 		}
+-		timer := time.NewTimer(interval)
++		timer := time.NewTimer(time.Nanosecond)
+ 		select {
+ 		case <-ctx.Done():
+ 			timer.Stop()

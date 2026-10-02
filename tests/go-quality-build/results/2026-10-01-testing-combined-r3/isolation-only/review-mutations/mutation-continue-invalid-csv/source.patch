@@ -1,0 +1,11 @@
+--- a/index.go
++++ b/index.go
+@@ -53,7 +53,7 @@
+ 			return fmt.Errorf("CSV row %d: %w", row, err)
+ 		}
+ 		if !validRecord(fields[0], fields[1]) {
+-			return fmt.Errorf("CSV row %d: %w", row, ErrInvalidRecord)
++			continue // MUTATION: ignore rejected record
+ 		}
+ 		if err := i.Put(fields[0], fields[1]); err != nil {
+ 			return fmt.Errorf("CSV row %d: %w", row, err)

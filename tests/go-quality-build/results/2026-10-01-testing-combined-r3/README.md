@@ -1,3 +1,3 @@
-# Isolation revision 3 fresh evaluations
+# Isolation revision 3 integrated outcomes
 
-Pending independent outcomes. Exact frozen task/input/common-guidance/settings match the recorded prior run. Isolation revision 3 retains automatic-client fidelity and adds conditional builder/application environment guidance. No repair or review feedback is supplied.
+Two fresh matched authors with final isolation3 guidance; both also receives exact behavior2. [Comparison](comparison.md) retains independent neutral cards, controller sensitivity and historical limits. Candidate checks/reconstructions are complete; promotion and delivery remain pending. This archive remains unsealed to receive the planned delivery review/check artifacts, with exact candidate/input/guidance maps already verifiable.
