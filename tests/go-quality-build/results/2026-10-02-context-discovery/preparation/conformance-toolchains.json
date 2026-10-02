@@ -1,0 +1,146 @@
+[
+  {
+    "case": "library-call-cause",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-quality-context-preparation/library-call-cause",
+    "status": 0,
+    "stdout": "ok  \texample.com/process\t1.252s\n",
+    "stderr": "",
+    "seconds": 4.167080879211426
+  },
+  {
+    "case": "library-call-cause",
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-count=1",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-quality-context-preparation/library-call-cause",
+    "status": 0,
+    "stdout": "ok  \texample.com/process\t0.173s\n",
+    "stderr": "",
+    "seconds": 2.5878970623016357
+  },
+  {
+    "case": "service-total-budget",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-quality-context-preparation/service-total-budget",
+    "status": 0,
+    "stdout": "ok  \texample.com/stages\t1.341s\n",
+    "stderr": "",
+    "seconds": 4.168819904327393
+  },
+  {
+    "case": "service-total-budget",
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-count=1",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-quality-context-preparation/service-total-budget",
+    "status": 1,
+    "stdout": "dyld[39206]: missing LC_UUID load command in /private/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-build1422514029/b001/stages.test\ndyld[39206]: missing LC_UUID load command\nsignal: abort trap\nFAIL\texample.com/stages\t0.203s\nFAIL\n",
+    "stderr": "",
+    "seconds": 2.488722324371338
+  },
+  {
+    "case": "cli-finalization-budget",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-quality-context-preparation/cli-finalization-budget",
+    "status": 0,
+    "stdout": "ok  \texample.com/finalize\t2.576s\n?   \texample.com/finalize/cmd/finalize\t[no test files]\n",
+    "stderr": "",
+    "seconds": 2.764101982116699
+  },
+  {
+    "case": "cli-finalization-budget",
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-count=1",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-quality-context-preparation/cli-finalization-budget",
+    "status": 0,
+    "stdout": "?   \texample.com/finalize/cmd/finalize\t[no test files]\nok  \texample.com/finalize\t0.704s\n",
+    "stderr": "",
+    "seconds": 0.8605079650878906
+  },
+  {
+    "case": "not-context-work",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-quality-context-preparation/not-context-work",
+    "status": 0,
+    "stdout": "ok  \texample.com/rangecheck\t1.189s\n",
+    "stderr": "",
+    "seconds": 1.341235876083374
+  },
+  {
+    "case": "not-context-work",
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-count=1",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-quality-context-preparation/not-context-work",
+    "status": 0,
+    "stdout": "ok  \texample.com/rangecheck\t0.178s\n",
+    "stderr": "",
+    "seconds": 0.32263660430908203
+  }
+]

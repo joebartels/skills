@@ -1,0 +1,66 @@
+{
+  "skill_name": "go-context-and-deadlines",
+  "evals": [
+    {
+      "id": "library-call-cause",
+      "prompt": "Update Process and tests to satisfy README.md cancellation, result and cause contracts. Preserve its public signature and supported Go version.",
+      "expected_output": "Accepted progress and independent failures retain documented meaning under cancellation without panic or cause loss.",
+      "assertions": [
+        "Already-canceled work never starts; standard cancellation classification and legal custom causes remain inspectable.",
+        "Independent callback failure and accepted progress survive coincident cancellation; completed success is not retroactively rejected."
+      ],
+      "files": [
+        "files/library-call-cause/README.md",
+        "files/library-call-cause/go.mod",
+        "files/library-call-cause/process.go",
+        "files/library-call-cause/process_test.go"
+      ]
+    },
+    {
+      "id": "service-total-budget",
+      "prompt": "Update FetchAll and tests to satisfy README.md total/stage budget, response-lifetime and failure contracts. Preserve client/API/version boundaries.",
+      "expected_output": "Caller-derived total and stage scopes remain live through owned response consumption.",
+      "assertions": [
+        "One total budget and an earlier parent deadline govern all stages.",
+        "Already/in-flight cancellation, retained completed bodies and owned-body closure follow the documented boundaries."
+      ],
+      "files": [
+        "files/service-total-budget/README.md",
+        "files/service-total-budget/go.mod",
+        "files/service-total-budget/stages.go",
+        "files/service-total-budget/stages_test.go"
+      ]
+    },
+    {
+      "id": "cli-finalization-budget",
+      "prompt": "Update Run and tests according to README.md required bounded finalization contract. Preserve the supplied command host and supported Go version.",
+      "expected_output": "Accepted work is finalized under an explicitly owned bounded scope, with actual process failure/effect observations.",
+      "assertions": [
+        "Parent cancellation does not prevent required bounded finalization; completion is observed.",
+        "Processing and independent finalization failure remain inspectable; real child status and receipt retain accepted effects."
+      ],
+      "files": [
+        "files/cli-finalization-budget/README.md",
+        "files/cli-finalization-budget/cmd/finalize/main.go",
+        "files/cli-finalization-budget/go.mod",
+        "files/cli-finalization-budget/run.go",
+        "files/cli-finalization-budget/run_test.go"
+      ]
+    },
+    {
+      "id": "not-context-work",
+      "prompt": "Repair inRange and add a focused ordinary regression test according to README.md. Preserve the API and supported Go version.",
+      "expected_output": "Small inclusive-boundary repair without cancellation machinery.",
+      "assertions": [
+        "Correct inclusive endpoints and outside values.",
+        "Declines context guidance when offered; no added context/deadline/configuration/abstraction."
+      ],
+      "files": [
+        "files/not-context-work/README.md",
+        "files/not-context-work/go.mod",
+        "files/not-context-work/range.go",
+        "files/not-context-work/range_test.go"
+      ]
+    }
+  ]
+}

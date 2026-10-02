@@ -1,0 +1,178 @@
+[
+  {
+    "id": "unsafe-cause-equality",
+    "case": "library-call-cause",
+    "file": "process.go",
+    "old": "return accepted, errors.Join(err, ctx.Err(), context.Cause(ctx))",
+    "new": "if cause := context.Cause(ctx); cause != nil && cause != err { return accepted, errors.Join(err, ctx.Err(), cause) }; return accepted, errors.Join(err, ctx.Err())",
+    "test": "TestCauseReturnedByCallback",
+    "checks": [
+      {
+        "command": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^$",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-quality-context-mutations/unsafe-cause-equality",
+        "status": 0,
+        "stdout": "ok  \texample.com/process\t0.213s [no tests to run]\n",
+        "stderr": "",
+        "seconds": 0.39896297454833984
+      },
+      {
+        "command": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^TestCauseReturnedByCallback$",
+          "-count=1",
+          "-timeout=10s",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-quality-context-mutations/unsafe-cause-equality",
+        "status": 1,
+        "stdout": "--- FAIL: TestCauseReturnedByCallback (0.00s)\n    contract_controller_test.go:92: Process panicked for a legal non-comparable cause: runtime error: comparing uncomparable type process.listCause\nFAIL\nFAIL\texample.com/process\t0.119s\nFAIL\n",
+        "stderr": "",
+        "seconds": 0.2381269931793213
+      }
+    ]
+  },
+  {
+    "id": "lost-custom-cause",
+    "case": "library-call-cause",
+    "file": "process.go",
+    "old": "context.Cause(ctx)",
+    "new": "nil",
+    "test": "TestCustomCauseAndIndependentFailure",
+    "checks": [
+      {
+        "command": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^$",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-quality-context-mutations/lost-custom-cause",
+        "status": 0,
+        "stdout": "ok  \texample.com/process\t0.176s [no tests to run]\n",
+        "stderr": "",
+        "seconds": 0.3152759075164795
+      },
+      {
+        "command": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^TestCustomCauseAndIndependentFailure$",
+          "-count=1",
+          "-timeout=10s",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-quality-context-mutations/lost-custom-cause",
+        "status": 1,
+        "stdout": "--- FAIL: TestCustomCauseAndIndependentFailure (0.00s)\n    contract_controller_test.go:63: accepted=1 err=independent apply failure\n        context canceled cause=custom cancellation\nFAIL\nFAIL\texample.com/process\t0.114s\nFAIL\n",
+        "stderr": "",
+        "seconds": 0.23183894157409668
+      }
+    ]
+  },
+  {
+    "id": "lost-total-budget",
+    "case": "service-total-budget",
+    "file": "stages.go",
+    "old": "fetchStage(op, client, endpoint, stage)",
+    "new": "fetchStage(ctx, client, endpoint, stage)",
+    "test": "TestTotalAndEarlierParentDeadline",
+    "checks": [
+      {
+        "command": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^$",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-quality-context-mutations/lost-total-budget",
+        "status": 0,
+        "stdout": "ok  \texample.com/stages\t0.213s [no tests to run]\n",
+        "stderr": "",
+        "seconds": 0.505399227142334
+      },
+      {
+        "command": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^TestTotalAndEarlierParentDeadline$",
+          "-count=1",
+          "-timeout=10s",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-quality-context-mutations/lost-total-budget",
+        "status": 1,
+        "stdout": "--- FAIL: TestTotalAndEarlierParentDeadline (0.00s)\n    --- FAIL: TestTotalAndEarlierParentDeadline/total (0.00s)\n        contract_controller_test.go:41: total scope reset: [2026-10-02 15:28:10.85819 -0500 CDT m=+60.001421793 2026-10-02 15:28:10.858369 -0500 CDT m=+60.001600376]\nFAIL\nFAIL\texample.com/stages\t0.169s\nFAIL\n",
+        "stderr": "",
+        "seconds": 0.35187196731567383
+      }
+    ]
+  },
+  {
+    "id": "unbounded-finalization",
+    "case": "cli-finalization-budget",
+    "file": "run.go",
+    "old": "context.WithTimeout(context.WithoutCancel(ctx), finalizationBudget)",
+    "new": "context.WithCancel(context.WithoutCancel(ctx))",
+    "test": "TestFinalizationDeadline",
+    "checks": [
+      {
+        "command": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^$",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-quality-context-mutations/unbounded-finalization",
+        "status": 0,
+        "stdout": "ok  \texample.com/finalize\t0.183s [no tests to run]\n?   \texample.com/finalize/cmd/finalize\t[no test files]\n",
+        "stderr": "",
+        "seconds": 0.3319990634918213
+      },
+      {
+        "command": [
+          "rtk",
+          "proxy",
+          "go",
+          "test",
+          "-run",
+          "^TestFinalizationDeadline$",
+          "-count=1",
+          "-timeout=10s",
+          "./..."
+        ],
+        "cwd": "/private/tmp/go-quality-context-mutations/unbounded-finalization",
+        "status": 1,
+        "stdout": "--- FAIL: TestFinalizationDeadline (1.00s)\n    contract_controller_test.go:86: accepted=1 err=unbounded finalization\nFAIL\nFAIL\texample.com/finalize\t1.126s\n?   \texample.com/finalize/cmd/finalize\t[no test files]\nFAIL\n",
+        "stderr": "",
+        "seconds": 1.2453110218048096
+      }
+    ]
+  }
+]
