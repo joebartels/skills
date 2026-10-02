@@ -1,0 +1,95 @@
+[
+  {
+    "label": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-3/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "runtime",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION",
+      "CGO_ENABLED"
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-3/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "darwin\narm64\ngo1.26.5\n1\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "candidate tests in unchanged copy",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-3/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/label\t0.221s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "formatting",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "format.go",
+      "format_test.go"
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-3/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "comment-only boundary verification",
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-c",
+      "from pathlib import Path; a=Path('../original'); b=Path('../candidate'); strip=lambda p:'\\n'.join(x for x in p.read_text().splitlines() if not x.startswith('//')); assert strip(a/'format.go') == strip(b/'format.go'); assert (a/'format_test.go').read_bytes() == (b/'format_test.go').read_bytes(); assert (a/'go.mod').read_bytes() == (b/'go.mod').read_bytes(); assert (a/'README.md').read_bytes() == (b/'README.md').read_bytes(); print('Only the Format doc comment differs; implementation, tests, module, and README are unchanged.')"
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-3/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "Only the Format doc comment differs; implementation, tests, module, and README are unchanged.\n",
+    "stderr": "",
+    "exit_code": 0
+  }
+]

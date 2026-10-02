@@ -1,0 +1,9 @@
+--- a/index.go
++++ b/index.go
+@@ -77,5 +77,5 @@
+ 	if err := f.Close(); err != nil {
+ 		return err
+ 	}
+-	return os.Rename(f.Name(), path)
++	return os.WriteFile(path, data, 0600)
+ }

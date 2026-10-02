@@ -1,0 +1,10 @@
+--- a/cmd/indexer/main.go
++++ b/cmd/indexer/main.go
+@@ -68,6 +68,7 @@
+ 	}
+ }
+ func main() {
++	fmt.Println("success")
+ 	if err := run(os.Args[1:]); err != nil {
+ 		fmt.Fprintln(os.Stderr, err)
+ 		os.Exit(2)

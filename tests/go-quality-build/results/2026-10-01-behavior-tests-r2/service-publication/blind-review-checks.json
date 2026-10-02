@@ -1,0 +1,167 @@
+[
+  {
+    "label": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-2/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "runtime",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION",
+      "CGO_ENABLED"
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-2/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "darwin\narm64\ngo1.26.5\n1\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "candidate tests in unchanged copy",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-2/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshThroughHTTP (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 35 [running]:\ntesting.tRunner.func1.2({0x100748720, 0x410c76323590})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x100748720?, 0x410c76323590?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1007d4360, 0x410c76323540})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/mirror_test.TestRefreshThroughHTTP(0x410c76542488)\n\t/private/tmp/go-independent-review-m9iq7xmf/changeset-2/verification/refresh_test.go:238 +0x8c\ntesting.tRunner(0x410c76542488, 0x1007d0238)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/mirror\t0.241s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "label": "race verification in unchanged copy",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-2/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshThroughHTTP (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 35 [running]:\ntesting.tRunner.func1.2({0x1011bdc20, 0xc00003b580})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x2b8\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x460\npanic({0x1011bdc20?, 0xc00003b580?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0x13c\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x10124f120, 0xc00003b530})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x30\nexample.com/mirror_test.TestRefreshThroughHTTP(0xc0001da488)\n\t/private/tmp/go-independent-review-m9iq7xmf/changeset-2/verification/refresh_test.go:238 +0xa8\ntesting.tRunner(0xc0001da488, 0x10124a9b8)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x168\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x7c0\nFAIL\texample.com/mirror\t0.232s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "label": "assertion signal: omit-trailing-validation",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestRefreshRejectsResponseWithoutChangingPriorBytes$",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-2/mutation-omit-trailing-validation",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes (0.01s)\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/trailing_array (0.00s)\n        refresh_test.go:127: Refresh succeeded for rejected response\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/trailing_null (0.00s)\n        refresh_test.go:127: Refresh succeeded for rejected response\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/trailing_junk (0.00s)\n        refresh_test.go:127: Refresh succeeded for rejected response\nFAIL\nFAIL\texample.com/mirror\t0.204s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "label": "assertion signal: truncate-destination",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestRefresh(ReplacesSnapshotWithoutTruncatingOpenHandle|PartialWriteRetainsPriorSnapshot)$",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-2/mutation-truncate-destination",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRefreshReplacesSnapshotWithoutTruncatingOpenHandle (0.00s)\n    refresh_unix_test.go:52: already-open old handle = \"[{\\\"code\\\":\\\"new\\\",\\\"label\\\":\\\"First replacement\\\"}]\", want \"old snapshot with exact spaces and a newline\\n\"\n--- FAIL: TestRefreshPartialWriteRetainsPriorSnapshot (0.01s)\n    refresh_unix_test.go:78: snapshot = \"[{\\\"code\\\":\\\"new\\\",\\\"label\\\":\\\"snapshotsnapshotsnapshotsnapshotsnapshot\", want \"previous exact snapshot bytes, longer than the child file-size limit, must all survive\\n\"\nFAIL\nFAIL\texample.com/mirror\t0.205s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "label": "approved unchanged-source listener rerun",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-2/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.197s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "sandbox_permissions": "require_escalated",
+    "purpose": "allow existing httptest loopback listener without source changes"
+  },
+  {
+    "label": "approved unchanged-source race listener rerun",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-2/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/mirror\t2.229s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "sandbox_permissions": "require_escalated",
+    "purpose": "allow existing httptest loopback listener without source changes"
+  }
+]

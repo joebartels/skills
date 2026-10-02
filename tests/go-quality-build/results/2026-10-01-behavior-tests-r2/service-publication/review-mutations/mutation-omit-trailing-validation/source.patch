@@ -1,0 +1,11 @@
+--- a/mirror.go
++++ b/mirror.go
+@@ -51,7 +51,7 @@
+ 		return fmt.Errorf("decode snapshot: expected a JSON array")
+ 	}
+ 	var trailing json.RawMessage
+-	if err := decoder.Decode(&trailing); err != io.EOF {
++	if err := decoder.Decode(&trailing); false && err != io.EOF {
+ 		if err != nil {
+ 			return fmt.Errorf("read snapshot trailing data: %w", err)
+ 		}

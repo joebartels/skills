@@ -33,6 +33,11 @@ Include setup failures, early assertions, descendants and background work.
   serial, including ancestors. t.Setenv restores state but cannot make global
   mutation parallel-safe. Preserve unset versus present-empty values. Use an
   explicit filtered child environment when checking real process behavior.
+- Separate build/tool subprocess setup from the executable's configuration.
+  When filtering a builder's environment, preserve or deliberately supply its
+  required cache/configuration instead of copying an absent override. A test
+  runner's GOCACHE override is not an implicit test prerequisite. Check relevant
+  setup with ordinary unset defaults while controlling application configuration.
 - Parallelize only independent work. Shared replacement sequences can remain
   serial inside independent instance cases. Respect the project's effective
   loop-variable semantics rather than adding or removing captures by habit.

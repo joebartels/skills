@@ -1,0 +1,16 @@
+--- a/key.go
++++ b/key.go
+@@ -32,11 +32,11 @@
+ 	if !ok || region == "" || name == "" || strings.Contains(name, "/") {
+ 		return Key{}, ErrInvalidKey
+ 	}
+-	region, err := url.PathUnescape(region)
++	region, err := url.QueryUnescape(region)
+ 	if err != nil {
+ 		return Key{}, ErrInvalidKey
+ 	}
+-	name, err = url.PathUnescape(name)
++	name, err = url.QueryUnescape(name)
+ 	if err != nil {
+ 		return Key{}, ErrInvalidKey
+ 	}

@@ -1,0 +1,139 @@
+[
+  {
+    "label": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-1/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "runtime",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION",
+      "CGO_ENABLED"
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-1/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "darwin\narm64\ngo1.26.5\n1\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "candidate tests in unchanged copy",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-1/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/keycodec\t0.171s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "finite fuzz",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^$",
+      "-fuzz=FuzzRoundTrip",
+      "-fuzztime=3s",
+      "-parallel=1"
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-1/verification",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "fuzz: elapsed: 0s, gathering baseline coverage: 0/31 completed\nfuzz: elapsed: 0s, gathering baseline coverage: 31/31 completed, now fuzzing with 1 workers\nfuzz: elapsed: 3s, execs: 333153 (111020/sec), new interesting: 0 (total: 31)\nfuzz: elapsed: 3s, execs: 333153 (0/sec), new interesting: 0 (total: 31)\nPASS\nok  \texample.com/keycodec\t3.179s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "assertion signal: encode-query-escaping",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestEncode$",
+      "-count=1",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-1/mutation-encode-query-escaping",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestEncode (0.00s)\n    --- FAIL: TestEncode/spaces_in_both_fields (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"us west\", Name:\"web blue\"}) = \"us+west/web+blue\", want \"us%20west/web%20blue\"\n    --- FAIL: TestEncode/literal_plus (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"us+west\", Name:\"web+blue\"}) = \"us%2Bwest/web%2Bblue\", want \"us+west/web+blue\"\nFAIL\nFAIL\texample.com/keycodec\t0.177s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "label": "assertion signal: decode-query-unescaping",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestDecode$",
+      "-count=1",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-1/mutation-decode-query-unescaping",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestDecode (0.00s)\n    --- FAIL: TestDecode/literal_plus (0.00s)\n        key_test.go:66: Decode(\"us+west/web+blue\") = keycodec.Key{Region:\"us west\", Name:\"web blue\"}, want keycodec.Key{Region:\"us+west\", Name:\"web+blue\"}\nFAIL\nFAIL\texample.com/keycodec\t0.177s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "label": "assertion signal: lost error identity",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestDecodeRejectsInvalidWire$",
+      "-count=1",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-m9iq7xmf/changeset-1/mutation-lost-error-identity",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestDecodeRejectsInvalidWire (0.00s)\n    --- FAIL: TestDecodeRejectsInvalidWire/empty_wire (0.00s)\n        key_test.go:119: Decode(\"\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/no_separator (0.00s)\n        key_test.go:119: Decode(\"east\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/escaped_separator_only (0.00s)\n        key_test.go:119: Decode(\"east%2Fweb\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/three_segments (0.00s)\n        key_test.go:119: Decode(\"east/web/api\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/extra_trailing_separator (0.00s)\n        key_test.go:119: Decode(\"east/web/\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/extra_leading_separator (0.00s)\n        key_test.go:119: Decode(\"/east/web\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/both_empty (0.00s)\n        key_test.go:119: Decode(\"/\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/empty_region (0.00s)\n        key_test.go:119: Decode(\"/web\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/empty_name (0.00s)\n        key_test.go:119: Decode(\"east/\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/bare_percent_in_region (0.00s)\n        key_test.go:119: Decode(\"%/web\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/bare_percent_in_name (0.00s)\n        key_test.go:119: Decode(\"east/%\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/short_escape_in_region (0.00s)\n        key_test.go:119: Decode(\"east%2/web\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/short_escape_in_name (0.00s)\n        key_test.go:119: Decode(\"east/web%2\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/invalid_hex_in_region (0.00s)\n        key_test.go:119: Decode(\"east%GG/web\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/invalid_hex_in_name (0.00s)\n        key_test.go:119: Decode(\"east/web%GG\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/invalid_second_hex_digit (0.00s)\n        key_test.go:119: Decode(\"east/web%2G\") error = invalid key, want ErrInvalidKey\n    --- FAIL: TestDecodeRejectsInvalidWire/valid_escape_followed_by_malformed_escape (0.00s)\n        key_test.go:119: Decode(\"east/web%20%\") error = invalid key, want ErrInvalidKey\nFAIL\nFAIL\texample.com/keycodec\t0.204s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  }
+]

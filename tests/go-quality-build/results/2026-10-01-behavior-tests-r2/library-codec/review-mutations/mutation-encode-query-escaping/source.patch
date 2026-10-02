@@ -1,0 +1,11 @@
+--- a/key.go
++++ b/key.go
+@@ -21,7 +21,7 @@
+ 	if k.Region == "" || k.Name == "" {
+ 		return "", ErrInvalidKey
+ 	}
+-	return url.PathEscape(k.Region) + "/" + url.PathEscape(k.Name), nil
++	return url.QueryEscape(k.Region) + "/" + url.QueryEscape(k.Name), nil
+ }
+ 
+ // Decode unescapes two nonempty URL path segments separated by one slash.

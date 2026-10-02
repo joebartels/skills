@@ -1,0 +1,21 @@
+--- a/key.go
++++ b/key.go
+@@ -30,15 +30,15 @@
+ func Decode(wire string) (Key, error) {
+ 	region, name, ok := strings.Cut(wire, "/")
+ 	if !ok || region == "" || name == "" || strings.Contains(name, "/") {
+-		return Key{}, ErrInvalidKey
++		return Key{}, errors.New("invalid key")
+ 	}
+ 	region, err := url.PathUnescape(region)
+ 	if err != nil {
+-		return Key{}, ErrInvalidKey
++		return Key{}, errors.New("invalid key")
+ 	}
+ 	name, err = url.PathUnescape(name)
+ 	if err != nil {
+-		return Key{}, ErrInvalidKey
++		return Key{}, errors.New("invalid key")
+ 	}
+ 	return Key{Region: region, Name: name}, nil
+ }
