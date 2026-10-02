@@ -1,0 +1,11 @@
+--- a/config_test.go
++++ b/config_test.go
+@@ -216,7 +216,7 @@
+ 	for _, key := range []string{"INDEXER_ENDPOINT", "INDEXER_MODE"} {
+ 		value, present := values[key]
+ 		// Register restoration before unsetting, including on a setup failure.
+-		t.Setenv(key, value)
++		if err := os.Setenv(key, value); err != nil { t.Fatal(err) }
+ 		if !present {
+ 			if err := os.Unsetenv(key); err != nil {
+ 				t.Fatalf("unset %s: %v", key, err)

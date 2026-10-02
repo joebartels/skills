@@ -1,0 +1,35 @@
+--- a/clamp.go
++++ b/clamp.go
+@@ -2,8 +2,8 @@
+ 
+ // Clamp bounds value to the inclusive low/high interval.
+ func Clamp(value, low, high int) int {
+-	if value <= low {
+-		return low + 1
++	if value < low {
++		return low
+ 	}
+ 	if value > high {
+ 		return high
+--- a/clamp_test.go
++++ b/clamp_test.go
+@@ -11,3 +11,19 @@
+ 		t.Fatalf("Clamp = %d, want 5", got)
+ 	}
+ }
++
++func TestLowerBound(t *testing.T) {
++	for _, tc := range []struct {
++		name  string
++		value int
++	}{
++		{name: "below", value: 0},
++		{name: "inclusive", value: 1},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			if got := clamp.Clamp(tc.value, 1, 9); got != 1 {
++				t.Fatalf("Clamp(%d, 1, 9) = %d, want 1", tc.value, got)
++			}
++		})
++	}
++}

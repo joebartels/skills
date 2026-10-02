@@ -1,0 +1,144 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/cli-environment/source.patch"
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-48j4fitj/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  {
+    "kind": "patch-reconstruction",
+    "result": "byte-for-byte",
+    "file_count": 5
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-48j4fitj/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/showcfg\t0.478s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.656
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-48j4fitj/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.08
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-48j4fitj/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.008
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-48j4fitj/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/showcfg\t1.454s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.65
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-shuffle=on",
+      "-count=10",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-48j4fitj/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/showcfg\t2.597s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 2.723
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-48j4fitj/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/showcfg\t0.650s\n?   \texample.com/showcfg/cmd/showcfg\t[no test files]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.811,
+    "kind": "withheld-contract-probes"
+  }
+]

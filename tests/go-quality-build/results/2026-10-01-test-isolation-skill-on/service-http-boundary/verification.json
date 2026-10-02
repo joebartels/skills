@@ -1,0 +1,144 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/service-http-boundary/source.patch"
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-gd1lojam/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.014
+  },
+  {
+    "kind": "patch-reconstruction",
+    "result": "byte-for-byte",
+    "file_count": 4
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-gd1lojam/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.236s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.479
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-gd1lojam/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.117
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-gd1lojam/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.008
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-gd1lojam/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t1.218s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.495
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-shuffle=on",
+      "-count=10",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-gd1lojam/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.176s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.371
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-gd1lojam/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.207s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.435,
+    "kind": "withheld-contract-probes"
+  }
+]

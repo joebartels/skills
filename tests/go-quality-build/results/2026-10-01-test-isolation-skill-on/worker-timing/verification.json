@@ -1,0 +1,144 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/worker-timing/source.patch"
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-h80riflz/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  {
+    "kind": "patch-reconstruction",
+    "result": "byte-for-byte",
+    "file_count": 4
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-h80riflz/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.373s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.534
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-h80riflz/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.09
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-h80riflz/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.008
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-h80riflz/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t1.358s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.538
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-shuffle=on",
+      "-count=10",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-h80riflz/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t1.798s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.927
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-h80riflz/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.462s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.629,
+    "kind": "withheld-contract-probes"
+  }
+]

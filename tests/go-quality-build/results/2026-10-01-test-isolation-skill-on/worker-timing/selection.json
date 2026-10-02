@@ -1,0 +1,55 @@
+{
+  "task_module": "/private/tmp/go-testing-author-iu16ahig/worker-timing",
+  "offered_guidance_names": [
+    "go-api-contracts",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries",
+    "go-test-isolation"
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-testing-author-iu16ahig/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-testing-author-iu16ahig/guidance/go-test-isolation/SKILL.md"
+  ],
+  "opened_reference_paths": [
+    "/private/tmp/go-testing-author-iu16ahig/guidance/go-test-isolation/references/isolation-patterns.md"
+  ],
+  "relevance_decisions": [
+    {
+      "name": "go-api-contracts",
+      "selected": false,
+      "reason": "Tests exercise established README contracts; no exported API or supported external contract is created or changed."
+    },
+    {
+      "name": "go-core-style",
+      "selected": true,
+      "reason": "Writing Go tests; used idiomatic errors, formatting, atomic/channel synchronization, and explicit goroutine ownership."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "selected": false,
+      "reason": "Production interfaces, concrete dependencies, constructors, options, wiring, and lifecycle contracts stay unchanged. The added lifetime controls are private test fixtures."
+    },
+    {
+      "name": "go-package-boundaries",
+      "selected": false,
+      "reason": "Existing module and external test package are retained; no responsibility, import direction, or package boundary change."
+    },
+    {
+      "name": "go-test-isolation",
+      "selected": true,
+      "reason": "Repairing guessed readiness and adding timer, goroutine, cancellation, filesystem fixture, cleanup-order, and parallel focused-selection tests."
+    }
+  ],
+  "opened_task_files": [
+    "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/worker-timing/dispatch.txt",
+    "/private/tmp/go-testing-author-iu16ahig/worker-timing/README.md",
+    "/private/tmp/go-testing-author-iu16ahig/worker-timing/go.mod",
+    "/private/tmp/go-testing-author-iu16ahig/worker-timing/poll.go",
+    "/private/tmp/go-testing-author-iu16ahig/worker-timing/poll_test.go"
+  ],
+  "opened_generated_report_files": [
+    "/private/tmp/go-testing-author-iu16ahig/worker-timing-report/checks.json",
+    "/private/tmp/go-testing-author-iu16ahig/worker-timing-report/selection.json"
+  ]
+}

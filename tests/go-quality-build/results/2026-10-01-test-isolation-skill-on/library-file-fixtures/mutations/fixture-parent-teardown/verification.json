@@ -1,0 +1,87 @@
+{
+  "semantic_id": "fixture-parent-teardown",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "19866819fbb65ed98dcef3a1b437f90805d3de6f162dcc795c938f174b4bd277",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-9z31icib/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.173s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.333
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/library-file-fixtures/mutations/fixture-parent-teardown/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-9z31icib/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.016
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-9z31icib/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.168s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.309
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-9z31icib/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    --- FAIL: TestStoreIndependentInstances/instances (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/beta/initial (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2921694764/002/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/beta/shorter (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2921694764/002/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/beta/empty (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2921694764/002/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2921694764/002/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/beta/repeat (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2921694764/002/same-key: no such file or directory\n        --- FAIL: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/initial (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2921694764/001/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/shorter (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2921694764/001/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/empty (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2921694764/001/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2921694764/001/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/repeat (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2921694764/001/same-key: no such file or directory\n        --- FAIL: TestStoreIndependentInstances/instances/gamma (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/initial (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2921694764/003/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/shorter (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2921694764/003/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/empty (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2921694764/003/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/replacement (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2921694764/003/same-key: no such file or directory\n            --- FAIL: TestStoreIndependentInstances/instances/gamma/repeat (0.00s)\n                store_test.go:65: Put: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2921694764/003/same-key: no such file or directory\nFAIL\nFAIL\texample.com/filestore\t0.117s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.231
+  },
+  "classification": "detected test-fixture sabotage",
+  "controller_interpretation": "Parent-group defer deletes parent-owned roots before resumed parallel children; explicit Put assertions fail. Only test fixture changes, not production or uplift."
+}

@@ -1,0 +1,87 @@
+{
+  "semantic_id": "poll-discard-context",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "45c759e74a30a1816445a29cc7214a44d170ba4d807fd140039abe016d2c8796",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-p5w5s2lk/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.449s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.621
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/worker-timing/mutations/poll-discard-context/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-p5w5s2lk/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-p5w5s2lk/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.179s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.332
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-p5w5s2lk/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCancellationDuringCallbackCleanup (5.00s)\n    poll_test.go:206: callback did not receive the caller's context\n    poll_test.go:410: Poll did not join during cleanup\n--- FAIL: TestCallbackErrorConcurrentWithCancellation (10.00s)\n    poll_test.go:247: timed out waiting for Poll completion\n    poll_test.go:410: Poll did not join during cleanup\n--- FAIL: TestIndependentInvocations (0.00s)\n    --- FAIL: TestIndependentInvocations/alpha (10.00s)\n        poll_test.go:376: timed out waiting for Poll completion\n        poll_test.go:410: Poll did not join during cleanup\n    --- FAIL: TestIndependentInvocations/beta (10.00s)\n        poll_test.go:376: timed out waiting for Poll completion\n        poll_test.go:410: Poll did not join during cleanup\n--- FAIL: TestFixtureTeardown (10.00s)\n    poll_test.go:288: timed out waiting for Poll completion\n    poll_test.go:410: Poll did not join during cleanup\n    poll_test.go:268: callback still owns fixture; cannot safely close it\n--- FAIL: TestConcurrentInvocations (15.00s)\n    poll_test.go:327: timed out waiting for Poll completion\n    poll_test.go:410: Poll did not join during cleanup\n    poll_test.go:410: Poll did not join during cleanup\nFAIL\nFAIL\texample.com/poller\t15.115s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 15.233
+  },
+  "classification": "detected by meaningful context/recurrence assertions",
+  "controller_interpretation": "Explicit callback-context identity assertion fails; separate bounded cancellation/join checks report non-cooperation. No unrelated panic, compile rejection or outer process timeout is counted."
+}

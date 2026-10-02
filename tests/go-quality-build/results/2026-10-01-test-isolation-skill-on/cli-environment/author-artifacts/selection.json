@@ -1,0 +1,51 @@
+{
+  "offered_guidance_names": [
+    "go-api-contracts",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries",
+    "go-test-isolation"
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-testing-author-iu16ahig/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-testing-author-iu16ahig/guidance/go-test-isolation/SKILL.md"
+  ],
+  "opened_reference_paths": [
+    "/private/tmp/go-testing-author-iu16ahig/guidance/go-test-isolation/references/isolation-patterns.md"
+  ],
+  "decisions": [
+    {
+      "name": "go-api-contracts",
+      "selected": false,
+      "reason": "This extends tests of the README-established API and CLI contract; exported APIs, supported output, errors and migration behavior are unchanged."
+    },
+    {
+      "name": "go-core-style",
+      "selected": true,
+      "reason": "Writing Go tests calls for idiomatic naming, standard-library dependencies, gofmt, and Go-version-compatible code."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "selected": false,
+      "reason": "No production interface, dependency wiring, constructor or lifecycle API changes. Test subprocess fixture ownership is addressed by go-test-isolation."
+    },
+    {
+      "name": "go-package-boundaries",
+      "selected": false,
+      "reason": "The existing external test package and production package responsibilities and imports remain unchanged."
+    },
+    {
+      "name": "go-test-isolation",
+      "selected": true,
+      "reason": "The work mutates process environment, must preserve unset versus present-empty state, owns a temporary compiled binary, and exercises bounded actual child processes."
+    }
+  ],
+  "opened_task_files": [
+    "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/cli-environment/dispatch.txt",
+    "/private/tmp/go-testing-author-iu16ahig/cli-environment/README.md",
+    "/private/tmp/go-testing-author-iu16ahig/cli-environment/go.mod",
+    "/private/tmp/go-testing-author-iu16ahig/cli-environment/config.go",
+    "/private/tmp/go-testing-author-iu16ahig/cli-environment/config_test.go",
+    "/private/tmp/go-testing-author-iu16ahig/cli-environment/cmd/showcfg/main.go"
+  ]
+}
