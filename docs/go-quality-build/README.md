@@ -607,3 +607,9 @@ After each meaningful stage and before finishing a task, update the status above
 - Sealed behavior2: 292 artifact hashes, checksum index `519a944677cb9b962ec98653aa12a2956f11b231a34254fac990cb4ada5fd315`; historical final-name integrated behavior2/isolation2: 179 hashes, index `86a7ee30d6d5bee8d7d800239f69906fd95a100af9740268a20693f10d499a6d`. All 41 completed reconstructions and 1,930 sealed hashes reverified. Seal commit `b187873`; no subsequent edits to these archives.
 - Isolation3 source frozen at `17e38eb`; six single/control/repeat and two affected integrated dispatches frozen at `f07df12`, tasks/inputs/common guidance/settings matched; combined both uses behavior2. Three fresh authors running. Both runtime skills still revision1.
 - Next: complete isolation3 evaluations and separate exact-byte promotion assessments, then shared delivery and final branch review.
+
+#### 2026-10-01 — First isolation revision-3 verified case
+
+- First file author completes unchanged production with grouped parallel instances and contract-derived expected executed values. Exact reconstruction, ordinary/vet/format/race/ten-shuffle/held/individual checks pass; named alpha, gamma replacement and excluded-instance selection pass.
+- Candidate-only shared-root regression compiles and fails retained persistence observations even at parallelism1; premature parent cleanup is separately labelled test-helper sabotage and fails child file operations. No independent outcome card yet. Other revision3 authors and behavior2 promotion reviewer running; runtime1 remains.
+- Next: complete remaining fresh cases/repeat, neutral independent outcomes and promotion gates.

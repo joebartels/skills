@@ -1,0 +1,273 @@
+[
+  {
+    "stage": "baseline",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "ok  \texample.com/filestore\t0.223s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "stage": "staticcheck",
+    "status": "skipped",
+    "reason": "staticcheck is not installed; dispatch prohibits installing tools"
+  },
+  {
+    "stage": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "stage": "format",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "gofmt",
+      "-s",
+      "-w",
+      "store_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "stage": "serial",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-count=1",
+      "-run=^TestStoreSerialChildren$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "ok  \texample.com/filestore\t0.227s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "stage": "concurrent",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-count=1",
+      "-v",
+      "-run=^TestStoreIndependentInstances$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "=== RUN   TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/alpha\n=== PAUSE TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/beta\n=== PAUSE TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/gamma\n=== PAUSE TestStoreIndependentInstances/instances/gamma\n=== CONT  TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/alpha/first\n=== CONT  TestStoreIndependentInstances/instances/gamma\n=== CONT  TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/gamma/first\n=== RUN   TestStoreIndependentInstances/instances/beta/first\n=== RUN   TestStoreIndependentInstances/instances/alpha/replacement\n=== RUN   TestStoreIndependentInstances/instances/beta/replacement\n=== RUN   TestStoreIndependentInstances/instances/gamma/replacement\n--- PASS: TestStoreIndependentInstances (0.00s)\n    --- PASS: TestStoreIndependentInstances/instances (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/first (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/first (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/gamma (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/first (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/replacement (0.00s)\nPASS\nok  \texample.com/filestore\t0.124s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "stage": "focused-instance",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-count=1",
+      "-v",
+      "-run=^TestStoreIndependentInstances$/^instances$/^alpha$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "=== RUN   TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/alpha\n=== PAUSE TestStoreIndependentInstances/instances/alpha\n=== CONT  TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/alpha/first\n=== RUN   TestStoreIndependentInstances/instances/alpha/replacement\n--- PASS: TestStoreIndependentInstances (0.00s)\n    --- PASS: TestStoreIndependentInstances/instances (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/first (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/replacement (0.00s)\nPASS\nok  \texample.com/filestore\t0.121s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "stage": "focused-replacement",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-count=1",
+      "-v",
+      "-run=^TestStoreIndependentInstances$/^instances$/^beta$/^replacement$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "=== RUN   TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/beta\n=== PAUSE TestStoreIndependentInstances/instances/beta\n=== CONT  TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/beta/replacement\n--- PASS: TestStoreIndependentInstances (0.00s)\n    --- PASS: TestStoreIndependentInstances/instances (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/replacement (0.00s)\nPASS\nok  \texample.com/filestore\t0.142s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "stage": "focused-first",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-count=1",
+      "-v",
+      "-run=^TestStoreIndependentInstances$/^instances$/^gamma$/^first$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "=== RUN   TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/gamma\n=== PAUSE TestStoreIndependentInstances/instances/gamma\n=== CONT  TestStoreIndependentInstances/instances/gamma\n=== RUN   TestStoreIndependentInstances/instances/gamma/first\n--- PASS: TestStoreIndependentInstances (0.00s)\n    --- PASS: TestStoreIndependentInstances/instances (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/gamma (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/gamma/first (0.00s)\nPASS\nok  \texample.com/filestore\t0.124s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "stage": "suite-race-shuffle",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=30s",
+      "-race",
+      "-shuffle=on",
+      "-count=20",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "ok  \texample.com/filestore\t1.237s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "stage": "vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "stage": "format-check",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "gofmt",
+      "-l",
+      "store_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-8hjrllxp/task-1/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  }
+]
