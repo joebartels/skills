@@ -1,0 +1,117 @@
+{
+  "run_id": "2026-10-01-testing-combined-r2",
+  "stage": "revision-2 dispatches frozen before authors",
+  "fixture_commit": "86de5cfa7d5ca017b5ca08adde734540f787ca56",
+  "skill_commit": "9847c38a694f15aa1a4377c8762b3091b980e305",
+  "revision": 2,
+  "skill_sha256": {
+    "go-api-contracts/SKILL.md": "c655df596414850f06c66ffcb34b5c5606aa73d3381051942dc45e99cd54a0ba",
+    "go-behavior-tests/SKILL.md": "b083f010026498a8976cc44321852ac3e588f22ad5d58d51f659fc87a127e550",
+    "go-behavior-tests/references/behavior-observations.md": "142d91164b0932a7691b035dc45e8517e1acf860e5bdb0e6fe6783f799763ae0",
+    "go-core-style/SKILL.md": "9d2b95a44d278af73a776a010df2e7d6ba80c3d73524b39ecf69abc0e24f28ff",
+    "go-core-style/promptfoo.yaml": "0a0b94f9de5826a5732fb0ced6069513a76b082c76d97b5f8ec84c82b2bb874d",
+    "go-core-style/rules.json": "c179c62d20f6767836bdb77df3581edd28d13b3729736194de5506d74cfd4391",
+    "go-core-style/schema.json": "08d12d27d631c4617f5e047842519bcd6c7807cfdfe7654757880b4e99edef7c",
+    "go-interfaces-and-composition/SKILL.md": "41c9cd023682e006b84b37ddadf39bc37f0f01b2bfd8af7609272799906d9621",
+    "go-package-boundaries/SKILL.md": "3245b2347309d6238950be43e269c05720dbcf5132548dd661955c9e428d3ca7",
+    "go-package-boundaries/references/package-maps.md": "19c2e6f964486abe11028ba04e443fc76eb39236538ee5d9ef25400cc8ecfc7f",
+    "go-test-isolation/SKILL.md": "3c065d63c3747e8f7e9f931674dfa6858852f1d66b5ef758933e7da594aa4b60",
+    "go-test-isolation/references/isolation-patterns.md": "6be0e6aa6817b4a5334dc21ac98d482c1615d3fec4ed4e1e595132d522b65d0f"
+  },
+  "author_settings": {
+    "model": "inherited session model; exact model ID not exposed by collaboration harness",
+    "reasoning": "inherited session setting; no override",
+    "fresh_context": "collaboration.spawn_agent fork_turns=none",
+    "harness": "Codex collaboration tools"
+  },
+  "host": {
+    "go": "go1.26.5",
+    "platform": "darwin/arm64",
+    "GOTOOLCHAIN": "local"
+  },
+  "control": {
+    "parent_run": "2026-10-01-testing-combined",
+    "task_fixture_common_guidance": "identical to frozen first-pass arm; only isolation revision changes",
+    "other_testing_skill": "absent in single suite; behavior revision 1 in combined both",
+    "controller_reviews_other_candidates": "withheld"
+  },
+  "cases": [
+    {
+      "id": "isolation-only",
+      "fixture_id": "indexer-evolution",
+      "isolation_relevant": true,
+      "workdir": "/private/tmp/go-fresh-author-qjdzm0iq/task-1/module",
+      "reportdir": "/private/tmp/go-fresh-author-qjdzm0iq/task-1/report",
+      "available_skills": [
+        "go-package-boundaries",
+        "go-api-contracts",
+        "go-interfaces-and-composition",
+        "go-core-style",
+        "go-test-isolation"
+      ],
+      "input_sha256": {
+        "README.md": "4c64d29f9e5586a08f7f6a6d74ba34e723299125c267a23ccacc3c42c2ecc44c",
+        "cmd/indexer/main.go": "92bf5c35b2a8ea295397a45611303ecd524c85d26bd6e1cd7b9360d1f6e640ca",
+        "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+        "go.mod": "6ad6c1c685b8d95d2f5e38dff9fd806cbca1f647c684b5823237f6d260b17b56",
+        "index.go": "bed0bba7cb74597e9d539270484b2db6f764fef24c42aa0bec5789be7bea4421",
+        "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+        "refresh.go": "1cd7c558eab528ef37e597fb220e307bbbb2aca1ccd82c9d1bc1a966fceeda0c",
+        "serve.go": "5dd07cd3543140ec2ddbee767538b9d2184c554fa117540204363cb4ec237bda"
+      },
+      "guidance_sha256": {
+        "go-api-contracts/SKILL.md": "c655df596414850f06c66ffcb34b5c5606aa73d3381051942dc45e99cd54a0ba",
+        "go-core-style/SKILL.md": "9d2b95a44d278af73a776a010df2e7d6ba80c3d73524b39ecf69abc0e24f28ff",
+        "go-core-style/promptfoo.yaml": "0a0b94f9de5826a5732fb0ced6069513a76b082c76d97b5f8ec84c82b2bb874d",
+        "go-core-style/rules.json": "c179c62d20f6767836bdb77df3581edd28d13b3729736194de5506d74cfd4391",
+        "go-core-style/schema.json": "08d12d27d631c4617f5e047842519bcd6c7807cfdfe7654757880b4e99edef7c",
+        "go-interfaces-and-composition/SKILL.md": "41c9cd023682e006b84b37ddadf39bc37f0f01b2bfd8af7609272799906d9621",
+        "go-package-boundaries/SKILL.md": "3245b2347309d6238950be43e269c05720dbcf5132548dd661955c9e428d3ca7",
+        "go-package-boundaries/references/package-maps.md": "19c2e6f964486abe11028ba04e443fc76eb39236538ee5d9ef25400cc8ecfc7f",
+        "go-test-isolation/SKILL.md": "3c065d63c3747e8f7e9f931674dfa6858852f1d66b5ef758933e7da594aa4b60",
+        "go-test-isolation/references/isolation-patterns.md": "6be0e6aa6817b4a5334dc21ac98d482c1615d3fec4ed4e1e595132d522b65d0f"
+      },
+      "dispatch_sha256": "473451f73e8d6f4b0eb594de8dfc32a33ffd35acb8f1d37a47d0dc8b960dcec4"
+    },
+    {
+      "id": "both",
+      "fixture_id": "indexer-evolution",
+      "isolation_relevant": true,
+      "workdir": "/private/tmp/go-fresh-author-qjdzm0iq/task-2/module",
+      "reportdir": "/private/tmp/go-fresh-author-qjdzm0iq/task-2/report",
+      "available_skills": [
+        "go-package-boundaries",
+        "go-api-contracts",
+        "go-interfaces-and-composition",
+        "go-core-style",
+        "go-test-isolation",
+        "go-behavior-tests"
+      ],
+      "input_sha256": {
+        "README.md": "4c64d29f9e5586a08f7f6a6d74ba34e723299125c267a23ccacc3c42c2ecc44c",
+        "cmd/indexer/main.go": "92bf5c35b2a8ea295397a45611303ecd524c85d26bd6e1cd7b9360d1f6e640ca",
+        "cmd/indexer/main_test.go": "9fbd2fb2b00ddb0e75e44775b434aa7517268bab629d29f13cb302671e46657f",
+        "go.mod": "6ad6c1c685b8d95d2f5e38dff9fd806cbca1f647c684b5823237f6d260b17b56",
+        "index.go": "bed0bba7cb74597e9d539270484b2db6f764fef24c42aa0bec5789be7bea4421",
+        "index_test.go": "723c80d9255bec3c0b4d91f33b7c537e18e936127765e4c8333d95442a73cf80",
+        "refresh.go": "1cd7c558eab528ef37e597fb220e307bbbb2aca1ccd82c9d1bc1a966fceeda0c",
+        "serve.go": "5dd07cd3543140ec2ddbee767538b9d2184c554fa117540204363cb4ec237bda"
+      },
+      "guidance_sha256": {
+        "go-api-contracts/SKILL.md": "c655df596414850f06c66ffcb34b5c5606aa73d3381051942dc45e99cd54a0ba",
+        "go-behavior-tests/SKILL.md": "b083f010026498a8976cc44321852ac3e588f22ad5d58d51f659fc87a127e550",
+        "go-behavior-tests/references/behavior-observations.md": "142d91164b0932a7691b035dc45e8517e1acf860e5bdb0e6fe6783f799763ae0",
+        "go-core-style/SKILL.md": "9d2b95a44d278af73a776a010df2e7d6ba80c3d73524b39ecf69abc0e24f28ff",
+        "go-core-style/promptfoo.yaml": "0a0b94f9de5826a5732fb0ced6069513a76b082c76d97b5f8ec84c82b2bb874d",
+        "go-core-style/rules.json": "c179c62d20f6767836bdb77df3581edd28d13b3729736194de5506d74cfd4391",
+        "go-core-style/schema.json": "08d12d27d631c4617f5e047842519bcd6c7807cfdfe7654757880b4e99edef7c",
+        "go-interfaces-and-composition/SKILL.md": "41c9cd023682e006b84b37ddadf39bc37f0f01b2bfd8af7609272799906d9621",
+        "go-package-boundaries/SKILL.md": "3245b2347309d6238950be43e269c05720dbcf5132548dd661955c9e428d3ca7",
+        "go-package-boundaries/references/package-maps.md": "19c2e6f964486abe11028ba04e443fc76eb39236538ee5d9ef25400cc8ecfc7f",
+        "go-test-isolation/SKILL.md": "3c065d63c3747e8f7e9f931674dfa6858852f1d66b5ef758933e7da594aa4b60",
+        "go-test-isolation/references/isolation-patterns.md": "6be0e6aa6817b4a5334dc21ac98d482c1615d3fec4ed4e1e595132d522b65d0f"
+      },
+      "dispatch_sha256": "d4cf38d7ca79823f03b7aeb823ccadde3926c1aa71465f72e83960f5a8b57b28"
+    }
+  ]
+}
