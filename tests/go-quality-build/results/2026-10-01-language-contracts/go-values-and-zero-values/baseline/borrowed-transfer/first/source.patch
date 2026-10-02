@@ -1,0 +1,137 @@
+diff --git a/README.md b/README.md
+index 5e7a46367d17af0381714a893c709c77924861e8..87b0fac342fddbc59175279daac341114410cae2 100644
+--- a/README.md
++++ b/README.md
+@@ -9,3 +9,9 @@ must not mutate or retain that view. Each accepted returned frame must remain
+ stable after later Next calls and after the source buffer is reused. Nil frames
+ remain nil, non-nil empty frames remain non-nil. Source ownership is borrowed;
+ there is no Close operation or new lifecycle. Document and test the new behavior.
++
++`CollectMatching` applies its optional predicate directly to each borrowed
++frame view. The predicate must not mutate or retain that view. Matching frames
++are copied into owned storage before the next `Next` call, preserving nil and
++non-nil empty frames. A nil predicate keeps every frame. On a source error, the
++function returns the frames accepted so far and preserves the original error.
+diff --git a/frames.go b/frames.go
+index 2389e845ea61c459eafe7c84d60ce317c91f9430..a7026f5372f3b9c9505dc371756b9a774cb5faf5 100644
+--- a/frames.go
++++ b/frames.go
+@@ -4,7 +4,19 @@ import "io"
+ 
+ type Source interface{ Next() ([]byte, error) }
+ 
++// Collect reads frames from src until EOF and returns owned copies of them.
++// A non-EOF error returns the accepted prefix and the original error.
+ func Collect(src Source) ([][]byte, error) {
++	return CollectMatching(src, nil)
++}
++
++// CollectMatching reads frames from src until EOF and returns owned copies of
++// frames for which keep returns true. A nil keep retains every frame. The
++// predicate receives Source's borrowed view, which is valid only until the
++// next Next call; it may inspect but must not mutate or retain that view.
++// Returned frames remain stable after subsequent Next calls. A non-EOF error
++// returns the accepted prefix and the original error.
++func CollectMatching(src Source, keep func([]byte) bool) ([][]byte, error) {
+ 	var out [][]byte
+ 	for {
+ 		frame, err := src.Next()
+@@ -14,6 +26,9 @@ func Collect(src Source) ([][]byte, error) {
+ 		if err != nil {
+ 			return out, err
+ 		}
++		if keep != nil && !keep(frame) {
++			continue
++		}
+ 		var owned []byte
+ 		if frame != nil {
+ 			owned = make([]byte, len(frame))
+diff --git a/frames_test.go b/frames_test.go
+index 934208793bebb63ef7a53495ae8a2c669dd7c839..9658586a15167f1bbeee0740069cb9abca55a127 100644
+--- a/frames_test.go
++++ b/frames_test.go
+@@ -1,6 +1,8 @@
+ package framecollect
+ 
+ import (
++	"bytes"
++	"errors"
+ 	"io"
+ 	"testing"
+ )
+@@ -8,9 +10,75 @@ import (
+ type empty struct{}
+ 
+ func (empty) Next() ([]byte, error) { return nil, io.EOF }
++
++var (
++	_ func(Source) ([][]byte, error)                    = Collect
++	_ func(Source, func([]byte) bool) ([][]byte, error) = CollectMatching
++)
++
+ func TestEmpty(t *testing.T) {
+ 	b, err := Collect(empty{})
+ 	if len(b) != 0 || err != nil {
+ 		t.Fatalf("%v %v", b, err)
+ 	}
+ }
++
++type sequence struct {
++	frames [][]byte
++	index  int
++	err    error
++}
++
++func (s *sequence) Next() ([]byte, error) {
++	if s.index < len(s.frames) {
++		frame := s.frames[s.index]
++		s.index++
++		return frame, nil
++	}
++	if s.err != nil {
++		return nil, s.err
++	}
++	return nil, io.EOF
++}
++
++func TestCollectMatchingFiltersBorrowedFramesAndOwnsResults(t *testing.T) {
++	buffer := []byte("one")
++	src := &sequence{frames: [][]byte{buffer, nil, []byte{}, []byte("skip")}}
++	got, err := CollectMatching(src, func(frame []byte) bool {
++		if len(frame) == 0 {
++			return true
++		}
++		// The predicate sees the source's borrowed bytes directly.
++		if &frame[0] != &buffer[0] && bytes.Equal(frame, []byte("one")) {
++			t.Fatal("predicate received a copied frame")
++		}
++		return !bytes.Equal(frame, []byte("skip"))
++	})
++	if err != nil {
++		t.Fatal(err)
++	}
++	if len(got) != 3 || !bytes.Equal(got[0], []byte("one")) || got[1] != nil || got[2] == nil || len(got[2]) != 0 {
++		t.Fatalf("unexpected retained frames: %#v", got)
++	}
++	copy(buffer, []byte("new"))
++	if !bytes.Equal(got[0], []byte("one")) {
++		t.Fatalf("returned frame changed with source buffer: %q", got[0])
++	}
++}
++
++func TestCollectMatchingNilPredicateKeepsAllFrames(t *testing.T) {
++	got, err := CollectMatching(&sequence{frames: [][]byte{nil, []byte{}}}, nil)
++	if err != nil || len(got) != 2 || got[0] != nil || got[1] == nil {
++		t.Fatalf("got %#v, %v", got, err)
++	}
++}
++
++func TestCollectMatchingReturnsAcceptedPrefixAndOriginalError(t *testing.T) {
++	wantErr := errors.New("source failed")
++	got, err := CollectMatching(&sequence{frames: [][]byte{[]byte("keep"), []byte("drop")}, err: wantErr}, func(frame []byte) bool {
++		return bytes.Equal(frame, []byte("keep"))
++	})
++	if err != wantErr || len(got) != 1 || string(got[0]) != "keep" {
++		t.Fatalf("got %#v, %v", got, err)
++	}
++}

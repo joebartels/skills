@@ -1,0 +1,7 @@
+package csvselect
+import("bytes";"errors";"testing")
+type LCFailCSVWriter struct{cause error;closed bool}
+func(w *LCFailCSVWriter)Write(p []byte)(int,error){return 0,w.cause}
+func(w *LCFailCSVWriter)Close()error{w.closed=true;return nil}
+func TestContractCSVFinalization(t *testing.T){cause:=errors.New("buffered sink failed");w:=&LCFailCSVWriter{cause:cause};_,err:=WriteSelected(w,[][]string{{"a","b"}},nil);if !errors.Is(err,cause)||w.closed{t.Fatalf("completion %v closed=%v",err,w.closed)}}
+func TestContractCSVFilter(t *testing.T){var out bytes.Buffer;n,err:=WriteSelected(&out,[][]string{{"a","x,y"},{"b","z"},{"a","q"}},func(row []string)bool{return row[0]=="a"});if n!=2||err!=nil||out.String()!="a,\"x,y\"\na,q\n"{t.Fatalf("%d %v %q",n,err,out.String())}}

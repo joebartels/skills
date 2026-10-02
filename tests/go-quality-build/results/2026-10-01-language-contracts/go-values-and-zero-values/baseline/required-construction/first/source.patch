@@ -1,0 +1,85 @@
+diff --git a/README.md b/README.md
+index 163e088994b4a8f57de2570dd0f5f3f4c0f3f291..aec304273828cce573635bf100ab26fb6f53561d 100644
+--- a/README.md
++++ b/README.md
+@@ -2,7 +2,7 @@
+ Go 1.22 package. Counter requires a validated secret key via New; its zero value
+ is intentionally unsupported. A constructed counter owns its key and may be
+ shared by goroutines. The internal mutex must not be copied after first use.
+-Add Count() uint64 for concurrent-safe observation of the number of Sign calls.
+-Keep the constructor precondition and existing Sign signatures/behavior. Do not
+-make callers normalize keys or start using a zero Counter. Add tests and short
+-accurate docs. There is no requirement for a clone or alternate constructor.
++Count() uint64 returns the number of Sign calls and is safe to call concurrently
++with Sign. Keep the constructor precondition and existing Sign
++signatures/behavior. Do not make callers normalize keys or start using a zero
++Counter. There is no requirement for a clone or alternate constructor.
+diff --git a/counter.go b/counter.go
+index 4fb3daa00d41e7366140193136f352d0fbe2e35e..3a865e2198c3a1a3c92150a26c01d62bfdc4324f 100644
+--- a/counter.go
++++ b/counter.go
+@@ -13,6 +13,17 @@ type Counter struct {
+ 	count uint64
+ }
+ 
++// Count returns the number of Sign calls made on c.
++// It is safe to call concurrently with Sign and other Count calls.
++func (c *Counter) Count() uint64 {
++	c.mu.Lock()
++	defer c.mu.Unlock()
++	if len(c.key) == 0 {
++		panic("signedcounter: use New")
++	}
++	return c.count
++}
++
+ func New(key []byte) (*Counter, error) {
+ 	if len(key) < 16 {
+ 		return nil, errors.New("key must contain at least 16 bytes")
+diff --git a/counter_test.go b/counter_test.go
+index 4cbf261677209547a2cace18d11eccc2fe919a26..a3ba567541b7de45bee675cb69ebf5c3336a383b 100644
+--- a/counter_test.go
++++ b/counter_test.go
+@@ -2,6 +2,42 @@ package signedcounter
+ 
+ import "testing"
+ 
++func TestCount(t *testing.T) {
++	c, err := New([]byte("sixteen-byte-key!"))
++	if err != nil {
++		t.Fatal(err)
++	}
++	if got := c.Count(); got != 0 {
++		t.Fatalf("Count() before Sign = %d, want 0", got)
++	}
++	c.Sign(nil)
++	if got := c.Count(); got != 1 {
++		t.Fatalf("Count() after Sign = %d, want 1", got)
++	}
++}
++
++func TestCountConcurrent(t *testing.T) {
++	c, err := New([]byte("sixteen-byte-key!"))
++	if err != nil {
++		t.Fatal(err)
++	}
++	const calls = 100
++	done := make(chan struct{})
++	for i := 0; i < calls; i++ {
++		go func() {
++			c.Sign(nil)
++			done <- struct{}{}
++		}()
++	}
++	for i := 0; i < calls; i++ {
++		_ = c.Count()
++		<-done
++	}
++	if got := c.Count(); got != calls {
++		t.Fatalf("Count() after concurrent Sign calls = %d, want %d", got, calls)
++	}
++}
++
+ func TestNew(t *testing.T) {
+ 	if _, err := New(nil); err == nil {
+ 		t.Fatal("accepted missing key")

@@ -1,0 +1,200 @@
+diff --git a/README.md b/README.md
+index 2aa92708d84fc79ef19262345f33f91b64fae3d8..e52bb2c09837f284c8692857a76fa6080bad37c8 100644
+--- a/README.md
++++ b/README.md
+@@ -1,8 +1,14 @@
+ # recordload
+-Go 1.22 library. Load reads key=value records in order. Blank lines are ignored.
+-The current task adds comment lines beginning with # and reports malformed records
+-using an exported *LineError with Line (one-based physical line) and Text fields.
+-Load returns the valid prefix on malformed input or read failure. The caller's
+-reader errors remain inspectable. Process bytes returned alongside a read error;
+-EOF is normal completion. Successful errors are nil interfaces. No line-size cap
+-is promised. Empty keys and values are accepted. Readers are borrowed.
++
++Go 1.22 library. `Load` reads `key=value` records in order. Blank lines and lines
++whose first character is `#` are ignored. Keys and values may be empty; the first
++`=` separates them.
++
++Malformed records return a `*LineError` with the one-based physical line number
++and original line text. `Load` also returns all records parsed before malformed
++input or a reader failure. Reader failures wrap the original error, so callers
++can inspect it with `errors.Is` or `errors.As`. Bytes returned together with a
++reader error are processed before the error is returned. `io.EOF` means normal
++completion, including when it accompanies the final bytes.
++
++Readers are borrowed and are not closed. There is no promised line-size limit.
+diff --git a/api_contract_test.go b/api_contract_test.go
+new file mode 100644
+index 0000000000000000000000000000000000000000..456bd186997093984843652edf5fc43e8b857016
+--- /dev/null
++++ b/api_contract_test.go
+@@ -0,0 +1,23 @@
++package recordload_test
++
++import (
++	"errors"
++	"strings"
++	"testing"
++
++	"example.com/recordload"
++)
++
++func TestExportedLineErrorContract(t *testing.T) {
++	got, err := recordload.Load(strings.NewReader("first=1\nbroken\n"))
++	var lineErr *recordload.LineError
++	if !errors.As(err, &lineErr) {
++		t.Fatalf("error = %v, want *recordload.LineError", err)
++	}
++	if lineErr.Line != 2 || lineErr.Text != "broken" {
++		t.Fatalf("LineError = %+v", lineErr)
++	}
++	if len(got) != 1 || got[0] != (recordload.Record{Key: "first", Value: "1"}) {
++		t.Fatalf("records = %#v", got)
++	}
++}
+diff --git a/load.go b/load.go
+index 160eef8d4c78f71d4497ebc98bb3bd37ea34cc82..796532a8c3d43db12a97d375b8a7e6c2480e5b24 100644
+--- a/load.go
++++ b/load.go
+@@ -1,28 +1,60 @@
+ package recordload
+ 
+ import (
++	"bufio"
++	"errors"
+ 	"fmt"
+ 	"io"
+ 	"strings"
+ )
+ 
++// Record is one key/value pair read by Load.
+ type Record struct{ Key, Value string }
+ 
++// LineError reports a malformed record on a one-based physical input line.
++type LineError struct {
++	Line int
++	Text string
++}
++
++func (e *LineError) Error() string {
++	return fmt.Sprintf("line %d: malformed record %q", e.Line, e.Text)
++}
++
++// Load reads key=value records in order. Blank lines and lines beginning with
++// # are ignored. On malformed input or a reader error, Load returns records
++// parsed before the error. Reader errors remain available through errors.Is
++// and errors.As.
+ func Load(r io.Reader) ([]Record, error) {
+-	data, err := io.ReadAll(r)
+-	if err != nil {
+-		return nil, err
+-	}
++	reader := bufio.NewReader(r)
+ 	var records []Record
+-	for n, text := range strings.Split(string(data), "\n") {
+-		if text == "" {
+-			continue
++	lineNumber := 0
++	for {
++		line, readErr := reader.ReadString('\n')
++		if len(line) > 0 {
++			lineNumber++
++			line = strings.TrimSuffix(line, "\n")
++			if err := parseLine(&records, lineNumber, line); err != nil {
++				return records, err
++			}
+ 		}
+-		key, value, ok := strings.Cut(text, "=")
+-		if !ok {
+-			return records, fmt.Errorf("line %d: malformed record", n+1)
++		if readErr != nil {
++			if errors.Is(readErr, io.EOF) {
++				return records, nil
++			}
++			return records, fmt.Errorf("read records: %w", readErr)
+ 		}
+-		records = append(records, Record{Key: key, Value: value})
+ 	}
+-	return records, nil
++}
++
++func parseLine(records *[]Record, lineNumber int, text string) error {
++	if text == "" || strings.HasPrefix(text, "#") {
++		return nil
++	}
++	key, value, ok := strings.Cut(text, "=")
++	if !ok {
++		return &LineError{Line: lineNumber, Text: text}
++	}
++	*records = append(*records, Record{Key: key, Value: value})
++	return nil
+ }
+diff --git a/load_test.go b/load_test.go
+index e378a0b616ae2bca00ba850d450e2fef7bda2d20..e1bf105b5b7d3e33361185a19e080bf494a9a071 100644
+--- a/load_test.go
++++ b/load_test.go
+@@ -1,6 +1,7 @@
+ package recordload
+ 
+ import (
++	"errors"
+ 	"strings"
+ 	"testing"
+ )
+@@ -11,3 +12,55 @@ func TestLoad(t *testing.T) {
+ 		t.Fatalf("%v %v", got, err)
+ 	}
+ }
++
++func TestLoadCommentsAndLineError(t *testing.T) {
++	got, err := Load(strings.NewReader("# header\n\na=1\ninvalid\nb=2\n"))
++	var lineErr *LineError
++	if !errors.As(err, &lineErr) {
++		t.Fatalf("error = %v, want *LineError", err)
++	}
++	if lineErr.Line != 4 || lineErr.Text != "invalid" {
++		t.Fatalf("LineError = %+v", lineErr)
++	}
++	if len(got) != 1 || got[0] != (Record{Key: "a", Value: "1"}) {
++		t.Fatalf("records = %#v, want valid prefix", got)
++	}
++}
++
++type dataAndErrorReader struct {
++	data []byte
++	err  error
++}
++
++func (r *dataAndErrorReader) Read(p []byte) (int, error) {
++	if len(r.data) == 0 {
++		return 0, r.err
++	}
++	n := copy(p, r.data)
++	r.data = r.data[n:]
++	if len(r.data) == 0 {
++		return n, r.err
++	}
++	return n, nil
++}
++
++func TestLoadPreservesReaderErrorAndPartialResult(t *testing.T) {
++	wantErr := errors.New("source failed")
++	got, err := Load(&dataAndErrorReader{data: []byte("a=1\nb=2"), err: wantErr})
++	if !errors.Is(err, wantErr) {
++		t.Fatalf("error = %v, want wrapped reader error", err)
++	}
++	if len(got) != 2 || got[1] != (Record{Key: "b", Value: "2"}) {
++		t.Fatalf("records = %#v, want both records returned with read error", got)
++	}
++}
++
++func TestLoadEmptyAndEmptyFields(t *testing.T) {
++	got, err := Load(strings.NewReader("=\nkey=\n"))
++	if err != nil {
++		t.Fatalf("Load error = %v", err)
++	}
++	if got == nil || len(got) != 2 || got[0] != (Record{}) || got[1] != (Record{Key: "key"}) {
++		t.Fatalf("records = %#v", got)
++	}
++}

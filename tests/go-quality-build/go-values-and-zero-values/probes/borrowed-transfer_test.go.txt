@@ -1,0 +1,15 @@
+package framecollect
+import (
+ "errors"
+ "io"
+ "testing"
+)
+type reused struct {buf []byte;index int;last error}
+func(s *reused) Next()([]byte,error){s.index++;switch s.index {case 1:copy(s.buf,"one");return s.buf,nil;case 2:copy(s.buf,"two");return s.buf,nil;case 3:return nil,nil;case 4:return s.buf[:0],nil;default:return nil,s.last}}
+func TestContractRetention(t *testing.T){
+ failure:=errors.New("upstream");s:=&reused{buf:make([]byte,3),last:failure};calls:=0
+ got,e:=CollectMatching(s,func(b []byte)bool{calls++;if len(b)>0 && &b[0]!=&s.buf[0]{t.Fatal("predicate received unrequested copy")};return string(b)!="two"})
+ copy(s.buf,"end");if len(got)!=3 || string(got[0])!="one" || got[1]!=nil || got[2]==nil || len(got[2])!=0 || !errors.Is(e,failure) || calls!=4 {t.Fatalf("%q %v calls=%d",got,e,calls)}
+ s=&reused{buf:make([]byte,3),last:io.EOF};got,e=CollectMatching(s,nil);if len(got)!=4 || e!=nil {t.Fatalf("%q %v",got,e)}
+ var _ func(Source)([][]byte,error)=Collect
+}

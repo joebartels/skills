@@ -1,0 +1,4 @@
+package recordload
+import("errors";"io";"testing")
+func TestReviewerFinalBytesEOF(t *testing.T) { got,err:=Load(&onceReader{data:"a=1",err:io.EOF}); if err!=nil||len(got)!=1||got[0].Value!="1"{t.Fatal(got,err)} }
+func TestReviewerMalformedReadErrorObservation(t *testing.T) { cause:=errors.New("reader failure"); got,err:=Load(&onceReader{data:"a=1\nbroken",err:cause}); var line *LineError; if len(got)!=1||!errors.As(err,&line)||line.Line!=2||line.Text!="broken"{t.Fatal(got,err)};t.Logf("prefix=%v line_error=%v read_cause_inspectable=%v",got,line,errors.Is(err,cause)) }

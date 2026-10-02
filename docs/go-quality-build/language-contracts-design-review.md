@@ -1,0 +1,81 @@
+# Language-contracts design assessment
+
+Reviewed 2026-10-01. This is an independent assessment of the proposed [language-contracts group](../superpowers/specs/2026-10-01-go-quality-build-language-contracts-design.md), not a behavioral evaluation or promotion decision. No candidate runtime skill or fixture was authored. The user has approved proceeding; the spec's pending-review language is historical and should be reconciled by the controller.
+
+## Recommendation
+
+Proceed sequentially with `go-error-contracts` and `go-values-and-zero-values`. Both have useful, distinct decisions if their content centers on tracing failure and state through real consumers. Default `go-names-and-docs` to a focused reference or deferred candidate. Its strongest proposed content is accurate contract documentation, much of which the API, error, value, and composition owners already need to provide. Conventional casing and comment syntax alone do not justify another routinely selected skill.
+
+| Candidate | Action | Expected usefulness before evaluation |
+| --- | --- | --- |
+| `go-error-contracts` | Keep; baseline first, then narrow guidance to demonstrated failure decisions. | Strong potential on partial I/O, completion failures, classification and boundary translation. Small likely gain on ordinary `if err != nil` code. |
+| `go-values-and-zero-values` | Keep; make aliasing/copy semantics the distinctive center, rather than repeating zero-value compatibility. | Strong potential on snapshots, borrowed data, reference-containing values and receiver changes. Incremental zero/default benefit is uncertain because existing skills already address it. |
+| `go-names-and-docs` | Defer standalone promotion; evaluate a reference-sized treatment only if a distinct baseline weakness appears. | Plausible benefit for inaccurate units, ownership or executable usage; weak expected benefit for standard naming reminders. Broad selection and unnecessary renames could erase that benefit. |
+
+These are reasoned expectations, not measured effects. The materials reviewed do not support an expected grade, success percentage, or across-project effectiveness claim.
+
+## Evidence and overlap
+
+I read repository instructions and the canonical [design record](README.md), [review guide](../go-quality-review/README.md), all three existing build skills, and the current [idiom](../../plugins/go-quality-review/skills/go-code-quality-and-idioms/references/idiom-decisions.md), [correctness](../../plugins/go-quality-review/skills/go-correctness-and-compatibility/references/correctness-compatibility-decisions.md), [architecture](../../plugins/go-quality-review/skills/go-architecture-and-design/references/design-decisions.md), [testing](../../plugins/go-quality-review/skills/go-testing/references/testing-decisions.md), and [security](../../plugins/go-quality-review/skills/go-security/references/security-decisions.md) decision references. I also inspected the recorded [combined outcome](../../tests/go-quality-build/results/2026-10-01-combined/trial-summary.md) and [composition task review](../../tests/go-quality-build/results/2026-10-01-interfaces-composition-skill-on/task-review.md); their findings below remain historical evidence, not reproductions in this assessment.
+
+The current [API skill](../../plugins/go-quality-build/skills/go-api-contracts/SKILL.md) already checks zero initialization, absent versus explicit zero, nil/empty serialization, error identity and partial results, method sets, and accurate migration claims. The [composition skill](../../plugins/go-quality-build/skills/go-interfaces-and-composition/SKILL.md) already chooses construction from invariants, distinguishes borrowed resources, and requires truthful completion/error examples. Merely extending their checklists into three files would add reading cost without establishing new decisions.
+
+The separation is defensible when API owns **whether supported behavior may change**, errors owns **how failure is represented and propagated**, and values owns **what state is shared, copied, absent, or configured**. Documentation should express the decision its owner made. Shared attention to the same code is reasonable; duplicated normative rules and competing owners are not. Keep typed-nil mechanics in one concise reference, with error success behavior owned by errors. Neither skill needs to require loading the other.
+
+## Candidate-specific concerns
+
+### Errors: preserve classification without changing the contract accidentally
+
+The useful content is choosing what callers can inspect, deciding what partial work remains valid, and detecting failure after the apparent main operation. Explaining `errors.Is`, `%w`, or sentinels by themselves mostly repeats familiar Go knowledge. A compact failure-path procedure and one paired exposure/translation example would teach more than an error taxonomy.
+
+The spec correctly rejects universal wrapping and recognizes that formatting with `%v` retains diagnostic text. The Go team's [wrapping guidance](https://go.dev/blog/go1.13-errors) supports both exposing a caller-supplied reader's failure and hiding a private backend cause. Make the exposure decision separately from the client-response decision: failure to unwrap an error does not establish that its message is safe.
+
+Add these explicit cases to the audit/evaluation expectations:
+
+- Preserve a supported direct sentinel return when consumers use equality. Changing it to a wrapper or aggregate can break that behavior even when `errors.Is` succeeds. Conversely, a new wrapping contract should not encourage callers to depend on direct equality. The existing API owner decides compatibility; the error owner chooses the compatible representation.
+- Do not treat aggregation as collecting every cleanup diagnostic unconditionally. Retain failures required by the contract, with chosen precedence, formatting and inspection semantics. [`errors.Join`](https://pkg.go.dev/errors#Join) discards nil values, uses newline-separated text and returns an error with `Unwrap() []error`; these properties may differ from an existing aggregate or exact sentinel API. The same package documents that `errors.Unwrap` handles only `Unwrap() error`, so a consumer using it needs examination after introducing a joined error.
+- A close/flush failure is consequential when it changes promised completion; closing a borrowed reader may itself be a bug. Keep acquisition/lifetime ownership with composition and evaluate outcome reporting here. Neither “check every Close” nor “ignore cleanup after the primary error” is an adequate rule.
+- A version check must affect the generated code. Current [`errors.AsType`](https://pkg.go.dev/errors#AsType) is documented as added in Go 1.26, while `Join` requires Go 1.20. A Go 1.22-declared fixture executed only by a newer compiler does not prove minimum-version compatibility.
+
+The successful nil-error rule is a justified semantic requirement, not a risky absolute. The [Go FAQ](https://go.dev/doc/faq#nil_error) explains why returning a nil concrete error pointer through an interface can report failure. Avoid expanding this into reflection-based normalization of every interface or a ban on legitimate typed-nil receivers.
+
+### Values: ownership is the strongest independent contribution
+
+Zero/default behavior alone is insufficient differentiation: it already produced the API skill's reported benefit and appears in composition. The stronger addition is following reference-containing state through inputs, returned views, snapshots, receiver calls and copies.
+
+The spec appropriately rejects automatic deep copies and fixed receiver-size rules. Make those qualifications executable rather than incidental prose. [`slices.Clone`](https://pkg.go.dev/slices#Clone) copies elements by assignment and preserves nilness; it does not isolate maps, pointers or slices stored in those elements. The [language specification](https://go.dev/ref/spec#Slice_expressions) establishes sharing of the underlying array, so limiting capacity does not prevent mutation of existing elements. A snapshot test should mutate both an existing element and a nested reference, in both directions where the contract promises independence.
+
+Add a counterexample where borrowing is required or intentionally documented: an ephemeral byte view that must be copied only if retained, or an input buffer that remains caller-owned. A universal deep-copy solution should fail that case's contract or unnecessary-work assessment. Do not turn the candidate into a general performance or concurrency skill.
+
+Receiver evaluations need an external, non-addressable use site. A local variable call can compile through automatic address-taking while an assignment of `T` to an interface or a method expression ceases to work. The [method-set rules](https://go.dev/ref/spec#Method_sets) distinguish `T` from `*T`. Also include a value receiver containing a map/slice: the receiver copy does not make referenced data immutable. Copy-sensitive state needs assignment/return/container paths as well as receiver declarations; [`sync.Mutex`](https://pkg.go.dev/sync#Mutex) forbids copying after first use. Vet helps detect some copies but does not certify the ownership contract.
+
+The wire case should fix the actual encoder and tags. [`encoding/json`](https://pkg.go.dev/encoding/json#Marshal) distinguishes a nil slice from an array and treats `[]byte` specially; an `omitempty` field can conceal the difference. Assert the promised output rather than assuming every slice emits `null` or `[]`. A constructor-required counterexample and explicit-zero case are good controls already in the plan.
+
+### Names/docs: narrow before spending on a standalone skill
+
+The current trigger includes introducing or changing identifiers and examples whose meaning affects readers. Nearly every substantive Go change does that. Tighten selection to a requested documentation/naming change or a demonstrated ambiguity that affects correct use; do not make this an all-Go companion skill.
+
+Call-site readability and accurate contract explanation are useful. Package casing, initialisms, receiver letters and conventional comment openings are generally reference material or mechanical review. [Package names](https://go.dev/blog/package-names) supports judging qualified use sites, and [Go Doc Comments](https://go.dev/doc/comment) supplies comment conventions. Neither source establishes that an additional skill improves an already competent author.
+
+The docs-only preservation control and established/protocol-name control are valuable. Add an attractive but unsupported safety or ordering claim to the accuracy evaluation, and require the author to remove or qualify it from implementation evidence. Compiling an example cannot prove a comment's concurrency, ownership or failure guarantee. Compare whether a consumer can determine units, usable partial results and retention obligations, using a small evidence ledger rather than counting comments or preferred words. Have the reviewer accept different concise names that communicate the same domain meaning.
+
+Before separate promotion, show that useful documentation is still missing or wrong with the relevant existing contract skill present, then that this candidate remedies it without unrelated code changes or comment bloat. If errors/values already produce accurate docs, retain naming/doc conventions as a focused reference instead. Merging all three into a broad idioms skill would hide the stronger error/value decisions and is not recommended.
+
+## Evaluation changes needed before baseline work
+
+The planned fresh contexts, matched model/effort, private expectations, independent reviewers, final-revision controls, and separate first-pass/assisted outcomes are good foundations. The task inventory covers useful situations. It needs a sharper measurement contract:
+
+1. **Measure incremental benefit.** Fix the relevant current API/composition exposure identically in both arms for each applicable case, before dispatch. Compare that arm with the same arm plus one candidate. A no-build-skill baseline may additionally be informative, but cannot show distinct benefit beyond the installed collection. Record exactly which skills were available and opened; ordinary Go knowledge is part of both arms.
+2. **Separate outcome checks from agent-authored tests.** Privately probe consumer behavior, data mutation, streams/status and documentation claims. Verify hidden checks against plausible wrong implementations before relying on them; do not require one API shape or a particular deep-copy/wrapping technique. Score the author's tests separately if reviewing them. Historical combined green tests missed a process-status regression, and the composition review corrected a grade after two relevant mutations survived; passing submitted tests is demonstrably insufficient here.
+3. **Use realistic failure combinations.** The reader case must actually deliver `n > 0` with a non-EOF error in one call, as permitted by [`io.Reader`](https://pkg.go.dev/io#Reader), plus both permitted EOF forms. The completion case needs success/failure crossed with completion success/failure. The CLI case needs an executable failure status, accepted-prefix evidence and stream checks. A backend case needs absence of an intentionally seeded sensitive marker in the actual response, as well as correct stable classification. These can be subcases of the planned tasks; they need not multiply skills or fixtures.
+4. **Reserve transfer evidence.** Fix at least one differently shaped task per retained candidate before drafting guidance and leave it unused while revising the skill. Rerunning the discovered failure is necessary regression evidence; it does not alone establish transfer. Do not keep generating easy-to-fail baseline tasks until one yields a promotable grade. Archive all attempted cases and stop/defer when the predeclared search budget is exhausted.
+5. **Bound variance and acceptance.** Repeat the principal weakness in at least three fresh implementations per arm, with the same settings and final skill bytes, and disclose the small sample. Run the remaining positive/counterexample/non-selection cases and reserved transfer task against the final revision. Require repeated removal of the confirmed owned defect, no observed material control harm, and no new unsupported API/dependency/design work. This is a small evidence gate, not a statistical reliability estimate. If costly, reduce the promoted scope rather than claiming broad effectiveness from one lucky run.
+6. **Predeclare secondary costs.** Record unnecessary exported types/sentinels/constructors, copies, packages, renames and documentation volume, plus commands/tool calls and elapsed effort where recoverable. Use evidence-backed judgments of usefulness, not a raw line-count penalty. Blinded review should identify the contract facts and verified defect/accuracy ledger before applying letter grades; grades alone are too coarse to establish a candidate's contribution.
+
+Selection should be measured separately from implementation quality. Explicitly providing a skill and requesting selection establishes behavior under that exposure. It does not establish automatic runtime routing. Include neighboring Go tasks that introduce identifiers but do not change names/docs semantics, and ordinary error returns without changed error handling, so trigger descriptions can be tested for over-selection.
+
+## Verified scope and next action
+
+This assessment checked the written design against existing runtime instructions, reviewer decision references, recorded evaluation limitations, and primary Go documentation retrieved during this review. It did not re-run prior Go implementations, fetch/audit the complete pinned upstream collection, measure any new candidate, test automatic selection, or verify a minimum toolchain. The upstream section/reference audit remains necessary before authoring.
+
+Next: reconcile the spec/status with user approval and these recommendations, write a bounded implementation plan, then prepare the error-contract audit and matched baseline. Keep values second. Make a standalone names/docs gate conditional on distinct evidence instead of treating three promoted skills as a required output.

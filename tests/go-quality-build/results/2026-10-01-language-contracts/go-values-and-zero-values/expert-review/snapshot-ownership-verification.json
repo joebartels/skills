@@ -1,0 +1,43 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=45s",
+      "-v",
+      "./..."
+    ],
+    "status": 0,
+    "stdout": "=== RUN   TestView\n--- PASS: TestView (0.00s)\n=== RUN   TestForkPreservesLayoutAndOwnsMutableData\n--- PASS: TestForkPreservesLayoutAndOwnsMutableData (0.00s)\n=== RUN   TestForkNilAndEmptyCollections\n--- PASS: TestForkNilAndEmptyCollections (0.00s)\n=== RUN   TestContractFork\n--- PASS: TestContractFork (0.00s)\n=== RUN   TestContractCycles\n--- PASS: TestContractCycles (0.00s)\n=== RUN   TestReviewerNonAddressableAndBorrowedViews\n--- PASS: TestReviewerNonAddressableAndBorrowedViews (0.00s)\n=== RUN   TestReviewerDiamondCycleAndIndependentForks\n--- PASS: TestReviewerDiamondCycleAndIndependentForks (0.00s)\nPASS\nok  \texample.com/editgraph\t1.191s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "graph.go",
+      "graph_test.go"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,53 @@
+[
+  {
+    "variant": "original",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-run",
+      "TestCloseout",
+      "-v",
+      "."
+    ],
+    "status": 0,
+    "stdout": "=== RUN   TestCloseoutCofailureObservation\n    zz_closeout_observation_test.go:11: prefixLength=0 readCause=true errorType=*errors.errorString error=caller read cause\n--- PASS: TestCloseoutCofailureObservation (0.00s)\nPASS\nok  \texample.com/recordload\t0.198s\n",
+    "stderr": ""
+  },
+  {
+    "variant": "candidate-a",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-run",
+      "TestCloseout",
+      "-v",
+      "."
+    ],
+    "status": 0,
+    "stdout": "=== RUN   TestCloseoutCofailureObservation\n    zz_closeout_observation_test.go:11: prefixLength=1 readCause=false errorType=*recordload.LineError error=line 2: malformed record \"broken\"\n--- PASS: TestCloseoutCofailureObservation (0.00s)\nPASS\nok  \texample.com/recordload\t0.163s\n",
+    "stderr": ""
+  },
+  {
+    "variant": "candidate-b",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-run",
+      "TestCloseout",
+      "-v",
+      "."
+    ],
+    "status": 0,
+    "stdout": "=== RUN   TestCloseoutCofailureObservation\n    zz_closeout_observation_test.go:11: prefixLength=1 readCause=true errorType=*errors.joinError error=line 2: malformed record \"broken\"\n        caller read cause\n--- PASS: TestCloseoutCofailureObservation (0.00s)\nPASS\nok  \texample.com/recordload\t0.140s\n",
+    "stderr": ""
+  }
+]

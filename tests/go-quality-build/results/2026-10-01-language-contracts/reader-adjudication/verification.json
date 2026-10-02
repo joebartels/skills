@@ -1,0 +1,256 @@
+{
+  "environment": {
+    "GOCACHE": "/private/tmp/go-language-contract-check-cache",
+    "GOWORK": "off"
+  },
+  "toolchain": "go version go1.26.5 darwin/arm64",
+  "identities": {
+    "original": {
+      "README.md": "0ca4020eb9b5116b617b25210f451e147a05e207acc6e2306d034b68af1f9d14",
+      "go.mod": "391500a886b38e7af44ac3ab84dcabf23a5d841454de7bf8b9d5e7eef1fd1d0d",
+      "load.go": "99d02c24dcdc5316d50e2972f4fc72e597912ddf97c1ca49b94543534f70eea7",
+      "load_test.go": "05fa7676e11b42bfefb3e04ac9261e78cfdc08dc90573bce3906db6a4648c908"
+    },
+    "candidate-a": {
+      "README.md": "8420855d1d4ff64f94c32f4011849b458d076e69254950e57b4ced8444e0bdd2",
+      "api_contract_test.go": "8450b7df2dd30b94d34e7b89660b0973c5b9a6fabf70b5919893c13d03760b4c",
+      "go.mod": "391500a886b38e7af44ac3ab84dcabf23a5d841454de7bf8b9d5e7eef1fd1d0d",
+      "load.go": "f965f18a99952b24995ff248f4b745136bbeb4f1e52b5262c340df8d29e3b185",
+      "load_test.go": "5f2b880d4e6c154e0e5a57bbf170dcc0e958d1e595f30c616fead880168b5de9"
+    },
+    "candidate-b": {
+      "README.md": "4b4c09e36f2b9034034146c549abaf126409aaf03ee8d0efdd62c1313c51dd75",
+      "api_test.go": "9989a5f91c9ebf50d7e60ad4341968a09c755c21cc5cc831a3ebfda64a1f45b7",
+      "go.mod": "391500a886b38e7af44ac3ab84dcabf23a5d841454de7bf8b9d5e7eef1fd1d0d",
+      "load.go": "633cdb9de33064c6dedbe384144773642a719c0e77d5ea06a26c45716ad87348",
+      "load_test.go": "0df4bc20cc6de6b60d8b8d76ba9fff4378543bc2f6b6fc473d79e0005442f99c"
+    }
+  },
+  "checks": [
+    {
+      "candidate": "original",
+      "stage": "supplied",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-count=1",
+        "-timeout=45s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-reader-adjudication-3b23/original",
+      "exit_code": 0,
+      "stdout": "ok  \texample.com/recordload\t1.187s\n",
+      "stderr": ""
+    },
+    {
+      "candidate": "original",
+      "stage": "supplied",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-reader-adjudication-3b23/original",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "candidate": "original",
+      "stage": "adjudication",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-count=1",
+        "-timeout=45s",
+        "-run",
+        "TestAdjudicationObservations|TestAdjudicationReaderBoundary",
+        "-v",
+        "."
+      ],
+      "cwd": "/private/tmp/go-reader-adjudication-3b23/original",
+      "exit_code": 0,
+      "stdout": "=== RUN   TestAdjudicationObservations\n=== RUN   TestAdjudicationObservations/malformed_with_cause\n    adjudication_test.go:35: prefix=[]recordload.Record(nil) errorType=*recordload.adjudicationCause error=\"terminal source failure\" IsCause=true AsCause=true IsEOF=false readCalls=1\n=== RUN   TestAdjudicationObservations/valid_with_cause\n    adjudication_test.go:35: prefix=[]recordload.Record(nil) errorType=*recordload.adjudicationCause error=\"terminal source failure\" IsCause=true AsCause=true IsEOF=false readCalls=1\n=== RUN   TestAdjudicationObservations/malformed_with_EOF\n    adjudication_test.go:35: prefix=[]recordload.Record{recordload.Record{Key:\"a\", Value:\"1\"}} errorType=*errors.errorString error=\"line 2: malformed record\" IsCause=false AsCause=false IsEOF=false readCalls=1\n=== RUN   TestAdjudicationObservations/valid_with_EOF\n    adjudication_test.go:35: prefix=[]recordload.Record{recordload.Record{Key:\"a\", Value:\"1\"}, recordload.Record{Key:\"b\", Value:\"2\"}} errorType=<nil> error=%!q(<nil>) IsCause=false AsCause=false IsEOF=false readCalls=1\n--- PASS: TestAdjudicationObservations (0.00s)\n    --- PASS: TestAdjudicationObservations/malformed_with_cause (0.00s)\n    --- PASS: TestAdjudicationObservations/valid_with_cause (0.00s)\n    --- PASS: TestAdjudicationObservations/malformed_with_EOF (0.00s)\n    --- PASS: TestAdjudicationObservations/valid_with_EOF (0.00s)\n=== RUN   TestAdjudicationReaderBoundary\n    adjudication_test.go:47: ReadString exposes malformed terminal bytes and the exact caller cause together, after one underlying Read\n--- PASS: TestAdjudicationReaderBoundary (0.00s)\nPASS\nok  \texample.com/recordload\t1.192s\n",
+      "stderr": ""
+    },
+    {
+      "candidate": "original",
+      "stage": "adjudication",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-count=1",
+        "-timeout=45s",
+        "-run",
+        "TestAdjudicationCauseContract",
+        "-v",
+        "."
+      ],
+      "cwd": "/private/tmp/go-reader-adjudication-3b23/original",
+      "exit_code": 0,
+      "stdout": "=== RUN   TestAdjudicationCauseContract\n--- PASS: TestAdjudicationCauseContract (0.00s)\nPASS\nok  \texample.com/recordload\t1.155s\n",
+      "stderr": ""
+    },
+    {
+      "candidate": "candidate-a",
+      "stage": "supplied",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-count=1",
+        "-timeout=45s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-reader-adjudication-3b23/candidate-a",
+      "exit_code": 0,
+      "stdout": "ok  \texample.com/recordload\t1.186s\n",
+      "stderr": ""
+    },
+    {
+      "candidate": "candidate-a",
+      "stage": "supplied",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-reader-adjudication-3b23/candidate-a",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "candidate": "candidate-a",
+      "stage": "adjudication",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-count=1",
+        "-timeout=45s",
+        "-run",
+        "TestAdjudicationObservations|TestAdjudicationReaderBoundary",
+        "-v",
+        "."
+      ],
+      "cwd": "/private/tmp/go-reader-adjudication-3b23/candidate-a",
+      "exit_code": 0,
+      "stdout": "=== RUN   TestAdjudicationObservations\n=== RUN   TestAdjudicationObservations/malformed_with_cause\n    adjudication_test.go:35: prefix=[]recordload.Record{recordload.Record{Key:\"a\", Value:\"1\"}} errorType=*recordload.LineError error=\"line 2: malformed record \\\"broken\\\"\" IsCause=false AsCause=false IsEOF=false readCalls=1\n=== RUN   TestAdjudicationObservations/valid_with_cause\n    adjudication_test.go:35: prefix=[]recordload.Record{recordload.Record{Key:\"a\", Value:\"1\"}, recordload.Record{Key:\"b\", Value:\"2\"}} errorType=*fmt.wrapError error=\"read records: terminal source failure\" IsCause=true AsCause=true IsEOF=false readCalls=1\n=== RUN   TestAdjudicationObservations/malformed_with_EOF\n    adjudication_test.go:35: prefix=[]recordload.Record{recordload.Record{Key:\"a\", Value:\"1\"}} errorType=*recordload.LineError error=\"line 2: malformed record \\\"broken\\\"\" IsCause=false AsCause=false IsEOF=false readCalls=1\n=== RUN   TestAdjudicationObservations/valid_with_EOF\n    adjudication_test.go:35: prefix=[]recordload.Record{recordload.Record{Key:\"a\", Value:\"1\"}, recordload.Record{Key:\"b\", Value:\"2\"}} errorType=<nil> error=%!q(<nil>) IsCause=false AsCause=false IsEOF=false readCalls=1\n--- PASS: TestAdjudicationObservations (0.00s)\n    --- PASS: TestAdjudicationObservations/malformed_with_cause (0.00s)\n    --- PASS: TestAdjudicationObservations/valid_with_cause (0.00s)\n    --- PASS: TestAdjudicationObservations/malformed_with_EOF (0.00s)\n    --- PASS: TestAdjudicationObservations/valid_with_EOF (0.00s)\n=== RUN   TestAdjudicationReaderBoundary\n    adjudication_test.go:47: ReadString exposes malformed terminal bytes and the exact caller cause together, after one underlying Read\n--- PASS: TestAdjudicationReaderBoundary (0.00s)\nPASS\nok  \texample.com/recordload\t1.189s\n",
+      "stderr": ""
+    },
+    {
+      "candidate": "candidate-a",
+      "stage": "adjudication",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-count=1",
+        "-timeout=45s",
+        "-run",
+        "TestAdjudicationCauseContract",
+        "-v",
+        "."
+      ],
+      "cwd": "/private/tmp/go-reader-adjudication-3b23/candidate-a",
+      "exit_code": 1,
+      "stdout": "=== RUN   TestAdjudicationCauseContract\n    adjudication_test.go:55: caller cause not inspectable: prefix=[]recordload.Record{recordload.Record{Key:\"a\", Value:\"1\"}} error=line 2: malformed record \"broken\"\n--- FAIL: TestAdjudicationCauseContract (0.00s)\nFAIL\nFAIL\texample.com/recordload\t0.151s\nFAIL\n",
+      "stderr": ""
+    },
+    {
+      "candidate": "candidate-b",
+      "stage": "supplied",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-count=1",
+        "-timeout=45s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-reader-adjudication-3b23/candidate-b",
+      "exit_code": 0,
+      "stdout": "ok  \texample.com/recordload\t1.188s\n",
+      "stderr": ""
+    },
+    {
+      "candidate": "candidate-b",
+      "stage": "supplied",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-reader-adjudication-3b23/candidate-b",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "candidate": "candidate-b",
+      "stage": "adjudication",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-count=1",
+        "-timeout=45s",
+        "-run",
+        "TestAdjudicationObservations|TestAdjudicationReaderBoundary",
+        "-v",
+        "."
+      ],
+      "cwd": "/private/tmp/go-reader-adjudication-3b23/candidate-b",
+      "exit_code": 0,
+      "stdout": "=== RUN   TestAdjudicationObservations\n=== RUN   TestAdjudicationObservations/malformed_with_cause\n    adjudication_test.go:35: prefix=[]recordload.Record{recordload.Record{Key:\"a\", Value:\"1\"}} errorType=*errors.joinError error=\"line 2: malformed record \\\"broken\\\"\\nterminal source failure\" IsCause=true AsCause=true IsEOF=false readCalls=1\n=== RUN   TestAdjudicationObservations/valid_with_cause\n    adjudication_test.go:35: prefix=[]recordload.Record{recordload.Record{Key:\"a\", Value:\"1\"}, recordload.Record{Key:\"b\", Value:\"2\"}} errorType=*recordload.adjudicationCause error=\"terminal source failure\" IsCause=true AsCause=true IsEOF=false readCalls=1\n=== RUN   TestAdjudicationObservations/malformed_with_EOF\n    adjudication_test.go:35: prefix=[]recordload.Record{recordload.Record{Key:\"a\", Value:\"1\"}} errorType=*recordload.LineError error=\"line 2: malformed record \\\"broken\\\"\" IsCause=false AsCause=false IsEOF=false readCalls=1\n=== RUN   TestAdjudicationObservations/valid_with_EOF\n    adjudication_test.go:35: prefix=[]recordload.Record{recordload.Record{Key:\"a\", Value:\"1\"}, recordload.Record{Key:\"b\", Value:\"2\"}} errorType=<nil> error=%!q(<nil>) IsCause=false AsCause=false IsEOF=false readCalls=1\n--- PASS: TestAdjudicationObservations (0.00s)\n    --- PASS: TestAdjudicationObservations/malformed_with_cause (0.00s)\n    --- PASS: TestAdjudicationObservations/valid_with_cause (0.00s)\n    --- PASS: TestAdjudicationObservations/malformed_with_EOF (0.00s)\n    --- PASS: TestAdjudicationObservations/valid_with_EOF (0.00s)\n=== RUN   TestAdjudicationReaderBoundary\n    adjudication_test.go:47: ReadString exposes malformed terminal bytes and the exact caller cause together, after one underlying Read\n--- PASS: TestAdjudicationReaderBoundary (0.00s)\nPASS\nok  \texample.com/recordload\t1.184s\n",
+      "stderr": ""
+    },
+    {
+      "candidate": "candidate-b",
+      "stage": "adjudication",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-count=1",
+        "-timeout=45s",
+        "-run",
+        "TestAdjudicationCauseContract",
+        "-v",
+        "."
+      ],
+      "cwd": "/private/tmp/go-reader-adjudication-3b23/candidate-b",
+      "exit_code": 0,
+      "stdout": "=== RUN   TestAdjudicationCauseContract\n--- PASS: TestAdjudicationCauseContract (0.00s)\nPASS\nok  \texample.com/recordload\t1.168s\n",
+      "stderr": ""
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "status": 0,
+    "stdout": "=== RUN   TestCollect\n--- PASS: TestCollect (0.00s)\n=== RUN   TestCollectMatchingFiltersInOrderAndCloses\n--- PASS: TestCollectMatchingFiltersInOrderAndCloses (0.00s)\n=== RUN   TestCollectMatchingNilFilterAndIterationError\n--- PASS: TestCollectMatchingNilFilterAndIterationError (0.00s)\n=== RUN   TestCollectMatchingScanErrorReturnsPrefix\n--- PASS: TestCollectMatchingScanErrorReturnsPrefix (0.00s)\n=== RUN   TestContractIterationFailure\n--- PASS: TestContractIterationFailure (0.00s)\n=== RUN   TestContractScanAndNilPredicate\n--- PASS: TestContractScanAndNilPredicate (0.00s)\n=== RUN   TestReviewerBestEffortClose\n--- PASS: TestReviewerBestEffortClose (0.00s)\nPASS\nok  \texample.com/cursorload\t1.292s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "collect.go",
+      "collect_test.go"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

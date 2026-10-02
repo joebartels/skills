@@ -20,6 +20,23 @@
         "files/combined-evolution/fielddesk_test.go",
         "files/combined-evolution/cmd/server/main.go"
       ]
+    },
+    {
+      "id": "language-contracts",
+      "prompt": "Extend batchview with comment-aware partial reads, independent prefix snapshots and the optional CLI prefix described in README. Implement, test, and document the behavior while preserving existing API signatures and JSON fields.",
+      "expected_output": "Error propagation and value ownership cooperate without contradictory guidance or unsupported guarantees.",
+      "assertions": [
+        "Caller read cause and valid prefix survive; comments/long records work.",
+        "Snapshot nested values are independent; nil/empty and existing signatures survive.",
+        "Actual CLI publishes the selected valid prefix before reporting failed input, with truthful streams/status."
+      ],
+      "files": [
+        "files/language-contracts/README.md",
+        "files/language-contracts/cmd/batchview/main.go",
+        "files/language-contracts/go.mod",
+        "files/language-contracts/load.go",
+        "files/language-contracts/load_test.go"
+      ]
     }
   ]
 }

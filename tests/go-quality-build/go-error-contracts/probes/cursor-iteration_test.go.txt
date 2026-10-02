@@ -1,0 +1,9 @@
+package cursorload
+import("errors";"reflect";"testing")
+type LCCursor struct{values []string;index int;scan,iteration,close error;closed int}
+func(r *LCCursor)Next()bool{if r.index>=len(r.values){return false};r.index++;return true}
+func(r *LCCursor)Scan(v *string)error{if r.scan!=nil{return r.scan};*v=r.values[r.index-1];return nil}
+func(r *LCCursor)Err()error{return r.iteration}
+func(r *LCCursor)Close()error{r.closed++;return r.close}
+func TestContractIterationFailure(t *testing.T){cause:=errors.New("late cursor failure");r:=&LCCursor{values:[]string{"a","b","c"},iteration:cause};got,err:=CollectMatching(r,func(s string)bool{return s!="b"});if !errors.Is(err,cause)||!reflect.DeepEqual(got,[]string{"a","c"})||r.closed!=1{t.Fatalf("%v %v closed=%d",got,err,r.closed)}}
+func TestContractScanAndNilPredicate(t *testing.T){cause:=errors.New("scan failed");r:=&LCCursor{values:[]string{"a"},scan:cause};got,err:=CollectMatching(r,nil);if len(got)!=0||!errors.Is(err,cause)||r.closed!=1{t.Fatal(got,err,r.closed)};r=&LCCursor{values:[]string{"x","y"}};got,err=CollectMatching(r,nil);if err!=nil||!reflect.DeepEqual(got,[]string{"x","y"})||r.closed!=1{t.Fatal(got,err,r.closed)}}
