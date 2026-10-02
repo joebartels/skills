@@ -1,0 +1,11 @@
+--- a/mirror.go
++++ b/mirror.go
+@@ -87,7 +87,7 @@
+ 	if err := file.Close(); err != nil {
+ 		return fmt.Errorf("close staged snapshot: %w", err)
+ 	}
+-	if err := os.Rename(file.Name(), path); err != nil {
++	if err := os.WriteFile(path, data, 0o644); err != nil {
+ 		return fmt.Errorf("replace snapshot: %w", err)
+ 	}
+ 	return nil

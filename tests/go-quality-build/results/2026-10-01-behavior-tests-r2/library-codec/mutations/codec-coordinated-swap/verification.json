@@ -1,0 +1,86 @@
+{
+  "semantic_id": "codec-coordinated-swap",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "e1d6f6db746374960c14f8b3c13ea2117742fb62ede0d2644a7e3e3d8f758600",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-uxmspput/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/keycodec\t0.182s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.342
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-r2/library-codec/mutations/codec-coordinated-swap/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-uxmspput/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-uxmspput/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/keycodec\t0.179s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.344
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-uxmspput/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestEncode (0.00s)\n    --- FAIL: TestEncode/existing_simple_key (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"east\", Name:\"web\"}) = \"web/east\", want \"east/web\"\n    --- FAIL: TestEncode/slash_in_region (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"us/west\", Name:\"web\"}) = \"web/us%2Fwest\", want \"us%2Fwest/web\"\n    --- FAIL: TestEncode/slash_in_name (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"east\", Name:\"web/api\"}) = \"web%2Fapi/east\", want \"east/web%2Fapi\"\n    --- FAIL: TestEncode/spaces_in_both_fields (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"us west\", Name:\"web blue\"}) = \"web%20blue/us%20west\", want \"us%20west/web%20blue\"\n    --- FAIL: TestEncode/percent_in_both_fields (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"%2F\", Name:\"100%\"}) = \"100%25/%252F\", want \"%252F/100%25\"\n    --- FAIL: TestEncode/unicode_in_both_fields (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"\u6771\u4eac\", Name:\"caf\u00e9\"}) = \"caf%C3%A9/%E6%9D%B1%E4%BA%AC\", want \"%E6%9D%B1%E4%BA%AC/caf%C3%A9\"\n    --- FAIL: TestEncode/literal_plus (0.00s)\n        key_test.go:38: Encode(keycodec.Key{Region:\"us+west\", Name:\"web+blue\"}) = \"web+blue/us+west\", want \"us+west/web+blue\"\n--- FAIL: TestDecode (0.00s)\n    --- FAIL: TestDecode/existing_simple_key (0.00s)\n        key_test.go:66: Decode(\"east/web\") = keycodec.Key{Region:\"web\", Name:\"east\"}, want keycodec.Key{Region:\"east\", Name:\"web\"}\n    --- FAIL: TestDecode/slash_in_region (0.00s)\n        key_test.go:66: Decode(\"us%2Fwest/web\") = keycodec.Key{Region:\"web\", Name:\"us/west\"}, want keycodec.Key{Region:\"us/west\", Name:\"web\"}\n    --- FAIL: TestDecode/slash_in_name (0.00s)\n        key_test.go:66: Decode(\"east/web%2Fapi\") = keycodec.Key{Region:\"web/api\", Name:\"east\"}, want keycodec.Key{Region:\"east\", Name:\"web/api\"}\n    --- FAIL: TestDecode/spaces_in_both_fields (0.00s)\n        key_test.go:66: Decode(\"us%20west/web%20blue\") = keycodec.Key{Region:\"web blue\", Name:\"us west\"}, want keycodec.Key{Region:\"us west\", Name:\"web blue\"}\n    --- FAIL: TestDecode/percent_in_both_fields (0.00s)\n        key_test.go:66: Decode(\"%252F/100%25\") = keycodec.Key{Region:\"100%\", Name:\"%2F\"}, want keycodec.Key{Region:\"%2F\", Name:\"100%\"}\n    --- FAIL: TestDecode/unicode_in_both_fields (0.00s)\n        key_test.go:66: Decode(\"%E6%9D%B1%E4%BA%AC/caf%C3%A9\") = keycodec.Key{Region:\"caf\u00e9\", Name:\"\u6771\u4eac\"}, want keycodec.Key{Region:\"\u6771\u4eac\", Name:\"caf\u00e9\"}\n    --- FAIL: TestDecode/lowercase_escapes (0.00s)\n        key_test.go:66: Decode(\"us%2fwest/caf%c3%a9\") = keycodec.Key{Region:\"caf\u00e9\", Name:\"us/west\"}, want keycodec.Key{Region:\"us/west\", Name:\"caf\u00e9\"}\n    --- FAIL: TestDecode/literal_plus (0.00s)\n        key_test.go:66: Decode(\"us+west/web+blue\") = keycodec.Key{Region:\"web+blue\", Name:\"us+west\"}, want keycodec.Key{Region:\"us+west\", Name:\"web+blue\"}\n--- FAIL: ExampleEncode (0.00s)\ngot:\nweb%20blue/us%2Fwest\nwant:\nus%2Fwest/web%20blue\n--- FAIL: ExampleDecode (0.00s)\ngot:\nregion=\"web blue\" name=\"us/west\"\nwant:\nregion=\"us/west\" name=\"web blue\"\nFAIL\nFAIL\texample.com/keycodec\t0.126s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.25
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

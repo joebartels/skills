@@ -1,0 +1,108 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "format.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-5/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-d",
+      "format.go",
+      "format_test.go"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-5/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-5/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-5/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "=== RUN   TestFormat\n--- PASS: TestFormat (0.00s)\nPASS\nok  \texample.com/label\t1.190s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "staticcheck",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-5/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "status": "not_run",
+    "reason": "staticcheck is not installed; tool installation is outside the authorized task."
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-c",
+      "from pathlib import Path\nassert Path(\"format.go\").read_text() == 'package label\\n\\n// Format returns s enclosed in square brackets.\\nfunc Format(s string) string { return \"[\" + s + \"]\" }\\n'\nassert Path(\"format_test.go\").read_text() == 'package label\\n\\nimport \"testing\"\\n\\nfunc TestFormat(t *testing.T) {\\n\\tif got := Format(\"web\"); got != \"[web]\" {\\n\\t\\tt.Fatalf(\"Format = %q\", got)\\n\\t}\\n}\\n'\nassert Path(\"go.mod\").read_text() == 'module example.com/label\\n\\ngo 1.22\\n'\nprint(\"Only the requested doc comment changed; existing tests and Go version are unchanged.\")"
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-5/module",
+    "environment": {},
+    "process_timeout_seconds": 30,
+    "stdout": "Only the requested doc comment changed; existing tests and Go version are unchanged.\n",
+    "stderr": "",
+    "exit_code": 0
+  }
+]

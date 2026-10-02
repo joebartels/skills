@@ -1,0 +1,337 @@
+--- a/main.go
++++ b/main.go
+@@ -22,24 +22,50 @@
+ 		return fmt.Errorf("--dir required and no positional arguments allowed")
+ 	}
+ 	reader := csv.NewReader(input)
+-	row, err := reader.Read()
+-	if err == io.EOF {
+-		return nil
++	reader.FieldsPerRecord = 2
++	for record := 1; ; record++ {
++		row, err := reader.Read()
++		if err == io.EOF {
++			return nil
++		}
++		if err != nil {
++			return fmt.Errorf("record %d: read CSV: %w", record, err)
++		}
++		if row[0] == "" || strings.ContainsAny(row[0], "/\\\x00") || row[0] == "." || row[0] == ".." {
++			return fmt.Errorf("record %d: invalid ID %q", record, row[0])
++		}
++		qty, err := strconv.Atoi(row[1])
++		if err != nil || qty <= 0 {
++			return fmt.Errorf("record %d: invalid quantity %q", record, row[1])
++		}
++		if err := os.MkdirAll(*dir, 0o755); err != nil {
++			return fmt.Errorf("record %d: create directory: %w", record, err)
++		}
++		if err := writeRecord(*dir, row[0], qty); err != nil {
++			return fmt.Errorf("record %d: write %q: %w", record, row[0], err)
++		}
+ 	}
++}
++
++// Publish only complete records so a failed duplicate cannot damage an earlier write.
++func writeRecord(dir, id string, qty int) error {
++	file, err := os.CreateTemp(dir, ".ledgerload-*")
+ 	if err != nil {
+ 		return err
+ 	}
+-	if len(row) != 2 || row[0] == "" || strings.ContainsAny(row[0], "/\\") || row[0] == "." || row[0] == ".." {
+-		return fmt.Errorf("invalid record")
+-	}
+-	qty, err := strconv.Atoi(row[1])
+-	if err != nil || qty <= 0 {
+-		return fmt.Errorf("invalid quantity")
+-	}
+-	if err := os.MkdirAll(*dir, 0o755); err != nil {
++	defer os.Remove(file.Name())
++	if _, err := file.WriteString(strconv.Itoa(qty) + "\n"); err != nil {
++		file.Close()
+ 		return err
+ 	}
+-	return os.WriteFile(filepath.Join(*dir, row[0]), []byte(strconv.Itoa(qty)+"\n"), 0o644)
++	if err := file.Chmod(0o644); err != nil {
++		file.Close()
++		return err
++	}
++	if err := file.Close(); err != nil {
++		return err
++	}
++	return os.Rename(file.Name(), filepath.Join(dir, id))
+ }
+ 
+ func main() {
+--- /dev/null
++++ b/main_fsize_test.go
+@@ -0,0 +1,62 @@
++//go:build darwin || linux
++
++package main
++
++import (
++	"context"
++	"fmt"
++	"os"
++	"os/exec"
++	"os/signal"
++	"strconv"
++	"syscall"
++	"testing"
++	"time"
++)
++
++func TestCLIWriteFailure(t *testing.T) {
++	binary := buildCLI(t)
++	for _, tc := range []struct {
++		name       string
++		limit      uint64
++		input      string
++		want       map[string]string
++		diagnostic string
++	}{
++		{"first write", 0, "web,7\nlater,2\n", nil, "record 1"},
++		{"partial duplicate write", 4, "web,7\nweb,123456\nlater,2\n", map[string]string{"web": "7\n"}, "record 2"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			dir := t.TempDir()
++			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
++			defer cancel()
++			// Change only a short-lived child's per-file limit, then exec the real CLI.
++			cmd := exec.CommandContext(ctx, os.Args[0], "-test.run=^TestFileSizeLimitHelper$", "--", binary, dir, strconv.FormatUint(tc.limit, 10))
++			cmd.Env = append(os.Environ(), "LEDGERLOAD_FILE_SIZE_LIMIT_HELPER=1")
++			checkProcess(t, cmd, tc.input, 2, tc.diagnostic)
++			checkFiles(t, dir, tc.want)
++		})
++	}
++}
++
++func TestFileSizeLimitHelper(t *testing.T) {
++	if os.Getenv("LEDGERLOAD_FILE_SIZE_LIMIT_HELPER") != "1" {
++		return
++	}
++	args := os.Args[len(os.Args)-3:]
++	limit, err := strconv.ParseUint(args[2], 10, 64)
++	if err != nil {
++		fmt.Fprintln(os.Stderr, "parse file-size limit:", err)
++		os.Exit(125)
++	}
++	// Make an over-limit write return EFBIG instead of terminating the process.
++	signal.Ignore(syscall.SIGXFSZ)
++	if err := syscall.Setrlimit(syscall.RLIMIT_FSIZE, &syscall.Rlimit{Cur: limit, Max: limit}); err != nil {
++		fmt.Fprintln(os.Stderr, "set child file-size limit:", err)
++		os.Exit(125)
++	}
++	if err := syscall.Exec(args[0], []string{args[0], "--dir", args[1]}, os.Environ()); err != nil {
++		fmt.Fprintln(os.Stderr, "exec CLI:", err)
++		os.Exit(125)
++	}
++}
+--- a/main_test.go
++++ b/main_test.go
+@@ -1,11 +1,16 @@
+ package main
+ 
+ import (
++	"bytes"
++	"context"
++	"errors"
+ 	"io"
+ 	"os"
++	"os/exec"
+ 	"path/filepath"
+ 	"strings"
+ 	"testing"
++	"time"
+ )
+ 
+ func TestSingleRecord(t *testing.T) {
+@@ -18,3 +23,187 @@
+ 		t.Fatalf("record = %q, %v", got, err)
+ 	}
+ }
++
++func buildCLI(t *testing.T) string {
++	t.Helper()
++	binary := filepath.Join(t.TempDir(), "ledgerload")
++	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
++	defer cancel()
++	cmd := exec.CommandContext(ctx, "go", "build", "-o", binary, ".")
++	if output, err := cmd.CombinedOutput(); err != nil {
++		t.Fatalf("build CLI: %v\n%s", err, output)
++	}
++	return binary
++}
++
++func checkProcess(t *testing.T, cmd *exec.Cmd, input string, wantExit int, diagnostic string) {
++	t.Helper()
++	var stdout, stderr bytes.Buffer
++	cmd.Stdin = strings.NewReader(input)
++	cmd.Stdout = &stdout
++	cmd.Stderr = &stderr
++	err := cmd.Run()
++	if cmd.ProcessState == nil {
++		t.Fatalf("start process: %v", err)
++	}
++	if exit := cmd.ProcessState.ExitCode(); exit != wantExit {
++		t.Fatalf("exit = %d, want %d; error = %v; stdout = %q; stderr = %q", exit, wantExit, err, stdout.String(), stderr.String())
++	}
++	if stdout.Len() != 0 {
++		t.Errorf("stdout = %q, want empty", stdout.String())
++	}
++	if wantExit == 0 && stderr.Len() != 0 {
++		t.Errorf("stderr = %q, want empty", stderr.String())
++	}
++	if wantExit != 0 && !strings.Contains(stderr.String(), diagnostic) {
++		t.Errorf("stderr = %q, want diagnostic containing %q", stderr.String(), diagnostic)
++	}
++}
++
++func runCLI(t *testing.T, binary string, args []string, input string, wantExit int, diagnostic string) {
++	t.Helper()
++	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
++	defer cancel()
++	checkProcess(t, exec.CommandContext(ctx, binary, args...), input, wantExit, diagnostic)
++}
++
++func checkFiles(t *testing.T, dir string, files map[string]string, directories ...string) {
++	t.Helper()
++	entries, err := os.ReadDir(dir)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if len(entries) != len(files)+len(directories) {
++		t.Errorf("directory entries = %v, want only files %v and directories %v", entries, files, directories)
++	}
++	for name, want := range files {
++		got, err := os.ReadFile(filepath.Join(dir, name))
++		if err != nil || string(got) != want {
++			t.Errorf("%s = %q, %v; want %q", name, got, err, want)
++		}
++	}
++	for _, name := range directories {
++		info, err := os.Stat(filepath.Join(dir, name))
++		if err != nil || !info.IsDir() {
++			t.Errorf("%s directory missing: %v", name, err)
++		}
++	}
++}
++
++func TestCLIBatches(t *testing.T) {
++	binary := buildCLI(t)
++	t.Run("ordered normalized duplicates and quoted IDs", func(t *testing.T) {
++		dir := filepath.Join(t.TempDir(), "records")
++		runCLI(t, binary, []string{"--dir", dir}, "web,0007\n\"comma,id\",+3\nweb,10", 0, "")
++		checkFiles(t, dir, map[string]string{"web": "10\n", "comma,id": "3\n"})
++	})
++	t.Run("empty input", func(t *testing.T) {
++		dir := filepath.Join(t.TempDir(), "records")
++		runCLI(t, binary, []string{"--dir", dir}, "", 0, "")
++		if _, err := os.Stat(dir); !errors.Is(err, os.ErrNotExist) {
++			t.Fatalf("empty batch created directory: %v", err)
++		}
++	})
++	for _, tc := range []struct {
++		name, row, diagnostic string
++	}{
++		{"empty ID", ",2\n", "invalid ID"},
++		{"dot", ".,2\n", "invalid ID"},
++		{"dot dot", "..,2\n", "invalid ID"},
++		{"slash", "../escape,2\n", "invalid ID"},
++		{"backslash", "a\\b,2\n", "invalid ID"},
++		{"NUL", "a\x00b,2\n", "invalid ID"},
++		{"zero", "bad,0\n", "invalid quantity"},
++		{"negative", "bad,-1\n", "invalid quantity"},
++		{"fraction", "bad,1.5\n", "invalid quantity"},
++		{"hex", "bad,0x10\n", "invalid quantity"},
++		{"space", "bad, 2\n", "invalid quantity"},
++		{"overflow", "bad,99999999999999999999999999999999\n", "invalid quantity"},
++		{"missing quantity", "bad,\n", "invalid quantity"},
++		{"too few fields", "bad\n", "read CSV"},
++		{"too many fields", "bad,2,extra\n", "read CSV"},
++		{"malformed CSV", "bad,\"unterminated\n", "read CSV"},
++		{"invalid replacement", "web,no\n", "invalid quantity"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			dir := t.TempDir()
++			runCLI(t, binary, []string{"--dir", dir}, "web,7\n"+tc.row+"later,9\n", 2, tc.diagnostic)
++			checkFiles(t, dir, map[string]string{"web": "7\n"})
++		})
++	}
++	t.Run("invalid first row", func(t *testing.T) {
++		dir := t.TempDir()
++		runCLI(t, binary, []string{"--dir", dir}, "bad,0\nweb,7\n", 2, "record 1")
++		checkFiles(t, dir, nil)
++	})
++	t.Run("usage", func(t *testing.T) {
++		for _, tc := range []struct {
++			name       string
++			args       []string
++			diagnostic string
++		}{
++			{"missing directory", nil, "--dir required"},
++			{"positional", []string{"--dir", t.TempDir(), "extra"}, "no positional arguments"},
++			{"unknown option", []string{"--unknown"}, "flag"},
++			{"missing option value", []string{"--dir"}, "flag"},
++		} {
++			t.Run(tc.name, func(t *testing.T) {
++				runCLI(t, binary, tc.args, "web,7\n", 2, tc.diagnostic)
++				if len(tc.args) >= 2 && tc.args[0] == "--dir" {
++					checkFiles(t, tc.args[1], nil)
++				}
++			})
++		}
++	})
++	t.Run("directory creation failure", func(t *testing.T) {
++		dir := filepath.Join(t.TempDir(), "file")
++		if err := os.WriteFile(dir, []byte("existing\n"), 0o644); err != nil {
++			t.Fatal(err)
++		}
++		runCLI(t, binary, []string{"--dir", dir}, "web,7\nlater,9\n", 2, "create directory")
++		got, err := os.ReadFile(dir)
++		if err != nil || string(got) != "existing\n" {
++			t.Fatalf("existing file = %q, %v", got, err)
++		}
++	})
++	t.Run("file failure retains accepted prefix", func(t *testing.T) {
++		dir := t.TempDir()
++		if err := os.Mkdir(filepath.Join(dir, "blocked"), 0o755); err != nil {
++			t.Fatal(err)
++		}
++		runCLI(t, binary, []string{"--dir", dir}, "web,7\nweb,8\nblocked,2\nlater,9\n", 2, "record 3")
++		checkFiles(t, dir, map[string]string{"web": "8\n"}, "blocked")
++	})
++}
++
++type batchReader struct {
++	t         *testing.T
++	dir       string
++	reads     int
++	inputFail error
++}
++
++func (r *batchReader) Read(p []byte) (int, error) {
++	r.reads++
++	if r.reads == 1 {
++		return copy(p, "web,7\n"), nil
++	}
++	// The first effect must be visible before a subsequent read can succeed or fail.
++	checkFiles(r.t, r.dir, map[string]string{"web": "7\n"})
++	return 0, r.inputFail
++}
++
++func TestRunStreamsBeforeReadingNextRecord(t *testing.T) {
++	// Use only two reads so the observer checks the one-record prefix.
++	dir := t.TempDir()
++	errInput := errors.New("input unavailable")
++	reader := &batchReader{t: t, dir: dir, inputFail: errInput}
++	err := run([]string{"--dir", dir}, reader, io.Discard)
++	if !errors.Is(err, errInput) {
++		t.Fatalf("run error = %v, want input failure", err)
++	}
++	if reader.reads != 2 {
++		t.Errorf("reads = %d, want 2", reader.reads)
++	}
++	checkFiles(t, dir, map[string]string{"web": "7\n"})
++}

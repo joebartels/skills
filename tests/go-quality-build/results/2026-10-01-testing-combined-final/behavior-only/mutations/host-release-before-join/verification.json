@@ -1,0 +1,86 @@
+{
+  "semantic_id": "host-release-before-join",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "2e176cbf1fb7948cdb52c42dbc1df5d20d32a17f955e63402fed66c1ae8ce67f",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-cjvo_jxg/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.421s\nok  \texample.com/indexer/cmd/indexer\t0.927s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.189
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-final/behavior-only/mutations/host-release-before-join/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-cjvo_jxg/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.014
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-cjvo_jxg/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.354s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.206s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.625
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-cjvo_jxg/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestServeCancellationErrorClassification (0.00s)\n    --- FAIL: TestServeCancellationErrorClassification/independent_failure (0.00s)\n        serve_test.go:113: independent cause lost: <nil>\n    --- FAIL: TestServeCancellationErrorClassification/cancellation_plus_failure (0.00s)\n        serve_test.go:113: independent cause lost: <nil>\n    --- FAIL: TestServeCancellationErrorClassification/non-comparable_failure (0.00s)\n        serve_test.go:118: non-comparable error lost: <nil>\n--- FAIL: TestServeJoinsCancellationCleanupBeforeRelease (0.00s)\n    serve_test.go:151: Serve returned before cleanup\nFAIL\nFAIL\texample.com/indexer\t0.356s\nok  \texample.com/indexer/cmd/indexer\t0.879s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.079
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

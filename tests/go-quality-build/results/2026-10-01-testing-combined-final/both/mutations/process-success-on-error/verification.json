@@ -1,0 +1,86 @@
+{
+  "semantic_id": "process-success-on-error",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "9f7420ec0d9ca50ddd7a071f1b99e0b5bf97c52906dbd92bca2300b9ad152bd7",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-r4rp3thr/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.381s\nok  \texample.com/indexer/cmd/indexer\t0.887s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.155
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-final/both/mutations/process-success-on-error/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-r4rp3thr/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.017
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-r4rp3thr/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.159s [no tests to run]\nok  \texample.com/indexer/cmd/indexer\t0.492s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.74
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-r4rp3thr/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.304s\n--- FAIL: TestStartupArgumentsProcess (0.00s)\n    --- FAIL: TestStartupArgumentsProcess/watch_zero_interval (0.40s)\n        main_test.go:167: process status=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status=2 and empty stdout\n    --- FAIL: TestStartupArgumentsProcess/apply_extra_argument (0.40s)\n        main_test.go:167: process status=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status=2 and empty stdout\n    --- FAIL: TestStartupArgumentsProcess/no_command (0.40s)\n        main_test.go:167: process status=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status=2 and empty stdout\n    --- FAIL: TestStartupArgumentsProcess/apply_missing_directory (0.40s)\n        main_test.go:167: process status=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status=2 and empty stdout\n    --- FAIL: TestStartupArgumentsProcess/unknown_command (0.40s)\n        main_test.go:167: process status=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status=2 and empty stdout\n    --- FAIL: TestStartupArgumentsProcess/watch_missing_host (0.40s)\n        main_test.go:167: process status=0 stdout=\"\" stderr=\"watch URL must be HTTP or HTTPS with a host\\n\"; want status=2 and empty stdout\n    --- FAIL: TestStartupArgumentsProcess/put_missing_text (0.40s)\n        main_test.go:167: process status=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status=2 and empty stdout\n    --- FAIL: TestStartupArgumentsProcess/watch_malformed_URL (0.40s)\n        main_test.go:167: process status=0 stdout=\"\" stderr=\"watch URL must be HTTP or HTTPS with a host\\n\"; want status=2 and empty stdout\n    --- FAIL: TestStartupArgumentsProcess/watch_negative_interval (0.40s)\n        main_test.go:167: process status=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status=2 and empty stdout\n    --- FAIL: TestStartupArgumentsProcess/put_extra_argument (0.40s)\n        main_test.go:167: process status=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status=2 and empty stdout\n    --- FAIL: TestStartupArgumentsProcess/watch_invalid_duration (0.40s)\n        main_test.go:167: process status=0 stdout=\"\" stderr=\"invalid value \\\"soon\\\" for flag -interval: parse error\\n\"; want status=2 and empty stdout\n    --- FAIL: TestStartupArgumentsProcess/watch_invalid_scheme (0.40s)\n        main_test.go:167: process status=0 stdout=\"\" stderr=\"watch URL must be HTTP or HTTPS with a host\\n\"; want status=2 and empty stdout\n    --- FAIL: TestStartupArgumentsProcess/apply_unknown_flag (0.40s)\n        main_test.go:167: process status=0 stdout=\"\" stderr=\"flag provided but not defined: -wrong\\n\"; want status=2 and empty stdout\n    --- FAIL: TestStartupArgumentsProcess/watch_missing_path (0.40s)\n        main_test.go:167: process status=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status=2 and empty stdout\n--- FAIL: TestWatchFirstFailureProcess (0.00s)\n    --- FAIL: TestWatchFirstFailureProcess/validation (0.01s)\n        main_test.go:196: process status=0 stdout=\"\" stderr=\"refresh record 1: invalid record\\n\"; want status=2 and empty stdout\n    --- FAIL: TestWatchFirstFailureProcess/decode (0.01s)\n        main_test.go:196: process status=0 stdout=\"\" stderr=\"refresh decode: invalid character '[' after top-level value\\n\"; want status=2 and empty stdout\n    --- FAIL: TestWatchFirstFailureProcess/status (0.01s)\n        main_test.go:196: process status=0 stdout=\"\" stderr=\"refresh status: 206\\n\"; want status=2 and empty stdout\n--- FAIL: TestApplyProcessPublicationFailure (0.01s)\n    main_test.go:309: process status=0 stdout=\"\" stderr=\"CSV row 2: rename /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestApplyProcessPublicationFailure2487231309/001/index/.record-937887105 /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestApplyProcessPublicationFailure2487231309/001/index/blocked: file exists\\n\"; want status=2 and empty stdout\n--- FAIL: TestWatchLaterFailureProcess (0.02s)\n    main_test.go:333: process status=0 stdout=\"\" stderr=\"refresh status: 206\\n\"; want status=2 and empty stdout\n--- FAIL: TestPutProcessPreservesGrammarAndStreams (0.02s)\n    main_test.go:119: process status=0 stdout=\"\" stderr=\"invalid record\\n\"; want status=2 and empty stdout\n--- FAIL: TestWatchInvalidStartupMakesNoRequest (0.02s)\n    main_test.go:351: process status=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status=2 and empty stdout\n    main_test.go:351: process status=0 stdout=\"\" stderr=\"usage: indexer put DIR KEY TEXT | apply --dir DIR | watch --url URL --file PATH --interval DURATION\\n\"; want status=2 and empty stdout\n    main_test.go:351: process status=0 stdout=\"\" stderr=\"invalid value \\\"soon\\\" for flag -interval: parse error\\n\"; want status=2 and empty stdout\n--- FAIL: TestApplyProcess (0.02s)\n    main_test.go:133: process status=0 stdout=\"\" stderr=\"CSV row 3: invalid record\\n\"; want status=2 and empty stdout\n    main_test.go:139: process status=0 stdout=\"\" stderr=\"CSV row 2: record on line 2: wrong number of fields\\n\"; want status=2 and empty stdout\nFAIL\nFAIL\texample.com/indexer/cmd/indexer\t0.947s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 1.158
+  },
+  "classification": "test failure; inspect named behavioral assertions before counting"
+}

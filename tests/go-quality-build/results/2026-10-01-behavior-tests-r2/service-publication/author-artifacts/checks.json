@@ -1,0 +1,221 @@
+[
+  {
+    "name": "regressions against original stub",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=20s",
+      "-run=TestRefresh",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 120,
+    "stdout": "--- FAIL: TestRefreshPublishesExactValues (0.00s)\n    --- FAIL: TestRefreshPublishesExactValues/nonblank_values_retain_whitespace_and_case (0.00s)\n        refresh_test.go:82: remote refresh not implemented\n    --- FAIL: TestRefreshPublishesExactValues/empty_array (0.00s)\n        refresh_test.go:82: remote refresh not implemented\n--- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes (0.01s)\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/partial_content_with_valid_body (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/created_with_valid_body (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/service_unavailable (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/malformed_JSON (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/trailing_array (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/trailing_null (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/trailing_junk (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/null_instead_of_array (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/object_instead_of_array (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/blank_code (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/unicode_blank_label (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/missing_code (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/missing_label (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/wrong_field_type (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/invalid_item_after_valid_prefix (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/null_item (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n--- FAIL: TestRefreshUsesSuppliedClientAndContext (0.00s)\n    refresh_test.go:161: remote refresh not implemented\n--- FAIL: TestRefreshRequestAndReadFailuresRetainSnapshot (0.00s)\n    --- FAIL: TestRefreshRequestAndReadFailuresRetainSnapshot/body_read (0.00s)\n        refresh_test.go:230: body close calls = 0, want 1\n    --- FAIL: TestRefreshRequestAndReadFailuresRetainSnapshot/read_after_JSON (0.00s)\n        refresh_test.go:230: body close calls = 0, want 1\n--- FAIL: TestRefreshThroughHTTP (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 62 [running]:\ntesting.tRunner.func1.2({0x100583da0, 0x7aef495156c0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x100583da0?, 0x7aef495156c0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x10060ce00, 0x7aef49515670})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/mirror_test.TestRefreshThroughHTTP(0x7aef495e0248)\n\t/private/tmp/go-fresh-author-mm5bi5gc/task-3/module/refresh_test.go:238 +0x8c\ntesting.tRunner(0x7aef495e0248, 0x100608e98)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/mirror\t0.543s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.7917649745941162
+  },
+  {
+    "name": "unchanged original source with approved loopback listener access",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=20s",
+      "-run=TestRefresh",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 120,
+    "stdout": "--- FAIL: TestRefreshPublishesExactValues (0.00s)\n    --- FAIL: TestRefreshPublishesExactValues/nonblank_values_retain_whitespace_and_case (0.00s)\n        refresh_test.go:82: remote refresh not implemented\n    --- FAIL: TestRefreshPublishesExactValues/empty_array (0.00s)\n        refresh_test.go:82: remote refresh not implemented\n--- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes (0.01s)\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/partial_content_with_valid_body (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/created_with_valid_body (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/service_unavailable (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/malformed_JSON (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/trailing_array (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/trailing_null (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/trailing_junk (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/null_instead_of_array (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/object_instead_of_array (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/blank_code (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/unicode_blank_label (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/missing_code (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/missing_label (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/wrong_field_type (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/invalid_item_after_valid_prefix (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n    --- FAIL: TestRefreshRejectsResponseWithoutChangingPriorBytes/null_item (0.00s)\n        refresh_test.go:132: body close calls = 0, want 1\n--- FAIL: TestRefreshUsesSuppliedClientAndContext (0.00s)\n    refresh_test.go:161: remote refresh not implemented\n--- FAIL: TestRefreshRequestAndReadFailuresRetainSnapshot (0.00s)\n    --- FAIL: TestRefreshRequestAndReadFailuresRetainSnapshot/body_read (0.00s)\n        refresh_test.go:230: body close calls = 0, want 1\n    --- FAIL: TestRefreshRequestAndReadFailuresRetainSnapshot/read_after_JSON (0.00s)\n        refresh_test.go:230: body close calls = 0, want 1\n--- FAIL: TestRefreshThroughHTTP (0.00s)\n    refresh_test.go:248: remote refresh not implemented\n--- FAIL: TestRefreshRenameFailureClosesBodyAndCleansStage (0.00s)\n    refresh_test.go:280: body close calls = 0, want 1\n--- FAIL: TestRefreshReplacesSnapshotWithoutTruncatingOpenHandle (0.00s)\n    refresh_unix_test.go:40: remote refresh not implemented\n--- FAIL: TestRefreshPartialWriteRetainsPriorSnapshot (0.01s)\n    refresh_unix_test.go:75: partial-write subprocess: exit status 1\n        --- FAIL: TestRefreshPartialWriteHelper (0.00s)\n            refresh_unix_test.go:99: body close calls = 0, want 1\n        FAIL\nFAIL\nFAIL\texample.com/mirror\t0.189s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.382796049118042
+  },
+  {
+    "name": "format Go source",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "mirror.go",
+      "refresh_test.go",
+      "refresh_unix_test.go"
+    ],
+    "timeout_seconds": 30,
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.009945869445800781
+  },
+  {
+    "name": "implemented source full suite with approved loopback access",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-timeout=20s",
+      "./..."
+    ],
+    "timeout_seconds": 120,
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "=== RUN   TestLocalWrite\n--- PASS: TestLocalWrite (0.00s)\n=== RUN   TestRefreshPublishesExactValues\n=== RUN   TestRefreshPublishesExactValues/nonblank_values_retain_whitespace_and_case\n=== RUN   TestRefreshPublishesExactValues/empty_array\n--- PASS: TestRefreshPublishesExactValues (0.00s)\n    --- PASS: TestRefreshPublishesExactValues/nonblank_values_retain_whitespace_and_case (0.00s)\n    --- PASS: TestRefreshPublishesExactValues/empty_array (0.00s)\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/partial_content_with_valid_body\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/created_with_valid_body\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/service_unavailable\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/malformed_JSON\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/trailing_array\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/trailing_null\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/trailing_junk\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/null_instead_of_array\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/object_instead_of_array\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/blank_code\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/unicode_blank_label\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/missing_code\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/missing_label\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/wrong_field_type\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/invalid_item_after_valid_prefix\n=== RUN   TestRefreshRejectsResponseWithoutChangingPriorBytes/null_item\n--- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes (0.01s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/partial_content_with_valid_body (0.00s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/created_with_valid_body (0.00s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/service_unavailable (0.00s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/malformed_JSON (0.00s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/trailing_array (0.00s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/trailing_null (0.00s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/trailing_junk (0.00s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/null_instead_of_array (0.00s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/object_instead_of_array (0.00s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/blank_code (0.00s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/unicode_blank_label (0.00s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/missing_code (0.00s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/missing_label (0.00s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/wrong_field_type (0.00s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/invalid_item_after_valid_prefix (0.00s)\n    --- PASS: TestRefreshRejectsResponseWithoutChangingPriorBytes/null_item (0.00s)\n=== RUN   TestRefreshUsesSuppliedClientAndContext\n--- PASS: TestRefreshUsesSuppliedClientAndContext (0.00s)\n=== RUN   TestRefreshRequestAndReadFailuresRetainSnapshot\n=== RUN   TestRefreshRequestAndReadFailuresRetainSnapshot/transport\n=== RUN   TestRefreshRequestAndReadFailuresRetainSnapshot/invalid_endpoint\n=== RUN   TestRefreshRequestAndReadFailuresRetainSnapshot/canceled_context\n=== RUN   TestRefreshRequestAndReadFailuresRetainSnapshot/body_read\n=== RUN   TestRefreshRequestAndReadFailuresRetainSnapshot/read_after_JSON\n--- PASS: TestRefreshRequestAndReadFailuresRetainSnapshot (0.00s)\n    --- PASS: TestRefreshRequestAndReadFailuresRetainSnapshot/transport (0.00s)\n    --- PASS: TestRefreshRequestAndReadFailuresRetainSnapshot/invalid_endpoint (0.00s)\n    --- PASS: TestRefreshRequestAndReadFailuresRetainSnapshot/canceled_context (0.00s)\n    --- PASS: TestRefreshRequestAndReadFailuresRetainSnapshot/body_read (0.00s)\n    --- PASS: TestRefreshRequestAndReadFailuresRetainSnapshot/read_after_JSON (0.00s)\n=== RUN   TestRefreshThroughHTTP\n--- PASS: TestRefreshThroughHTTP (0.00s)\n=== RUN   TestRefreshRenameFailureClosesBodyAndCleansStage\n--- PASS: TestRefreshRenameFailureClosesBodyAndCleansStage (0.00s)\n=== RUN   TestRefreshReplacesSnapshotWithoutTruncatingOpenHandle\n--- PASS: TestRefreshReplacesSnapshotWithoutTruncatingOpenHandle (0.00s)\n=== RUN   TestRefreshPartialWriteRetainsPriorSnapshot\n--- PASS: TestRefreshPartialWriteRetainsPriorSnapshot (0.01s)\n=== RUN   TestRefreshPartialWriteHelper\n    refresh_unix_test.go:85: runs only as the bounded partial-write subprocess\n--- SKIP: TestRefreshPartialWriteHelper (0.00s)\nPASS\nok  \texample.com/mirror\t0.448s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.7219669818878174
+  },
+  {
+    "name": "temporary direct-write mutation publication safeguards",
+    "temporary_mutation": "replaceSnapshot call replaced with os.WriteFile",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-timeout=20s",
+      "-run=TestRefresh(ReplacesSnapshotWithoutTruncatingOpenHandle|PartialWriteRetainsPriorSnapshot)$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "timeout_seconds": 120,
+    "stdout": "--- FAIL: TestRefreshReplacesSnapshotWithoutTruncatingOpenHandle (0.00s)\n    refresh_unix_test.go:52: already-open old handle = \"[{\\\"code\\\":\\\"new\\\",\\\"label\\\":\\\"First replacement\\\"}]\", want \"old snapshot with exact spaces and a newline\\n\"\n--- FAIL: TestRefreshPartialWriteRetainsPriorSnapshot (0.01s)\n    refresh_unix_test.go:78: snapshot = \"[{\\\"code\\\":\\\"new\\\",\\\"label\\\":\\\"snapshotsnapshotsnapshotsnapshotsnapshot\", want \"previous exact snapshot bytes, longer than the child file-size limit, must all survive\\n\"\nFAIL\nFAIL\texample.com/mirror\t0.260s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "elapsed_seconds": 0.5249221324920654,
+    "source_restored": true,
+    "source_sha256": "b8a28d7719409c8812293460f78684b41ba0bf28ea9522d393b051c1783bebab"
+  },
+  {
+    "name": "race repeat shuffled suite with approved loopback access",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-count=3",
+      "-shuffle=on",
+      "-timeout=30s",
+      "./..."
+    ],
+    "timeout_seconds": 120,
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/mirror\t4.361s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 4.706603050231934
+  },
+  {
+    "name": "go vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "timeout_seconds": 120,
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.15269088745117188
+  },
+  {
+    "name": "gofmt verification",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "mirror.go",
+      "refresh_test.go",
+      "refresh_unix_test.go"
+    ],
+    "timeout_seconds": 30,
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.010800838470458984
+  },
+  {
+    "name": "local Go version",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "timeout_seconds": 30,
+    "cwd": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/module",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "elapsed_seconds": 0.012158870697021484
+  }
+]

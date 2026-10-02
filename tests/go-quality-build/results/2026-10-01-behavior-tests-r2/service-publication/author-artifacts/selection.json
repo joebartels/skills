@@ -1,0 +1,83 @@
+{
+  "offered_names": [
+    "go-api-contracts",
+    "go-behavior-tests",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries"
+  ],
+  "selection_decisions": [
+    {
+      "name": "go-api-contracts",
+      "selected": true,
+      "opened_path": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-api-contracts/SKILL.md",
+      "reason": "Refresh implements an existing exported signature and defines supported HTTP, JSON-file, validation, and retained-state behavior. Kept the function type, Item fields and tags, module path, Write behavior, and Go 1.22 minimum."
+    },
+    {
+      "name": "go-behavior-tests",
+      "selected": true,
+      "opened_path": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-behavior-tests/SKILL.md",
+      "reason": "The request explicitly changes remote refresh behavior and asks for regression tests. Used independent byte oracles, success-shaped non-200 rejection, failure-stage observations, repeated publication, and a controlled partial write."
+    },
+    {
+      "name": "go-core-style",
+      "selected": true,
+      "opened_path": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-core-style/SKILL.md",
+      "reason": "Actual Go implementation and tests require idiomatic error handling, formatting, standard-library use, and the supported Go language version."
+    },
+    {
+      "name": "go-interfaces-and-composition",
+      "selected": true,
+      "opened_path": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-interfaces-and-composition/SKILL.md",
+      "reason": "Refresh uses the supplied HTTP client/context and owns acquired response bodies and temporary files. Kept the concrete client API and existing RoundTripper test seam without adding a storage interface, constructor, or global dependency."
+    },
+    {
+      "name": "go-package-boundaries",
+      "selected": true,
+      "opened_path": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-package-boundaries/SKILL.md",
+      "reason": "Remote fetch/validation/publication extends this small snapshot package responsibility. Kept the cohesive operation and file representation in the existing package; no package split, facade, or new import direction was justified."
+    }
+  ],
+  "opened_skill_paths": [
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-behavior-tests/SKILL.md",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-interfaces-and-composition/SKILL.md",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-package-boundaries/SKILL.md"
+  ],
+  "opened_reference_paths": [
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-behavior-tests/references/behavior-observations.md"
+  ],
+  "reference_decisions": [
+    {
+      "path": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-behavior-tests/references/behavior-observations.md",
+      "opened": true,
+      "reason": "Failure-stage retention, real HTTP boundary, and independent file-byte oracles directly apply."
+    },
+    {
+      "path": "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-package-boundaries/references/package-maps.md",
+      "opened": false,
+      "reason": "No package split or comparison of project shapes was needed for the existing reserved Refresh API."
+    }
+  ],
+  "opened_input_files": [
+    "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-r2/service-publication/dispatch.txt",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/module/README.md",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/module/mirror.go",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/module/mirror_test.go",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/module/go.mod",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-behavior-tests/SKILL.md",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-core-style/SKILL.md",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-interfaces-and-composition/SKILL.md",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-package-boundaries/SKILL.md",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-3/guidance/go-behavior-tests/references/behavior-observations.md"
+  ],
+  "constraints": {
+    "only_authorized_module_and_guidance_inspected": true,
+    "delegated": false,
+    "dependencies_installed": false,
+    "committed": false,
+    "external_changes": false
+  }
+}

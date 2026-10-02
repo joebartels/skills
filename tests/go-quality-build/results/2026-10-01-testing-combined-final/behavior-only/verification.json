@@ -1,0 +1,144 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-testing-combined-final/behavior-only/source.patch"
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-pdlclfo7/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  {
+    "kind": "patch-reconstruction",
+    "result": "byte-for-byte",
+    "file_count": 12
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-pdlclfo7/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.423s\nok  \texample.com/indexer/cmd/indexer\t0.928s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.187
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-pdlclfo7/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.122
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-pdlclfo7/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.009
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-pdlclfo7/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t4.496s\nok  \texample.com/indexer/cmd/indexer\t1.926s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 4.831
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-shuffle=on",
+      "-count=10",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-pdlclfo7/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t2.312s\nok  \texample.com/indexer/cmd/indexer\t5.493s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 5.704
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-testing-reconstruct-pdlclfo7/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/indexer\t0.941s\nok  \texample.com/indexer/cmd/indexer\t1.006s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 1.25,
+    "kind": "withheld-contract-probes"
+  }
+]

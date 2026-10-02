@@ -1,0 +1,11 @@
+--- a/mirror.go
++++ b/mirror.go
+@@ -58,7 +58,7 @@
+ 		return fmt.Errorf("decode snapshot: unexpected trailing JSON")
+ 	}
+ 	for i, item := range items {
+-		if strings.TrimSpace(item.Code) == "" || strings.TrimSpace(item.Label) == "" {
++		if strings.TrimSpace(item.Code) == "" {
+ 			return fmt.Errorf("validate snapshot: item %d has a blank code or label", i)
+ 		}
+ 	}

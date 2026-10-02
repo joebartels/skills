@@ -1,0 +1,12 @@
+--- a/refresh.go
++++ b/refresh.go
+@@ -23,9 +23,6 @@
+ 	}
+ 	// A redirect would make another GET and hide the initial non-200 status.
+ 	requestClient := *client
+-	requestClient.CheckRedirect = func(*http.Request, []*http.Request) error {
+-		return http.ErrUseLastResponse
+-	}
+ 	response, err := requestClient.Do(req)
+ 	if err != nil {
+ 		return fmt.Errorf("refresh fetch: %w", err)

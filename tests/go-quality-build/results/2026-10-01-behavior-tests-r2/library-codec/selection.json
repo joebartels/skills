@@ -1,0 +1,50 @@
+{
+  "offered_names": [
+    "go-api-contracts",
+    "go-behavior-tests",
+    "go-core-style",
+    "go-interfaces-and-composition",
+    "go-package-boundaries"
+  ],
+  "selected": [
+    {
+      "name": "go-api-contracts",
+      "opened_path": "/private/tmp/go-fresh-author-mm5bi5gc/task-1/guidance/go-api-contracts/SKILL.md",
+      "reason": "The change extends the exported codec's wire contract in a minor release while retaining public function types, the Key struct and ErrInvalidKey. External-package tests exercise consumer calls, function assignments and sentinel matching."
+    },
+    {
+      "name": "go-behavior-tests",
+      "opened_path": "/private/tmp/go-fresh-author-mm5bi5gc/task-1/guidance/go-behavior-tests/SKILL.md",
+      "reason": "Escaping changes meaningful behavior and the task explicitly requests high-quality contract tests. Independent fixed encoder bytes and decoder values supplement a round-trip fuzz property and executable examples.",
+      "opened_reference_paths": [
+        "/private/tmp/go-fresh-author-mm5bi5gc/task-1/guidance/go-behavior-tests/references/behavior-observations.md"
+      ],
+      "reference_reason": "The library and wire boundary guidance informs independent test oracles and assertions for sentinel errors and zero failure results."
+    },
+    {
+      "name": "go-core-style",
+      "opened_path": "/private/tmp/go-fresh-author-mm5bi5gc/task-1/guidance/go-core-style/SKILL.md",
+      "reason": "This is Go implementation and test work. It uses standard-library path escaping, early error returns and gofmt; vet and race checks pass, while staticcheck is unavailable."
+    }
+  ],
+  "not_selected": [
+    {
+      "name": "go-interfaces-and-composition",
+      "reason": "No interfaces, constructors, options, dependency wiring or resource lifecycle change. The standard net/url import serves a local pure codec calculation.",
+      "opened": false
+    },
+    {
+      "name": "go-package-boundaries",
+      "reason": "The existing codec retains its package, responsibility and ownership. No package move, split, merge or import-direction redesign is needed.",
+      "opened": false
+    }
+  ],
+  "opened_task_and_module_files": [
+    "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-r2/library-codec/dispatch.txt",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-1/module/README.md",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-1/module/go.mod",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-1/module/key.go",
+    "/private/tmp/go-fresh-author-mm5bi5gc/task-1/module/key_test.go"
+  ],
+  "scope": "Only the authorized dispatch, isolated module and relevant offered guidance were read. No other skills, repository files, author workspaces, evaluations or controller probes were inspected."
+}
