@@ -1,0 +1,144 @@
+{
+  "scope": "Task 4 isolation promotion",
+  "checks": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test*.py"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "",
+      "stderr": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.073s\n\nOK\n",
+      "exit_code": 0,
+      "duration_seconds": 0.11590108298696578
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/go-quality-build",
+        "-p",
+        "test_*.py"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "",
+      "stderr": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.014s\n\nOK\n",
+      "exit_code": 0,
+      "duration_seconds": 0.05447541596367955
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/go-quality-review/test_layout.py"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "",
+      "stderr": ".\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "exit_code": 0,
+      "duration_seconds": 0.02950758405495435
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/go-quality-review/go-quality-report/evals/test_grade.py"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "",
+      "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.000s\n\nOK\n",
+      "exit_code": 0,
+      "duration_seconds": 0.031341916997916996
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "scripts/validate.py"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "PASS: 10 skills; matching grading/report contracts; 120 valid evaluation cases\nPASS: 25 valid build evaluation cases\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.0453991669928655
+    },
+    {
+      "command": [
+        "rtk",
+        "claude",
+        "plugin",
+        "validate",
+        "./plugins/go-quality-build"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "Validating plugin manifest: /Users/jb/.codex/worktrees/b633/skills/plugins/go-quality-build/.claude-plugin/plugin.json\n\n\u2714 Validation passed\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.46724775002803653
+    },
+    {
+      "command": [
+        "rtk",
+        "claude",
+        "plugin",
+        "validate",
+        "."
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "Validating marketplace manifest: /Users/jb/.codex/worktrees/b633/skills/.claude-plugin/marketplace.json\n\n\u2714 Validation passed\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.18221258302219212
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "/Users/jb/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+        "plugins/go-quality-build/skills/go-test-isolation"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "Skill is valid!\n",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.026071875006891787
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+      "stdout": "",
+      "stderr": "",
+      "exit_code": 0,
+      "duration_seconds": 0.016345583950169384
+    }
+  ]
+}

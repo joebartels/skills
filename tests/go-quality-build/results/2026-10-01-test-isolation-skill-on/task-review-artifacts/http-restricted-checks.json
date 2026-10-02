@@ -1,0 +1,92 @@
+[
+  {
+    "label": "toolchain",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "label": "baseline:service-http-boundary:clean",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/http-restricted/baseline/service-http-boundary",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestFetchHTTPRequest (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 68 [running]:\ntesting.tRunner.func1.2({0x10536be20, 0x3673eb496c20})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x10536be20?, 0x3673eb496c20?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1053f5dc0, 0x3673eb496bd0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/metadata_test.TestFetchHTTPRequest(0x3673eb51cfc8)\n\t/private/tmp/go-isolation-promotion-review-20261001/verification/http-restricted/baseline/service-http-boundary/fetch_test.go:187 +0x84\ntesting.tRunner(0x3673eb51cfc8, 0x1053f1e60)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/metadata\t0.202s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.446
+  },
+  {
+    "label": "skill-on:service-http-boundary:clean",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/http-restricted/skill-on/service-http-boundary",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestFetchHTTP (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 22 [running]:\ntesting.tRunner.func1.2({0x101577d40, 0x7e2545090630})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x101577d40?, 0x7e2545090630?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x101601b00, 0x7e25450905e0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/metadata_test.TestFetchHTTP(0x7e25450ea488)\n\t/private/tmp/go-isolation-promotion-review-20261001/verification/http-restricted/skill-on/service-http-boundary/fetch_test.go:64 +0x88\ntesting.tRunner(0x7e25450ea488, 0x1015fdbe0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/metadata\t0.190s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.436
+  }
+]

@@ -5,7 +5,7 @@ architecture/style snapshots with unchanged inherited settings. Only isolation
 guidance availability differs; behavior guidance is absent in both arms. Five
 separate anonymized reviewers use unchanged review skills and receive neither
 writing guidance nor arm labels, author reports, expected outcomes, other reviews
-or controller probes. Original revision 1 remains outside runtime pending promotion.
+or controller probes. Original revision 1 is promoted unchanged after independent task review.
 
 | Case | Baseline Testing / Correctness | Guided Testing / Correctness | Confirmed difference |
 | --- | --- | --- | --- |
@@ -58,5 +58,4 @@ checks do not replace minimum-runtime execution.
 Guidance is unchanged revision 1; no author receives another candidate, baseline
 finding, mutation recipe or review repair. Clear independently reproduced selection
 benefit makes an improvement repeat unnecessary under the approved conditional gate.
-Next: separate task-level review of exact advice, evidence, copy/license scope and
-bounded promotion, then move unchanged bytes if accepted.
+Independent task review accepts unchanged-byte promotion, verifies all ten reconstructions and 348 checkpoint artifact hashes, and finds no unresolved actionable finding. Runtime/snapshot byte equality and shared delivery checks pass. Next: fresh four-arm combined evaluation.

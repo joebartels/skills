@@ -1,0 +1,662 @@
+[
+  {
+    "label": "toolchain",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  {
+    "label": "baseline:service-http-boundary:clean",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/http-approved/baseline/service-http-boundary",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.205s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.463
+  },
+  {
+    "label": "baseline:service-http-boundary:vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/http-approved/baseline/service-http-boundary",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.119
+  },
+  {
+    "label": "baseline:service-http-boundary:gofmt",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/http-approved/baseline/service-http-boundary",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "label": "baseline:service-http-boundary:race-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-shuffle=104729",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/http-approved/baseline/service-http-boundary",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/metadata\t1.196s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 1.476
+  },
+  {
+    "label": "baseline:http-body-not-closed:patch",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/service-http-boundary/mutations/http-body-not-closed/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/http-approved/baseline/service-http-boundary/http-body-not-closed",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.014
+  },
+  {
+    "label": "baseline:http-body-not-closed:compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/http-approved/baseline/service-http-boundary/http-body-not-closed",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.278s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.522
+  },
+  {
+    "label": "baseline:http-body-not-closed:signal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/http-approved/baseline/service-http-boundary/http-body-not-closed",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestFetchSuccessClosesBody (0.00s)\n    --- FAIL: TestFetchSuccessClosesBody/ordinary (0.00s)\n        fetch_test.go:72: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchSuccessClosesBody/preserve_name (0.00s)\n        fetch_test.go:72: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchSuccessClosesBody/surrounding_JSON_whitespace (0.00s)\n        fetch_test.go:72: body closed 0 times, want 1 before Fetch returns\n--- FAIL: TestFetchInvalidJSONOrFieldsClosesBody (0.00s)\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/empty_body (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/malformed_JSON (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/null (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/array (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/scalar (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/trailing_object (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/trailing_garbage (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/missing_name (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/empty_name (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/whitespace_name (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/null_name (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/wrong_name_type (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/missing_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/zero_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/negative_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/null_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/wrong_revision_type (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/fractional_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/overflowing_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n--- FAIL: TestFetchNon200StatusClosesBody (0.00s)\n    --- FAIL: TestFetchNon200StatusClosesBody/201 (0.00s)\n        fetch_test.go:123: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchNon200StatusClosesBody/204 (0.00s)\n        fetch_test.go:123: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchNon200StatusClosesBody/206 (0.00s)\n        fetch_test.go:123: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchNon200StatusClosesBody/404 (0.00s)\n        fetch_test.go:123: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchNon200StatusClosesBody/500 (0.00s)\n        fetch_test.go:123: body closed 0 times, want 1 before Fetch returns\n--- FAIL: TestFetchReadFailureClosesBody (0.00s)\n    fetch_test.go:146: body closed 0 times, want 1 before Fetch returns\n--- FAIL: TestFetchCancellation (0.00s)\n    --- FAIL: TestFetchCancellation/while_reading_response_body (0.00s)\n        fetch_test.go:340: canceled response body closed 0 times, want 1\nFAIL\nFAIL\texample.com/metadata\t0.135s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 0.329
+  },
+  {
+    "label": "baseline:http-ignore-cancellation:patch",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/service-http-boundary/mutations/http-ignore-cancellation/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/http-approved/baseline/service-http-boundary/http-ignore-cancellation",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.014
+  },
+  {
+    "label": "baseline:http-ignore-cancellation:compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/http-approved/baseline/service-http-boundary/http-ignore-cancellation",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.266s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.515
+  },
+  {
+    "label": "baseline:http-ignore-cancellation:signal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/http-approved/baseline/service-http-boundary/http-ignore-cancellation",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestFetchCancellation (10.00s)\n    --- FAIL: TestFetchCancellation/before_response_headers (5.00s)\n        fetch_test.go:343: Fetch did not return after caller cancellation\n    --- FAIL: TestFetchCancellation/while_reading_response_body (5.00s)\n        fetch_test.go:343: Fetch did not return after caller cancellation\nFAIL\nFAIL\texample.com/metadata\t10.181s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 10.377
+  },
+  {
+    "label": "baseline:service-http-boundary:source-preserved",
+    "equal": true,
+    "hashes": {
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3",
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "README.md": "5e52eb6593abf19cb5eff5217737defefdfa9c96535433ad69aede1a898c5da6",
+      "fetch_test.go": "84aab17a74a98ab1f0bc20f88a50b5397c9ae73ed716042cf148db2e953caae6"
+    }
+  },
+  {
+    "label": "skill-on:service-http-boundary:clean",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/http-approved/skill-on/service-http-boundary",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.204s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.448
+  },
+  {
+    "label": "skill-on:service-http-boundary:vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/http-approved/skill-on/service-http-boundary",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.119
+  },
+  {
+    "label": "skill-on:service-http-boundary:gofmt",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/http-approved/skill-on/service-http-boundary",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.009
+  },
+  {
+    "label": "skill-on:service-http-boundary:race-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-race",
+      "-count=10",
+      "-shuffle=104729",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/verification/http-approved/skill-on/service-http-boundary",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/metadata\t1.244s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 1.519
+  },
+  {
+    "label": "skill-on:http-body-not-closed:patch",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/service-http-boundary/mutations/http-body-not-closed/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/http-approved/skill-on/service-http-boundary/http-body-not-closed",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.017
+  },
+  {
+    "label": "skill-on:http-body-not-closed:compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/http-approved/skill-on/service-http-boundary/http-body-not-closed",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.206s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.446
+  },
+  {
+    "label": "skill-on:http-body-not-closed:signal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/http-approved/skill-on/service-http-boundary/http-body-not-closed",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestFetchResponse (0.00s)\n    --- FAIL: TestFetchResponse/server_error (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/trailing_object (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/no_content (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/trailing_garbage (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/null (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/negative_revision (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/not_modified (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/created (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/wrong_revision_type (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/missing_name (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/empty (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/read_error_after_valid_json (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/empty_name (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/success (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/not_found (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/missing_revision (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/malformed (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/string (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/fractional_revision (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/wrong_name_type (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/array (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/zero_revision (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/whitespace (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n    --- FAIL: TestFetchResponse/blank_name (0.00s)\n        fetch_test.go:146: response body closed 0 times, want once\n--- FAIL: TestFetchCancellation (0.00s)\n    --- FAIL: TestFetchCancellation/reading_body (0.00s)\n        fetch_test.go:285: canceled response body closed 0 times, want once\nFAIL\nFAIL\texample.com/metadata\t0.177s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 0.369
+  },
+  {
+    "label": "skill-on:http-ignore-cancellation:patch",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-skill-on/service-http-boundary/mutations/http-ignore-cancellation/source.patch"
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/http-approved/skill-on/service-http-boundary/http-ignore-cancellation",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.018
+  },
+  {
+    "label": "skill-on:http-ignore-cancellation:compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/http-approved/skill-on/service-http-boundary/http-ignore-cancellation",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "ok  \texample.com/metadata\t0.200s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "duration_seconds": 0.441
+  },
+  {
+    "label": "skill-on:http-ignore-cancellation:signal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "GOPROXY=off",
+      "GOSUMDB=off",
+      "GOWORK=off",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-promotion-review-20261001/mutation-verification/http-approved/skill-on/service-http-boundary/http-ignore-cancellation",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOWORK": "off"
+    },
+    "stdout": "--- FAIL: TestFetchCancellation (0.00s)\n    --- FAIL: TestFetchCancellation/reading_body (5.00s)\n        fetch_test.go:265: Fetch cancellation did not finish within 5 seconds\n    --- FAIL: TestFetchCancellation/before_headers (5.00s)\n        fetch_test.go:265: Fetch cancellation did not finish within 5 seconds\nFAIL\nFAIL\texample.com/metadata\t5.180s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "duration_seconds": 5.381
+  },
+  {
+    "label": "skill-on:service-http-boundary:source-preserved",
+    "equal": true,
+    "hashes": {
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3",
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "README.md": "5e52eb6593abf19cb5eff5217737defefdfa9c96535433ad69aede1a898c5da6",
+      "fetch_test.go": "f58846793657dad48f2b56746803432e22501d78df69e5de73ef604451e35cdc"
+    }
+  }
+]
