@@ -1,0 +1,116 @@
+[
+  {
+    "name": "go-version",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "timeout_seconds": 10,
+    "exit_code": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": ""
+  },
+  {
+    "name": "baseline-race",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "timeout_seconds": 60,
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/filestore\t1.245s\n",
+    "stderr": ""
+  },
+  {
+    "name": "staticcheck",
+    "skipped": true,
+    "reason": "staticcheck is not installed; task forbids tool installation"
+  },
+  {
+    "name": "format",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-w",
+      "store_test.go"
+    ],
+    "timeout_seconds": 10,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "name": "format-check",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "store_test.go"
+    ],
+    "timeout_seconds": 10,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "name": "go-vet",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "timeout_seconds": 60,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "name": "grouped-tests-verbose",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-v",
+      "-count=1",
+      "-parallel=8",
+      "-timeout=30s",
+      "./..."
+    ],
+    "timeout_seconds": 60,
+    "exit_code": 0,
+    "stdout": "=== RUN   TestStoreSerialChildren\n=== RUN   TestStoreSerialChildren/first\n=== RUN   TestStoreSerialChildren/replacement\n--- PASS: TestStoreSerialChildren (0.00s)\n    --- PASS: TestStoreSerialChildren/first (0.00s)\n    --- PASS: TestStoreSerialChildren/replacement (0.00s)\n=== RUN   TestStoreIndependentInstances\n=== PAUSE TestStoreIndependentInstances\n=== CONT  TestStoreIndependentInstances\n=== RUN   TestStoreIndependentInstances/instances\n=== RUN   TestStoreIndependentInstances/instances/alpha\n=== PAUSE TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/beta\n=== PAUSE TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/empty\n=== PAUSE TestStoreIndependentInstances/instances/empty\n=== CONT  TestStoreIndependentInstances/instances/alpha\n=== RUN   TestStoreIndependentInstances/instances/alpha/replacements\n=== RUN   TestStoreIndependentInstances/instances/alpha/replacements/value-0\n=== CONT  TestStoreIndependentInstances/instances/empty\n=== CONT  TestStoreIndependentInstances/instances/beta\n=== RUN   TestStoreIndependentInstances/instances/empty/replacements\n=== RUN   TestStoreIndependentInstances/instances/empty/replacements/value-0\n=== RUN   TestStoreIndependentInstances/instances/beta/replacements\n=== RUN   TestStoreIndependentInstances/instances/beta/replacements/value-0\n=== RUN   TestStoreIndependentInstances/instances/empty/replacements/value-1\n=== RUN   TestStoreIndependentInstances/instances/alpha/replacements/value-1\n=== RUN   TestStoreIndependentInstances/instances/beta/replacements/value-1\n=== RUN   TestStoreIndependentInstances/instances/alpha/replacements/value-2\n=== RUN   TestStoreIndependentInstances/instances/empty/replacements/value-2\n=== RUN   TestStoreIndependentInstances/instances/beta/replacements/value-2\n--- PASS: TestStoreIndependentInstances (0.00s)\n    --- PASS: TestStoreIndependentInstances/instances (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/alpha/replacements (0.00s)\n                --- PASS: TestStoreIndependentInstances/instances/alpha/replacements/value-0 (0.00s)\n                --- PASS: TestStoreIndependentInstances/instances/alpha/replacements/value-1 (0.00s)\n                --- PASS: TestStoreIndependentInstances/instances/alpha/replacements/value-2 (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/empty (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/empty/replacements (0.00s)\n                --- PASS: TestStoreIndependentInstances/instances/empty/replacements/value-0 (0.00s)\n                --- PASS: TestStoreIndependentInstances/instances/empty/replacements/value-1 (0.00s)\n                --- PASS: TestStoreIndependentInstances/instances/empty/replacements/value-2 (0.00s)\n        --- PASS: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- PASS: TestStoreIndependentInstances/instances/beta/replacements (0.00s)\n                --- PASS: TestStoreIndependentInstances/instances/beta/replacements/value-0 (0.00s)\n                --- PASS: TestStoreIndependentInstances/instances/beta/replacements/value-1 (0.00s)\n                --- PASS: TestStoreIndependentInstances/instances/beta/replacements/value-2 (0.00s)\nPASS\nok  \texample.com/filestore\t0.232s\n",
+    "stderr": ""
+  },
+  {
+    "name": "race-repeated-shuffled",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=50",
+      "-shuffle=on",
+      "-parallel=8",
+      "-timeout=30s",
+      "./..."
+    ],
+    "timeout_seconds": 60,
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/filestore\t1.276s\n",
+    "stderr": ""
+  }
+]

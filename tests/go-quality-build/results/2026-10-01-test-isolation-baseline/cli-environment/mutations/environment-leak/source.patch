@@ -1,0 +1,11 @@
+--- a/config_test.go
++++ b/config_test.go
+@@ -73,7 +73,7 @@
+ 	t.Helper()
+ 	// Setenv registers restoration of both the old value and its presence.
+ 	// Register that cleanup even when this case needs the variable unset.
+-	t.Setenv(key, value.value)
++	if err := os.Setenv(key, value.value); err != nil { t.Fatal(err) }
+ 	if !value.present {
+ 		if err := os.Unsetenv(key); err != nil {
+ 			t.Fatalf("Unsetenv(%q): %v", key, err)

@@ -117,4 +117,4 @@ The initial 68-section inventory omitted the detailed testing-layout reference p
 
 ## Use status — 2026-10-01
 
-Behavior revision 1 is promoted unchanged after matched evaluation and the audit correction. The isolation fixtures/probes are original controller-authored inputs with standard-library dependencies and Go1.22 declarations. The isolation draft does not exist yet; its retained decisions remain proposed until blind baseline findings and matched skill-on evidence support utility.
+Behavior revision 1 is promoted unchanged after matched evaluation and the audit correction. The isolation fixtures/probes are original controller-authored inputs with standard-library dependencies and Go1.22 declarations. The isolation draft does not exist yet; its retained decisions remain proposed until matched skill-on evidence supports utility. Five fresh [baseline cases](../../tests/go-quality-build/results/2026-10-01-test-isolation-baseline/comparison.md) confirm strong dependency/cleanup safeguards and one introduced focused-child independence defect. This is a concrete authoring target, not skill benefit.

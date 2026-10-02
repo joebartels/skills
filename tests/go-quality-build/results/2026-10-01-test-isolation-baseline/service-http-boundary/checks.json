@@ -1,0 +1,197 @@
+[
+  {
+    "stage": "baseline",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "process_timeout_seconds": 60,
+    "exit_code": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": ""
+  },
+  {
+    "stage": "baseline",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-timeout=30s",
+      "./..."
+    ],
+    "process_timeout_seconds": 60,
+    "exit_code": 0,
+    "stdout": "=== RUN   TestFetchMetadata\n--- PASS: TestFetchMetadata (0.00s)\nPASS\nok  \texample.com/metadata\t1.268s\n",
+    "stderr": ""
+  },
+  {
+    "stage": "implementation",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-s",
+      "-w",
+      "fetch_test.go"
+    ],
+    "process_timeout_seconds": 60,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "stage": "implementation",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "process_timeout_seconds": 60,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "stage": "implementation",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "process_timeout_seconds": 60,
+    "exit_code": 1,
+    "stdout": "=== RUN   TestFetchSuccessClosesBody\n=== RUN   TestFetchSuccessClosesBody/ordinary\n=== RUN   TestFetchSuccessClosesBody/preserve_name\n=== RUN   TestFetchSuccessClosesBody/surrounding_JSON_whitespace\n--- PASS: TestFetchSuccessClosesBody (0.00s)\n    --- PASS: TestFetchSuccessClosesBody/ordinary (0.00s)\n    --- PASS: TestFetchSuccessClosesBody/preserve_name (0.00s)\n    --- PASS: TestFetchSuccessClosesBody/surrounding_JSON_whitespace (0.00s)\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/empty_body\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/malformed_JSON\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/null\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/array\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/scalar\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/trailing_object\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/trailing_garbage\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/missing_name\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/empty_name\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/whitespace_name\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/null_name\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/wrong_name_type\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/missing_revision\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/zero_revision\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/negative_revision\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/null_revision\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/wrong_revision_type\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/fractional_revision\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/overflowing_revision\n--- PASS: TestFetchInvalidJSONOrFieldsClosesBody (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/empty_body (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/malformed_JSON (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/null (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/array (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/scalar (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/trailing_object (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/trailing_garbage (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/missing_name (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/empty_name (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/whitespace_name (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/null_name (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/wrong_name_type (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/missing_revision (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/zero_revision (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/negative_revision (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/null_revision (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/wrong_revision_type (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/fractional_revision (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/overflowing_revision (0.00s)\n=== RUN   TestFetchNon200StatusClosesBody\n=== RUN   TestFetchNon200StatusClosesBody/201\n=== RUN   TestFetchNon200StatusClosesBody/204\n=== RUN   TestFetchNon200StatusClosesBody/206\n=== RUN   TestFetchNon200StatusClosesBody/404\n=== RUN   TestFetchNon200StatusClosesBody/500\n--- PASS: TestFetchNon200StatusClosesBody (0.00s)\n    --- PASS: TestFetchNon200StatusClosesBody/201 (0.00s)\n    --- PASS: TestFetchNon200StatusClosesBody/204 (0.00s)\n    --- PASS: TestFetchNon200StatusClosesBody/206 (0.00s)\n    --- PASS: TestFetchNon200StatusClosesBody/404 (0.00s)\n    --- PASS: TestFetchNon200StatusClosesBody/500 (0.00s)\n=== RUN   TestFetchReadFailureClosesBody\n--- PASS: TestFetchReadFailureClosesBody (0.00s)\n=== RUN   TestFetchTransportFailure\n--- PASS: TestFetchTransportFailure (0.00s)\n=== RUN   TestFetchMalformedURL\n--- PASS: TestFetchMalformedURL (0.00s)\n=== RUN   TestFetchHTTPRequest\n--- FAIL: TestFetchHTTPRequest (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 53 [running]:\ntesting.tRunner.func1.2({0x105129240, 0xc00003b0b0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x2b8\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x460\npanic({0x105129240?, 0xc00003b0b0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0x13c\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1051b8860, 0xc00003b060})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x30\nexample.com/metadata_test.TestFetchHTTPRequest(0xc0001aafc8)\n\t/private/tmp/go-testing-author-y6_tmx1p/service-http-boundary/fetch_test.go:187 +0xa8\ntesting.tRunner(0xc0001aafc8, 0x1051b42c0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x168\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x7c0\nFAIL\texample.com/metadata\t0.220s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "stage": "implementation",
+    "command": [
+      "rtk",
+      "proxy",
+      "which",
+      "staticcheck"
+    ],
+    "process_timeout_seconds": 60,
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "stage": "loopback-verification",
+    "sandbox": "escalated",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "process_timeout_seconds": 60,
+    "exit_code": 0,
+    "stdout": "=== RUN   TestFetchSuccessClosesBody\n=== RUN   TestFetchSuccessClosesBody/ordinary\n=== RUN   TestFetchSuccessClosesBody/preserve_name\n=== RUN   TestFetchSuccessClosesBody/surrounding_JSON_whitespace\n--- PASS: TestFetchSuccessClosesBody (0.00s)\n    --- PASS: TestFetchSuccessClosesBody/ordinary (0.00s)\n    --- PASS: TestFetchSuccessClosesBody/preserve_name (0.00s)\n    --- PASS: TestFetchSuccessClosesBody/surrounding_JSON_whitespace (0.00s)\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/empty_body\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/malformed_JSON\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/null\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/array\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/scalar\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/trailing_object\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/trailing_garbage\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/missing_name\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/empty_name\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/whitespace_name\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/null_name\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/wrong_name_type\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/missing_revision\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/zero_revision\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/negative_revision\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/null_revision\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/wrong_revision_type\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/fractional_revision\n=== RUN   TestFetchInvalidJSONOrFieldsClosesBody/overflowing_revision\n--- PASS: TestFetchInvalidJSONOrFieldsClosesBody (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/empty_body (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/malformed_JSON (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/null (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/array (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/scalar (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/trailing_object (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/trailing_garbage (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/missing_name (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/empty_name (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/whitespace_name (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/null_name (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/wrong_name_type (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/missing_revision (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/zero_revision (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/negative_revision (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/null_revision (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/wrong_revision_type (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/fractional_revision (0.00s)\n    --- PASS: TestFetchInvalidJSONOrFieldsClosesBody/overflowing_revision (0.00s)\n=== RUN   TestFetchNon200StatusClosesBody\n=== RUN   TestFetchNon200StatusClosesBody/201\n=== RUN   TestFetchNon200StatusClosesBody/204\n=== RUN   TestFetchNon200StatusClosesBody/206\n=== RUN   TestFetchNon200StatusClosesBody/404\n=== RUN   TestFetchNon200StatusClosesBody/500\n--- PASS: TestFetchNon200StatusClosesBody (0.00s)\n    --- PASS: TestFetchNon200StatusClosesBody/201 (0.00s)\n    --- PASS: TestFetchNon200StatusClosesBody/204 (0.00s)\n    --- PASS: TestFetchNon200StatusClosesBody/206 (0.00s)\n    --- PASS: TestFetchNon200StatusClosesBody/404 (0.00s)\n    --- PASS: TestFetchNon200StatusClosesBody/500 (0.00s)\n=== RUN   TestFetchReadFailureClosesBody\n--- PASS: TestFetchReadFailureClosesBody (0.00s)\n=== RUN   TestFetchTransportFailure\n--- PASS: TestFetchTransportFailure (0.00s)\n=== RUN   TestFetchMalformedURL\n--- PASS: TestFetchMalformedURL (0.00s)\n=== RUN   TestFetchHTTPRequest\n--- PASS: TestFetchHTTPRequest (0.00s)\n=== RUN   TestFetchCancellation\n=== RUN   TestFetchCancellation/before_response_headers\n=== RUN   TestFetchCancellation/while_reading_response_body\n--- PASS: TestFetchCancellation (0.00s)\n    --- PASS: TestFetchCancellation/before_response_headers (0.00s)\n    --- PASS: TestFetchCancellation/while_reading_response_body (0.00s)\nPASS\nok  \texample.com/metadata\t1.206s\n",
+    "stderr": ""
+  },
+  {
+    "stage": "final-verification",
+    "sandbox": "escalated",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-s",
+      "-w",
+      "fetch_test.go"
+    ],
+    "process_timeout_seconds": 60,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "stage": "final-verification",
+    "sandbox": "escalated",
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "process_timeout_seconds": 60,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "stage": "final-verification",
+    "sandbox": "escalated",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "process_timeout_seconds": 60,
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "stage": "final-verification",
+    "sandbox": "escalated",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=50",
+      "-timeout=30s",
+      "./..."
+    ],
+    "process_timeout_seconds": 60,
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/metadata\t1.327s\n",
+    "stderr": ""
+  }
+]

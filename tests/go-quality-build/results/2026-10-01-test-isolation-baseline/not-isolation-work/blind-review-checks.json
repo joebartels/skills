@@ -1,0 +1,116 @@
+[
+  {
+    "label": "toolchain",
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go version",
+    "cwd": null,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.01
+  },
+  {
+    "label": "platform-and-environment",
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local go env GOOS GOARCH GOVERSION GOTOOLCHAIN GOCACHE",
+    "cwd": null,
+    "stdout": "darwin\narm64\ngo1.26.5\nlocal\n/private/tmp/go-quality-testing-cache\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.009
+  },
+  {
+    "label": "supplied-diff",
+    "command": "rtk proxy diff -ru /private/tmp/go-independent-review-sqiumb21/original /private/tmp/go-independent-review-sqiumb21/candidate",
+    "cwd": null,
+    "stdout": "diff -ru /private/tmp/go-independent-review-sqiumb21/original/clamp.go /private/tmp/go-independent-review-sqiumb21/candidate/clamp.go\n--- /private/tmp/go-independent-review-sqiumb21/original/clamp.go\t2026-10-01 19:05:22\n+++ /private/tmp/go-independent-review-sqiumb21/candidate/clamp.go\t2026-10-01 19:24:47\n@@ -3,7 +3,7 @@\n // Clamp bounds value to the inclusive low/high interval.\n func Clamp(value, low, high int) int {\n \tif value <= low {\n-\t\treturn low + 1\n+\t\treturn low\n \t}\n \tif value > high {\n \t\treturn high\ndiff -ru /private/tmp/go-independent-review-sqiumb21/original/clamp_test.go /private/tmp/go-independent-review-sqiumb21/candidate/clamp_test.go\n--- /private/tmp/go-independent-review-sqiumb21/original/clamp_test.go\t2026-10-01 19:05:22\n+++ /private/tmp/go-independent-review-sqiumb21/candidate/clamp_test.go\t2026-10-01 19:24:27\n@@ -11,3 +11,23 @@\n \t\tt.Fatalf(\"Clamp = %d, want 5\", got)\n \t}\n }\n+\n+func TestLowerBound(t *testing.T) {\n+\ttests := []struct {\n+\t\tname  string\n+\t\tvalue int\n+\t\tlow   int\n+\t\thigh  int\n+\t}{\n+\t\t{name: \"below\", value: 0, low: 1, high: 9},\n+\t\t{name: \"at\", value: 1, low: 1, high: 9},\n+\t\t{name: \"single value interval\", value: 1, low: 1, high: 1},\n+\t}\n+\tfor _, tt := range tests {\n+\t\tt.Run(tt.name, func(t *testing.T) {\n+\t\t\tif got := clamp.Clamp(tt.value, tt.low, tt.high); got != tt.low {\n+\t\t\t\tt.Fatalf(\"Clamp(%d, %d, %d) = %d, want %d\", tt.value, tt.low, tt.high, got, tt.low)\n+\t\t\t}\n+\t\t})\n+\t}\n+}\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.006
+  },
+  {
+    "label": "original-package-tests",
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local GOPROXY=off GOSUMDB=off go test -count=1 -timeout=10s -v ./...",
+    "cwd": "/private/tmp/go-independent-review-sqiumb21/review-original",
+    "stdout": "=== RUN   TestInterior\n--- PASS: TestInterior (0.00s)\nPASS\nok  \texample.com/clamp\t0.184s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.311
+  },
+  {
+    "label": "candidate-package-tests",
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local GOPROXY=off GOSUMDB=off go test -count=1 -timeout=10s -v ./...",
+    "cwd": "/private/tmp/go-independent-review-sqiumb21/review-candidate",
+    "stdout": "=== RUN   TestInterior\n--- PASS: TestInterior (0.00s)\n=== RUN   TestLowerBound\n=== RUN   TestLowerBound/below\n=== RUN   TestLowerBound/at\n=== RUN   TestLowerBound/single_value_interval\n--- PASS: TestLowerBound (0.00s)\n    --- PASS: TestLowerBound/below (0.00s)\n    --- PASS: TestLowerBound/at (0.00s)\n    --- PASS: TestLowerBound/single_value_interval (0.00s)\nPASS\nok  \texample.com/clamp\t0.162s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.302
+  },
+  {
+    "label": "candidate-focused",
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local GOPROXY=off GOSUMDB=off go test -run '^TestLowerBound$' -count=1 -timeout=10s -v ./...",
+    "cwd": "/private/tmp/go-independent-review-sqiumb21/review-candidate",
+    "stdout": "=== RUN   TestLowerBound\n=== RUN   TestLowerBound/below\n=== RUN   TestLowerBound/at\n=== RUN   TestLowerBound/single_value_interval\n--- PASS: TestLowerBound (0.00s)\n    --- PASS: TestLowerBound/below (0.00s)\n    --- PASS: TestLowerBound/at (0.00s)\n    --- PASS: TestLowerBound/single_value_interval (0.00s)\nPASS\nok  \texample.com/clamp\t0.127s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.242
+  },
+  {
+    "label": "candidate-repeat-and-shuffle",
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local GOPROXY=off GOSUMDB=off go test -shuffle=82417 -count=10 -timeout=10s ./...",
+    "cwd": "/private/tmp/go-independent-review-sqiumb21/review-candidate",
+    "stdout": "ok  \texample.com/clamp\t0.119s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.233
+  },
+  {
+    "label": "old-lower-bound-mutation",
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local GOPROXY=off GOSUMDB=off go test -run '^TestLowerBound$' -count=1 -timeout=10s -v ./...",
+    "cwd": "/private/tmp/go-independent-review-sqiumb21/review-mutated",
+    "stdout": "=== RUN   TestLowerBound\n=== RUN   TestLowerBound/below\n    clamp_test.go:29: Clamp(0, 1, 9) = 2, want 1\n=== RUN   TestLowerBound/at\n    clamp_test.go:29: Clamp(1, 1, 9) = 2, want 1\n=== RUN   TestLowerBound/single_value_interval\n    clamp_test.go:29: Clamp(1, 1, 1) = 2, want 1\n--- FAIL: TestLowerBound (0.00s)\n    --- FAIL: TestLowerBound/below (0.00s)\n    --- FAIL: TestLowerBound/at (0.00s)\n    --- FAIL: TestLowerBound/single_value_interval (0.00s)\nFAIL\nFAIL\texample.com/clamp\t0.157s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.292
+  },
+  {
+    "label": "finite-contract-and-api-probe",
+    "command": "rtk proxy env GOCACHE=/private/tmp/go-quality-testing-cache GOTOOLCHAIN=local GOPROXY=off GOSUMDB=off go test -run '^TestReviewFiniteContract$' -count=1 -timeout=10s -v ./...",
+    "cwd": "/private/tmp/go-independent-review-sqiumb21/review-oracle",
+    "stdout": "=== RUN   TestReviewFiniteContract\n    review_contract_test.go:42: verified 781 supported input triples\n--- PASS: TestReviewFiniteContract (0.00s)\nPASS\nok  \texample.com/clamp\t0.156s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.293
+  },
+  {
+    "label": "source-preservation",
+    "method": "SHA-256 all supplied source files before and after checks",
+    "before": {
+      "original": {
+        "README.md": "6f83be8f1fb4bae7ae3a4118e64cbe65b2975efc99abcc7a450264a41f80a41c",
+        "clamp.go": "1531f4f12762a8de67afad06945345c7814fd5cb2bc07d5dca56e12acab66824",
+        "clamp_test.go": "4ee58de54175701b8b223487e181d74a32c55c593878c63b3b124b731781bc3f",
+        "go.mod": "6159f8c50c24e8a65f078eb935b56655ab3da9e77bd2c62ba41b955b40bb319d"
+      },
+      "candidate": {
+        "README.md": "6f83be8f1fb4bae7ae3a4118e64cbe65b2975efc99abcc7a450264a41f80a41c",
+        "clamp.go": "26a25065ebe8bbef18fa8b3c338de00db25fa10d7bc4f06c7bd51af2524f40f2",
+        "clamp_test.go": "2f2a5e5f7a4ef9bd1850fce7ea579a1a791eda60575109a2eb7d93443b1be80d",
+        "go.mod": "6159f8c50c24e8a65f078eb935b56655ab3da9e77bd2c62ba41b955b40bb319d"
+      }
+    },
+    "after": {
+      "original": {
+        "README.md": "6f83be8f1fb4bae7ae3a4118e64cbe65b2975efc99abcc7a450264a41f80a41c",
+        "clamp.go": "1531f4f12762a8de67afad06945345c7814fd5cb2bc07d5dca56e12acab66824",
+        "clamp_test.go": "4ee58de54175701b8b223487e181d74a32c55c593878c63b3b124b731781bc3f",
+        "go.mod": "6159f8c50c24e8a65f078eb935b56655ab3da9e77bd2c62ba41b955b40bb319d"
+      },
+      "candidate": {
+        "README.md": "6f83be8f1fb4bae7ae3a4118e64cbe65b2975efc99abcc7a450264a41f80a41c",
+        "clamp.go": "26a25065ebe8bbef18fa8b3c338de00db25fa10d7bc4f06c7bd51af2524f40f2",
+        "clamp_test.go": "2f2a5e5f7a4ef9bd1850fce7ea579a1a791eda60575109a2eb7d93443b1be80d",
+        "go.mod": "6159f8c50c24e8a65f078eb935b56655ab3da9e77bd2c62ba41b955b40bb319d"
+      }
+    },
+    "unchanged": true
+  }
+]

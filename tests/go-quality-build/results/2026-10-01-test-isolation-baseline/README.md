@@ -1,7 +1,9 @@
-# Isolation baseline preparation
+# Isolation baseline
 
 Five new Go1.22 standard-library modules cover file fixtures, environment/process configuration, HTTP dependency fidelity, worker timing/teardown and a pure-function control. All 15 starting test/vet/format commands pass. Final four applicable controller probes pass; ten shuffled race-enabled runs also pass. The production contracts are already implemented except the pure control's requested repair; these checks prepare the observation boundaries, not writing-skill improvement.
 
 Initial restricted HTTP bind failure and the first pre-freeze worker observation remain in preparation-initial-restricted.json and hash-verified preparation-initial-probes/. The final worker probe now timestamps the callback's completion event. Automatically approved local-loopback final checks are separate. No author sees controller probes/mutation recipes. Neither testing-writing skill is supplied to baseline authors.
 
-Fresh author outcomes, reconstructions and blind reviews are pending. Actual Go1.22 execution is unavailable; host Go1.26.5/darwin-arm64, no tool install or download.
+Five fresh authors and five separate anonymized reviews are complete. Every candidate reconstructs exactly from the frozen input and patch. Clean checks, applicable race/ten-shuffle/individual checks and four held probes pass. File Testing B reflects independently reproduced false failures when selecting named children; environment/HTTP/worker Testing A+ and pure-control A are strong baselines. See [comparison](comparison.md). No isolation draft or uplift exists in this baseline.
+
+[Manifest](manifest.json) and [checksum index](checksums.sha256) preserve exact launches/dispatches, guidance, original/candidate sources, raw selection/reports/checks, mutations and controller tooling. Actual Go1.22 execution is unavailable; host Go1.26.5/darwin-arm64, no tool install or download. HTTP listeners required automatically approved local-loopback access; restricted failures remain separate raw evidence. Individual author/reviewer repetitions beyond the controller's ten runs are observations, not an effort/speed benefit. Exact inherited model/reasoning IDs are unavailable; all contexts inherit unchanged settings with no override.

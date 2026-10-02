@@ -1,0 +1,29 @@
+--- a/store_test.go
++++ b/store_test.go
+@@ -2,6 +2,7 @@
+ 
+ import (
+ 	"fmt"
++	"os"
+ 	"testing"
+ 
+ 	"example.com/filestore"
+@@ -33,13 +34,17 @@
+ 		{name: "beta", values: []string{"beta", "beta replacement", "beta"}},
+ 		{name: "empty", values: []string{"", "line one\nline two\x00", ""}},
+ 	}
++	var roots []string
+ 	for i := range instances {
+ 		// The parent owns each root so it also survives the final reads below.
+-		instances[i].store = filestore.New(t.TempDir())
++		root := t.TempDir()
++		roots = append(roots, root)
++		instances[i].store = filestore.New(root)
+ 	}
+ 
+ 	// This group waits for its parallel children before the final reads run.
+ 	t.Run("instances", func(t *testing.T) {
++		defer func() { for _, root := range roots { os.RemoveAll(root) } }()
+ 		for _, instance := range instances {
+ 			t.Run(instance.name, func(t *testing.T) {
+ 				t.Parallel()

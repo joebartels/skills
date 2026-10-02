@@ -1,0 +1,615 @@
+[
+  {
+    "name": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": null,
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "name": "platform",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "CGO_ENABLED"
+    ],
+    "cwd": null,
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "darwin\narm64\n1\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "name": "supplied_diff",
+    "command": [
+      "rtk",
+      "proxy",
+      "diff",
+      "-ru",
+      "/private/tmp/go-independent-review-ry7bg0wi/original",
+      "/private/tmp/go-independent-review-ry7bg0wi/candidate"
+    ],
+    "cwd": null,
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "diff -ru /private/tmp/go-independent-review-ry7bg0wi/original/poll_test.go /private/tmp/go-independent-review-ry7bg0wi/candidate/poll_test.go\n--- /private/tmp/go-independent-review-ry7bg0wi/original/poll_test.go\t2026-10-01 19:05:22\n+++ /private/tmp/go-independent-review-ry7bg0wi/candidate/poll_test.go\t2026-10-01 19:21:52\n@@ -3,33 +3,371 @@\n import (\n \t\"context\"\n \t\"errors\"\n+\t\"os\"\n+\t\"sync\"\n+\t\"sync/atomic\"\n \t\"testing\"\n \t\"time\"\n \n \t\"example.com/poller\"\n )\n \n+const waitLimit = 2 * time.Second\n+\n+// A closed done channel lets both the test and its cleanup join the same run.\n+type pollRun struct {\n+\tdone chan struct{}\n+\terr  error\n+}\n+\n+func startPoll(t *testing.T, ctx context.Context, cancel context.CancelFunc, interval time.Duration, callback func(context.Context) error) *pollRun {\n+\tt.Helper()\n+\trun := &pollRun{done: make(chan struct{})}\n+\tgo func() {\n+\t\trun.err = poller.Poll(ctx, interval, callback)\n+\t\tclose(run.done)\n+\t}()\n+\tt.Cleanup(func() {\n+\t\tcancel()\n+\t\tawait(t, run.done, \"Poll teardown\")\n+\t})\n+\treturn run\n+}\n+\n+func await[T any](t *testing.T, ch <-chan T, operation string) T {\n+\tt.Helper()\n+\ttimer := time.NewTimer(waitLimit)\n+\tdefer timer.Stop()\n+\tselect {\n+\tcase value := <-ch:\n+\t\treturn value\n+\tcase <-timer.C:\n+\t\tt.Fatalf(\"timed out waiting for %s\", operation)\n+\t\tvar zero T\n+\t\treturn zero\n+\t}\n+}\n+\n+func (run *pollRun) wait(t *testing.T) error {\n+\tt.Helper()\n+\tawait(t, run.done, \"Poll return\")\n+\treturn run.err\n+}\n+\n func TestCancellation(t *testing.T) {\n+\tt.Parallel()\n \tctx, cancel := context.WithCancel(context.Background())\n-\tdefer cancel()\n-\tdone := make(chan error, 1)\n-\tgo func() { done <- poller.Poll(ctx, time.Hour, func(context.Context) error { return nil }) }()\n-\ttime.Sleep(5 * time.Millisecond)\n+\treturned := make(chan struct{})\n+\tvar calls atomic.Int32\n+\trun := startPoll(t, ctx, cancel, time.Hour, func(context.Context) error {\n+\t\tif calls.Add(1) == 1 {\n+\t\t\tclose(returned)\n+\t\t}\n+\t\treturn nil\n+\t})\n+\n+\t// The first callback must begin promptly, even with an hour-long interval.\n+\tawait(t, returned, \"first callback\")\n \tcancel()\n+\tif err := run.wait(t); err != nil {\n+\t\tt.Fatalf(\"Poll after cancellation = %v, want nil\", err)\n+\t}\n+\tif got := calls.Load(); got != 1 {\n+\t\tt.Fatalf(\"callback calls = %d, want 1\", got)\n+\t}\n+}\n+\n+func TestAlreadyCanceled(t *testing.T) {\n+\tt.Parallel()\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tcancel()\n+\tvar calls atomic.Int32\n+\trun := startPoll(t, ctx, cancel, time.Hour, func(context.Context) error {\n+\t\tcalls.Add(1)\n+\t\treturn errors.New(\"unexpected callback\")\n+\t})\n+\tif err := run.wait(t); err != nil {\n+\t\tt.Fatalf(\"Poll with canceled context = %v, want nil\", err)\n+\t}\n+\tif got := calls.Load(); got != 0 {\n+\t\tt.Fatalf(\"callback calls = %d, want 0\", got)\n+\t}\n+}\n+\n+func TestInvalidInterval(t *testing.T) {\n+\tt.Parallel()\n+\tfor _, interval := range []time.Duration{0, -time.Nanosecond, -time.Second} {\n+\t\tt.Run(interval.String(), func(t *testing.T) {\n+\t\t\tctx, cancel := context.WithCancel(context.Background())\n+\t\t\tvar calls atomic.Int32\n+\t\t\trun := startPoll(t, ctx, cancel, interval, func(context.Context) error {\n+\t\t\t\tcalls.Add(1)\n+\t\t\t\treturn errors.New(\"unexpected callback\")\n+\t\t\t})\n+\t\t\tif err := run.wait(t); err == nil {\n+\t\t\t\tt.Fatal(\"Poll with nonpositive interval returned nil\")\n+\t\t\t}\n+\t\t\tif got := calls.Load(); got != 0 {\n+\t\t\t\tt.Fatalf(\"callback calls = %d, want 0\", got)\n+\t\t\t}\n+\t\t})\n+\t}\n+}\n+\n+func TestCallbackError(t *testing.T) {\n+\tt.Parallel()\n+\twant := errors.New(\"poll failed\")\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tvar calls atomic.Int32\n+\trun := startPoll(t, ctx, cancel, time.Hour, func(context.Context) error {\n+\t\tcalls.Add(1)\n+\t\treturn want\n+\t})\n+\tif err := run.wait(t); err != want || !errors.Is(err, want) {\n+\t\tt.Fatalf(\"Poll = %v, want original callback error %v\", err, want)\n+\t}\n+\tif got := calls.Load(); got != 1 {\n+\t\tt.Fatalf(\"callback calls = %d, want 1\", got)\n+\t}\n+}\n+\n+func TestCallbackErrorDuringCancellation(t *testing.T) {\n+\tt.Parallel()\n+\twant := errors.New(\"callback failed during cancellation\")\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tentered := make(chan struct{})\n+\trun := startPoll(t, ctx, cancel, time.Hour, func(ctx context.Context) error {\n+\t\tclose(entered)\n+\t\t<-ctx.Done()\n+\t\treturn want\n+\t})\n+\tawait(t, entered, \"callback entry\")\n+\tcancel()\n+\tif err := run.wait(t); err != want {\n+\t\tt.Fatalf(\"Poll = %v, want original callback error %v\", err, want)\n+\t}\n+}\n+\n+func TestCallerContext(t *testing.T) {\n+\tt.Parallel()\n+\ttype contextKey struct{}\n+\tparent := context.WithValue(context.Background(), contextKey{}, \"caller value\")\n+\tctx, cancel := context.WithCancel(parent)\n+\treceived := make(chan context.Context, 1)\n+\twant := errors.New(\"finished\")\n+\trun := startPoll(t, ctx, cancel, time.Hour, func(callbackCtx context.Context) error {\n+\t\treceived <- callbackCtx\n+\t\treturn want\n+\t})\n+\tif got := await(t, received, \"callback context\"); got != ctx {\n+\t\tt.Errorf(\"callback context = %v, want caller context %v\", got, ctx)\n+\t}\n+\tif err := run.wait(t); err != want {\n+\t\tt.Fatalf(\"Poll = %v, want %v\", err, want)\n+\t}\n+}\n+\n+func TestRecurrenceAfterCompletion(t *testing.T) {\n+\tt.Parallel()\n+\tconst interval = 20 * time.Millisecond\n+\ttype event struct {\n+\t\tcall   int32\n+\t\tstart  bool\n+\t\tat     time.Time\n+\t\tactive int32\n+\t}\n+\tevents := make(chan event, 8)\n+\trelease := make(chan struct{})\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tvar calls, active atomic.Int32\n+\twant := errors.New(\"three callbacks complete\")\n+\trun := startPoll(t, ctx, cancel, interval, func(ctx context.Context) error {\n+\t\tcall := calls.Add(1)\n+\t\tcurrent := active.Add(1)\n+\t\tdefer active.Add(-1)\n+\t\tselect {\n+\t\tcase events <- event{call: call, start: true, at: time.Now(), active: current}:\n+\t\tcase <-ctx.Done():\n+\t\t\treturn nil\n+\t\t}\n+\t\tif call == 1 {\n+\t\t\tselect {\n+\t\t\tcase <-release:\n+\t\t\tcase <-ctx.Done():\n+\t\t\t\treturn nil\n+\t\t\t}\n+\t\t}\n+\t\tif call == 3 {\n+\t\t\treturn want\n+\t\t}\n+\t\tselect {\n+\t\tcase events <- event{call: call, at: time.Now()}:\n+\t\tcase <-ctx.Done():\n+\t\t}\n+\t\treturn nil\n+\t})\n+\n+\tfirst := await(t, events, \"first callback entry\")\n+\tif first.call != 1 || !first.start || first.active != 1 {\n+\t\tt.Fatalf(\"first callback event = %+v\", first)\n+\t}\n+\t// Hold the callback longer than the interval to expose tick-based or\n+\t// overlapping recurrence. This timer measures a contract, not readiness.\n+\thold := time.NewTimer(2 * interval)\n+\tdefer hold.Stop()\n \tselect {\n-\tcase err := <-done:\n+\tcase got := <-events:\n+\t\tt.Fatalf(\"callback event while first callback is blocked: %+v\", got)\n+\tcase <-hold.C:\n+\t}\n+\tclose(release)\n+\tfor call := int32(2); call <= 3; call++ {\n+\t\tfinished := await(t, events, \"preceding callback completion\")\n+\t\tstarted := await(t, events, \"recurring callback entry\")\n+\t\tif finished.start || finished.call != call-1 {\n+\t\t\tt.Fatalf(\"completion event = %+v, want callback %d completion\", finished, call-1)\n+\t\t}\n+\t\tif !started.start || started.call != call || started.active != 1 {\n+\t\t\tt.Fatalf(\"start event = %+v, want sequential callback %d\", started, call)\n+\t\t}\n+\t\tif elapsed := started.at.Sub(finished.at); elapsed < interval {\n+\t\t\tt.Errorf(\"callback %d started %v after preceding completion, want at least %v\", call, elapsed, interval)\n+\t\t}\n+\t}\n+\tif err := run.wait(t); err != want {\n+\t\tt.Fatalf(\"Poll = %v, want %v\", err, want)\n+\t}\n+\tif got := calls.Load(); got != 3 {\n+\t\tt.Fatalf(\"callback calls = %d, want 3\", got)\n+\t}\n+}\n+\n+func TestCancellationWaitsForCleanupAndPreservesCallerResource(t *testing.T) {\n+\tt.Parallel()\n+\tfile, err := os.CreateTemp(t.TempDir(), \"poll-resource\")\n+\tif err != nil {\n+\t\tt.Fatal(err)\n+\t}\n+\t// Registered before Poll's cleanup so the run is joined before closing\n+\t// the caller-owned fixture, including when an assertion fails.\n+\tt.Cleanup(func() {\n+\t\tif err := file.Close(); err != nil {\n+\t\t\tt.Errorf(\"close caller resource: %v\", err)\n+\t\t}\n+\t})\n+\tif _, err := file.WriteString(\"x\"); err != nil {\n+\t\tt.Fatal(err)\n+\t}\n+\tctx, cancel := context.WithCancel(context.Background())\n+\tentered := make(chan error, 1)\n+\tcanceled := make(chan struct{})\n+\tcleaned := make(chan struct{})\n+\treleaseCleanup := make(chan struct{})\n+\tvar releaseOnce sync.Once\n+\trun := startPoll(t, ctx, cancel, time.Hour, func(ctx context.Context) error {\n+\t\tdefer func() {\n+\t\t\t<-releaseCleanup\n+\t\t\tclose(cleaned)\n+\t\t}()\n+\t\tvar data [1]byte\n+\t\t_, err := file.ReadAt(data[:], 0)\n+\t\tentered <- err\n \t\tif err != nil {\n-\t\t\tt.Fatal(err)\n+\t\t\treturn err\n \t\t}\n-\tcase <-time.After(time.Second):\n-\t\tt.Fatal(\"Poll did not stop after cancellation\")\n+\t\t<-ctx.Done()\n+\t\tclose(canceled)\n+\t\treturn nil\n+\t})\n+\tt.Cleanup(func() { releaseOnce.Do(func() { close(releaseCleanup) }) })\n+\tif err := await(t, entered, \"callback resource use\"); err != nil {\n+\t\tt.Fatalf(\"callback read caller resource: %v\", err)\n \t}\n+\tcancel()\n+\tawait(t, canceled, \"callback cancellation\")\n+\t// Callback entry and cancellation are both observed before this bounded\n+\t// negative check. The deferred cleanup remains deliberately blocked.\n+\tobservation := time.NewTimer(25 * time.Millisecond)\n+\tdefer observation.Stop()\n+\tselect {\n+\tcase <-run.done:\n+\t\tt.Fatal(\"Poll returned before callback cleanup completed\")\n+\tcase <-observation.C:\n+\t}\n+\treleaseOnce.Do(func() { close(releaseCleanup) })\n+\tif err := run.wait(t); err != nil {\n+\t\tt.Fatalf(\"Poll after cancellation = %v, want nil\", err)\n+\t}\n+\tselect {\n+\tcase <-cleaned:\n+\tdefault:\n+\t\tt.Fatal(\"Poll returned before deferred cleanup signaled completion\")\n+\t}\n+\tif _, err := file.Stat(); err != nil {\n+\t\tt.Fatalf(\"caller resource unusable after Poll returned: %v\", err)\n+\t}\n }\n \n-func TestCallbackError(t *testing.T) {\n-\twant := errors.New(\"poll failed\")\n-\terr := poller.Poll(context.Background(), time.Hour, func(context.Context) error { return want })\n-\tif !errors.Is(err, want) {\n-\t\tt.Fatalf(\"Poll = %v, want callback cause\", err)\n+func TestIndependentInvocations(t *testing.T) {\n+\tt.Parallel()\n+\tctxA, cancelA := context.WithCancel(context.Background())\n+\tctxB, cancelB := context.WithCancel(context.Background())\n+\tenteredA := make(chan struct{})\n+\tcanceledA := make(chan struct{})\n+\treleaseA := make(chan struct{})\n+\tvar releaseAOnce sync.Once\n+\trunA := startPoll(t, ctxA, cancelA, time.Hour, func(ctx context.Context) error {\n+\t\tdefer func() { <-releaseA }()\n+\t\tclose(enteredA)\n+\t\t<-ctx.Done()\n+\t\tclose(canceledA)\n+\t\treturn nil\n+\t})\n+\tt.Cleanup(func() { releaseAOnce.Do(func() { close(releaseA) }) })\n+\n+\tenteredB := make(chan int32, 2)\n+\treleaseB := make(chan struct{})\n+\tvar callsB atomic.Int32\n+\twant := errors.New(\"second invocation complete\")\n+\trunB := startPoll(t, ctxB, cancelB, 5*time.Millisecond, func(ctx context.Context) error {\n+\t\tcall := callsB.Add(1)\n+\t\tselect {\n+\t\tcase enteredB <- call:\n+\t\tcase <-ctx.Done():\n+\t\t\treturn nil\n+\t\t}\n+\t\tif call == 1 {\n+\t\t\tselect {\n+\t\t\tcase <-releaseB:\n+\t\t\tcase <-ctx.Done():\n+\t\t\t}\n+\t\t\treturn nil\n+\t\t}\n+\t\treturn want\n+\t})\n+\tawait(t, enteredA, \"first invocation entry\")\n+\tif got := await(t, enteredB, \"second invocation entry\"); got != 1 {\n+\t\tt.Fatalf(\"second invocation callback = %d, want 1\", got)\n+\t}\n+\tcancelA()\n+\tawait(t, canceledA, \"first invocation cancellation\")\n+\tclose(releaseB)\n+\tif got := await(t, enteredB, \"second invocation recurrence\"); got != 2 {\n+\t\tt.Fatalf(\"second invocation callback = %d, want 2\", got)\n+\t}\n+\tif err := runB.wait(t); err != want {\n+\t\tt.Fatalf(\"second Poll = %v, want %v\", err, want)\n+\t}\n+\tif ctxB.Err() != nil {\n+\t\tt.Fatalf(\"second invocation context canceled: %v\", ctxB.Err())\n+\t}\n+\tselect {\n+\tcase <-runA.done:\n+\t\tt.Fatal(\"first Poll returned while its callback cleanup remained blocked\")\n+\tdefault:\n+\t}\n+\treleaseAOnce.Do(func() { close(releaseA) })\n+\tif err := runA.wait(t); err != nil {\n+\t\tt.Fatalf(\"first Poll after cancellation = %v, want nil\", err)\n \t}\n }\n",
+    "stderr": "",
+    "exit": 1
+  },
+  {
+    "name": "original_tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/original",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.181s\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "name": "candidate_tests",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.259s\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "name": "candidate_race_shuffle",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=50",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t5.490s\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "name": "mutation_fixed_ticker",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestRecurrenceAfterCompletion$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_fixed_ticker",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRecurrenceAfterCompletion (0.06s)\n    poll_test.go:234: callback 2 started 3\u00b5s after preceding completion, want at least 20ms\n    poll_test.go:234: callback 3 started 19.061458ms after preceding completion, want at least 20ms\nFAIL\nFAIL\texample.com/poller\t0.323s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 0.4756122080143541,
+    "mutation_source": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_fixed_ticker/poll.go",
+    "mutation_tests": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_fixed_ticker/poll_test.go"
+  },
+  {
+    "name": "mutation_no_completion_delay",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestRecurrenceAfterCompletion$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_no_completion_delay",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestRecurrenceAfterCompletion (0.04s)\n    poll_test.go:234: callback 2 started 9.334\u00b5s after preceding completion, want at least 20ms\n    poll_test.go:234: callback 3 started 1.375\u00b5s after preceding completion, want at least 20ms\nFAIL\nFAIL\texample.com/poller\t0.220s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 0.39569479192141443,
+    "mutation_source": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_no_completion_delay/poll.go",
+    "mutation_tests": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_no_completion_delay/poll_test.go"
+  },
+  {
+    "name": "mutation_early_return",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestCancellationWaitsForCleanupAndPreservesCallerResource$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_early_return",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCancellationWaitsForCleanupAndPreservesCallerResource (0.00s)\n    poll_test.go:294: Poll returned before callback cleanup completed\nFAIL\nFAIL\texample.com/poller\t0.185s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 0.36925629200413823,
+    "mutation_source": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_early_return/poll.go",
+    "mutation_tests": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_early_return/poll_test.go"
+  },
+  {
+    "name": "mutation_suppress_canceled_error",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestCallbackErrorDuringCancellation$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_suppress_canceled_error",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCallbackErrorDuringCancellation (0.00s)\n    poll_test.go:147: Poll = <nil>, want original callback error callback failed during cancellation\nFAIL\nFAIL\texample.com/poller\t0.167s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 0.3147318750852719,
+    "mutation_source": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_suppress_canceled_error/poll.go",
+    "mutation_tests": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_suppress_canceled_error/poll_test.go"
+  },
+  {
+    "name": "mutation_global_serialization",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestIndependentInvocations$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_global_serialization",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestIndependentInvocations (4.00s)\n    poll_test.go:349: timed out waiting for second invocation entry\n    poll_test.go:32: timed out waiting for Poll teardown\nFAIL\nFAIL\texample.com/poller\t4.166s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 4.320075666997582,
+    "mutation_source": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_global_serialization/poll.go",
+    "mutation_tests": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_global_serialization/poll_test.go"
+  },
+  {
+    "name": "mutation_delayed_first_callback",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestCancellation$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_delayed_first_callback",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCancellation (2.00s)\n    poll_test.go:70: timed out waiting for first callback\nFAIL\nFAIL\texample.com/poller\t2.181s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 2.342891874955967,
+    "mutation_source": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_delayed_first_callback/poll.go",
+    "mutation_tests": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_delayed_first_callback/poll_test.go"
+  },
+  {
+    "name": "mutation_replaced_context",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestCallerContext$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_replaced_context",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCallerContext (0.00s)\n    poll_test.go:163: callback context = context.Background, want caller context context.Background.WithValue(poller_test.contextKey, caller value).WithCancel\nFAIL\nFAIL\texample.com/poller\t0.175s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 0.33230079198256135,
+    "mutation_source": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_replaced_context/poll.go",
+    "mutation_tests": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_replaced_context/poll_test.go"
+  },
+  {
+    "name": "mutation_precanceled_callback",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestAlreadyCanceled$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_precanceled_callback",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestAlreadyCanceled (0.00s)\n    poll_test.go:90: Poll with canceled context = unexpected callback, want nil\nFAIL\nFAIL\texample.com/poller\t0.174s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 0.3240146669559181,
+    "mutation_source": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_precanceled_callback/poll.go",
+    "mutation_tests": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_precanceled_callback/poll_test.go"
+  },
+  {
+    "name": "mutation_invalid_calls_callback",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestInvalidInterval$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_invalid_calls_callback",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestInvalidInterval (0.00s)\n    --- FAIL: TestInvalidInterval/0s (0.00s)\n        poll_test.go:111: callback calls = 1, want 0\n    --- FAIL: TestInvalidInterval/-1ns (0.00s)\n        poll_test.go:111: callback calls = 1, want 0\n    --- FAIL: TestInvalidInterval/-1s (0.00s)\n        poll_test.go:111: callback calls = 1, want 0\nFAIL\nFAIL\texample.com/poller\t0.161s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 0.3098323328886181,
+    "mutation_source": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_invalid_calls_callback/poll.go",
+    "mutation_tests": "/private/tmp/go-independent-review-ry7bg0wi/verification/mutation_invalid_calls_callback/poll_test.go"
+  },
+  {
+    "name": "forced_failure_cleanup",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestCancellationWaitsForCleanupAndPreservesCallerResource$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/verification/forced_failure_cleanup",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCancellationWaitsForCleanupAndPreservesCallerResource (0.00s)\n    poll_test.go:288: FORCED REVIEW FAILURE before releasing callback cleanup\nFAIL\nFAIL\texample.com/poller\t0.185s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 0.3606707910075784,
+    "mutation_source": "/private/tmp/go-independent-review-ry7bg0wi/verification/forced_failure_cleanup/poll.go",
+    "mutation_tests": "/private/tmp/go-independent-review-ry7bg0wi/verification/forced_failure_cleanup/poll_test.go"
+  },
+  {
+    "name": "forced_failure_independent_cleanup",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestIndependentInvocations$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/verification/forced_failure_independent_cleanup",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestIndependentInvocations (0.00s)\n    poll_test.go:354: FORCED REVIEW FAILURE while both invocations remain active\nFAIL\nFAIL\texample.com/poller\t0.184s\nFAIL\n",
+    "stderr": "",
+    "exit": 1,
+    "elapsed_seconds": 0.3571366249816492,
+    "mutation_source": "/private/tmp/go-independent-review-ry7bg0wi/verification/forced_failure_independent_cleanup/poll.go",
+    "mutation_tests": "/private/tmp/go-independent-review-ry7bg0wi/verification/forced_failure_independent_cleanup/poll_test.go"
+  },
+  {
+    "name": "candidate_stdversion",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "-stdversion",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "name": "isolated_TestCancellation",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestCancellation$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.145s\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "name": "isolated_TestAlreadyCanceled",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestAlreadyCanceled$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.115s\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "name": "isolated_TestInvalidInterval",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestInvalidInterval$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.113s\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "name": "isolated_TestCallbackError",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestCallbackError$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.115s\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "name": "isolated_TestCallbackErrorDuringCancellation",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestCallbackErrorDuringCancellation$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.114s\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "name": "isolated_TestCallerContext",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestCallerContext$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.116s\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "name": "isolated_TestRecurrenceAfterCompletion",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestRecurrenceAfterCompletion$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.198s\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "name": "isolated_TestCancellationWaitsForCleanupAndPreservesCallerResource",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestCancellationWaitsForCleanupAndPreservesCallerResource$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.177s\n",
+    "stderr": "",
+    "exit": 0
+  },
+  {
+    "name": "isolated_TestIndependentInvocations",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestIndependentInvocations$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-ry7bg0wi/candidate",
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.134s\n",
+    "stderr": "",
+    "exit": 0
+  }
+]

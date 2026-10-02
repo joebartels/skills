@@ -1,0 +1,87 @@
+{
+  "semantic_id": "poll-discard-context",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "45c759e74a30a1816445a29cc7214a44d170ba4d807fd140039abe016d2c8796",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-sgiuwfk1/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.263s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.442
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/worker-timing/mutations/poll-discard-context/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-sgiuwfk1/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-sgiuwfk1/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/poller\t0.142s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.296
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-sgiuwfk1/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestCallerContext (0.00s)\n    poll_test.go:163: callback context = context.Background, want caller context context.Background.WithValue(poller_test.contextKey, caller value).WithCancel\n--- FAIL: TestCallbackErrorDuringCancellation (4.00s)\n    poll_test.go:146: timed out waiting for Poll return\n    poll_test.go:32: timed out waiting for Poll teardown\n--- FAIL: TestCancellationWaitsForCleanupAndPreservesCallerResource (4.01s)\n    poll_test.go:287: timed out waiting for callback cancellation\n    poll_test.go:32: timed out waiting for Poll teardown\n--- FAIL: TestIndependentInvocations (6.01s)\n    poll_test.go:353: timed out waiting for first invocation cancellation\n    poll_test.go:32: timed out waiting for Poll teardown\n    poll_test.go:32: timed out waiting for Poll teardown\nFAIL\nFAIL\texample.com/poller\t6.137s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 6.252
+  },
+  "classification": "detected by meaningful context assertion",
+  "controller_interpretation": "TestCallerContext reports context.Background rather than caller context. Separate finite waits report cancellation/cleanup gaps; neither unrelated crash nor harness timeout is credited."
+}

@@ -1,0 +1,36 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^alpha$",
+      "./..."
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/library-file-fixtures/candidate",
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    store_test.go:70: beta: final Get = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances816772371/002/same-key: no such file or directory; want \"beta\"\n    store_test.go:70: empty: final Get = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances816772371/003/same-key: no such file or directory; want \"\"\nFAIL\nFAIL\texample.com/filestore\t0.141s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestStoreIndependentInstances$/^instances$/^alpha$/^replacements$/^value-1$",
+      "./..."
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/library-file-fixtures/candidate",
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    store_test.go:70: alpha: final Get = \"alpha replacement\", <nil>; want \"alpha\"\n    store_test.go:70: beta: final Get = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2900702022/002/same-key: no such file or directory; want \"beta\"\n    store_test.go:70: empty: final Get = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances2900702022/003/same-key: no such file or directory; want \"\"\nFAIL\nFAIL\texample.com/filestore\t0.117s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  }
+]

@@ -1,0 +1,363 @@
+--- a/fetch_test.go
++++ b/fetch_test.go
+@@ -2,24 +2,354 @@
+ 
+ import (
+ 	"context"
++	"errors"
++	"fmt"
+ 	"io"
+ 	"net/http"
++	"net/http/httptest"
+ 	"strings"
++	"sync"
+ 	"testing"
++	"time"
+ 
+ 	"example.com/metadata"
+ )
+ 
++// roundTrip exercises Fetch through http.Client while replacing its transport.
++// It verifies request construction, response handling, and body ownership, but
++// does not exercise DNS, sockets, HTTP framing, or net/http cancellation.
+ type roundTrip func(*http.Request) (*http.Response, error)
+ 
+ func (f roundTrip) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+ 
+-func TestFetchMetadata(t *testing.T) {
++type trackedBody struct {
++	io.Reader
++	closeCalls int
++}
++
++func (b *trackedBody) Close() error {
++	b.closeCalls++
++	return nil
++}
++
++func responseClient(status int, body io.ReadCloser) *http.Client {
++	return &http.Client{Transport: roundTrip(func(*http.Request) (*http.Response, error) {
++		return &http.Response{StatusCode: status, Body: body}, nil
++	})}
++}
++
++func assertClosed(t *testing.T, body *trackedBody) {
++	t.Helper()
++	if body.closeCalls != 1 {
++		t.Errorf("body closed %d times, want 1 before Fetch returns", body.closeCalls)
++	}
++}
++
++func assertFailure(t *testing.T, got metadata.Metadata, err error) {
++	t.Helper()
++	if got != (metadata.Metadata{}) {
++		t.Errorf("Fetch returned %#v on failure, want zero Metadata", got)
++	}
++	if err == nil || strings.TrimSpace(err.Error()) == "" {
++		t.Errorf("Fetch error = %v, want a useful nonempty error", err)
++	}
++}
++
++func TestFetchSuccessClosesBody(t *testing.T) {
++	tests := []struct {
++		name string
++		json string
++		want metadata.Metadata
++	}{
++		{"ordinary", `{"name":"first","revision":1}`, metadata.Metadata{Name: "first", Revision: 1}},
++		{"preserve name", `{"name":" \tCafé\n ","revision":27}`, metadata.Metadata{Name: " \tCafé\n ", Revision: 27}},
++		{"surrounding JSON whitespace", "\n {\"revision\":2,\"name\":\"second\"} \t\n", metadata.Metadata{Name: "second", Revision: 2}},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			body := &trackedBody{Reader: strings.NewReader(tt.json)}
++			got, err := metadata.Fetch(context.Background(), responseClient(http.StatusOK, body), "http://example.invalid/catalog")
++			assertClosed(t, body)
++			if err != nil {
++				t.Fatalf("Fetch error = %v", err)
++			}
++			if got != tt.want {
++				t.Errorf("Fetch = %#v, want %#v", got, tt.want)
++			}
++		})
++	}
++}
++
++func TestFetchInvalidJSONOrFieldsClosesBody(t *testing.T) {
++	tests := []struct {
++		name string
++		json string
++	}{
++		{"empty body", ""},
++		{"malformed JSON", `{"name":"first","revision":1`},
++		{"null", `null`},
++		{"array", `[{"name":"first","revision":1}]`},
++		{"scalar", `"first"`},
++		{"trailing object", `{"name":"first","revision":1} {"name":"second","revision":2}`},
++		{"trailing garbage", `{"name":"first","revision":1} garbage`},
++		{"missing name", `{"revision":1}`},
++		{"empty name", `{"name":"","revision":1}`},
++		{"whitespace name", `{"name":" \t\n\u2003","revision":1}`},
++		{"null name", `{"name":null,"revision":1}`},
++		{"wrong name type", `{"name":42,"revision":1}`},
++		{"missing revision", `{"name":"first"}`},
++		{"zero revision", `{"name":"first","revision":0}`},
++		{"negative revision", `{"name":"first","revision":-1}`},
++		{"null revision", `{"name":"first","revision":null}`},
++		{"wrong revision type", `{"name":"first","revision":"1"}`},
++		{"fractional revision", `{"name":"first","revision":1.5}`},
++		{"overflowing revision", `{"name":"first","revision":999999999999999999999999}`},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			body := &trackedBody{Reader: strings.NewReader(tt.json)}
++			got, err := metadata.Fetch(context.Background(), responseClient(http.StatusOK, body), "http://example.invalid/catalog")
++			assertClosed(t, body)
++			assertFailure(t, got, err)
++		})
++	}
++}
++
++func TestFetchNon200StatusClosesBody(t *testing.T) {
++	for _, status := range []int{http.StatusCreated, http.StatusNoContent, http.StatusPartialContent, http.StatusNotFound, http.StatusInternalServerError} {
++		t.Run(fmt.Sprint(status), func(t *testing.T) {
++			body := &trackedBody{Reader: strings.NewReader(`{"name":"first","revision":1}`)}
++			got, err := metadata.Fetch(context.Background(), responseClient(status, body), "http://example.invalid/catalog")
++			assertClosed(t, body)
++			assertFailure(t, got, err)
++			if err != nil && !strings.Contains(err.Error(), fmt.Sprint(status)) {
++				t.Errorf("error %q does not identify HTTP status %d", err, status)
++			}
++		})
++	}
++}
++
++type failingReader struct {
++	err error
++}
++
++func (r failingReader) Read(p []byte) (int, error) {
++	// Return valid metadata bytes alongside a read failure. Fetch must not accept
++	// the partial result just because those bytes happen to form valid JSON.
++	return copy(p, `{"name":"first","revision":1}`), r.err
++}
++
++func TestFetchReadFailureClosesBody(t *testing.T) {
++	wantErr := errors.New("response read failed")
++	body := &trackedBody{Reader: failingReader{err: wantErr}}
++	got, err := metadata.Fetch(context.Background(), responseClient(http.StatusOK, body), "http://example.invalid/catalog")
++	assertClosed(t, body)
++	assertFailure(t, got, err)
++	if !errors.Is(err, wantErr) {
++		t.Errorf("Fetch error = %v, want errors.Is(err, read failure)", err)
++	}
++}
++
++func TestFetchTransportFailure(t *testing.T) {
++	wantErr := errors.New("transport failed")
+ 	client := &http.Client{Transport: roundTrip(func(*http.Request) (*http.Response, error) {
+-		return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader(`{"name":"first","revision":1}`))}, nil
++		return nil, wantErr
+ 	})}
+ 	got, err := metadata.Fetch(context.Background(), client, "http://example.invalid/catalog")
+-	if err != nil || got.Name != "first" || got.Revision != 1 {
+-		t.Fatalf("Fetch = %#v, %v", got, err)
+-	}
+-}
++	assertFailure(t, got, err)
++	if !errors.Is(err, wantErr) {
++		t.Errorf("Fetch error = %v, want errors.Is(err, transport failure)", err)
++	}
++}
++
++func TestFetchMalformedURL(t *testing.T) {
++	called := false
++	client := &http.Client{Transport: roundTrip(func(*http.Request) (*http.Response, error) {
++		called = true
++		return nil, errors.New("unexpected transport call")
++	})}
++	got, err := metadata.Fetch(context.Background(), client, "http://[::1")
++	assertFailure(t, got, err)
++	if called {
++		t.Error("Fetch called the transport for a malformed URL")
++	}
++}
++
++// The httptest fixtures use real loopback HTTP and the standard transport. They
++// verify wire request details and cancellation across http.Client and server
++// request contexts; they require permission to bind a local TCP listener.
++func TestFetchHTTPRequest(t *testing.T) {
++	type requestDetails struct {
++		method     string
++		requestURI string
++	}
++	requests := make(chan requestDetails, 1)
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		select {
++		case requests <- requestDetails{method: r.Method, requestURI: r.RequestURI}:
++		default:
++		}
++		w.Header().Set("Content-Type", "application/json")
++		io.WriteString(w, `{"name":"network","revision":3}`)
++	}))
++	client := server.Client()
++	client.Timeout = 5 * time.Second
++	t.Cleanup(func() {
++		client.CloseIdleConnections()
++		server.Close()
++	})
++	const pathAndQuery = "/catalog/a%2Fb?tag=one&tag=two&space=a%20b&plus=a%2Bb"
++	got, err := metadata.Fetch(context.Background(), client, server.URL+pathAndQuery)
++	if err != nil {
++		t.Fatalf("Fetch error = %v", err)
++	}
++	if want := (metadata.Metadata{Name: "network", Revision: 3}); got != want {
++		t.Errorf("Fetch = %#v, want %#v", got, want)
++	}
++	select {
++	case request := <-requests:
++		if request.method != http.MethodGet || request.requestURI != pathAndQuery {
++			t.Errorf("request = %#v, want GET %q", request, pathAndQuery)
++		}
++	case <-time.After(5 * time.Second):
++		t.Fatal("server did not observe the request")
++	}
++}
++
++// readSignalBody observes the real transport's body without changing its I/O.
++// The signal proves that Fetch received and read response bytes before cancel.
++type readSignalBody struct {
++	io.ReadCloser
++	read       chan struct{}
++	readOnce   sync.Once
++	closeCalls int
++}
++
++func (b *readSignalBody) Read(p []byte) (int, error) {
++	n, err := b.ReadCloser.Read(p)
++	if n > 0 {
++		b.readOnce.Do(func() { close(b.read) })
++	}
++	return n, err
++}
++
++func (b *readSignalBody) Close() error {
++	b.closeCalls++
++	return b.ReadCloser.Close()
++}
++
++func TestFetchCancellation(t *testing.T) {
++	for _, phase := range []string{"before response headers", "while reading response body"} {
++		t.Run(phase, func(t *testing.T) {
++			ctx, cancel := context.WithCancel(context.Background())
++			started := make(chan struct{})
++			handlerResult := make(chan error, 1)
++			release := make(chan struct{})
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				if phase == "while reading response body" {
++					w.Header().Set("Content-Type", "application/json")
++					if _, err := io.WriteString(w, `{"name":"unfinished`); err != nil {
++						handlerResult <- err
++						return
++					}
++					w.(http.Flusher).Flush()
++				}
++				close(started)
++				select {
++				case <-r.Context().Done():
++					handlerResult <- r.Context().Err()
++				case <-release:
++					handlerResult <- errors.New("handler released during cleanup before cancellation")
++				}
++			}))
++			client := server.Client()
++			client.Timeout = 5 * time.Second
++			bodies := make(chan *readSignalBody, 1)
++			if phase == "while reading response body" {
++				transport := client.Transport
++				client.Transport = roundTrip(func(r *http.Request) (*http.Response, error) {
++					response, err := transport.RoundTrip(r)
++					if err != nil {
++						return nil, err
++					}
++					body := &readSignalBody{ReadCloser: response.Body, read: make(chan struct{})}
++					response.Body = body
++					bodies <- body
++					return response, nil
++				})
++				// The decorator does not expose CloseIdleConnections, so retain
++				// cleanup for the owned underlying transport explicitly.
++				t.Cleanup(transport.(*http.Transport).CloseIdleConnections)
++			}
++			type fetchResult struct {
++				metadata metadata.Metadata
++				err      error
++			}
++			result := make(chan fetchResult, 1)
++			finished := make(chan struct{})
++			t.Cleanup(func() {
++				cancel()
++				close(release)
++				select {
++				case <-finished:
++				case <-time.After(6 * time.Second):
++					t.Error("Fetch goroutine did not exit during cleanup")
++				}
++				client.CloseIdleConnections()
++				server.Close()
++			})
++			go func() {
++				defer close(finished)
++				got, err := metadata.Fetch(ctx, client, server.URL+"/catalog")
++				result <- fetchResult{metadata: got, err: err}
++			}()
++			select {
++			case <-started:
++			case got := <-result:
++				t.Fatalf("Fetch returned before the handler barrier: %#v, %v", got.metadata, got.err)
++			case err := <-handlerResult:
++				t.Fatalf("HTTP handler failed before the cancellation barrier: %v", err)
++			case <-time.After(5 * time.Second):
++				t.Fatal("HTTP handler did not reach the cancellation barrier")
++			}
++			var body *readSignalBody
++			if phase == "while reading response body" {
++				select {
++				case body = <-bodies:
++				case got := <-result:
++					t.Fatalf("Fetch returned before acquiring a response body: %#v, %v", got.metadata, got.err)
++				case <-time.After(5 * time.Second):
++					t.Fatal("transport did not return the response body")
++				}
++				select {
++				case <-body.read:
++				case got := <-result:
++					t.Fatalf("Fetch returned before reading the partial response body: %#v, %v", got.metadata, got.err)
++				case <-time.After(5 * time.Second):
++					t.Fatal("Fetch did not read the partial response body")
++				}
++			}
++			cancel()
++			select {
++			case got := <-result:
++				assertFailure(t, got.metadata, got.err)
++				if !errors.Is(got.err, context.Canceled) {
++					t.Errorf("Fetch error = %v, want errors.Is(err, context.Canceled)", got.err)
++				}
++				if body != nil && body.closeCalls != 1 {
++					t.Errorf("canceled response body closed %d times, want 1", body.closeCalls)
++				}
++			case <-time.After(5 * time.Second):
++				t.Fatal("Fetch did not return after caller cancellation")
++			}
++			select {
++			case err := <-handlerResult:
++				if !errors.Is(err, context.Canceled) {
++					t.Errorf("server request error = %v, want context.Canceled", err)
++				}
++			case <-time.After(5 * time.Second):
++				t.Fatal("caller cancellation did not reach the server request")
++			}
++		})
++	}
++}

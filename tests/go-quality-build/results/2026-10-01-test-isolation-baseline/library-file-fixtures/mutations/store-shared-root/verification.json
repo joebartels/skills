@@ -1,0 +1,87 @@
+{
+  "semantic_id": "store-shared-root",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "7884626be81007d8ff7d6483349ad7165cf5e0a1758c76193f40daaa73e99ad2",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-d95q1k47/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.214s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.356
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/library-file-fixtures/mutations/store-shared-root/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-d95q1k47/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.016
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-d95q1k47/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.165s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.309
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-d95q1k47/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    --- FAIL: TestStoreIndependentInstances/instances (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/beta/replacements (0.00s)\n                --- FAIL: TestStoreIndependentInstances/instances/beta/replacements/value-0 (0.00s)\n                    store_test.go:57: Get = \"\", <nil>; want \"beta\"\n                --- FAIL: TestStoreIndependentInstances/instances/beta/replacements/value-1 (0.00s)\n                    store_test.go:57: Get = \"beta replacementt\\x00\", <nil>; want \"beta replacement\"\n                --- FAIL: TestStoreIndependentInstances/instances/beta/replacements/value-2 (0.00s)\n                    store_test.go:57: Get = \"alpha\", <nil>; want \"beta\"\n        --- FAIL: TestStoreIndependentInstances/instances/empty (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/empty/replacements (0.00s)\n                --- FAIL: TestStoreIndependentInstances/instances/empty/replacements/value-1 (0.00s)\n                    store_test.go:57: Get = \"beta replacementt\\x00\", <nil>; want \"line one\\nline two\\x00\"\n                --- FAIL: TestStoreIndependentInstances/instances/empty/replacements/value-2 (0.00s)\n                    store_test.go:57: Get = \"alpha\", <nil>; want \"\"\n        --- FAIL: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/replacements (0.00s)\n                --- FAIL: TestStoreIndependentInstances/instances/alpha/replacements/value-0 (0.00s)\n                    store_test.go:57: Get = \"\", <nil>; want \"alpha\"\n                --- FAIL: TestStoreIndependentInstances/instances/alpha/replacements/value-1 (0.00s)\n                    store_test.go:57: Get = \"beta replacementt\\x00\", <nil>; want \"alpha replacement\"\n    store_test.go:70: beta: final Get = \"alpha\", <nil>; want \"beta\"\n    store_test.go:70: empty: final Get = \"alpha\", <nil>; want \"\"\nFAIL\nFAIL\texample.com/filestore\t0.118s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.234
+  },
+  "classification": "detected by meaningful value assertions",
+  "controller_interpretation": "Production aliases independent roots; candidate checks distinct values during and after grouped parallel child work."
+}

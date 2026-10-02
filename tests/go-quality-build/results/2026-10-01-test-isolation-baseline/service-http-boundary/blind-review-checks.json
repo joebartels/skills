@@ -1,0 +1,359 @@
+[
+  {
+    "label": "toolchain",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-review-bq9orwps/candidate",
+    "exit": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": ""
+  },
+  {
+    "label": "platform",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "env",
+      "GOOS",
+      "GOARCH",
+      "GOVERSION",
+      "CGO_ENABLED",
+      "GOMOD"
+    ],
+    "cwd": "/private/tmp/go-independent-review-bq9orwps/candidate",
+    "exit": 0,
+    "stdout": "darwin\narm64\ngo1.26.5\n1\n/private/tmp/go-independent-review-bq9orwps/candidate/go.mod\n",
+    "stderr": ""
+  },
+  {
+    "label": "candidate-full-suite",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-bq9orwps/candidate",
+    "exit": 1,
+    "stdout": "--- FAIL: TestFetchHTTPRequest (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 68 [running]:\ntesting.tRunner.func1.2({0x102c83e20, 0x47b76ce94c20})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x102c83e20?, 0x47b76ce94c20?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x102d0ddc0, 0x47b76ce94bd0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/metadata_test.TestFetchHTTPRequest(0x47b76cf1cfc8)\n\t/private/tmp/go-independent-review-bq9orwps/candidate/fetch_test.go:187 +0x84\ntesting.tRunner(0x47b76cf1cfc8, 0x102d09e60)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/metadata\t0.206s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "label": "candidate-full-suite-loopback",
+    "sandbox_permissions": "require_escalated",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-bq9orwps/candidate",
+    "exit": 0,
+    "stdout": "ok  \texample.com/metadata\t0.174s\n",
+    "stderr": ""
+  },
+  {
+    "label": "candidate-race-shuffle-repeat",
+    "sandbox_permissions": "require_escalated",
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-race",
+      "-count=20",
+      "-shuffle=on",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-bq9orwps/candidate",
+    "exit": 0,
+    "stdout": "ok  \texample.com/metadata\t1.275s\n",
+    "stderr": ""
+  },
+  {
+    "label": "mutation-omit-body-close",
+    "sandbox_permissions": "require_escalated",
+    "mutation": {
+      "file": "fetch.go",
+      "before": "defer response.Body.Close()",
+      "after": "// mutation: omit close"
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "TestFetchSuccessClosesBody|TestFetchInvalidJSONOrFieldsClosesBody|TestFetchNon200StatusClosesBody|TestFetchReadFailureClosesBody",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-bq9orwps/mutations/omit-body-close",
+    "exit": 1,
+    "stdout": "--- FAIL: TestFetchSuccessClosesBody (0.00s)\n    --- FAIL: TestFetchSuccessClosesBody/ordinary (0.00s)\n        fetch_test.go:72: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchSuccessClosesBody/preserve_name (0.00s)\n        fetch_test.go:72: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchSuccessClosesBody/surrounding_JSON_whitespace (0.00s)\n        fetch_test.go:72: body closed 0 times, want 1 before Fetch returns\n--- FAIL: TestFetchInvalidJSONOrFieldsClosesBody (0.00s)\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/empty_body (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/malformed_JSON (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/null (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/array (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/scalar (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/trailing_object (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/trailing_garbage (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/missing_name (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/empty_name (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/whitespace_name (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/null_name (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/wrong_name_type (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/missing_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/zero_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/negative_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/null_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/wrong_revision_type (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/fractional_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/overflowing_revision (0.00s)\n        fetch_test.go:112: body closed 0 times, want 1 before Fetch returns\n--- FAIL: TestFetchNon200StatusClosesBody (0.00s)\n    --- FAIL: TestFetchNon200StatusClosesBody/201 (0.00s)\n        fetch_test.go:123: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchNon200StatusClosesBody/204 (0.00s)\n        fetch_test.go:123: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchNon200StatusClosesBody/206 (0.00s)\n        fetch_test.go:123: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchNon200StatusClosesBody/404 (0.00s)\n        fetch_test.go:123: body closed 0 times, want 1 before Fetch returns\n    --- FAIL: TestFetchNon200StatusClosesBody/500 (0.00s)\n        fetch_test.go:123: body closed 0 times, want 1 before Fetch returns\n--- FAIL: TestFetchReadFailureClosesBody (0.00s)\n    fetch_test.go:146: body closed 0 times, want 1 before Fetch returns\nFAIL\nFAIL\texample.com/metadata\t0.213s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "label": "mutation-accept-trailing-json",
+    "sandbox_permissions": "require_escalated",
+    "mutation": {
+      "file": "fetch.go",
+      "before": "json.Unmarshal(data, &result)",
+      "after": "json.NewDecoder(strings.NewReader(string(data))).Decode(&result)"
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "TestFetchInvalidJSONOrFieldsClosesBody",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-bq9orwps/mutations/accept-trailing-json",
+    "exit": 1,
+    "stdout": "--- FAIL: TestFetchInvalidJSONOrFieldsClosesBody (0.00s)\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/trailing_object (0.00s)\n        fetch_test.go:113: Fetch returned metadata.Metadata{Name:\"first\", Revision:1} on failure, want zero Metadata\n        fetch_test.go:113: Fetch error = <nil>, want a useful nonempty error\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/trailing_garbage (0.00s)\n        fetch_test.go:113: Fetch returned metadata.Metadata{Name:\"first\", Revision:1} on failure, want zero Metadata\n        fetch_test.go:113: Fetch error = <nil>, want a useful nonempty error\nFAIL\nFAIL\texample.com/metadata\t0.196s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "label": "mutation-ignore-read-error",
+    "sandbox_permissions": "require_escalated",
+    "mutation": {
+      "file": "fetch.go",
+      "before": "data, err := io.ReadAll(response.Body)\n\tif err != nil {",
+      "after": "data, err := io.ReadAll(response.Body)\n\tif err != nil && len(data) == 0 {"
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "TestFetchReadFailureClosesBody",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-bq9orwps/mutations/ignore-read-error",
+    "exit": 1,
+    "stdout": "--- FAIL: TestFetchReadFailureClosesBody (0.00s)\n    fetch_test.go:147: Fetch returned metadata.Metadata{Name:\"first\", Revision:1} on failure, want zero Metadata\n    fetch_test.go:147: Fetch error = <nil>, want a useful nonempty error\n    fetch_test.go:149: Fetch error = <nil>, want errors.Is(err, read failure)\nFAIL\nFAIL\texample.com/metadata\t0.201s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "label": "mutation-return-partial-metadata",
+    "sandbox_permissions": "require_escalated",
+    "mutation": {
+      "file": "fetch.go",
+      "before": "return Metadata{}, fmt.Errorf(\"invalid metadata\")",
+      "after": "return result, fmt.Errorf(\"invalid metadata\")"
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "TestFetchInvalidJSONOrFieldsClosesBody",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-bq9orwps/mutations/return-partial-metadata",
+    "exit": 1,
+    "stdout": "--- FAIL: TestFetchInvalidJSONOrFieldsClosesBody (0.00s)\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/missing_name (0.00s)\n        fetch_test.go:113: Fetch returned metadata.Metadata{Name:\"\", Revision:1} on failure, want zero Metadata\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/empty_name (0.00s)\n        fetch_test.go:113: Fetch returned metadata.Metadata{Name:\"\", Revision:1} on failure, want zero Metadata\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/whitespace_name (0.00s)\n        fetch_test.go:113: Fetch returned metadata.Metadata{Name:\" \\t\\n\\u2003\", Revision:1} on failure, want zero Metadata\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/null_name (0.00s)\n        fetch_test.go:113: Fetch returned metadata.Metadata{Name:\"\", Revision:1} on failure, want zero Metadata\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/missing_revision (0.00s)\n        fetch_test.go:113: Fetch returned metadata.Metadata{Name:\"first\", Revision:0} on failure, want zero Metadata\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/zero_revision (0.00s)\n        fetch_test.go:113: Fetch returned metadata.Metadata{Name:\"first\", Revision:0} on failure, want zero Metadata\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/negative_revision (0.00s)\n        fetch_test.go:113: Fetch returned metadata.Metadata{Name:\"first\", Revision:-1} on failure, want zero Metadata\n    --- FAIL: TestFetchInvalidJSONOrFieldsClosesBody/null_revision (0.00s)\n        fetch_test.go:113: Fetch returned metadata.Metadata{Name:\"first\", Revision:0} on failure, want zero Metadata\nFAIL\nFAIL\texample.com/metadata\t0.206s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "label": "mutation-accept-any-2xx",
+    "sandbox_permissions": "require_escalated",
+    "mutation": {
+      "file": "fetch.go",
+      "before": "response.StatusCode != http.StatusOK",
+      "after": "response.StatusCode < 200 || response.StatusCode >= 300"
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "TestFetchNon200StatusClosesBody",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-bq9orwps/mutations/accept-any-2xx",
+    "exit": 1,
+    "stdout": "--- FAIL: TestFetchNon200StatusClosesBody (0.00s)\n    --- FAIL: TestFetchNon200StatusClosesBody/201 (0.00s)\n        fetch_test.go:124: Fetch returned metadata.Metadata{Name:\"first\", Revision:1} on failure, want zero Metadata\n        fetch_test.go:124: Fetch error = <nil>, want a useful nonempty error\n    --- FAIL: TestFetchNon200StatusClosesBody/204 (0.00s)\n        fetch_test.go:124: Fetch returned metadata.Metadata{Name:\"first\", Revision:1} on failure, want zero Metadata\n        fetch_test.go:124: Fetch error = <nil>, want a useful nonempty error\n    --- FAIL: TestFetchNon200StatusClosesBody/206 (0.00s)\n        fetch_test.go:124: Fetch returned metadata.Metadata{Name:\"first\", Revision:1} on failure, want zero Metadata\n        fetch_test.go:124: Fetch error = <nil>, want a useful nonempty error\nFAIL\nFAIL\texample.com/metadata\t0.202s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "label": "mutation-trim-name",
+    "sandbox_permissions": "require_escalated",
+    "mutation": {
+      "file": "fetch.go",
+      "before": "return result, nil",
+      "after": "result.Name = strings.TrimSpace(result.Name)\n\treturn result, nil"
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "TestFetchSuccessClosesBody",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-bq9orwps/mutations/trim-name",
+    "exit": 1,
+    "stdout": "--- FAIL: TestFetchSuccessClosesBody (0.00s)\n    --- FAIL: TestFetchSuccessClosesBody/preserve_name (0.00s)\n        fetch_test.go:77: Fetch = metadata.Metadata{Name:\"Caf\u00e9\", Revision:27}, want metadata.Metadata{Name:\" \\tCaf\u00e9\\n \", Revision:27}\nFAIL\nFAIL\texample.com/metadata\t0.201s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "label": "mutation-drop-caller-context",
+    "sandbox_permissions": "require_escalated",
+    "mutation": {
+      "file": "fetch.go",
+      "before": "http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)",
+      "after": "http.NewRequestWithContext(context.Background(), http.MethodGet, endpoint, nil)"
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "TestFetchCancellation",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-bq9orwps/mutations/drop-caller-context",
+    "exit": 1,
+    "stdout": "--- FAIL: TestFetchCancellation (10.01s)\n    --- FAIL: TestFetchCancellation/before_response_headers (5.00s)\n        fetch_test.go:343: Fetch did not return after caller cancellation\n    --- FAIL: TestFetchCancellation/while_reading_response_body (5.00s)\n        fetch_test.go:343: Fetch did not return after caller cancellation\nFAIL\nFAIL\texample.com/metadata\t10.209s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "label": "mutation-drop-query",
+    "sandbox_permissions": "require_escalated",
+    "mutation": {
+      "file": "fetch.go",
+      "before": "response, err := client.Do(req)",
+      "after": "req.URL.RawQuery = \"\"\n\tresponse, err := client.Do(req)"
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "TestFetchHTTPRequest",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-bq9orwps/mutations/drop-query",
+    "exit": 1,
+    "stdout": "--- FAIL: TestFetchHTTPRequest (0.00s)\n    fetch_test.go:212: request = metadata_test.requestDetails{method:\"GET\", requestURI:\"/catalog/a%2Fb\"}, want GET \"/catalog/a%2Fb?tag=one&tag=two&space=a%20b&plus=a%2Bb\"\nFAIL\nFAIL\texample.com/metadata\t0.206s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "label": "mutation-wrong-method",
+    "sandbox_permissions": "require_escalated",
+    "mutation": {
+      "file": "fetch.go",
+      "before": "http.MethodGet",
+      "after": "http.MethodPost"
+    },
+    "command": [
+      "rtk",
+      "proxy",
+      "env",
+      "GOCACHE=/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN=local",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "TestFetchHTTPRequest",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-review-bq9orwps/mutations/wrong-method",
+    "exit": 1,
+    "stdout": "--- FAIL: TestFetchHTTPRequest (0.00s)\n    fetch_test.go:212: request = metadata_test.requestDetails{method:\"POST\", requestURI:\"/catalog/a%2Fb?tag=one&tag=two&space=a%20b&plus=a%2Bb\"}, want GET \"/catalog/a%2Fb?tag=one&tag=two&space=a%20b&plus=a%2Bb\"\nFAIL\nFAIL\texample.com/metadata\t0.214s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "label": "candidate-preserved",
+    "before_sha256": {
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3",
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "README.md": "5e52eb6593abf19cb5eff5217737defefdfa9c96535433ad69aede1a898c5da6",
+      "fetch_test.go": "84aab17a74a98ab1f0bc20f88a50b5397c9ae73ed716042cf148db2e953caae6"
+    },
+    "after_sha256": {
+      "go.mod": "f4773d29c36d474f96e611c08e67e92e4c5fe4a8ee4cbf8f021d4bdc17667aa3",
+      "fetch.go": "bdb0aedbf91116e77c41689fe89c46e761ae2197f9d25f810d716b5db86593ab",
+      "README.md": "5e52eb6593abf19cb5eff5217737defefdfa9c96535433ad69aede1a898c5da6",
+      "fetch_test.go": "84aab17a74a98ab1f0bc20f88a50b5397c9ae73ed716042cf148db2e953caae6"
+    },
+    "identical": true
+  }
+]

@@ -1,0 +1,139 @@
+[
+  {
+    "label": "regression_before_fix",
+    "command": [
+      "go",
+      "test",
+      "-run",
+      "^TestLowerBound$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "--- FAIL: TestLowerBound (0.00s)\n    --- FAIL: TestLowerBound/below (0.00s)\n        clamp_test.go:29: Clamp(0, 1, 9) = 2, want 1\n    --- FAIL: TestLowerBound/at (0.00s)\n        clamp_test.go:29: Clamp(1, 1, 9) = 2, want 1\n    --- FAIL: TestLowerBound/single_value_interval (0.00s)\n        clamp_test.go:29: Clamp(1, 1, 1) = 2, want 1\nFAIL\nFAIL\texample.com/clamp\t0.172s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1
+  },
+  {
+    "label": "format",
+    "command": [
+      "gofmt",
+      "-s",
+      "-w",
+      "clamp.go",
+      "clamp_test.go"
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "format_verification",
+    "command": [
+      "gofmt",
+      "-l",
+      "clamp.go",
+      "clamp_test.go"
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "regression_after_fix",
+    "command": [
+      "go",
+      "test",
+      "-run",
+      "^TestLowerBound$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "ok  \texample.com/clamp\t0.192s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "all_tests_race",
+    "command": [
+      "go",
+      "test",
+      "-v",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 60,
+    "stdout": "=== RUN   TestInterior\n--- PASS: TestInterior (0.00s)\n=== RUN   TestLowerBound\n=== RUN   TestLowerBound/below\n=== RUN   TestLowerBound/at\n=== RUN   TestLowerBound/single_value_interval\n--- PASS: TestLowerBound (0.00s)\n    --- PASS: TestLowerBound/below (0.00s)\n    --- PASS: TestLowerBound/at (0.00s)\n    --- PASS: TestLowerBound/single_value_interval (0.00s)\nPASS\nok  \texample.com/clamp\t1.194s\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "local_toolchain",
+    "command": [
+      "go",
+      "version"
+    ],
+    "environment": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "process_timeout_seconds": 15,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  {
+    "label": "staticcheck_availability",
+    "command": [
+      "shutil.which",
+      "staticcheck"
+    ],
+    "stdout": "staticcheck unavailable on PATH",
+    "stderr": "",
+    "exit_code": 1,
+    "verification_skipped": true
+  }
+]

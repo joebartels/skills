@@ -1,0 +1,87 @@
+{
+  "semantic_id": "fixture-parent-teardown",
+  "candidate_tests_only": true,
+  "controller_probes_absent": true,
+  "patch_sha256": "65303ead32089adb3aa451828014336fffbaf270b802c52fa28befb38416feb5",
+  "clean": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-m464xrdc/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.174s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.324
+  },
+  "applied": {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-test-isolation-baseline/library-file-fixtures/mutations/fixture-parent-teardown/source.patch"
+    ],
+    "cwd": "/private/tmp/go-mutation-m464xrdc/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.016
+  },
+  "compiled": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-m464xrdc/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "ok  \texample.com/filestore\t0.160s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.293
+  },
+  "result": {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-mutation-m464xrdc/module",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local"
+    },
+    "stdout": "--- FAIL: TestStoreIndependentInstances (0.00s)\n    --- FAIL: TestStoreIndependentInstances/instances (0.00s)\n        --- FAIL: TestStoreIndependentInstances/instances/beta (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/beta/replacements (0.00s)\n                --- FAIL: TestStoreIndependentInstances/instances/beta/replacements/value-0 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances288142276/002/same-key: no such file or directory\n                --- FAIL: TestStoreIndependentInstances/instances/beta/replacements/value-1 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances288142276/002/same-key: no such file or directory\n                --- FAIL: TestStoreIndependentInstances/instances/beta/replacements/value-2 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances288142276/002/same-key: no such file or directory\n        --- FAIL: TestStoreIndependentInstances/instances/alpha (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/alpha/replacements (0.00s)\n                --- FAIL: TestStoreIndependentInstances/instances/alpha/replacements/value-0 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances288142276/001/same-key: no such file or directory\n                --- FAIL: TestStoreIndependentInstances/instances/alpha/replacements/value-1 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances288142276/001/same-key: no such file or directory\n                --- FAIL: TestStoreIndependentInstances/instances/alpha/replacements/value-2 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances288142276/001/same-key: no such file or directory\n        --- FAIL: TestStoreIndependentInstances/instances/empty (0.00s)\n            --- FAIL: TestStoreIndependentInstances/instances/empty/replacements (0.00s)\n                --- FAIL: TestStoreIndependentInstances/instances/empty/replacements/value-0 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances288142276/003/same-key: no such file or directory\n                --- FAIL: TestStoreIndependentInstances/instances/empty/replacements/value-1 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances288142276/003/same-key: no such file or directory\n                --- FAIL: TestStoreIndependentInstances/instances/empty/replacements/value-2 (0.00s)\n                    store_test.go:58: Put = open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances288142276/003/same-key: no such file or directory\n    store_test.go:75: alpha: final Get = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances288142276/001/same-key: no such file or directory; want \"alpha\"\n    store_test.go:75: beta: final Get = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances288142276/002/same-key: no such file or directory; want \"beta\"\n    store_test.go:75: empty: final Get = \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestStoreIndependentInstances288142276/003/same-key: no such file or directory; want \"\"\nFAIL\nFAIL\texample.com/filestore\t0.117s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.224
+  },
+  "classification": "detected test-fixture sabotage",
+  "controller_interpretation": "Only fixture code changed: parent-body defer removes directories before parallel descendants execute. File operation and final-value assertions fail. Not a production defect or score uplift."
+}
