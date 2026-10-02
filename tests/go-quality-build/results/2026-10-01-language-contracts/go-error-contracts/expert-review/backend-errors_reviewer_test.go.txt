@@ -1,0 +1,3 @@
+package accountlookup
+import("fmt";"testing")
+func TestReviewerWrappedMissingAndSuccess(t *testing.T){b:=&probeBackend{value:"unusable",err:fmt.Errorf("backend: %w",BackendMissing)};got,err:=(Service{Backend:b}).Lookup("alice");if got!=""||err!=ErrMissing{t.Fatal(got,err)};b.err=nil;b.value="usable";got,err=(Service{Backend:b}).Lookup("alice");if got!="usable"||err!=nil{t.Fatal(got,err)}}

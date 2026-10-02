@@ -2,7 +2,7 @@
 
 ## Intent and proposed scope
 
-Build the next focused Go authoring skills for agents making concrete changes in existing libraries, CLIs, services, and workers. The user assigned testing work to the separate **Go Skills - testing** chat. This group therefore proposes `go-error-contracts`, `go-values-and-zero-values`, and `go-names-and-docs`. The grouping is a recommendation pending user review; these skills are not implemented or evaluated yet.
+Build the next focused Go authoring skills for agents making concrete changes in existing libraries, CLIs, services, and workers. The user assigned testing work to the separate **Go Skills - testing** chat. This group contains candidates `go-error-contracts`, `go-values-and-zero-values`, and `go-names-and-docs`. The user approved implementation on 2026-10-01, conditioned on enough distinct content and independent effectiveness feedback. These candidates are not implemented or evaluated at this approval stage.
 
 Success means better completed code and clearer, accurate consumer documentation, with fewer confirmed defects or unnecessary changes than matched work without the candidate skill. A skill must contribute decisions beyond the existing architecture group, select appropriately, and avoid harmful blanket rules. Passing examples, structural validation, or an A grade alone do not establish skill benefit.
 
@@ -78,4 +78,4 @@ A promoted skill has a distinct trigger, checked links/examples, realistic final
 
 The testing chat works in a different managed worktree. Reserve its two decision owners and avoid writing their runtime files or evaluations here. Shared README/catalog/design-record updates may need reconciliation when branches meet; preserve both dated work logs and test each catalog after integration. Do not message the other chat without user authorization.
 
-This spec is proposed. The next action is user review, followed by an implementation plan and sequential baseline/authoring/evaluation work. No new runtime skill, evaluation fixture, package metadata, or installation is included in the design stage.
+This spec is approved for sequential baseline/authoring/evaluation work under the implementation plan. Promotion remains contingent on evidence. No new runtime skill, evaluation fixture, package metadata, or installation was included in the design stage.

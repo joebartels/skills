@@ -1,0 +1,43 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-v",
+      "./..."
+    ],
+    "status": 0,
+    "stdout": "=== RUN   TestExport\n--- PASS: TestExport (0.00s)\n=== RUN   TestExportReturnsCloseError\n--- PASS: TestExportReturnsCloseError (0.00s)\n=== RUN   TestExportLimitStopsAfterLimit\n--- PASS: TestExportLimitStopsAfterLimit (0.00s)\n=== RUN   TestExportLimitCountsEmptyAndUnterminatedRecords\n--- PASS: TestExportLimitCountsEmptyAndUnterminatedRecords (0.00s)\n=== RUN   TestExportLimitRejectsNegativeAndCloses\n--- PASS: TestExportLimitRejectsNegativeAndCloses (0.00s)\n=== RUN   TestExportLimitPreservesBothWriteAndCloseErrors\n--- PASS: TestExportLimitPreservesBothWriteAndCloseErrors (0.00s)\n=== RUN   TestExportLimitReturnsSingleWriteErrorDirectly\n--- PASS: TestExportLimitReturnsSingleWriteErrorDirectly (0.00s)\n=== RUN   TestContractCompletionIdentity\n=== RUN   TestContractCompletionIdentity/primary\n=== RUN   TestContractCompletionIdentity/finish\n=== RUN   TestContractCompletionIdentity/both\n=== RUN   TestContractCompletionIdentity/success\n--- PASS: TestContractCompletionIdentity (0.00s)\n    --- PASS: TestContractCompletionIdentity/primary (0.00s)\n    --- PASS: TestContractCompletionIdentity/finish (0.00s)\n    --- PASS: TestContractCompletionIdentity/both (0.00s)\n    --- PASS: TestContractCompletionIdentity/success (0.00s)\n=== RUN   TestContractLimitAndNegative\n--- PASS: TestContractLimitAndNegative (0.00s)\n=== RUN   TestContractWriteFailure\n--- PASS: TestContractWriteFailure (0.00s)\n=== RUN   TestReviewerNegativeNoReadAndCloseFailure\n--- PASS: TestReviewerNegativeNoReadAndCloseFailure (0.00s)\n=== RUN   TestReviewerShortWrite\n--- PASS: TestReviewerShortWrite (0.00s)\nPASS\nok  \texample.com/lineexport\t1.415s\n?   \texample.com/lineexport/cmd/lineexport\t[no test files]\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "export.go",
+      "export_test.go",
+      "cmd/lineexport/main.go"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]

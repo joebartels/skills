@@ -1,0 +1,37 @@
+[
+  {
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/paging\t1.246s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestContract",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/paging\t1.194s\n",
+    "stderr": "",
+    "probe_sha256": "1875bcd9f392b635d444899ae2be60d1cf0e1b28d8d9111c5bf4f902946618c6"
+  }
+]

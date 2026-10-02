@@ -1,0 +1,103 @@
+{
+  "skill_name": "go-error-contracts",
+  "evals": [
+    {
+      "id": "reader-errors",
+      "prompt": "Extend Load with comment support and structured line errors as described in README. Implement, test, and document the behavior. Keep the library small.",
+      "expected_output": "Caller input causes and valid prefix survive; successful errors are nil.",
+      "assertions": [
+        "Comment physical line numbering and *LineError fields are correct.",
+        "A reader returning bytes plus a custom error retains parsed bytes and exposes the cause; EOF is completion.",
+        "Long valid records are not silently bounded by Scanner defaults."
+      ],
+      "files": [
+        "files/reader-errors/README.md",
+        "files/reader-errors/go.mod",
+        "files/reader-errors/load.go",
+        "files/reader-errors/load_test.go"
+      ]
+    },
+    {
+      "id": "backend-errors",
+      "prompt": "Add blank-key rejection and useful context to account lookup failures as described in README. Implement and test it without expanding the API beyond the needed classification.",
+      "expected_output": "Error context respects domain identity and diagnostic exposure.",
+      "assertions": [
+        "ErrMissing remains directly comparable.",
+        "ErrInvalidKey rejects blank keys without a backend call.",
+        "Unavailable errors classify through errors.Is without exposing backend error identity/type/text."
+      ],
+      "files": [
+        "files/backend-errors/README.md",
+        "files/backend-errors/go.mod",
+        "files/backend-errors/lookup.go",
+        "files/backend-errors/lookup_test.go"
+      ]
+    },
+    {
+      "id": "cli-completion",
+      "prompt": "Make writer finalization failures visible and implement ExportLimit plus the optional positional CLI limit described in README. Add tests and usage docs.",
+      "expected_output": "Owned finalization is truthful and does not overwrite or hide primary failures.",
+      "assertions": [
+        "Exactly one close on all paths, accepted-prefix count preserved.",
+        "Single errors retain direct identity; concurrent primary and close failures expose both causes.",
+        "CLI exit/stdout/stderr and positional filename behavior are correct."
+      ],
+      "files": [
+        "files/cli-completion/README.md",
+        "files/cli-completion/cmd/lineexport/main.go",
+        "files/cli-completion/export.go",
+        "files/cli-completion/export_test.go",
+        "files/cli-completion/go.mod"
+      ]
+    },
+    {
+      "id": "not-error-work",
+      "prompt": "Fix pages so exact multiples and zero items do not overcount. Keep the helper private and add regression tests.",
+      "expected_output": "Local calculation fix without error-contract selection.",
+      "assertions": [
+        "Correct ceiling division including zero.",
+        "No exported API, new errors, or unrelated changes."
+      ],
+      "files": [
+        "files/not-error-work/README.md",
+        "files/not-error-work/go.mod",
+        "files/not-error-work/pages.go",
+        "files/not-error-work/pages_test.go"
+      ]
+    },
+    {
+      "id": "csv-transfer",
+      "prompt": "Add WriteSelected for caller-defined row filtering, with the behavior in README. Implement, test, and document it while keeping WriteRows compatible.",
+      "expected_output": "Filtering preserves completion error inspection across buffered CSV encoding.",
+      "assertions": [
+        "Selected rows retain valid CSV/order and nil keep selects all.",
+        "Final buffered write failure is returned and inspectable; borrowed writer is not closed.",
+        "No per-row durability claim or retry is invented."
+      ],
+      "files": [
+        "files/csv-transfer/README.md",
+        "files/csv-transfer/csv.go",
+        "files/csv-transfer/csv_test.go",
+        "files/csv-transfer/go.mod"
+      ],
+      "role": "reserved-transfer"
+    },
+    {
+      "id": "cursor-iteration",
+      "prompt": "Add CollectMatching to filter cursor rows while retaining Collect, according to README. Implement, test, and document it. Keep the implementation small.",
+      "expected_output": "Filtered iteration preserves valid prefix and reports incomplete iteration.",
+      "assertions": [
+        "Iteration Err is inspected after Next returns false; no false success.",
+        "Scan failure retains its cause and selected prefix.",
+        "Owned cursor closes once; nil predicate and order work."
+      ],
+      "files": [
+        "files/cursor-iteration/README.md",
+        "files/cursor-iteration/collect.go",
+        "files/cursor-iteration/collect_test.go",
+        "files/cursor-iteration/go.mod"
+      ],
+      "role": "bounded-supplemental-search"
+    }
+  ]
+}

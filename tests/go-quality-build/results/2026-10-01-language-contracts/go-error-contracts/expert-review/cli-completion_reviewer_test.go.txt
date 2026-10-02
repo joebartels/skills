@@ -1,0 +1,9 @@
+package lineexport
+import("errors";"io";"strings";"testing")
+type reviewerNoRead struct{t *testing.T}
+func(r reviewerNoRead)Read([]byte)(int,error){r.t.Fatal("negative limit read input");return 0,io.EOF}
+type reviewerShortWriter struct{closes int}
+func(w *reviewerShortWriter)Write(p []byte)(int,error){return len(p)-1,nil}
+func(w *reviewerShortWriter)Close()error{w.closes++;return nil}
+func TestReviewerNegativeNoReadAndCloseFailure(t *testing.T){cause:=errors.New("close");w:=&probeWriter{closeErr:cause}; n,err:=ExportLimit(reviewerNoRead{t},w,-1);if n!=0||err==nil||!errors.Is(err,cause)||w.closed!=1||w.Len()!=0{t.Fatal(n,err,w.closed)}}
+func TestReviewerShortWrite(t *testing.T){w:=new(reviewerShortWriter);n,err:=Export(strings.NewReader("record"),w);if n!=0||err!=io.ErrShortWrite||w.closes!=1{t.Fatal(n,err,w.closes)}}

@@ -1,0 +1,124 @@
+diff --git a/README.md b/README.md
+index 8d35d798f03205c0da56db6601201595b2c6efbb..0f173dd58f8b24fe39f0aff8f8292761c6f0ed76 100644
+--- a/README.md
++++ b/README.md
+@@ -1,8 +1,10 @@
+ # cursorload
+-Go 1.22 library. Collect owns the supplied cursor and returns every scanned string.
+-Failures may leave a valid prefix; the returned error distinguishes failed from
+-complete iteration. The new task adds CollectMatching(rows, keep) with a
+-func(string)bool filter (nil keeps all), preserves order, and keeps Collect.
+-The cursor is closed once on every path. Its close cannot invalidate already read
+-rows and is best-effort; iteration/Scan error is primary. No retry or buffering of
+-the complete input is needed. The callback cannot fail. No database dependency.
++Go 1.22 library. `Collect` owns the supplied cursor and returns every scanned
++string. `CollectMatching(rows, keep)` returns only scanned strings accepted by
++`keep`; a nil filter accepts all strings. Both preserve cursor order and return
++the successfully collected prefix with a scan or iteration error.
++
++Both functions close the cursor once on every path. Close is best-effort and its
++error is ignored; it cannot invalidate already read rows. Scan and iteration
++errors are returned. The filter cannot return an error. No retry or full-input
++buffering is needed. No database dependency.
+diff --git a/collect.go b/collect.go
+index 495ff4bacf51dc5c6e70f3f08b51135b4f46f859..5c4a232dfea927735139e897c2bf8ca5ed904850 100644
+--- a/collect.go
++++ b/collect.go
+@@ -8,6 +8,13 @@ type Rows interface {
+ }
+ 
+ func Collect(rows Rows) ([]string, error) {
++	return CollectMatching(rows, nil)
++}
++
++// CollectMatching scans rows, returning values accepted by keep in cursor order.
++// A nil keep function accepts every value. CollectMatching closes rows once;
++// a scan or iteration error returns the successfully collected prefix.
++func CollectMatching(rows Rows, keep func(string) bool) ([]string, error) {
+ 	defer rows.Close()
+ 	var out []string
+ 	for rows.Next() {
+@@ -15,7 +22,9 @@ func Collect(rows Rows) ([]string, error) {
+ 		if err := rows.Scan(&s); err != nil {
+ 			return out, err
+ 		}
+-		out = append(out, s)
++		if keep == nil || keep(s) {
++			out = append(out, s)
++		}
+ 	}
+-	return out, nil
++	return out, rows.Err()
+ }
+diff --git a/collect_test.go b/collect_test.go
+index ba16dc5ed0dbb5d2d53deb68b4431686aa6559fe..973801fbe904f2bbc957f2bef4a80292210538c7 100644
+--- a/collect_test.go
++++ b/collect_test.go
+@@ -1,6 +1,11 @@
+ package cursorload
+ 
+-import "testing"
++import (
++	"errors"
++	"testing"
++)
++
++var _ func(Rows, func(string) bool) ([]string, error) = CollectMatching
+ 
+ type oneRow struct{ done bool }
+ 
+@@ -20,3 +25,54 @@ func TestCollect(t *testing.T) {
+ 		t.Fatal(got, err)
+ 	}
+ }
++
++type testRows struct {
++	values   []string
++	index    int
++	scanErr  error
++	iterErr  error
++	closeErr error
++	closes   int
++}
++
++func (r *testRows) Next() bool { return r.index < len(r.values) }
++func (r *testRows) Scan(s *string) error {
++	if r.scanErr != nil && r.index == 1 {
++		return r.scanErr
++	}
++	*s = r.values[r.index]
++	r.index++
++	return nil
++}
++func (r *testRows) Err() error { return r.iterErr }
++func (r *testRows) Close() error {
++	r.closes++
++	return r.closeErr
++}
++
++func TestCollectMatchingFiltersInOrderAndCloses(t *testing.T) {
++	rows := &testRows{values: []string{"a", "bb", "c"}}
++	got, err := CollectMatching(rows, func(s string) bool { return len(s) == 1 })
++	if err != nil || len(got) != 2 || got[0] != "a" || got[1] != "c" || rows.closes != 1 {
++		t.Fatal(got, err, rows.closes)
++	}
++}
++
++func TestCollectMatchingNilFilterAndIterationError(t *testing.T) {
++	iterationErr := errors.New("iteration failed")
++	closeErr := errors.New("close failed")
++	rows := &testRows{values: []string{"a", "b"}, iterErr: iterationErr, closeErr: closeErr}
++	got, err := CollectMatching(rows, nil)
++	if err != iterationErr || len(got) != 2 || got[0] != "a" || got[1] != "b" || rows.closes != 1 {
++		t.Fatal(got, err, rows.closes)
++	}
++}
++
++func TestCollectMatchingScanErrorReturnsPrefix(t *testing.T) {
++	scanErr := errors.New("scan failed")
++	rows := &testRows{values: []string{"a", "b", "c"}, scanErr: scanErr}
++	got, err := CollectMatching(rows, nil)
++	if err != scanErr || len(got) != 1 || got[0] != "a" || rows.closes != 1 {
++		t.Fatal(got, err, rows.closes)
++	}
++}

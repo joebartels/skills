@@ -1,0 +1,47 @@
+[
+  {
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "ok  \texample.com/lineexport\t1.478s\nok  \texample.com/lineexport/cmd/lineexport\t1.654s\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestContract",
+      "./..."
+    ],
+    "exit_code": 1,
+    "stdout": "FAIL\t./... [setup failed]\n--- FAIL: TestContractWriteFailure (0.00s)\n    language_contract_probe_test.go:10: 1 <nil> 1\nFAIL\nFAIL\texample.com/lineexport\t0.209s\nFAIL\n",
+    "stderr": "# ./...\npattern ./...: open /Users/jb/Library/Caches/go-build/75/750f0c992ff91e9ab38fd577eef820fdb5dfb227b61ef4c2acca063ee87d970b-d: operation not permitted\n",
+    "probe_sha256": "ca5b1f647b80ab91618a00674b40ff304179002aebb9662260417cb8d167bfef"
+  },
+  {
+    "command": [
+      "go",
+      "build",
+      "./cmd/lineexport"
+    ],
+    "exit_code": 1,
+    "stdout": "",
+    "stderr": "open /Users/jb/Library/Caches/go-build/c1/c16b79e6d730837984a798cd9aea633706403945a9a7cbe9ec53798843f14afe-d: operation not permitted\n"
+  }
+]

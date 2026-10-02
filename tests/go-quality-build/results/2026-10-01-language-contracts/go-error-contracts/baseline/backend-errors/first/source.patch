@@ -1,0 +1,93 @@
+diff --git a/lookup.go b/lookup.go
+index c7c20570e3e63961b9480b15bcf18b37428a554d..161a4aaae9f6ea47f5e02ae84413e4562d72f2c1 100644
+--- a/lookup.go
++++ b/lookup.go
+@@ -1,21 +1,30 @@
+ package accountlookup
+ 
+-import "errors"
++import (
++	"errors"
++	"fmt"
++	"strings"
++)
+ 
+ var ErrMissing = errors.New("account missing")
+ var ErrUnavailable = errors.New("account unavailable")
++var ErrInvalidKey = errors.New("invalid account key")
+ var BackendMissing = errors.New("backend missing")
+ 
+ type Backend interface{ Find(string) (string, error) }
+ type Service struct{ Backend Backend }
+ 
+ func (s Service) Lookup(key string) (string, error) {
++	if strings.TrimSpace(key) == "" {
++		return "", ErrInvalidKey
++	}
++
+ 	value, err := s.Backend.Find(key)
+ 	if errors.Is(err, BackendMissing) {
+ 		return "", ErrMissing
+ 	}
+ 	if err != nil {
+-		return "", ErrUnavailable
++		return "", fmt.Errorf("lookup account %q: %w", key, ErrUnavailable)
+ 	}
+ 	return value, nil
+ }
+diff --git a/lookup_test.go b/lookup_test.go
+index 6a6d08a179a4ada7e625c3560ef33b872ee4486d..e8a7358f99c9af9761df488ece547887af44476d 100644
+--- a/lookup_test.go
++++ b/lookup_test.go
+@@ -1,6 +1,10 @@
+ package accountlookup
+ 
+-import "testing"
++import (
++	"errors"
++	"strings"
++	"testing"
++)
+ 
+ type missingBackend struct{}
+ 
+@@ -11,3 +15,39 @@ func TestMissing(t *testing.T) {
+ 		t.Fatal(err)
+ 	}
+ }
++
++type recordingBackend struct {
++	called bool
++	err    error
++}
++
++func (b *recordingBackend) Find(string) (string, error) {
++	b.called = true
++	return "", b.err
++}
++
++func TestBlankKeyRejectedBeforeBackend(t *testing.T) {
++	backend := &recordingBackend{}
++	_, err := (Service{Backend: backend}).Lookup(" \t\n")
++	if err != ErrInvalidKey {
++		t.Fatalf("Lookup error = %v, want ErrInvalidKey", err)
++	}
++	if backend.called {
++		t.Fatal("backend called for blank key")
++	}
++}
++
++func TestUnavailableIncludesSafeLookupContext(t *testing.T) {
++	backend := &recordingBackend{err: errors.New("password=secret; SELECT * FROM users")}
++	_, err := (Service{Backend: backend}).Lookup("user-17")
++	if !errors.Is(err, ErrUnavailable) {
++		t.Fatalf("Lookup error = %v, want ErrUnavailable", err)
++	}
++	message := err.Error()
++	if !strings.Contains(message, "lookup account \"user-17\"") {
++		t.Fatalf("Lookup error %q lacks operation/key context", message)
++	}
++	if strings.Contains(message, "secret") || strings.Contains(message, "SELECT") {
++		t.Fatalf("Lookup error exposed backend diagnostic: %q", message)
++	}
++}
