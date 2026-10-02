@@ -1,7 +1,7 @@
 # Go quality build: context and concurrency design
 
 **Date:** 2026-10-02
-**Status:** Written design for review. The user approved the scope and source/quality refinement with “looks good. onwards”; implementation, new author trials and runtime promotion have not begun.
+**Status:** Written design accepted for implementation planning after the user-requested [independent alignment review](../../go-quality-build/reviews/context-concurrency-spec/review.md) and resolution of its review-coverage finding. The user authorized proceeding upon reviewer acceptance; implementation, new author trials and runtime promotion have not begun.
 **Base:** `0d0a339b27cd1ff7ff3cc177f28a9a4455f91a96`; package `go-quality-build` 0.2.0.
 
 ## Intent and scope
@@ -116,7 +116,9 @@ These profiles sample two models, two reasoning levels and three harnesses, not 
 
 Use standard-library fixtures unless a case requires an existing dependency. Run meaningful scoped build/test/vet/format checks, race detection on reachable concurrent paths and bounded shuffle/repetition. CLI promises need actual child processes; network promises need faithful clients at the claimed boundary. Test actual Go 1.22 and an available newer supported toolchain when possible; a 1.22 directive under a newer compiler is insufficient. Missing listeners, platforms or toolchains produce scoped limits. Clean race runs do not prove unexercised schedules safe.
 
-Independent outcome review covers Correctness for both candidates; Architecture for changed ownership/API design; Resilience for propagation/budget promises; Performance for actual capacity/resource claims; and Testing for assertion sensitivity. Review relevant topics only and deduplicate common causes. Record confirmed defects, preserved strong outcomes, added API/code/dependency costs and meaningful limits, without averaging grades or rewarding rule repetition.
+Independent outcome review follows the unchanged `go-quality-report` coverage contract: consider all nine topics across the requested scope and record each topic's applicability, assigned boundary and assessed coverage. Review Correctness and Code Quality & Idioms for changed Go outputs, including readability, error flow, value semantics and effective-version choices; Architecture for changed ownership/API design; Resilience for propagation/budget promises; Performance for actual capacity/resource claims; and Testing for assertion sensitivity. Route Dependencies & Reproducibility for implicated modules, toolchains or build inputs, Security for trust/abuse/sensitive-data boundaries, and Deployment & Operations for process configuration, shutdown or release promises. Invoke only relevant topics, combine coherent questions into bounded review packets, and avoid a mandatory nine-worker audit.
+
+Keep missing evidence distinct from non-applicability. Preserve scope, coverage, substantiated findings, linked corrections and limits in the topic cards; deduplicate shared causes and never average grades. A full-scope synthesis with a material coverage gap is Insufficient evidence rather than an A/A+ result. Record preserved strong outcomes and added API/code/dependency costs without rewarding rule repetition or changing the reviewer rubric.
 
 Promotion requires all of the following:
 
@@ -133,6 +135,6 @@ Integrated results check interaction and compatibility; they cannot replace indi
 
 After written-design review, prepare a task-level implementation plan covering: source audit and exact manifests; context discovery/draft/evaluation/decision; concurrency discovery/draft/evaluation/decision; reuse profiles and selection evidence; integrated trial; exact-byte packaging, independent delivery review and portable evidence sealing. Keep each study's final disposition before starting the next. Preserve one set of raw artifacts with linked comparisons instead of duplicate archives.
 
-Implementation authoring uses skill-creator and writing-skills; verification precedes completion/promotion claims. Independent authors/reviewers must be separately authorized and launched through the execution method chosen at the implementation-plan handoff. This written-design task performs no author trials or delegation.
+Implementation authoring uses skill-creator and writing-skills; verification precedes completion/promotion claims. Independent authors/reviewers must be separately authorized and launched through the execution method chosen at the implementation-plan handoff. The user-requested independent written-spec review performs no behavioral author trials and does not authorize their execution.
 
 Update the canonical status and dated log at each meaningful stage with actual checks, artifact identities, decisions, limits and next action. Do not retry the earlier auto-review-blocked composition trial as part of this group.
