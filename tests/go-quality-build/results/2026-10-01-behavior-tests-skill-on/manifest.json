@@ -1,6 +1,6 @@
 {
   "run_id": "2026-10-01-behavior-tests-skill-on",
-  "stage": "all five matched revision-1 outcomes and blind reviews complete; bounded promotion recommended pending independent task review",
+  "stage": "revision-1 matched evaluation complete; independent conditional acceptance satisfied by audit-only correction; exact evaluated bytes promoted and shared delivery checks passed",
   "fixture_commit": "716e779b2470021ae64602a197fbafb979eec0b5",
   "author_settings": {
     "model": "inherited session model; exact model ID not exposed by collaboration harness",
@@ -387,8 +387,8 @@
     "SKILL.md": "b083f010026498a8976cc44321852ac3e588f22ad5d58d51f659fc87a127e550",
     "references/behavior-observations.md": "142d91164b0932a7691b035dc45e8517e1acf860e5bdb0e6fe6783f799763ae0"
   },
-  "candidate_runtime_promoted": false,
-  "seal_stage": "all five matched revision-1 outcomes and blind reviews complete; bounded promotion recommended pending independent task review",
+  "candidate_runtime_promoted": true,
+  "seal_stage": "revision-1 matched evaluation complete; independent conditional acceptance satisfied by audit-only correction; exact evaluated bytes promoted and shared delivery checks passed",
   "benefit_summary": "Two unique baseline assertion gaps closed: partial failed duplicate replacement and work-error/successful-release reporting; no matched uplift credited to strong controls.",
   "review_settings": {
     "harness": "fresh Codex collaboration contexts, fork_turns=none",
@@ -397,7 +397,7 @@
     "blinding": "anonymized original/candidate code and task; no arm label, writing skills, expected judgments, author reports, other reviews or controller probes"
   },
   "artifact_sha256": {
-    "README.md": "25182376719698b27a6eb95771dc5d971b74daed4b7acabdab5b18a56a0a32e9",
+    "README.md": "463e8d09811e4d8f252b50e64056f2e3254ab9763fe4449231cf8f316697cda2",
     "cli-partial-failure/author-artifacts/author-report.md": "b097e119d0ee23c06e2e154d0f2ad91b8adf97dd730fbb6f2535c1f825c13096",
     "cli-partial-failure/author-artifacts/checks.json": "ce576cce39ddcc5a87af6d6148cd717528030ada6cb3d8f18d5b48687cf4ae58",
     "cli-partial-failure/author-artifacts/selection.json": "2f33ba82eca78cb60c4a2f9208dd3be1f6f70f1b9e1dd0350bbc604d64d85cc1",
@@ -430,12 +430,13 @@
     "cli-partial-failure/selection.json": "2f33ba82eca78cb60c4a2f9208dd3be1f6f70f1b9e1dd0350bbc604d64d85cc1",
     "cli-partial-failure/source.patch": "1721e90cf54eac72d22e6a079e73f535a2ddd2fc4fd21fc5e3cb6de346513fe9",
     "cli-partial-failure/verification.json": "e01d4a7421496f1d5d0cd906d020811228110301ee37dad550237dd7fdadcc91",
-    "comparison.md": "af56645649091e1d9288b5aa0b320d72f5ddf4307fd59c2cde28e98ee02409ed",
+    "comparison.md": "de57a43ba6fa615bbd9419134aee9f5f91011c4deda1f837c145f3d177642e08",
     "controller/archive_trial.py": "fec2d97e2aea172f31aa5faae72dbd1afa05991f8c6720e3f0865a792d6822b5",
     "controller/dispatch_setup.py": "47916f82cc1a3811de83b4dedd584d7867c938d2b369647d14a2e5595c514a62",
     "controller/review_setup.py": "5caec052d75f541f7d1852bf4fed0ac8a2d69ce80725b3e334550248aa3f7d03",
     "controller/run_mutation.py": "9d90a55eff7a9dbbafea2dd71ba1c70a672151f3c975b4d4c78e655e14a668d9",
     "controller/seal_run.py": "0fd20ad5a0f813ca846ecbef15c31058227f071ef1cbcd63496f15b39086bf4f",
+    "delivery-checks.json": "6805dfccead52e41d1adc29f06a2a812dd95ec1acbbb78af0ea20f3844ef01e0",
     "example-verification.json": "43a485f8e3a0416c3640e120d011924a492317a722d3c334ab6c101702cc29d8",
     "library-codec/author-artifacts/author-report.md": "76748b39fb6c015e4bc97b4ce3975b1f642a4f31ad731cebe83902701fefefd1",
     "library-codec/author-artifacts/checks.json": "6c81982643cdab9ab3fdb3db39093cbe1b2b68024f6993303adf30a01060621b",
@@ -539,6 +540,23 @@
     "skills/go-interfaces-and-composition/SKILL.md": "41c9cd023682e006b84b37ddadf39bc37f0f01b2bfd8af7609272799906d9621",
     "skills/go-package-boundaries/SKILL.md": "3245b2347309d6238950be43e269c05720dbcf5132548dd661955c9e428d3ca7",
     "skills/go-package-boundaries/references/package-maps.md": "19c2e6f964486abe11028ba04e443fc76eb39236538ee5d9ef25400cc8ecfc7f",
+    "task-review-artifacts/additional-checks.json": "ab0eb9cadd93e1722638eeca5343ee60c16a33fd0cf011d115985ab243845885",
+    "task-review-artifacts/additional_checks.py": "739921fde25ad5b44f910c04f4f72ab8070a610493742ca59c73be94340fb651",
+    "task-review-artifacts/archive-checks.json": "5f47bbadf31bfc4924f458ae99cddb910e43b02424efa3cbcfd50a9bbe530662",
+    "task-review-artifacts/clean-checks.json": "fc751fd92a7d76b9e61ae594a15b7220abc03e93868730f22368b6dc96c2cb57",
+    "task-review-artifacts/mutations-checks.json": "305f60e3b1c2d73d2920aa16b02cf452087963a2678ace089113e311df000478",
+    "task-review-artifacts/probe-checks.json": "815d2be7a01bd60ba897c65f82c5c1a36b1b258256b5d9dbeaf36a39e3aa0d15",
+    "task-review-artifacts/run_go_checks.py": "560b1e6c999275a2c9af6bb0a6f13581d0c6b3d094901ef11b4b54e688b4636f",
+    "task-review-artifacts/run_probes.py": "7bc0025afbd5f205b8977bf8c962808ff581aa97c8b92cab018c450544188a8a",
+    "task-review-artifacts/service-approved-checks.json": "62a14395d52a01fe65238569a755613fd25a657a367f0b64d115c0d26be0cd84",
+    "task-review-artifacts/service-checks.json": "c47d3d162df2d64947999db42a84757583a35b96276889cc14d59bcb90a84595",
+    "task-review-artifacts/service-mutations-approved-checks.json": "fe6dea533db6fa18fb68aab4525df81dd4d4d68322ffbc2bd41012f9f46dc2c3",
+    "task-review-artifacts/source-audit-at-checkpoint.md": "e648bb50245a87b9dd5a05410716db93d477451b8fd4a74e5628bfb5d66b2aeb",
+    "task-review-artifacts/verify_archives.py": "05f60204f59434dfd0c39b03d3927f9864ee426738d9c8f600eaefef552a9d1d",
+    "task-review-checks.json": "5b9cf6ff9a00c8759ae312ddebe2483277ed5cd00a4466eb0bc098b723f73c85",
+    "task-review-dispatch.md": "9c03f749bf6b544a34e0eef02f7404008fa698d8400c413c755d4a6e048a79fe",
+    "task-review-launch.txt": "c22304f0a05b6775168152d175a778db03a963bbff0cfca33378e3eef6d273c2",
+    "task-review.md": "ae57f9cf1225a68df1838cb144308cc51b07ae5de1801be74af9e846b31aefa6",
     "toolchain-availability.json": "8f3f65b172f53cc4dd8dfc523008af938a537047499928af0b7c1ff8183a93e8",
     "worker-host/author-artifacts/author-report.md": "e72118682182035983e5156e58f221e2240703b628242b4b4de20ba4577eb8ae",
     "worker-host/author-artifacts/checks.json": "95256b4344dccdefcbab8abcd1dd61802670b5f48bd32135ac4cb860ef2d3c28",
@@ -576,5 +594,11 @@
     "worker-host/source.patch": "1a9578a2dd9d1f831fc018b046f37869248a0c37b81d8c76ffdb7e162d18d0bd",
     "worker-host/verification.json": "ce41455ffe2e4684a90842d5763f504bba05119fac508550cd16cc67eae4a2f1"
   },
-  "checksum_note": "checksums.sha256 covers manifest.json and every other archived file except itself; its digest is anchored in the canonical design record."
+  "checksum_note": "checksums.sha256 covers manifest.json and every other archived file except itself; its digest is anchored in the canonical design record.",
+  "runtime_destination": "plugins/go-quality-build/skills/go-behavior-tests",
+  "runtime_sha256": {
+    "SKILL.md": "b083f010026498a8976cc44321852ac3e588f22ad5d58d51f659fc87a127e550",
+    "references/behavior-observations.md": "142d91164b0932a7691b035dc45e8517e1acf860e5bdb0e6fe6783f799763ae0"
+  },
+  "promotion_resolution": "Independent task review supports unchanged revision-1 promotion after testing-layout audit correction. Root corrected all 11 missing sections at 7403956; no runtime guidance change."
 }

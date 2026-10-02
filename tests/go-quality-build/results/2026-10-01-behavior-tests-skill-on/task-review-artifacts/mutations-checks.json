@@ -1,0 +1,808 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/cli-partial-failure/mutations/cli-discard-prefix/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/cli-partial-failure/cli-discard-prefix",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/cli-partial-failure/cli-discard-prefix",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.187s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.33
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/cli-partial-failure/cli-discard-prefix",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestRunStopsAtInvalidRow (0.01s)\n    --- FAIL: TestRunStopsAtInvalidRow/missing_field (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/extra_field (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/zero (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/negative (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/empty_quantity (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/nondecimal (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/fraction (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/exponent (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/whitespace (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/overflow (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/unclosed_quote (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/bare_quote (0.00s)\n        main_test.go:71: records = map[], want map[api:8\n             web:9\n            ]\n--- FAIL: TestRunWritesBeforeReadingNextRow (0.00s)\n    io.go:722: records = map[], want map[web:7\n        ]\n--- FAIL: TestRunInputFailureRetainsPrefix (0.00s)\n    io.go:722: records = map[], want map[web:7\n        ]\n--- FAIL: TestRunStopsReadingAfterInvalidRow (0.00s)\n    io.go:722: records = map[], want map[web:7\n        ]\n--- FAIL: TestCLI (0.27s)\n    --- FAIL: TestCLI/invalid_prefix (0.00s)\n        main_test.go:342: records = map[], want map[web:7\n            ]\n    --- FAIL: TestCLI/malformed_CSV (0.00s)\n        main_test.go:342: records = map[], want map[web:7\n            ]\nFAIL\nFAIL\texample.com/ledgerload\t0.406s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.523
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/cli-partial-failure/mutations/cli-success-exit/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/cli-partial-failure/cli-success-exit",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/cli-partial-failure/cli-success-exit",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.160s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.321
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/cli-partial-failure/cli-success-exit",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestCLI (0.31s)\n    --- FAIL: TestCLI/invalid_prefix (0.00s)\n        main_test.go:331: exit = 0, want 2; stderr = \"record 2: invalid quantity \\\"0\\\"\\n\"\n    --- FAIL: TestCLI/malformed_CSV (0.00s)\n        main_test.go:331: exit = 0, want 2; stderr = \"record 2: reading CSV: parse error on line 2, column 4: bare \\\" in non-quoted-field\\n\"\n    --- FAIL: TestCLI/file_failure (0.00s)\n        main_test.go:331: exit = 0, want 2; stderr = \"record 2: writing \\\"blocked\\\": open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIfile_failure2322523135/001/blocked: is a directory\\n\"\n    --- FAIL: TestCLI/missing_dir (0.00s)\n        main_test.go:331: exit = 0, want 2; stderr = \"--dir required and no positional arguments allowed\\n\"\n    --- FAIL: TestCLI/positional (0.00s)\n        main_test.go:331: exit = 0, want 2; stderr = \"--dir required and no positional arguments allowed\\n\"\n    --- FAIL: TestCLI/unknown_flag (0.00s)\n        main_test.go:331: exit = 0, want 2; stderr = \"flag provided but not defined: -unknown\\nUsage of ledgerload:\\n  -dir string\\n    \\trecord directory\\nflag provided but not defined: -unknown\\n\"\nFAIL\nFAIL\texample.com/ledgerload\t0.445s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.555
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/library-codec/mutations/codec-coordinated-swap/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/library-codec/codec-coordinated-swap",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.012
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/library-codec/codec-coordinated-swap",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/keycodec\t0.149s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.309
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/library-codec/codec-coordinated-swap",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestEncode (0.00s)\n    --- FAIL: TestEncode/legacy (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"east\", Name:\"web\"}) = \"web/east\", <nil>; want \"east/web\", nil\n    --- FAIL: TestEncode/region_slash (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"us/west\", Name:\"web\"}) = \"web/us%2Fwest\", <nil>; want \"us%2Fwest/web\", nil\n    --- FAIL: TestEncode/name_slash (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"east\", Name:\"web/blue\"}) = \"web%2Fblue/east\", <nil>; want \"east/web%2Fblue\", nil\n    --- FAIL: TestEncode/region_space (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"us west\", Name:\"web\"}) = \"web/us%20west\", <nil>; want \"us%20west/web\", nil\n    --- FAIL: TestEncode/name_space (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"east\", Name:\"web blue\"}) = \"web%20blue/east\", <nil>; want \"east/web%20blue\", nil\n    --- FAIL: TestEncode/percent (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"100%\", Name:\"%2F\"}) = \"%252F/100%25\", <nil>; want \"100%25/%252F\", nil\n    --- FAIL: TestEncode/Unicode (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"\u65e5\u672c\", Name:\"caf\u00e9\"}) = \"caf%C3%A9/%E6%97%A5%E6%9C%AC\", <nil>; want \"%E6%97%A5%E6%9C%AC/caf%C3%A9\", nil\n    --- FAIL: TestEncode/path_plus (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"a+b\", Name:\"c+d\"}) = \"c+d/a+b\", <nil>; want \"a+b/c+d\", nil\n    --- FAIL: TestEncode/reserved (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"a?b\", Name:\"c#d\"}) = \"c%23d/a%3Fb\", <nil>; want \"a%3Fb/c%23d\", nil\n    --- FAIL: TestEncode/combined (0.00s)\n        codec_contract_test.go:39: Encode(keycodec.Key{Region:\"us/west\", Name:\"web blue\"}) = \"web%20blue/us%2Fwest\", <nil>; want \"us%2Fwest/web%20blue\", nil\n--- FAIL: TestDecode (0.00s)\n    --- FAIL: TestDecode/legacy (0.00s)\n        codec_contract_test.go:68: Decode(\"east/web\") = keycodec.Key{Region:\"web\", Name:\"east\"}, <nil>; want keycodec.Key{Region:\"east\", Name:\"web\"}, nil\n    --- FAIL: TestDecode/region_slash (0.00s)\n        codec_contract_test.go:68: Decode(\"us%2Fwest/web\") = keycodec.Key{Region:\"web\", Name:\"us/west\"}, <nil>; want keycodec.Key{Region:\"us/west\", Name:\"web\"}, nil\n    --- FAIL: TestDecode/name_slash (0.00s)\n        codec_contract_test.go:68: Decode(\"east/web%2Fblue\") = keycodec.Key{Region:\"web/blue\", Name:\"east\"}, <nil>; want keycodec.Key{Region:\"east\", Name:\"web/blue\"}, nil\n    --- FAIL: TestDecode/spaces (0.00s)\n        codec_contract_test.go:68: Decode(\"%20west/web%20\") = keycodec.Key{Region:\"web \", Name:\" west\"}, <nil>; want keycodec.Key{Region:\" west\", Name:\"web \"}, nil\n    --- FAIL: TestDecode/percent (0.00s)\n        codec_contract_test.go:68: Decode(\"100%25/%252F\") = keycodec.Key{Region:\"%2F\", Name:\"100%\"}, <nil>; want keycodec.Key{Region:\"100%\", Name:\"%2F\"}, nil\n    --- FAIL: TestDecode/Unicode (0.00s)\n        codec_contract_test.go:68: Decode(\"%E6%97%A5%E6%9C%AC/caf%C3%A9\") = keycodec.Key{Region:\"caf\u00e9\", Name:\"\u65e5\u672c\"}, <nil>; want keycodec.Key{Region:\"\u65e5\u672c\", Name:\"caf\u00e9\"}, nil\n    --- FAIL: TestDecode/literal_plus (0.00s)\n        codec_contract_test.go:68: Decode(\"a+b/c+d\") = keycodec.Key{Region:\"c+d\", Name:\"a+b\"}, <nil>; want keycodec.Key{Region:\"a+b\", Name:\"c+d\"}, nil\n    --- FAIL: TestDecode/escaped_plus (0.00s)\n        codec_contract_test.go:68: Decode(\"a%2Bb/c%2Bd\") = keycodec.Key{Region:\"c+d\", Name:\"a+b\"}, <nil>; want keycodec.Key{Region:\"a+b\", Name:\"c+d\"}, nil\n    --- FAIL: TestDecode/lowercase_hex (0.00s)\n        codec_contract_test.go:68: Decode(\"us%2fwest/caf%c3%a9\") = keycodec.Key{Region:\"caf\u00e9\", Name:\"us/west\"}, <nil>; want keycodec.Key{Region:\"us/west\", Name:\"caf\u00e9\"}, nil\n    --- FAIL: TestDecode/escaped_unreserved (0.00s)\n        codec_contract_test.go:68: Decode(\"%65ast/%77eb\") = keycodec.Key{Region:\"web\", Name:\"east\"}, <nil>; want keycodec.Key{Region:\"east\", Name:\"web\"}, nil\n    --- FAIL: TestDecode/reserved (0.00s)\n        codec_contract_test.go:68: Decode(\"a%3Fb/c%23d\") = keycodec.Key{Region:\"c#d\", Name:\"a?b\"}, <nil>; want keycodec.Key{Region:\"a?b\", Name:\"c#d\"}, nil\n--- FAIL: Example (0.00s)\ngot:\nweb%20blue/us%2Fwest\nregion=\"us/west\" name=\"web blue\"\nwant:\nus%2Fwest/web%20blue\nregion=\"us/west\" name=\"web blue\"\nFAIL\nFAIL\texample.com/keycodec\t0.111s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.237
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/worker-host/mutations/host-no-join/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/worker-host/host-no-join",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.011
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/worker-host/host-no-join",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.138s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.28
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/worker-host/host-no-join",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestRunCancellationWaitsForCallbackCleanupBeforeRelease (0.00s)\n    host_test.go:162: release ran while callback cleanup was blocked\n--- FAIL: TestRunCanceledCallbackResult (0.00s)\n    --- FAIL: TestRunCanceledCallbackResult/context_error (0.00s)\n        host_test.go:276: Run = release failed; want callback result context canceled joined with release error\n    --- FAIL: TestRunCanceledCallbackResult/independent_error (0.00s)\n        host_test.go:276: Run = release failed; want callback result independent callback failure joined with release error\nFAIL\nFAIL\texample.com/sweeper\t0.320s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.437
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/worker-host/mutations/post-review-host-drop-error-successful-release/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/worker-host/post-review-host-drop-error-successful-release",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.021
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/worker-host/post-review-host-drop-error-successful-release",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.175s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.327
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/worker-host/post-review-host-drop-error-successful-release",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.277s\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.399
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/worker-host/mutations/worker-start-relative/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/worker-host/worker-start-relative",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.022
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/worker-host/worker-start-relative",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.183s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.335
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/baseline/worker-host/worker-start-relative",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestRunImmediateThenFullIntervalAfterCompletion (0.08s)\n    host_test.go:104: next sweep started after 1.167\u00b5s; want at least 40ms after completion\nFAIL\nFAIL\texample.com/sweeper\t0.235s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.357
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/cli-partial-failure/mutations/cli-discard-prefix/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/cli-partial-failure/cli-discard-prefix",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.019
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/cli-partial-failure/cli-discard-prefix",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.175s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.332
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/cli-partial-failure/cli-discard-prefix",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestRunStopsAtInvalidRow (0.01s)\n    --- FAIL: TestRunStopsAtInvalidRow/too_few_fields (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/too_many_fields (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/empty_quantity (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/zero_quantity (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/negative_duplicate (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/fractional_quantity (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/nondecimal_quantity (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/space_in_quantity (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/overflow_quantity (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n    --- FAIL: TestRunStopsAtInvalidRow/malformed_CSV (0.00s)\n        main_test.go:74: entries = [- keep], want records map[first:3\n             keep:5\n            ]\n--- FAIL: TestRunInputFailureRetainsPrefix (0.00s)\n    main_test.go:122: entries = [], want records map[first:3\n         keep:5\n        ]\n--- FAIL: TestRunPublishesBeforeReadingNextRecord (0.00s)\n    main_test.go:141: first record not published before next read: \"\", open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestRunPublishesBeforeReadingNextRecord3975086161/001/first: no such file or directory\n--- FAIL: TestCLIProcessContract (0.29s)\n    --- FAIL: TestCLIProcessContract/invalid_duplicate (0.00s)\n        main_test.go:175: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIProcessContractinvalid_duplicate1905254520/001/records: no such file or directory\n    --- FAIL: TestCLIProcessContract/malformed_CSV_after_prefix (0.00s)\n        main_test.go:175: open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIProcessContractmalformed_CSV_after_prefix620515185/001/records: no such file or directory\nFAIL\nFAIL\texample.com/ledgerload\t0.625s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.743
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/cli-partial-failure/mutations/cli-success-exit/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/cli-partial-failure/cli-success-exit",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/cli-partial-failure/cli-success-exit",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.166s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.31
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/cli-partial-failure/cli-success-exit",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestCLIProcessContract (0.30s)\n    --- FAIL: TestCLIProcessContract/invalid_first_row (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"record 1 (\\\"bad\\\"): invalid quantity \\\"0\\\"\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/invalid_duplicate (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"record 2 (\\\"keep\\\"): invalid quantity \\\"-9\\\"\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/malformed_CSV_after_prefix (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"read record 2: record on line 2; parse error on line 3, column 9: extraneous or missing \\\" in quoted-field\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/missing_directory (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"--dir required and no positional arguments allowed\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/empty_directory_option (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"--dir required and no positional arguments allowed\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/positional_argument (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"--dir required and no positional arguments allowed\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/unknown_flag (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"flag provided but not defined: -unknown\\nUsage of ledgerload:\\n  -dir string\\n    \\trecord directory\\nflag provided but not defined: -unknown\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/missing_flag_value (0.00s)\n        main_test.go:174: process = exit 0, stdout \"\", stderr \"flag needs an argument: -dir\\nUsage of ledgerload:\\n  -dir string\\n    \\trecord directory\\nflag needs an argument: -dir\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/file_failure_after_prefix (0.00s)\n        main_test.go:184: process = exit 0, stdout \"\", stderr \"write record 2 (\\\"blocked\\\"): rename /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIProcessContractfile_failure_after_prefix2261975266/001/.ledgerload-1810900539 /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIProcessContractfile_failure_after_prefix2261975266/001/blocked: file exists\\n\"; want exit 2 and empty stdout\n    --- FAIL: TestCLIProcessContract/directory_creation_failure (0.00s)\n        main_test.go:192: process = exit 0, stdout \"\", stderr \"create record directory: mkdir /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIProcessContractdirectory_creation_failure3134050595/001/records: not a directory\\n\"; want exit 2 and empty stdout\n--- FAIL: TestCLIPartialWriteRetainsAcceptedDuplicate (0.21s)\n    write_failure_unix_test.go:38: limited executable = <nil>; stderr \"write record 2 (\\\"keep\\\"): write /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIPartialWriteRetainsAcceptedDuplicate914750042/002/.ledgerload-2976379341: file too large\\n\"\nFAIL\nFAIL\texample.com/ledgerload\t0.637s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.753
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/cli-partial-failure/mutations/post-review-cli-direct-partial-write/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/cli-partial-failure/post-review-cli-direct-partial-write",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/cli-partial-failure/post-review-cli-direct-partial-write",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/ledgerload\t0.167s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.313
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/cli-partial-failure/post-review-cli-direct-partial-write",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestCLIPartialWriteRetainsAcceptedDuplicate (0.20s)\n    write_failure_unix_test.go:41: /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestCLIPartialWriteRetainsAcceptedDuplicate1462137285/002/keep = \"12\", <nil>; want \"1\\n\"\nFAIL\nFAIL\texample.com/ledgerload\t0.634s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.752
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/library-codec/mutations/codec-coordinated-swap/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/library-codec/codec-coordinated-swap",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/library-codec/codec-coordinated-swap",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/keycodec\t0.179s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.335
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/library-codec/codec-coordinated-swap",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestEncode (0.00s)\n    --- FAIL: TestEncode/simple (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"east\", Name:\"web\"}) = \"web/east\", want \"east/web\"\n    --- FAIL: TestEncode/slashes (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"us/west\", Name:\"web/blue\"}) = \"web%2Fblue/us%2Fwest\", want \"us%2Fwest/web%2Fblue\"\n    --- FAIL: TestEncode/spaces (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"us west\", Name:\"web blue\"}) = \"web%20blue/us%20west\", want \"us%20west/web%20blue\"\n    --- FAIL: TestEncode/percent (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"us%west\", Name:\"web%blue\"}) = \"web%25blue/us%25west\", want \"us%25west/web%25blue\"\n    --- FAIL: TestEncode/escaped-looking_values (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"%2F\", Name:\"%20\"}) = \"%2520/%252F\", want \"%252F/%2520\"\n    --- FAIL: TestEncode/Unicode (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"\u65e5\u672c\", Name:\"caf\u00e9\"}) = \"caf%C3%A9/%E6%97%A5%E6%9C%AC\", want \"%E6%97%A5%E6%9C%AC/caf%C3%A9\"\n    --- FAIL: TestEncode/literal_plus (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"us+west\", Name:\"web+blue\"}) = \"web+blue/us+west\", want \"us+west/web+blue\"\n    --- FAIL: TestEncode/URL_punctuation (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"us?west\", Name:\"web#blue\"}) = \"web%23blue/us%3Fwest\", want \"us%3Fwest/web%23blue\"\n    --- FAIL: TestEncode/escaped_fields_only (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"/\", Name:\"%\"}) = \"%25/%2F\", want \"%2F/%25\"\n    --- FAIL: TestEncode/README_example (0.00s)\n        key_test.go:41: Encode(keycodec.Key{Region:\"us/west\", Name:\"web blue\"}) = \"web%20blue/us%2Fwest\", want \"us%2Fwest/web%20blue\"\n--- FAIL: TestDecode (0.00s)\n    --- FAIL: TestDecode/simple (0.00s)\n        key_test.go:94: Decode(\"east/web\") = keycodec.Key{Region:\"web\", Name:\"east\"}, want keycodec.Key{Region:\"east\", Name:\"web\"}\n    --- FAIL: TestDecode/slashes (0.00s)\n        key_test.go:94: Decode(\"us%2Fwest/web%2Fblue\") = keycodec.Key{Region:\"web/blue\", Name:\"us/west\"}, want keycodec.Key{Region:\"us/west\", Name:\"web/blue\"}\n    --- FAIL: TestDecode/spaces (0.00s)\n        key_test.go:94: Decode(\"us%20west/web%20blue\") = keycodec.Key{Region:\"web blue\", Name:\"us west\"}, want keycodec.Key{Region:\"us west\", Name:\"web blue\"}\n    --- FAIL: TestDecode/percent (0.00s)\n        key_test.go:94: Decode(\"us%25west/web%25blue\") = keycodec.Key{Region:\"web%blue\", Name:\"us%west\"}, want keycodec.Key{Region:\"us%west\", Name:\"web%blue\"}\n    --- FAIL: TestDecode/one_unescape (0.00s)\n        key_test.go:94: Decode(\"%252F/%2520\") = keycodec.Key{Region:\"%20\", Name:\"%2F\"}, want keycodec.Key{Region:\"%2F\", Name:\"%20\"}\n    --- FAIL: TestDecode/Unicode (0.00s)\n        key_test.go:94: Decode(\"%E6%97%A5%E6%9C%AC/caf%C3%A9\") = keycodec.Key{Region:\"caf\u00e9\", Name:\"\u65e5\u672c\"}, want keycodec.Key{Region:\"\u65e5\u672c\", Name:\"caf\u00e9\"}\n    --- FAIL: TestDecode/literal_plus (0.00s)\n        key_test.go:94: Decode(\"us+west/web+blue\") = keycodec.Key{Region:\"web+blue\", Name:\"us+west\"}, want keycodec.Key{Region:\"us+west\", Name:\"web+blue\"}\n    --- FAIL: TestDecode/escaped_plus (0.00s)\n        key_test.go:94: Decode(\"us%2Bwest/web%2Bblue\") = keycodec.Key{Region:\"web+blue\", Name:\"us+west\"}, want keycodec.Key{Region:\"us+west\", Name:\"web+blue\"}\n    --- FAIL: TestDecode/URL_punctuation (0.00s)\n        key_test.go:94: Decode(\"us%3Fwest/web%23blue\") = keycodec.Key{Region:\"web#blue\", Name:\"us?west\"}, want keycodec.Key{Region:\"us?west\", Name:\"web#blue\"}\n    --- FAIL: TestDecode/lowercase_escapes (0.00s)\n        key_test.go:94: Decode(\"us%2fwest/caf%c3%a9\") = keycodec.Key{Region:\"caf\u00e9\", Name:\"us/west\"}, want keycodec.Key{Region:\"us/west\", Name:\"caf\u00e9\"}\n    --- FAIL: TestDecode/escaped_fields_only (0.00s)\n        key_test.go:94: Decode(\"%2F/%25\") = keycodec.Key{Region:\"%\", Name:\"/\"}, want keycodec.Key{Region:\"/\", Name:\"%\"}\n    --- FAIL: TestDecode/legacy_unescaped_values (0.00s)\n        key_test.go:94: Decode(\"us west/caf\u00e9\") = keycodec.Key{Region:\"caf\u00e9\", Name:\"us west\"}, want keycodec.Key{Region:\"us west\", Name:\"caf\u00e9\"}\n--- FAIL: ExampleEncode (0.00s)\ngot:\nweb%20blue/us%2Fwest\nwant:\nus%2Fwest/web%20blue\n--- FAIL: ExampleDecode (0.00s)\ngot:\nRegion: \"web blue\", Name: \"us/west\"\nwant:\nRegion: \"us/west\", Name: \"web blue\"\nFAIL\nFAIL\texample.com/keycodec\t0.134s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.256
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/worker-host/mutations/host-no-join/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/worker-host/host-no-join",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.013
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/worker-host/host-no-join",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.173s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.323
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/worker-host/host-no-join",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn (0.00s)\n    --- FAIL: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/normal_cancellation (0.00s)\n        host_test.go:259: release ran while callback cleanup was blocked\n    --- FAIL: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/callback_error_during_cancellation (0.00s)\n        host_test.go:259: release ran while callback cleanup was blocked\nFAIL\nFAIL\texample.com/sweeper\t0.418s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.541
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/worker-host/mutations/post-review-host-drop-error-successful-release/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/worker-host/post-review-host-drop-error-successful-release",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.022
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/worker-host/post-review-host-drop-error-successful-release",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.187s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.341
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/worker-host/post-review-host-drop-error-successful-release",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestSuccessfulCyclesWaitAfterCompletionAndNeverOverlap (0.25s)\n    host_test.go:208: Run = <nil>, want third cycle error\n--- FAIL: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn (0.06s)\n    --- FAIL: TestCancellationWaitsForCallbackCleanupBeforeReleaseAndReturn/callback_error_during_cancellation (0.03s)\n        host_test.go:271: Run = <nil>, want callback cause cleanup failed\n--- FAIL: TestWorkerAndReleaseErrorCombinations (0.00s)\n    --- FAIL: TestWorkerAndReleaseErrorCombinations/sweep_failure_releases (0.00s)\n        host_test.go:321: Run = <nil>, want cause sweep failed\nFAIL\nFAIL\texample.com/sweeper\t0.481s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.605
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/worker-host/mutations/worker-start-relative/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/worker-host/worker-start-relative",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.019
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/worker-host/worker-start-relative",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/sweeper\t0.180s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.331
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/mutations/skill-on/worker-host/worker-start-relative",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestSuccessfulCyclesWaitAfterCompletionAndNeverOverlap (0.18s)\n    host_test.go:201: cycle 2 started 3.583\u00b5s after completion, want at least 60ms\n    host_test.go:201: cycle 3 started 59.953583ms after completion, want at least 60ms\nFAIL\nFAIL\texample.com/sweeper\t0.423s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.543
+  }
+]

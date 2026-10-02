@@ -1,0 +1,250 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/service-publication/mutations/mirror-direct-truncate/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/service-mutations-approved/baseline/service-publication/mirror-direct-truncate",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.014
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/service-mutations-approved/baseline/service-publication/mirror-direct-truncate",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.205s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.436
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/service-mutations-approved/baseline/service-publication/mirror-direct-truncate",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestRefreshReplacesSnapshotForOpenReaders (0.00s)\n    refresh_test.go:220: already-open handle = \"[]\", want \"  [ {\\\"code\\\":\\\"old\\\",\\\"label\\\":\\\"Old\\\"} ]\\n\"\nFAIL\nFAIL\texample.com/mirror\t0.182s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.367
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-baseline/service-publication/mutations/mirror-no-label-validation/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/service-mutations-approved/baseline/service-publication/mirror-no-label-validation",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.015
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/service-mutations-approved/baseline/service-publication/mirror-no-label-validation",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.196s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.428
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/service-mutations-approved/baseline/service-publication/mirror-no-label-validation",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody (0.01s)\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/blank_label (0.00s)\n        refresh_test.go:114: Refresh unexpectedly succeeded\n    --- FAIL: TestRefreshFailuresPreserveSnapshotAndCloseBody/missing_label (0.00s)\n        refresh_test.go:114: Refresh unexpectedly succeeded\nFAIL\nFAIL\texample.com/mirror\t0.192s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.375
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/mutations/mirror-direct-truncate/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/service-mutations-approved/skill-on/service-publication/mirror-direct-truncate",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.014
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/service-mutations-approved/skill-on/service-publication/mirror-direct-truncate",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.202s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.441
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/service-mutations-approved/skill-on/service-publication/mirror-direct-truncate",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestRefreshReplacesSnapshotWithoutTruncatingOldHandle (0.00s)\n    refresh_unix_test.go:42: already-open snapshot = \"[{\\\"code\\\":\\\"new\\\",\\\"label\\\":\\\"New\\\"}]\", want \"old snapshot with exact bytes\\n\"\n--- FAIL: TestRefreshPartialWriteFailureRetainsPreviousSnapshot (0.01s)\n    refresh_unix_test.go:99: snapshot = \"[{\\\"code\\\":\\\"new\\\",\\\"label\\\":\\\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", want \"accepted snapshot\\n\"\nFAIL\nFAIL\texample.com/mirror\t0.196s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.386
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "git",
+      "apply",
+      "/Users/jb/.codex/worktrees/b633/skills/tests/go-quality-build/results/2026-10-01-behavior-tests-skill-on/service-publication/mutations/mirror-no-label-validation/source.patch"
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/service-mutations-approved/skill-on/service-publication/mirror-no-label-validation",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.014
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/service-mutations-approved/skill-on/service-publication/mirror-no-label-validation",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "ok  \texample.com/mirror\t0.204s [no tests to run]\n",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_seconds": 0.445
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-behavior-promotion-review/mutated/service-mutations-approved/skill-on/service-publication/mirror-no-label-validation",
+    "env": {
+      "GOCACHE": "/private/tmp/go-quality-testing-cache",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off"
+    },
+    "stdout": "--- FAIL: TestRefreshRejectsResponsesAndRetainsExactBytes (0.01s)\n    --- FAIL: TestRefreshRejectsResponsesAndRetainsExactBytes/empty_label (0.00s)\n        refresh_test.go:145: Refresh accepted an invalid response\n    --- FAIL: TestRefreshRejectsResponsesAndRetainsExactBytes/blank_label (0.00s)\n        refresh_test.go:145: Refresh accepted an invalid response\n    --- FAIL: TestRefreshRejectsResponsesAndRetainsExactBytes/invalid_later_item (0.00s)\n        refresh_test.go:145: Refresh accepted an invalid response\n--- FAIL: TestRefreshRetainsLastAcceptedSnapshot (0.00s)\n    refresh_test.go:316: replacement 1 succeeded, want rejection\nFAIL\nFAIL\texample.com/mirror\t0.192s\nFAIL\n",
+    "stderr": "",
+    "exit_code": 1,
+    "duration_seconds": 0.376
+  }
+]
