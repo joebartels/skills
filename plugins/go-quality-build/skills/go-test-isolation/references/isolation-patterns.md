@@ -98,7 +98,7 @@ starts, but the test still owns joining and resource-release order.
 | Fixture | Supports | Requires another observation when |
 | --- | --- | --- |
 | Local temporary files | Actual path/data/ownership behavior | Cross-platform replacement/permission semantics matter |
-| Handwritten HTTP transport/body | Constructed request, statuses, read errors, close counts | Real framing/transport cancellation is promised |
+| Handwritten HTTP transport/body | Constructed request, statuses, read errors, close counts | Client redirect policy, real framing or transport cancellation is promised |
 | httptest.ResponseRecorder | Handler response behavior | Network connection behavior matters |
 | Local httptest server/client | Real local request/response and context behavior | External DNS/TLS/service behavior matters |
 | Actual command with explicit environment | Process status/streams/configuration | Deployment environment or other platforms matter |
@@ -106,6 +106,15 @@ starts, but the test still owns joining and resource-release order.
 
 Do not make unrelated integration infrastructure mandatory. Keep reduced-scope
 results explicit rather than calling a substitute a successful real integration.
+
+For tests that build a command, distinguish the Go builder's environment from
+the command's application environment. An unset GOCACHE normally uses Go's user
+cache default; a filtered builder environment that also removes the default's
+inputs can make setup fail before any application observation. Preserve the
+needed builder settings or supply an owned absolute cache path, with cleanup.
+Do not silently depend on an evaluation runner's override. Exercise relevant
+unset defaults as well as explicit application values; this does not require a
+new cache for every invocation or passing unrelated application settings through.
 
 ## Timing choices
 

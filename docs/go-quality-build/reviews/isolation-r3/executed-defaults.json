@@ -1,0 +1,412 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-f",
+      "{{if .TestGoFiles}}{{.ImportPath}}{{else if .XTestGoFiles}}{{.ImportPath}}{{end}}",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-test-isolation-r3/cli-environment",
+    "exit_code": 0,
+    "stdout": "example.com/showcfg\n",
+    "stderr": "",
+    "elapsed_seconds": 0.021,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "cli-environment package list"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-c",
+      "-o",
+      "/private/tmp/go-isolation-r3-promotion/default-tests-cli-environment-0",
+      "example.com/showcfg"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-test-isolation-r3/cli-environment",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.152,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "cli-environment compile unchanged tests"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-f",
+      "{{.Dir}}",
+      "example.com/showcfg"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-test-isolation-r3/cli-environment",
+    "exit_code": 0,
+    "stdout": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-test-isolation-r3/cli-environment\n",
+    "stderr": "",
+    "elapsed_seconds": 0.018,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "cli-environment package cwd"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-isolation-r3-promotion/default-tests-cli-environment-0",
+      "-test.count=1",
+      "-test.timeout=60s"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-test-isolation-r3/cli-environment",
+    "exit_code": 0,
+    "stdout": "PASS\n",
+    "stderr": "",
+    "elapsed_seconds": 1.697,
+    "env": {
+      "GOCACHE": "<unset>",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/private/tmp/go-isolation-r3-promotion/valid-default-home"
+    },
+    "label": "cli-environment unset GOCACHE valid HOME full unchanged binary"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-f",
+      "{{if .TestGoFiles}}{{.ImportPath}}{{else if .XTestGoFiles}}{{.ImportPath}}{{end}}",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/isolation-only",
+    "exit_code": 0,
+    "stdout": "example.com/indexer\nexample.com/indexer/cmd/indexer\n",
+    "stderr": "",
+    "elapsed_seconds": 0.03,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "isolation-only package list"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-c",
+      "-o",
+      "/private/tmp/go-isolation-r3-promotion/default-tests-isolation-only-0",
+      "example.com/indexer"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/isolation-only",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.268,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "isolation-only compile unchanged tests"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-f",
+      "{{.Dir}}",
+      "example.com/indexer"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/isolation-only",
+    "exit_code": 0,
+    "stdout": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/isolation-only\n",
+    "stderr": "",
+    "elapsed_seconds": 0.027,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "isolation-only package cwd"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-isolation-r3-promotion/default-tests-isolation-only-0",
+      "-test.count=1",
+      "-test.timeout=60s"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/isolation-only",
+    "exit_code": 0,
+    "stdout": "PASS\n",
+    "stderr": "",
+    "elapsed_seconds": 0.551,
+    "env": {
+      "GOCACHE": "<unset>",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/private/tmp/go-isolation-r3-promotion/valid-default-home"
+    },
+    "label": "isolation-only unset GOCACHE valid HOME full unchanged binary"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-c",
+      "-o",
+      "/private/tmp/go-isolation-r3-promotion/default-tests-isolation-only-1",
+      "example.com/indexer/cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/isolation-only",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.28,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "isolation-only compile unchanged tests"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-f",
+      "{{.Dir}}",
+      "example.com/indexer/cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/isolation-only",
+    "exit_code": 0,
+    "stdout": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/isolation-only/cmd/indexer\n",
+    "stderr": "",
+    "elapsed_seconds": 0.034,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "isolation-only package cwd"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-isolation-r3-promotion/default-tests-isolation-only-1",
+      "-test.count=1",
+      "-test.timeout=60s"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/isolation-only/cmd/indexer",
+    "exit_code": 0,
+    "stdout": "PASS\n",
+    "stderr": "",
+    "elapsed_seconds": 2.287,
+    "env": {
+      "GOCACHE": "<unset>",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/private/tmp/go-isolation-r3-promotion/valid-default-home"
+    },
+    "label": "isolation-only unset GOCACHE valid HOME full unchanged binary"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-f",
+      "{{if .TestGoFiles}}{{.ImportPath}}{{else if .XTestGoFiles}}{{.ImportPath}}{{end}}",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/both",
+    "exit_code": 0,
+    "stdout": "example.com/indexer\nexample.com/indexer/cmd/indexer\n",
+    "stderr": "",
+    "elapsed_seconds": 0.03,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "both package list"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-c",
+      "-o",
+      "/private/tmp/go-isolation-r3-promotion/default-tests-both-0",
+      "example.com/indexer"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/both",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.269,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "both compile unchanged tests"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-f",
+      "{{.Dir}}",
+      "example.com/indexer"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/both",
+    "exit_code": 0,
+    "stdout": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/both\n",
+    "stderr": "",
+    "elapsed_seconds": 0.03,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "both package cwd"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-isolation-r3-promotion/default-tests-both-0",
+      "-test.count=1",
+      "-test.timeout=60s"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/both",
+    "exit_code": 0,
+    "stdout": "PASS\n",
+    "stderr": "",
+    "elapsed_seconds": 0.552,
+    "env": {
+      "GOCACHE": "<unset>",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/private/tmp/go-isolation-r3-promotion/valid-default-home"
+    },
+    "label": "both unset GOCACHE valid HOME full unchanged binary"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-c",
+      "-o",
+      "/private/tmp/go-isolation-r3-promotion/default-tests-both-1",
+      "example.com/indexer/cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/both",
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.284,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "both compile unchanged tests"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-f",
+      "{{.Dir}}",
+      "example.com/indexer/cmd/indexer"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/both",
+    "exit_code": 0,
+    "stdout": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/both/cmd/indexer\n",
+    "stderr": "",
+    "elapsed_seconds": 0.028,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "both package cwd"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-isolation-r3-promotion/default-tests-both-1",
+      "-test.count=1",
+      "-test.timeout=60s"
+    ],
+    "cwd": "/private/tmp/go-isolation-r3-promotion/reconstructed/2026-10-01-testing-combined-r3/both/cmd/indexer",
+    "exit_code": 0,
+    "stdout": "PASS\n",
+    "stderr": "",
+    "elapsed_seconds": 0.907,
+    "env": {
+      "GOCACHE": "<unset>",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/private/tmp/go-isolation-r3-promotion/valid-default-home"
+    },
+    "label": "both unset GOCACHE valid HOME full unchanged binary"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b633/skills",
+    "exit_code": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.01,
+    "env": {
+      "GOCACHE": "/private/tmp/go-isolation-r3-promotion/cache",
+      "GOTOOLCHAIN": "local",
+      "HOME": "/Users/jb"
+    },
+    "label": "actual toolchain"
+  }
+]

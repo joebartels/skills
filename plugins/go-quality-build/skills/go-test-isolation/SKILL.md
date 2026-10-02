@@ -33,6 +33,11 @@ Include setup failures, early assertions, descendants and background work.
   serial, including ancestors. t.Setenv restores state but cannot make global
   mutation parallel-safe. Preserve unset versus present-empty values. Use an
   explicit filtered child environment when checking real process behavior.
+- Separate build/tool subprocess setup from the executable's configuration.
+  When filtering a builder's environment, preserve or deliberately supply its
+  required cache/configuration instead of copying an absent override. A test
+  runner's GOCACHE override is not an implicit test prerequisite. Check relevant
+  setup with ordinary unset defaults while controlling application configuration.
 - Parallelize only independent work. Shared replacement sequences can remain
   serial inside independent instance cases. Respect the project's effective
   loop-variable semantics rather than adding or removing captures by habit.
@@ -46,7 +51,11 @@ required. Keep production seams aligned with actual API/composition needs;
 avoid exported hooks, interfaces or clock frameworks just to fit a test form.
 
 Make a double preserve the relevant cancellation, error, ordering, body lifetime
-and side-effect behavior. Instrument response bodies for ownership assertions;
+and side-effect behavior. Account for automatic client/driver behavior when the
+contract limits requests, targets or accepted responses: a redirected final 200
+can hide a rejected initial status and extra requests. Test through the actual
+client policy at that boundary without mutating shared caller configuration.
+Instrument response bodies for ownership assertions;
 use a real local HTTP server/transport when the claim needs request or network
 cancellation behavior. Handler recorders and synthetic transports support
 narrower observations. If a restriction forces a substitute, report that scope
