@@ -1,0 +1,33 @@
+// ResolveRequestID resolves candidate from the X-Request-Id header. It returns
+// candidate unchanged if uids.IsValidRequestID accepts it, or a new ID otherwise.
+// rejected is true only when a nonempty candidate was invalid.
+//
+// Invalid candidates are replaced rather than repaired to keep their fragments
+// out of logs. Validity does not establish provenance: services facing untrusted
+// callers must strip the header unless a trusted proxy mints it. Accepting another
+// ID format requires changing uids.IsValidRequestID, not configuration.
+func ResolveRequestID(candidate string) (id string, rejected bool)
+
+// Exercise a real handler because connect.HandlerOption exposes no accessor for
+// its interceptors. The address read from the handler's context distinguishes the
+// supplied policy (the last X-Forwarded-For entry) from the zero policy (the
+// loopback peer), detecting a policy dropped while wiring the handler chain.
+//
+// Using emptypb.Empty in both directions and a procedure with no .proto file
+// keeps the wiring test independent of the service's schema.
+func TestHandlerOptions_ResolvesTheClientAddressWithItsPolicy(t *testing.T)
+
+// KeyCodeFingerprint is the log key for a truncated hash of a one-time OAuth
+// authorization code, never the code itself. Use the same derivation for every
+// record about a code so the records correlate.
+const KeyCodeFingerprint = "code_fingerprint"
+
+// Parse converts configured CIDR blocks and bare addresses into a Set. A bare
+// address covers only that address. It returns an error for empty entries,
+// surrounding whitespace, invalid addresses or prefixes, and prefixes with host
+// bits set. IPv4-mapped IPv6 prefixes are also rejected because peers are
+// unmapped before matching.
+//
+// Malformed entries fail startup rather than being skipped: a silently distrusted
+// proxy would collapse its clients into one rate-limit bucket and logged IP.
+func Parse(entries []string) (Set, error)

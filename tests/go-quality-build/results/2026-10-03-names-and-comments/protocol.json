@@ -1,0 +1,41 @@
+{
+  "base_commit": "a05a40f977891856cebafe3c02abeb99622d0fbd",
+  "branch": "codex/go-names-and-comments",
+  "task": "Add idiomatic Go documentation for this small library so another engineer can use it correctly. Review names and add appropriate Godoc and implementation comments. Keep all exported identifiers, signatures and runtime behavior unchanged. Do not add a README, examples or dependencies.",
+  "baseline_guidance": "existing names/docs reference only",
+  "candidate_guidance": "same reference plus frozen candidate if baseline shows a relevant failure",
+  "micro_repetitions_per_arm": 5,
+  "budget": "Five fresh baseline samples; five matched candidate samples only for a demonstrated gap; one cleanup transfer and one unrelated control per arm. At most one guidance revision with affected reruns. Stop if no useful improvement.",
+  "settings": "Inherited model/reasoning; exact IDs unavailable through collaboration API. Fresh fork_turns=none authors.",
+  "review": "Independent source-focused review with neutral randomized arm mapping; preserve meaningful facts and code, remove filler; raw word counts are descriptive only.",
+  "inputs_sha256": {
+    "tests/go-quality-build/go-names-and-comments/evals/files/collector-docs/collector.go": "78a06a5de1e14f944f95bf41d9eff44fd07192b7aa12946a509c92da7850ea63",
+    "tests/go-quality-build/go-names-and-comments/evals/files/collector-docs/go.mod": "db826dd5933d66266e524846d2ba5f33807b42048c358c4ced7c86f32c278e8b",
+    "tests/go-quality-build/go-names-and-comments/evals/files/collector-docs/task.txt": "cfa01371a7d1efa142f14408638227484b02dd27ce64b88b3d483e16049b687e",
+    "tests/go-quality-build/results/2026-10-03-names-and-comments/existing-guide.md": "bdd75166555ea4e8e17fd95c8ecf9dc234ba0fb6c4df88c08079240f116562ea",
+    "tests/go-quality-build/go-names-and-comments/evals/files/ledger-cleanup/go.mod": "a76dda90662662cba22a4fcd78f86eb5504d8458fa6023a18a45b9dc2dd81ced",
+    "tests/go-quality-build/go-names-and-comments/evals/files/ledger-cleanup/task.txt": "4d92ca1dd594bc620149b1ab33ef8b70755a5b337cff228a479935e0d25fcd40",
+    "tests/go-quality-build/go-names-and-comments/evals/files/ledger-cleanup/ledger.go": "5f74e6ef37ebc9ad78ab5184b90d5cd87b86a351bcc419c4e322f10bc0316507",
+    "tests/go-quality-build/go-names-and-comments/evals/files/calculation-control/go.mod": "531551b9a6af282e7ad2003d63a53f2345d6d23e594fc51fd0528ff8be48a435",
+    "tests/go-quality-build/go-names-and-comments/evals/files/calculation-control/task.txt": "efed4ca23c49a84a1fee48f389c15be9b9ed30844142cc0550f5127124175e4d",
+    "tests/go-quality-build/go-names-and-comments/evals/files/calculation-control/arithmetic.go": "7448a79e5915740210dc6b666e35481c9e588578f6ca4ce45612a803cf6aac4b",
+    "tests/go-quality-build/go-names-and-comments/evals/files/real-comments/task.txt": "7242c7bd65b465b6e92eaec51b99639a7b608f7ad23388f3102ae94cd3fbe77a",
+    "tests/go-quality-build/go-names-and-comments/evals/files/real-comments/comments.go.txt": "e5135de2ecea3c53ad1891063b795b580dc624003af413f4c252b98afc425589"
+  },
+  "supplemental_cases": [
+    "ledger-cleanup",
+    "calculation-control"
+  ],
+  "case_preparation_note": "Declared cleanup transfer and unrelated control prepared after initial collector authors; no candidate exists. Core task/input/guidance remain fixed. Cleanup also exercises private naming.",
+  "real_examples_extension": {
+    "reason": "User supplied real verbose output after initial simple-fixture baselines passed. Those actual failures establish the missing scope: cross-boundary policy and test-review narratives.",
+    "budget": "Five fresh real-example baseline samples and five matched candidate samples; fresh new-documentation, cleanup and calculation-control samples only if useful. One guidance revision maximum.",
+    "scope": "Comment-only declaration excerpts; supplied prose is the factual contract oracle, not independently verified production source. Function bodies omitted; no compilation claim for these excerpts."
+  },
+  "candidate_basis": "Actual user examples and fresh existing-reference outputs real-01/02/03 retain lengthy test prefaces and helper deployment narratives. Initial collector baselines stay successful controls.",
+  "revision_1_sha256": "a2c787b946b35e388afb7702456f2e9ab0ff2d9cec5fd43cb16dde50f664afa6",
+  "candidate_sha256": "22e69690b3926b6cc090a2bef5f13ec7a0a7b63b7cc1b939aa2957f68acfac2b",
+  "revision_reason": "Arm-blind review identified loss of caller-relevant provenance warning and useful opaque-handler fixture rationale. Preserve those concise facts while removing deployment narratives. Initial version not promoted.",
+  "revision_checks": "Five fresh real-example authors on the original unchanged task, same reference, revised candidate. Recheck fresh full-source controls because setup/contract wording changed. This is the one budgeted guidance revision.",
+  "review_brief_note": "The second independent review makes the original user request for succinct useful comments explicit and clarifies that declaration-only excerpts provide no setup statements for internal comment placement. Author tasks and source inputs remain unchanged; avoid treating reviewer preferences as a fixed quantitative score across passes."
+}

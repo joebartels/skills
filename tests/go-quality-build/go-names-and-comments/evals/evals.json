@@ -1,0 +1,61 @@
+{
+  "skill_name": "go-names-and-comments",
+  "evals": [
+    {
+      "id": "collector-docs",
+      "prompt": "Add idiomatic Go documentation for this small library so another engineer can use it correctly. Review names and add appropriate Godoc and implementation comments. Keep all exported identifiers, signatures and runtime behavior unchanged. Do not add a README, examples or dependencies.",
+      "expected_output": "Useful public contracts with concise comments and no code narration or behavior changes.",
+      "assertions": [
+        "Documents actual defaults, limits, filtering, ownership and concurrency without invented guarantees.",
+        "Avoids duplicated explanations and implementation narration; public identifiers and runtime behavior are preserved."
+      ],
+      "files": [
+        "files/collector-docs/task.txt",
+        "files/collector-docs/go.mod",
+        "files/collector-docs/collector.go"
+      ]
+    },
+    {
+      "id": "ledger-cleanup",
+      "prompt": "Review this Go library for confusing names and overly verbose comments. Improve names and documentation while preserving every exported identifier, signature, operation contract and runtime behavior. Edit source only; do not add a README, examples or dependencies.",
+      "expected_output": "Compact accurate Godoc, a meaningful private parse name and no implementation narration.",
+      "assertions": [
+        "Preserves input grammar, non-nil destination requirement, replacement/count behavior, usable state on failure, reader ownership and line-size constraint.",
+        "Removes marketing, boilerplate and code narration while preserving exported APIs and executable behavior."
+      ],
+      "files": [
+        "files/ledger-cleanup/task.txt",
+        "files/ledger-cleanup/go.mod",
+        "files/ledger-cleanup/ledger.go"
+      ]
+    },
+    {
+      "id": "calculation-control",
+      "prompt": "Fix clamp so values above maximum return maximum. Keep the existing identifiers and all other behavior. This is a local calculation fix; make only the required source change.",
+      "expected_output": "One local expression fix with no naming or comment expansion.",
+      "assertions": [
+        "Returns maximum for above-maximum input.",
+        "No naming/comment cleanup, dependencies or public surface changes."
+      ],
+      "files": [
+        "files/calculation-control/task.txt",
+        "files/calculation-control/go.mod",
+        "files/calculation-control/arithmetic.go"
+      ]
+    },
+    {
+      "id": "real-comments",
+      "prompt": "Improve the comments on these Go declarations for maintainability. You may remove unnecessary comments. Keep declarations unchanged and base wording on the supplied material without inventing behavior. Return the edited comments.go.txt only; do not create new documents or code.",
+      "expected_output": "Compact caller contracts with test-review and unrelated deployment narratives removed.",
+      "assertions": [
+        "Keeps empty/valid/invalid request-ID and rejected-result semantics, including the limitation that format validity does not establish provenance.",
+        "Keeps truncated-hash/no-raw-code/correlation contract and Parse accepted inputs/rejection rules.",
+        "Avoids test-review essays, boot/rate-limit consequences and deployment-policy duplication; no declaration changes."
+      ],
+      "files": [
+        "files/real-comments/task.txt",
+        "files/real-comments/comments.go.txt"
+      ]
+    }
+  ]
+}

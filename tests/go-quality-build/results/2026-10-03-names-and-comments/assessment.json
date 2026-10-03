@@ -1,0 +1,39 @@
+{
+  "decision": "Promoted the revised 199-word runtime skill after observed source improvement, preserved contracts, exact-skill review and passing repository/package checks.",
+  "paired_review_result": "Independent neutral-arm reviewer preferred all five revised outputs, with no material contract/safety issue. Missing opaque-handler explanation in three declaration-only excerpts is an optional maintenance tradeoff; two retain short setup reasons.",
+  "word_counts_descriptive_only": {
+    "original": 421,
+    "existing_reference_only": [
+      200,
+      240,
+      255,
+      235,
+      241
+    ],
+    "revision_1": [
+      119,
+      110,
+      103,
+      108,
+      104
+    ],
+    "revision_2": [
+      116,
+      98,
+      103,
+      124,
+      128
+    ],
+    "existing_reference_mean": 234.2,
+    "revision_2_mean": 113.8
+  },
+  "preservation": "All 15 real comment outputs retain identical declarations; full-source outputs preserve ASTs modulo two permitted private names and the single requested control expression. All 13 full-source outputs build and pass vet on Go 1.26.5. No runtime tests were added for comment-only edits.",
+  "scope_limits": [
+    "Small in-session explicit-guidance trial, not automatic skill discovery or a general model benchmark.",
+    "Inherited author settings; exact model/reasoning IDs and tool transcripts unavailable.",
+    "Initial fixture was too simple; real-case extension was prompted by user evidence and transparently recorded after the initial successful controls.",
+    "The second review brief explicitly restates the user request for succinct useful comments and absence of setup bodies; reviewer preferences are not a fixed quantitative measure across passes.",
+    "Real examples are declarations plus supplied documentation; full production implementation, security configuration and behavior were not verified.",
+    "Only the installed Go 1.26.5 toolchain was used; Go 1.22 declarations were not separately executed."
+  ]
+}

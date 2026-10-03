@@ -1,0 +1,19 @@
+// ResolveRequestID returns candidate if uids.IsValidRequestID accepts it,
+// otherwise a new request ID.
+// rejected is true only when a nonempty invalid candidate was replaced.
+func ResolveRequestID(candidate string) (id string, rejected bool)
+
+// Using emptypb.Empty in both directions keeps this wiring test independent
+// of the service's schema.
+func TestHandlerOptions_ResolvesTheClientAddressWithItsPolicy(t *testing.T)
+
+// KeyCodeFingerprint identifies a log field containing a truncated hash of a
+// one-time OAuth authorization code. Use the same derivation for every record
+// about a code, and never log the code itself.
+const KeyCodeFingerprint = "code_fingerprint"
+
+// Parse converts CIDR blocks and bare addresses into a Set.
+// A bare address covers only itself. Parse returns an error for empty entries,
+// surrounding whitespace, malformed addresses, IPv4-mapped IPv6 prefixes,
+// or prefixes with host bits set.
+func Parse(entries []string) (Set, error)

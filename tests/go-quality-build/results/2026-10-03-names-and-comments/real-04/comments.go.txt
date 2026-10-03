@@ -1,0 +1,31 @@
+// ResolveRequestID returns candidate if uids.IsValidRequestID accepts it.
+// Otherwise it generates a new ID. rejected is true only when a nonempty
+// candidate was replaced, allowing the caller to log the rejection.
+//
+// Invalid candidates are replaced rather than repaired so no caller-chosen
+// fragment reaches logs. A valid ID does not establish its origin: services
+// facing untrusted callers must strip X-Request-Id unless a trusted proxy
+// mints it. Upstream IDs in another format are replaced and warned about on
+// every request; accepting that format requires changing uids.IsValidRequestID,
+// not configuration.
+func ResolveRequestID(candidate string) (id string, rejected bool)
+
+// Exercise a real handler because connect.HandlerOption is opaque: the client
+// address read from its context verifies that HandlerOptions uses the supplied
+// policy. This policy selects the last X-Forwarded-For entry; the zero policy
+// would ignore forwarded headers and return httptest's loopback peer address.
+// emptypb.Empty keeps the test independent of the service's schema.
+func TestHandlerOptions_ResolvesTheClientAddressWithItsPolicy(t *testing.T)
+
+// KeyCodeFingerprint identifies a truncated hash of a one-time OAuth
+// authorization code in logs, never the code itself. Use the same derivation
+// for every record about a code so the records can be correlated.
+const KeyCodeFingerprint = "code_fingerprint"
+
+// Parse builds a Set from CIDR blocks or bare addresses, which match only
+// that address. It rejects empty entries, surrounding whitespace, invalid
+// addresses, IPv4-mapped IPv6 prefixes, and prefixes with host bits set.
+// IPv4-mapped IPv6 prefixes cannot match because peers are unmapped first.
+// Invalid entries are not skipped: silently distrusting a proxy would put
+// all its clients in one rate-limit bucket and log them under one IP.
+func Parse(entries []string) (Set, error)

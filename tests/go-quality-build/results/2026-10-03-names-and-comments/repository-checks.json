@@ -1,0 +1,24 @@
+{
+  "checks": [
+    {
+      "command": "rtk proxy python3 -m unittest discover -s tests -p 'test*.py'",
+      "exit_code": 0,
+      "tests": 14
+    },
+    {
+      "command": "rtk proxy python3 -m unittest discover -s tests/go-quality-build -p 'test_*.py'",
+      "exit_code": 0,
+      "tests": 10
+    },
+    {
+      "command": "rtk proxy python3 tests/go-quality-review/test_layout.py",
+      "exit_code": 0,
+      "tests": 1
+    },
+    {
+      "command": "rtk proxy python3 tests/go-quality-review/go-quality-report/evals/test_grade.py",
+      "exit_code": 0,
+      "tests": 12
+    }
+  ]
+}
