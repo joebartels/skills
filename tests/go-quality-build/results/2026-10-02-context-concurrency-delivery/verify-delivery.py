@@ -121,7 +121,10 @@ def verify():
     for record in m["additional_seals"]:
         seal(safe_child(ROOT, record["path"]), record["checksum_index_sha256"], continuation,
              record.get("separately_sealed_subtree"))
-    for entry in read(OUT / "raw-whitespace-exceptions.json")["entries"]:
+    exceptions = read(OUT / "raw-whitespace-exceptions.json")["entries"]
+    assert len(exceptions) == m["whitespace_exception_count"]
+    assert len({entry["path"] for entry in exceptions}) == len(exceptions)
+    for entry in exceptions:
         assert sha(safe_child(ROOT, entry["path"])) == entry["sha256"]
     checks = read(OUT / "shared-verification.json")
     assert all(row["status"] == 0 for row in checks) and len(checks) == 14
