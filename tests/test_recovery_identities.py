@@ -38,24 +38,31 @@ class RecoveryIdentityTests(unittest.TestCase):
     def save_manifest(self, manifest):
         (self.here / "trials.json").write_text(json.dumps(manifest))
 
-    def preflight(self):
+    def preflight(self, optimized=False):
         # An absent selection ends after identity checks, without executing Go.
+        command = [sys.executable]
+        if optimized:
+            command.append("-O")
         return subprocess.run(
-            [sys.executable, "-B", str(self.here / "check.py"),
+            command + ["-B", str(self.here / "check.py"),
              "--trial", "not-a-recorded-trial", "--output", str(self.root / "result.json")],
             capture_output=True, text=True, timeout=15,
         )
 
     def assert_rejected(self, identity):
-        result = self.preflight()
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn(identity, result.stderr)
-        self.assertNotIn("No trials selected", result.stderr)
+        for optimized in (False, True):
+            with self.subTest(optimized=optimized):
+                result = self.preflight(optimized)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(identity, result.stderr)
+                self.assertNotIn("No trials selected", result.stderr)
 
     def test_valid_guidance_reaches_trial_selection(self):
-        result = self.preflight()
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("No trials selected", result.stderr)
+        for optimized in (False, True):
+            with self.subTest(optimized=optimized):
+                result = self.preflight(optimized)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("No trials selected", result.stderr)
 
     def test_rejects_changed_concurrency_guidance(self):
         path = self.root / "plugins/go-quality-build/skills/go-concurrency-and-ownership/SKILL.md"
