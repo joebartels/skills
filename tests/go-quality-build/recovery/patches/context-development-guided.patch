@@ -1,0 +1,423 @@
+--- a/stages.go
++++ b/stages.go
+@@ -4,0 +5 @@
++	"errors"
+@@ -11 +12,2 @@
+-// FetchAll obtains complete response bodies in endpoint order.
++// FetchAll obtains complete response bodies in endpoint order, retaining the
++// completed prefix on failure. Each stage includes reading and closing its body.
+@@ -12,0 +15,6 @@
++	if len(endpoints) == 0 {
++		return nil, nil
++	}
++	operationCtx, cancel := context.WithTimeout(ctx, total)
++	defer cancel()
++
+@@ -14 +22 @@
+-		request, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
++		body, err := fetchStage(operationCtx, client, endpoint, stage)
+@@ -17,16 +24,0 @@
+-		}
+-		response, err := client.Do(request)
+-		if err != nil {
+-			return bodies, err
+-		}
+-		if response.StatusCode != http.StatusOK {
+-			response.Body.Close()
+-			return bodies, fmt.Errorf("status %d", response.StatusCode)
+-		}
+-		body, err := io.ReadAll(response.Body)
+-		closeErr := response.Body.Close()
+-		if err != nil {
+-			return bodies, err
+-		}
+-		if closeErr != nil {
+-			return bodies, closeErr
+@@ -37,0 +30,40 @@
++
++func fetchStage(parent context.Context, client *http.Client, endpoint string, limit time.Duration) ([]byte, error) {
++	ctx, cancel := context.WithTimeout(parent, limit)
++	defer cancel()
++	if err := withCancellation(ctx, nil); err != nil {
++		return nil, err
++	}
++
++	request, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
++	if err != nil {
++		return nil, withCancellation(ctx, err)
++	}
++	response, err := client.Do(request)
++	if err != nil {
++		if response != nil && response.Body != nil {
++			err = errors.Join(err, response.Body.Close())
++		}
++		return nil, withCancellation(ctx, err)
++	}
++
++	var body []byte
++	if response.StatusCode != http.StatusOK {
++		err = fmt.Errorf("status %d", response.StatusCode)
++	} else {
++		body, err = io.ReadAll(response.Body)
++	}
++	err = errors.Join(err, response.Body.Close())
++	if err != nil {
++		return nil, withCancellation(ctx, err)
++	}
++	return body, nil
++}
++
++// Observe cancellation before deferred cleanup cancels this stage itself.
++func withCancellation(ctx context.Context, err error) error {
++	if contextErr := ctx.Err(); contextErr != nil {
++		return errors.Join(err, contextErr, context.Cause(ctx))
++	}
++	return err
++}
+--- a/stages_test.go
++++ b/stages_test.go
+@@ -4,0 +5 @@
++	"errors"
+@@ -6,0 +8,2 @@
++	"net/http/httptest"
++	"reflect"
+@@ -24,0 +28,339 @@
++
++// This assignment also preserves the supported function type.
++var _ func(context.Context, *http.Client, []string, time.Duration, time.Duration) ([][]byte, error) = FetchAll
++
++type bodyFuncs struct {
++	read  func([]byte) (int, error)
++	close func() error
++}
++
++func (b bodyFuncs) Read(p []byte) (int, error) { return b.read(p) }
++func (b bodyFuncs) Close() error               { return b.close() }
++
++type cancelCause []string
++
++func (c cancelCause) Error() string { return strings.Join(c, ": ") }
++
++func TestEmptyAndCanceled(t *testing.T) {
++	cause := cancelCause{"caller", "stopped"}
++	ctx, cancel := context.WithCancelCause(context.Background())
++	cancel(cause)
++	calls := 0
++	client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++		calls++
++		return nil, errors.New("unexpected request")
++	})}
++	got, err := FetchAll(ctx, client, nil, time.Second, time.Second)
++	if len(got) != 0 || err != nil {
++		t.Fatalf("empty call = %q, %v", got, err)
++	}
++	got, err = FetchAll(ctx, client, []string{"http://example.test/first"}, time.Second, time.Second)
++	var observed cancelCause
++	if len(got) != 0 || !errors.Is(err, context.Canceled) || !errors.As(err, &observed) || !reflect.DeepEqual(observed, cause) {
++		t.Fatalf("canceled call = %q, %v; cause = %v", got, err, observed)
++	}
++	if calls != 0 {
++		t.Fatalf("requests = %d, want 0", calls)
++	}
++}
++
++func TestBudgetsAndStageLifetime(t *testing.T) {
++	for _, tc := range []struct {
++		name         string
++		total, stage time.Duration
++		parentLimit  time.Duration
++	}{
++		{"total", time.Hour, 2 * time.Hour, 0},
++		{"stage", 2 * time.Hour, time.Hour, 0},
++		{"parent", 2 * time.Hour, 2 * time.Hour, time.Hour},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			ctx := context.Background()
++			if tc.parentLimit != 0 {
++				var cancel context.CancelFunc
++				ctx, cancel = context.WithTimeout(ctx, tc.parentLimit)
++				defer cancel()
++			}
++			before := time.Now()
++			var previous context.Context
++			var firstDeadline time.Time
++			calls, closes := 0, 0
++			client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++				calls++
++				if r.Method != http.MethodGet || r.URL.Path != []string{"/first", "/second"}[calls-1] {
++					t.Errorf("request %d = %s %s", calls, r.Method, r.URL.Path)
++				}
++				if previous != nil && (!errors.Is(previous.Err(), context.Canceled) || closes != 1) {
++					t.Error("previous stage was not closed and canceled before the next request")
++				}
++				deadline, ok := r.Context().Deadline()
++				if !ok {
++					t.Error("request has no deadline")
++				}
++				limit := min(tc.total, tc.stage)
++				if deadline.Before(before.Add(limit)) || deadline.After(time.Now().Add(limit)) {
++					if tc.parentLimit == 0 {
++						t.Errorf("deadline %v outside duration %v", deadline, limit)
++					}
++				}
++				if parentDeadline, ok := ctx.Deadline(); ok && !deadline.Equal(parentDeadline) {
++					t.Errorf("deadline = %v, want parent %v", deadline, parentDeadline)
++				}
++				if calls == 1 {
++					firstDeadline = deadline
++				} else if tc.name != "stage" && !deadline.Equal(firstDeadline) {
++					t.Error("the total operation deadline restarted for the second stage")
++				}
++				previous = r.Context()
++				reader := strings.NewReader(r.URL.Path)
++				body := bodyFuncs{
++					read: func(p []byte) (int, error) {
++						if err := r.Context().Err(); err != nil {
++							t.Errorf("stage canceled before body read: %v", err)
++						}
++						return reader.Read(p)
++					},
++					close: func() error {
++						closes++
++						if err := r.Context().Err(); err != nil {
++							t.Errorf("stage canceled before body closure: %v", err)
++						}
++						return nil
++					},
++				}
++				return &http.Response{StatusCode: http.StatusOK, Body: body}, nil
++			})}
++			got, err := FetchAll(ctx, client, []string{"http://example.test/first", "http://example.test/second"}, tc.total, tc.stage)
++			if err != nil || !reflect.DeepEqual(got, [][]byte{[]byte("/first"), []byte("/second")}) || calls != 2 || closes != 2 {
++				t.Fatalf("bodies=%q err=%v requests=%d closes=%d", got, err, calls, closes)
++			}
++			if !errors.Is(previous.Err(), context.Canceled) {
++				t.Error("final stage cancel resources were not released")
++			}
++		})
++	}
++}
++
++func TestFailedStageRetainsPrefixAndErrors(t *testing.T) {
++	requestErr := errors.New("request failed")
++	readErr := errors.New("read failed")
++	closeErr := errors.New("close failed")
++	for _, tc := range []struct {
++		name                 string
++		status               int
++		request, read, close error
++	}{
++		{"request", 200, requestErr, nil, nil},
++		{"status", 206, nil, nil, nil},
++		{"status and close", 206, nil, nil, closeErr},
++		{"read", 200, nil, readErr, nil},
++		{"close", 200, nil, nil, closeErr},
++		{"read and close", 200, nil, readErr, closeErr},
++		{"read wraps cancellation", 200, nil, errors.Join(readErr, context.Canceled), closeErr},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			calls, closes := 0, 0
++			client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++				calls++
++				if calls == 1 {
++					return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader("accepted"))}, nil
++				}
++				if tc.request != nil {
++					return nil, tc.request
++				}
++				reader := strings.NewReader("unaccepted")
++				body := bodyFuncs{
++					read: func(p []byte) (int, error) {
++						if tc.read != nil {
++							return copy(p, "partial"), tc.read
++						}
++						return reader.Read(p)
++					},
++					close: func() error { closes++; return tc.close },
++				}
++				return &http.Response{StatusCode: tc.status, Body: body}, nil
++			})}
++			got, err := FetchAll(context.Background(), client, []string{"http://example.test/first", "http://example.test/fails", "http://example.test/forbidden"}, time.Hour, time.Hour)
++			if !reflect.DeepEqual(got, [][]byte{[]byte("accepted")}) || err == nil || calls != 2 {
++				t.Fatalf("bodies=%q err=%v requests=%d", got, err, calls)
++			}
++			for _, want := range []error{tc.request, tc.read, tc.close} {
++				if want != nil && !errors.Is(err, want) {
++					t.Errorf("error %v lost %v", err, want)
++				}
++			}
++			if tc.status != 200 && !strings.Contains(err.Error(), "status 206") {
++				t.Errorf("error %v lost the rejected status", err)
++			}
++			if tc.read == nil && errors.Is(err, context.Canceled) {
++				t.Error("scope cleanup invented a cancellation error")
++			}
++			wantCloses := 1
++			if tc.request != nil {
++				wantCloses = 0
++			}
++			if closes != wantCloses {
++				t.Errorf("closes = %d, want %d", closes, wantCloses)
++			}
++		})
++	}
++}
++
++func TestCancellationRetainsIndependentFailures(t *testing.T) {
++	ctx, cancel := context.WithCancelCause(context.Background())
++	defer cancel(nil)
++	cause := cancelCause{"operator", "stop"}
++	readErr, closeErr := errors.New("read failed"), errors.New("close failed")
++	closes := 0
++	client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++		return &http.Response{StatusCode: 200, Body: bodyFuncs{
++			read: func(p []byte) (int, error) {
++				cancel(cause)
++				return copy(p, "partial"), errors.Join(readErr, context.Canceled)
++			},
++			close: func() error { closes++; return closeErr },
++		}}, nil
++	})}
++	got, err := FetchAll(ctx, client, []string{"http://example.test/fails"}, time.Hour, time.Hour)
++	var observed cancelCause
++	if len(got) != 0 || closes != 1 || !errors.Is(err, readErr) || !errors.Is(err, closeErr) || !errors.Is(err, context.Canceled) || !errors.As(err, &observed) || !reflect.DeepEqual(observed, cause) {
++		t.Fatalf("bodies=%q err=%v closes=%d cause=%v", got, err, closes, observed)
++	}
++}
++
++func TestCompletionAndNextStageCancellation(t *testing.T) {
++	for _, count := range []int{1, 2} {
++		name := "complete"
++		if count == 2 {
++			name = "remaining"
++		}
++		t.Run(name, func(t *testing.T) {
++			ctx, cancel := context.WithCancel(context.Background())
++			defer cancel()
++			calls := 0
++			client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++				calls++
++				reader := strings.NewReader("complete")
++				return &http.Response{StatusCode: 200, Body: bodyFuncs{
++					read: reader.Read,
++					close: func() error {
++						cancel()
++						return nil
++					},
++				}}, nil
++			})}
++			endpoints := []string{"http://example.test/complete", "http://example.test/forbidden"}[:count]
++			got, err := FetchAll(ctx, client, endpoints, time.Hour, time.Hour)
++			if !reflect.DeepEqual(got, [][]byte{[]byte("complete")}) || calls != 1 {
++				t.Fatalf("bodies=%q err=%v requests=%d", got, err, calls)
++			}
++			if count == 1 && err != nil || count == 2 && !errors.Is(err, context.Canceled) {
++				t.Fatalf("error = %v for %d stages", err, count)
++			}
++		})
++	}
++}
++
++func TestLocalTransportCancellation(t *testing.T) {
++	for _, bodyStarted := range []bool{false, true} {
++		name := "request"
++		if bodyStarted {
++			name = "body"
++		}
++		t.Run(name, func(t *testing.T) {
++			started, canceled, release := make(chan struct{}), make(chan struct{}), make(chan struct{})
++			readStarted := make(chan struct{})
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				if bodyStarted {
++					w.WriteHeader(http.StatusOK)
++					w.(http.Flusher).Flush()
++				}
++				close(started)
++				select {
++				case <-r.Context().Done():
++					close(canceled)
++				case <-release:
++				}
++			}))
++			ctx, cancel := context.WithCancel(context.Background())
++			result := make(chan error, 1)
++			finished := make(chan struct{})
++			client := server.Client()
++			transport := client.Transport
++			if bodyStarted {
++				client.Transport = transportFunc(func(r *http.Request) (*http.Response, error) {
++					response, err := transport.RoundTrip(r)
++					if err == nil {
++						body := response.Body
++						notified := false
++						response.Body = bodyFuncs{
++							read: func(p []byte) (int, error) {
++								if !notified {
++									notified = true
++									close(readStarted)
++								}
++								return body.Read(p)
++							},
++							close: body.Close,
++						}
++					}
++					return response, err
++				})
++			}
++			t.Cleanup(func() {
++				cancel()
++				close(release)
++				select {
++				case <-finished:
++				case <-time.After(5 * time.Second):
++					t.Error("FetchAll did not finish during cleanup")
++				}
++				transport.(*http.Transport).CloseIdleConnections()
++				server.Close()
++			})
++			go func() {
++				defer close(finished)
++				_, err := FetchAll(ctx, client, []string{server.URL}, time.Hour, time.Hour)
++				result <- err
++			}()
++			select {
++			case <-started:
++			case <-time.After(5 * time.Second):
++				t.Fatal("server did not observe the request")
++			}
++			if bodyStarted {
++				select {
++				case <-readStarted:
++				case <-time.After(5 * time.Second):
++					t.Fatal("FetchAll did not begin response body consumption")
++				}
++			}
++			cancel()
++			select {
++			case err := <-result:
++				if !errors.Is(err, context.Canceled) {
++					t.Fatalf("error = %v, want cancellation", err)
++				}
++			case <-time.After(5 * time.Second):
++				t.Fatal("FetchAll did not return after caller cancellation")
++			}
++			select {
++			case <-canceled:
++			case <-time.After(5 * time.Second):
++				t.Fatal("local server did not observe request cancellation")
++			}
++		})
++	}
++}
++
++func TestStageDeadlineFailure(t *testing.T) {
++	requestErr := errors.New("transport stopped")
++	client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++		<-r.Context().Done()
++		return nil, requestErr
++	})}
++	got, err := FetchAll(context.Background(), client, []string{"http://example.test/slow"}, time.Second, 10*time.Millisecond)
++	if len(got) != 0 || !errors.Is(err, requestErr) || !errors.Is(err, context.DeadlineExceeded) {
++		t.Fatalf("bodies=%q err=%v", got, err)
++	}
++}

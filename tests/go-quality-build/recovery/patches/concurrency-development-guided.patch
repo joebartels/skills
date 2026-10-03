@@ -1,0 +1,460 @@
+--- a/workers.go
++++ b/workers.go
+@@ -5,0 +6 @@
++	"sync"
+@@ -14,0 +16,3 @@
++// Serve runs independent leases, reserving a slot until each lease is closed.
++// Cancellation or failure stops admission and requests cooperative stopping;
++// Serve still waits for all admitted work and owned cleanup before returning.
+@@ -16,4 +20,10 @@
+-	for job := range jobs {
+-		lease, err := open(ctx, job)
+-		if err != nil {
+-			return err
++	workCtx, cancel := context.WithCancel(ctx)
++	defer cancel()
++
++	var mu sync.Mutex
++	var errs []error
++	callerSeen := false
++	observeCaller := func() {
++		callerErr := ctx.Err()
++		if callerErr == nil {
++			return
+@@ -21,2 +31,5 @@
+-		if err := errors.Join(lease.Run(ctx, job), lease.Close()); err != nil {
+-			return err
++		mu.Lock()
++		defer mu.Unlock()
++		if !callerSeen {
++			errs = append(errs, callerErr, context.Cause(ctx))
++			callerSeen = true
+@@ -25 +38,61 @@
+-	return nil
++	stopped := func() bool {
++		if workCtx.Err() == nil {
++			return false
++		}
++		observeCaller()
++		return true
++	}
++	fail := func(err error, run bool) {
++		if err == nil {
++			return
++		}
++		// Only Run may acknowledge coordinated stopping. Open and Close
++		// failures are independent, even if they classify as cancellation.
++		stopErr := workCtx.Err()
++		if run && stopErr != nil && ctx.Err() == nil && err == stopErr {
++			return
++		}
++		mu.Lock()
++		errs = append(errs, err)
++		mu.Unlock()
++		cancel()
++		observeCaller()
++	}
++
++	var workers sync.WaitGroup
++	workers.Add(limit)
++	for i := 0; i < limit; i++ {
++		go func() {
++			defer workers.Done()
++			for {
++				if stopped() {
++					return
++				}
++				var job Job
++				select {
++				case <-workCtx.Done():
++					observeCaller()
++					return
++				case next, ok := <-jobs:
++					// Receiving a value does not admit it until this boundary.
++					if stopped() || !ok {
++						return
++					}
++					job = next
++				}
++
++				lease, err := open(workCtx, job)
++				if err != nil {
++					fail(err, false)
++					return
++				}
++				if !stopped() {
++					fail(lease.Run(workCtx, job), true)
++				}
++				// This worker owns the lease, including a late acquisition.
++				fail(lease.Close(), false)
++			}
++		}()
++	}
++	workers.Wait()
++	return errors.Join(errs...)
+--- a/workers_test.go
++++ b/workers_test.go
+@@ -4,0 +5,5 @@
++	"errors"
++	"fmt"
++	"reflect"
++	"sync"
++	"sync/atomic"
+@@ -5,0 +11 @@
++	"time"
+@@ -11,0 +18 @@
++
+@@ -21,0 +29,353 @@
++
++type funcLease struct {
++	run   func(context.Context, Job) error
++	close func() error
++}
++
++func (l funcLease) Run(ctx context.Context, job Job) error { return l.run(ctx, job) }
++func (l funcLease) Close() error                           { return l.close() }
++
++type gate struct {
++	ch   chan struct{}
++	once sync.Once
++}
++
++func newGate() *gate     { return &gate{ch: make(chan struct{})} }
++func (g *gate) release() { g.once.Do(func() { close(g.ch) }) }
++
++func await(t *testing.T, event <-chan struct{}, description string) {
++	t.Helper()
++	select {
++	case <-event:
++	case <-time.After(5 * time.Second):
++		t.Fatalf("timed out waiting for %s", description)
++	}
++}
++
++func remainsBlocked(t *testing.T, event <-chan struct{}, description string) {
++	t.Helper()
++	select {
++	case <-event:
++		t.Fatalf("%s completed while its prerequisite was held", description)
++	case <-time.After(25 * time.Millisecond):
++	}
++}
++
++type serveResult struct {
++	done chan struct{}
++	err  error
++}
++
++func startServe(t *testing.T, parent context.Context, jobs <-chan Job, limit int,
++	open func(context.Context, Job) (Lease, error), gates ...*gate) *serveResult {
++	t.Helper()
++	ctx, cancel := context.WithCancel(parent)
++	result := &serveResult{done: make(chan struct{})}
++	t.Cleanup(func() {
++		cancel()
++		for _, gate := range gates {
++			gate.release()
++		}
++		select {
++		case <-result.done:
++		case <-time.After(5 * time.Second):
++			t.Error("Serve did not finish during cleanup")
++		}
++	})
++	go func() {
++		result.err = Serve(ctx, jobs, limit, open)
++		close(result.done)
++	}()
++	return result
++}
++
++func (r *serveResult) wait(t *testing.T) error {
++	t.Helper()
++	await(t, r.done, "Serve return")
++	return r.err
++}
++
++func TestSparseInputAndIndependentSlotRelease(t *testing.T) {
++	jobs := make(chan Job, 3)
++	jobs <- 1
++	firstRun := make(chan struct{})
++	secondClose := make(chan struct{})
++	thirdOpen := make(chan struct{})
++	firstRunGate, secondCloseGate := newGate(), newGate()
++	var reserved atomic.Int32
++	var overLimit atomic.Bool
++	var opened, closed [4]atomic.Int32
++	result := startServe(t, context.Background(), jobs, 2, func(ctx context.Context, job Job) (Lease, error) {
++		opened[job].Add(1)
++		if reserved.Add(1) > 2 {
++			overLimit.Store(true)
++		}
++		if job == 3 {
++			close(thirdOpen)
++		}
++		return funcLease{
++			run: func(ctx context.Context, _ Job) error {
++				if job == 1 {
++					close(firstRun)
++					select {
++					case <-firstRunGate.ch:
++					case <-ctx.Done():
++						return ctx.Err()
++					}
++				}
++				return nil
++			},
++			close: func() error {
++				if job == 2 {
++					close(secondClose)
++					<-secondCloseGate.ch
++				}
++				closed[job].Add(1)
++				reserved.Add(-1)
++				return nil
++			},
++		}, nil
++	}, firstRunGate, secondCloseGate)
++
++	await(t, firstRun, "first Run with sparse input")
++	jobs <- 2
++	await(t, secondClose, "second Close")
++	jobs <- 3
++	remainsBlocked(t, thirdOpen, "third acquisition")
++	secondCloseGate.release()
++	await(t, thirdOpen, "third acquisition while first Run is held")
++	close(jobs)
++	remainsBlocked(t, result.done, "Serve")
++	firstRunGate.release()
++	if err := result.wait(t); err != nil {
++		t.Fatal(err)
++	}
++	if overLimit.Load() || reserved.Load() != 0 {
++		t.Fatalf("reservation bound violated: over=%v remaining=%d", overLimit.Load(), reserved.Load())
++	}
++	for job := 1; job <= 3; job++ {
++		if opened[job].Load() != 1 || closed[job].Load() != 1 {
++			t.Errorf("job %d: opened=%d closed=%d", job, opened[job].Load(), closed[job].Load())
++		}
++	}
++}
++
++func TestRunFailureStopsBeforeHeldCleanup(t *testing.T) {
++	workErr := errors.New("run failure")
++	jobs := make(chan Job, 3)
++	jobs <- 1
++	jobs <- 2
++	jobs <- 3
++	firstRun, secondRun := make(chan struct{}), make(chan struct{})
++	firstStopped, firstClosed := make(chan struct{}), make(chan struct{})
++	secondClose := make(chan struct{})
++	failGate, runCleanup, closeCleanup := newGate(), newGate(), newGate()
++	var thirdOpened atomic.Bool
++	var closed [4]atomic.Int32
++	result := startServe(t, context.Background(), jobs, 2, func(ctx context.Context, job Job) (Lease, error) {
++		if job == 3 {
++			thirdOpened.Store(true)
++			return funcLease{
++				run:   func(context.Context, Job) error { return nil },
++				close: func() error { closed[job].Add(1); return nil },
++			}, nil
++		}
++		return funcLease{
++			run: func(ctx context.Context, _ Job) error {
++				if job == 1 {
++					close(firstRun)
++					<-ctx.Done()
++					close(firstStopped)
++					<-runCleanup.ch
++					return ctx.Err()
++				}
++				close(secondRun)
++				select {
++				case <-failGate.ch:
++					return workErr
++				case <-ctx.Done():
++					return ctx.Err()
++				}
++			},
++			close: func() error {
++				closed[job].Add(1)
++				if job == 1 {
++					close(firstClosed)
++				} else {
++					close(secondClose)
++					<-closeCleanup.ch
++				}
++				return nil
++			},
++		}, nil
++	}, failGate, runCleanup, closeCleanup)
++	await(t, firstRun, "first Run")
++	await(t, secondRun, "second Run")
++	failGate.release()
++	await(t, secondClose, "failing lease Close")
++	await(t, firstStopped, "cooperative stop before Close finishes")
++	remainsBlocked(t, firstClosed, "first Close")
++	remainsBlocked(t, result.done, "Serve")
++	closeCleanup.release()
++	runCleanup.release()
++	await(t, firstClosed, "first Close after Run cleanup")
++	err := result.wait(t)
++	if !errors.Is(err, workErr) || errors.Is(err, context.Canceled) {
++		t.Fatalf("Serve = %v, want run failure without coordinated stop acknowledgement", err)
++	}
++	if thirdOpened.Load() || closed[1].Load() != 1 || closed[2].Load() != 1 {
++		t.Fatalf("third admitted=%v closes=[%d %d]", thirdOpened.Load(), closed[1].Load(), closed[2].Load())
++	}
++	jobs <- 4 // The caller still owns an open, usable channel after failure.
++}
++
++func TestLateAcquisitionClosesWithoutRun(t *testing.T) {
++	workErr := errors.New("run failure")
++	jobs := make(chan Job, 2)
++	jobs <- 1
++	jobs <- 2
++	acquiring, stopped := make(chan struct{}), make(chan struct{})
++	secondRun, lateClose := make(chan struct{}), make(chan struct{})
++	failGate, acquireGate, closeGate := newGate(), newGate(), newGate()
++	var lateRuns, lateCloses atomic.Int32
++	result := startServe(t, context.Background(), jobs, 2, func(ctx context.Context, job Job) (Lease, error) {
++		if job == 1 {
++			close(acquiring)
++			<-ctx.Done()
++			close(stopped)
++			<-acquireGate.ch
++			return funcLease{
++				run: func(context.Context, Job) error { lateRuns.Add(1); return nil },
++				close: func() error {
++					lateCloses.Add(1)
++					close(lateClose)
++					<-closeGate.ch
++					return nil
++				},
++			}, nil
++		}
++		return funcLease{
++			run: func(ctx context.Context, _ Job) error {
++				close(secondRun)
++				select {
++				case <-failGate.ch:
++					return workErr
++				case <-ctx.Done():
++					return ctx.Err()
++				}
++			},
++			close: func() error { return nil },
++		}, nil
++	}, failGate, acquireGate, closeGate)
++	await(t, acquiring, "held acquisition")
++	await(t, secondRun, "second Run")
++	failGate.release()
++	await(t, stopped, "held acquisition cancellation")
++	remainsBlocked(t, result.done, "Serve")
++	acquireGate.release()
++	await(t, lateClose, "late lease Close")
++	remainsBlocked(t, result.done, "Serve")
++	closeGate.release()
++	if err := result.wait(t); !errors.Is(err, workErr) {
++		t.Fatalf("Serve = %v, want %v", err, workErr)
++	}
++	if lateRuns.Load() != 0 || lateCloses.Load() != 1 {
++		t.Fatalf("late lease: runs=%d closes=%d", lateRuns.Load(), lateCloses.Load())
++	}
++}
++
++func TestCloseFailureStopsAcquisitionAndRetainsOpenError(t *testing.T) {
++	closeErr := errors.New("close failure")
++	openErr := errors.New("open failure")
++	jobs := make(chan Job, 2)
++	jobs <- 1
++	jobs <- 2
++	acquiring, stopped := make(chan struct{}), make(chan struct{})
++	closing := make(chan struct{})
++	closeGate, openGate := newGate(), newGate()
++	result := startServe(t, context.Background(), jobs, 2, func(ctx context.Context, job Job) (Lease, error) {
++		if job == 2 {
++			close(acquiring)
++			<-ctx.Done()
++			close(stopped)
++			<-openGate.ch
++			return nil, errors.Join(openErr, ctx.Err())
++		}
++		return funcLease{
++			run: func(context.Context, Job) error { return nil },
++			close: func() error {
++				close(closing)
++				<-closeGate.ch
++				return closeErr
++			},
++		}, nil
++	}, closeGate, openGate)
++	await(t, acquiring, "second acquisition")
++	await(t, closing, "first Close")
++	closeGate.release()
++	await(t, stopped, "acquisition stop after Close failure")
++	remainsBlocked(t, result.done, "Serve")
++	openGate.release()
++	err := result.wait(t)
++	if !errors.Is(err, closeErr) || !errors.Is(err, openErr) || !errors.Is(err, context.Canceled) {
++		t.Fatalf("Serve = %v, want independent Open and Close causes including cancellation", err)
++	}
++}
++
++type sliceCause struct{ messages []string }
++
++func (e sliceCause) Error() string { return fmt.Sprint(e.messages) }
++
++func TestCallerCancellationDuringCleanupRetainsAllCauses(t *testing.T) {
++	workErr, closeErr := errors.New("work failure"), errors.New("close failure")
++	ctx, cancel := context.WithCancelCause(context.Background())
++	defer cancel(nil)
++	jobs := make(chan Job, 1)
++	jobs <- 1
++	closing := make(chan struct{})
++	closeGate := newGate()
++	result := startServe(t, ctx, jobs, 1, func(context.Context, Job) (Lease, error) {
++		return funcLease{
++			run: func(context.Context, Job) error { return errors.Join(workErr, context.DeadlineExceeded) },
++			close: func() error {
++				close(closing)
++				<-closeGate.ch
++				return fmt.Errorf("close: %w", errors.Join(closeErr, context.Canceled))
++			},
++		}, nil
++	}, closeGate)
++	await(t, closing, "held Close after independent Run failure")
++	cause := sliceCause{messages: []string{"caller stopped during cleanup"}}
++	cancel(cause)
++	remainsBlocked(t, result.done, "Serve")
++	closeGate.release()
++	err := result.wait(t)
++	for _, want := range []error{workErr, closeErr, context.Canceled, context.DeadlineExceeded} {
++		if !errors.Is(err, want) {
++			t.Errorf("Serve = %v, missing %v", err, want)
++		}
++	}
++	var got sliceCause
++	if !errors.As(err, &got) || !reflect.DeepEqual(got.messages, cause.messages) {
++		t.Fatalf("Serve = %v, missing noncomparable caller cause", err)
++	}
++}
++
++func TestAlreadyCanceledAdmitsNothing(t *testing.T) {
++	ctx, cancel := context.WithCancel(context.Background())
++	cancel()
++	jobs := make(chan Job, 1)
++	jobs <- 1
++	close(jobs)
++	calls := 0
++	err := Serve(ctx, jobs, 3, func(context.Context, Job) (Lease, error) {
++		calls++
++		return new(basicLease), nil
++	})
++	if !errors.Is(err, context.Canceled) || calls != 0 {
++		t.Fatalf("Serve = %v, Open calls=%d", err, calls)
++	}
++	if job := <-jobs; job != 1 {
++		t.Fatalf("caller channel changed: job=%d", job)
++	}
++}

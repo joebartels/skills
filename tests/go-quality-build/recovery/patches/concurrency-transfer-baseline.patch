@@ -1,0 +1,467 @@
+--- a/pipeline.go
++++ b/pipeline.go
+@@ -3 +3,4 @@
+-import "context"
++import (
++	"context"
++	"errors"
++)
+@@ -5,0 +9,6 @@
++	if err := ctx.Err(); err != nil {
++		return errors.Join(err, context.Cause(ctx))
++	}
++
++	workCtx, cancel := context.WithCancel(ctx)
++	defer cancel()
+@@ -7,2 +16,4 @@
+-	if err := produce(ctx, values); err != nil {
+-		return err
++	type callbackResult struct {
++		err                error
++		stopAcknowledged   bool
++		callerCancellation error
+@@ -10,2 +21,46 @@
+-	close(values)
+-	return consume(ctx, values)
++	resultAtReturn := func(err error) callbackResult {
++		// Capture cancellation before this callback requests its peer to stop.
++		// Broad cancellation matching would discard independent wrapped errors.
++		sharedErr := workCtx.Err()
++		result := callbackResult{
++			err:              err,
++			stopAcknowledged: sharedErr != nil && err == sharedErr,
++		}
++		if callerErr := ctx.Err(); callerErr != nil {
++			result.callerCancellation = errors.Join(callerErr, context.Cause(ctx))
++		}
++		return result
++	}
++
++	produced := make(chan callbackResult, 1)
++	consumed := make(chan callbackResult, 1)
++	go func() {
++		err := produce(workCtx, values)
++		result := resultAtReturn(err)
++		close(values)
++		if err != nil {
++			cancel()
++		}
++		produced <- result
++	}()
++	go func() {
++		result := resultAtReturn(consume(workCtx, values))
++		// Even successful early completion must stop and join production.
++		cancel()
++		consumed <- result
++	}()
++
++	producerResult, consumerResult := <-produced, <-consumed
++	callerCancellation := producerResult.callerCancellation
++	if callerCancellation == nil {
++		callerCancellation = consumerResult.callerCancellation
++	}
++	if callerCancellation == nil {
++		if producerResult.stopAcknowledged {
++			producerResult.err = nil
++		}
++		if consumerResult.stopAcknowledged {
++			consumerResult.err = nil
++		}
++	}
++	return errors.Join(producerResult.err, consumerResult.err, callerCancellation)
+--- a/pipeline_test.go
++++ b/pipeline_test.go
+@@ -4,0 +5,4 @@
++	"errors"
++	"fmt"
++	"slices"
++	"sync"
+@@ -5,0 +10 @@
++	"time"
+@@ -19,0 +25,386 @@
++
++func TestOrderedValues(t *testing.T) {
++	var got []int
++	done := startPipeline(t, context.Background(), 2,
++		func(ctx context.Context, out chan<- int) error {
++			for _, value := range []int{3, 1, 4, 1, 5} {
++				select {
++				case out <- value:
++				case <-ctx.Done():
++					return ctx.Err()
++				}
++			}
++			return nil
++		},
++		func(ctx context.Context, in <-chan int) error {
++			if cap(in) != 2 {
++				return fmt.Errorf("channel capacity = %d, want 2", cap(in))
++			}
++			for {
++				select {
++				case value, ok := <-in:
++					if !ok {
++						return nil
++					}
++					got = append(got, value)
++				case <-ctx.Done():
++					return ctx.Err()
++				}
++			}
++		})
++	if err := waitResult(t, done); err != nil {
++		t.Fatalf("runPipeline = %v, want nil", err)
++	}
++	if !slices.Equal(got, []int{3, 1, 4, 1, 5}) {
++		t.Fatalf("consumed values = %v, want [3 1 4 1 5]", got)
++	}
++}
++
++func TestConsumerEarlyCompletionStopsAndJoinsProducer(t *testing.T) {
++	cleanupStarted := make(chan struct{})
++	producerReturned := make(chan struct{})
++	release, open := gate()
++	var accepted []int
++	done := startPipeline(t, context.Background(), 1,
++		func(ctx context.Context, out chan<- int) error {
++			defer close(producerReturned)
++			for value := 1; ; value++ {
++				select {
++				case out <- value:
++				case <-ctx.Done():
++					close(cleanupStarted)
++					<-release
++					return ctx.Err()
++				}
++			}
++		},
++		func(ctx context.Context, in <-chan int) error {
++			for len(accepted) < 3 {
++				select {
++				case value := <-in:
++					accepted = append(accepted, value)
++				case <-ctx.Done():
++					return ctx.Err()
++				}
++			}
++			return nil
++		}, open)
++	waitEvent(t, cleanupStarted)
++	assertHeld(t, done)
++	open()
++	if err := waitResult(t, done); err != nil {
++		t.Fatalf("runPipeline = %v, want early completion success", err)
++	}
++	waitEvent(t, producerReturned)
++	if !slices.Equal(accepted, []int{1, 2, 3}) {
++		t.Fatalf("accepted values = %v, want [1 2 3]", accepted)
++	}
++}
++
++func TestProducerFailureStopsAndJoinsConsumer(t *testing.T) {
++	failure := errors.New("production failed")
++	consumerStarted := make(chan struct{})
++	cleanupStarted := make(chan struct{})
++	consumerReturned := make(chan struct{})
++	release, open := gate()
++	accepted := 0
++	done := startPipeline(t, context.Background(), 1,
++		func(ctx context.Context, out chan<- int) error {
++			select {
++			case out <- 7:
++			case <-ctx.Done():
++				return ctx.Err()
++			}
++			select {
++			case <-consumerStarted:
++				return failure
++			case <-ctx.Done():
++				return ctx.Err()
++			}
++		},
++		func(ctx context.Context, in <-chan int) error {
++			defer close(consumerReturned)
++			select {
++			case accepted = <-in:
++			case <-ctx.Done():
++				return ctx.Err()
++			}
++			close(consumerStarted)
++			<-ctx.Done()
++			close(cleanupStarted)
++			<-release
++			return ctx.Err()
++		}, open)
++	waitEvent(t, cleanupStarted)
++	assertHeld(t, done)
++	open()
++	err := waitResult(t, done)
++	if !errors.Is(err, failure) || errors.Is(err, context.Canceled) {
++		t.Fatalf("runPipeline = %v, want production failure without stop acknowledgment", err)
++	}
++	waitEvent(t, consumerReturned)
++	if accepted != 7 {
++		t.Fatalf("accepted value after failure = %d, want 7", accepted)
++	}
++}
++
++func TestChannelClosesAfterProducerReturnAndConsumerIsJoined(t *testing.T) {
++	producerCleanup := make(chan struct{})
++	producerReturned := make(chan struct{})
++	valueAccepted := make(chan struct{})
++	channelClosed := make(chan struct{})
++	consumerReturned := make(chan struct{})
++	producerRelease, openProducer := gate()
++	consumerRelease, openConsumer := gate()
++	got := 0
++	done := startPipeline(t, context.Background(), 1,
++		func(ctx context.Context, out chan<- int) error {
++			defer close(producerReturned)
++			select {
++			case out <- 7:
++			case <-ctx.Done():
++				return ctx.Err()
++			}
++			close(producerCleanup)
++			<-producerRelease
++			return nil
++		},
++		func(ctx context.Context, in <-chan int) error {
++			defer close(consumerReturned)
++			select {
++			case got = <-in:
++			case <-ctx.Done():
++				return ctx.Err()
++			}
++			close(valueAccepted)
++			select {
++			case _, ok := <-in:
++				if ok {
++					return errors.New("unexpected second value")
++				}
++				close(channelClosed)
++			case <-ctx.Done():
++				return ctx.Err()
++			}
++			<-consumerRelease
++			return nil
++		}, openProducer, openConsumer)
++	waitEvent(t, producerCleanup)
++	waitEvent(t, valueAccepted)
++	select {
++	case <-channelClosed:
++		t.Fatal("channel closed while producer callback still held cleanup")
++	case <-time.After(20 * time.Millisecond):
++	}
++	openProducer()
++	waitEvent(t, producerReturned)
++	waitEvent(t, channelClosed)
++	assertHeld(t, done)
++	openConsumer()
++	if err := waitResult(t, done); err != nil {
++		t.Fatalf("runPipeline = %v, want nil", err)
++	}
++	waitEvent(t, consumerReturned)
++	if got != 7 {
++		t.Fatalf("accepted value = %d, want 7", got)
++	}
++}
++
++type cancellationCause struct{ details []string }
++
++func (c cancellationCause) Error() string { return fmt.Sprint(c.details) }
++
++func TestCanceledCallerSkipsCallbacks(t *testing.T) {
++	ctx, cancel := context.WithCancelCause(context.Background())
++	cancel(cancellationCause{[]string{"caller stopped"}})
++	called := false
++	err := runPipeline(ctx, 1,
++		func(context.Context, chan<- int) error { called = true; return nil },
++		func(context.Context, <-chan int) error { called = true; return nil })
++	if called {
++		t.Error("already-canceled caller invoked a callback")
++	}
++	assertCallerCancellation(t, err)
++}
++
++func TestCallerCancellationJoinsHeldCallbacksAndPreservesFailures(t *testing.T) {
++	ctx, cancel := context.WithCancelCause(context.Background())
++	t.Cleanup(func() { cancel(nil) })
++	producerStarted := make(chan struct{})
++	consumerStarted := make(chan struct{})
++	producerCleanup := make(chan struct{})
++	consumerCleanup := make(chan struct{})
++	producerReturned := make(chan struct{})
++	consumerReturned := make(chan struct{})
++	release, open := gate()
++	failure := errors.New("independent failure during cancellation")
++	done := startPipeline(t, ctx, 1,
++		func(ctx context.Context, _ chan<- int) error {
++			defer close(producerReturned)
++			close(producerStarted)
++			<-ctx.Done()
++			close(producerCleanup)
++			<-release
++			return errors.Join(failure, ctx.Err())
++		},
++		func(ctx context.Context, _ <-chan int) error {
++			defer close(consumerReturned)
++			close(consumerStarted)
++			<-ctx.Done()
++			close(consumerCleanup)
++			<-release
++			return ctx.Err()
++		}, open)
++	waitEvent(t, producerStarted)
++	waitEvent(t, consumerStarted)
++	cancel(cancellationCause{[]string{"caller stopped"}})
++	waitEvent(t, producerCleanup)
++	waitEvent(t, consumerCleanup)
++	assertHeld(t, done)
++	open()
++	err := waitResult(t, done)
++	assertCallerCancellation(t, err)
++	if !errors.Is(err, failure) {
++		t.Fatalf("runPipeline = %v, missing independent failure", err)
++	}
++	waitEvent(t, producerReturned)
++	waitEvent(t, consumerReturned)
++}
++
++func TestIndependentErrorsAfterCoordinatedStop(t *testing.T) {
++	marker := errors.New("independent operation failed")
++	for _, tc := range []struct {
++		name string
++		err  error
++		want error
++	}{
++		{"wrapped canceled", fmt.Errorf("independent operation: %w", context.Canceled), context.Canceled},
++		{"joined canceled", errors.Join(marker, context.Canceled), marker},
++		{"joined deadline", errors.Join(marker, context.DeadlineExceeded), marker},
++		{"bare deadline", context.DeadlineExceeded, context.DeadlineExceeded},
++	} {
++		for _, side := range []string{"producer", "consumer"} {
++			t.Run(side+"/"+tc.name, func(t *testing.T) {
++				peerFailure := errors.New("peer failed")
++				done := startPipeline(t, context.Background(), 1,
++					func(ctx context.Context, _ chan<- int) error {
++						if side == "consumer" {
++							return peerFailure
++						}
++						<-ctx.Done()
++						return tc.err
++					},
++					func(ctx context.Context, _ <-chan int) error {
++						if side == "producer" {
++							return nil
++						}
++						<-ctx.Done()
++						return tc.err
++					})
++				err := waitResult(t, done)
++				if !errors.Is(err, tc.err) || !errors.Is(err, tc.want) {
++					t.Fatalf("runPipeline = %v, missing original independent error %v", err, tc.err)
++				}
++				if side == "consumer" && !errors.Is(err, peerFailure) {
++					t.Fatalf("runPipeline = %v, missing independent producer failure", err)
++				}
++			})
++		}
++	}
++}
++
++func TestExactContextErrorBeforeStoppingIsIndependent(t *testing.T) {
++	for _, side := range []string{"producer", "consumer"} {
++		t.Run(side, func(t *testing.T) {
++			done := startPipeline(t, context.Background(), 1,
++				func(ctx context.Context, _ chan<- int) error {
++					if side == "producer" {
++						return context.Canceled
++					}
++					<-ctx.Done()
++					return ctx.Err()
++				},
++				func(ctx context.Context, _ <-chan int) error {
++					if side == "consumer" {
++						return context.Canceled
++					}
++					<-ctx.Done()
++					return ctx.Err()
++				})
++			if err := waitResult(t, done); !errors.Is(err, context.Canceled) {
++				t.Fatalf("runPipeline = %v, missing independent exact context error", err)
++			}
++		})
++	}
++}
++
++func assertCallerCancellation(t *testing.T, err error) {
++	t.Helper()
++	if !errors.Is(err, context.Canceled) {
++		t.Errorf("runPipeline = %v, missing caller cancellation classification", err)
++	}
++	var cause cancellationCause
++	if !errors.As(err, &cause) || !slices.Equal(cause.details, []string{"caller stopped"}) {
++		t.Errorf("runPipeline = %v, missing noncomparable caller cause", err)
++	}
++}
++
++func gate() (<-chan struct{}, func()) {
++	release := make(chan struct{})
++	var once sync.Once
++	return release, func() { once.Do(func() { close(release) }) }
++}
++
++func startPipeline(t *testing.T, ctx context.Context, capacity int,
++	produce func(context.Context, chan<- int) error,
++	consume func(context.Context, <-chan int) error, release ...func()) <-chan error {
++	t.Helper()
++	ctx, cancel := context.WithCancel(ctx)
++	done := make(chan error, 1)
++	finished := make(chan struct{})
++	t.Cleanup(func() {
++		cancel()
++		for _, open := range release {
++			open()
++		}
++		select {
++		case <-finished:
++		case <-time.After(3 * time.Second):
++			t.Error("pipeline did not join during test cleanup")
++		}
++	})
++	go func() {
++		defer close(finished)
++		done <- runPipeline(ctx, capacity, produce, consume)
++	}()
++	return done
++}
++
++func waitEvent(t *testing.T, event <-chan struct{}) {
++	t.Helper()
++	select {
++	case <-event:
++	case <-time.After(3 * time.Second):
++		t.Fatal("callback did not reach expected event")
++	}
++}
++
++func waitResult(t *testing.T, done <-chan error) error {
++	t.Helper()
++	select {
++	case err := <-done:
++		return err
++	case <-time.After(3 * time.Second):
++		t.Fatal("pipeline did not return")
++		return nil
++	}
++}
++
++func assertHeld(t *testing.T, done <-chan error) {
++	t.Helper()
++	select {
++	case err := <-done:
++		t.Fatalf("pipeline returned before held callback cleanup completed: %v", err)
++	case <-time.After(20 * time.Millisecond):
++	}
++}

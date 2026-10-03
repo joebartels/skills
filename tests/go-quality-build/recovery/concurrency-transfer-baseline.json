@@ -1,0 +1,83 @@
+{
+  "current_go": {
+    "command": [
+      "go",
+      "version"
+    ],
+    "exit_code": 0,
+    "output": "go version go1.26.5 darwin/arm64\n"
+  },
+  "additional_probes": {},
+  "results": [
+    {
+      "name": "concurrency-transfer-baseline",
+      "checks": [
+        {
+          "command": [
+            "git",
+            "apply",
+            "--unidiff-zero",
+            "/Users/jb/.codex/worktrees/0bc1/skills/tests/go-quality-build/recovery/patches/concurrency-transfer-baseline.patch"
+          ],
+          "exit_code": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": "ok  \texample.test/pipeline\t0.323s\n"
+        },
+        {
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": "ok  \texample.test/pipeline\t0.330s\n"
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": "ok  \texample.test/pipeline\t0.318s\n"
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-shuffle=on",
+            "-count=3",
+            "-timeout=30s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": "ok  \texample.test/pipeline\t1.662s\n"
+        }
+      ]
+    }
+  ]
+}

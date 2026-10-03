@@ -1,0 +1,237 @@
+--- a/receipt.go
++++ b/receipt.go
+@@ -4,0 +5 @@
++	"errors"
+@@ -8 +9,5 @@
+-// ApplyBatch applies ordered items and writes a receipt for accepted work.
++// ApplyBatch applies ordered items using ctx and returns the accepted count.
++// It stops before the next item when ctx is canceled. Empty input succeeds.
++// For accepted work, finish runs before return with caller values and its own
++// finalizationBudget, independent of the caller's cancellation and deadline.
++// Apply and finish failures remain inspectable with errors.Is and errors.As.
+@@ -10,0 +16 @@
++	var applyErr error
+@@ -11,0 +18,4 @@
++		if err := ctx.Err(); err != nil {
++			applyErr = errors.Join(err, context.Cause(ctx))
++			break
++		}
+@@ -13 +23,2 @@
+-			return n, err
++			applyErr = err
++			break
+@@ -18 +29 @@
+-		return 0, nil
++		return 0, applyErr
+@@ -20 +31,3 @@
+-	return n, finish(ctx, n)
++	finishCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), finalizationBudget)
++	defer cancel()
++	return n, errors.Join(applyErr, finish(finishCtx, n))
+--- a/receipt_test.go
++++ b/receipt_test.go
+@@ -4,0 +5,4 @@
++	"errors"
++	"fmt"
++	"reflect"
++	"sync"
+@@ -22,0 +27,199 @@
++
++func TestNoAcceptedItems(t *testing.T) {
++	cause := errors.New("caller stopped")
++	ctx, cancel := context.WithCancelCause(context.Background())
++	cancel(cause)
++	for _, tc := range []struct {
++		name  string
++		items []string
++	}{
++		{"empty", nil},
++		{"canceled", []string{"one"}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			n, err := ApplyBatch(ctx, tc.items, time.Second,
++				func(context.Context, string) error { t.Error("apply called"); return nil },
++				func(context.Context, int) error { t.Error("finish called"); return nil })
++			if n != 0 {
++				t.Errorf("count = %d, want 0", n)
++			}
++			if len(tc.items) == 0 {
++				if err != nil {
++					t.Errorf("empty error = %v, want nil", err)
++				}
++			} else if !errors.Is(err, context.Canceled) || !errors.Is(err, cause) {
++				t.Errorf("error = %v, want cancellation and cause", err)
++			}
++		})
++	}
++}
++
++func TestIndependentFailures(t *testing.T) {
++	applyFailure := errors.New("apply failed")
++	finishFailure := errors.New("receipt failed")
++	for _, tc := range []struct {
++		name       string
++		applyErr   error
++		finishErr  error
++		wantCount  int
++		wantEvents []string
++	}{
++		{"apply", fmt.Errorf("apply: %w", applyFailure), nil, 1, []string{"one", "two", "finish"}},
++		{"finish", nil, errors.Join(finishFailure, context.DeadlineExceeded), 3, []string{"one", "two", "three", "finish"}},
++		{"both", errors.Join(applyFailure, context.Canceled), fmt.Errorf("finish: %w", finishFailure), 1, []string{"one", "two", "finish"}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			var events []string
++			n, err := ApplyBatch(context.Background(), []string{"one", "two", "three"}, time.Second,
++				func(_ context.Context, item string) error {
++					events = append(events, item)
++					if item == "two" {
++						return tc.applyErr
++					}
++					return nil
++				},
++				func(_ context.Context, count int) error {
++					events = append(events, "finish")
++					if count != tc.wantCount {
++						t.Errorf("receipt count = %d, want %d", count, tc.wantCount)
++					}
++					return tc.finishErr
++				})
++			if n != tc.wantCount || !reflect.DeepEqual(events, tc.wantEvents) {
++				t.Errorf("count = %d, events = %v; want %d, %v", n, events, tc.wantCount, tc.wantEvents)
++			}
++			for _, want := range []error{applyFailure, finishFailure, context.Canceled, context.DeadlineExceeded} {
++				wantPresent := errors.Is(tc.applyErr, want) || errors.Is(tc.finishErr, want)
++				if errors.Is(err, want) != wantPresent {
++					t.Errorf("error = %v, presence of %v = %v, want %v", err, want, !wantPresent, wantPresent)
++				}
++			}
++		})
++	}
++}
++
++func TestFirstApplyFailure(t *testing.T) {
++	want := errors.New("first item failed")
++	calls := 0
++	n, err := ApplyBatch(context.Background(), []string{"one", "two"}, time.Second,
++		func(context.Context, string) error { calls++; return want },
++		func(context.Context, int) error { t.Error("receipt without accepted work"); return nil })
++	if n != 0 || calls != 1 || !errors.Is(err, want) {
++		t.Errorf("count = %d, calls = %d, error = %v; want 0, 1, first failure", n, calls, err)
++	}
++}
++
++func TestCancellationAfterAcceptance(t *testing.T) {
++	type metadataKey struct{}
++	for _, tc := range []struct {
++		name  string
++		items []string
++	}{
++		{"stops before next item", []string{"one", "two"}},
++		{"completed final item succeeds", []string{"one"}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			parent, release := context.WithTimeout(context.WithValue(context.Background(), metadataKey{}, "metadata"), time.Second)
++			defer release()
++			ctx, cancel := context.WithCancelCause(parent)
++			defer cancel(nil)
++			cause := errors.New("caller stopped after acceptance")
++			applies, finishes := 0, 0
++			var receiptCtx context.Context
++			n, err := ApplyBatch(ctx, tc.items, time.Minute,
++				func(got context.Context, item string) error {
++					applies++
++					if got != ctx || item != "one" {
++						t.Errorf("apply received context %v, item %q", got, item)
++					}
++					cancel(cause)
++					return nil
++				},
++				func(got context.Context, count int) error {
++					finishes++
++					receiptCtx = got
++					deadline, ok := got.Deadline()
++					callerDeadline, _ := parent.Deadline()
++					if count != 1 || got.Err() != nil || got.Value(metadataKey{}) != "metadata" || !ok || !deadline.After(callerDeadline) {
++						t.Errorf("receipt count = %d, error = %v, metadata = %v, deadline = %v", count, got.Err(), got.Value(metadataKey{}), deadline)
++					}
++					return nil
++				})
++			if n != 1 || applies != 1 || finishes != 1 {
++				t.Fatalf("count = %d, apply calls = %d, finish calls = %d", n, applies, finishes)
++			}
++			if len(tc.items) == 1 {
++				if err != nil {
++					t.Errorf("completed error = %v, want nil", err)
++				}
++			} else if !errors.Is(err, context.Canceled) || !errors.Is(err, cause) {
++				t.Errorf("error = %v, want cancellation and cause", err)
++			}
++			if receiptCtx.Err() != context.Canceled {
++				t.Errorf("receipt scope after return = %v, want released", receiptCtx.Err())
++			}
++		})
++	}
++}
++
++func TestFinalizationBudgetAndCompletion(t *testing.T) {
++	cause := errors.New("caller deadline cause")
++	ctx, cancel := context.WithTimeoutCause(context.Background(), 100*time.Millisecond, cause)
++	defer cancel()
++	expired := make(chan error, 1)
++	release := make(chan struct{})
++	var releaseOnce sync.Once
++	done := make(chan struct{})
++	var n int
++	var err error
++	t.Cleanup(func() {
++		releaseOnce.Do(func() { close(release) })
++		cancel()
++		select {
++		case <-done:
++		case <-time.After(2 * time.Second):
++			t.Error("ApplyBatch did not finish during cleanup")
++		}
++	})
++	go func() {
++		defer close(done)
++		n, err = ApplyBatch(ctx, []string{"one", "two"}, 10*time.Millisecond,
++			func(got context.Context, _ string) error { <-got.Done(); return nil },
++			func(got context.Context, _ int) error {
++				if got.Err() != nil {
++					expired <- fmt.Errorf("receipt already canceled: %w", got.Err())
++				} else {
++					select {
++					case <-got.Done():
++						expired <- got.Err()
++					case <-time.After(time.Second):
++						expired <- errors.New("receipt budget did not expire")
++					}
++				}
++				<-release
++				return got.Err()
++			})
++	}()
++	select {
++	case got := <-expired:
++		if got != context.DeadlineExceeded {
++			t.Errorf("receipt expiration = %v, want its deadline", got)
++		}
++	case <-time.After(2 * time.Second):
++		t.Fatal("receipt did not reach its budget")
++	}
++	select {
++	case <-done:
++		t.Fatal("ApplyBatch returned while receipt was still in use")
++	case <-time.After(20 * time.Millisecond):
++	}
++	releaseOnce.Do(func() { close(release) })
++	select {
++	case <-done:
++	case <-time.After(2 * time.Second):
++		t.Fatal("ApplyBatch did not return after receipt completion")
++	}
++	if n != 1 || !errors.Is(err, context.DeadlineExceeded) || !errors.Is(err, cause) {
++		t.Errorf("count = %d, error = %v; want 1, deadline exceeded and caller cause", n, err)
++	}
++}

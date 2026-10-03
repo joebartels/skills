@@ -1,0 +1,53 @@
+{
+  "label": "post-inspection diagnostic; frozen checks unchanged",
+  "probe_sha256": "57a265d5f68e79d5e889a87534b49f8be01151b5f3272139c3e81fb6962ae4bd",
+  "trial": "concurrency-development-baseline",
+  "checks": [
+    {
+      "toolchain": "current",
+      "command": [
+        "go",
+        "version"
+      ],
+      "exit_code": 0,
+      "output": "go version go1.26.5 darwin/arm64\n"
+    },
+    {
+      "toolchain": "current",
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=15s",
+        "-run",
+        "^TestDiagnosticIndependentOpenErrorBeforePeerStop$",
+        "./..."
+      ],
+      "exit_code": 1,
+      "output": "--- FAIL: TestDiagnosticIndependentOpenErrorBeforePeerStop (0.00s)\n    controller_open-error-origin_test.go:58: Serve = independent peer Run failure, missing independent Open failure established before peer stop\nFAIL\nFAIL\texample.test/leaseworkers\t0.177s\nFAIL\n"
+    },
+    {
+      "toolchain": "minimum",
+      "command": [
+        "go",
+        "version"
+      ],
+      "exit_code": 0,
+      "output": "go version go1.22.12 darwin/arm64\n"
+    },
+    {
+      "toolchain": "minimum",
+      "command": [
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=15s",
+        "-run",
+        "^TestDiagnosticIndependentOpenErrorBeforePeerStop$",
+        "./..."
+      ],
+      "exit_code": 1,
+      "output": "--- FAIL: TestDiagnosticIndependentOpenErrorBeforePeerStop (0.00s)\n    controller_open-error-origin_test.go:58: Serve = independent peer Run failure, missing independent Open failure established before peer stop\nFAIL\nFAIL\texample.test/leaseworkers\t0.178s\nFAIL\n"
+    }
+  ]
+}

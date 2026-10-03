@@ -4,14 +4,12 @@ Reusable skills for Claude Code, Codex, and OpenCode v2. Each collection lives i
 
 ## Collections
 
-| Package | Skills | Purpose |
-| --- | ---: | --- |
-| [go-quality-review](plugins/go-quality-review/README.md) | 10 | Graded Go code reviews: one overall report skill and nine focused topic skills. |
-| [go-quality-build](plugins/go-quality-build/README.md) | 5 evaluated skills | Package responsibilities, API contracts, interfaces/composition, behavior testing, and test isolation. |
+| Package | Purpose |
+| --- | --- |
+| [go-quality-review](plugins/go-quality-review/README.md) | Graded Go code reviews across focused quality topics. |
+| [go-quality-build](plugins/go-quality-build/README.md) | Go authoring guidance for design, testing, context and concurrency. |
 
-The detailed [Go review guide](docs/go-quality-review/README.md) covers grading, evaluations, and authoring. The [architecture and implementation plan](docs/superpowers/specs/2026-09-29-multiharness-skills-design.md) record the harness choices.
-
-The [Go quality build design record](docs/go-quality-build/README.md) tracks the writing skills, upstream reuse policy, evaluation approach, and next steps. Package boundaries, API contracts, and interfaces/composition are implemented and behaviorally evaluated on bounded cases. The composition evaluation improved one lifecycle architecture case; testing gaps and a blocked zero-value trial remain documented. Version `0.2.0` adds the evaluated [behavior-testing skill](plugins/go-quality-build/skills/go-behavior-tests/SKILL.md) revision2 and [isolation skill](plugins/go-quality-build/skills/go-test-isolation/SKILL.md) revision3. They guide independent assertions, real process and dependency observations, failure-state retention, fixture lifetime and event-controlled concurrency. [Behavior evidence](tests/go-quality-build/results/2026-10-01-behavior-tests-r2/comparison.md), [isolation evidence](tests/go-quality-build/results/2026-10-01-test-isolation-r3/comparison.md) and [final combined outcomes](tests/go-quality-build/results/2026-10-01-testing-combined-r3/comparison.md) preserve specific improvements, controls, historical failures and remaining sensitivity limits. Automatic routing, Codex/OpenCode runtime loading and actual Go1.22 execution remain unverified. Use the installation commands below with `go-quality-build` to load the current package.
+The [Go review guide](docs/go-quality-review/README.md) covers grading and review contracts. The [Go build authoring guide](docs/go-quality-build/README.md) covers writing and validating focused skills. Installation examples below use `go-quality-review`; substitute `go-quality-build` to load that collection.
 
 ## Use the skills
 
@@ -35,7 +33,7 @@ codex plugin marketplace add /absolute/path/to/this/repo
 codex plugin add go-quality-review@joebartels-skills
 ```
 
-The package's root `plugin.json` is the [portable Agent Plugins manifest](https://developers.openai.com/plugins/build/plugins); `skills/` is discovered from the package root. The ten skills remain individually selectable after installation.
+The package's root `plugin.json` is the [portable Agent Plugins manifest](https://developers.openai.com/plugins/build/plugins); `skills/` is discovered from the package root. Skills remain individually selectable after installation.
 
 ### OpenCode v2
 
@@ -48,7 +46,7 @@ From this repository root, `opencode.json` adds `./plugins/go-quality-review/ski
 }
 ```
 
-OpenCode v2 resolves a relative `skills` source from the **active working directory**, even if a config was found elsewhere. Use an absolute path for cross-project use, or copy selected skill directories into one of its [discovered skills directories](https://opencode.ai/v2/docs/skills/). A skills-only collection does not need executable OpenCode plugin code. The local OpenCode binary used during this migration is v1.18.7; use a v2 session to verify loading by its exact skill ID.
+OpenCode v2 resolves a relative `skills` source from the **active working directory**, even if a config was found elsewhere. Use an absolute path for cross-project use, or copy selected skill directories into one of its [discovered skills directories](https://opencode.ai/v2/docs/skills/). A skills-only collection does not need executable OpenCode plugin code.
 
 ## Develop and validate
 
