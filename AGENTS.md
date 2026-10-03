@@ -1,5 +1,5 @@
 # Repository agent instructions
 
-When working on the Go quality build skills, read [the design record](docs/go-quality-build/README.md) before making changes. Follow its continuation protocol: update its status and append a dated work-log entry after each meaningful stage and before ending your task. Record exact artifacts, verified results, decisions, open questions, and the next action. Keep proposed skills distinct from implemented and evaluated skills.
+For Go quality build work, read the [authoring guide](docs/go-quality-build/README.md) and the relevant runtime skills before editing.
 
-These instructions apply to every agent continuing that effort, regardless of harness. The design record is the canonical progress source; do not rely on conversation history alone.
+Keep maintained documentation concise and evergreen. Include only guidance needed to use or develop the skills. Keep task history, status logs, review outcomes, and future proposals out of documentation. Use Git history for historical context when needed.

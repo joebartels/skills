@@ -4,14 +4,12 @@ Reusable skills for Claude Code, Codex, and OpenCode v2. Each collection lives i
 
 ## Collections
 
-| Package | Skills | Purpose |
-| --- | ---: | --- |
-| [go-quality-review](plugins/go-quality-review/README.md) | 10 | Graded Go code reviews: one overall report skill and nine focused topic skills. |
-| [go-quality-build](plugins/go-quality-build/README.md) | 7 authoring skills | Package boundaries, APIs/composition, testing, context/deadlines, and concurrency/ownership. |
+| Package | Purpose |
+| --- | --- |
+| [go-quality-review](plugins/go-quality-review/README.md) | Graded Go code reviews across focused quality topics. |
+| [go-quality-build](plugins/go-quality-build/README.md) | Go authoring guidance for design, testing, context and concurrency. |
 
-The detailed [Go review guide](docs/go-quality-review/README.md) covers grading, evaluations, and authoring. The [architecture and implementation plan](docs/superpowers/specs/2026-09-29-multiharness-skills-design.md) record the harness choices.
-
-The [Go quality build design record](docs/go-quality-build/README.md) tracks decision owners, revision-specific evidence and open limits. Version `0.3.0` adds [context/deadlines](plugins/go-quality-build/skills/go-context-and-deadlines/SKILL.md) and [concurrency/ownership](plugins/go-quality-build/skills/go-concurrency-and-ownership/SKILL.md) to the five existing authoring skills. Their [small recovery loop](docs/go-quality-build/context-concurrency-recovery.md) preserves strong baselines and checks practical budget, cancellation, supervision and resource-lifetime guard rails on Go 1.22.12 and 1.26.5. Targeted ownership/error-origin corrections are documented separately from frozen comparisons. Broader effectiveness, automatic routing and Codex/OpenCode runtime loading remain unverified. Use the installation commands below with `go-quality-build` to load the package.
+The [Go review guide](docs/go-quality-review/README.md) covers grading and review contracts. The [Go build authoring guide](docs/go-quality-build/README.md) covers writing and validating focused skills. Installation examples below use `go-quality-review`; substitute `go-quality-build` to load that collection.
 
 ## Use the skills
 
@@ -35,7 +33,7 @@ codex plugin marketplace add /absolute/path/to/this/repo
 codex plugin add go-quality-review@joebartels-skills
 ```
 
-The package's root `plugin.json` is the [portable Agent Plugins manifest](https://developers.openai.com/plugins/build/plugins); `skills/` is discovered from the package root. The ten skills remain individually selectable after installation.
+The package's root `plugin.json` is the [portable Agent Plugins manifest](https://developers.openai.com/plugins/build/plugins); `skills/` is discovered from the package root. Skills remain individually selectable after installation.
 
 ### OpenCode v2
 
@@ -48,7 +46,7 @@ From this repository root, `opencode.json` adds `./plugins/go-quality-review/ski
 }
 ```
 
-OpenCode v2 resolves a relative `skills` source from the **active working directory**, even if a config was found elsewhere. Use an absolute path for cross-project use, or copy selected skill directories into one of its [discovered skills directories](https://opencode.ai/v2/docs/skills/). A skills-only collection does not need executable OpenCode plugin code. The local OpenCode binary used during this migration is v1.18.7; use a v2 session to verify loading by its exact skill ID.
+OpenCode v2 resolves a relative `skills` source from the **active working directory**, even if a config was found elsewhere. Use an absolute path for cross-project use, or copy selected skill directories into one of its [discovered skills directories](https://opencode.ai/v2/docs/skills/). A skills-only collection does not need executable OpenCode plugin code.
 
 ## Develop and validate
 

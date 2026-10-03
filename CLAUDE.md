@@ -1,3 +1,3 @@
 # Repository agent instructions
 
-For work on the Go quality build skills, follow [AGENTS.md](AGENTS.md) and the [design record](docs/go-quality-build/README.md). Update the record as work progresses and before ending the task.
+Follow [AGENTS.md](AGENTS.md). For Go quality build work, read the [authoring guide](docs/go-quality-build/README.md).
