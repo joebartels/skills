@@ -62,7 +62,7 @@ Test combinations of neighboring skills on the same task. Resolve contradictory 
 
 ## Work status and next steps
 
-**Current continuation:** Context/concurrency study complete; both reviewed drafts remain unpromoted and runtime stays five skills0.2.0. User requests push/PR/Copilot loop. Publication is blocked by automatic approval review pending explicit approval for the full study payload to public joebartels/skills. All work is committed locally; no remote branch/PR created. Sealed evidence remains unchanged.
+**Current continuation:** Context/concurrency study complete; reviewed drafts remain unpromoted and runtime stays five skills0.2.0. User explicitly approves publishing the full study payload to public joebartels/skills. Push/PR creation and the authorized Copilot review loop are active; sealed evidence remains unchanged.
 
 - **Completed:** Compared the local review approach with the upstream collection; proposed candidate boundaries and the reuse and evaluation policy in this record. Added repository agent instructions and a continuation protocol so later workers maintain this record. Pinned the upstream revision for the first architecture-group audit.
 - **Written spec revised:** The first group is `go-package-boundaries`, `go-api-contracts`, and `go-interfaces-and-composition` in a peer `plugins/go-quality-build/` package. After reviewing the [first-group design spec](../superpowers/specs/2026-09-30-go-quality-build-architecture-group-design.md), the user clarified that transport and database persistence are examples, not the center of package-boundary guidance. The spec now requires package maps across libraries, CLIs, services, and workers, plus a broader component palette.
@@ -1221,3 +1221,9 @@ After each meaningful stage and before finishing a task, update the status above
 - Automatic approval review rejected two direct git pushes. First reason: extensive potentially sensitive study artifacts were not explicitly authorized to this destination. After read-only ownership/payload checks, second reason: publicly disclosing model prompts/results and historical machine paths still requires explicit payload approval. No workaround/alternate transport attempted.
 - [Payload audit](reviews/context-concurrency-pr/payload-audit.json) verifies PUBLIC joebartels/skills, authenticated joebartels/ADMIN,2725 changed docs/tests files at73be6bc; no configured credential-pattern findings.18,698 historical host path occurrences in854files and an existing sealed2.7MB controller-conformance executable remain. Audit is not an exhaustive disclosure guarantee; original seals unchanged.
 - [Publication status](reviews/context-concurrency-pr/publication-status.md) preserves exact pending action and destination. User approval question explicitly covers full study artifacts and public repository. No push/PR/Copilot request yet. All unaffected publication preparation complete; next direct push/create/attach/review loop once approval arrives, or respect a private-payload choice.
+
+
+#### 2026-10-02 — Explicit public-payload approval received
+
+- User replied “i approve” to the explicit question naming full study prompts/results, historical machine paths, controller executable and PUBLIC https://github.com/joebartels/skills. This supplies the payload/destination authorization required by automatic review; permission persists through this PR workflow.
+- Next direct git push of the same branch, create/attach PR against main, request/wait Copilot and resolve actionable findings with minimal verified fixes/replies. No merge requested; immutable archives/drafts/runtime dispositions remain exact.
