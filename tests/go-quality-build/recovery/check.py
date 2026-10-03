@@ -65,6 +65,12 @@ def main():
     for trial in manifest["trials"]:
         for field in ("extra_guidance_sha256", "shared_guidance_sha256"):
             for relative, expected in trial.get(field, {}).items():
+                if field == "extra_guidance_sha256":
+                    revision = trial["extra_guidance_revisions"][relative]
+                    declared = manifest["guidance_revisions"][relative.split("/")[0]][revision]
+                else:
+                    declared = manifest["concurrency_shared_guidance_sha256"][relative]
+                require(expected == declared, trial["name"] + ": declared revision: " + relative)
                 current = root / "plugins/go-quality-build/skills" / relative
                 require(digest(current) == expected or
                         (relative, expected) in historical_guidance, trial["name"] + ": " + relative)

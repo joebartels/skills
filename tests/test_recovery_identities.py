@@ -88,6 +88,24 @@ class RecoveryIdentityTests(unittest.TestCase):
         self.save_manifest(manifest)
         self.assert_rejected("concurrency-transfer-baseline")
 
+    def test_shared_context_cannot_substitute_historical_revision(self):
+        manifest = self.manifest()
+        trial = next(t for t in manifest["trials"] if t["name"] == "concurrency-transfer-baseline")
+        trial["shared_guidance_sha256"]["go-context-and-deadlines/SKILL.md"] = (
+            manifest["guidance_revisions"]["go-context-and-deadlines"]["revision_1"]
+        )
+        self.save_manifest(manifest)
+        self.assert_rejected("concurrency-transfer-baseline")
+
+    def test_extra_context_cannot_substitute_newer_revision(self):
+        manifest = self.manifest()
+        trial = next(t for t in manifest["trials"] if t["name"] == "context-transfer-guided")
+        trial["extra_guidance_sha256"]["go-context-and-deadlines/SKILL.md"] = (
+            manifest["guidance_revisions"]["go-context-and-deadlines"]["revision_2"]
+        )
+        self.save_manifest(manifest)
+        self.assert_rejected("context-transfer-guided")
+
     def test_reconstructs_and_checks_historical_revision(self):
         manifest = self.manifest()
         revision = manifest["guidance_revisions"]["go-context-and-deadlines"]
