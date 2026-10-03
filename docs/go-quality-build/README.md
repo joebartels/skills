@@ -62,7 +62,7 @@ Test combinations of neighboring skills on the same task. Resolve contradictory 
 
 ## Work status and next steps
 
-**Current continuation:** Concurrency Task4 reviewed draft, not promoted: exact guidance accepted, zero primary corrections and failed transfer/preservation/routing consistency. Study sealed; Task4 final gate/commit next, then ineligible interaction skip and Task6 closeout. Runtime five0.2.0; both new drafts outside runtime.
+**Current continuation:** Concurrency Task4 reviewed draft, not promoted: exact guidance accepted, zero primary corrections and failed transfer/preservation/routing consistency. Study sealed and Task4 committed; Task5 interaction skipped as ineligible. Task6 package/portable-seal/whole-branch closeout remains. Runtime five0.2.0; both new drafts outside runtime.
 
 - **Completed:** Compared the local review approach with the upstream collection; proposed candidate boundaries and the reuse and evaluation policy in this record. Added repository agent instructions and a continuation protocol so later workers maintain this record. Pinned the upstream revision for the first architecture-group audit.
 - **Written spec revised:** The first group is `go-package-boundaries`, `go-api-contracts`, and `go-interfaces-and-composition` in a peer `plugins/go-quality-build/` package. After reviewing the [first-group design spec](../superpowers/specs/2026-09-30-go-quality-build-architecture-group-design.md), the user clarified that transport and database persistence are examples, not the center of package-boundary guidance. The spec now requires package maps across libraries, CLIs, services, and workers, plus a broader component palette.
@@ -1164,3 +1164,10 @@ After each meaningful stage and before finishing a task, update the status above
 - Final readiness20-artifact index SHA-256 **f68fc12440b7210b47c72a8560db6218ffa65680c7c686c8cd17dac3e66d9f80** externally anchored here, copied exactly into study. Preflight64 index remains unchanged. Final comparison SHA000dcff477fbef57edf2ba55fc1f8b979fcd3dc97bc814945a6502d19a7d4b51.
 - Concurrency study seal1347 files; [checksum index](../../tests/go-quality-build/results/2026-10-02-concurrency-study/checksums.json) SHA-256 **3c6235e6ee75c3544e80d177f8e28199bc0249142f8531f5d09621de6db5bc60** anchored outside archive. Exact30 raw whitespace paths preserved, no glob exception.15/16 candidate,31/36 group authors;12/20 candidate,26/40 group selection. Runtime five0.2.0 and both accepted-content drafts uninstalled.
 - Next final read-only closeout gate/scoped whitespace/commit/Task4 completion, then Task5 skip because context is not promoted, and exact unchanged package/portable seal/whole-branch review in Task6. No publication/global installation.
+
+
+#### 2026-10-02 — Interaction gate skipped
+
+- Task4 committed7b0839f after read-only integrity and exact30-path whitespace verification. Both individually accepted-content drafts remain unpromoted.
+- [Interaction eligibility record](../../tests/go-quality-build/results/2026-10-02-context-concurrency-combined/manifest.json) preserves exact individual manifest hashes and mandatory skip: neither qualified; zero fixture/arms/combined cards.31/36 authors and26/40 selection probes unchanged; build cases46.
+- Next Task6 unchanged five-skill0.2.0 package verification, portable reconstructions/seals and one independent whole-branch delivery review. No publication/install.

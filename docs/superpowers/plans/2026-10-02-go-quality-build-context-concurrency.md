@@ -146,10 +146,12 @@ Completed disposition: reviewed draft, not promoted. Fifteen counted authors, tw
 
 **Interfaces:** Consume both individual dispositions. Produce either a documented skipped four-arm study or suite `skill_name="context-concurrency-combined"` with `request-scoped-fanout`, four matched outcomes and resolved interaction findings.
 
-- [ ] **Step 1: Apply the eligibility gate.** If both qualify, prepare the supplied interaction API/contract/tests above. If one/none qualify, record the skip; Task 6 reviews any accepted skill with the existing package without inventing a rejected neighbor or substituting old tasks.
+- [x] **Step 1: Apply the eligibility gate.** If both qualify, prepare the supplied interaction API/contract/tests above. If one/none qualify, record the skip; Task 6 reviews any accepted skill with the existing package without inventing a rejected neighbor or substituting old tasks.
 - [ ] **Step 2: Check and freeze the new interaction fixture.** Show controller conformance and meaningful held failure observations, then freeze task/catalog/profile/skill hashes. Repository validation expects 47 build cases when this suite exists, otherwise 46. No candidate guidance changes from preparation observations without reentering individual final-byte gates.
 - [ ] **Step 3: Run the four matched arms within four launches.** Same reference profile and task, original five-skill catalog plus neither/context only/concurrency only/both accepted snapshots. Reserve one launch per arm; keep labels outside authors and neutral reviewers. Count every attempt within four integrated slots and 36 total; any retry consumes an unspent arm slot and leaves an explicit coverage gap rather than a complete four-arm claim.
 - [ ] **Step 4: Independently review and resolve interaction.** Record all-nine coverage, outcomes, conflicts, complexity and costs; integrated success cannot replace individual benefit. A guidance change reopens affected individual and integrated evidence within remaining budget; otherwise retain an explicit incomplete/reviewed-draft disposition. Verify/seal the archive, update status/log and commit `test: record Go context and concurrency interaction`.
+
+Completed: eligibility failed for both candidates. Steps2–4 behavioral preparation/authors/review are explicitly skipped; no fixture or integrated launch. The decision record is verified and committed.
 
 ## Task 6: Exact-byte package delivery and independent closeout
 
