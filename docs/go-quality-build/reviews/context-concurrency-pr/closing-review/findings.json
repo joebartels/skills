@@ -1,0 +1,49 @@
+{
+  "reviewed_base": "0d0a339b27cd1ff7ff3cc177f28a9a4455f91a96",
+  "reviewed_head": "c5ee3d0e337975d1de199c86c34bbe2f301ccf85",
+  "go_confirmed": [],
+  "non_go_confirmed": [
+    {
+      "id": "NG1",
+      "priority": "P2",
+      "grading": "ungraded non-Go",
+      "classification": "introduced in requested base-to-head changeset",
+      "title": "Require the current delivery checksum index before reporting integrity success",
+      "path": "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py",
+      "line_start": 141,
+      "line_end": 143,
+      "cause": "The current advertised gate conditionally verifies its own delivery packet only when checksums.json exists. Absence disables that required seal instead of failing closed.",
+      "trigger": "Delete tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/checksums.json from a relocated exact c5ee3d0 checkout and invoke the documented unoptimized gate. Delivery README corruption then remains undetected.",
+      "consequence": "The command exits 0 and prints PASS for an incomplete delivery packet, and also for that packet with altered delivery metadata. An accidentally missing index silently disables identity verification of the current manifest, shared checks and delivery documentation. Other separately sealed study archives remain checked; no general code-execution or study-source tampering claim is made.",
+      "evidence": [
+        "evidence/checks.json:gate-missing-current-delivery-index exit=0/PASS",
+        "evidence/checks.json:gate-missing-index-and-corrupt-delivery-document exit=0/PASS",
+        "evidence/checks.json:gate-present-index-and-corrupt-delivery-document exit=1/sealed bytes changed",
+        "evidence/checks.json:gate-restored-exact-data exit=0/PASS",
+        "evidence/snapshot.json: all diagnostics extracted from exact tracked c5ee3d0"
+      ],
+      "minimal_correction": "Require the current checksum index unconditionally and run its canonical-anchor/byte verification before PASS. Preserve the exact prior delivery as historical evidence when resealing the corrected packet; keep bootstrap capture behavior out of the advertised final gate.",
+      "verification_plan": "Add actual CLI regression cases on disposable copies for missing current index, altered delivery README/metadata with missing index, present-index corruption, and restored exact packet. Require nonzero/no PASS for both missing-index cases, maintain normal success and optimized-mode refusal, and retain original snapshot seals.",
+      "primary_owner": "current portable delivery gate",
+      "independently_causal_to_optimization_fix": true,
+      "not_applied_to_historical_copy": true
+    }
+  ],
+  "go_unique_counts": {
+    "critical": 0,
+    "major": 0,
+    "moderate": 0,
+    "minor": 0
+  },
+  "reconciliation": [
+    "NG1 is a current advertised-boundary defect and is separate from the already corrected optimized-Python cause.",
+    "Historical helper assertion behavior, absolute capture paths and output-writing behavior are disclosed preservation/replay limits, not new required edits to immutable snapshots."
+  ],
+  "historical_limitations": [
+    "verify_example.py is a historical capture writer with hardcoded toolchain/validator paths; it writes logs and metadata under its own raw directory.",
+    "verify-readiness.py verifies historical physical author/selection catalogs and external source captures; it has no optimized-mode guard and is not the current portable checkout gate.",
+    "verify-evidence.py and verify-guidance.py write historical review result JSON; verify-guidance also depends on old capture/toolchain paths. Their docs-era reproduce language is bounded by current delivery instructions forbidding in-place historical capture replay.",
+    "The round-1 delivery-before-optimization-fix/verify-delivery.py remains original snapshot bytes, lacks the current optimization guard and retains its original relative root calculation. It is explicitly marked historical, not advertised as runnable at its copied path."
+  ],
+  "rejected_or_unconfirmed": []
+}

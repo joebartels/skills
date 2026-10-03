@@ -62,7 +62,7 @@ Test combinations of neighboring skills on the same task. Resolve contradictory 
 
 ## Work status and next steps
 
-**Current continuation:** Context/concurrency study complete; reviewed drafts remain unpromoted and runtime stays five skills0.2.0. User explicitly approves publishing the full study payload to public joebartels/skills. Push/PR creation and the authorized Copilot review loop are active; sealed evidence remains unchanged.
+**Current continuation:** PR#6 is published. Copilot round2 has no findings; the fresh independent closing review gives the bounded Go example A and finds one separate P2 current-gate missing-index bypass. Minimal required-seal fix is GREEN with exact prior snapshots preserved and root9/build10/layout1/grade12 passing. Original reviewer report remains intact. Next commit/push, Copilot round3 and focused post-fix addendum. Runtime stays five skills0.2.0; both candidates remain unpromoted.
 
 - **Completed:** Compared the local review approach with the upstream collection; proposed candidate boundaries and the reuse and evaluation policy in this record. Added repository agent instructions and a continuation protocol so later workers maintain this record. Pinned the upstream revision for the first architecture-group audit.
 - **Written spec revised:** The first group is `go-package-boundaries`, `go-api-contracts`, and `go-interfaces-and-composition` in a peer `plugins/go-quality-build/` package. After reviewing the [first-group design spec](../superpowers/specs/2026-09-30-go-quality-build-architecture-group-design.md), the user clarified that transport and database persistence are examples, not the center of package-boundary guidance. The spec now requires package maps across libraries, CLIs, services, and workers, plus a broader component palette.
@@ -1249,3 +1249,44 @@ After each meaningful stage and before finishing a task, update the status above
 - Normal CLI success and all three optimized modes have real regression tests; root count increases6→8. [GREEN checks](reviews/context-concurrency-pr/round-1/checks-green.json) pass root8/build10/layout1/grade12, validator46build/120review and current31-outcome gate. [Corrupt optimized proof](reviews/context-concurrency-pr/round-1/corrupt-optimized-green.json) refuses corrupt manifest normally/-O/-OO/PYTHONOPTIMIZE and accepts restored relocated data; original RED captures retained.
 - [Classification](reviews/context-concurrency-pr/round-1/classification.json) accepts only4171677988, records minimal fail-closed guard/current revision2 and original20387 snapshot provenance. No source/skill/fixture repair, no native author/selection launch, no grade/promotion change. Historical assertion-tool pattern18files/~1771lines remains outside the named-case fix.
 - Next full-diff size/scoped whitespace check, commit/push verified change, update PR description, reply/resolve exact thread and re-request Copilot. Original snapshots are historical evidence; current advertised entrypoint requires unoptimized Python and validates their exact seals.
+
+
+#### 2026-10-02 — Copilot round1 pushed and round2 requested
+
+- Pushed c5ee3d0 minimal optimized-Python guard, real CLI regressions and exact original delivery provenance. [Size/whitespace proof](reviews/context-concurrency-pr/round-1/size-and-whitespace.json) records1.774% diff growth and clean full staged branch outside83hash-verified raw paths; below25% cap.
+- Updated PR description/root8 count, posted [inline reply4171712666](https://github.com/joebartels/skills/pull/6#discussion_r4171712666), resolved PRRT_kwDOUvGCaM6oj51M and re-requested Copilot. [Resolution record](reviews/context-concurrency-pr/round-1/thread-resolved.json) confirms completion; no remaining round1 issue.
+- Next wait for completed second review/CI, address any new VALID findings with the same bounded protocol, then fresh no-context closing review of non-test code and final handoff. Historical helper pattern remains unmodified; no merge requested.
+
+
+#### 2026-10-02 — Copilot round2 complete; independent closing review dispatched
+
+- [Copilot review5399024376](https://github.com/joebartels/skills/pull/6#pullrequestreview-5399024376) at c5ee3d0 reports no findings and confirms optimized-Python bypass resolved. [Exact round2 capture](reviews/context-concurrency-pr/round-2/README.md) preserves review/comments/thread/CI state; sole thread resolved and both validation checks SUCCESS.
+- Copilot requests final human attention due to archive size; no claim that all experimental outputs are defect-free. Required one fresh no-context closing reviewer dispatched for exact0d0a339b..c5ee3d0 non-test source and current verification boundary, with relevant Go topic cards and separate ungraded Python/archive review. Reviewer may not mutate sealed sources or launch model studies.
+- Next reconcile closing review, verify final gates/diff growth and record/push final bookkeeping. No merge requested; original studies and runtime dispositions unchanged.
+
+
+#### 2026-10-02 — Independent closing integrity finding and required-seal correction
+
+- Closing reviewer independently reproduced a current-gate bypass at c5ee3d0: missing delivery checksums.json skips the self-seal and returns PASS, including after delivery README corruption. The named case is VALID; it is separate from Python optimization and historical capture scripts. Parent real CLI [regression](reviews/context-concurrency-pr/closing-fix/missing-seal-red.json) independently fails as expected before implementation.
+- Before correction, copied all exact revision2 delivery bytes/index to [historical snapshot](reviews/context-concurrency-pr/closing-fix/delivery-before-required-seal-fix/checksums.json); index SHA-256 **dd63309f526b323dea232650026ab34c91f30468d3c0bbcaa81d1793287a4909** verified. Current tool revision3 removes the optional self-seal branch; both original20387 and revision2dd633 snapshots are additionally validated as inert exact evidence. No study/source/skill/fixture repair or new author launch.
+- Current revised12-file delivery index SHA-256 **f20d74230d19d3323c31f0697a31679786401b7cc612b53ba14a1e276790df2b** externally anchored here. Next real CLI GREEN/corrupt/missing/restored checks, structural suite, exact raw exceptions/diff growth, preserve closing reviewer report and push minimal fix; request Copilot round3 and receive focused independent post-fix addendum. No merge requested.
+
+
+#### 2026-10-02 — Required-seal fix verified
+
+- [Independent finding adjudication](reviews/context-concurrency-pr/closing-fix/classification.json) accepts the named current-gate omission. [GREEN verification](reviews/context-concurrency-pr/closing-fix/checks-green.json) passes real CLI3/root9/build10/layout1/grade12, validator46build/120review and31 reconstructions/all anchored seals. [Disposable relocated proof](reviews/context-concurrency-pr/closing-fix/missing-corrupt-restored-green.json) rejects missing current index, corrupt README with/without index and accepts exact/restored trees.
+- Current revision3 checksum f20d7423 and historical dd633/20387 snapshots remain exact. Similar optional-seal conditionals exist only in historical snapshots/capture tools found by inventory; the current advertised entrypoint is corrected. No mass rewrite, source/guidance repair, study rerun or promotion.
+- Next preserve original closing report/grades, verify full diff growth/whitespace and commit/push this minimal correction; request Copilot round3, then focused post-fix addendum and final handoff.
+
+
+#### 2026-10-02 — Independent closing review reconciled
+
+- [Original fresh closing report](reviews/context-concurrency-pr/closing-review/report.md) targets exact0d0a339b..c5ee3d0; report SHA-256 **b3f5de47bf5d900783cf33c53320a1326dc8bf2c6394add5259ad22e16e6e3f2**. Parent verifies all original card/findings hashes and re-runs the absolute grade calculator in [adjudication](reviews/context-concurrency-pr/closing-fix/adjudication.json). Bounded21-line Go example earns A: Architecture/Idioms/Correctness/Testing/Resources/Reproducibility A; Security/Resilience/Deployment justified N/A; zero Go findings. Fresh actual Go1.22.12/1.26.5 checks pass on disposable exact-head copies. No whole-archive or efficacy grade is claimed.
+- Separate ungraded Python NG1/P2 is independently verified VALID and corrected minimally with mandatory seal; full structural/adverse controls GREEN. Original report/cards retain the pre-fix finding, to be closed by focused addendum rather than silently rewritten. No Go example/guidance/runtime/study source changes invalidate the Go cards.
+- Next full staged size/whitespace check, publish required-seal fix/review artifacts, update description and request Copilot round3. No merge requested.
+
+
+#### 2026-10-02 — Required-seal correction prepared for publication
+
+- [Full staged size/whitespace check](reviews/context-concurrency-pr/closing-fix/size-and-whitespace.json) covers2804files,178509insertions/15deletions before this small proof/status addition:6.173% growth against168145baseline changed lines, below25% cap. Full staged whitespace passes outside the same83exact hash-verified historical paths; no new exception or frozen-byte edit.
+- Required-seal fix, CLI regression, original closing cards/grade and exact revision2 snapshot are ready to commit/push. Original closing review retains NG1/P2 and bounded Go A; post-fix narrow confirmation and Copilot round3 remain pending. No additional skill study/runtime change or merge.

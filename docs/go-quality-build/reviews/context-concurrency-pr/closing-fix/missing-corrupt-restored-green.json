@@ -1,0 +1,70 @@
+{
+  "cases": [
+    {
+      "case": "exact-relocated",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "status": 0,
+      "stdout": "PASS: portable31 reconstructions (26 completed/5 failed), five runtime0.2.0 skills, anchored seals and preserved counterevidence\n",
+      "stderr": ""
+    },
+    {
+      "case": "missing-current-index",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "status": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 147, in <module>\n    verify()\n    ~~~~~~^^\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 141, in verify\n    expected = sha(OUT / \"checksums.json\")\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 27, in sha\n    return hashlib.sha256(path.read_bytes()).hexdigest()\n                          ~~~~~~~~~~~~~~~^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py\", line 625, in read_bytes\n    with self.open(mode='rb') as f:\n         ~~~~~~~~~^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py\", line 537, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/checksums.json'\n"
+    },
+    {
+      "case": "corrupt-readme-and-missing-index",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "status": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 147, in <module>\n    verify()\n    ~~~~~~^^\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 141, in verify\n    expected = sha(OUT / \"checksums.json\")\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 27, in sha\n    return hashlib.sha256(path.read_bytes()).hexdigest()\n                          ~~~~~~~~~~~~~~~^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py\", line 625, in read_bytes\n    with self.open(mode='rb') as f:\n         ~~~~~~~~~^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py\", line 537, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/private/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/checksums.json'\n"
+    },
+    {
+      "case": "corrupt-readme-with-index",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "status": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 147, in <module>\n    verify()\n    ~~~~~~^^\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 142, in verify\n    seal(OUT, expected, continuation)\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 57, in seal\n    assert actual == expected_files, (root.name, \"sealed bytes changed\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('2026-10-02-context-concurrency-delivery', 'sealed bytes changed')\n"
+    },
+    {
+      "case": "restored-exact",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-current-seal-proof-1c7f9a_k/checkout/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "status": 0,
+      "stdout": "PASS: portable31 reconstructions (26 completed/5 failed), five runtime0.2.0 skills, anchored seals and preserved counterevidence\n",
+      "stderr": ""
+    }
+  ],
+  "original_files_modified": false
+}

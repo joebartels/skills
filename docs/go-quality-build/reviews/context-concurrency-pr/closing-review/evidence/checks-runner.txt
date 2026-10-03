@@ -1,0 +1,83 @@
+import hashlib
+import io
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import tarfile
+import tempfile
+import time
+
+ROOT = Path('/Users/jb/.codex/worktrees/ed95/skills')
+OUT = ROOT / 'docs/go-quality-build/reviews/context-concurrency-pr/closing-review/evidence'
+HEAD = 'c5ee3d0e337975d1de199c86c34bbe2f301ccf85'
+records = []
+
+def run(label, argv, cwd, overrides=None, timeout=60):
+    env = os.environ.copy()
+    env.pop('PYTHONOPTIMIZE', None)
+    env.update(overrides or {})
+    start = time.monotonic()
+    proc = subprocess.run(argv, cwd=cwd, env=env, capture_output=True, text=True, timeout=timeout)
+    item = dict(id=label, argv=argv, cwd=str(cwd), environment_overrides=overrides or {},
+                environment_removed=['PYTHONOPTIMIZE'], exit_code=proc.returncode,
+                elapsed_seconds=round(time.monotonic()-start, 3), stdout=proc.stdout, stderr=proc.stderr)
+    records.append(item)
+    (OUT / 'checks.json').write_text(json.dumps(records, indent=2) + '\n')
+    print(label, proc.returncode, proc.stdout.strip()[:250], proc.stderr.strip()[-500:], flush=True)
+    return proc
+
+with tempfile.TemporaryDirectory(prefix='pr6-closing-', dir='/private/tmp') as temp:
+    scratch = Path(temp)
+    exact = scratch / 'exact-head'
+    exact.mkdir()
+    arch = subprocess.run(['rtk', 'proxy', 'git', 'archive', HEAD], cwd=ROOT, capture_output=True)
+    assert arch.returncode == 0, arch.stderr
+    with tarfile.open(fileobj=io.BytesIO(arch.stdout)) as tar:
+        tar.extractall(exact, filter='data')
+    (OUT / 'snapshot.json').write_text(json.dumps({'head': HEAD,
+        'argv': ['rtk', 'proxy', 'git', 'archive', HEAD], 'exit_code': arch.returncode,
+        'archive_sha256': hashlib.sha256(arch.stdout).hexdigest(),
+        'purpose': 'Exact tracked revision in disposable copy; no uncommitted parent bookkeeping'}, indent=2) + '\n')
+    gate = 'tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py'
+    for label, flags, env in [('gate-normal', [], {}), ('gate-O', ['-O'], {}),
+                              ('gate-OO', ['-OO'], {}), ('gate-env-optimized', [], {'PYTHONOPTIMIZE': '1'})]:
+        run(label, ['rtk', 'proxy', 'python3', '-B', *flags, gate], exact, env)
+    run('integrity-cli-tests', ['rtk', 'proxy', 'python3', '-B', '-m', 'unittest', 'discover', '-s', 'tests', '-p', 'test_go_study_integrity.py', '-v'], exact)
+    delivery = exact / Path(gate).parent
+    index = delivery / 'checksums.json'
+    original_index = index.read_bytes()
+    index.unlink()
+    run('gate-missing-current-delivery-index', ['rtk', 'proxy', 'python3', '-B', gate], exact)
+    readme = delivery / 'README.md'
+    original_readme = readme.read_bytes()
+    readme.write_text('Neither evidence nor metadata is preserved in this diagnostic.\n')
+    run('gate-missing-index-and-corrupt-delivery-document', ['rtk', 'proxy', 'python3', '-B', gate], exact)
+    index.write_bytes(original_index)
+    run('gate-present-index-and-corrupt-delivery-document', ['rtk', 'proxy', 'python3', '-B', gate], exact)
+    readme.write_bytes(original_readme)
+    run('gate-restored-exact-data', ['rtk', 'proxy', 'python3', '-B', gate], exact)
+    example = exact / 'docs/go-quality-build/reviews/concurrency-readiness/preflight/example'
+    work = scratch / 'example'
+    shutil.copytree(example, work)
+    overrides = {'GOWORK': 'off', 'GOTOOLCHAIN': 'local', 'GOPROXY': 'off',
+                 'GOFLAGS': '', 'GOCACHE': str(scratch / 'go-cache'), 'GOMODCACHE': str(scratch / 'go-modcache')}
+    toolchains = [('minimum', '/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go'),
+                  ('host', '/opt/homebrew/Cellar/go/1.26.5/libexec/bin/go')]
+    initial_tree = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in work.iterdir() if p.is_file()}
+    for label, go in toolchains:
+        if not Path(go).is_file():
+            records.append({'id': label+'-unavailable', 'path': go, 'status': 'unavailable'})
+            continue
+        env = {**overrides, 'GOCACHE': str(scratch / (label+'-go-cache'))}
+        for kind, args in [('version', ['version']), ('environment', ['env', 'GOVERSION', 'GOOS', 'GOARCH', 'GOTOOLCHAIN']),
+                           ('build', ['build', '-mod=readonly', './...']), ('test', ['test', '-mod=readonly', '-count=1', '-timeout=20s', './...']),
+                           ('vet', ['vet', '-mod=readonly', './...']), ('race-shuffle', ['test', '-mod=readonly', '-race', '-shuffle=on', '-count=5', '-timeout=30s', './...']),
+                           ('modules', ['list', '-m', 'all'])]:
+            run(label+'-'+kind, ['rtk', 'proxy', go, *args], work, env, timeout=120)
+        run(label+'-format', ['rtk', 'proxy', str(Path(go).with_name('gofmt')), '-d', 'totals.go', 'totals_test.go'], work, env)
+    final_tree = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in work.iterdir() if p.is_file()}
+    (OUT / 'example-source-preservation.json').write_text(json.dumps({'before': initial_tree, 'after': final_tree, 'equal': initial_tree == final_tree}, indent=2)+'\n')
+    assert initial_tree == final_tree
+    (OUT / 'checks.json').write_text(json.dumps(records, indent=2) + '\n')

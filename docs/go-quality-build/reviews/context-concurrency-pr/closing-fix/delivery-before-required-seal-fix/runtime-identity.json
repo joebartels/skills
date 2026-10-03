@@ -1,45 +1,6 @@
 {
-  "date": "2026-10-02",
-  "phase": "evidence delivered after independent whole-branch review; final continuation/ledger stored outside archive",
-  "promotion": "neither",
-  "runtime_version": "0.2.0",
-  "runtime_skill_count": 5,
-  "author_attempts": 31,
-  "author_ceiling": 36,
-  "selection_attempts": 26,
-  "selection_ceiling": 40,
-  "integrated_author_attempts": 0,
-  "build_cases": 46,
-  "review_cases": 120,
-  "reconstruction_counts": {
-    "attempts": 31,
-    "completed": 26,
-    "failed": 5,
-    "source_files": 130
-  },
-  "drafts": [
-    {
-      "name": "go-context-and-deadlines",
-      "path": "tests/go-quality-build/go-context-and-deadlines/draft/SKILL.md",
-      "sha256": "6368240e5a000cd8f056afa5980099317882d8ebcefa0e1f29921975ccc4627d"
-    },
-    {
-      "name": "go-concurrency-and-ownership",
-      "path": "tests/go-quality-build/go-concurrency-and-ownership/draft/SKILL.md",
-      "sha256": "0ab21aee46b9446356b455d59776263a8160fcf2a0c3b5050c2b1792ecf13002"
-    }
-  ],
-  "runtime_skill_sha256": {
-    "go-api-contracts/SKILL.md": "c655df596414850f06c66ffcb34b5c5606aa73d3381051942dc45e99cd54a0ba",
-    "go-behavior-tests/SKILL.md": "c37b88cf03cdc9e1844e50f7061cdcbfc01609d6a8576f45fa619bd626407267",
-    "go-behavior-tests/references/behavior-observations.md": "ffba4ee582a014add07d3ab2f622d701f062910cc3ac774bbc9190e0f50ebd2c",
-    "go-interfaces-and-composition/SKILL.md": "41c9cd023682e006b84b37ddadf39bc37f0f01b2bfd8af7609272799906d9621",
-    "go-package-boundaries/SKILL.md": "3245b2347309d6238950be43e269c05720dbcf5132548dd661955c9e428d3ca7",
-    "go-package-boundaries/references/package-maps.md": "19c2e6f964486abe11028ba04e443fc76eb39236538ee5d9ef25400cc8ecfc7f",
-    "go-test-isolation/SKILL.md": "7ff805a5e1d59e51817af235c48d086014d5b369f4ff4e9271f0ee016edfa246",
-    "go-test-isolation/references/isolation-patterns.md": "8e4740eb2ae35f7b3e9ebf2eebf52daf6d637692f16203ad9af623b1f0133291"
-  },
-  "unchanged_package_review_sha256": {
+  "scope": "Entire runtime build/review package, root scope/marketplace and distributed root notices equal comparator0d0a339b",
+  "sha256": {
     ".claude-plugin/marketplace.json": "10f88f4bed25eef106c09e79f30a2321054edafbe723c726320af62dd9d6a428",
     "README.md": "add1cf38464114987716cf1678e595874ceb4e0cc2162cfa457a5ef450d65b73",
     "plugins/go-quality-build/.claude-plugin/plugin.json": "433a3e13bfe5e498c64d27b711c462fffe9d9dc1b34720697add7b46203f67e0",
@@ -79,66 +40,5 @@
     "plugins/go-quality-review/skills/go-security/references/security-decisions.md": "2995454ed5bbf589d22d8173af49812ee15186f1e38c1654e53573b0b84e3667",
     "plugins/go-quality-review/skills/go-testing/SKILL.md": "7f59f7017c1a5132c847b4ec821f7f87fd6ac71b0b57428ee7f9f1b9f18d47af",
     "plugins/go-quality-review/skills/go-testing/references/testing-decisions.md": "34811a7b16122e74188fe254373a84d8dd3dfae49d5327af732ae3632d66e229"
-  },
-  "archives": [
-    {
-      "path": "tests/go-quality-build/results/2026-10-02-context-discovery",
-      "checksum_index_sha256": "ef03a5bdc2594cacd143558d21617fa60764ffdb303d6b87fda7c397ac54fd03",
-      "skill_catalog": "skills"
-    },
-    {
-      "path": "tests/go-quality-build/results/2026-10-02-context-study",
-      "checksum_index_sha256": "ff6ce82fe427a717c9535a53736626949f4976455b1d6d82b5ce497b3d609fc0",
-      "skill_catalog": "skills"
-    },
-    {
-      "path": "tests/go-quality-build/results/2026-10-02-concurrency-discovery",
-      "checksum_index_sha256": "e34967c595baca2b0ecd9b77abfca3bd94295ee0a9c9710a11fe643eacdd0648",
-      "skill_catalog": "preparation/skills"
-    },
-    {
-      "path": "tests/go-quality-build/results/2026-10-02-concurrency-study",
-      "checksum_index_sha256": "3c6235e6ee75c3544e80d177f8e28199bc0249142f8531f5d09621de6db5bc60",
-      "skill_catalog": "skills"
-    }
-  ],
-  "additional_seals": [
-    {
-      "path": "tests/go-quality-build/results/2026-10-02-context-concurrency-combined",
-      "checksum_index_sha256": "1b93b99d0b5a16fc763d4132775019751682af2e049fe591683ae928f30df250"
-    },
-    {
-      "path": "docs/go-quality-build/reviews/concurrency-readiness/preflight",
-      "checksum_index_sha256": "d4639503c4138b8c9d33cd865a2619ddfdab87b6cfc03f12a04a8cf63e3ccd74"
-    },
-    {
-      "path": "docs/go-quality-build/reviews/concurrency-readiness",
-      "checksum_index_sha256": "f68fc12440b7210b47c72a8560db6218ffa65680c7c686c8cd17dac3e66d9f80",
-      "separately_sealed_subtree": "preflight"
-    },
-    {
-      "path": "docs/go-quality-build/reviews/context-concurrency-pr/round-1/delivery-before-optimization-fix",
-      "checksum_index_sha256": "20387a7bb3d3ef460fe1231eb2c5a721a71075a84118a9e8086e1bd5a1913e93"
-    },
-    {
-      "path": "docs/go-quality-build/reviews/context-concurrency-pr/closing-fix/delivery-before-required-seal-fix",
-      "checksum_index_sha256": "dd63309f526b323dea232650026ab34c91f30468d3c0bbcaa81d1793287a4909"
-    }
-  ],
-  "whitespace_exception_count": 83,
-  "limits": [
-    "No repeated fixed-primary correction for either candidate; strong ties are preservation, not uplift.",
-    "Context CLI minimum authored assertion failure and independent errors lost; concurrency shared transfer error loss/lifecycle/test regressions and two lower-reasoning routing deviations retained.",
-    "31 counted authors include5 pre-model failures;26 completions do not imply clean outcomes.",
-    "Context alternate-model author pair failed before model contact; lower reasoning/other-native implementations unavailable within context cap.",
-    "Concurrency alternate-model/lower-reasoning completed; broader platforms/schedules or native Claude/OpenCode loading unverified.",
-    "Historical direct version/auth checks not durably captured; fresh capability corroboration is explicitly current, not historical replay.",
-    "Python3/Git byte reconstruction does not rerun historical Go/model behavior or require their historical temporary toolchain paths.",
-    "20 upstream captures inventoried/pinned; full third-party source bodies remain externally available at revisions, not redistributed in this delivery. No upstream prose/code copied into drafts/runtime."
-  ],
-  "independent_review_location": "docs/go-quality-build/reviews/context-concurrency-delivery/whole-branch-review.md",
-  "reviewed_range_whitespace_exception_count": 82,
-  "post_review_raw_exception_count": 1,
-  "tool_revision": 3,
-  "tool_revision_reason": "Independent closing review: require delivery checksums.json before PASS; exact revision2 and original delivery snapshots preserved separately"
+  }
 }

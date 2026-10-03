@@ -1,0 +1,628 @@
+[
+  {
+    "id": "gate-normal",
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/exact-head",
+    "environment_overrides": {},
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.498,
+    "stdout": "PASS: portable31 reconstructions (26 completed/5 failed), five runtime0.2.0 skills, anchored seals and preserved counterevidence\n",
+    "stderr": ""
+  },
+  {
+    "id": "gate-O",
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "-O",
+      "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/exact-head",
+    "environment_overrides": {},
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 1,
+    "elapsed_seconds": 0.03,
+    "stdout": "",
+    "stderr": "FAIL: Python optimization disables integrity checks; run without -O/-OO and unset PYTHONOPTIMIZE.\n"
+  },
+  {
+    "id": "gate-OO",
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "-OO",
+      "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/exact-head",
+    "environment_overrides": {},
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 1,
+    "elapsed_seconds": 0.076,
+    "stdout": "",
+    "stderr": "FAIL: Python optimization disables integrity checks; run without -O/-OO and unset PYTHONOPTIMIZE.\n"
+  },
+  {
+    "id": "gate-env-optimized",
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/exact-head",
+    "environment_overrides": {
+      "PYTHONOPTIMIZE": "1"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 1,
+    "elapsed_seconds": 0.028,
+    "stdout": "",
+    "stderr": "FAIL: Python optimization disables integrity checks; run without -O/-OO and unset PYTHONOPTIMIZE.\n"
+  },
+  {
+    "id": "integrity-cli-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_go_study_integrity.py",
+      "-v"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/exact-head",
+    "environment_overrides": {},
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.667,
+    "stdout": "",
+    "stderr": "test_normal_execution_verifies_current_evidence (test_go_study_integrity.GoStudyIntegrityCLI.test_normal_execution_verifies_current_evidence) ... ok\ntest_optimized_modes_fail_closed (test_go_study_integrity.GoStudyIntegrityCLI.test_optimized_modes_fail_closed) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.634s\n\nOK\n"
+  },
+  {
+    "id": "gate-missing-current-delivery-index",
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/exact-head",
+    "environment_overrides": {},
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.546,
+    "stdout": "PASS: portable31 reconstructions (26 completed/5 failed), five runtime0.2.0 skills, anchored seals and preserved counterevidence\n",
+    "stderr": ""
+  },
+  {
+    "id": "gate-missing-index-and-corrupt-delivery-document",
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/exact-head",
+    "environment_overrides": {},
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.501,
+    "stdout": "PASS: portable31 reconstructions (26 completed/5 failed), five runtime0.2.0 skills, anchored seals and preserved counterevidence\n",
+    "stderr": ""
+  },
+  {
+    "id": "gate-present-index-and-corrupt-delivery-document",
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/exact-head",
+    "environment_overrides": {},
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 1,
+    "elapsed_seconds": 0.519,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/private/tmp/pr6-closing-du2k5irh/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 148, in <module>\n    verify()\n    ~~~~~~^^\n  File \"/private/tmp/pr6-closing-du2k5irh/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 143, in verify\n    seal(OUT, expected, continuation)\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/private/tmp/pr6-closing-du2k5irh/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 57, in seal\n    assert actual == expected_files, (root.name, \"sealed bytes changed\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('2026-10-02-context-concurrency-delivery', 'sealed bytes changed')\n"
+  },
+  {
+    "id": "gate-restored-exact-data",
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/exact-head",
+    "environment_overrides": {},
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.495,
+    "stdout": "PASS: portable31 reconstructions (26 completed/5 failed), five runtime0.2.0 skills, anchored seals and preserved counterevidence\n",
+    "stderr": ""
+  },
+  {
+    "id": "minimum-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "version"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/minimum-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.013,
+    "stdout": "go version go1.22.12 darwin/arm64\n",
+    "stderr": ""
+  },
+  {
+    "id": "minimum-environment",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "env",
+      "GOVERSION",
+      "GOOS",
+      "GOARCH",
+      "GOTOOLCHAIN"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/minimum-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.009,
+    "stdout": "go1.22.12\ndarwin\narm64\nlocal\n",
+    "stderr": ""
+  },
+  {
+    "id": "minimum-build",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "build",
+      "-mod=readonly",
+      "./..."
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/minimum-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.742,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "id": "minimum-test",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/minimum-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 1.107,
+    "stdout": "ok  \texample.org/concurrency-preflight\t0.277s\n",
+    "stderr": ""
+  },
+  {
+    "id": "minimum-vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "vet",
+      "-mod=readonly",
+      "./..."
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/minimum-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.333,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "id": "minimum-race-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-mod=readonly",
+      "-race",
+      "-shuffle=on",
+      "-count=5",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/minimum-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 3.544,
+    "stdout": "ok  \texample.org/concurrency-preflight\t1.243s\n",
+    "stderr": ""
+  },
+  {
+    "id": "minimum-modules",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "list",
+      "-m",
+      "all"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/minimum-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.012,
+    "stdout": "example.org/concurrency-preflight\n",
+    "stderr": ""
+  },
+  {
+    "id": "minimum-format",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/gofmt",
+      "-d",
+      "totals.go",
+      "totals_test.go"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/minimum-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.014,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "id": "host-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/opt/homebrew/Cellar/go/1.26.5/libexec/bin/go",
+      "version"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/host-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.01,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": ""
+  },
+  {
+    "id": "host-environment",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/opt/homebrew/Cellar/go/1.26.5/libexec/bin/go",
+      "env",
+      "GOVERSION",
+      "GOOS",
+      "GOARCH",
+      "GOTOOLCHAIN"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/host-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.009,
+    "stdout": "go1.26.5\ndarwin\narm64\nlocal\n",
+    "stderr": ""
+  },
+  {
+    "id": "host-build",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/opt/homebrew/Cellar/go/1.26.5/libexec/bin/go",
+      "build",
+      "-mod=readonly",
+      "./..."
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/host-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.858,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "id": "host-test",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/opt/homebrew/Cellar/go/1.26.5/libexec/bin/go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/host-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 1.129,
+    "stdout": "ok  \texample.org/concurrency-preflight\t0.172s\n",
+    "stderr": ""
+  },
+  {
+    "id": "host-vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/opt/homebrew/Cellar/go/1.26.5/libexec/bin/go",
+      "vet",
+      "-mod=readonly",
+      "./..."
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/host-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.385,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "id": "host-race-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/opt/homebrew/Cellar/go/1.26.5/libexec/bin/go",
+      "test",
+      "-mod=readonly",
+      "-race",
+      "-shuffle=on",
+      "-count=5",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/host-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 4.15,
+    "stdout": "ok  \texample.org/concurrency-preflight\t1.227s\n",
+    "stderr": ""
+  },
+  {
+    "id": "host-modules",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/opt/homebrew/Cellar/go/1.26.5/libexec/bin/go",
+      "list",
+      "-m",
+      "all"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/host-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.012,
+    "stdout": "example.org/concurrency-preflight\n",
+    "stderr": ""
+  },
+  {
+    "id": "host-format",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/opt/homebrew/Cellar/go/1.26.5/libexec/bin/gofmt",
+      "-d",
+      "totals.go",
+      "totals_test.go"
+    ],
+    "cwd": "/private/tmp/pr6-closing-du2k5irh/example",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/pr6-closing-du2k5irh/host-go-cache",
+      "GOMODCACHE": "/private/tmp/pr6-closing-du2k5irh/go-modcache"
+    },
+    "environment_removed": [
+      "PYTHONOPTIMIZE"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.008,
+    "stdout": "",
+    "stderr": ""
+  }
+]

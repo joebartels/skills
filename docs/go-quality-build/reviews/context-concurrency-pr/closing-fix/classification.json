@@ -1,0 +1,27 @@
+{
+  "source": "Independent fresh closing review at c5ee3d0",
+  "finding": "Missing current delivery checksum index permits PASS and bypasses current delivery byte validation",
+  "classification": "VALID",
+  "root_cause": "Current advertised gate conditionally executes its own seal validation",
+  "minimal_fix": "Require current checksums.json and its canonical anchor unconditionally before PASS",
+  "proof": "missing-seal-red.json; checks-green.json; missing-corrupt-restored-green.json",
+  "preserved_original_index": "20387a7bb3d3ef460fe1231eb2c5a721a71075a84118a9e8086e1bd5a1913e93",
+  "preserved_revision2_index": "dd63309f526b323dea232650026ab34c91f30468d3c0bbcaa81d1793287a4909",
+  "current_revision3_index": "f20d74230d19d3323c31f0697a31679786401b7cc612b53ba14a1e276790df2b",
+  "related_pattern": {
+    "files": [
+      "docs/go-quality-build/reviews/context-concurrency-pr/closing-fix/delivery-before-required-seal-fix/verify-delivery.py",
+      "docs/go-quality-build/reviews/context-concurrency-pr/round-1/delivery-before-optimization-fix/verify-delivery.py",
+      "tests/go-quality-build/results/2026-10-01-testing-combined-final/controller/verify_testing_evidence.py",
+      "tests/go-quality-build/results/2026-10-01-testing-combined-r3/controller/delivery/verify_testing_evidence.py",
+      "tests/go-quality-build/results/2026-10-01-behavior-tests-r2/controller/verify_testing_evidence.py",
+      "tests/go-quality-build/results/2026-10-01-testing-combined-r3/controller/verify_testing_evidence.py",
+      "tests/go-quality-build/results/2026-10-02-concurrency-discovery/verify-integrity.py",
+      "tests/go-quality-build/results/2026-10-01-test-isolation-r3/controller/verify_testing_evidence.py"
+    ],
+    "count": 8,
+    "total_lines": 521,
+    "state": "Historical snapshot/capture tools, including unchanged prior testing studies; no expansion beyond current advertised gate. Prior bytes remain exact, broader rewriting requires separate scope."
+  },
+  "runtime_study_disposition": "unchanged; no native launch or promotion"
+}
