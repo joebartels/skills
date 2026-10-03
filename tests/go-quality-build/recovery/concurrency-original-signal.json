@@ -1,0 +1,37 @@
+{
+  "toolchain": "go1.22.12 darwin/arm64, CGO_ENABLED=0",
+  "results": [
+    {
+      "case": "lease-workers",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "TestRecovery",
+        "-count=1",
+        "-timeout=10s",
+        "./..."
+      ],
+      "exit_code": 1,
+      "output": "--- FAIL: TestRecoverySparseProgressAndReleaseCapacity (1.00s)\n    controller_lease-workers_test.go:107: job 2 did not start with spare capacity and open input\n--- FAIL: TestRecoveryFailureSupervisesBlockedAcquisition (1.00s)\n    controller_lease-workers_test.go:175: missing stop while acquisition blocks\n--- FAIL: TestRecoveryCloseFailureAndCanceledEntry (0.00s)\n    controller_lease-workers_test.go:209: admitted canceled work\n    controller_lease-workers_test.go:213: canceled entry err=unexpected Open\nFAIL\nFAIL\texample.test/leaseworkers\t2.223s\nFAIL\n"
+    },
+    {
+      "case": "early-pipeline",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "TestRecovery",
+        "-count=1",
+        "-timeout=10s",
+        "./..."
+      ],
+      "exit_code": 1,
+      "output": "--- FAIL: TestRecoveryEarlyConsumerCompletionJoinsProducer (1.00s)\n    controller_early-pipeline_test.go:53: missing producer stopping after early consumer success\n--- FAIL: TestRecoveryIndependentCancellationClassFailures (1.00s)\n    controller_early-pipeline_test.go:89: independent outcomes lost: context deadline exceeded\n--- FAIL: TestRecoveryCallerCauseAndBothJoins (1.00s)\n    controller_early-pipeline_test.go:121: missing consumer start\n--- FAIL: TestRecoveryCanceledEntry (0.00s)\n    controller_early-pipeline_test.go:145: producer admitted\n    controller_early-pipeline_test.go:145: consumer admitted\n    controller_early-pipeline_test.go:147: entry cancellation lost: <nil>\nFAIL\nFAIL\texample.test/pipeline\t3.156s\nFAIL\n"
+    }
+  ]
+}

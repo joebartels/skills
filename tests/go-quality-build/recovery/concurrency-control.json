@@ -1,0 +1,70 @@
+{
+  "current_go": {
+    "command": [
+      "go",
+      "version"
+    ],
+    "exit_code": 0,
+    "output": "go version go1.26.5 darwin/arm64\n"
+  },
+  "additional_probes": {},
+  "results": [
+    {
+      "name": "concurrency-control",
+      "checks": [
+        {
+          "command": [
+            "git",
+            "apply",
+            "--unidiff-zero",
+            "/Users/jb/.codex/worktrees/0bc1/skills/tests/go-quality-build/recovery/patches/concurrency-control.patch"
+          ],
+          "exit_code": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": "ok  \texample.test/serialcalc\t2.924s\n"
+        },
+        {
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": "ok  \texample.test/serialcalc\t2.226s\n"
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": "ok  \texample.test/serialcalc\t1.309s\n"
+        }
+      ]
+    }
+  ]
+}

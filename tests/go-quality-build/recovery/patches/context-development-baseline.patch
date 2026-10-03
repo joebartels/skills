@@ -1,0 +1,454 @@
+--- a/stages.go
++++ b/stages.go
+@@ -4,0 +5 @@
++	"errors"
+@@ -11 +12,2 @@
+-// FetchAll obtains complete response bodies in endpoint order.
++// FetchAll obtains complete response bodies in endpoint order. It retains the
++// completed prefix on failure and owns response bodies, but borrows the client.
+@@ -12,0 +15,6 @@
++	if len(endpoints) == 0 {
++		return nil, nil
++	}
++	operationCtx, cancel := context.WithTimeout(ctx, total)
++	defer cancel()
++
+@@ -14 +22 @@
+-		request, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
++		body, err := fetchStage(operationCtx, client, endpoint, stage)
+@@ -17,16 +24,0 @@
+-		}
+-		response, err := client.Do(request)
+-		if err != nil {
+-			return bodies, err
+-		}
+-		if response.StatusCode != http.StatusOK {
+-			response.Body.Close()
+-			return bodies, fmt.Errorf("status %d", response.StatusCode)
+-		}
+-		body, err := io.ReadAll(response.Body)
+-		closeErr := response.Body.Close()
+-		if err != nil {
+-			return bodies, err
+-		}
+-		if closeErr != nil {
+-			return bodies, closeErr
+@@ -37,0 +30,40 @@
++
++func fetchStage(parent context.Context, client *http.Client, endpoint string, duration time.Duration) ([]byte, error) {
++	ctx, cancel := context.WithTimeout(parent, duration)
++	defer cancel()
++	if err := ctx.Err(); err != nil {
++		return nil, stageFailure(ctx, err)
++	}
++
++	request, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
++	if err != nil {
++		return nil, stageFailure(ctx, err)
++	}
++	response, err := client.Do(request)
++	if err != nil {
++		var closeErr error
++		if response != nil && response.Body != nil {
++			closeErr = response.Body.Close()
++		}
++		return nil, stageFailure(ctx, err, closeErr)
++	}
++	if response.StatusCode != http.StatusOK {
++		closeErr := response.Body.Close()
++		return nil, stageFailure(ctx, fmt.Errorf("status %d", response.StatusCode), closeErr)
++	}
++	body, readErr := io.ReadAll(response.Body)
++	closeErr := response.Body.Close()
++	if readErr != nil || closeErr != nil {
++		return nil, stageFailure(ctx, readErr, closeErr)
++	}
++	return body, nil
++}
++
++// Observe cancellation before fetchStage releases its own scope. A completed
++// stage succeeds even if cancellation follows its successful read and close.
++func stageFailure(ctx context.Context, failures ...error) error {
++	if err := ctx.Err(); err != nil {
++		failures = append(failures, err, context.Cause(ctx))
++	}
++	return errors.Join(failures...)
++}
+--- a/stages_test.go
++++ b/stages_test.go
+@@ -4,0 +5 @@
++	"errors"
+@@ -6,0 +8 @@
++	"net/http/httptest"
+@@ -16,0 +19 @@
++	var scopes []context.Context
+@@ -17,0 +21,4 @@
++		if len(scopes) > 0 && !errors.Is(scopes[len(scopes)-1].Err(), context.Canceled) {
++			return nil, errors.New("previous stage scope was not released")
++		}
++		scopes = append(scopes, r.Context())
+@@ -24,0 +32,364 @@
++
++// Keep the public function type compatible with existing consumers.
++var _ func(context.Context, *http.Client, []string, time.Duration, time.Duration) ([][]byte, error) = FetchAll
++
++type testBody struct {
++	io.Reader
++	close func() error
++}
++
++func (b testBody) Close() error { return b.close() }
++
++type errorReader struct{ err error }
++
++func (r errorReader) Read([]byte) (int, error) { return 0, r.err }
++
++func TestNoRequestForEmptyOrCanceledCall(t *testing.T) {
++	for _, empty := range []bool{false, true} {
++		t.Run(map[bool]string{false: "canceled", true: "empty"}[empty], func(t *testing.T) {
++			ctx, cancel := context.WithCancelCause(context.Background())
++			cause := errors.New("caller stopped")
++			cancel(cause)
++			calls := 0
++			client := &http.Client{Transport: transportFunc(func(*http.Request) (*http.Response, error) {
++				calls++
++				return nil, errors.New("unexpected request")
++			})}
++			endpoints := []string{"http://example.test/first"}
++			if empty {
++				endpoints = nil
++			}
++			bodies, err := FetchAll(ctx, client, endpoints, time.Second, time.Second)
++			if calls != 0 || len(bodies) != 0 {
++				t.Fatalf("calls=%d bodies=%q", calls, bodies)
++			}
++			if empty {
++				if err != nil {
++					t.Fatal(err)
++				}
++			} else if !errors.Is(err, context.Canceled) || !errors.Is(err, cause) {
++				t.Fatalf("error=%v, want cancellation and caller cause", err)
++			}
++		})
++	}
++}
++
++func TestFailureRetainsOnlyCompletedPrefix(t *testing.T) {
++	readErr := errors.New("read failed")
++	closeErr := errors.New("close failed")
++	for _, tc := range []struct {
++		name        string
++		status      int
++		read, close error
++	}{
++		{"read", 200, readErr, nil},
++		{"close", 200, nil, closeErr},
++		{"read_and_close", 200, readErr, closeErr},
++		{"non_200_and_close", 206, nil, closeErr},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			calls := 0
++			closes := [2]int{}
++			liveAtClose := true
++			client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++				i := calls
++				calls++
++				if i > 1 {
++					return nil, errors.New("unexpected later endpoint")
++				}
++				status := 200
++				var reader io.Reader = strings.NewReader("first")
++				if i == 1 {
++					status = tc.status
++					reader = strings.NewReader("incomplete")
++					if tc.read != nil {
++						reader = io.MultiReader(reader, errorReader{tc.read})
++					}
++				}
++				body := testBody{Reader: reader, close: func() error {
++					closes[i]++
++					liveAtClose = liveAtClose && r.Context().Err() == nil
++					if i == 1 {
++						return tc.close
++					}
++					return nil
++				}}
++				return &http.Response{StatusCode: status, Body: body, Header: make(http.Header), Request: r}, nil
++			})}
++			bodies, err := FetchAll(context.Background(), client, []string{"http://example.test/first", "http://example.test/failed", "http://example.test/later"}, time.Second, time.Second)
++			if err == nil || len(bodies) != 1 || string(bodies[0]) != "first" || calls != 2 {
++				t.Fatalf("bodies=%q calls=%d error=%v", bodies, calls, err)
++			}
++			for _, want := range []error{tc.read, tc.close} {
++				if want != nil && !errors.Is(err, want) {
++					t.Errorf("error=%v, missing %v", err, want)
++				}
++			}
++			if tc.status != 200 && !strings.Contains(err.Error(), "status 206") {
++				t.Errorf("error=%v, want status 206", err)
++			}
++			if closes != [2]int{1, 1} || !liveAtClose {
++				t.Errorf("closes=%v liveAtClose=%v", closes, liveAtClose)
++			}
++		})
++	}
++}
++
++func TestRequestFailureRetainsPrefixAndCause(t *testing.T) {
++	failure := errors.New("transport failed")
++	calls := 0
++	client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++		calls++
++		if calls == 2 {
++			return nil, failure
++		}
++		return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader("first")), Request: r}, nil
++	})}
++	bodies, err := FetchAll(context.Background(), client, []string{"http://example.test/first", "http://example.test/failed", "http://example.test/later"}, time.Second, time.Second)
++	if !errors.Is(err, failure) || len(bodies) != 1 || string(bodies[0]) != "first" || calls != 2 {
++		t.Fatalf("bodies=%q calls=%d error=%v", bodies, calls, err)
++	}
++}
++
++func TestBudgetScopes(t *testing.T) {
++	t.Run("one_total_budget", func(t *testing.T) {
++		var scopes []context.Context
++		client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++			scopes = append(scopes, r.Context())
++			if len(scopes) == 2 {
++				<-r.Context().Done()
++				return nil, r.Context().Err()
++			}
++			return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader("first")), Request: r}, nil
++		})}
++		bodies, err := FetchAll(context.Background(), client, []string{"http://example.test/first", "http://example.test/second"}, 40*time.Millisecond, time.Second)
++		if !errors.Is(err, context.DeadlineExceeded) || len(bodies) != 1 || string(bodies[0]) != "first" || len(scopes) != 2 {
++			t.Fatalf("bodies=%q scopes=%d error=%v", bodies, len(scopes), err)
++		}
++		first, _ := scopes[0].Deadline()
++		second, _ := scopes[1].Deadline()
++		if !first.Equal(second) {
++			t.Errorf("total deadline restarted: first=%v second=%v", first, second)
++		}
++	})
++	t.Run("stage_budget", func(t *testing.T) {
++		var scope context.Context
++		var remaining time.Duration
++		client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++			scope = r.Context()
++			deadline, ok := scope.Deadline()
++			if !ok {
++				return nil, errors.New("missing deadline")
++			}
++			remaining = time.Until(deadline)
++			<-scope.Done()
++			return nil, scope.Err()
++		})}
++		_, err := FetchAll(context.Background(), client, []string{"http://example.test/first"}, time.Second, 30*time.Millisecond)
++		if !errors.Is(err, context.DeadlineExceeded) || scope == nil || remaining > 30*time.Millisecond {
++			t.Fatalf("remaining=%v scope=%v error=%v", remaining, scope, err)
++		}
++	})
++	t.Run("earlier_parent", func(t *testing.T) {
++		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
++		defer cancel()
++		want, _ := ctx.Deadline()
++		var scope context.Context
++		client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++			scope = r.Context()
++			return &http.Response{StatusCode: 200, Body: io.NopCloser(strings.NewReader("body")), Request: r}, nil
++		})}
++		_, err := FetchAll(ctx, client, []string{"http://example.test/first"}, 2*time.Second, 2*time.Second)
++		if err != nil || scope == nil {
++			t.Fatalf("scope=%v error=%v", scope, err)
++		}
++		got, _ := scope.Deadline()
++		if !got.Equal(want) || !errors.Is(scope.Err(), context.Canceled) || ctx.Err() != nil {
++			t.Errorf("deadline=%v want=%v stageErr=%v parentErr=%v", got, want, scope.Err(), ctx.Err())
++		}
++	})
++}
++
++func TestStageBudgetIncludesReadAndClose(t *testing.T) {
++	for _, waitAtClose := range []bool{false, true} {
++		t.Run(map[bool]string{false: "read", true: "close"}[waitAtClose], func(t *testing.T) {
++			closeFailure := errors.New("close failed after deadline")
++			closes := 0
++			client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++				reader := io.Reader(strings.NewReader("body"))
++				if !waitAtClose {
++					reader = readerFunc(func([]byte) (int, error) {
++						<-r.Context().Done()
++						return 0, r.Context().Err()
++					})
++				}
++				body := testBody{Reader: reader, close: func() error {
++					closes++
++					if waitAtClose {
++						<-r.Context().Done()
++						return closeFailure
++					}
++					return nil
++				}}
++				return &http.Response{StatusCode: 200, Body: body, Request: r}, nil
++			})}
++			bodies, err := FetchAll(context.Background(), client, []string{"http://example.test/first"}, time.Second, 30*time.Millisecond)
++			if len(bodies) != 0 || closes != 1 || !errors.Is(err, context.DeadlineExceeded) || (waitAtClose && !errors.Is(err, closeFailure)) {
++				t.Fatalf("bodies=%q closes=%d error=%v", bodies, closes, err)
++			}
++		})
++	}
++}
++
++type cancellationCause []string
++
++func (c cancellationCause) Error() string { return strings.Join(c, ":") }
++
++func TestFailurePreservesCancellationAndIndependentErrors(t *testing.T) {
++	for _, cancelAtClose := range []bool{false, true} {
++		t.Run(map[bool]string{false: "read", true: "close"}[cancelAtClose], func(t *testing.T) {
++			ctx, cancel := context.WithCancelCause(context.Background())
++			defer cancel(nil)
++			cause := cancellationCause{"caller", "stopped"}
++			failure := errors.New("independent failure")
++			closes := 0
++			client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++				reader := io.Reader(strings.NewReader("body"))
++				if !cancelAtClose {
++					reader = readerFunc(func([]byte) (int, error) {
++						cancel(cause)
++						return 0, failure
++					})
++				}
++				body := testBody{Reader: reader, close: func() error {
++					closes++
++					if cancelAtClose {
++						cancel(cause)
++						return failure
++					}
++					return nil
++				}}
++				return &http.Response{StatusCode: 200, Body: body, Request: r}, nil
++			})}
++			bodies, err := FetchAll(ctx, client, []string{"http://example.test/first"}, time.Second, time.Second)
++			var gotCause cancellationCause
++			if len(bodies) != 0 || closes != 1 || !errors.Is(err, failure) || !errors.Is(err, context.Canceled) || !errors.As(err, &gotCause) || gotCause.Error() != cause.Error() {
++				t.Fatalf("bodies=%q closes=%d error=%v cause=%v", bodies, closes, err, gotCause)
++			}
++		})
++	}
++}
++
++type readerFunc func([]byte) (int, error)
++
++func (f readerFunc) Read(p []byte) (int, error) { return f(p) }
++
++func TestCompletedSuccessSurvivesCancellation(t *testing.T) {
++	ctx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++	var scope context.Context
++	liveAtClose := false
++	client := &http.Client{Transport: transportFunc(func(r *http.Request) (*http.Response, error) {
++		scope = r.Context()
++		body := testBody{Reader: strings.NewReader("complete"), close: func() error {
++			liveAtClose = scope.Err() == nil
++			cancel()
++			return nil
++		}}
++		return &http.Response{StatusCode: 200, Body: body, Request: r}, nil
++	})}
++	bodies, err := FetchAll(ctx, client, []string{"http://example.test/first"}, time.Second, time.Second)
++	if err != nil || len(bodies) != 1 || string(bodies[0]) != "complete" || !liveAtClose || scope.Err() == nil {
++		t.Fatalf("bodies=%q liveAtClose=%v scopeErr=%v error=%v", bodies, liveAtClose, scope.Err(), err)
++	}
++}
++
++func TestCancellationAtLocalHTTPBoundary(t *testing.T) {
++	for _, reading := range []bool{false, true} {
++		t.Run(map[bool]string{false: "request", true: "body_read"}[reading], func(t *testing.T) {
++			started := make(chan struct{})
++			remoteCanceled := make(chan struct{})
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				if reading {
++					w.WriteHeader(200)
++					_, _ = io.WriteString(w, "partial")
++					w.(http.Flusher).Flush()
++				} else {
++					close(started)
++				}
++				<-r.Context().Done()
++				close(remoteCanceled)
++			}))
++			ctx, cancel := context.WithCancelCause(context.Background())
++			cause := errors.New("caller canceled local HTTP")
++			client := server.Client()
++			transport := client.Transport
++			closes := 0
++			if reading {
++				client.Transport = transportFunc(func(r *http.Request) (*http.Response, error) {
++					response, err := transport.RoundTrip(r)
++					if err != nil {
++						return response, err
++					}
++					body := response.Body
++					reads := 0
++					response.Body = testBody{Reader: readerFunc(func(p []byte) (int, error) {
++						reads++
++						if reads == 2 {
++							close(started)
++						}
++						return body.Read(p)
++					}), close: func() error {
++						closes++
++						return body.Close()
++					}}
++					return response, nil
++				})
++			}
++			type result struct {
++				bodies [][]byte
++				err    error
++			}
++			outcomes := make(chan result, 1)
++			finished := make(chan struct{})
++			go func() {
++				defer close(finished)
++				bodies, err := FetchAll(ctx, client, []string{server.URL}, 2*time.Second, time.Second)
++				outcomes <- result{bodies, err}
++			}()
++			t.Cleanup(func() {
++				cancel(nil)
++				server.CloseClientConnections()
++				select {
++				case <-finished:
++				case <-time.After(3 * time.Second):
++					t.Error("FetchAll did not finish during cleanup")
++				}
++				server.Close()
++			})
++			awaitSignal(t, started, "request/body consumption started")
++			cancel(cause)
++			select {
++			case got := <-outcomes:
++				if len(got.bodies) != 0 || !errors.Is(got.err, context.Canceled) || !errors.Is(got.err, cause) {
++					t.Errorf("bodies=%q error=%v", got.bodies, got.err)
++				}
++			case <-time.After(3 * time.Second):
++				t.Fatal("FetchAll did not finish after cancellation")
++			}
++			awaitSignal(t, remoteCanceled, "local handler observed cancellation")
++			if reading && closes != 1 {
++				t.Errorf("body closes=%d, want 1", closes)
++			}
++		})
++	}
++}
++
++func awaitSignal(t *testing.T, signal <-chan struct{}, event string) {
++	t.Helper()
++	select {
++	case <-signal:
++	case <-time.After(3 * time.Second):
++		t.Fatalf("timed out waiting for %s", event)
++	}
++}

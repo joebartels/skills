@@ -1,0 +1,50 @@
+{
+  "scope": "Fresh package 0.3.0 validation; behavioral evidence remains separately recorded.",
+  "checks": [
+    {
+      "command": "rtk proxy python3 -B scripts/validate.py",
+      "exit_code": 0,
+      "output": "PASS: 10 skills; matching grading/report contracts; 120 valid evaluation cases\nPASS: 44 valid build evaluation cases\n"
+    },
+    {
+      "command": "rtk proxy python3 -B -m unittest discover -s tests -p 'test*.py'",
+      "exit_code": 0,
+      "output": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.092s\n\nOK\n"
+    },
+    {
+      "command": "rtk proxy python3 -B -m unittest discover -s tests/go-quality-build -p 'test_*.py'",
+      "exit_code": 0,
+      "output": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.022s\n\nOK\n"
+    },
+    {
+      "command": "rtk proxy python3 -B tests/go-quality-review/test_layout.py",
+      "exit_code": 0,
+      "output": ".\n----------------------------------------------------------------------\nRan 1 test in 0.001s\n\nOK\n"
+    },
+    {
+      "command": "rtk proxy python3 -B tests/go-quality-review/go-quality-report/evals/test_grade.py",
+      "exit_code": 0,
+      "output": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.000s\n\nOK\n"
+    },
+    {
+      "command": "rtk proxy claude plugin validate ./plugins/go-quality-build",
+      "exit_code": 0,
+      "output": "Validating plugin manifest: /Users/jb/.codex/worktrees/0bc1/skills/plugins/go-quality-build/.claude-plugin/plugin.json\n\n✔ Validation passed\n"
+    },
+    {
+      "command": "rtk proxy claude plugin validate ./plugins/go-quality-review",
+      "exit_code": 0,
+      "output": "Validating plugin manifest: /Users/jb/.codex/worktrees/0bc1/skills/plugins/go-quality-review/.claude-plugin/plugin.json\n\n✔ Validation passed\n"
+    },
+    {
+      "command": "rtk proxy claude plugin validate .",
+      "exit_code": 0,
+      "output": "Validating marketplace manifest: /Users/jb/.codex/worktrees/0bc1/skills/.claude-plugin/marketplace.json\n\n✔ Validation passed\n"
+    },
+    {
+      "command": "rtk proxy git diff --check",
+      "exit_code": 0,
+      "output": ""
+    }
+  ]
+}

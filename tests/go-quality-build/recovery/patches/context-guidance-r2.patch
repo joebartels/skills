@@ -1,0 +1,10 @@
+--- a/SKILL.md
++++ b/SKILL.md
+@@ -46 +46,6 @@
+-The scope owner calls cancel on every exit. Keep an HTTP request's scope live
++The scope owner calls cancel on every exit. Check the client's ownership
++contract on each outcome: an `http.Client.Do` error can accompany an
++already-closed redirect body; do not close it again. A successful `Do`
++transfers body closure to you, including on status/read failure.
++
++Keep an HTTP request's scope live

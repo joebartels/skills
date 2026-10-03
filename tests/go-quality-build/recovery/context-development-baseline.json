@@ -1,0 +1,82 @@
+{
+  "current_go": {
+    "command": [
+      "go",
+      "version"
+    ],
+    "exit_code": 0,
+    "output": "go version go1.26.5 darwin/arm64\n"
+  },
+  "results": [
+    {
+      "name": "context-development-baseline",
+      "checks": [
+        {
+          "command": [
+            "git",
+            "apply",
+            "--unidiff-zero",
+            "/Users/jb/.codex/worktrees/0bc1/skills/tests/go-quality-build/recovery/patches/context-development-baseline.patch"
+          ],
+          "exit_code": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 1,
+          "output": "--- FAIL: TestCancellationAtLocalHTTPBoundary (0.00s)\n    --- FAIL: TestCancellationAtLocalHTTPBoundary/request (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 39 [running]:\ntesting.tRunner.func1.2({0x102a92f80, 0x2163a0e92b60})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x102a92f80?, 0x2163a0e92b60?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x102b1a780, 0x2163a0e94ea0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/stages.TestCancellationAtLocalHTTPBoundary.func1(0x2163a0f0cb48)\n\t/private/tmp/go-recovery-pd_6j6ds/module/stages_test.go:312 +0xb0\ntesting.tRunner(0x2163a0f0cb48, 0x2163a0e9c580)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 38\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/stages\t0.319s\nFAIL\n"
+        },
+        {
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 1,
+          "output": "--- FAIL: TestCancellationAtLocalHTTPBoundary (0.00s)\n    --- FAIL: TestCancellationAtLocalHTTPBoundary/request (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 51 [running]:\ntesting.tRunner.func1.2({0x1054030e0, 0x1da649f11040})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1054030e0?, 0x1da649f11040?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x10548b2e0, 0x1da649f15420})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/stages.TestCancellationAtLocalHTTPBoundary.func1(0x1da649f93d48)\n\t/private/tmp/go-recovery-pd_6j6ds/module/stages_test.go:312 +0xb0\ntesting.tRunner(0x1da649f93d48, 0x1da649f1c710)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 50\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/stages\t0.340s\nFAIL\n"
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 1,
+          "output": "--- FAIL: TestCancellationAtLocalHTTPBoundary (0.00s)\n    --- FAIL: TestCancellationAtLocalHTTPBoundary/request (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered]\n\tpanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted\n\ngoroutine 49 [running]:\ntesting.tRunner.func1.2({0x102bd5dc0, 0x14000090580})\n\t/private/tmp/go-skill-recovery-toolchains/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:1631 +0x1c4\ntesting.tRunner.func1()\n\t/private/tmp/go-skill-recovery-toolchains/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:1634 +0x33c\npanic({0x102bd5dc0?, 0x14000090580?})\n\t/private/tmp/go-skill-recovery-toolchains/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/runtime/panic.go:770 +0x124\nnet/http/httptest.newLocalListener()\n\t/private/tmp/go-skill-recovery-toolchains/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/net/http/httptest/server.go:71 +0xdc\nnet/http/httptest.NewUnstartedServer(...)\n\t/private/tmp/go-skill-recovery-toolchains/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/net/http/httptest/server.go:119\nnet/http/httptest.NewServer({0x102c451c8, 0x14000092460})\n\t/private/tmp/go-skill-recovery-toolchains/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/net/http/httptest/server.go:106 +0x28\nexample.com/stages.TestCancellationAtLocalHTTPBoundary.func1(0x140000ad040)\n\t/private/tmp/go-recovery-pd_6j6ds/module/stages_test.go:312 +0xb8\ntesting.tRunner(0x140000ad040, 0x14000098270)\n\t/private/tmp/go-skill-recovery-toolchains/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:1689 +0xec\ncreated by testing.(*T).Run in goroutine 32\n\t/private/tmp/go-skill-recovery-toolchains/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:1742 +0x318\nFAIL\texample.com/stages\t0.318s\nFAIL\n"
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-shuffle=on",
+            "-count=3",
+            "-timeout=30s",
+            "./..."
+          ],
+          "exit_code": 1,
+          "output": "-test.shuffle 1791038301486200000\n--- FAIL: TestCancellationAtLocalHTTPBoundary (0.00s)\n    --- FAIL: TestCancellationAtLocalHTTPBoundary/request (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 45 [running]:\ntesting.tRunner.func1.2({0x1030642e0, 0xc0001ae3a0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x2b8\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x460\npanic({0x1030642e0?, 0xc0001ae3a0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0x13c\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1030f1a20, 0xc0001a8500})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x30\nexample.com/stages.TestCancellationAtLocalHTTPBoundary.func1(0xc0001b5208)\n\t/private/tmp/go-recovery-pd_6j6ds/module/stages_test.go:312 +0x110\ntesting.tRunner(0xc0001b5208, 0xc0001a22f0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x168\ncreated by testing.(*T).Run in goroutine 44\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x7c0\nFAIL\texample.com/stages\t0.361s\nFAIL\n"
+        }
+      ]
+    }
+  ]
+}
