@@ -17,7 +17,7 @@ def digest(path):
 
 def run(command, cwd, env):
     try:
-        result = subprocess.run(["rtk", "proxy", *command], cwd=cwd, env=env,
+        result = subprocess.run(command, cwd=cwd, env=env,
                                 capture_output=True, text=True, timeout=90)
         return {"command": command, "exit_code": result.returncode,
                 "output": result.stdout + result.stderr}
@@ -40,16 +40,41 @@ def main():
         assert digest(root / relative) == expected, relative
     for relative, expected in manifest.get("concurrency_shared_guidance_sha256", {}).items():
         assert digest(root / "plugins/go-quality-build/skills" / relative) == expected, relative
+    historical_guidance = set()
+    for skill, revision in manifest.get("guidance_revisions", {}).items():
+        relative = skill + "/SKILL.md"
+        current = root / "plugins/go-quality-build/skills" / relative
+        latest = "revision_2" if "delta" in revision else "revision_1"
+        assert digest(current) == revision[latest], relative + ": " + latest
+        if "delta" in revision:
+            delta = here / revision["delta"]
+            assert digest(delta) == revision["delta_sha256"], revision["delta"]
+            with tempfile.TemporaryDirectory(prefix="go-guidance-revision-") as tmp:
+                previous = Path(tmp) / "SKILL.md"
+                shutil.copyfile(current, previous)
+                applied = run(["git", "apply", "--reverse", "--unidiff-zero", str(delta)],
+                              tmp, os.environ)
+                assert applied["exit_code"] == 0, applied["output"]
+                assert digest(previous) == revision["revision_1"], relative + ": revision_1"
+                historical_guidance.add((relative, revision["revision_1"]))
+    for trial in manifest["trials"]:
+        for field in ("extra_guidance_sha256", "shared_guidance_sha256"):
+            for relative, expected in trial.get(field, {}).items():
+                current = root / "plugins/go-quality-build/skills" / relative
+                assert (digest(current) == expected or
+                        (relative, expected) in historical_guidance), trial["name"] + ": " + relative
     results = []
     for trial in manifest["trials"]:
         if args.trial and trial["name"] not in args.trial:
             continue
         with tempfile.TemporaryDirectory(prefix="go-recovery-", dir="/private/tmp") as tmp:
             module = Path(tmp) / "module"
-            actual_input = {str(p.relative_to(root / trial["input"])): digest(p)
-                            for p in (root / trial["input"]).rglob("*") if p.is_file()}
-            assert actual_input == trial["input_sha256"], trial["name"]
             shutil.copytree(root / trial["input"], module)
+            if "historical_readme" in trial:
+                shutil.copyfile(here / trial["historical_readme"], module / "README.md")
+            actual_input = {str(p.relative_to(module)): digest(p)
+                            for p in module.rglob("*") if p.is_file()}
+            assert actual_input == trial["input_sha256"], trial["name"]
             env = dict(os.environ, GOWORK="off", GOCACHE="/private/tmp/go-skill-recovery-cache", GOTOOLCHAIN="local")
             patch = here / trial["patch"]
             assert digest(patch) == trial["patch_sha256"], trial["name"]
