@@ -1,0 +1,6 @@
+## Deployment & Operations — Not applicable
+Scope: Changeset 0d0a339b27cd1ff7ff3cc177f28a9a4455f91a96 → c5ee3d0e337975d1de199c86c34bbe2f301ccf85; only docs/go-quality-build/reviews/concurrency-readiness/preflight/example/totals.go, with docs/go-quality-build/reviews/concurrency-readiness/preflight/example/totals_test.go and docs/go-quality-build/reviews/concurrency-readiness/preflight/example/go.mod as contract/build context. Private exact-snippet example, not a shipped service or runtime package.
+Coverage: Applicability considered for release artifacts, runtime configuration, CI delivery, probes, shutdown and rollout. This private archived snippet has no deployment or published module release path; its build input is assessed under reproducibility.
+Rationale: No runtime/release operations decision is implicated by the Go example. The separate Python verification-boundary review is ungraded and is not evidence for a Go deployment grade.
+
+Limits: This Not applicable state covers only the bounded Go example. The umbrella routing/reference and topic applicability criteria were consulted; no broader topic audit or scanner/service/deployment check is claimed. Archived model outcomes, current Python gate and unchanged installable package are outside this card.

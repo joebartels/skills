@@ -1,0 +1,29 @@
+{
+  "id": "A-mutation-drop-unit-updates-go122",
+  "argv": [
+    "rtk",
+    "proxy",
+    "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+    "test",
+    "-mod=readonly",
+    "-count=1",
+    "-timeout=2s",
+    "-run",
+    "^TestConcurrentAdd",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A",
+  "environment_overrides": {
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOMODCACHE": "/private/tmp/go-neutral-library-study/independent-review/modcache",
+    "GOCACHE": "/private/tmp/go-neutral-library-study/independent-review/gocache"
+  },
+  "status": 1,
+  "timed_out": false,
+  "stdout": "panic: test timed out after 2s\nrunning tests:\n\tTestConcurrentAddAndSnapshot (2s)\n\ngoroutine 49 [running]:\ntesting.(*M).startAlarm.func1()\n\t/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:2366 +0x30c\ncreated by time.goFunc\n\t/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/time/sleep.go:177 +0x38\n\ngoroutine 1 [chan receive]:\ntesting.(*T).Run(0x140001a64e0, {0x104fee5e0?, 0x140001d7b38?}, 0x1050513e0)\n\t/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:1750 +0x32c\ntesting.runTests.func1(0x140001a64e0)\n\t/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:2161 +0x40\ntesting.tRunner(0x140001a64e0, 0x140001d7c58)\n\t/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:1689 +0xec\ntesting.runTests(0x140001b0030, {0x10511c4c0, 0x3, 0x3}, {0x1400018ad18?, 0x104fa2cf0?, 0x105120e60?})\n\t/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:2159 +0x3b0\ntesting.(*M).Run(0x140001900a0)\n\t/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:2027 +0x5a4\nmain.main()\n\t_testmain.go:51 +0x16c\n\ngoroutine 34 [semacquire]:\nsync.runtime_Semacquire(0x140001a21c0?)\n\t/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/runtime/sema.go:62 +0x2c\nsync.(*WaitGroup).Wait(0x140001980e0)\n\t/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/sync/waitgroup.go:116 +0x74\nexample.com/library-shared-state.TestConcurrentAddAndSnapshot(0x140001a6680)\n\t/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals_test.go:56 +0x17c\ntesting.tRunner(0x140001a6680, 0x1050513e0)\n\t/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:1689 +0xec\ncreated by testing.(*T).Run in goroutine 1\n\t/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:1742 +0x318\n\ngoroutine 43 [runnable]:\nexample.com/library-shared-state.(*Totals).Snapshot(0x1400019c030?)\n\t/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals.go:31 +0x100\nexample.com/library-shared-state.TestConcurrentAddAndSnapshot.func2()\n\t/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals_test.go:43 +0x70\ncreated by example.com/library-shared-state.TestConcurrentAddAndSnapshot in goroutine 34\n\t/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals_test.go:39 +0x164\nFAIL\texample.com/library-shared-state\t2.175s\nFAIL\n",
+  "stderr": "",
+  "elapsed_seconds": 2.298
+}

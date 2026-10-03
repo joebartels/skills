@@ -1,0 +1,123 @@
+{
+  "review": "independent concurrency-service outcome review",
+  "date": "2026-10-02",
+  "mode": "candidate code-area outcome review; original implementation is context",
+  "candidate_paths": [
+    "/private/tmp/go-independent-concurrency-service/candidate/host.go",
+    "/private/tmp/go-independent-concurrency-service/candidate/host_test.go",
+    "/private/tmp/go-independent-concurrency-service/candidate/go.mod",
+    "/private/tmp/go-independent-concurrency-service/candidate/README.md"
+  ],
+  "contract": "/private/tmp/go-independent-concurrency-service/original/README.md",
+  "candidate_hashes": {
+    "README.md": "ef879dacbe1931f44ba3e5f6c8810052a2364e069dfca5c07eb5d959899ed17b",
+    "go.mod": "fed3cc3508ef6f75539c8012266acec88d21c6f0c99db0e5f85fab74e7a77f77",
+    "host.go": "18b161e49c3ddfde132e5c0e634b75bb7b461442b4c77d88c035fe823c84ec26",
+    "host_test.go": "b35ce20bddd357b9412ec3e597bbd51ec5808af1e643f295caf1dffd995c75d9"
+  },
+  "exclusions": [
+    "repository planning, results, writing guidance, expected judgments, skill/promotion assessment",
+    "no modifications to candidate",
+    "no unrelated production deployment or security audit"
+  ],
+  "topics": [
+    {
+      "topic": "architecture-and-design",
+      "status": "applicable",
+      "grade": "C-",
+      "reason": "The shared lifecycle API, cohort admission, ownership and supervisor boundaries are changed and contract-critical.",
+      "card": "/private/tmp/go-independent-concurrency-service/cards/architecture-and-design.md",
+      "coverage": "complete"
+    },
+    {
+      "topic": "code-quality-and-idioms",
+      "status": "applicable",
+      "grade": "C",
+      "reason": "Go error-flow timing, local concurrency expression, standard-library idioms and mechanical checks are relevant.",
+      "card": "/private/tmp/go-independent-concurrency-service/cards/code-quality-and-idioms.md",
+      "coverage": "complete"
+    },
+    {
+      "topic": "correctness-and-compatibility",
+      "status": "applicable",
+      "grade": "C-",
+      "reason": "The complete Serve lifecycle and cancellation/error/consumer contracts are the requested outcome.",
+      "card": "/private/tmp/go-independent-concurrency-service/cards/correctness-and-compatibility.md",
+      "coverage": "complete"
+    },
+    {
+      "topic": "dependencies-and-reproducibility",
+      "status": "applicable",
+      "grade": "A",
+      "reason": "New errors import/API use must satisfy the explicit Go 1.22 minimum and standard-library-only standalone build.",
+      "card": "/private/tmp/go-independent-concurrency-service/cards/dependencies-and-reproducibility.md",
+      "coverage": "complete"
+    },
+    {
+      "topic": "deployment-and-operations",
+      "status": "not_applicable",
+      "grade": "Not applicable",
+      "reason": "The bounded library packet changes no release artifact, CI gate, container, runtime manifest, process wiring or rollout control. Lifecycle implementation is assessed in architecture/resource/resilience; no deployment contract is supplied.",
+      "card": null,
+      "coverage": "not_applicable"
+    },
+    {
+      "topic": "observability-and-resilience",
+      "status": "applicable",
+      "grade": "C",
+      "reason": "Cooperative dependency failure, context propagation, stop containment and shutdown join/Close completion are explicit obligations.",
+      "card": "/private/tmp/go-independent-concurrency-service/cards/observability-and-resilience.md",
+      "coverage": "complete"
+    },
+    {
+      "topic": "performance-and-resource-management",
+      "status": "applicable",
+      "grade": "C-",
+      "reason": "Declared capacity bounds acquired leases through Close; admission progress and goroutine/resource termination are central.",
+      "card": "/private/tmp/go-independent-concurrency-service/cards/performance-and-resource-management.md",
+      "coverage": "complete"
+    },
+    {
+      "topic": "security",
+      "status": "not_applicable",
+      "grade": "Not applicable",
+      "reason": "No authorization, credential, untrusted data sink, network/file/crypto boundary or attacker-driven abuse contract is implicated by this small lifecycle protocol. Resource behavior is covered without inventing security reach.",
+      "card": null,
+      "coverage": "not_applicable"
+    },
+    {
+      "topic": "testing",
+      "status": "applicable",
+      "grade": "C-",
+      "reason": "The authored tests must detect meaningful regressions in the explicit concurrency and ownership contracts.",
+      "card": "/private/tmp/go-independent-concurrency-service/cards/testing.md",
+      "coverage": "complete"
+    }
+  ],
+  "boundary_owner": "independent packet reviewer; no further subagents",
+  "evidence": "/private/tmp/go-independent-concurrency-service/review-validation/executed-checks.json",
+  "controller_source": "/private/tmp/go-independent-concurrency-service/controller-checks/contract_test.go",
+  "status": "complete",
+  "skills_actually_read": [
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-quality-report/SKILL.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-architecture-and-design/SKILL.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-code-quality-and-idioms/SKILL.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-correctness-and-compatibility/SKILL.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-dependencies-and-reproducibility/SKILL.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-observability-and-resilience/SKILL.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-performance-and-resource-management/SKILL.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-testing/SKILL.md"
+  ],
+  "references_actually_read": [
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-architecture-and-design/references/design-decisions.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-code-quality-and-idioms/references/idiom-decisions.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-correctness-and-compatibility/references/correctness-compatibility-decisions.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-dependencies-and-reproducibility/references/dependency-reproducibility-decisions.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-observability-and-resilience/references/observability-resilience-decisions.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-performance-and-resource-management/references/performance-decisions.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-quality-report/references/grading.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-quality-report/references/orchestration.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-quality-report/references/reporting.md",
+    "/private/tmp/go-independent-concurrency-service/review-guidance/go-testing/references/testing-decisions.md"
+  ]
+}

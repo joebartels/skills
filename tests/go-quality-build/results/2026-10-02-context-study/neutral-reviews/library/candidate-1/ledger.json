@@ -1,0 +1,117 @@
+{
+  "scope": "Code-area review of completed neutral candidate-1: process.go, process_test.go, README.md and go.mod; original/README.md is authoritative contract, original source/test are behavior context. Snapshot SHA-256 identities are in [manifest.json](manifest.json). Library module example.com/process, go 1.22; independent checks used Go 1.26.5 and Go 1.22.12 darwin/arm64.",
+  "coverage": [
+    {
+      "id": "architecture",
+      "topic": "Architecture & Design",
+      "skill": "review-skills/go-architecture-and-design/SKILL.md",
+      "status": "complete",
+      "reason": "Applicable: exported callback/context API, cancellation/error boundary, and caller ownership are central to this library area.",
+      "card": "architecture.md"
+    },
+    {
+      "id": "code-quality",
+      "topic": "Code Quality & Go Idioms",
+      "skill": "review-skills/go-code-quality-and-idioms/SKILL.md",
+      "status": "complete",
+      "reason": "Applicable: error flow, helpers, names, exported documentation, and Go 1.22-compatible idioms in both source and tests.",
+      "card": "code-quality.md"
+    },
+    {
+      "id": "correctness",
+      "topic": "Correctness & Compatibility",
+      "skill": "review-skills/go-correctness-and-compatibility/SKILL.md",
+      "status": "complete",
+      "reason": "Applicable: sequential ordering, exact accepted count, cancellation observation order, independent errors, legal non-comparable causes, and preserved signature.",
+      "card": "correctness.md"
+    },
+    {
+      "id": "testing",
+      "topic": "Testing",
+      "skill": "review-skills/go-testing/SKILL.md",
+      "status": "complete",
+      "reason": "Applicable: author regression detection for the new cancellation and completion contract; assertions and scratch mutation sensitivity assessed.",
+      "card": "testing.md"
+    },
+    {
+      "id": "security",
+      "topic": "Security",
+      "skill": "review-skills/go-security/SKILL.md",
+      "status": "not_applicable",
+      "reason": "Not applicable to this code area: ctx, integer jobs, and an executable cooperative callback are supplied by the same caller; Process introduces no authorization, privilege, parser, credential, network, filesystem, or attacker-controlled sensitive sink. Error retention is within that caller boundary. No security claim is made about unseen hosts or callbacks.",
+      "card": "security.md"
+    },
+    {
+      "id": "resilience",
+      "topic": "Observability & Resilience",
+      "skill": "review-skills/go-observability-and-resilience/SKILL.md",
+      "status": "complete",
+      "reason": "Applicable: cooperative stop behavior and failure/cancellation classification at the caller boundary. Service telemetry, retries, probes and process shutdown are outside this synchronous library contract.",
+      "card": "resilience.md"
+    },
+    {
+      "id": "resources",
+      "topic": "Performance & Resource Management",
+      "skill": "review-skills/go-performance-and-resource-management/SKILL.md",
+      "status": "complete",
+      "reason": "Applicable: sequential work bound, callback lifetime and caller-owned resources; no internal goroutine, timer, queue, I/O resource, or retained input graph.",
+      "card": "resources.md"
+    },
+    {
+      "id": "reproducibility",
+      "topic": "Dependencies & Reproducibility",
+      "skill": "review-skills/go-dependencies-and-reproducibility/SKILL.md",
+      "status": "complete",
+      "reason": "Applicable: standalone standard-library-only Go module, newly used context.Cause/errors.Join APIs and explicit Go 1.22 support.",
+      "card": "reproducibility.md"
+    },
+    {
+      "id": "deployment",
+      "topic": "Deployment & Operations",
+      "skill": "review-skills/go-deployment-and-operations/SKILL.md",
+      "status": "not_applicable",
+      "reason": "Not applicable to the bounded source implementation: no release, CI enforcement, packaging, runtime configuration or process lifecycle decision is introduced or part of the supplied target. Module build/support is assessed under Reproducibility. External release/platform facts are unknown and excluded, rather than assumed absent or passed.",
+      "card": "deployment.md"
+    }
+  ],
+  "findings": [
+    {
+      "id": "T1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Author error/cause regression uses differing dynamic types and misses legal same-non-comparable cause comparison panic.",
+      "evidence": "candidate-1/process_test.go:70; independent unsafe-cause-equality compile=0 author=0 held=1; baseline provided contract=0.",
+      "correction": "[T1] Add an author regression where the callback cancels with a slice-containing legal error and returns that same cause (or another value of its same dynamic type). Assert zero/accepted-prefix result, standard cancellation classification and errors.As payload. Re-run the unchanged frozen unsafe equality mutation: it must compile and fail the author suite while baseline passes.",
+      "sources": [
+        "candidate-1/testing/T1"
+      ],
+      "primary_owner": "Testing",
+      "status": "confirmed"
+    },
+    {
+      "id": "T2",
+      "severity": "moderate",
+      "systemic": false,
+      "cause": "Canceled-empty result lacks author coverage.",
+      "evidence": "candidate-1/process_test.go:29,43; supplementary entry-check removal compile=0 author=0 held=1.",
+      "correction": "[T2] Exercise an already-canceled context with both empty and nonempty jobs, asserting zero callbacks/accepted plus cancellation classification and inspectable custom cause. The supplementary entry-check-removal mutation must fail the author suite.",
+      "sources": [
+        "candidate-1/testing/T2"
+      ],
+      "primary_owner": "Testing",
+      "status": "confirmed",
+      "efficacy_status": "supplementary, not frozen efficacy target"
+    }
+  ],
+  "strengths": [
+    {
+      "id": "G1",
+      "evidence": "Unmodified candidates preserve sequential accepted-prefix behavior and independently pass author/held suites on Go 1.22.12 and Go 1.26.5."
+    },
+    {
+      "id": "G2",
+      "evidence": "Independent frozen lost-custom-cause mutation fails author suite with meaningful errors.Is/As assertions."
+    }
+  ],
+  "safeguards": []
+}

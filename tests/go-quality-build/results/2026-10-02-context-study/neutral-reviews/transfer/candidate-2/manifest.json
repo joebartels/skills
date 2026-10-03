@@ -1,0 +1,154 @@
+{
+  "candidate": 2,
+  "mode": "changeset",
+  "scope": "Changeset review of the provided immutable original to candidate snapshot; library plus supplied CLI host. Only run.go, run_test.go and newly added cmd/finalize/main_test.go differ. README.md, go.mod and cmd/finalize/main.go are unchanged contract/caller context. Exact SHA-256 snapshots are in ../source-snapshots.json. Declared Go 1.22; independently executed Go 1.22.12 and Go 1.26.5, darwin/arm64, GOTOOLCHAIN=local, GOWORK=off.",
+  "base": "original",
+  "head": "candidate-2",
+  "source_snapshots": "../source-snapshots.json",
+  "inspected_paths": [
+    "README.md",
+    "go.mod",
+    "run.go",
+    "run_test.go",
+    "cmd/finalize/main.go",
+    "cmd/finalize/main_test.go"
+  ],
+  "additional_context": [
+    "original/* relevant counterparts",
+    "provided-contract-probes/contract_test.go",
+    "provided-checks-2.json",
+    "frozen review-skills and relevant decision references"
+  ],
+  "excluded": [
+    "repository/planning/results/writing skills",
+    "arm mapping",
+    "unrelated repository audit",
+    "mutations beyond supplied single factual sensitivity result"
+  ],
+  "applicability": [
+    {
+      "id": "architecture",
+      "topic": "Architecture & Design",
+      "status": "complete",
+      "reason": "Callback/API composition and Run-to-command lifecycle ownership; supplied host preserved.",
+      "owner": "context_checked_transfer_review",
+      "skill": "/private/tmp/go-context-outcome-20261002/transfer/review-skills/go-architecture-and-design/SKILL.md",
+      "card": "architecture.md"
+    },
+    {
+      "id": "code-quality",
+      "topic": "Code Quality & Go Idioms",
+      "status": "complete",
+      "reason": "Changed Run error flow/helpers, test readability, Go 1.22 API availability, formatting and vet.",
+      "owner": "context_checked_transfer_review",
+      "skill": "/private/tmp/go-context-outcome-20261002/transfer/review-skills/go-code-quality-and-idioms/SKILL.md",
+      "card": "code-quality.md"
+    },
+    {
+      "id": "correctness",
+      "topic": "Correctness & Compatibility",
+      "status": "complete",
+      "reason": "Sequential acceptance, stop conditions, empty/unaccepted work, late successful apply, cancellation classification/cause, independent failures, finalization effects, and child status/output/receipt.",
+      "owner": "context_checked_transfer_review",
+      "skill": "/private/tmp/go-context-outcome-20261002/transfer/review-skills/go-correctness-and-compatibility/SKILL.md",
+      "card": "correctness.md"
+    },
+    {
+      "id": "testing",
+      "topic": "Testing",
+      "status": "complete",
+      "reason": "Both authored test files, real process boundaries, portable assertions, regression detection, case lifetime, and failure-path cleanup.",
+      "owner": "context_checked_transfer_review",
+      "skill": "/private/tmp/go-context-outcome-20261002/transfer/review-skills/go-testing/SKILL.md",
+      "card": "testing.md"
+    },
+    {
+      "id": "security",
+      "topic": "Security",
+      "status": "not_applicable",
+      "reason": "Conditional applicability only: trusted cooperative callbacks, caller-owned local CLI inputs, unchanged receipt sink/permissions, no changed attacker or authorization boundary.",
+      "owner": "context_checked_transfer_review",
+      "skill": "/private/tmp/go-context-outcome-20261002/transfer/review-skills/go-security/SKILL.md",
+      "card": "security.md"
+    },
+    {
+      "id": "resilience",
+      "topic": "Observability & Resilience",
+      "status": "complete",
+      "reason": "Cancellation/failure diagnosis, independent finalization deadline, synchronous drain before return/exit, and required receipt failure handling.",
+      "owner": "context_checked_transfer_review",
+      "skill": "/private/tmp/go-context-outcome-20261002/transfer/review-skills/go-observability-and-resilience/SKILL.md",
+      "card": "resilience.md"
+    },
+    {
+      "id": "resources",
+      "topic": "Performance & Resource Management",
+      "status": "complete",
+      "reason": "Run complexity, finalization timer/context ownership, synchronous callback completion and release; test fixture ownership is assigned to Testing.",
+      "owner": "context_checked_transfer_review",
+      "skill": "/private/tmp/go-context-outcome-20261002/transfer/review-skills/go-performance-and-resource-management/SKILL.md",
+      "card": "resources.md"
+    },
+    {
+      "id": "dependencies",
+      "topic": "Dependencies & Reproducibility",
+      "status": "complete",
+      "reason": "Standard-library-only module, unchanged go 1.22 directive, selected compiler and nested process-build compiler, standalone readonly builds on minimum/host.",
+      "owner": "context_checked_transfer_review",
+      "skill": "/private/tmp/go-context-outcome-20261002/transfer/review-skills/go-dependencies-and-reproducibility/SKILL.md",
+      "card": "dependencies.md"
+    },
+    {
+      "id": "deployment",
+      "topic": "Deployment & Operations",
+      "status": "complete",
+      "reason": "Local CLI artifact build, existing runtime configuration/signals, accepted-prefix receipt effects and exit 2 after failure/interruption. No unrelated delivery-system audit.",
+      "owner": "context_checked_transfer_review",
+      "skill": "/private/tmp/go-context-outcome-20261002/transfer/review-skills/go-deployment-and-operations/SKILL.md",
+      "card": "deployment.md"
+    }
+  ],
+  "boundaries": [
+    {
+      "id": "apply-to-accepted-count",
+      "status": "complete",
+      "owner": "context_checked_transfer_review"
+    },
+    {
+      "id": "cancellation-classification-and-cause",
+      "status": "complete",
+      "owner": "context_checked_transfer_review"
+    },
+    {
+      "id": "independent-error-tree-retention",
+      "status": "complete",
+      "owner": "context_checked_transfer_review"
+    },
+    {
+      "id": "bounded-surviving-finalization-to-Run-return",
+      "status": "complete",
+      "owner": "context_checked_transfer_review"
+    },
+    {
+      "id": "Run-to-command-status-and-receipt",
+      "status": "complete",
+      "owner": "context_checked_transfer_review"
+    },
+    {
+      "id": "authored-test-controller-lifetime",
+      "status": "complete",
+      "owner": "context_checked_transfer_review"
+    },
+    {
+      "id": "minimum-to-nested-build-compiler",
+      "status": "complete",
+      "owner": "context_checked_transfer_review"
+    }
+  ],
+  "checks": "Independent checks: host authored suite passes; minimum authored suite passes; standalone -mod=readonly build and vet pass on both compilers; gofmt -d is empty; supplied unchanged contract probes pass on both compilers, including real interrupted child status/output/receipt and real receipt-write failure; host -race -shuffle=on -count=3 suite with unchanged probes passes. Supplementary combined-error and finalization-scope-release diagnostics pass on both compilers.",
+  "limits": "Review was sequential within this neutral packet; no mapping, repository design/results, author skills, or other arms were inspected. Authored sources and supplied probes were not modified. Windows interruption is explicitly skipped by both authored suites and the supplied probe; execution here covers darwin/arm64 only. Cooperative nonnil callbacks, nonnil parent context and positive budget are contractual preconditions. No crash, hostile-input, durability/atomicity, packaging/CI, or arbitrary-platform promises were invented. Supplementary reviewer diagnostics are not frozen efficacy tests.",
+  "reviewer_diagnostics": {
+    "status": "supplementary, not frozen efficacy",
+    "source": "../diagnostic_contract_test.go"
+  }
+}

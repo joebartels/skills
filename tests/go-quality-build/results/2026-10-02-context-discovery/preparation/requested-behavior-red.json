@@ -1,0 +1,70 @@
+[
+  {
+    "case": "cli-finalization-budget",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-quality-context-preparation/cli-finalization-budget",
+    "status": 1,
+    "stdout": "--- FAIL: TestFinalizationAfterCancel (0.00s)\n    contract_controller_test.go:69: accepted=1 err=context canceled\n--- FAIL: TestFinalizationDeadline (1.00s)\n    contract_controller_test.go:86: accepted=1 err=unbounded finalization\n--- FAIL: TestUnacceptedCanceledWork (0.00s)\n    contract_controller_test.go:96: calls=1 finalized=1 accepted=1 err=<nil>\n--- FAIL: TestFinalizationAfterCancelProcess (1.53s)\n    contract_controller_test.go:173: receipt=\"\" err=open /var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/TestFinalizationAfterCancelProcess2582335092/002/receipt: no such file or directory\nFAIL\nFAIL\texample.com/finalize\t4.236s\n?   \texample.com/finalize/cmd/finalize\t[no test files]\nFAIL\n",
+    "stderr": "",
+    "seconds": 4.38669228553772
+  },
+  {
+    "case": "library-call-cause",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-quality-context-preparation/library-call-cause",
+    "status": 1,
+    "stdout": "--- FAIL: TestCanceledBeforeStart (0.00s)\n    contract_controller_test.go:22: calls=0 accepted=0 err=<nil> cause=custom cancellation\n--- FAIL: TestCustomCauseAndIndependentFailure (0.00s)\n    contract_controller_test.go:63: accepted=1 err=independent apply failure cause=custom cancellation\n--- FAIL: TestResultDecisionOrder (0.00s)\n    contract_controller_test.go:76: accepted=2 calls=2 err=<nil>\nFAIL\nFAIL\texample.com/process\t0.178s\nFAIL\n",
+    "stderr": "",
+    "seconds": 0.31326889991760254
+  },
+  {
+    "case": "not-context-work",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-quality-context-preparation/not-context-work",
+    "status": 1,
+    "stdout": "--- FAIL: TestInclusiveUpperBound (0.00s)\n    contract_controller_test.go:11: value=6 got=false want=true\nFAIL\nFAIL\texample.com/rangecheck\t0.186s\nFAIL\n",
+    "stderr": "",
+    "seconds": 0.3298981189727783
+  },
+  {
+    "case": "service-total-budget",
+    "command": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-quality-context-preparation/service-total-budget",
+    "status": 1,
+    "stdout": "--- FAIL: TestTotalAndEarlierParentDeadline (0.00s)\n    --- FAIL: TestTotalAndEarlierParentDeadline/total (0.00s)\n        contract_controller_test.go:38: bodies=[] deadlines=[] err=Get \"http://example.test/one\": missing operation deadline\n--- FAIL: TestStageBudgetAndCanceledAdmission (0.00s)\n    contract_controller_test.go:110: already canceled: calls=1 err=Get \"http://example.test/one\": context canceled\nFAIL\nFAIL\texample.com/stages\t0.198s\nFAIL\n",
+    "stderr": "",
+    "seconds": 0.45439887046813965
+  }
+]

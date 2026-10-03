@@ -1,0 +1,29 @@
+{
+  "id": "A-mutation-wrong-signed-sum-host",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-mod=readonly",
+    "-count=1",
+    "-timeout=2s",
+    "-run",
+    "^TestSequentialTotals$",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-library-study/independent-review/work/wrong-signed-sum-A",
+  "environment_overrides": {
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOMODCACHE": "/private/tmp/go-neutral-library-study/independent-review/modcache",
+    "GOCACHE": "/private/tmp/go-neutral-library-study/independent-review/gocache"
+  },
+  "status": 1,
+  "timed_out": false,
+  "stdout": "--- FAIL: TestSequentialTotals (0.00s)\n    totals_test.go:13: totals={Count:2 Sum:5}\nFAIL\nFAIL\texample.com/library-shared-state\t0.158s\nFAIL\n",
+  "stderr": "",
+  "elapsed_seconds": 0.295
+}

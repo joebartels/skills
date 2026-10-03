@@ -1,0 +1,200 @@
+{
+  "review_id": "go-context-outcome-20261002-neutral-control-code-area",
+  "mode": "code-area",
+  "reviewer": "/root/context_checked_control_review",
+  "requested_scope": "Independently assess each supplied candidate code area against original README/code, without source edits or arm disclosure.",
+  "snapshot_artifact": "/private/tmp/go-context-outcome-20261002/control/reviews/snapshot.json",
+  "source_paths": [
+    "README.md",
+    "go.mod",
+    "range.go",
+    "range_test.go"
+  ],
+  "exclusions": [
+    "Repository/planning/results/writing-skill material outside packet",
+    "External consumers, CI, releases, deployment environments"
+  ],
+  "supplied_results_policy": "provided-checks-1.json and provided-checks-2.json were not read or used; raw independent check outputs are preserved.",
+  "delegation": "One bounded review worker; topic assessments sequential within this worker, two independent candidate check jobs executed concurrently.",
+  "skills_read": [
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-quality-report/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-architecture-and-design/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-code-quality-and-idioms/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-correctness-and-compatibility/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-testing/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-security/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-observability-and-resilience/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-performance-and-resource-management/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-dependencies-and-reproducibility/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-deployment-and-operations/SKILL.md"
+  ],
+  "references_read": [
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-quality-report/references/orchestration.md",
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-quality-report/references/reporting.md",
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-quality-report/references/grading.md",
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-code-quality-and-idioms/references/idiom-decisions.md",
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-testing/references/testing-decisions.md",
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-correctness-and-compatibility/references/correctness-compatibility-decisions.md",
+    "/private/tmp/go-context-outcome-20261002/control/review-skills/go-dependencies-and-reproducibility/references/dependency-reproducibility-decisions.md"
+  ],
+  "candidates": [
+    {
+      "id": "candidate-1",
+      "status": "complete",
+      "grade": "A",
+      "coverage": [
+        {
+          "id": "architecture-and-design",
+          "status": "complete",
+          "reason": "The private function boundary and the explicitly required small serial design are in scope.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-1/cards/architecture-and-design.md"
+        },
+        {
+          "id": "code-quality-and-idioms",
+          "status": "complete",
+          "reason": "The implementation and regression tests present local clarity and Go idiom decisions.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-1/cards/code-quality-and-idioms.md"
+        },
+        {
+          "id": "correctness-and-compatibility",
+          "status": "complete",
+          "reason": "Inclusive lower and upper boundaries, private signature compatibility, and the Go 1.22 minimum are mandatory behavior contracts.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-1/cards/correctness-and-compatibility.md"
+        },
+        {
+          "id": "testing",
+          "status": "complete",
+          "reason": "Meaningful regression detection for the inclusive upper bound is required.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-1/cards/testing.md"
+        },
+        {
+          "id": "security",
+          "status": "not_applicable",
+          "reason": "The supplied code is a private scalar comparison with no sensitive assets, privileged action, trust boundary, parsing, I/O sink, credentials, external dependency, or variable resource amplification. Nothing in the specified repair creates a security decision.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-1/cards/security.md"
+        },
+        {
+          "id": "observability-and-resilience",
+          "status": "not_applicable",
+          "reason": "The pure local predicate cannot block on or fail an external operation, has no retry or lifecycle contract, and does not require logs, metrics, tracing, cancellation, or deadlines. README explicitly preserves the small serial design.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-1/cards/observability-and-resilience.md"
+        },
+        {
+          "id": "performance-and-resource-management",
+          "status": "complete",
+          "reason": "Preserving the small serial implementation implicates the predicate cost and resource-use decision.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-1/cards/performance-and-resource-management.md"
+        },
+        {
+          "id": "dependencies-and-reproducibility",
+          "status": "complete",
+          "reason": "The named code-area includes the standalone module and the explicit Go 1.22 support requirement, so unchanged build inputs are assessed.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-1/cards/dependencies-and-reproducibility.md"
+        },
+        {
+          "id": "deployment-and-operations",
+          "status": "not_applicable",
+          "reason": "This packet defines a private library predicate repair and tests, with no executable artifact, release workflow, packaging, runtime configuration, probe, shutdown, rollout, or recovery obligation. Standalone module resolution is assessed under Dependencies & Reproducibility.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-1/cards/deployment-and-operations.md"
+        }
+      ],
+      "boundary_owner": "/root/context_checked_control_review",
+      "boundaries": [
+        "Inclusive interval for low <= high",
+        "Private signature and serial implementation",
+        "Meaningful upper-bound regression detection",
+        "Go 1.22 metadata/source compatibility and standalone module inputs"
+      ],
+      "evidence": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-1/independent-checks.json",
+      "report": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-1/report.md"
+    },
+    {
+      "id": "candidate-2",
+      "status": "complete",
+      "grade": "A",
+      "coverage": [
+        {
+          "id": "architecture-and-design",
+          "status": "complete",
+          "reason": "The private function boundary and the explicitly required small serial design are in scope.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-2/cards/architecture-and-design.md"
+        },
+        {
+          "id": "code-quality-and-idioms",
+          "status": "complete",
+          "reason": "The implementation and regression tests present local clarity and Go idiom decisions.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-2/cards/code-quality-and-idioms.md"
+        },
+        {
+          "id": "correctness-and-compatibility",
+          "status": "complete",
+          "reason": "Inclusive lower and upper boundaries, private signature compatibility, and the Go 1.22 minimum are mandatory behavior contracts.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-2/cards/correctness-and-compatibility.md"
+        },
+        {
+          "id": "testing",
+          "status": "complete",
+          "reason": "Meaningful regression detection for the inclusive upper bound is required.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-2/cards/testing.md"
+        },
+        {
+          "id": "security",
+          "status": "not_applicable",
+          "reason": "The supplied code is a private scalar comparison with no sensitive assets, privileged action, trust boundary, parsing, I/O sink, credentials, external dependency, or variable resource amplification. Nothing in the specified repair creates a security decision.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-2/cards/security.md"
+        },
+        {
+          "id": "observability-and-resilience",
+          "status": "not_applicable",
+          "reason": "The pure local predicate cannot block on or fail an external operation, has no retry or lifecycle contract, and does not require logs, metrics, tracing, cancellation, or deadlines. README explicitly preserves the small serial design.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-2/cards/observability-and-resilience.md"
+        },
+        {
+          "id": "performance-and-resource-management",
+          "status": "complete",
+          "reason": "Preserving the small serial implementation implicates the predicate cost and resource-use decision.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-2/cards/performance-and-resource-management.md"
+        },
+        {
+          "id": "dependencies-and-reproducibility",
+          "status": "complete",
+          "reason": "The named code-area includes the standalone module and the explicit Go 1.22 support requirement, so unchanged build inputs are assessed.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-2/cards/dependencies-and-reproducibility.md"
+        },
+        {
+          "id": "deployment-and-operations",
+          "status": "not_applicable",
+          "reason": "This packet defines a private library predicate repair and tests, with no executable artifact, release workflow, packaging, runtime configuration, probe, shutdown, rollout, or recovery obligation. Standalone module resolution is assessed under Dependencies & Reproducibility.",
+          "owner": "/root/context_checked_control_review",
+          "card": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-2/cards/deployment-and-operations.md"
+        }
+      ],
+      "boundary_owner": "/root/context_checked_control_review",
+      "boundaries": [
+        "Inclusive interval for low <= high",
+        "Private signature and serial implementation",
+        "Meaningful upper-bound regression detection",
+        "Go 1.22 metadata/source compatibility and standalone module inputs"
+      ],
+      "evidence": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-2/independent-checks.json",
+      "report": "/private/tmp/go-context-outcome-20261002/control/reviews/candidate-2/report.md"
+    }
+  ]
+}

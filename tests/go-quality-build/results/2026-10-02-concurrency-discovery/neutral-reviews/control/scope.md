@@ -1,0 +1,1 @@
+Review candidate against original and its README contract. This packet contains no writing skills, arm labels, expected outcomes, planning or prior judgments. Controller verification includes host/minimum observations; independently check relevant claims. Apply all-nine applicability and unchanged grade/report rules. Preserve findings and coverage limits.

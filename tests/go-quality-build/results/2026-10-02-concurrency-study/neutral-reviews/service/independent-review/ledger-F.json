@@ -1,0 +1,141 @@
+{
+  "scope": "Candidate F complete bounded code-area review at exact supplied source hashes; standard-library worker-host API, Go 1.22 minimum.",
+  "coverage": [
+    {
+      "id": "go-architecture-and-design",
+      "status": "complete",
+      "reason": "Applicable: the host-supplied Lease protocol, injected Open dependency, cancellation/error propagation and cohort ownership are design boundaries; reviewed API, ownership and composition without demanding another framework."
+    },
+    {
+      "id": "go-code-quality-and-idioms",
+      "status": "complete",
+      "reason": "Applicable: reviewed local state transitions, result collection, checked errors, context guards, docs, value/closure semantics under go 1.22; gofmt and vet independently executed."
+    },
+    {
+      "id": "go-correctness-and-compatibility",
+      "status": "complete",
+      "reason": "Applicable: reviewed every README result/lifecycle obligation, API shape, empty/finite/open input, partial acquisition, all three failure stages, cancellation before/during/stopping, successful effects and supported Go minimum."
+    },
+    {
+      "id": "go-testing",
+      "status": "complete",
+      "reason": "Applicable: reviewed candidate host_test.go assertions, doubles, event gates, cleanup and whether meaningful contract violations evade its authored suite. External held/supplementary/independent probes verify behavior; they are not additions to the candidate regression suite."
+    },
+    {
+      "id": "go-security",
+      "status": "not_applicable",
+      "reason": "Not applicable within this bounded trusted-host API: Job is a caller-supplied integer; Open and Lease are trusted collaborators; there is no demonstrated attacker, authorization boundary, sensitive sink, credential, cryptographic or network/file parsing decision. General resource failures are not recast as vulnerabilities. No advisory scan or security assessment of an unspecified host is claimed."
+    },
+    {
+      "id": "go-observability-and-resilience",
+      "status": "complete",
+      "reason": "Applicable: cancellation, stop propagation, failure containment, joining actual cleanup and errors.Is diagnostics are the available library signals. No service telemetry, retries or arbitrary timeout requirement is inferred."
+    },
+    {
+      "id": "go-performance-and-resource-management",
+      "status": "complete",
+      "reason": "Applicable: limit bounds acquired leases through Close, cohort completion controls goroutines/resources, and available capacity must be used. Assessed scaling/lifetime and bounded event counts; no microbenchmark or production latency claim."
+    },
+    {
+      "id": "go-dependencies-and-reproducibility",
+      "status": "complete",
+      "reason": "Applicable: go.mod declares Go 1.22 and standard-library-only production/tests. Verified standalone readonly resolution, host and actual minimum compilation/test execution, imports, module graph and exact input hashes. No generated/native/release inputs or bit-identical artifact contract."
+    },
+    {
+      "id": "go-deployment-and-operations",
+      "status": "not_applicable",
+      "reason": "Not applicable to the bounded library code area: no configured release artifact, CI/promotion path, process signals, container, runtime configuration, health/routing or grace budget decision is supplied or promised. Host deployment evidence is unavailable outside scope and excluded, not reported as passing. Library lifecycle is assessed by the applicable topics."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F/P1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "The cohort context is unconditionally canceled when admission ends, even for a healthy full cohort or normal input closure.",
+      "evidence": "candidates/F/host.go:93; candidates/F/host.go:94; evidence/F-host-independent.log: healthy two-job cohort sees canceled context before release and returns both Run cancellation errors; evidence/F-minimum-independent.log: same intended assertions; Healthy cooperative Runs are stopped before their requested work completes, and completed uncanceled input returns a failure. This is a contained important success/lifecycle contract failure.",
+      "correction": "Cancel only for an observed failure/caller stop; join normal Runs without canceling their work, then release leases.",
+      "sources": [
+        "cards/F/go-architecture-and-design.md",
+        "cards/F/go-code-quality-and-idioms.md",
+        "cards/F/go-correctness-and-compatibility.md",
+        "cards/F/go-observability-and-resilience.md",
+        "cards/F/go-performance-and-resource-management.md"
+      ]
+    },
+    {
+      "id": "F/P2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "A successful Open always calls Run without checking that stopping happened during acquisition.",
+      "evidence": "candidates/F/host.go:84; candidates/F/host.go:85; evidence/F-host-independent.log: callback cancellation-before-success still starts one Run; evidence/F-minimum-independent.log: same intended assertion; evidence/F-host-contract.log: held acquired-before-stop fixture detects forbidden Run; The explicit fixture requires a lease acquired before stop to remain owned but unstarted; F starts it after caller cancellation and later closes it. One contained important startup/stop failure.",
+      "correction": "Record acquired lease ownership, observe stop before Run entry, and skip Run while joining/releasing all prior work.",
+      "sources": [
+        "cards/F/go-architecture-and-design.md",
+        "cards/F/go-code-quality-and-idioms.md",
+        "cards/F/go-correctness-and-compatibility.md",
+        "cards/F/go-observability-and-resilience.md",
+        "cards/F/go-performance-and-resource-management.md"
+      ]
+    },
+    {
+      "id": "F/P3",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Capacity is decremented on Run completion while the acquired lease remains unreleased until later cohort Close.",
+      "evidence": "candidates/F/host.go:38; candidates/F/host.go:61; candidates/F/host.go:103; evidence/F-host-independent.log: TestIndependentCompletedRunsRetainCapacity records peak=8 with limit 2; evidence/F-minimum-independent.log: same measured peak=8; evidence/F-host-race.log: three repeated peak=8 intended assertions; Eight paced successful jobs on open input retain eight acquired leases at capacity 2, with no Close until input ends. Peak is 4x declared bound for eight jobs; for a stream of completed Runs retention grows with jobs rather than limit. This is a contained major resource and lifecycle-contract failure; no unobserved system exhaustion is claimed.",
+      "correction": "Track acquired leases and pending reservations through completed Close, and stop admitting once those owned slots reach limit; completion alone cannot release capacity.",
+      "sources": [
+        "cards/F/go-architecture-and-design.md",
+        "cards/F/go-code-quality-and-idioms.md",
+        "cards/F/go-correctness-and-compatibility.md",
+        "cards/F/go-observability-and-resilience.md",
+        "cards/F/go-performance-and-resource-management.md"
+      ]
+    },
+    {
+      "id": "F/T1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Healthy capacity fixtures ignore their Run contexts, so premature coordinated stop is invisible.",
+      "evidence": "candidates/F/host_test.go:33; candidates/F/host_test.go:78; candidates/F/host_test.go:148; evidence/F-host-authored.log: suite passes P1; evidence/F-host-independent.log: cooperative healthy Run contexts detect premature cancellation; The important uncanceled success contract is tested with callbacks that keep succeeding after any stop request. Their gates verify sequencing while masking whether work was allowed to complete cooperatively.",
+      "correction": "Make healthy callbacks verify they are not canceled before their external success gate and return ctx.Err when improperly stopped.",
+      "sources": [
+        "cards/F/go-testing.md"
+      ]
+    },
+    {
+      "id": "F/T2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Authored cancellation coverage does not exercise an acquired success returned after stopping and assert no Run.",
+      "evidence": "candidates/F/host_test.go:135; candidates/F/host_test.go:259; evidence/F-host-authored.log: suite passes P2; evidence/F-host-independent.log: forbidden Run after callback cancellation; Input-wait/already-canceled tests do not protect the important partial acquisition ownership transition.",
+      "correction": "Return a successful lease after callback cancellation, assert zero Runs, and still require owned Close after cohort join.",
+      "sources": [
+        "cards/F/go-testing.md"
+      ]
+    },
+    {
+      "id": "F/T3",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Capacity tests inspect only a full initial cohort and later Run starts, without counting live acquired leases across completed Runs on open input.",
+      "evidence": "candidates/F/host_test.go:33; candidates/F/host_test.go:78; candidates/F/host_test.go:148; evidence/F-host-authored.log: suite passes P3; evidence/F-host-independent.log: eight held leases at capacity 2; An explicit important capacity bound through Close is effectively unverified for a stream of successful completions; Run concurrency is insufficient as its proxy.",
+      "correction": "Track live acquisition/release counts and use paced successful jobs on open input to assert the lease bound, plus held Close.",
+      "sources": [
+        "cards/F/go-testing.md"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "F/G1",
+      "evidence": "The exact Job/Lease/Serve API remains compatible and construction stays host-owned through the Open function, with no unrelated framework/public API; both actual toolchains compile every source package."
+    },
+    {
+      "id": "F/G2",
+      "evidence": "Actual go1.22.12 and go1.26.5 compile the standalone go 1.22 standard-library-only module with GOWORK=off, GOTOOLCHAIN=local, GOFLAGS=-mod=readonly; go list -m all returns only example.com/service-owned-workers. No external go.sum is needed."
+    }
+  ],
+  "safeguards": []
+}

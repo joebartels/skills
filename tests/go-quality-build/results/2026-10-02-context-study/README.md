@@ -1,0 +1,7 @@
+# Checked context matched study — reviewed draft, not promoted
+
+Independent [readiness review](readiness-review/readiness-review.md) accepts exact guidance 6368240e5a000cd8f056afa5980099317882d8ebcefa0e1f29921975ccc4627d while rejecting runtime promotion. [Comparison](comparison.md) records zero repeated primary corrections, service/transfer regressions and the exposed authored minimum-version test failure. Original strong ties, failures, raw cards and supplementary sensitivity limits remain intact. Runtime stays five 0.2.0 skills.
+
+[Manifest](manifest.json) freezes inputs/catalogs/profiles and counts all 16 author attempts (six original discovery, eight checked completions, two checked pre-model failures). [Native selection](selection-summary.json) reports twelve requests across three Codex profiles; total 14/20 including earlier capability probes. Selection is distinct from implementation benefit, full package loading and other-runtime support.
+
+All ten checked source trees reconstruct exactly. All-nine coverage/72 topic cards/388 frozen raw reviewer artifacts are preserved under neutral-reviews; mapping is disclosed only after freezing. [Read-only verification](verify-integrity.py) checks reconstruction, declared contrary outcomes, identities and the [archive seal](checksums.json). Exact raw whitespace exceptions preserve captured patches/cards. Index SHA-256 is anchored outside this archive in the canonical design record. No new author/retry, draft tuning, installation or publication is authorized by this disposition.

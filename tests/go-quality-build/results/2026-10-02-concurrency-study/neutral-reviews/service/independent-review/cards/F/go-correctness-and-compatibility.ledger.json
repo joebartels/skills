@@ -1,0 +1,52 @@
+{
+  "scope": "Candidate F complete bounded code area for Correctness & Compatibility; source SHA256 host.go=9a07e02eb8592790dc8cbaef39f97b392403dcd6e10f7556444c2aa437980aca; host_test.go=639fd87f428cfe0da4a8ee700006bd9141c85c483669c1d16049ae658320282d",
+  "coverage": [
+    {
+      "id": "go-correctness-and-compatibility",
+      "status": "complete",
+      "reason": "Applicable: reviewed every README result/lifecycle obligation, API shape, empty/finite/open input, partial acquisition, all three failure stages, cancellation before/during/stopping, successful effects and supported Go minimum."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F/P1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "The cohort context is unconditionally canceled when admission ends, even for a healthy full cohort or normal input closure.",
+      "evidence": "candidates/F/host.go:93; candidates/F/host.go:94; evidence/F-host-independent.log: healthy two-job cohort sees canceled context before release and returns both Run cancellation errors; evidence/F-minimum-independent.log: same intended assertions",
+      "correction": "Cancel only for an observed failure/caller stop; join normal Runs without canceling their work, then release leases.",
+      "sources": [
+        "cards/F/go-correctness-and-compatibility.md#F-P1"
+      ]
+    },
+    {
+      "id": "F/P2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "A successful Open always calls Run without checking that stopping happened during acquisition.",
+      "evidence": "candidates/F/host.go:84; candidates/F/host.go:85; evidence/F-host-independent.log: callback cancellation-before-success still starts one Run; evidence/F-minimum-independent.log: same intended assertion; evidence/F-host-contract.log: held acquired-before-stop fixture detects forbidden Run",
+      "correction": "Record acquired lease ownership, observe stop before Run entry, and skip Run while joining/releasing all prior work.",
+      "sources": [
+        "cards/F/go-correctness-and-compatibility.md#F-P2"
+      ]
+    },
+    {
+      "id": "F/P3",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Capacity is decremented on Run completion while the acquired lease remains unreleased until later cohort Close.",
+      "evidence": "candidates/F/host.go:38; candidates/F/host.go:61; candidates/F/host.go:103; evidence/F-host-independent.log: TestIndependentCompletedRunsRetainCapacity records peak=8 with limit 2; evidence/F-minimum-independent.log: same measured peak=8; evidence/F-host-race.log: three repeated peak=8 intended assertions",
+      "correction": "Track acquired leases and pending reservations through completed Close, and stop admitting once those owned slots reach limit; completion alone cannot release capacity.",
+      "sources": [
+        "cards/F/go-correctness-and-compatibility.md#F-P3"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "F/go-correctness-and-compatibility/G1",
+      "evidence": "Already-canceled/input-wait cancellation and finite owned cleanup are exercised by the authored/held suites; successful independent Open/Run/Close causes remain errors.Is inspectable. Source API shape remains unchanged on actual Go 1.22.12 and host 1.26.5."
+    }
+  ],
+  "safeguards": []
+}

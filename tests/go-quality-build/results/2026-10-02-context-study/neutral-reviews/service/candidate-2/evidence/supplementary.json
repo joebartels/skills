@@ -1,0 +1,25 @@
+{
+  "label": "supplementary",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-run",
+    "^TestSupplementary",
+    "-count=1",
+    "-timeout=30s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-context-outcome-20261002/service/reviews/scratch/candidate-2",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-context-outcome-20261002/service/reviews/go-cache",
+    "GOWORK": "off",
+    "GOTOOLCHAIN": "local",
+    "GOPROXY": "off"
+  },
+  "status": 1,
+  "stdout": "--- FAIL: TestSupplementaryIndependentCustomCause (0.00s)\n    supplementary_contract_test.go:26: missing independent/cause/classification: Get \"http://example.test/a\": independent transport failure\n        custom stop\nFAIL\nFAIL\texample.com/stages\t0.170s\nFAIL\n",
+  "stderr": "",
+  "elapsed_seconds": 0.455
+}

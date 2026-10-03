@@ -1,0 +1,5 @@
+I selected and opened [go-behavior-tests](/private/tmp/go-select-qcolvbxi/.agents/skills/go-behavior-tests/SKILL.md) and its [behavior observations reference](/private/tmp/go-select-qcolvbxi/.agents/skills/go-behavior-tests/references/behavior-observations.md). A last-element loop-bound fix needs an assertion with an independently known expected value that would fail under the old bound.
+
+I declined the other catalog skills: the described change has no established external API contract, concurrency or resource lifecycle concern, interface or dependency change, package boundary change, or test isolation concern. The failure-stage and cleanup guidance in the opened reference is also irrelevant.
+
+This was selection only. I did not inspect the task code, edit files, run tests, browse, or delegate.

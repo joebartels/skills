@@ -1,0 +1,303 @@
+--- /dev/null
++++ b/cmd/finalize/main_test.go
+@@ -0,0 +1,124 @@
++package main
++
++import (
++	"bufio"
++	"bytes"
++	"io"
++	"os"
++	"os/exec"
++	"path/filepath"
++	"runtime"
++	"strings"
++	"testing"
++	"time"
++)
++
++func buildCommand(t *testing.T) string {
++	t.Helper()
++	binary := filepath.Join(t.TempDir(), "finalize")
++	cmd := exec.Command("go", "build", "-o", binary, "./cmd/finalize")
++	cmd.Dir = "../.."
++	if out, err := cmd.CombinedOutput(); err != nil {
++		t.Fatalf("build command: %v\n%s", err, out)
++	}
++	return binary
++}
++
++func TestInterruptedCommandFinalizesAcceptedReceipt(t *testing.T) {
++	if runtime.GOOS == "windows" {
++		t.Skip("os.Interrupt delivery to child processes is unsupported on Windows")
++	}
++	binary := buildCommand(t)
++	receipt := filepath.Join(t.TempDir(), "receipt")
++	cmd := exec.Command(binary, "--receipt", receipt, "1", "0")
++	var stdout bytes.Buffer
++	cmd.Stdout = &stdout
++	stderr, err := cmd.StderrPipe()
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err := cmd.Start(); err != nil {
++		t.Fatal(err)
++	}
++	finished := false
++	t.Cleanup(func() {
++		if !finished && cmd.Process != nil {
++			_ = cmd.Process.Kill()
++			_ = cmd.Wait()
++		}
++	})
++	lines := bufio.NewReader(stderr)
++	type stderrResult struct {
++		firstLine string
++		rest      []byte
++		err       error
++	}
++	type readyResult struct {
++		firstLine string
++		err       error
++	}
++	stderrDone := make(chan stderrResult, 1)
++	ready := make(chan readyResult, 1)
++	go func() {
++		line, err := lines.ReadString('\n')
++		if err == nil && strings.TrimSpace(line) != "waiting" {
++			err = io.ErrUnexpectedEOF
++		}
++		ready <- readyResult{firstLine: line, err: err}
++		rest, readErr := io.ReadAll(lines)
++		if err == nil {
++			err = readErr
++		}
++		stderrDone <- stderrResult{firstLine: line, rest: rest, err: err}
++	}()
++	select {
++	case got := <-ready:
++		if got.err != nil || strings.TrimSpace(got.firstLine) != "waiting" {
++			t.Fatalf("waiting signal: line=%q err=%v", got.firstLine, got.err)
++		}
++	case <-time.After(5 * time.Second):
++		t.Fatalf("command did not report waiting (stdout=%q)", stdout.String())
++	}
++	if err := cmd.Process.Signal(os.Interrupt); err != nil {
++		t.Fatalf("interrupt command: %v", err)
++	}
++	waitErr := cmd.Wait()
++	finished = true
++	gotStderr := <-stderrDone
++	if gotStderr.err != nil {
++		t.Fatalf("read command stderr: %v", gotStderr.err)
++	}
++	if exit, ok := waitErr.(*exec.ExitError); !ok || exit.ExitCode() != 2 {
++		t.Fatalf("command status=%v, want exit 2 (stdout=%q stderr=%q)", waitErr, stdout.String(), gotStderr.rest)
++	}
++	if got := stdout.String(); got != "accepted 1\n" {
++		t.Errorf("stdout=%q, want accepted output", got)
++	}
++	if got := string(gotStderr.rest); !strings.Contains(got, "context canceled") {
++		t.Errorf("stderr=%q, want cancellation diagnostic", got)
++	}
++	contents, err := os.ReadFile(receipt)
++	if err != nil {
++		t.Fatalf("read receipt: %v", err)
++	}
++	if string(contents) != "accepted=1\n" {
++		t.Errorf("receipt=%q, want accepted=1 newline", contents)
++	}
++}
++
++func TestCommandReportsReceiptWriteFailure(t *testing.T) {
++	binary := buildCommand(t)
++	receiptDir := t.TempDir()
++	cmd := exec.Command(binary, "--receipt", receiptDir, "1")
++	stdout, err := cmd.Output()
++	exit, ok := err.(*exec.ExitError)
++	if !ok || exit.ExitCode() != 2 {
++		t.Fatalf("command error=%v, want exit 2 (stdout=%q)", err, stdout)
++	}
++	if string(stdout) != "accepted 1\n" {
++		t.Errorf("stdout=%q, want accepted output", stdout)
++	}
++	if !bytes.Contains(exit.Stderr, []byte(receiptDir)) {
++		t.Errorf("stderr=%q, want receipt path in write failure", exit.Stderr)
++	}
++}
+--- a/run.go
++++ b/run.go
+@@ -1,21 +1,36 @@
+ package finalize
+ 
+-import "context"
+-import "time"
++import (
++	"context"
++	"errors"
++	"time"
++)
+ 
+ // Run applies jobs sequentially and finalizes their accepted count.
+ func Run(ctx context.Context, jobs []int, apply func(context.Context, int) error, finalize func(context.Context, int) error, finalizationBudget time.Duration) (accepted int, err error) {
+ 	for _, job := range jobs {
+-		if err = apply(ctx, job); err != nil {
++		if ctxErr := ctx.Err(); ctxErr != nil {
++			err = cancellationError(ctx)
++			break
++		}
++		if applyErr := apply(ctx, job); applyErr != nil {
++			err = applyErr
++			if ctx.Err() != nil {
++				err = errors.Join(err, cancellationError(ctx))
++			}
+ 			break
+ 		}
+ 		accepted++
+ 	}
+ 	if accepted != 0 {
+-		finalErr := finalize(ctx, accepted)
+-		if err == nil {
+-			err = finalErr
+-		}
++		finalCtx, cancel := context.WithTimeout(context.Background(), finalizationBudget)
++		finalErr := finalize(finalCtx, accepted)
++		cancel()
++		err = errors.Join(err, finalErr)
+ 	}
+ 	return accepted, err
+ }
++
++func cancellationError(ctx context.Context) error {
++	return errors.Join(ctx.Err(), context.Cause(ctx))
++}
+--- a/run_test.go
++++ b/run_test.go
+@@ -2,14 +2,122 @@
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"testing"
+ 	"time"
+ )
+ 
+-func TestCompletedWorkFinalizes(t *testing.T) {
+-	finalized := -1
+-	n, err := Run(context.Background(), []int{1, 2}, func(context.Context, int) error { return nil }, func(_ context.Context, n int) error { finalized = n; return nil }, time.Second)
+-	if n != 2 || finalized != 2 || err != nil {
+-		t.Fatalf("accepted=%d finalized=%d err=%v", n, finalized, err)
++func TestRunSequentialAcceptanceAndFinalization(t *testing.T) {
++	var applied []int
++	finalized := 0
++	n, err := Run(context.Background(), []int{3, 5}, func(_ context.Context, job int) error {
++		applied = append(applied, job)
++		return nil
++	}, func(_ context.Context, count int) error {
++		finalized = count
++		return nil
++	}, time.Second)
++	if err != nil || n != 2 || finalized != 2 || len(applied) != 2 || applied[0] != 3 || applied[1] != 5 {
++		t.Fatalf("accepted=%d finalized=%d applied=%v err=%v", n, finalized, applied, err)
+ 	}
+ }
++
++func TestRunStopsOnApplyFailureAndJoinsFinalizationFailure(t *testing.T) {
++	workErr := errors.New("apply failed")
++	finishErr := errors.New("finalize failed")
++	var applied []int
++	finalized := 0
++	n, err := Run(context.Background(), []int{1, 2, 3}, func(_ context.Context, job int) error {
++		applied = append(applied, job)
++		if job == 2 {
++			return workErr
++		}
++		return nil
++	}, func(_ context.Context, count int) error { finalized = count; return finishErr }, time.Second)
++	if n != 1 || finalized != 1 || len(applied) != 2 || applied[1] != 2 {
++		t.Fatalf("accepted=%d finalized=%d applied=%v", n, finalized, applied)
++	}
++	if !errors.Is(err, workErr) || !errors.Is(err, finishErr) {
++		t.Fatalf("err=%v, want both work and finalization causes", err)
++	}
++}
++
++func TestRunPreCanceledContextDoesNoWork(t *testing.T) {
++	base, cancel := context.WithCancelCause(context.Background())
++	cause := errors.New("shutdown requested")
++	cancel(cause)
++	called := false
++	n, err := Run(base, []int{1}, func(context.Context, int) error { called = true; return nil }, func(context.Context, int) error { called = true; return nil }, time.Second)
++	if n != 0 || called || !errors.Is(err, context.Canceled) || !errors.Is(err, cause) {
++		t.Fatalf("accepted=%d called=%v err=%v", n, called, err)
++	}
++}
++
++func TestRunCancellationBetweenJobsRetainsAcceptedPrefixAndCause(t *testing.T) {
++	ctx, cancel := context.WithCancelCause(context.Background())
++	cause := errors.New("stop remaining jobs")
++	applied := 0
++	finalized := 0
++	n, err := Run(ctx, []int{1, 2}, func(context.Context, int) error {
++		applied++
++		cancel(cause)
++		return nil
++	}, func(_ context.Context, count int) error { finalized = count; return nil }, time.Second)
++	if n != 1 || applied != 1 || finalized != 1 || !errors.Is(err, context.Canceled) || !errors.Is(err, cause) {
++		t.Fatalf("accepted=%d applied=%d finalized=%d err=%v", n, applied, finalized, err)
++	}
++}
++
++func TestRunSuccessfulLastApplyIsNotVetoedByLateCancellation(t *testing.T) {
++	ctx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++	finalized := false
++	n, err := Run(ctx, []int{1}, func(context.Context, int) error { cancel(); return nil }, func(finalCtx context.Context, count int) error {
++		finalized = count == 1 && finalCtx.Err() == nil
++		return nil
++	}, time.Second)
++	if n != 1 || !finalized || err != nil {
++		t.Fatalf("accepted=%d finalized=%v err=%v", n, finalized, err)
++	}
++}
++
++func TestRunFinalizationSurvivesParentCancellationAndJoinsBeforeReturn(t *testing.T) {
++	parent, cancelParent := context.WithCancel(context.Background())
++	entered := make(chan struct{})
++	completed := false
++	started := time.Now()
++	n, err := Run(parent, []int{1}, func(context.Context, int) error { cancelParent(); return nil }, func(ctx context.Context, count int) error {
++		if count != 1 || ctx.Err() != nil {
++			t.Errorf("finalization count=%d ctx err=%v", count, ctx.Err())
++		}
++		close(entered)
++		<-ctx.Done()
++		completed = true
++		return ctx.Err()
++	}, 30*time.Millisecond)
++	select {
++	case <-entered:
++	default:
++		t.Fatal("finalizer was not called")
++	}
++	if !completed || n != 1 || !errors.Is(err, context.DeadlineExceeded) || time.Since(started) < 20*time.Millisecond {
++		t.Fatalf("accepted=%d completed=%v elapsed=%v err=%v", n, completed, time.Since(started), err)
++	}
++}
++
++func TestRunFinalizationFailureFailsSuccessfulProcessing(t *testing.T) {
++	finishErr := errors.New("receipt write failed")
++	n, err := Run(context.Background(), []int{1}, func(context.Context, int) error { return nil }, func(context.Context, int) error { return finishErr }, time.Second)
++	if n != 1 || !errors.Is(err, finishErr) {
++		t.Fatalf("accepted=%d err=%v", n, err)
++	}
++}
++
++func TestRunDoesNotFinalizeWithoutAcceptedWork(t *testing.T) {
++	called := false
++	workErr := errors.New("no accepted work")
++	n, err := Run(context.Background(), []int{1}, func(context.Context, int) error { return workErr }, func(context.Context, int) error { called = true; return nil }, time.Second)
++	if n != 0 || called || !errors.Is(err, workErr) {
++		t.Fatalf("accepted=%d finalize called=%v err=%v", n, called, err)
++	}
++}

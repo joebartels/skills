@@ -1,0 +1,18 @@
+{
+  "scope": "Bounded code-area review of candidate B source snapshot (see source-hashes-before.json), CLI/private runPipeline and delivered tests, judged against original README/source; Go1.22 minimum, actual Go1.22.12 and host Go1.26.5 darwin/arm64. Findings are existing-in-scope in this delivered snapshot.",
+  "coverage": [
+    {
+      "id": "performance-and-resource-management",
+      "status": "complete",
+      "reason": "The code owns a bounded channel and two callbacks; blocked sends/receives, cleanup joins and constant per-call work are relevant resources."
+    }
+  ],
+  "findings": [],
+  "strengths": [
+    {
+      "id": "B/performance-and-resource-management/G1",
+      "evidence": "Per pipeline call, the implementation creates one capacity-bounded integer channel and a two-result channel, with two callback goroutines. This is O(capacity) queued data and O(1) coordinator state/goroutine count. Independent gated probes confirm blocked cooperative work is stopped and callback cleanup joined."
+    }
+  ],
+  "safeguards": []
+}

@@ -1,0 +1,15 @@
+COMMAND: rtk proxy /private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go test -mod=readonly -count=1 -timeout=5s -run ^TestReviewConcurrentCheckpoint$ ./...
+CWD: /private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A
+ENV: {"GOCACHE": "/private/tmp/go-neutral-library-study/independent-review/gocache", "GOMODCACHE": "/private/tmp/go-neutral-library-study/independent-review/modcache", "GOPROXY": "off", "GOSUMDB": "off", "GOTOOLCHAIN": "local", "GOWORK": "off"}
+STDOUT:
+--- FAIL: TestReviewConcurrentCheckpoint (0.00s)
+    review_contract_test.go:122: checkpoint snapshot: got {Count:0 Sum:0}, want {4 4}
+    review_contract_test.go:130: final snapshot: got {Count:0 Sum:0}, want {4000 4000}
+FAIL
+FAIL	example.com/library-shared-state	0.173s
+FAIL
+
+STDERR:
+
+STATUS: 1
+TIMED_OUT: False

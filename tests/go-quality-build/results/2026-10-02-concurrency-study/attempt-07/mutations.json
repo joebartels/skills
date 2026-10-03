@@ -1,0 +1,75 @@
+[
+  {
+    "meaning": "unjoined-early-producer",
+    "substitution": {
+      "file": "cmd/pipeline/pipeline.go",
+      "old": "second := <-results",
+      "new": "second := result{producer: !first.producer}"
+    },
+    "original_held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerEarlyConsumerAndProducerFailure$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-7l_b5osq",
+      "status": 0,
+      "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.418s\n",
+      "stderr": ""
+    },
+    "compile": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-7l_b5osq",
+      "status": 0,
+      "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.250s [no tests to run]\n",
+      "stderr": ""
+    },
+    "author_tests": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-7l_b5osq",
+      "status": 1,
+      "stdout": "--- FAIL: TestFinitePipeline (0.00s)\n    pipeline_test.go:30: got=[] err=<nil>\n--- FAIL: TestConsumerEarlyCompletionCancelsAndJoinsProducer (0.00s)\n    pipeline_test.go:89: producer was not joined before return\n--- FAIL: TestProducerFailureStopsConsumerAndPreservesBothErrors (0.00s)\n    pipeline_test.go:106: error = context canceled\n        producer failed, want both independent failures\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.199s\nFAIL\n",
+      "stderr": ""
+    },
+    "held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerEarlyConsumerAndProducerFailure$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-7l_b5osq",
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerEarlyConsumerAndProducerFailure (0.00s)\n    --- FAIL: TestControllerEarlyConsumerAndProducerFailure/early_consumer_joins_blocked_producer (0.00s)\n        controller_contract_test.go:83: returned before producer cleanup joined\n        controller_contract_test.go:96: producer not joined\n    --- FAIL: TestControllerEarlyConsumerAndProducerFailure/producer_failure_stops_blocked_receive (0.00s)\n        controller_contract_test.go:144: consumer not joined\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.245s\nFAIL\n",
+      "stderr": ""
+    },
+    "qualified": true
+  }
+]

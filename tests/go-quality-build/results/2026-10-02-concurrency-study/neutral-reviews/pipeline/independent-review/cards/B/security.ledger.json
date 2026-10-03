@@ -1,0 +1,18 @@
+{
+  "scope": "Bounded code-area review of candidate B source snapshot (see source-hashes-before.json), CLI/private runPipeline and delivered tests, judged against original README/source; Go1.22 minimum, actual Go1.22.12 and host Go1.26.5 darwin/arm64. Findings are existing-in-scope in this delivered snapshot.",
+  "coverage": [
+    {
+      "id": "security",
+      "status": "complete",
+      "reason": "The CLI parses caller-controlled integer-line input and emits only integers/diagnostics; resource amplification and input-to-sink paths can be assessed within this local CLI boundary."
+    }
+  ],
+  "findings": [],
+  "strengths": [
+    {
+      "id": "B/security/G1",
+      "evidence": "Production input is scanned incrementally and parsed as an integer before entering the bounded channel; output uses a fixed integer format. No input-controlled executable/path/network/authorization/secret boundary is present. Source has two fixed callback goroutines and a capacity-one command queue; there is no per-line goroutine growth."
+    }
+  ],
+  "safeguards": []
+}

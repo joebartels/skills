@@ -1,0 +1,466 @@
+[
+  {
+    "label": "go122-version",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/baseline",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "version"
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 0,
+    "stdout": "go version go1.22.12 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.009
+  },
+  {
+    "label": "go122-tests-cgo-disabled",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/baseline",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache",
+      "CGO_ENABLED": "0"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/stages\t0.369s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.383
+  },
+  {
+    "label": "standalone-build",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/baseline",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "build",
+      "-mod=readonly",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.085
+  },
+  {
+    "label": "selected-modules",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/baseline",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-m",
+      "all"
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 0,
+    "stdout": "example.com/stages\n",
+    "stderr": "",
+    "elapsed_seconds": 0.009
+  },
+  {
+    "label": "restart-total-each-stage-author-tests",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/restart-total-each-stage",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/stages\t0.341s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.089
+  },
+  {
+    "label": "cancel-before-body-author-tests",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/cancel-before-body",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/stages\t0.346s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.568
+  },
+  {
+    "label": "ignore-close-only-failure-author-tests",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/ignore-close-only-failure",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/stages\t0.353s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.58
+  },
+  {
+    "label": "invalidate-complete-success-author-tests",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/invalidate-complete-success",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/stages\t0.345s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.574
+  },
+  {
+    "label": "review-contract-boundaries",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/boundary",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReview",
+      "-race",
+      "-count=1",
+      "-timeout=30s",
+      "-v",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 1,
+    "stdout": "=== RUN   TestReviewOneTotalDeadlineAndEarlierParentDeadline\n=== RUN   TestReviewOneTotalDeadlineAndEarlierParentDeadline/total\n=== RUN   TestReviewOneTotalDeadlineAndEarlierParentDeadline/parent\n--- PASS: TestReviewOneTotalDeadlineAndEarlierParentDeadline (0.00s)\n    --- PASS: TestReviewOneTotalDeadlineAndEarlierParentDeadline/total (0.00s)\n    --- PASS: TestReviewOneTotalDeadlineAndEarlierParentDeadline/parent (0.00s)\n=== RUN   TestReviewStageScopeLiveUntilCloseAndReleasedBeforeNextRequest\n--- PASS: TestReviewStageScopeLiveUntilCloseAndReleasedBeforeNextRequest (0.00s)\n=== RUN   TestReviewCloseOnlyFailureExcludesBody\n--- PASS: TestReviewCloseOnlyFailureExcludesBody (0.00s)\n=== RUN   TestReviewCompleteSuccessNotInvalidatedByCloseCancellation\n--- PASS: TestReviewCompleteSuccessNotInvalidatedByCloseCancellation (0.00s)\n=== RUN   TestReviewBodyFailurePreservesCustomCauseAndCloseError\n--- PASS: TestReviewBodyFailurePreservesCustomCauseAndCloseError (0.00s)\n=== RUN   TestReviewStandardTransportBodyReadCancellation\n--- FAIL: TestReviewStandardTransportBodyReadCancellation (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 11 [running]:\ntesting.tRunner.func1.2({0x102a6bf60, 0xc000038a00})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x2b8\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x460\npanic({0x102a6bf60?, 0xc000038a00?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0x13c\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x102af7ce0, 0xc0000389b0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x30\nexample.com/stages.TestReviewStandardTransportBodyReadCancellation(0xc0000fd448)\n\t/private/tmp/packet-02-review-diagnostics/boundary/review_contract_test.go:108 +0xa8\ntesting.tRunner(0xc0000fd448, 0x102af3be8)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x168\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x7c0\nFAIL\texample.com/stages\t0.227s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.555
+  },
+  {
+    "label": "restart-total-each-stage-review-tests",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/restart-total-each-stage",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReview",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewOneTotalDeadlineAndEarlierParentDeadline (0.00s)\n    --- FAIL: TestReviewOneTotalDeadlineAndEarlierParentDeadline/total (0.00s)\n        review_contract_test.go:39: total scope deadline restarted: first=2026-10-02 15:51:48.715322 -0500 CDT m=+60.001515584 current=2026-10-02 15:51:48.71537 -0500 CDT m=+60.001563876\n--- FAIL: TestReviewStandardTransportBodyReadCancellation (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 42 [running]:\ntesting.tRunner.func1.2({0x102f26d60, 0x3c5dfcf96970})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x102f26d60?, 0x3c5dfcf96970?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x102fad5a0, 0x3c5dfcf96920})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/stages.TestReviewStandardTransportBodyReadCancellation(0x3c5dfcfe3448)\n\t/private/tmp/packet-02-review-diagnostics/restart-total-each-stage/review_contract_test.go:108 +0x8c\ntesting.tRunner(0x3c5dfcfe3448, 0x102fa9b48)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/stages\t0.208s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.469
+  },
+  {
+    "label": "cancel-before-body-review-tests",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/cancel-before-body",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReview",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewStageScopeLiveUntilCloseAndReleasedBeforeNextRequest (0.00s)\n    review_contract_test.go:58: stage canceled before body read\n    review_contract_test.go:61: stage canceled before body close\n    review_contract_test.go:58: stage canceled before body read\n    review_contract_test.go:61: stage canceled before body close\n--- FAIL: TestReviewBodyFailurePreservesCustomCauseAndCloseError (0.00s)\n    review_contract_test.go:103: bodies=[] err=independent read failure\n        independent close failure\n        context canceled\n        context canceled closed=true\n--- FAIL: TestReviewStandardTransportBodyReadCancellation (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 11 [running]:\ntesting.tRunner.func1.2({0x102782d60, 0x37bbf9e96920})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x102782d60?, 0x37bbf9e96920?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1028095a0, 0x37bbf9e968d0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/stages.TestReviewStandardTransportBodyReadCancellation(0x37bbf9fc5448)\n\t/private/tmp/packet-02-review-diagnostics/cancel-before-body/review_contract_test.go:108 +0x8c\ntesting.tRunner(0x37bbf9fc5448, 0x102805b48)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/stages\t0.203s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.431
+  },
+  {
+    "label": "ignore-close-only-failure-review-tests",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/ignore-close-only-failure",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReview",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewCloseOnlyFailureExcludesBody (0.00s)\n    review_contract_test.go:79: bodies=[\"complete\"] err=<nil>\n--- FAIL: TestReviewStandardTransportBodyReadCancellation (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 42 [running]:\ntesting.tRunner.func1.2({0x102c96d60, 0x29b5dff968a0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x102c96d60?, 0x29b5dff968a0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x102d1d5a0, 0x29b5dff96850})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/stages.TestReviewStandardTransportBodyReadCancellation(0x29b5dffe3448)\n\t/private/tmp/packet-02-review-diagnostics/ignore-close-only-failure/review_contract_test.go:108 +0x8c\ntesting.tRunner(0x29b5dffe3448, 0x102d19b48)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/stages\t0.216s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.441
+  },
+  {
+    "label": "invalidate-complete-success-review-tests",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/invalidate-complete-success",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReview",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewCompleteSuccessNotInvalidatedByCloseCancellation (0.00s)\n    review_contract_test.go:89: bodies=[\"complete\"] err=context canceled\n        context canceled\n        context canceled\n--- FAIL: TestReviewStandardTransportBodyReadCancellation (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 28 [running]:\ntesting.tRunner.func1.2({0x100c32d60, 0x2dd06fe128e0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x100c32d60?, 0x2dd06fe128e0?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x100cb95a0, 0x2dd06fe12890})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.com/stages.TestReviewStandardTransportBodyReadCancellation(0x2dd06fe6d448)\n\t/private/tmp/packet-02-review-diagnostics/invalidate-complete-success/review_contract_test.go:108 +0x8c\ntesting.tRunner(0x2dd06fe6d448, 0x100cb5b48)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/stages\t0.195s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.421
+  },
+  {
+    "label": "boundary-focused-no-listener",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/boundary",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReview",
+      "-skip",
+      "StandardTransport",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/stages\t0.238s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.462
+  },
+  {
+    "label": "restart-total-each-stage-focused-no-listener",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/restart-total-each-stage",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReview",
+      "-skip",
+      "StandardTransport",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewOneTotalDeadlineAndEarlierParentDeadline (0.00s)\n    --- FAIL: TestReviewOneTotalDeadlineAndEarlierParentDeadline/total (0.00s)\n        review_contract_test.go:39: total scope deadline restarted: first=2026-10-02 15:53:14.124172 -0500 CDT m=+60.001441293 current=2026-10-02 15:53:14.124222 -0500 CDT m=+60.001490876\nFAIL\nFAIL\texample.com/stages\t0.173s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.365
+  },
+  {
+    "label": "cancel-before-body-focused-no-listener",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/cancel-before-body",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReview",
+      "-skip",
+      "StandardTransport",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewStageScopeLiveUntilCloseAndReleasedBeforeNextRequest (0.00s)\n    review_contract_test.go:58: stage canceled before body read\n    review_contract_test.go:61: stage canceled before body close\n    review_contract_test.go:58: stage canceled before body read\n    review_contract_test.go:61: stage canceled before body close\n--- FAIL: TestReviewBodyFailurePreservesCustomCauseAndCloseError (0.00s)\n    review_contract_test.go:103: bodies=[] err=independent read failure\n        independent close failure\n        context canceled\n        context canceled closed=true\nFAIL\nFAIL\texample.com/stages\t0.170s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.354
+  },
+  {
+    "label": "ignore-close-only-failure-focused-no-listener",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/ignore-close-only-failure",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReview",
+      "-skip",
+      "StandardTransport",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewCloseOnlyFailureExcludesBody (0.00s)\n    review_contract_test.go:79: bodies=[\"complete\"] err=<nil>\nFAIL\nFAIL\texample.com/stages\t0.167s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.347
+  },
+  {
+    "label": "invalidate-complete-success-focused-no-listener",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/invalidate-complete-success",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReview",
+      "-skip",
+      "StandardTransport",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewCompleteSuccessNotInvalidatedByCloseCancellation (0.00s)\n    review_contract_test.go:89: bodies=[\"complete\"] err=context canceled\n        context canceled\n        context canceled\nFAIL\nFAIL\texample.com/stages\t0.168s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.352
+  },
+  {
+    "label": "cancellation-snapshot-stress",
+    "cwd": "/private/tmp/packet-02-review-diagnostics/snapshot-stress",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewCancellationSnapshot$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOCACHE": "/private/tmp/packet-02-go-cache"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewCancellationSnapshot (0.04s)\n    stress_snapshot_test.go:27: iteration 21357: cancellation cause retained without cancellation classification: operation failure\n        custom cancellation\nFAIL\nFAIL\texample.com/stages\t0.235s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.446
+  }
+]

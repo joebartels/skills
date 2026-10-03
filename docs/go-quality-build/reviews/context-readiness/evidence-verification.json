@@ -1,0 +1,651 @@
+{
+  "review_kind": "independent evidence identity checks, no author or probe launch",
+  "input_hashes": {
+    "controller-probes/cli-finalization-budget/contract_test.go": "a4da0cdf6e80b7775c50fe058ccc002d5f39c02eb287e028e5b85724da1c280b",
+    "controller-probes/library-call-cause/contract_test.go": "fd3d5f2e3006b93bd0c953b46806bb4bf56a6305747f54442c3c2420e1ae4739",
+    "controller-probes/mutations.md": "440e965af5b0bee56f80a66ae99710a2f10f8d1c4b2e5be868b43671c83e0aad",
+    "controller-probes/not-context-work/contract_test.go": "e901d8a7ba865dfbf3350d39477b112bf3ad1365bf3e77d1f8a3f7097934d14f",
+    "controller-probes/service-total-budget/contract_test.go": "2e891a7b411499985f6678b251a741e144cc6bb6527f293e4749adafdeab9035",
+    "evals.json": "6a4bcc14bbaa258dbc15e475c6e13bdf3d6a7bf0335a9a0155ba1e76d295b7e6",
+    "files/cli-finalization-budget/README.md": "54095381e481f6ac563f5c25c34c2d2dc4544cceb2b0c67d048f82a592d999f6",
+    "files/cli-finalization-budget/cmd/finalize/main.go": "9271b096954e126e9b2352c3ab3cb8154b780423fcfdae513dfc8578a69755a8",
+    "files/cli-finalization-budget/go.mod": "b73d929218900342c526e632cba831746fa94b7cec3ce21494d9a600bf8336b4",
+    "files/cli-finalization-budget/run.go": "9ca17af848492d10166fc5317873efff4656cd03644801ebdab679aa3207a961",
+    "files/cli-finalization-budget/run_test.go": "2166115dac567a789a6015adee2073d4d966ca69cda5c9cf45f49b704a6547d7",
+    "files/library-call-cause/README.md": "2edba1bb35e859545b26f49847d12f0db21238e77e269f21251008216a2ac36a",
+    "files/library-call-cause/go.mod": "895dea1b3447db8e18a55516a99c09358db5554c6aaeac616be0db2cc2c02c6c",
+    "files/library-call-cause/process.go": "a03e701772a6a097f15ea82d4c1ab821ae35f87b4553c3eb7d07bbc208c8fbbf",
+    "files/library-call-cause/process_test.go": "1fadbcb2b023718069313403c77ee28f4f9c28a5fa89ceeed4cee52cdaf178c9",
+    "files/not-context-work/README.md": "82330f9481b3f29ac994542e9c201fc9648185d5e64d6a3fa066324fab1919cf",
+    "files/not-context-work/go.mod": "19309aefc19bace20ba72442c303a0bb5c944e5bbfaf8b0e220ef43e8c5d5b6e",
+    "files/not-context-work/range.go": "4913f5152f92987b0ecd0c353e2bdc43b110b959e150e5a9492db2a111cf1f3a",
+    "files/not-context-work/range_test.go": "7a03f1da5c381bd2ec11cec780591d33cc280f79eb613a3f7308b7e568c7a59c",
+    "files/service-total-budget/README.md": "47be49120740cf575442ef2dc830bb1aa4ef53c0faf968c008a7a748a35d3f4a",
+    "files/service-total-budget/go.mod": "8e1e0e3517ef00b5581398bfb9fe68ca47fc958d67a3bf6488b73ded33a3b99c",
+    "files/service-total-budget/stages.go": "5fc27874088d0c9b39160355b3800dfee9ccfca5cc6f63dce036f67777cb164e",
+    "files/service-total-budget/stages_test.go": "a21adb0c3bd018418bbb4b7e444cfbd0d4f465c4c5f4e4dc8e52cab61acc8fc6"
+  },
+  "attempts": [
+    {
+      "attempt": 7,
+      "case": "library-call-cause",
+      "arm": "baseline",
+      "profile": "reference",
+      "status": "completed",
+      "counted": true,
+      "files": {
+        "process_test.go": "a114abc9e93b9030a55c75232bf511e87a6f082a79e2fc529a840207de63dfee",
+        "go.mod": "895dea1b3447db8e18a55516a99c09358db5554c6aaeac616be0db2cc2c02c6c",
+        "README.md": "2edba1bb35e859545b26f49847d12f0db21238e77e269f21251008216a2ac36a",
+        "process.go": "779c9172ccd57faff5e25f328671a35aabf0574473af2d927ca11ea1bc09135a"
+      },
+      "patch_sha256": "6799d3f17fbf7aef430f1d7a1e404c1eeeeebb539f37bae180592a9a856d7ef7",
+      "patch_application": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "patch",
+          "-p1",
+          "--batch",
+          "-i",
+          "/Users/jb/.codex/worktrees/ed95/skills/tests/go-quality-build/results/2026-10-02-context-study/attempt-07/source.patch"
+        ],
+        "cwd": "/private/tmp/context-readiness-reconstruct-36v_zrau",
+        "exit_code": 0,
+        "stdout": "patching file process.go\npatching file process_test.go\n",
+        "stderr": ""
+      }
+    },
+    {
+      "attempt": 8,
+      "case": "service-total-budget",
+      "arm": "baseline",
+      "profile": "reference",
+      "status": "completed",
+      "counted": true,
+      "files": {
+        "go.mod": "8e1e0e3517ef00b5581398bfb9fe68ca47fc958d67a3bf6488b73ded33a3b99c",
+        "README.md": "47be49120740cf575442ef2dc830bb1aa4ef53c0faf968c008a7a748a35d3f4a",
+        "stages_test.go": "fdf3e99090ed345c79ccac4d041eb36337409a65a109ca7861adbb5ea51bc8c5",
+        "stages.go": "4cfb59f7b1424eaf87435120d6f24dfd269fc1326e6ee64a931afb38d5887055"
+      },
+      "patch_sha256": "b097756ffb57edf617de2f374c473a7ebfaaae31853bb4c4575471d975a2ee2b",
+      "patch_application": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "patch",
+          "-p1",
+          "--batch",
+          "-i",
+          "/Users/jb/.codex/worktrees/ed95/skills/tests/go-quality-build/results/2026-10-02-context-study/attempt-08/source.patch"
+        ],
+        "cwd": "/private/tmp/context-readiness-reconstruct-ess71kij",
+        "exit_code": 0,
+        "stdout": "patching file stages.go\npatching file stages_test.go\n",
+        "stderr": ""
+      }
+    },
+    {
+      "attempt": 9,
+      "case": "not-context-work",
+      "arm": "baseline",
+      "profile": "reference",
+      "status": "completed",
+      "counted": true,
+      "files": {
+        "range_test.go": "f20dddbe9007d8bc2fce41416988d1f69c1a8df26ce5d37164055f2ec87f38c7",
+        "go.mod": "19309aefc19bace20ba72442c303a0bb5c944e5bbfaf8b0e220ef43e8c5d5b6e",
+        "range.go": "0e9e5ec26abe09a4f19bf32f385af43c2639ce3b7aeae0d61450812f86785ece",
+        "README.md": "82330f9481b3f29ac994542e9c201fc9648185d5e64d6a3fa066324fab1919cf"
+      },
+      "patch_sha256": "1519b24b45b33811480dcb2c782a9ee1f0436096600c6277ba767f19067f94cd",
+      "patch_application": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "patch",
+          "-p1",
+          "--batch",
+          "-i",
+          "/Users/jb/.codex/worktrees/ed95/skills/tests/go-quality-build/results/2026-10-02-context-study/attempt-09/source.patch"
+        ],
+        "cwd": "/private/tmp/context-readiness-reconstruct-wkzffdim",
+        "exit_code": 0,
+        "stdout": "patching file range.go\npatching file range_test.go\n",
+        "stderr": ""
+      }
+    },
+    {
+      "attempt": 10,
+      "case": "library-call-cause",
+      "arm": "exposure",
+      "profile": "reference",
+      "status": "completed",
+      "counted": true,
+      "files": {
+        "process_test.go": "fbe6d9c9da3f00c4cd1edf2e3295852033a4d99d569e125f6b17a1fb78cf5965",
+        "go.mod": "895dea1b3447db8e18a55516a99c09358db5554c6aaeac616be0db2cc2c02c6c",
+        "README.md": "2edba1bb35e859545b26f49847d12f0db21238e77e269f21251008216a2ac36a",
+        "process.go": "bfcf2ea9b015491b089a8de74edd1e7172201320d30e49ccc3730eceb83284b3"
+      },
+      "patch_sha256": "741a0f89163499c4f8a1217e913e7ac9f0a76110cfbe69fa57b9ca7e8f3058f5",
+      "patch_application": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "patch",
+          "-p1",
+          "--batch",
+          "-i",
+          "/Users/jb/.codex/worktrees/ed95/skills/tests/go-quality-build/results/2026-10-02-context-study/attempt-10/source.patch"
+        ],
+        "cwd": "/private/tmp/context-readiness-reconstruct-4oismkc_",
+        "exit_code": 0,
+        "stdout": "patching file process.go\npatching file process_test.go\n",
+        "stderr": ""
+      }
+    },
+    {
+      "attempt": 11,
+      "case": "service-total-budget",
+      "arm": "exposure",
+      "profile": "reference",
+      "status": "completed",
+      "counted": true,
+      "files": {
+        "go.mod": "8e1e0e3517ef00b5581398bfb9fe68ca47fc958d67a3bf6488b73ded33a3b99c",
+        "README.md": "47be49120740cf575442ef2dc830bb1aa4ef53c0faf968c008a7a748a35d3f4a",
+        "stages_test.go": "1916aaaed116d9cea342421bebc0b86cd2c94b8aa76038239efe088e4b6d9681",
+        "stages.go": "edb31c788b3dc7a6b9281f16930d86edd7caf27cfc551b9f66b16d17ccadd226"
+      },
+      "patch_sha256": "b9c9692c5d86448fbcd7870d4a5d2b1f6a4863b034adaaf606aba5de42617d5e",
+      "patch_application": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "patch",
+          "-p1",
+          "--batch",
+          "-i",
+          "/Users/jb/.codex/worktrees/ed95/skills/tests/go-quality-build/results/2026-10-02-context-study/attempt-11/source.patch"
+        ],
+        "cwd": "/private/tmp/context-readiness-reconstruct-jp5i607e",
+        "exit_code": 0,
+        "stdout": "patching file stages.go\npatching file stages_test.go\n",
+        "stderr": ""
+      }
+    },
+    {
+      "attempt": 12,
+      "case": "not-context-work",
+      "arm": "exposure",
+      "profile": "reference",
+      "status": "completed",
+      "counted": true,
+      "files": {
+        "range_test.go": "16dfcf7e345970b9ca35c0cc84a87771aa3f74feb7ba42ccfa645544742d6a03",
+        "go.mod": "19309aefc19bace20ba72442c303a0bb5c944e5bbfaf8b0e220ef43e8c5d5b6e",
+        "range.go": "0e9e5ec26abe09a4f19bf32f385af43c2639ce3b7aeae0d61450812f86785ece",
+        "README.md": "82330f9481b3f29ac994542e9c201fc9648185d5e64d6a3fa066324fab1919cf"
+      },
+      "patch_sha256": "99bc0e585f48599dcad75e935641fc1e7d13799f1ae866f7161f26a79fb426ff",
+      "patch_application": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "patch",
+          "-p1",
+          "--batch",
+          "-i",
+          "/Users/jb/.codex/worktrees/ed95/skills/tests/go-quality-build/results/2026-10-02-context-study/attempt-12/source.patch"
+        ],
+        "cwd": "/private/tmp/context-readiness-reconstruct-obq0abu9",
+        "exit_code": 0,
+        "stdout": "patching file range.go\npatching file range_test.go\n",
+        "stderr": ""
+      }
+    },
+    {
+      "attempt": 13,
+      "case": "cli-finalization-budget",
+      "arm": "baseline",
+      "profile": "transfer",
+      "status": "completed",
+      "counted": true,
+      "files": {
+        "go.mod": "b73d929218900342c526e632cba831746fa94b7cec3ce21494d9a600bf8336b4",
+        "run.go": "e47a5cdd987903b17eac0e6f2d4ca499850fa85ce4e5227536256ede8e991e5e",
+        "README.md": "54095381e481f6ac563f5c25c34c2d2dc4544cceb2b0c67d048f82a592d999f6",
+        "run_test.go": "06f952dd4db3bf7b007014c710aaa6c3b0db3f3fc9fc1c98957a34978068d73e",
+        "cmd/finalize/main.go": "9271b096954e126e9b2352c3ab3cb8154b780423fcfdae513dfc8578a69755a8",
+        "cmd/finalize/main_test.go": "3367e3524df87039712b88dfc1d403c885d2308f521d3f303bc2ad7337b9e166"
+      },
+      "patch_sha256": "69edc9c2c2b448eb7b48fd95eaf29612ab6ec0164959cdf0353a2274dcc6f6e7",
+      "patch_application": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "patch",
+          "-p1",
+          "--batch",
+          "-i",
+          "/Users/jb/.codex/worktrees/ed95/skills/tests/go-quality-build/results/2026-10-02-context-study/attempt-13/source.patch"
+        ],
+        "cwd": "/private/tmp/context-readiness-reconstruct-l5pak2tl",
+        "exit_code": 0,
+        "stdout": "patching file 'cmd/finalize/main_test.go'\npatching file run.go\npatching file run_test.go\n",
+        "stderr": ""
+      }
+    },
+    {
+      "attempt": 14,
+      "case": "cli-finalization-budget",
+      "arm": "exposure",
+      "profile": "transfer",
+      "status": "completed",
+      "counted": true,
+      "files": {
+        "go.mod": "b73d929218900342c526e632cba831746fa94b7cec3ce21494d9a600bf8336b4",
+        "run.go": "cbbd7b3a31b092d0cebf41d7bf3f7ae3fe94f750f0a533724c176b56a42ab2f2",
+        "README.md": "54095381e481f6ac563f5c25c34c2d2dc4544cceb2b0c67d048f82a592d999f6",
+        "run_test.go": "515f52a0dada9c74005c573e32fbe90d3bb15d88bf36a5a4e13a24ef69ec4612",
+        "cmd/finalize/main.go": "9271b096954e126e9b2352c3ab3cb8154b780423fcfdae513dfc8578a69755a8",
+        "cmd/finalize/main_test.go": "ac0c738afae0ae3d7136a3cecf0206b099f1db47f2dce4ada18d08aa91e9bfa7"
+      },
+      "patch_sha256": "4d202c944d0a9c4211caa5e495d32375fe8bf79a269475e1577e47bf7dee5237",
+      "patch_application": {
+        "argv": [
+          "rtk",
+          "proxy",
+          "patch",
+          "-p1",
+          "--batch",
+          "-i",
+          "/Users/jb/.codex/worktrees/ed95/skills/tests/go-quality-build/results/2026-10-02-context-study/attempt-14/source.patch"
+        ],
+        "cwd": "/private/tmp/context-readiness-reconstruct-k7__2zli",
+        "exit_code": 0,
+        "stdout": "patching file 'cmd/finalize/main_test.go'\npatching file run.go\npatching file run_test.go\n",
+        "stderr": ""
+      }
+    },
+    {
+      "attempt": 15,
+      "case": "library-call-cause",
+      "arm": "baseline",
+      "profile": "alternate-model",
+      "status": "failed",
+      "counted": true,
+      "files": {
+        "process_test.go": "1fadbcb2b023718069313403c77ee28f4f9c28a5fa89ceeed4cee52cdaf178c9",
+        "go.mod": "895dea1b3447db8e18a55516a99c09358db5554c6aaeac616be0db2cc2c02c6c",
+        "README.md": "2edba1bb35e859545b26f49847d12f0db21238e77e269f21251008216a2ac36a",
+        "process.go": "a03e701772a6a097f15ea82d4c1ab821ae35f87b4553c3eb7d07bbc208c8fbbf"
+      },
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "patch_application": {
+        "argv": [],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "",
+        "meaning": "empty patch; original retained"
+      }
+    },
+    {
+      "attempt": 16,
+      "case": "library-call-cause",
+      "arm": "exposure",
+      "profile": "alternate-model",
+      "status": "failed",
+      "counted": true,
+      "files": {
+        "process_test.go": "1fadbcb2b023718069313403c77ee28f4f9c28a5fa89ceeed4cee52cdaf178c9",
+        "go.mod": "895dea1b3447db8e18a55516a99c09358db5554c6aaeac616be0db2cc2c02c6c",
+        "README.md": "2edba1bb35e859545b26f49847d12f0db21238e77e269f21251008216a2ac36a",
+        "process.go": "a03e701772a6a097f15ea82d4c1ab821ae35f87b4553c3eb7d07bbc208c8fbbf"
+      },
+      "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "patch_application": {
+        "argv": [],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "",
+        "meaning": "empty patch; original retained"
+      }
+    }
+  ],
+  "selection": [
+    {
+      "profile": "alternate-model",
+      "request": "applicable",
+      "body_read_observed": true,
+      "status": 0,
+      "observed_commands": [
+        "/bin/zsh -lc 'rtk --help'",
+        "/bin/zsh -lc 'rtk read .agents/skills/go-behavior-tests/SKILL.md'",
+        "/bin/zsh -lc 'rtk read .agents/skills/go-context-and-deadlines/SKILL.md'",
+        "/bin/zsh -lc 'rtk read .agents/skills/go-interfaces-and-composition/SKILL.md'",
+        "/bin/zsh -lc 'rtk read .agents/skills/go-behavior-tests/references/behavior-observations.md'",
+        "/bin/zsh -lc 'rtk read .agents/skills/go-test-isolation/SKILL.md'",
+        "/bin/zsh -lc 'rtk read .agents/skills/go-test-isolation/references/isolation-patterns.md'"
+      ],
+      "completion_sha256": "489c979980db2f431befe318d62aa26dca208a33afa85c070651cb6a1863cbe0",
+      "dispatch_sha256": "d8f6b8094c7534a59c7466e0fe5fa0609bf0c264649f4eb40a63924821d4a919",
+      "events_sha256": "ee2291e8c7490024e6af0f0861771d06350440328177d4545448bb80826d8ced",
+      "prompt_sha256": "b3fff1be7e00341d187d6d3b8d80f2a0ea89f4a77cf64b8917f69816c6f116c2",
+      "declaration_sha256": "3ed6117aefeaf95841cc044d9a9b8ee6c35dd1f435c890a32b7c291d7d20a47b",
+      "native_settings": [
+        "--ignore-user-config",
+        "--ephemeral",
+        "skip_host_skill_discovery",
+        "--approve-for-me"
+      ]
+    },
+    {
+      "profile": "alternate-model",
+      "request": "applicable-paraphrase",
+      "body_read_observed": true,
+      "status": 0,
+      "observed_commands": [
+        "/bin/zsh -lc 'pwd; rg --files .agents/skills .codex 2>/dev/null'",
+        "/bin/zsh -lc 'cat /Users/jb/.codex/RTK.md'",
+        "/bin/zsh -lc 'rtk cat .agents/skills/go-test-isolation/SKILL.md'",
+        "/bin/zsh -lc 'rtk cat .agents/skills/go-behavior-tests/SKILL.md'",
+        "/bin/zsh -lc 'rtk cat .agents/skills/go-context-and-deadlines/SKILL.md'",
+        "/bin/zsh -lc 'rtk cat .agents/skills/go-test-isolation/references/isolation-patterns.md'",
+        "/bin/zsh -lc 'rtk cat .agents/skills/go-behavior-tests/references/behavior-observations.md'"
+      ],
+      "completion_sha256": "1226a8dfa8fb7bfda5ac109da3b80b4af6cdd85f48ef787cbe9642891adcd862",
+      "dispatch_sha256": "f9a82619fbd4b3a41c956f2cc5ca16372450ab5a0a58383f21ca2b67d681152d",
+      "events_sha256": "b27db9e27f8bc67a4c7d9757640867fbe1d844b7dc2563394e38221cd1ff246a",
+      "prompt_sha256": "b0f06dfce9b5f4fcb4dd4b76ce7ad46e19c5defc538f5c78f3ac5467fb446801",
+      "declaration_sha256": "22c4616c537927dc029b4d5ddd711f78d55748f284e4c586f5a5169eeeb9c7b1",
+      "native_settings": [
+        "--ignore-user-config",
+        "--ephemeral",
+        "skip_host_skill_discovery",
+        "--approve-for-me"
+      ]
+    },
+    {
+      "profile": "alternate-model",
+      "request": "control",
+      "body_read_observed": false,
+      "status": 0,
+      "observed_commands": [
+        "/bin/zsh -lc 'cat .agents/skills/go-behavior-tests/SKILL.md'",
+        "/bin/zsh -lc 'cat .agents/skills/go-behavior-tests/references/behavior-observations.md'"
+      ],
+      "completion_sha256": "9b9299e592d72cfd3e3fff482d1c1025b9440e8a93e1f36ddd89bf8c56bb5348",
+      "dispatch_sha256": "fbaee1bea09ca7e075a86852d5523cdff1429e7e42318476c2170a3c87ed9dfd",
+      "events_sha256": "6424b2253e6a2c1ae81a6d17dddf4a48d79b5ac658206c9e01601358f6319b27",
+      "prompt_sha256": "8df448fe8f90b24651cf1a4a407ccc12fad925c9a63ae04d5f822873ade0ff4d",
+      "declaration_sha256": "e34d73b5bf44747eba285292a797e69d101a2117351979491eea8cca3459749e",
+      "native_settings": [
+        "--ignore-user-config",
+        "--ephemeral",
+        "skip_host_skill_discovery",
+        "--approve-for-me"
+      ]
+    },
+    {
+      "profile": "alternate-model",
+      "request": "control-paraphrase",
+      "body_read_observed": false,
+      "status": 0,
+      "observed_commands": [
+        "/bin/zsh -lc 'rtk cat .agents/skills/go-behavior-tests/SKILL.md'",
+        "/bin/zsh -lc 'rtk cat .agents/skills/go-behavior-tests/references/behavior-observations.md'"
+      ],
+      "completion_sha256": "376aea7427076c61526132e1aa12ff307a39bb7bb902ca08a20f3318c1fde256",
+      "dispatch_sha256": "6460eafebaa0224f18aef9eb60b875af5e7444cb6d677e701b5b2e9fdb1568d9",
+      "events_sha256": "e7347cb75345fe42340c08f2ac12468dbbba771d06a113b9875bf240810e44ab",
+      "prompt_sha256": "8fa895c1a2d61294c8fbe2f94ae0a59b53eddcaad088ab9fb04b0be644ba7b41",
+      "declaration_sha256": "6add71d7abc729596c95dc2289cfc764286129d34ac4220d4b66b87819f7fdfb",
+      "native_settings": [
+        "--ignore-user-config",
+        "--ephemeral",
+        "skip_host_skill_discovery",
+        "--approve-for-me"
+      ]
+    },
+    {
+      "profile": "alternate-reasoning",
+      "request": "applicable",
+      "body_read_observed": true,
+      "status": 0,
+      "observed_commands": [
+        "/bin/zsh -lc 'rtk cat /Users/jb/.codex/RTK.md && rtk cat .agents/skills/go-context-and-deadlines/SKILL.md && rtk cat .agents/skills/go-interfaces-and-composition/SKILL.md'"
+      ],
+      "completion_sha256": "7de9a3eb9f462c97f84eb5233c1c67e46be5bef65aad02aa56050ba63cf0ba30",
+      "dispatch_sha256": "74421430eeb1f7be1337f828ea6e9daeea09e3d2cfa38e4886b105ba07bc1f5e",
+      "events_sha256": "3e0f0f294b82bb304bfacb7f71ca49510fbe58449d4fc0e5ccb37ad1781b1051",
+      "prompt_sha256": "b3fff1be7e00341d187d6d3b8d80f2a0ea89f4a77cf64b8917f69816c6f116c2",
+      "declaration_sha256": "5ed2925d98a43d599921c79594b07a20a231d852ce9f0296870aa6314dfb4fa6",
+      "native_settings": [
+        "--ignore-user-config",
+        "--ephemeral",
+        "skip_host_skill_discovery",
+        "--approve-for-me"
+      ]
+    },
+    {
+      "profile": "alternate-reasoning",
+      "request": "applicable-paraphrase",
+      "body_read_observed": true,
+      "status": 0,
+      "observed_commands": [
+        "/bin/zsh -lc 'rtk cat /Users/jb/.codex/RTK.md'",
+        "/bin/zsh -lc 'rtk cat /private/tmp/go-select-kkj7walf/.agents/skills/go-context-and-deadlines/SKILL.md && rtk cat /private/tmp/go-select-kkj7walf/.agents/skills/go-interfaces-and-composition/SKILL.md'"
+      ],
+      "completion_sha256": "81932853d69398a0dc844d4aca08629cf960f928753d99ccf0068f1499905700",
+      "dispatch_sha256": "c90503e5f18140c2ec46f706cfb8c8b79e717465ca7fc6d06215500aa1940997",
+      "events_sha256": "8abdd9ea5f7318286b6fa4c7cd553d9ce20b0df57b17cc26f29b676461c192f6",
+      "prompt_sha256": "b0f06dfce9b5f4fcb4dd4b76ce7ad46e19c5defc538f5c78f3ac5467fb446801",
+      "declaration_sha256": "6b6045f13d0de90314cabb397490813c8fb638380738d71af3cf4cc2a979af25",
+      "native_settings": [
+        "--ignore-user-config",
+        "--ephemeral",
+        "skip_host_skill_discovery",
+        "--approve-for-me"
+      ]
+    },
+    {
+      "profile": "alternate-reasoning",
+      "request": "control",
+      "body_read_observed": false,
+      "status": 0,
+      "observed_commands": [
+        "/bin/zsh -lc \"rtk cat /Users/jb/.codex/RTK.md; rtk rg --files -g 'AGENTS.md' -g '*.go' -g 'go.mod' -g 'SKILL.md' .\"",
+        "/bin/zsh -lc 'rtk rg --files'",
+        "/bin/zsh -lc 'rtk pwd; rtk ls -la'",
+        "/bin/zsh -lc 'rtk ls -R .agents; rtk cat .agents/skills/go-behavior-tests/SKILL.md; rtk cat .agents/skills/go-test-isolation/SKILL.md; rtk cat .agents/skills/go-api-contracts/SKILL.md'",
+        "/bin/zsh -lc \"rtk cat .agents/skills/go-behavior-tests/references/behavior-observations.md; rtk rg --files --hidden -g '\"'! .git'\"' -g '*.go' -g 'go.mod' -g 'AGENTS.md' .; rtk rg -n 'range|upper|inclusive|int' --glob '*.go' .\""
+      ],
+      "completion_sha256": "004b6647f7fff3492c1d2d3b753e944e47b2aa08959409d508e1e7311fae73e1",
+      "dispatch_sha256": "3d85522da75c0353083ec64aba31c64b8e6106f66a6ff58b3ff49fb53d7715e9",
+      "events_sha256": "c1e9c8b53c4f7566d56102aa9649698d0c029a29a25367179e6f32e3587232e9",
+      "prompt_sha256": "8df448fe8f90b24651cf1a4a407ccc12fad925c9a63ae04d5f822873ade0ff4d",
+      "declaration_sha256": "bb548062668be9fef2e6487046ac76962de7eb91ca0ca5a840b40b9f74932207",
+      "native_settings": [
+        "--ignore-user-config",
+        "--ephemeral",
+        "skip_host_skill_discovery",
+        "--approve-for-me"
+      ]
+    },
+    {
+      "profile": "alternate-reasoning",
+      "request": "control-paraphrase",
+      "body_read_observed": false,
+      "status": 0,
+      "observed_commands": [
+        "/bin/zsh -lc 'rtk pwd && rtk ls -la && rtk cat /Users/jb/.codex/RTK.md && rtk find .agents/skills -name SKILL.md -maxdepth 3'",
+        "/bin/zsh -lc 'rtk cat .agents/skills/go-behavior-tests/SKILL.md && rtk cat .agents/skills/go-test-isolation/SKILL.md'"
+      ],
+      "completion_sha256": "e5480cf37d9386ec0344f63ecbddb7bcb11a1f539a6a213a35b0b0ad65e8e673",
+      "dispatch_sha256": "64ea6a5e9f554a02f82000759eb7a238623d114242dd2259fbdbeabc90e381bc",
+      "events_sha256": "83a1de6fe2e786528b19351cb9a9c2701ae3ca7e0947b1acfae7ba78fbec7fe8",
+      "prompt_sha256": "8fa895c1a2d61294c8fbe2f94ae0a59b53eddcaad088ab9fb04b0be644ba7b41",
+      "declaration_sha256": "93e9bad5b6cb0095355ec941da5214b1b7880ea2ded2ee323233ea9072879cfb",
+      "native_settings": [
+        "--ignore-user-config",
+        "--ephemeral",
+        "skip_host_skill_discovery",
+        "--approve-for-me"
+      ]
+    },
+    {
+      "profile": "reference",
+      "request": "applicable",
+      "body_read_observed": true,
+      "status": 0,
+      "observed_commands": [
+        "/bin/zsh -lc 'rtk cat .agents/skills/go-context-and-deadlines/SKILL.md .agents/skills/go-behavior-tests/SKILL.md .agents/skills/go-interfaces-and-composition/SKILL.md'"
+      ],
+      "completion_sha256": "506d681acdeab2cf3a5fe8d231d8e6832a63aacf1cac3a7014acfdcf3192b4c9",
+      "dispatch_sha256": "4b6d649478f13f8f9e974b654f5986e32594810c7c59f313f2f95e44f91665a9",
+      "events_sha256": "2334c94e31022af77ff59c3edb56624cba958a74d3fe0c7a39acd0df96e2016e",
+      "prompt_sha256": "b3fff1be7e00341d187d6d3b8d80f2a0ea89f4a77cf64b8917f69816c6f116c2",
+      "declaration_sha256": "da10d77df7fbf54f334d252c3108d770186636a1c19d931a5c007b7861447ae0",
+      "native_settings": [
+        "--ignore-user-config",
+        "--ephemeral",
+        "skip_host_skill_discovery",
+        "--approve-for-me"
+      ]
+    },
+    {
+      "profile": "reference",
+      "request": "applicable-paraphrase",
+      "body_read_observed": true,
+      "status": 0,
+      "observed_commands": [
+        "/bin/zsh -lc 'rtk cat .agents/skills/go-context-and-deadlines/SKILL.md'",
+        "/bin/zsh -lc 'rtk cat .agents/skills/go-behavior-tests/SKILL.md'"
+      ],
+      "completion_sha256": "523871900a95e483226389dd1c71cecf98f612cc5fd3ceda3c5bc1b89a4a5f5a",
+      "dispatch_sha256": "a6c76a8f803f22961a1f6af3e6f8415a38269433e941b315739936f18f231792",
+      "events_sha256": "e0812c7026859ee9bfac773dcb5a7c9792563981b3e79073eee74ec1fc628e66",
+      "prompt_sha256": "b0f06dfce9b5f4fcb4dd4b76ce7ad46e19c5defc538f5c78f3ac5467fb446801",
+      "declaration_sha256": "9426c1d05d3a8187cf874856932aefc8837bb5def4034b02f522ea72bdc16b25",
+      "native_settings": [
+        "--ignore-user-config",
+        "--ephemeral",
+        "skip_host_skill_discovery",
+        "--approve-for-me"
+      ]
+    },
+    {
+      "profile": "reference",
+      "request": "control",
+      "body_read_observed": false,
+      "status": 0,
+      "observed_commands": [
+        "/bin/zsh -lc 'rtk cat /Users/jb/.codex/RTK.md; rtk pwd; rtk rg --files .agents/skills'",
+        "/bin/zsh -lc 'rtk cat .agents/skills/go-behavior-tests/SKILL.md; rtk cat .agents/skills/go-api-contracts/SKILL.md'"
+      ],
+      "completion_sha256": "fa89faf730a845b12711e83eb653280ecaa21c9a0061a6de6cedfbbefe3a9129",
+      "dispatch_sha256": "ac173d4ed63f781469ca311416f294371aa1ad560feca07032d333ec730a97d1",
+      "events_sha256": "f2cb1ab5f0619b16341d7e03e288cbf7b2659e088bba53892c8c24ca6043ed17",
+      "prompt_sha256": "8df448fe8f90b24651cf1a4a407ccc12fad925c9a63ae04d5f822873ade0ff4d",
+      "declaration_sha256": "263b11327080f3af28a51252260cc8563722888bbdd32a4813f74afedec25576",
+      "native_settings": [
+        "--ignore-user-config",
+        "--ephemeral",
+        "skip_host_skill_discovery",
+        "--approve-for-me"
+      ]
+    },
+    {
+      "profile": "reference",
+      "request": "control-paraphrase",
+      "body_read_observed": false,
+      "status": 0,
+      "observed_commands": [
+        "/bin/zsh -lc \"rtk-prefixed pwd && rtk-prefixed rg --files -g 'AGENTS.md' -g 'SKILL.md' -g '*.go' -g '\"'!vendor'\"' | head -80 && rtk-prefixed cat /Users/jb/.codex/RTK.md\"",
+        "/bin/zsh -lc \"command -v rtk; command -v rtk-prefixed; pwd; rg --files -g 'AGENTS.md' -g 'SKILL.md' -g '*.go' -g '\"'!vendor'\"' | head -80; cat /Users/jb/.codex/RTK.md\"",
+        "/bin/zsh -lc \"rtk pwd && rtk rg --files -g 'AGENTS.md' -g 'SKILL.md' -g '*.go' -g '\"'!vendor'\"' | head -100 && rtk cat /Users/jb/.codex/RTK.md\"",
+        "/bin/zsh -lc \"rtk ls -la && rtk rg --files --hidden -g '\"'!/.git/**'\"' -g '\"'!vendor/**'\"' | head -120\"",
+        "/bin/zsh -lc 'rtk cat .agents/skills/go-behavior-tests/SKILL.md && rtk cat .agents/skills/go-behavior-tests/references/behavior-observations.md'"
+      ],
+      "completion_sha256": "c831095d855193fef0d3e6cd9228fa6f13ced7fa395e294fa8b00998a70f944b",
+      "dispatch_sha256": "3fa49067a9258193c5df8f48eac69d25467cb6bfe01e96558f9d3a38fc1f24a0",
+      "events_sha256": "848cabdb350f2e91b2cb2dc98bc71c12f56527693b6ee1874b03c8bef6027b59",
+      "prompt_sha256": "8fa895c1a2d61294c8fbe2f94ae0a59b53eddcaad088ab9fb04b0be644ba7b41",
+      "declaration_sha256": "c06614abf18f5d236f0c722fd82a40d5170f274efc5dc0bd301908633adbf78c",
+      "native_settings": [
+        "--ignore-user-config",
+        "--ephemeral",
+        "skip_host_skill_discovery",
+        "--approve-for-me"
+      ]
+    }
+  ],
+  "outcome_freezes": {
+    "library": {
+      "index_sha256": "a3a252737b63c9f327ac3ce203cae1864fc1ff6933697f146194cb1c486a6a30",
+      "artifacts_checked": 41,
+      "frozen_before_arm_disclosure": true
+    },
+    "service": {
+      "index_sha256": "3a80379800dbb1c4a4eca99d8643f6e5d886a3fbe97650315a00488c48961f65",
+      "artifacts_checked": 155,
+      "frozen_before_arm_disclosure": true
+    },
+    "control": {
+      "index_sha256": "c2c1ac7aa243ba57a5e73aad98287d2e8ee4aa88a12dbc83d7811bc768edf3b1",
+      "artifacts_checked": 81,
+      "frozen_before_arm_disclosure": true
+    },
+    "transfer": {
+      "index_sha256": "c7db4993a2ebc08fd3b87f29a0e8b49d948ceaa87c4538587b71650730f31bb3",
+      "artifacts_checked": 111,
+      "frozen_before_arm_disclosure": true
+    }
+  },
+  "neutral_source_identity": {
+    "library": {
+      "source_hashes_checked": 12,
+      "candidate_attempt_mapping": {
+        "candidate-1": 10,
+        "candidate-2": 7
+      }
+    },
+    "service": {
+      "source_hashes_checked": 12,
+      "candidate_attempt_mapping": {
+        "candidate-1": 11,
+        "candidate-2": 8
+      }
+    },
+    "control": {
+      "source_hashes_checked": 12,
+      "candidate_attempt_mapping": {
+        "candidate-1": 9,
+        "candidate-2": 12
+      }
+    },
+    "transfer": {
+      "source_hashes_checked": 18,
+      "candidate_attempt_mapping": {
+        "candidate-1": 14,
+        "candidate-2": 13
+      }
+    }
+  },
+  "final_summary_sha256": {
+    "comparison.md": "bd806b43c4ff270d7673bea901a9c32fa0d6ae163307a0c689c1743bf6bb81d3",
+    "manifest.json": "4b2505749d43d65163367ead1151d03c05f4ab75576bed7a89dd13de3fad14cb",
+    "neutral-packet-map.json": "63348188580d250f10c912f5202353151e87e4202ffb3175ec8b7612be147db7",
+    "selection-summary.json": "e0a3d8098ccb82e092e077cd941a3b814f1312f3f3ae6c0b469c80521ed87e5f",
+    "attempt-integrity.json": "81a5fa960a5b8b4b7086d7a754ed8015645b123e87eb40c2d2f21181220c51f7"
+  },
+  "limits": [
+    "Completed sources reconstructed independently; failed attempts15/16 reconstruct unchanged inputs, never outcomes.",
+    "Selection access cross-checked against captured observed commands; hidden full runtime context and discarded temporary native catalog cannot be independently recaptured.",
+    "All72 topic cards exist in exact frozen packet inventories; card coverage, interpretation and severity remain independent reviewer judgments, not proof from a hash.",
+    "No tests, authors, probes, input edits, draft edits, runtime edits or raw-archive edits performed."
+  ]
+}

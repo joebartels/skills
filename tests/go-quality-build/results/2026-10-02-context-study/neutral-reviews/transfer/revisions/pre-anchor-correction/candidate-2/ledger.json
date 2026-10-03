@@ -1,0 +1,73 @@
+{
+  "scope": "provided original to candidate-2; complete requested library/command evolution",
+  "coverage": [
+    {
+      "id": "architecture",
+      "status": "complete",
+      "reason": "Callback/API composition and Run-to-command lifecycle ownership; supplied host preserved."
+    },
+    {
+      "id": "code-quality",
+      "status": "complete",
+      "reason": "Changed Run error flow/helpers, test readability, Go 1.22 API availability, formatting and vet."
+    },
+    {
+      "id": "correctness",
+      "status": "complete",
+      "reason": "Sequential acceptance, stop conditions, empty/unaccepted work, late successful apply, cancellation classification/cause, independent failures, finalization effects, and child status/output/receipt."
+    },
+    {
+      "id": "testing",
+      "status": "complete",
+      "reason": "Both authored test files, real process boundaries, portable assertions, regression detection, case lifetime, and failure-path cleanup."
+    },
+    {
+      "id": "security",
+      "status": "not_applicable",
+      "reason": "Conditional applicability only: trusted cooperative callbacks, caller-owned local CLI inputs, unchanged receipt sink/permissions, no changed attacker or authorization boundary."
+    },
+    {
+      "id": "resilience",
+      "status": "complete",
+      "reason": "Cancellation/failure diagnosis, independent finalization deadline, synchronous drain before return/exit, and required receipt failure handling."
+    },
+    {
+      "id": "resources",
+      "status": "complete",
+      "reason": "Run complexity, finalization timer/context ownership, synchronous callback completion and release; test fixture ownership is assigned to Testing."
+    },
+    {
+      "id": "dependencies",
+      "status": "complete",
+      "reason": "Standard-library-only module, unchanged go 1.22 directive, selected compiler and nested process-build compiler, standalone readonly builds on minimum/host."
+    },
+    {
+      "id": "deployment",
+      "status": "complete",
+      "reason": "Local CLI artifact build, existing runtime configuration/signals, accepted-prefix receipt effects and exit 2 after failure/interruption. No unrelated delivery-system audit."
+    }
+  ],
+  "findings": [
+    {
+      "id": "T1",
+      "severity": "moderate",
+      "systemic": false,
+      "cause": "Bounded-finalization verification relies on the operation under test to unblock the test and on an unbounded post-interrupt child Wait.",
+      "evidence": "candidate-2/run_test.go:89-97 calls Run synchronously with a finalizer blocked on ctx.Done and no independent case guard. candidate-2/cmd/finalize/main_test.go:85-87 waits synchronously for the interrupted child and stderr reader; cleanup cannot run while this wait is blocked. Supplied frozen sensitivity output documents the unbounded-finalization variant reaching the package-wide 30s panic; that result was supplied, not independently rerun. Immutable candidate suites and probes pass on both actual compilers.",
+      "correction": "Use a separate bounded test controller around Run and the child lifecycle, make callbacks releasable on failure, and kill/reap a stalled child before reporting a case-level failure. Keep production completion assertions.",
+      "primary_owner": "Library/process test controllers",
+      "sources": [
+        "candidate-2/testing/T1"
+      ],
+      "source_location": "candidate-2/cmd/finalize/main_test.go:85",
+      "reconciliation": "One test-controller ownership cause across in-process and process finalization; moderate because regressions are eventually detected by a package-wide timeout, with poor isolation and delayed diagnosis. No immutable production hang is claimed."
+    }
+  ],
+  "strengths": [
+    {
+      "id": "G1",
+      "evidence": "Actual Go 1.22.12 and 1.26.5 unchanged supplied process probes verify exit 2, accepted output and interrupted receipt; cooperative finalization waits within its scope and resources release is independently checked."
+    }
+  ],
+  "safeguards": []
+}

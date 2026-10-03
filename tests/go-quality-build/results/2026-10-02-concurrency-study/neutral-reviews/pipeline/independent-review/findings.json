@@ -1,0 +1,211 @@
+{
+  "candidates": {
+    "A": [
+      {
+        "id": "A/F1",
+        "severity": "major",
+        "systemic": false,
+        "primary_owner": "correctness-and-compatibility",
+        "scope": "existing-in-scope",
+        "cause": "The stop snapshot stores only a boolean; suppression then treats both Canceled and DeadlineExceeded as the coordinated stop error without matching the actual child context error.",
+        "evidence": "candidates/A/cmd/pipeline/pipeline.go:13,19,24,57-59; TestReviewIndependentDeadlineAfterStop has an active parent, observes child ctx.Err()==context.Canceled, then independently returns context.DeadlineExceeded during cleanup. Host Go1.26.5, actual Go1.22.12 and host race/shuffle all return nil and fail the intended error-identity assertion.",
+        "correction": "Record the actual child context error observed with each callback result and suppress only the exact matching context stop error for that coordinated stop. Preserve a DeadlineExceeded error when the work context was only Canceled, plus wrapped/joined independent causes. Keep the first independent exact error before stopping.",
+        "magnitude": "Contained error-preservation failure in one private pipeline contract. A caller may receive success instead of an independent operation deadline failure during callback cleanup; no broad/irreversible or systemic reach was shown.",
+        "topics": [
+          "architecture-and-design",
+          "code-quality-and-idioms",
+          "correctness-and-compatibility",
+          "observability-and-resilience"
+        ],
+        "evidence_labels": [
+          "A/host/independent-probes",
+          "A/minimum/independent-probes",
+          "A/probe-race-shuffle"
+        ],
+        "locations": [
+          "candidates/A/cmd/pipeline/pipeline.go:57",
+          "probes/review_probe_test.go:124"
+        ]
+      },
+      {
+        "id": "A/F2",
+        "severity": "major",
+        "systemic": false,
+        "primary_owner": "testing",
+        "scope": "existing-in-scope",
+        "cause": "The claimed early producer join assertion tests a flag assigned true after the pipeline call and waits for eventual producer cleanup after return; it never establishes cleanup completed before host return.",
+        "evidence": "candidates/A/cmd/pipeline/pipeline_test.go:44-69. A narrowly scoped, compiling mutation returns after normal consumer completion only while producerDone is false. Baseline author/probe targets pass; the mutant full author suite and claimed join test both pass at -count=10, while TestReviewEarlyStopJoin fails ASSERT host returned before producer cleanup release.",
+        "correction": "Run the host asynchronously, hold producer cleanup after observing its stop, and assert host completion is still unavailable before releasing cleanup; then check both callback completion and host result. Own cancellation and gate release in cleanup and bound every event wait.",
+        "magnitude": "An explicit important lifecycle contract is effectively unverified by the delivered join test. The regression can return to callers while callback cleanup still runs; one test-harness correction is required independently of production fixes.",
+        "topics": [
+          "testing"
+        ],
+        "evidence_labels": [
+          "A/narrow-join/original-author-target-green",
+          "A/narrow-join/original-probe-target-green",
+          "A/narrow-join/compile",
+          "A/narrow-join/ordinary-suite",
+          "A/narrow-join/author-target",
+          "A/narrow-join/independent-target"
+        ],
+        "locations": [
+          "candidates/A/cmd/pipeline/pipeline_test.go:46",
+          "candidates/A/cmd/pipeline/pipeline_test.go:62",
+          "candidates/A/cmd/pipeline/pipeline_test.go:67"
+        ]
+      },
+      {
+        "id": "A/F3",
+        "severity": "major",
+        "systemic": false,
+        "primary_owner": "testing",
+        "scope": "existing-in-scope",
+        "cause": "Independent cancellation-class error tests cover a pre-stop producer joined error and first consumer sentinel, but do not verify independent error preservation after stopping for both callback roles/classes.",
+        "evidence": "candidates/A/cmd/pipeline/pipeline_test.go:88-109. The compiling broad-cancellation-suppression mutation survives the entire delivered suite. Baseline TestReviewWrappedFailures is green, and the mutant fails its consumer-cleanup independent-error assertion. The unmodified candidate also fails the independent DeadlineExceeded-during-Canceled-cleanup probe on both toolchains.",
+        "correction": "Add independent producer/consumer error assertions before and after coordinated stopping, including an exact error different from child ctx.Err() and wrapped/joined errors. Require original-green, compiled-mutant and intended assertion failures for suppression mutations.",
+        "magnitude": "The README explicitly requires preservation of independent failures. A regression can silently discard consumer cleanup errors without changing this suite result; a separate error-test correction is needed from the host/cleanup join assertion correction.",
+        "topics": [
+          "testing"
+        ],
+        "evidence_labels": [
+          "A/mutation/broad-cancel-suppression/original-target-green",
+          "A/mutation/broad-cancel-suppression/compile",
+          "A/mutation/broad-cancel-suppression/ordinary-suite",
+          "A/mutation/broad-cancel-suppression/independent-target",
+          "A/host/independent-probes"
+        ],
+        "locations": [
+          "candidates/A/cmd/pipeline/pipeline_test.go:88",
+          "candidates/A/cmd/pipeline/pipeline_test.go:99"
+        ]
+      }
+    ],
+    "B": [
+      {
+        "id": "B/F1",
+        "severity": "major",
+        "systemic": false,
+        "primary_owner": "correctness-and-compatibility",
+        "scope": "existing-in-scope",
+        "cause": "suppressStopError uses only an active parent and membership in the two exact cancellation sentinels; it has no evidence that a callback error was caused by coordinated stopping.",
+        "evidence": "candidates/B/cmd/pipeline/pipeline.go:43,46-49. TestControllerIndependentCancellationClassBeforeStop fails on host, actual Go1.22.12 and race/shuffle. Independent TestReviewIndependentExactBeforeStop reproduces both producer and consumer first exact-Canceled errors being lost before child cancellation. TestReviewIndependentDeadlineAfterStop also loses DeadlineExceeded when the actual child stop is Canceled.",
+        "correction": "Attach actual child stop/error state to each callback result, retain the first independent failure observed before stopping, and suppress only the exact matching context error generated for coordinated stopping. Preserve other exact cancellation-class errors and every wrapped/joined independent error.",
+        "magnitude": "Contained important error-preservation failure in the private pipeline. Both callback roles can report an independent cancellation failure and callers receive success; multiple symptoms share the single classification correction, so this is one major rather than a systemic major.",
+        "topics": [
+          "architecture-and-design",
+          "code-quality-and-idioms",
+          "correctness-and-compatibility",
+          "observability-and-resilience"
+        ],
+        "evidence_labels": [
+          "B/host/held-tests",
+          "B/minimum/held-tests",
+          "B/held-race-shuffle",
+          "B/host/independent-probes",
+          "B/minimum/independent-probes",
+          "B/probe-race-shuffle"
+        ],
+        "locations": [
+          "candidates/B/cmd/pipeline/pipeline.go:43",
+          "candidates/B/cmd/pipeline/pipeline.go:47"
+        ]
+      },
+      {
+        "id": "B/F2",
+        "severity": "major",
+        "systemic": false,
+        "primary_owner": "testing",
+        "scope": "existing-in-scope",
+        "cause": "The suite conflates cancellation-class independent failures with wrapped errors: it never asserts preservation of a bare sentinel returned before any coordinated stop, or an independent exact deadline after a Canceled stop.",
+        "evidence": "candidates/B/cmd/pipeline/pipeline_test.go:93-131; the candidate ordinary suite is green on host and actual Go1.22.12, while the supplied held test and independent exact-error probes deterministically fail. The both-error test meaningfully rejects broad errors.Is-based suppression, but that assertion does not cover this current provenance defect.",
+        "correction": "Add bounded tests for each callback returning bare context.Canceled while the child and parent are active, and for an independent context.DeadlineExceeded while cleanup observes Canceled. Assert error identity after joins, and retain the existing wrapped/joined cases.",
+        "magnitude": "An explicit important error-preservation contract is unverified for the exact sentinel paths that currently fail. Production repair and test additions are independent changes; the two timing/class examples belong to one assertion-matrix gap.",
+        "topics": [
+          "testing"
+        ],
+        "evidence_labels": [
+          "B/host/ordinary-tests",
+          "B/minimum/ordinary-tests",
+          "B/host/held-tests",
+          "B/host/independent-probes",
+          "B/mutation/broad-cancel-suppression/ordinary-suite"
+        ],
+        "locations": [
+          "candidates/B/cmd/pipeline/pipeline_test.go:93",
+          "candidates/B/cmd/pipeline/pipeline_test.go:110"
+        ]
+      }
+    ]
+  },
+  "strengths": {
+    "A": [
+      {
+        "id": "A/G1",
+        "evidence": "TestReviewFIFO succeeds at capacities 1 and 3, and actual host/minimum binaries emit the finite integer sequence and exact --take prefix in order."
+      },
+      {
+        "id": "A/G2",
+        "evidence": "Supplied held early cleanup gate and independent TestReviewEarlyStopJoin/TestReviewFailureStopJoin succeed on the original A snapshot. Both callbacks are joined after cooperative stopping, and the original first-sentinel-before-stop probe succeeds."
+      },
+      {
+        "id": "A/G3",
+        "evidence": "Exact equality retains wrapped/joined independent errors on the original snapshot (TestReviewWrappedFailures passes). errors.Join preserves inspected independent error identities; caller cancellation remains an error in the delivered test."
+      },
+      {
+        "id": "A/G4",
+        "evidence": "Host1.26.5 and actual Go1.22.12 builds/vet/ordinary suites pass in disposable standalone copies with GOWORK=off, GOTOOLCHAIN=local, GOPROXY=off and -mod=readonly; gofmt -d is empty."
+      }
+    ],
+    "B": [
+      {
+        "id": "B/G1",
+        "evidence": "TestReviewFIFO succeeds at capacities 1 and 3, and actual host/minimum binaries emit the finite integer sequence and exact --take prefix in order."
+      },
+      {
+        "id": "B/G2",
+        "evidence": "Independent early-stop and producer-failure cleanup-gate probes succeed on original B. Its author join test baseline is green, and the compiling skip-early-join mutation fails the intended joined-before-return assertion repeatedly."
+      },
+      {
+        "id": "B/G3",
+        "evidence": "The original wrapped/joined independent-error probe succeeds. Its author both-error test rejects the compiling broad errors.Is suppression mutation through the intended missing-independent-failures assertion."
+      },
+      {
+        "id": "B/G4",
+        "evidence": "Host1.26.5 and actual Go1.22.12 builds/vet/ordinary suites pass in disposable standalone copies with GOWORK=off, GOTOOLCHAIN=local, GOPROXY=off and -mod=readonly; gofmt -d is empty."
+      }
+    ]
+  },
+  "reconciliation": [
+    "Within each candidate, the production cancellation-class suppression symptoms are deduplicated to one root cause. Cross-topic copies use that canonical ID.",
+    "Production correction and error-regression assertion additions are separate independently necessary corrections.",
+    "A join assertion needs a distinct event/order correction and remains separate from the error assertion matrix gap.",
+    "No systemic major or critical reach is supported. Multiple callback examples are contained in one pipeline boundary.",
+    "The first broad A skip-join mutation also erased already-observed producer errors, so only its targeted result is retained as supplementary evidence. The narrowed mutation is used for the independently graded join-test gap."
+  ],
+  "rejected_or_unconfirmed": [
+    {
+      "id": "Q1",
+      "candidate": "A",
+      "concern": "Publication of producer result precedes close(out).",
+      "decision": "Not graded: callbacks have returned, and source promises callback joining; no demonstrated persistent goroutine/channel leak or supported close-before-host-return contract was established."
+    },
+    {
+      "id": "Q2",
+      "candidate": "both",
+      "concern": "Two exact context.Canceled errors can be causally indistinguishable after a stop.",
+      "decision": "Limit: findings rely on observable before-stop provenance and mismatched DeadlineExceeded-vs-Canceled classes, not an impossible inference about identical sentinel intent after stopping."
+    },
+    {
+      "id": "Q3",
+      "candidate": "both",
+      "concern": "Arbitrary blocking Scanner Reader cancellation.",
+      "decision": "Excluded explicitly by original README; no defect or requested signal machinery."
+    },
+    {
+      "id": "Q4",
+      "candidate": "both",
+      "concern": "Package-alarm mutation failures and missing cleanup on failed author tests.",
+      "decision": "Raw results retained; timeout-only runs provide no intended-assertion mutation credit. This is a verification limit and optional harness-hardening follow-up, not extra counted production defects."
+    }
+  ]
+}

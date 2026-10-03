@@ -1,0 +1,178 @@
+[
+  {
+    "candidate": "A",
+    "mutation": "drop-unit-updates",
+    "toolchain": "host",
+    "intended_assertion": "The final exact-count assertion should fail for coherent {0 0}, with no wait for the expected count.",
+    "behavioral_assertion_detected": false,
+    "deadline_rejection": true,
+    "build_failure": false,
+    "raw_record": "raw/A-mutation-drop-unit-updates-host.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals.go"
+  },
+  {
+    "candidate": "A",
+    "mutation": "drop-unit-updates",
+    "toolchain": "go122",
+    "intended_assertion": "The final exact-count assertion should fail for coherent {0 0}, with no wait for the expected count.",
+    "behavioral_assertion_detected": false,
+    "deadline_rejection": true,
+    "build_failure": false,
+    "raw_record": "raw/A-mutation-drop-unit-updates-go122.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals.go"
+  },
+  {
+    "candidate": "A",
+    "mutation": "split-update",
+    "toolchain": "host",
+    "intended_assertion": "The in-flight Count != Sum assertion should fail; every field remains separately synchronized, so race rejection is not required.",
+    "behavioral_assertion_detected": true,
+    "deadline_rejection": false,
+    "build_failure": false,
+    "raw_record": "raw/A-mutation-split-update-host.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/split-update-A/totals.go"
+  },
+  {
+    "candidate": "A",
+    "mutation": "split-update",
+    "toolchain": "go122",
+    "intended_assertion": "The in-flight Count != Sum assertion should fail; every field remains separately synchronized, so race rejection is not required.",
+    "behavioral_assertion_detected": true,
+    "deadline_rejection": false,
+    "build_failure": false,
+    "raw_record": "raw/A-mutation-split-update-go122.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/split-update-A/totals.go"
+  },
+  {
+    "candidate": "A",
+    "mutation": "global-state",
+    "toolchain": "host",
+    "intended_assertion": "The first or second instance snapshot assertion should reject state shared between Totals instances.",
+    "behavioral_assertion_detected": true,
+    "deadline_rejection": false,
+    "build_failure": false,
+    "raw_record": "raw/A-mutation-global-state-host.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/global-state-A/totals.go"
+  },
+  {
+    "candidate": "A",
+    "mutation": "global-state",
+    "toolchain": "go122",
+    "intended_assertion": "The first or second instance snapshot assertion should reject state shared between Totals instances.",
+    "behavioral_assertion_detected": true,
+    "deadline_rejection": false,
+    "build_failure": false,
+    "raw_record": "raw/A-mutation-global-state-go122.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/global-state-A/totals.go"
+  },
+  {
+    "candidate": "A",
+    "mutation": "wrong-signed-sum",
+    "toolchain": "host",
+    "intended_assertion": "The sequential exact {Count:2, Sum:1} assertion should reject treating a negative delta as positive.",
+    "behavioral_assertion_detected": true,
+    "deadline_rejection": false,
+    "build_failure": false,
+    "raw_record": "raw/A-mutation-wrong-signed-sum-host.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/wrong-signed-sum-A/totals.go"
+  },
+  {
+    "candidate": "A",
+    "mutation": "wrong-signed-sum",
+    "toolchain": "go122",
+    "intended_assertion": "The sequential exact {Count:2, Sum:1} assertion should reject treating a negative delta as positive.",
+    "behavioral_assertion_detected": true,
+    "deadline_rejection": false,
+    "build_failure": false,
+    "raw_record": "raw/A-mutation-wrong-signed-sum-go122.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/wrong-signed-sum-A/totals.go"
+  },
+  {
+    "candidate": "B",
+    "mutation": "drop-unit-updates",
+    "toolchain": "host",
+    "intended_assertion": "The final exact-count assertion should fail for coherent {0 0}, with no wait for the expected count.",
+    "behavioral_assertion_detected": true,
+    "deadline_rejection": false,
+    "build_failure": false,
+    "raw_record": "raw/B-mutation-drop-unit-updates-host.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-B/totals.go"
+  },
+  {
+    "candidate": "B",
+    "mutation": "drop-unit-updates",
+    "toolchain": "go122",
+    "intended_assertion": "The final exact-count assertion should fail for coherent {0 0}, with no wait for the expected count.",
+    "behavioral_assertion_detected": true,
+    "deadline_rejection": false,
+    "build_failure": false,
+    "raw_record": "raw/B-mutation-drop-unit-updates-go122.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-B/totals.go"
+  },
+  {
+    "candidate": "B",
+    "mutation": "split-update",
+    "toolchain": "host",
+    "intended_assertion": "The in-flight Count != Sum assertion should fail; every field remains separately synchronized, so race rejection is not required.",
+    "behavioral_assertion_detected": true,
+    "deadline_rejection": false,
+    "build_failure": false,
+    "raw_record": "raw/B-mutation-split-update-host.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/split-update-B/totals.go"
+  },
+  {
+    "candidate": "B",
+    "mutation": "split-update",
+    "toolchain": "go122",
+    "intended_assertion": "The in-flight Count != Sum assertion should fail; every field remains separately synchronized, so race rejection is not required.",
+    "behavioral_assertion_detected": true,
+    "deadline_rejection": false,
+    "build_failure": false,
+    "raw_record": "raw/B-mutation-split-update-go122.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/split-update-B/totals.go"
+  },
+  {
+    "candidate": "B",
+    "mutation": "global-state",
+    "toolchain": "host",
+    "intended_assertion": "The first or second instance snapshot assertion should reject state shared between Totals instances.",
+    "behavioral_assertion_detected": true,
+    "deadline_rejection": false,
+    "build_failure": false,
+    "raw_record": "raw/B-mutation-global-state-host.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/global-state-B/totals.go"
+  },
+  {
+    "candidate": "B",
+    "mutation": "global-state",
+    "toolchain": "go122",
+    "intended_assertion": "The first or second instance snapshot assertion should reject state shared between Totals instances.",
+    "behavioral_assertion_detected": true,
+    "deadline_rejection": false,
+    "build_failure": false,
+    "raw_record": "raw/B-mutation-global-state-go122.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/global-state-B/totals.go"
+  },
+  {
+    "candidate": "B",
+    "mutation": "wrong-signed-sum",
+    "toolchain": "host",
+    "intended_assertion": "The sequential exact {Count:2, Sum:1} assertion should reject treating a negative delta as positive.",
+    "behavioral_assertion_detected": true,
+    "deadline_rejection": false,
+    "build_failure": false,
+    "raw_record": "raw/B-mutation-wrong-signed-sum-host.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/wrong-signed-sum-B/totals.go"
+  },
+  {
+    "candidate": "B",
+    "mutation": "wrong-signed-sum",
+    "toolchain": "go122",
+    "intended_assertion": "The sequential exact {Count:2, Sum:1} assertion should reject treating a negative delta as positive.",
+    "behavioral_assertion_detected": true,
+    "deadline_rejection": false,
+    "build_failure": false,
+    "raw_record": "raw/B-mutation-wrong-signed-sum-go122.json",
+    "source": "/private/tmp/go-neutral-library-study/independent-review/work/wrong-signed-sum-B/totals.go"
+  }
+]

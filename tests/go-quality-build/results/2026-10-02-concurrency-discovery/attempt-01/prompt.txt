@@ -1,0 +1,24 @@
+Update Totals and tests to satisfy README.md coherent concurrent update/snapshot contracts. Preserve the public API and supported version.
+
+Work on this task in the current directory. Read README.md and the supplied files; implement the requested behavior and meaningful tests. The allowed skill catalog below is available for this task. Select and read applicable SKILL.md files and local references as needed; decline irrelevant skills. Use only this task and allowed catalog without external discovery or delegation. Do not inspect other tasks, evaluations, planning or result directories. Prefix shell commands with rtk (rtk proxy runs the original command). Preserve specified Go version and dependency/API boundaries. In your final response report skills opened/used, changes, actual checks and limitations.
+
+Allowed skill catalog:
+name: go-api-contracts
+description: Use when Go work creates or changes an exported API or supported external CLI, wire, file, or error contract, including compatibility and release migrations. Skip private helper fixes without an established external contract, even when their local behavior intentionally changes.
+file: .agents/skills/go-api-contracts/SKILL.md
+
+name: go-behavior-tests
+description: Use when a Go task changes meaningful behavior, fixes a defect, or adds or strengthens tests for a supported contract in a library, CLI, service, or worker. Skip comment-only, formatting-only, and mechanical edits with no behavioral change or requested test improvement.
+file: .agents/skills/go-behavior-tests/SKILL.md
+
+name: go-interfaces-and-composition
+description: Use when Go work introduces or changes an interface, concrete dependency, constructor, options API, dependency wiring, or resource lifecycle. Skip private pure calculations and local expression fixes that do not change those decisions.
+file: .agents/skills/go-interfaces-and-composition/SKILL.md
+
+name: go-package-boundaries
+description: Use when a Go change creates, splits, merges, or relocates packages, adds a responsibility, or changes import direction or ownership. Applies to libraries, CLIs, and services; local expression edits with unchanged responsibilities do not need this skill.
+file: .agents/skills/go-package-boundaries/SKILL.md
+
+name: go-test-isolation
+description: Use when Go test work involves files, external dependencies, doubles, shared mutable or process state, goroutines, timers, fixture lifetime, or parallel execution, including repairing flaky or order-dependent setup. Skip pure deterministic calculations using only local inputs and ordinary assertions.
+file: .agents/skills/go-test-isolation/SKILL.md

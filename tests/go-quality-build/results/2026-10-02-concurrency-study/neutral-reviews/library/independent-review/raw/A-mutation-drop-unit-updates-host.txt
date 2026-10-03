@@ -1,0 +1,54 @@
+COMMAND: rtk proxy go test -mod=readonly -count=1 -timeout=2s -run ^TestConcurrentAdd ./...
+CWD: /private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A
+ENV: {"GOCACHE": "/private/tmp/go-neutral-library-study/independent-review/gocache", "GOMODCACHE": "/private/tmp/go-neutral-library-study/independent-review/modcache", "GOPROXY": "off", "GOSUMDB": "off", "GOTOOLCHAIN": "local", "GOWORK": "off"}
+STDOUT:
+panic: test timed out after 2s
+	running tests:
+		TestConcurrentAddAndSnapshot (2s)
+
+goroutine 49 [running]:
+testing.(*M).startAlarm.func1()
+	/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2802 +0x2cc
+created by time.goFunc
+	/opt/homebrew/Cellar/go/1.26.5/libexec/src/time/sleep.go:215 +0x38
+
+goroutine 1 [chan receive]:
+testing.(*T).Run(0x250ee1972008, {0x1044f19fe?, 0x1ad4d1f8044a73b0?}, 0x104644558)
+	/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2109 +0x3bc
+testing.runTests.func1(0x250ee1972008)
+	/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2585 +0x40
+testing.tRunner(0x250ee1972008, 0x250ee1965c48)
+	/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4
+testing.runTests({0x1044f2d71, 0x20}, {0x1044f2d71, 0x20}, 0x250ee1910270, {0x104669ea0, 0x3, 0x3}, {0x808080142c7b576e?, 0x1044ede5a?, ...})
+	/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2583 +0x3f0
+testing.(*M).Run(0x250ee190e8c0)
+	/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2443 +0x578
+main.main()
+	_testmain.go:50 +0x80
+
+goroutine 34 [sync.WaitGroup.Wait]:
+sync.runtime_SemacquireWaitGroup(0x250ee1900298?, 0xf0?)
+	/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/sema.go:114 +0x38
+sync.(*WaitGroup).Wait(0x250ee1902220)
+	/opt/homebrew/Cellar/go/1.26.5/libexec/src/sync/waitgroup.go:206 +0xa8
+example.com/library-shared-state.TestConcurrentAddAndSnapshot(0x250ee1972248)
+	/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals_test.go:56 +0x164
+testing.tRunner(0x250ee1972248, 0x104644558)
+	/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4
+created by testing.(*T).Run in goroutine 1
+	/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8
+
+goroutine 43 [runnable]:
+example.com/library-shared-state.(*Totals).Snapshot(0x250ee1924060?)
+	/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals.go:34 +0xbc
+example.com/library-shared-state.TestConcurrentAddAndSnapshot.func2()
+	/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals_test.go:43 +0x60
+created by example.com/library-shared-state.TestConcurrentAddAndSnapshot in goroutine 34
+	/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals_test.go:39 +0x14c
+FAIL	example.com/library-shared-state	2.184s
+FAIL
+
+STDERR:
+
+STATUS: 1
+TIMED_OUT: False

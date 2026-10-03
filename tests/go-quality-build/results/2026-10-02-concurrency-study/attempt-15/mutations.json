@@ -1,0 +1,75 @@
+[
+  {
+    "meaning": "control regression, outside four candidate targets",
+    "substitution": {
+      "file": "sum.go",
+      "old": "package positive\n\nfunc sumPositive(values []int) int {\n\tsum := 0\n\tfor _, value := range values {\n\t\tif value > 0 {\n\t\t\tsum += value\n\t\t}\n\t}\n\treturn sum\n}\n",
+      "new": "package positive\n\nfunc sumPositive(values []int) int {\n\tsum := 0\n\tfor i := 0; i+1 < len(values); i++ {\n\t\tif values[i] > 0 {\n\t\t\tsum += values[i]\n\t\t}\n\t}\n\treturn sum\n}\n"
+    },
+    "original_held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerFinalPositiveValue$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-wfc3_5lp",
+      "status": 0,
+      "stdout": "ok  \texample.com/not-concurrency-work\t0.172s\n",
+      "stderr": ""
+    },
+    "compile": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-wfc3_5lp",
+      "status": 0,
+      "stdout": "ok  \texample.com/not-concurrency-work\t0.252s [no tests to run]\n",
+      "stderr": ""
+    },
+    "author_tests": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-wfc3_5lp",
+      "status": 1,
+      "stdout": "--- FAIL: TestSumIncludesFinalPositiveValue (0.00s)\n    sum_test.go:13: sum=2, want 5\nFAIL\nFAIL\texample.com/not-concurrency-work\t0.252s\nFAIL\n",
+      "stderr": ""
+    },
+    "held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerFinalPositiveValue$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-wfc3_5lp",
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerFinalPositiveValue (0.00s)\n    controller_contract_test.go:11: values=[7] got=0 want=7\nFAIL\nFAIL\texample.com/not-concurrency-work\t0.201s\nFAIL\n",
+      "stderr": ""
+    },
+    "qualified": true
+  }
+]

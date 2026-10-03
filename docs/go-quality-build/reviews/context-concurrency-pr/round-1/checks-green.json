@@ -1,0 +1,108 @@
+{
+  "scope": "Post-fix full structural and live integrity checks; historical author checks unchanged",
+  "checks": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/test_go_study_integrity.py"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": "..\n----------------------------------------------------------------------\nRan 2 tests in 0.792s\n\nOK\n",
+      "elapsed_seconds": 0.826
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test*.py"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": "........\n----------------------------------------------------------------------\nRan 8 tests in 0.857s\n\nOK\n",
+      "elapsed_seconds": 0.895
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/go-quality-build",
+        "-p",
+        "test_*.py"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.017s\n\nOK\n",
+      "elapsed_seconds": 0.061
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/go-quality-review/test_layout.py"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ".\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+      "elapsed_seconds": 0.032
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/go-quality-review/go-quality-report/evals/test_grade.py"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.000s\n\nOK\n",
+      "elapsed_seconds": 0.036
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "scripts/validate.py"
+      ],
+      "status": 0,
+      "stdout": "PASS: 10 skills; matching grading/report contracts; 120 valid evaluation cases\nPASS: 46 valid build evaluation cases\n",
+      "stderr": "",
+      "elapsed_seconds": 0.059
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "status": 0,
+      "stdout": "PASS: portable31 reconstructions (26 completed/5 failed), five runtime0.2.0 skills, anchored seals and preserved counterevidence\n",
+      "stderr": "",
+      "elapsed_seconds": 0.63
+    }
+  ]
+}

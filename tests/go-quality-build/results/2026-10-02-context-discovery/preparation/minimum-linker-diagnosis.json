@@ -1,0 +1,39 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-count=1",
+      "-timeout=45s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-quality-context-preparation/service-total-budget",
+    "overrides": {
+      "CGO_ENABLED": "0"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/stages\t0.264s\n",
+    "stderr": "",
+    "seconds": 1.3499300479888916
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-count=1",
+      "-timeout=45s",
+      "-ldflags=-linkmode=external",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-quality-context-preparation/service-total-budget",
+    "overrides": {},
+    "status": 0,
+    "stdout": "ok  \texample.com/stages\t0.230s\n",
+    "stderr": "",
+    "seconds": 0.5353391170501709
+  }
+]

@@ -1,0 +1,76 @@
+{
+  "candidate": "B",
+  "mode": "bounded code-area review",
+  "snapshot_manifest": "../../verification/source-manifest.json",
+  "scope": [
+    "candidates/B/sum.go",
+    "candidates/B/sum_test.go",
+    "candidates/B/go.mod",
+    "candidates/B/README.md"
+  ],
+  "topics": [
+    {
+      "topic": "go-architecture-and-design",
+      "state": "not_applicable",
+      "coverage_status": "not_applicable",
+      "reason": "The reviewed area is one private arithmetic helper and its ordinary unit tests. No package/API boundary, runtime dependency, composition, cross-component ownership, or lifecycle contract is implicated.",
+      "card": "go-architecture-and-design.md"
+    },
+    {
+      "topic": "go-code-quality-and-idioms",
+      "state": "applicable",
+      "coverage_status": "complete",
+      "reason": "Local Go clarity, loop/value semantics, names, formatting, and the retained Go 1.22 language level are directly assessable.",
+      "card": "go-code-quality-and-idioms.md"
+    },
+    {
+      "topic": "go-correctness-and-compatibility",
+      "state": "applicable",
+      "coverage_status": "complete",
+      "reason": "The README explicitly promises complete positive-value summation, empty/negative-only zero results, the existing private signature, and a serial implementation.",
+      "card": "go-correctness-and-compatibility.md"
+    },
+    {
+      "topic": "go-testing",
+      "state": "applicable",
+      "coverage_status": "complete",
+      "reason": "The candidate regression assertion must detect the original skipped-final-element defect; existing assertions and isolation are assessable.",
+      "card": "go-testing.md"
+    },
+    {
+      "topic": "go-security",
+      "state": "not_applicable",
+      "coverage_status": "not_applicable",
+      "reason": "No trust/authorization boundary, sensitive data, unsafe code, external input sink, cryptography, or attacker-reachable resource boundary is present in this private local helper packet.",
+      "card": "go-security.md"
+    },
+    {
+      "topic": "go-observability-and-resilience",
+      "state": "not_applicable",
+      "coverage_status": "not_applicable",
+      "reason": "The pure serial computation has no I/O failures, retries, cancellation budget, queue, overload boundary, diagnostics contract, or lifecycle failure behavior.",
+      "card": "go-observability-and-resilience.md"
+    },
+    {
+      "topic": "go-performance-and-resource-management",
+      "state": "applicable",
+      "coverage_status": "complete",
+      "reason": "The actual arithmetic traversal's complexity and additional storage are assessable from this complete helper; concurrency, I/O, pooling, and external-resource tuning are irrelevant.",
+      "card": "go-performance-and-resource-management.md"
+    },
+    {
+      "topic": "go-dependencies-and-reproducibility",
+      "state": "applicable",
+      "coverage_status": "complete",
+      "reason": "This bounded code area includes its complete standard-library-only module and explicit Go 1.22 support contract, allowing standalone resolution and local rebuild assessment.",
+      "card": "go-dependencies-and-reproducibility.md"
+    },
+    {
+      "topic": "go-deployment-and-operations",
+      "state": "not_applicable",
+      "coverage_status": "not_applicable",
+      "reason": "No CLI/service runtime, release artifact, pipeline, deployment configuration, probe, shutdown, rollout, or recovery decision is supplied or required for this private repair.",
+      "card": "go-deployment-and-operations.md"
+    }
+  ]
+}

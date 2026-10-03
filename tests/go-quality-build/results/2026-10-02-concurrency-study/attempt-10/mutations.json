@@ -1,0 +1,150 @@
+[
+  {
+    "meaning": "release-before-completion",
+    "substitution": {
+      "file": "host.go",
+      "old": "for running > 0 {",
+      "new": "for running > 0 && false {"
+    },
+    "original_held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerPartialStartAndBlockedAdmission$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-zm0_a5wl",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.335s\n",
+      "stderr": ""
+    },
+    "compile": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-zm0_a5wl",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.177s [no tests to run]\n",
+      "stderr": ""
+    },
+    "author_tests": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-zm0_a5wl",
+      "status": 1,
+      "stdout": "--- FAIL: TestServeFiniteJobs (0.00s)\n    host_test.go:27: accepted=0 closed=2 err=<nil>\n--- FAIL: TestServeFailuresJoinAndStopAdmission (0.00s)\n    host_test.go:196: lease closed before Run completed\n--- FAIL: TestServeRunFailureInterruptsOpen (0.00s)\n    host_test.go:306: Serve=open interrupted closed=1, want both errors and one close\n--- FAIL: TestServeIndependentRunAndCloseFailures (0.00s)\n    --- FAIL: TestServeIndependentRunAndCloseFailures/run_only (0.00s)\n        host_test.go:335: Serve = <nil>, missing run failed\n    --- FAIL: TestServeIndependentRunAndCloseFailures/both (0.00s)\n        host_test.go:335: Serve = close failed, missing run failed\nFAIL\nFAIL\texample.com/service-owned-workers\t0.182s\nFAIL\n",
+      "stderr": ""
+    },
+    "held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerPartialStartAndBlockedAdmission$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-zm0_a5wl",
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerPartialStartAndBlockedAdmission (0.00s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/startup_failure (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/worker_failure (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:206: worker failure lost: independent close failure\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/caller_cancellation (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:209: cancellation lost: independent close failure\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:218: lease closed before all started users joined\nFAIL\nFAIL\texample.com/service-owned-workers\t0.147s\nFAIL\n",
+      "stderr": ""
+    },
+    "qualified": true,
+    "limit": "Inspect intended assertion before detection credit; compile failures/invalid original target excluded."
+  },
+  {
+    "meaning": "unresponsive-admission",
+    "substitution": {
+      "file": "host.go",
+      "old": "case <-runCtx.Done():",
+      "new": "case <-make(chan struct{}):"
+    },
+    "original_held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerCancellationWithOpenInput$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-fa_98qeu",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.148s\n",
+      "stderr": ""
+    },
+    "compile": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-fa_98qeu",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.160s [no tests to run]\n",
+      "stderr": ""
+    },
+    "author_tests": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-fa_98qeu",
+      "status": 1,
+      "stdout": "panic: test timed out after 30s\n\trunning tests:\n\t\tTestServeCancellationBeforeAndDuringAdmission (30s)\n\t\tTestServeCancellationBeforeAndDuringAdmission/already_canceled (30s)\n\ngoroutine 3 [running]:\ntesting.(*M).startAlarm.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2802 +0x2cc\ncreated by time.goFunc\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/time/sleep.go:215 +0x38\n\ngoroutine 1 [chan receive]:\ntesting.(*T).Run(0x6974cd6dc008, {0x104cc2860?, 0x2e72bf4004c6f670?}, 0x104e16440)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2109 +0x3bc\ntesting.runTests.func1(0x6974cd6dc008)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2585 +0x40\ntesting.tRunner(0x6974cd6dc008, 0x6974cd68ac48)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ntesting.runTests({0x104cbf497, 0x21}, {0x104cbf497, 0x21}, 0x6974cd690270, {0x104e3e1c0, 0x8, 0x8}, {0x808080808080472b?, 0x104cb9fb1?, ...})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2583 +0x3f0\ntesting.(*M).Run(0x6974cd68e640)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2443 +0x578\nmain.main()\n\t_testmain.go:60 +0x80\n\ngoroutine 40 [chan receive]:\ntesting.(*T).Run(0x6974cd6dc6c8, {0x104cba3fe?, 0x6974cd68bf58?}, 0x104e164f8)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2109 +0x3bc\nexample.com/service-owned-workers.TestServeCancellationBeforeAndDuringAdmission(0x6974cd6dc6c8)\n\t/private/tmp/go-study-mutation-fa_98qeu/host_test.go:124 +0x34\ntesting.tRunner(0x6974cd6dc6c8, 0x104e16440)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\n\ngoroutine 41 [select]:\nexample.com/service-owned-workers.Serve({0x104e187c0, 0x6974cd6da2d0}, 0x6974cd680700, 0x2, 0x6974cd686f48)\n\t/private/tmp/go-study-mutation-fa_98qeu/host.go:35 +0x1f8\nexample.com/service-owned-workers.TestServeCancellationBeforeAndDuringAdmission.func1(0x6974cd6dc908)\n\t/private/tmp/go-study-mutation-fa_98qeu/host_test.go:128 +0x84\ntesting.tRunner(0x6974cd6dc908, 0x104e164f8)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 40\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/service-owned-workers\t30.120s\nFAIL\n",
+      "stderr": ""
+    },
+    "held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerCancellationWithOpenInput$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-fa_98qeu",
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerCancellationWithOpenInput (1.00s)\n    controller_contract_test.go:352: missing event: blocked admission observes cancellation before input closure\nFAIL\nFAIL\texample.com/service-owned-workers\t1.134s\nFAIL\n",
+      "stderr": ""
+    },
+    "qualified": true,
+    "limit": "Inspect intended assertion before detection credit; compile failures/invalid original target excluded."
+  }
+]

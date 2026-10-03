@@ -1,0 +1,52 @@
+{
+  "scope": "Candidate F complete bounded code area for Testing; source SHA256 host.go=9a07e02eb8592790dc8cbaef39f97b392403dcd6e10f7556444c2aa437980aca; host_test.go=639fd87f428cfe0da4a8ee700006bd9141c85c483669c1d16049ae658320282d",
+  "coverage": [
+    {
+      "id": "go-testing",
+      "status": "complete",
+      "reason": "Applicable: reviewed candidate host_test.go assertions, doubles, event gates, cleanup and whether meaningful contract violations evade its authored suite. External held/supplementary/independent probes verify behavior; they are not additions to the candidate regression suite."
+    }
+  ],
+  "findings": [
+    {
+      "id": "F/T1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Healthy capacity fixtures ignore their Run contexts, so premature coordinated stop is invisible.",
+      "evidence": "candidates/F/host_test.go:33; candidates/F/host_test.go:78; candidates/F/host_test.go:148; evidence/F-host-authored.log: suite passes P1; evidence/F-host-independent.log: cooperative healthy Run contexts detect premature cancellation",
+      "correction": "Make healthy callbacks verify they are not canceled before their external success gate and return ctx.Err when improperly stopped.",
+      "sources": [
+        "cards/F/go-testing.md#F-T1"
+      ]
+    },
+    {
+      "id": "F/T2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Authored cancellation coverage does not exercise an acquired success returned after stopping and assert no Run.",
+      "evidence": "candidates/F/host_test.go:135; candidates/F/host_test.go:259; evidence/F-host-authored.log: suite passes P2; evidence/F-host-independent.log: forbidden Run after callback cancellation",
+      "correction": "Return a successful lease after callback cancellation, assert zero Runs, and still require owned Close after cohort join.",
+      "sources": [
+        "cards/F/go-testing.md#F-T2"
+      ]
+    },
+    {
+      "id": "F/T3",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Capacity tests inspect only a full initial cohort and later Run starts, without counting live acquired leases across completed Runs on open input.",
+      "evidence": "candidates/F/host_test.go:33; candidates/F/host_test.go:78; candidates/F/host_test.go:148; evidence/F-host-authored.log: suite passes P3; evidence/F-host-independent.log: eight held leases at capacity 2",
+      "correction": "Track live acquisition/release counts and use paced successful jobs on open input to assert the lease bound, plus held Close.",
+      "sources": [
+        "cards/F/go-testing.md#F-T3"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "F/go-testing/G1",
+      "evidence": "Authored tests include meaningful finite work/error identity assertions and bounded channel waits rather than only test names; the independently executed authored suites pass once on both actual versions. Candidate-specific additional positives/limits are below."
+    }
+  ],
+  "safeguards": []
+}

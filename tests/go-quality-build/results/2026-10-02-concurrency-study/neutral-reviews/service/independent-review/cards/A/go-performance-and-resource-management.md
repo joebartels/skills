@@ -1,0 +1,28 @@
+## Performance & Resource Management — C+
+
+Scope: Code-area review of candidate A: host.go, host_test.go, go.mod, README.md; exact supplied hashes in [source manifest](../../../source-manifest.json). host.go SHA256 `c45a48c184493ebe70f1f52cbb831194f2a25604e49776687930cd951fd34ab7`. Standard-library owned worker host, unchanged Job/Lease/Serve protocol; Go 1.22 minimum.
+
+Coverage: Applicable: limit bounds acquired leases through Close, cohort completion controls goroutines/resources, and available capacity must be used. Assessed scaling/lifetime and bounded event counts; no microbenchmark or production latency claim. All bounded applicable obligations complete; outside-scope unavailable host evidence is excluded, not passed.
+
+Rationale: Unique topic causes: major=0, moderate=2, minor=0, critical=0. The first matching unchanged rubric row selects C+. All majors are contained at the helper/fixture boundary; no systemic or critical reach is claimed. Strengths do not cancel findings.
+
+Finding counts: critical=0, major=0, moderate=2, minor=0
+
+Good
+
+- [A/go-performance-and-resource-management/G1] The held capacity/release fixture checks five accepted finite jobs, acquires at most two in the full-cohort schedule, holds Close before release and verifies exactly one Close for acquired leases. This positive schedule does not prove paced-input capacity.
+- Candidate-specific verified context: The supplied held and supplementary fixtures pass on both versions. Async Open is joined and acquired leases are closed after the actual Run results; pending cooperative Open is interrupted on an observed Run failure. The bounded stress evidence adds the uncommon post-Open ready-result case that one-shot checks missed.
+
+Bad
+
+- [A/P1][moderate][existing-in-scope] Close failures are appended but never enter the stop state before the next cohort. `candidates/A/host.go:60`, `candidates/A/host.go:85` — At limit 1, three leases are opened/closed after the first Close fails, where the contract permits only one; unbounded input would continue admissions after observed failure. Contained important admission contract failure, not systemic/critical. Resource-topic consequence: three acquisitions/releases versus one at limit 1, with capacity still bounded. Supported extra work is moderate; no measured exhaustion. Evidence: `evidence/A-host-independent.log: TestIndependentCloseFailureStopsNextAdmission`; `evidence/A-minimum-independent.log: same intended assertion`; `evidence/A-host-race.log: repeated intended assertion`.
+- [A/P2][moderate][existing-in-scope] Successful Open results can start Run using only stale stop state without rechecking caller/work context. `candidates/A/host.go:143`, `candidates/A/host.go:174` — Open deliberately cancels the caller context before returning its nonnil lease successfully. If its buffered result and cancellation are both ready, selecting the result starts Run after stopping; acquired lease must instead be owned and closed without Run. Reach is one host call; major contract failure. Resource-topic consequence: a forbidden extra Run per affected acquired lease; localized work/lifetime violation is moderate. Correctness/lifecycle consequence is major. Evidence: `evidence/stress-commands.json: 3 forbidden Runs in 2000 concurrent valid calls on host race build`; `evidence/minimum-stress-command.json: 1, 1 and 6 forbidden Runs per 2000 calls on actual minimum race build`.
+
+Suggested changes
+
+- [A/P1] Have closeCohort set stop/cancel on any Close error, while still closing all owned leases exactly once. Why: At limit 1, three leases are opened/closed after the first Close fails, where the contract permits only one; unbounded input would continue admissions after observed failure. Contained important admission contract failure, not systemic/critical. Verification: Close-only sentinel with three queued jobs, limit 1: errors.Is cause true and Open/Close counts exactly one. Primary owner: host.go implementation.
+- [A/P2] After collecting/owning the Open result, observe context cancellation and set stop before starting Run; retain cancellation cause. Why: Open deliberately cancels the caller context before returning its nonnil lease successfully. If its buffered result and cancellation are both ready, selecting the result starts Run after stopping; acquired lease must instead be owned and closed without Run. Reach is one host call; major contract failure. Verification: Use callback cancellation-before-success with bounded concurrent pressure; assert zero Runs, one Close and errors.Is(context.Canceled). Primary owner: host.go implementation.
+
+Limits: Review is a complete bounded code-area assessment, not a whole deployed system or proof of all interleavings. Exact commands/stdout/stderr are preserved in evidence/commands.json; original supplied checks are separately in checks-A..F.json. Host is go1.26.5 darwin/arm64; actual minimum is go1.22.12 darwin/arm64. Standalone readonly module mode, isolated Go cache, no source/config changes. No arbitrary panic/nil-context/nonpositive-limit/contract-violating Open behavior is required. No production load/profile, unspecified deployment or threat-model claim. Detection counts intended behavioral assertions only; unrelated build failures and setup-blocked fixture events are separated.
+
+Skill and reference inspected: [go-performance-and-resource-management](../../../review-guidance/go-performance-and-resource-management/SKILL.md); [topic decisions](../../../review-guidance/go-performance-and-resource-management/references/performance-decisions.md). Arithmetic: [topic ledger](go-performance-and-resource-management.ledger.json), [calculator result](go-performance-and-resource-management.ledger.grade.json).

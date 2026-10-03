@@ -1,0 +1,26 @@
+{
+  "label": "lost-close-error-on-read-diagnostic",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-run",
+    "^TestReviewDualReadCloseErrors$",
+    "-count=1",
+    "-timeout=30s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-context-outcome-20261002/service/reviews/scratch/lost-close-error-on-read-1",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-context-outcome-20261002/service/reviews/go-cache-min",
+    "GOWORK": "off",
+    "GOTOOLCHAIN": "local",
+    "GOPROXY": "off",
+    "CGO_ENABLED": "0"
+  },
+  "status": 1,
+  "stdout": "--- FAIL: TestReviewDualReadCloseErrors (0.00s)\n    review_diagnostic_test.go:53: bodies=[] err=independent read\nFAIL\nFAIL\texample.com/stages\t0.211s\nFAIL\n",
+  "stderr": "",
+  "elapsed_seconds": 0.444
+}

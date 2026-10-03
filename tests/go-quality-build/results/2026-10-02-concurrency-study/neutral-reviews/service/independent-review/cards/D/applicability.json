@@ -1,0 +1,79 @@
+{
+  "candidate": "D",
+  "all_nine": [
+    {
+      "id": "go-architecture-and-design",
+      "status": "complete",
+      "reason": "Applicable: the host-supplied Lease protocol, injected Open dependency, cancellation/error propagation and cohort ownership are design boundaries; reviewed API, ownership and composition without demanding another framework.",
+      "skill": "review-guidance/go-architecture-and-design/SKILL.md",
+      "reference": "review-guidance/go-architecture-and-design/references/design-decisions.md",
+      "card": "cards/D/go-architecture-and-design.md"
+    },
+    {
+      "id": "go-code-quality-and-idioms",
+      "status": "complete",
+      "reason": "Applicable: reviewed local state transitions, result collection, checked errors, context guards, docs, value/closure semantics under go 1.22; gofmt and vet independently executed.",
+      "skill": "review-guidance/go-code-quality-and-idioms/SKILL.md",
+      "reference": "review-guidance/go-code-quality-and-idioms/references/idiom-decisions.md",
+      "card": "cards/D/go-code-quality-and-idioms.md"
+    },
+    {
+      "id": "go-correctness-and-compatibility",
+      "status": "complete",
+      "reason": "Applicable: reviewed every README result/lifecycle obligation, API shape, empty/finite/open input, partial acquisition, all three failure stages, cancellation before/during/stopping, successful effects and supported Go minimum.",
+      "skill": "review-guidance/go-correctness-and-compatibility/SKILL.md",
+      "reference": "review-guidance/go-correctness-and-compatibility/references/correctness-compatibility-decisions.md",
+      "card": "cards/D/go-correctness-and-compatibility.md"
+    },
+    {
+      "id": "go-testing",
+      "status": "complete",
+      "reason": "Applicable: reviewed candidate host_test.go assertions, doubles, event gates, cleanup and whether meaningful contract violations evade its authored suite. External held/supplementary/independent probes verify behavior; they are not additions to the candidate regression suite.",
+      "skill": "review-guidance/go-testing/SKILL.md",
+      "reference": "review-guidance/go-testing/references/testing-decisions.md",
+      "card": "cards/D/go-testing.md"
+    },
+    {
+      "id": "go-security",
+      "status": "not_applicable",
+      "reason": "Not applicable within this bounded trusted-host API: Job is a caller-supplied integer; Open and Lease are trusted collaborators; there is no demonstrated attacker, authorization boundary, sensitive sink, credential, cryptographic or network/file parsing decision. General resource failures are not recast as vulnerabilities. No advisory scan or security assessment of an unspecified host is claimed.",
+      "skill": "review-guidance/go-security/SKILL.md",
+      "reference": "review-guidance/go-security/references/security-decisions.md",
+      "card": "cards/D/go-security.md"
+    },
+    {
+      "id": "go-observability-and-resilience",
+      "status": "complete",
+      "reason": "Applicable: cancellation, stop propagation, failure containment, joining actual cleanup and errors.Is diagnostics are the available library signals. No service telemetry, retries or arbitrary timeout requirement is inferred.",
+      "skill": "review-guidance/go-observability-and-resilience/SKILL.md",
+      "reference": "review-guidance/go-observability-and-resilience/references/observability-resilience-decisions.md",
+      "card": "cards/D/go-observability-and-resilience.md"
+    },
+    {
+      "id": "go-performance-and-resource-management",
+      "status": "complete",
+      "reason": "Applicable: limit bounds acquired leases through Close, cohort completion controls goroutines/resources, and available capacity must be used. Assessed scaling/lifetime and bounded event counts; no microbenchmark or production latency claim.",
+      "skill": "review-guidance/go-performance-and-resource-management/SKILL.md",
+      "reference": "review-guidance/go-performance-and-resource-management/references/performance-decisions.md",
+      "card": "cards/D/go-performance-and-resource-management.md"
+    },
+    {
+      "id": "go-dependencies-and-reproducibility",
+      "status": "complete",
+      "reason": "Applicable: go.mod declares Go 1.22 and standard-library-only production/tests. Verified standalone readonly resolution, host and actual minimum compilation/test execution, imports, module graph and exact input hashes. No generated/native/release inputs or bit-identical artifact contract.",
+      "skill": "review-guidance/go-dependencies-and-reproducibility/SKILL.md",
+      "reference": "review-guidance/go-dependencies-and-reproducibility/references/dependency-reproducibility-decisions.md",
+      "card": "cards/D/go-dependencies-and-reproducibility.md"
+    },
+    {
+      "id": "go-deployment-and-operations",
+      "status": "not_applicable",
+      "reason": "Not applicable to the bounded library code area: no configured release artifact, CI/promotion path, process signals, container, runtime configuration, health/routing or grace budget decision is supplied or promised. Host deployment evidence is unavailable outside scope and excluded, not reported as passing. Library lifecycle is assessed by the applicable topics.",
+      "skill": "review-guidance/go-deployment-and-operations/SKILL.md",
+      "reference": "review-guidance/go-deployment-and-operations/references/deployment-operations-decisions.md",
+      "card": "cards/D/go-deployment-and-operations.md"
+    }
+  ],
+  "coverage_unavailable_distinction": "Not-applicable topics have no bounded decision. Unspecified external deployment/threat/performance profiles are unavailable outside the chosen scope and are not marked complete or used to infer missing controls. No applicable material obligation remains unavailable.",
+  "read_guidance": "All nine supplied skills and their references inspected; shared rubric/report template unchanged."
+}

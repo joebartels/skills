@@ -1,0 +1,5 @@
+Updated [Serve](/private/tmp/go-task-nd_31zqt/host.go:20) to admit jobs up to capacity, stop admission on failure or cancellation, join every started Run before closing its cohort’s leases, and return independent Open, Run, Close, and caller cancellation errors. The existing Lease API, standard library dependency boundary, and `go 1.22` declaration remain intact.
+
+Added [tests](/private/tmp/go-task-nd_31zqt/host_test.go:51) for concurrent admission, release order, held cleanup, cancellation, and combined failures. Checks passed: `go test ./...`, `go test -race -shuffle=on -count=20 ./...`, and `go vet ./...`.
+
+Opened and used: go-api-contracts, go-behavior-tests, go-concurrency-and-ownership, go-interfaces-and-composition, and go-test-isolation. Declined go-package-boundaries because no package responsibility or import direction changed. The installed toolchain was Go 1.26.5; Go 1.22 itself was not available for a direct run.

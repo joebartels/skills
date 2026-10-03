@@ -1,0 +1,268 @@
+{
+  "supplementary_review_discovered_checks": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestReview(AvailableJobWithOpenInput|RunFailureCancelsPendingOpen)$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-48k3ad71",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.169s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.336
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-run",
+        "^TestReview(AvailableJobWithOpenInput|RunFailureCancelsPendingOpen)$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-48k3ad71",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.150s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.303
+    }
+  ],
+  "supplementary_limit": "Not a replacement for four original frozen mutation targets or primary frozen held observation.",
+  "reconstruction_hashes_match": true,
+  "ordinary_checks": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "apply",
+        "/Users/jb/.codex/worktrees/ed95/skills/tests/go-quality-build/results/2026-10-02-concurrency-study/attempt-14/source.patch"
+      ],
+      "cwd": "/private/tmp/go-check-48k3ad71",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.012
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-check-48k3ad71",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "elapsed_seconds": 0.01
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-check-48k3ad71",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "go version go1.22.12 darwin/arm64\n",
+      "stderr": "",
+      "elapsed_seconds": 0.008
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "build",
+        "-o",
+        "/dev/null",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-48k3ad71",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.05
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-48k3ad71",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.302s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.464
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-48k3ad71",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.07
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-l",
+        "."
+      ],
+      "cwd": "/private/tmp/go-check-48k3ad71",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.008
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-48k3ad71",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.131s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.27
+    }
+  ],
+  "held_contract_checks": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-48k3ad71",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.189s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.335
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-48k3ad71",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.177s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.329
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-shuffle=on",
+        "-count=3",
+        "-timeout=60s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-48k3ad71",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t1.327s\n",
+      "stderr": "",
+      "elapsed_seconds": 1.521
+    }
+  ],
+  "mutations": "Concrete author-specific mutation sensitivity recorded separately; no controller repair credit."
+}

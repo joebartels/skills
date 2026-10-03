@@ -1,0 +1,74 @@
+{
+  "scope": "Changeset 0d0a339b27cd1ff7ff3cc177f28a9a4455f91a96 \u2192 c5ee3d0e337975d1de199c86c34bbe2f301ccf85; only docs/go-quality-build/reviews/concurrency-readiness/preflight/example/totals.go, with docs/go-quality-build/reviews/concurrency-readiness/preflight/example/totals_test.go and docs/go-quality-build/reviews/concurrency-readiness/preflight/example/go.mod as contract/build context. Private exact-snippet example, not a shipped service or runtime package.",
+  "coverage": [
+    {
+      "id": "go-architecture-and-design",
+      "status": "complete",
+      "reason": "State ownership, dependency direction, private API, construction and synchronous observation were assessed. No application architecture or public release contract is implicated."
+    },
+    {
+      "id": "go-code-quality-and-idioms",
+      "status": "complete",
+      "reason": "Both methods, copy-sensitive receiver/state semantics, zero initialization, names, local flow, gofmt and vet were assessed under the go 1.22 module."
+    },
+    {
+      "id": "go-correctness-and-compatibility",
+      "status": "complete",
+      "reason": "Zero state, signed updates, coherent count/sum observations, returned-value independence, per-instance state, shared concurrent accesses and effective minimum Go version were assessed. No preexisting public API is changed."
+    },
+    {
+      "id": "go-testing",
+      "status": "complete",
+      "reason": "The entire 92-line related test harness was inspected for meaningful assertions, zero/signed/scalar/per-instance contracts, concurrent observation, writer registration/join, bounded observation failure and isolation. Tests are integration context for the 21-line example, not separate graded production source."
+    },
+    {
+      "id": "go-security",
+      "status": "not_applicable",
+      "reason": "Applicability considered across the example and documented callers. No attacker-controlled sink, authorization, credential, sensitive-data, unsafe operation or security resource policy is implicated."
+    },
+    {
+      "id": "go-observability-and-resilience",
+      "status": "not_applicable",
+      "reason": "Applicability considered for failure boundaries, cancellation, retries, telemetry, queues and service lifecycle. The production example is synchronous local scalar state with no I/O, dependency failure or operational signal contract."
+    },
+    {
+      "id": "go-performance-and-resource-management",
+      "status": "complete",
+      "reason": "Per-call work, retained state, critical-section lifetime, lock contention assumptions and ownership were assessed. The example has no promised throughput/latency target or claimed optimization."
+    },
+    {
+      "id": "go-dependencies-and-reproducibility",
+      "status": "complete",
+      "reason": "Standalone module, import inventory, go 1.22 minimum, selected toolchains, workspace isolation, offline resolution, readonly module mode and exact source preservation were assessed. No third-party graph, generated input or distributable binary identity claim exists."
+    },
+    {
+      "id": "go-deployment-and-operations",
+      "status": "not_applicable",
+      "reason": "Applicability considered for release artifacts, runtime configuration, CI delivery, probes, shutdown and rollout. This private archived snippet has no deployment or published module release path; its build input is assessed under reproducibility."
+    }
+  ],
+  "findings": [],
+  "strengths": [
+    {
+      "id": "G1",
+      "evidence": "One private mutex protects both update and joint observation; pointer receivers/scalar result ownership inspected; fresh tests and five shuffled race repetitions pass on actual Go1.22.12 and Go1.26.5."
+    },
+    {
+      "id": "G2",
+      "evidence": "Standard-library-only standalone module builds offline under GOWORK=off/GOTOOLCHAIN=local/-mod=readonly on both actual toolchains; no source/module hashes change."
+    }
+  ],
+  "safeguards": [],
+  "non_go_finding_index": "findings.json:NG1 (excluded from Go grade)",
+  "cards": {
+    "go-architecture-and-design": "cards/example/go-architecture-and-design.md",
+    "go-code-quality-and-idioms": "cards/example/go-code-quality-and-idioms.md",
+    "go-correctness-and-compatibility": "cards/example/go-correctness-and-compatibility.md",
+    "go-testing": "cards/example/go-testing.md",
+    "go-security": "cards/example/go-security.md",
+    "go-observability-and-resilience": "cards/example/go-observability-and-resilience.md",
+    "go-performance-and-resource-management": "cards/example/go-performance-and-resource-management.md",
+    "go-dependencies-and-reproducibility": "cards/example/go-dependencies-and-reproducibility.md",
+    "go-deployment-and-operations": "cards/example/go-deployment-and-operations.md"
+  }
+}

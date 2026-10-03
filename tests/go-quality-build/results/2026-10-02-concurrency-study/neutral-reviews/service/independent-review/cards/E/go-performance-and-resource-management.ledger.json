@@ -1,0 +1,18 @@
+{
+  "scope": "Candidate E complete bounded code area for Performance & Resource Management; source SHA256 host.go=f2f7dd6470aae322fe98a33d39e71addae18d9d749424e94723e7ca9213d208d; host_test.go=12acf3330e3334e1f802ff8a3a21a39a1110370ae1e804a9672cf15aff09fd43",
+  "coverage": [
+    {
+      "id": "go-performance-and-resource-management",
+      "status": "complete",
+      "reason": "Applicable: limit bounds acquired leases through Close, cohort completion controls goroutines/resources, and available capacity must be used. Assessed scaling/lifetime and bounded event counts; no microbenchmark or production latency claim."
+    }
+  ],
+  "findings": [],
+  "strengths": [
+    {
+      "id": "E/go-performance-and-resource-management/G1",
+      "evidence": "The held capacity/release fixture checks five accepted finite jobs, acquires at most two in the full-cohort schedule, holds Close before release and verifies exactly one Close for acquired leases. This positive schedule does not prove paced-input capacity."
+    }
+  ],
+  "safeguards": []
+}

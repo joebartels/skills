@@ -1,0 +1,14 @@
+cwd: /private/tmp/go-context-outcome-20261002/control/reviews/candidate-2/scratch/original-with-regression
+command argv: ["rtk", "proxy", "env", "GOWORK=off", "GOTOOLCHAIN=local", "GOPROXY=off", "GOSUMDB=off", "GOCACHE=/private/tmp/go-context-outcome-20261002/control/reviews/candidate-2/scratch/go-cache", "GOMODCACHE=/private/tmp/go-context-outcome-20261002/control/reviews/candidate-2/scratch/go-mod-cache", "GOTMPDIR=/private/tmp/go-context-outcome-20261002/control/reviews/candidate-2/scratch/go-temp", "GOFLAGS=", "go", "test", "-count=1", "-mod=readonly", "-run=TestUpper", "-v", "./..."]
+exit code: 1
+expected exit code: 1
+
+stdout:
+=== RUN   TestUpperBoundIncluded
+    range_test.go:13: upper bound should be included
+--- FAIL: TestUpperBoundIncluded (0.00s)
+FAIL
+FAIL	example.com/rangecheck	0.130s
+FAIL
+
+stderr:

@@ -1,0 +1,165 @@
+{
+  "review": "neutral service candidate independent review",
+  "candidate": 1,
+  "mode": "changeset",
+  "scope": "Changeset review: neutral original snapshot to candidate-1, the complete supplied README.md, go.mod, stages.go and stages_test.go. This is a sequential outbound HTTP library function, Go minimum 1.22. Snapshot hashes: snapshot.json. No repository or planning context inspected.",
+  "coverage": [
+    {
+      "id": "architecture",
+      "status": "complete",
+      "reason": "API/dependency shape; total/stage ownership, synchronous success, body ownership, and error propagation across FetchAll/fetchStage/failedWithContext; no missing material architecture context for this bounded function."
+    },
+    {
+      "id": "code-quality",
+      "status": "complete",
+      "reason": "All production/test Go, local error flow, nil/empty result semantics, helper scope, documentation and Go 1.22 idioms; gofmt and vet executed."
+    },
+    {
+      "id": "correctness",
+      "status": "complete",
+      "reason": "Ordered GET/200-only acceptance; prefix on failures; total sharing/earlier parent; configured stage ceiling; canceled admission; cooperative read/close cancellation; independent errors/custom cause; empty input; success after later cancellation; unchanged signature/minimum. All supplied paths inspected and targeted checks executed."
+    },
+    {
+      "id": "testing",
+      "status": "complete",
+      "reason": "All author assertions, doubles, channels/timers, cleanup and supplied checks/probes; frozen total-reset sensitivity independently reproduced. Additional stage/combined-error mutations are review diagnostics only."
+    },
+    {
+      "id": "security",
+      "status": "not_applicable",
+      "reason": "No changed security-relevant trust or authorization boundary is established in this bounded changeset. These edits derive budgets and aggregate errors using the supplied client, finite HTTP/HTTPS endpoints and positive durations; they do not alter destinations, redirects, TLS policy, credentials or privilege."
+    },
+    {
+      "id": "resilience",
+      "status": "complete",
+      "reason": "Caller/total/stage budgets, active HTTP/body cancellation, synchronous completion, prefix/error containment, and borrowed client lifetime. No telemetry/retry/service process is owned by this function."
+    },
+    {
+      "id": "resources",
+      "status": "complete",
+      "reason": "Every body acquisition/close exit, read buffering, per-stage timer cancellation, total cancellation, client reuse and sequential in-flight work. Workload byte/concurrency profiles are unknown; no performance improvement or fixed response-size bound is claimed."
+    },
+    {
+      "id": "reproducibility",
+      "status": "complete",
+      "reason": "Compared original/candidate go.mod and all imports; standalone GOWORK=off/GOTOOLCHAIN=local/GOPROXY=off build/test/vet checks; independently executed Go 1.22.12 tests with CGO_ENABLED=0 and supplied original minimum-version check records. No external sums, vendor, local replace, generation or native inputs are required by these edits."
+    },
+    {
+      "id": "deployment",
+      "status": "not_applicable",
+      "reason": "No release workflow, process startup/shutdown, packaging, CI enforcement or deployed runtime configuration is changed by this library function implementation. The explicit Go minimum build obligation is assessed under Dependencies & Reproducibility."
+    }
+  ],
+  "boundaries": [
+    {
+      "contract": "total budget is created once",
+      "owner": "context_checked_service_review",
+      "status": "complete",
+      "evidence": "Source trace; evidence/*.json; findings.json; contract-validity.md"
+    },
+    {
+      "contract": "earlier parent deadline clipping",
+      "owner": "context_checked_service_review",
+      "status": "complete",
+      "evidence": "Source trace; evidence/*.json; findings.json; contract-validity.md"
+    },
+    {
+      "contract": "configured stage ceiling",
+      "owner": "context_checked_service_review",
+      "status": "complete",
+      "evidence": "Source trace; evidence/*.json; findings.json; contract-validity.md"
+    },
+    {
+      "contract": "already-canceled nonempty admission",
+      "owner": "context_checked_service_review",
+      "status": "complete",
+      "evidence": "Source trace; evidence/*.json; findings.json; contract-validity.md"
+    },
+    {
+      "contract": "read and close scope live through completion",
+      "owner": "context_checked_service_review",
+      "status": "complete",
+      "evidence": "Source trace; evidence/*.json; findings.json; contract-validity.md"
+    },
+    {
+      "contract": "release stage cancel before next stage",
+      "owner": "context_checked_service_review",
+      "status": "complete",
+      "evidence": "Source trace; evidence/*.json; findings.json; contract-validity.md"
+    },
+    {
+      "contract": "every owned body closure",
+      "owner": "context_checked_service_review",
+      "status": "complete",
+      "evidence": "Source trace; evidence/*.json; findings.json; contract-validity.md"
+    },
+    {
+      "contract": "ordered completed prefix",
+      "owner": "context_checked_service_review",
+      "status": "complete",
+      "evidence": "Source trace; evidence/*.json; findings.json; contract-validity.md"
+    },
+    {
+      "contract": "independent error retention",
+      "owner": "context_checked_service_review",
+      "status": "complete",
+      "evidence": "Source trace; evidence/*.json; findings.json; contract-validity.md"
+    },
+    {
+      "contract": "custom cancellation classification",
+      "owner": "context_checked_service_review",
+      "status": "complete",
+      "evidence": "Source trace; evidence/*.json; findings.json; contract-validity.md"
+    },
+    {
+      "contract": "empty endpoint result",
+      "owner": "context_checked_service_review",
+      "status": "complete",
+      "evidence": "Source trace; evidence/*.json; findings.json; contract-validity.md"
+    },
+    {
+      "contract": "later cancellation cannot revoke completed success",
+      "owner": "context_checked_service_review",
+      "status": "complete",
+      "evidence": "Source trace; evidence/*.json; findings.json; contract-validity.md"
+    },
+    {
+      "contract": "source signature and Go 1.22 support",
+      "owner": "context_checked_service_review",
+      "status": "complete",
+      "evidence": "Source trace; evidence/*.json; findings.json; contract-validity.md"
+    }
+  ],
+  "excluded": [
+    "All repository/design/planning/arm-mapping material outside this neutral packet",
+    "Host app release/security policy and non-supplied callers"
+  ],
+  "skills_read": [
+    "/private/tmp/go-context-outcome-20261002/service/review-skills/go-architecture-and-design/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/service/review-skills/go-code-quality-and-idioms/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/service/review-skills/go-correctness-and-compatibility/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/service/review-skills/go-testing/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/service/review-skills/go-security/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/service/review-skills/go-observability-and-resilience/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/service/review-skills/go-performance-and-resource-management/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/service/review-skills/go-dependencies-and-reproducibility/SKILL.md",
+    "/private/tmp/go-context-outcome-20261002/service/review-skills/go-deployment-and-operations/SKILL.md"
+  ],
+  "cards": {
+    "architecture": "/private/tmp/go-context-outcome-20261002/service/reviews/candidate-1/architecture.md",
+    "code-quality": "/private/tmp/go-context-outcome-20261002/service/reviews/candidate-1/code-quality.md",
+    "correctness": "/private/tmp/go-context-outcome-20261002/service/reviews/candidate-1/correctness.md",
+    "testing": "/private/tmp/go-context-outcome-20261002/service/reviews/candidate-1/testing.md",
+    "security": "/private/tmp/go-context-outcome-20261002/service/reviews/candidate-1/security.md",
+    "resilience": "/private/tmp/go-context-outcome-20261002/service/reviews/candidate-1/resilience.md",
+    "resources": "/private/tmp/go-context-outcome-20261002/service/reviews/candidate-1/resources.md",
+    "reproducibility": "/private/tmp/go-context-outcome-20261002/service/reviews/candidate-1/reproducibility.md",
+    "deployment": "/private/tmp/go-context-outcome-20261002/service/reviews/candidate-1/deployment.md"
+  },
+  "supplied_evidence": "/private/tmp/go-context-outcome-20261002/service/provided-checks-1.json",
+  "executed_evidence": "/private/tmp/go-context-outcome-20261002/service/reviews/candidate-1/evidence",
+  "owner": "context_checked_service_review",
+  "delegation": "Single bounded independent reviewer; no recursive delegation",
+  "status": "complete; frozen before mapping disclosure",
+  "frozen_at_utc": "2026-10-02T21:45:47.512110+00:00"
+}

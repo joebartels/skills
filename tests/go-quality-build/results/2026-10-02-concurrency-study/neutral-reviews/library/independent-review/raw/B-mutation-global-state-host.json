@@ -1,0 +1,29 @@
+{
+  "id": "B-mutation-global-state-host",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-mod=readonly",
+    "-count=1",
+    "-timeout=2s",
+    "-run",
+    "Independent|Isolated",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-library-study/independent-review/work/global-state-B",
+  "environment_overrides": {
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOMODCACHE": "/private/tmp/go-neutral-library-study/independent-review/modcache",
+    "GOCACHE": "/private/tmp/go-neutral-library-study/independent-review/gocache"
+  },
+  "status": 1,
+  "timed_out": false,
+  "stdout": "--- FAIL: TestSnapshotsAreIndependentAndInstancesAreIsolated (0.00s)\n    totals_test.go:74: first totals = {Count:3 Sum:13}\nFAIL\nFAIL\texample.com/library-shared-state\t0.159s\nFAIL\n",
+  "stderr": "",
+  "elapsed_seconds": 0.297
+}

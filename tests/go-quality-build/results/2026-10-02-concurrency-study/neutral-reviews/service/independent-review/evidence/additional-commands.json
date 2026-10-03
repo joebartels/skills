@@ -1,0 +1,40 @@
+[
+  {
+    "candidate": "A",
+    "name": "A-repeat-acquired-cancel",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestIndependentAcquiredAfterCancelSkipsRun$",
+      "-count=30",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.143s\n",
+    "stderr": ""
+  },
+  {
+    "candidate": "A",
+    "name": "A-repeat-authored-failure",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestServeFailureJoinsAndClosesOwnedLeases$",
+      "-count=50",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.115s\n",
+    "stderr": ""
+  }
+]

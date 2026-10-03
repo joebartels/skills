@@ -1,0 +1,113 @@
+{
+  "scope": "Bounded code-area review of candidate A source snapshot (see source-hashes-before.json), CLI/private runPipeline and delivered tests, judged against original README/source; Go1.22 minimum, actual Go1.22.12 and host Go1.26.5 darwin/arm64. Findings are existing-in-scope in this delivered snapshot.",
+  "coverage": [
+    {
+      "id": "A/architecture-and-design",
+      "status": "complete",
+      "reason": "Callback/context/error ownership and cross-boundary completion are the central design decisions; the fixed private API and supplied host must remain usable. All material bounded obligations assessed; contextual exclusions are stated in card limits."
+    },
+    {
+      "id": "A/code-quality-and-idioms",
+      "status": "complete",
+      "reason": "The local context state and error classification need clear, truthful semantics; Go 1.22, formatting and vet also apply. All material bounded obligations assessed; contextual exclusions are stated in card limits."
+    },
+    {
+      "id": "A/correctness-and-compatibility",
+      "status": "complete",
+      "reason": "FIFO, early normal completion, failure cancellation, callback joining, error identity and CLI output/status are explicit important contracts. All material bounded obligations assessed; contextual exclusions are stated in card limits."
+    },
+    {
+      "id": "A/testing",
+      "status": "complete",
+      "reason": "The delivered tests claim to verify concurrency and error preservation. Their assertions, event gates, isolation and mutation sensitivity require assessment. All material bounded obligations assessed; contextual exclusions are stated in card limits."
+    },
+    {
+      "id": "A/security",
+      "status": "complete",
+      "reason": "The CLI parses caller-controlled integer-line input and emits only integers/diagnostics; resource amplification and input-to-sink paths can be assessed within this local CLI boundary. All material bounded obligations assessed; contextual exclusions are stated in card limits."
+    },
+    {
+      "id": "A/observability-and-resilience",
+      "status": "complete",
+      "reason": "Cooperative stop, callback failure propagation and caller-visible success/error signals govern failure containment and diagnostics. All material bounded obligations assessed; contextual exclusions are stated in card limits."
+    },
+    {
+      "id": "A/performance-and-resource-management",
+      "status": "complete",
+      "reason": "The code owns a bounded channel and two callbacks; blocked sends/receives, cleanup joins and constant per-call work are relevant resources. All material bounded obligations assessed; contextual exclusions are stated in card limits."
+    },
+    {
+      "id": "A/dependencies-and-reproducibility",
+      "status": "complete",
+      "reason": "The documented Go 1.22 minimum and standard-library-only standalone module are a rebuild contract, checked with an actual minimum toolchain. All material bounded obligations assessed; contextual exclusions are stated in card limits."
+    },
+    {
+      "id": "A/deployment-and-operations",
+      "status": "complete",
+      "reason": "This artifact is a CLI. Actual binary build, startup/configuration, stdout/stderr, exit codes and finite-input termination are relevant; containers, signals and rollouts are outside this scope. All material bounded obligations assessed; contextual exclusions are stated in card limits."
+    }
+  ],
+  "findings": [
+    {
+      "id": "A/F1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "The stop snapshot stores only a boolean; suppression then treats both Canceled and DeadlineExceeded as the coordinated stop error without matching the actual child context error.",
+      "evidence": "candidates/A/cmd/pipeline/pipeline.go:13,19,24,57-59; TestReviewIndependentDeadlineAfterStop has an active parent, observes child ctx.Err()==context.Canceled, then independently returns context.DeadlineExceeded during cleanup. Host Go1.26.5, actual Go1.22.12 and host race/shuffle all return nil and fail the intended error-identity assertion.",
+      "correction": "Record the actual child context error observed with each callback result and suppress only the exact matching context stop error for that coordinated stop. Preserve a DeadlineExceeded error when the work context was only Canceled, plus wrapped/joined independent causes. Keep the first independent exact error before stopping.",
+      "sources": [
+        "A/architecture-and-design/F1",
+        "A/code-quality-and-idioms/F1",
+        "A/correctness-and-compatibility/F1",
+        "A/observability-and-resilience/F1"
+      ],
+      "magnitude": "Contained error-preservation failure in one private pipeline contract. A caller may receive success instead of an independent operation deadline failure during callback cleanup; no broad/irreversible or systemic reach was shown.",
+      "primary_owner": "correctness-and-compatibility"
+    },
+    {
+      "id": "A/F2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "The claimed early producer join assertion tests a flag assigned true after the pipeline call and waits for eventual producer cleanup after return; it never establishes cleanup completed before host return.",
+      "evidence": "candidates/A/cmd/pipeline/pipeline_test.go:44-69. A narrowly scoped, compiling mutation returns after normal consumer completion only while producerDone is false. Baseline author/probe targets pass; the mutant full author suite and claimed join test both pass at -count=10, while TestReviewEarlyStopJoin fails ASSERT host returned before producer cleanup release.",
+      "correction": "Run the host asynchronously, hold producer cleanup after observing its stop, and assert host completion is still unavailable before releasing cleanup; then check both callback completion and host result. Own cancellation and gate release in cleanup and bound every event wait.",
+      "sources": [
+        "A/testing/F2"
+      ],
+      "magnitude": "An explicit important lifecycle contract is effectively unverified by the delivered join test. The regression can return to callers while callback cleanup still runs; one test-harness correction is required independently of production fixes.",
+      "primary_owner": "testing"
+    },
+    {
+      "id": "A/F3",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Independent cancellation-class error tests cover a pre-stop producer joined error and first consumer sentinel, but do not verify independent error preservation after stopping for both callback roles/classes.",
+      "evidence": "candidates/A/cmd/pipeline/pipeline_test.go:88-109. The compiling broad-cancellation-suppression mutation survives the entire delivered suite. Baseline TestReviewWrappedFailures is green, and the mutant fails its consumer-cleanup independent-error assertion. The unmodified candidate also fails the independent DeadlineExceeded-during-Canceled-cleanup probe on both toolchains.",
+      "correction": "Add independent producer/consumer error assertions before and after coordinated stopping, including an exact error different from child ctx.Err() and wrapped/joined errors. Require original-green, compiled-mutant and intended assertion failures for suppression mutations.",
+      "sources": [
+        "A/testing/F3"
+      ],
+      "magnitude": "The README explicitly requires preservation of independent failures. A regression can silently discard consumer cleanup errors without changing this suite result; a separate error-test correction is needed from the host/cleanup join assertion correction.",
+      "primary_owner": "testing"
+    }
+  ],
+  "strengths": [
+    {
+      "id": "A/G1",
+      "evidence": "TestReviewFIFO succeeds at capacities 1 and 3, and actual host/minimum binaries emit the finite integer sequence and exact --take prefix in order."
+    },
+    {
+      "id": "A/G2",
+      "evidence": "Supplied held early cleanup gate and independent TestReviewEarlyStopJoin/TestReviewFailureStopJoin succeed on the original A snapshot. Both callbacks are joined after cooperative stopping, and the original first-sentinel-before-stop probe succeeds."
+    },
+    {
+      "id": "A/G3",
+      "evidence": "Exact equality retains wrapped/joined independent errors on the original snapshot (TestReviewWrappedFailures passes). errors.Join preserves inspected independent error identities; caller cancellation remains an error in the delivered test."
+    },
+    {
+      "id": "A/G4",
+      "evidence": "Host1.26.5 and actual Go1.22.12 builds/vet/ordinary suites pass in disposable standalone copies with GOWORK=off, GOTOOLCHAIN=local, GOPROXY=off and -mod=readonly; gofmt -d is empty."
+    }
+  ],
+  "safeguards": []
+}

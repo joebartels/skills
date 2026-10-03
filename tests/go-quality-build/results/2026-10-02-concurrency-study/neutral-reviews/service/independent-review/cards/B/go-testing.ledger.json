@@ -1,0 +1,52 @@
+{
+  "scope": "Candidate B complete bounded code area for Testing; source SHA256 host.go=718c14538b977d31400614c6e32ea2d2452c88d6fbb9f24f536b89d67078dc29; host_test.go=83321712342ef7dbb318135853a9fb748f392d891f89e9f255c6f79d437d5bb2",
+  "coverage": [
+    {
+      "id": "go-testing",
+      "status": "complete",
+      "reason": "Applicable: reviewed candidate host_test.go assertions, doubles, event gates, cleanup and whether meaningful contract violations evade its authored suite. External held/supplementary/independent probes verify behavior; they are not additions to the candidate regression suite."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B/T1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Authored Run failure fixtures only observe failure after admission can finish, leaving pending-Open stop unverified.",
+      "evidence": "candidates/B/host_test.go:111; candidates/B/host_test.go:145; evidence/B-host-authored.log: suite passes P1; evidence/B-host-contract.log: independently executed pending-Open assertion fails",
+      "correction": "Add a pending cooperative Open gated against a failing prior Run; assert it receives stop and Serve completes without caller cancel.",
+      "sources": [
+        "cards/B/go-testing.md#B-T1"
+      ]
+    },
+    {
+      "id": "B/T2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "The Close-only regression case closes input after one job, so it cannot detect renewed admission after Close failure.",
+      "evidence": "candidates/B/host_test.go:258; evidence/B-host-authored.log: suite passes P2; evidence/B-host-independent.log: Close-only queued-job assertion fails",
+      "correction": "Keep later jobs queued after the failing Close and assert one acquisition/release at limit 1.",
+      "sources": [
+        "cards/B/go-testing.md#B-T2"
+      ]
+    },
+    {
+      "id": "B/T3",
+      "severity": "major",
+      "systemic": false,
+      "cause": "The acquired-but-not-started test neither establishes a stop during Open nor checks zero Runs; it explicitly expects the second Run to start.",
+      "evidence": "candidates/B/host_test.go:225; candidates/B/host_test.go:253; candidates/B/host_test.go:253 checks startedSecond.Load()!=1; evidence/B-host-authored.log: suite passes P3; evidence/B-host-independent.log: cancellation-before-success observes forbidden Run",
+      "correction": "Add an Open callback that cancels before returning success; assert zero second Runs and release of every acquired lease after joining existing Runs.",
+      "sources": [
+        "cards/B/go-testing.md#B-T3"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "B/go-testing/G1",
+      "evidence": "Authored tests include meaningful finite work/error identity assertions and bounded channel waits rather than only test names; the independently executed authored suites pass once on both actual versions. Candidate-specific additional positives/limits are below."
+    }
+  ],
+  "safeguards": []
+}

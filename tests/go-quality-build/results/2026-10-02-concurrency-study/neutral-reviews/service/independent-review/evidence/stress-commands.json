@@ -1,0 +1,56 @@
+[
+  {
+    "candidate": "A",
+    "name": "A-stress-acquired-cancel",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestIndependentStressAcquiredAfterCancel$",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "environment_overrides": {
+      "GOMAXPROCS": "16",
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestIndependentStressAcquiredAfterCancel (0.04s)\n    review_stress_test.go:3: started 3 Runs after Open canceled caller context\nFAIL\nFAIL\texample.com/service-owned-workers\t0.278s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "candidate": "A",
+    "name": "A-race-repeat-authored-failure",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestServeFailureJoinsAndClosesOwnedLeases$",
+      "-count=1000",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "environment_overrides": {
+      "GOMAXPROCS": "16",
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestServeFailureJoinsAndClosesOwnedLeases (0.00s)\n    host_test.go:136: closed=1, want both acquired leases\n--- FAIL: TestServeFailureJoinsAndClosesOwnedLeases (0.00s)\n    host_test.go:136: closed=1, want both acquired leases\n--- FAIL: TestServeFailureJoinsAndClosesOwnedLeases (0.00s)\n    host_test.go:136: closed=1, want both acquired leases\nFAIL\nFAIL\texample.com/service-owned-workers\t0.267s\nFAIL\n",
+    "stderr": ""
+  }
+]

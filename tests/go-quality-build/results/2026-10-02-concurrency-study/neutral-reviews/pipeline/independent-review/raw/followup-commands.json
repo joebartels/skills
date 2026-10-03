@@ -1,0 +1,228 @@
+[
+  {
+    "label": "A/narrow-join/original-author-target-green",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestEarlyConsumerCompletionStopsAndJoinsProducer$",
+      "-count=10",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.200s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.308
+  },
+  {
+    "label": "A/narrow-join/original-probe-target-green",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestReviewEarlyStopJoin$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-probe",
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.117s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.238
+  },
+  {
+    "label": "A/narrow-join/compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-skip-unfinished-producer-join",
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.156s [no tests to run]\n",
+    "stderr": "",
+    "elapsed_seconds": 0.3
+  },
+  {
+    "label": "A/narrow-join/ordinary-suite",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=10",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-skip-unfinished-producer-join",
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.117s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.232
+  },
+  {
+    "label": "A/narrow-join/author-target",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestEarlyConsumerCompletionStopsAndJoinsProducer$",
+      "-count=10",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-skip-unfinished-producer-join",
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.115s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.227
+  },
+  {
+    "label": "A/narrow-join/independent-target",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestReviewEarlyStopJoin$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-skip-unfinished-producer-join",
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewEarlyStopJoin (0.00s)\n    review_probe_test.go:69: ASSERT host returned before producer cleanup release\n    review_probe_test.go:73: ASSERT producer not joined\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.164s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.312
+  },
+  {
+    "label": "A/author-join/original-green",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestEarlyConsumerCompletionStopsAndJoinsProducer$",
+      "-count=10",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.116s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.231
+  },
+  {
+    "label": "A/author-join/mutant-target",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestEarlyConsumerCompletionStopsAndJoinsProducer$",
+      "-count=10",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-skip-early-join",
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.117s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.232
+  },
+  {
+    "label": "B/author-join/original-green",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestConsumerEarlyCompletionCancelsAndJoinsProducer$",
+      "-count=10",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.118s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.23
+  },
+  {
+    "label": "B/author-join/mutant-target",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestConsumerEarlyCompletionCancelsAndJoinsProducer$",
+      "-count=10",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-skip-early-join",
+    "status": 1,
+    "stdout": "--- FAIL: TestConsumerEarlyCompletionCancelsAndJoinsProducer (0.00s)\n    pipeline_test.go:89: producer was not joined before return\n--- FAIL: TestConsumerEarlyCompletionCancelsAndJoinsProducer (0.00s)\n    pipeline_test.go:89: producer was not joined before return\n--- FAIL: TestConsumerEarlyCompletionCancelsAndJoinsProducer (0.00s)\n    pipeline_test.go:89: producer was not joined before return\n--- FAIL: TestConsumerEarlyCompletionCancelsAndJoinsProducer (0.00s)\n    pipeline_test.go:89: producer was not joined before return\n--- FAIL: TestConsumerEarlyCompletionCancelsAndJoinsProducer (0.00s)\n    pipeline_test.go:89: producer was not joined before return\n--- FAIL: TestConsumerEarlyCompletionCancelsAndJoinsProducer (0.00s)\n    pipeline_test.go:89: producer was not joined before return\n--- FAIL: TestConsumerEarlyCompletionCancelsAndJoinsProducer (0.00s)\n    pipeline_test.go:89: producer was not joined before return\n--- FAIL: TestConsumerEarlyCompletionCancelsAndJoinsProducer (0.00s)\n    pipeline_test.go:89: producer was not joined before return\n--- FAIL: TestConsumerEarlyCompletionCancelsAndJoinsProducer (0.00s)\n    pipeline_test.go:89: producer was not joined before return\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.116s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.228
+  },
+  {
+    "label": "B/author-early-stop/original-green",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestConsumerEarlyCompletionCancelsAndJoinsProducer$",
+      "-count=1",
+      "-timeout=5s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.116s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.229
+  },
+  {
+    "label": "B/author-early-stop/mutant-target",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestConsumerEarlyCompletionCancelsAndJoinsProducer$",
+      "-count=1",
+      "-timeout=5s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-early-stop",
+    "status": 1,
+    "stdout": "--- FAIL: TestConsumerEarlyCompletionCancelsAndJoinsProducer (1.00s)\n    pipeline_test.go:70: producer did not observe cancellation\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t1.118s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 1.236
+  }
+]

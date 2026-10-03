@@ -1,0 +1,5 @@
+## Security — Not applicable
+Scope: Requested evolution of caller-budget, body-lifetime, and error behavior for a library that takes the caller's existing client and HTTP/HTTPS endpoints. Original outbound destination/body-size behavior is excluded by scope.
+Coverage: The new code introduces no credential, TLS, authorization, parsing, logging, filesystem, or executable boundary, and does not replace the supplied transport or change endpoint selection/redirect policy. Time/resource failure containment is assessed under Resilience and Resource Management.
+Rationale: No distinct security decision is implicated by the requested completed paths. Caller trust policies, destination allowlisting, and legacy response-size policies are outside this requested evolution; their absence from the packet is not treated as a defect or as proof of security.
+Limits: No broader application threat model, known-vulnerability scan, actual endpoint policy, or security posture is assessed. If the target expands to attacker-selected endpoints, protected network destinations, or hostile response-size policy, Security becomes applicable and those controls/callers would need evidence.

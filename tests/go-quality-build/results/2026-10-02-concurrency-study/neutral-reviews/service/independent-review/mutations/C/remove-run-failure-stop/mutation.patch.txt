@@ -1,0 +1,9 @@
+Original exact block:
+if err != nil {
+						stop()
+					}
+Replacement:
+if err != nil {
+						// Deliberate diagnostic mutation: no worker-side stop.
+					}
+Intended assertion: ^TestReviewRunFailureCancelsPendingOpen$

@@ -1,0 +1,1 @@
+Review candidate against original and its README contract. Only source/task/checks are supplied; no writing guidance, arm labels, expected outcomes, planning or prior judgments. Use disposable copies and unchanged review contracts; all-nine applicability.

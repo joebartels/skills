@@ -1,0 +1,107 @@
+--- a/totals.go
++++ b/totals.go
+@@ -1,4 +1,6 @@
+ package totals
++
++import "sync"
+ 
+ // Snapshot is a value observation of accepted updates.
+ type Snapshot struct {
+@@ -8,12 +10,23 @@
+ 
+ // Totals collects updates. Its zero value is usable; do not copy after use.
+ type Totals struct {
++	mu    sync.Mutex
+ 	count int64
+ 	sum   int64
+ }
+ 
+ // Add accepts one update.
+-func (t *Totals) Add(delta int64) { t.count++; t.sum += delta }
++func (t *Totals) Add(delta int64) {
++	t.mu.Lock()
++	t.count++
++	t.sum += delta
++	t.mu.Unlock()
++}
+ 
+ // Snapshot returns current totals.
+-func (t *Totals) Snapshot() Snapshot { return Snapshot{Count: t.count, Sum: t.sum} }
++func (t *Totals) Snapshot() Snapshot {
++	t.mu.Lock()
++	snapshot := Snapshot{Count: t.count, Sum: t.sum}
++	t.mu.Unlock()
++	return snapshot
++}
+--- a/totals_test.go
++++ b/totals_test.go
+@@ -1,6 +1,9 @@
+ package totals
+ 
+-import "testing"
++import (
++	"sync"
++	"testing"
++)
+ 
+ func TestSequentialTotals(t *testing.T) {
+ 	var got Totals
+@@ -10,3 +13,58 @@
+ 		t.Fatalf("totals=%+v", got.Snapshot())
+ 	}
+ }
++
++func TestConcurrentAddAndSnapshot(t *testing.T) {
++	const (
++		writers = 8
++		updates = 2000
++	)
++
++	var got Totals
++	var wg sync.WaitGroup
++	start := make(chan struct{})
++	snapshots := make(chan Snapshot, writers)
++
++	for i := 0; i < writers; i++ {
++		wg.Add(1)
++		go func() {
++			defer wg.Done()
++			<-start
++			for j := 0; j < updates; j++ {
++				got.Add(1)
++				if j%10 == 0 {
++					snapshot := got.Snapshot()
++					if snapshot.Count != snapshot.Sum {
++						snapshots <- snapshot
++						return
++					}
++				}
++			}
++		}()
++	}
++	close(start)
++	wg.Wait()
++	close(snapshots)
++	for snapshot := range snapshots {
++		t.Errorf("incoherent snapshot: %+v", snapshot)
++	}
++
++	want := int64(writers * updates)
++	if snapshot := got.Snapshot(); snapshot != (Snapshot{Count: want, Sum: want}) {
++		t.Fatalf("final snapshot=%+v, want count and sum %d", snapshot, want)
++	}
++}
++
++func TestTotalsInstancesAreIndependent(t *testing.T) {
++	var first, second Totals
++	first.Add(4)
++	second.Add(9)
++	first.Add(-1)
++
++	if got, want := first.Snapshot(), (Snapshot{Count: 2, Sum: 3}); got != want {
++		t.Errorf("first snapshot=%+v, want %+v", got, want)
++	}
++	if got, want := second.Snapshot(), (Snapshot{Count: 1, Sum: 9}); got != want {
++		t.Errorf("second snapshot=%+v, want %+v", got, want)
++	}
++}

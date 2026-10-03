@@ -1,0 +1,132 @@
+[
+  {
+    "meaning": "release-before-completion",
+    "substitution": {
+      "file": "host.go",
+      "old": "joinRuns()",
+      "new": "_ = joinRuns // mutation: no completion observation"
+    },
+    "original_held_named": {
+      "argv": [
+        "go",
+        "test",
+        "-run",
+        "^TestControllerPartialStartAndBlockedAdmission$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-7vaahckm",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.177s\n",
+      "stderr": ""
+    },
+    "compile": {
+      "argv": [
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-7vaahckm",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.173s [no tests to run]\n",
+      "stderr": ""
+    },
+    "author_tests": {
+      "argv": [
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-7vaahckm",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.127s\n",
+      "stderr": ""
+    },
+    "held_named": {
+      "argv": [
+        "go",
+        "test",
+        "-run",
+        "^TestControllerPartialStartAndBlockedAdmission$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-7vaahckm",
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerPartialStartAndBlockedAdmission (0.00s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/startup_failure (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/worker_failure (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:184: later job opened despite bounded/stopped admission\n        controller_contract_test.go:206: worker failure lost: independent close failure\n            unexpected later open\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/caller_cancellation (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:184: later job opened despite bounded/stopped admission\n        controller_contract_test.go:209: cancellation lost: independent close failure\n            unexpected later open\n        controller_contract_test.go:218: lease closed before all started users joined\nFAIL\nFAIL\texample.com/service-owned-workers\t0.171s\nFAIL\n",
+      "stderr": ""
+    },
+    "qualified": true
+  },
+  {
+    "meaning": "unresponsive-admission",
+    "substitution": {
+      "file": "host.go",
+      "old": "\t\tselect {\n\t\tcase j, ok := <-input:\n\t\t\tif !ok {\n\t\t\t\tinput = nil\n\t\t\t\tcontinue\n\t\t\t}\n\t\t\tjobCh <- j\n\t\tcase r := <-runs:\n\t\t\trunning--\n\t\t\tif r.err != nil {\n\t\t\t\terrs = append(errs, r.err)\n\t\t\t\tcancel()\n\t\t\t\tstop = true\n\t\t\t}\n\t\t\tcontinue\n\t\tcase <-ctx.Done():\n\t\t\terrs = append(errs, ctx.Err())\n\t\t\tcancel()\n\t\t\tstop = true\n\t\t\tcontinue\n\t\t}",
+      "new": "\t\tmutJob, mutOK := <-input\n\t\tif !mutOK { input = nil; continue }\n\t\tjobCh <- mutJob"
+    },
+    "original_held_named": {
+      "argv": [
+        "go",
+        "test",
+        "-run",
+        "^TestControllerCancellationWithOpenInput$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-rsyqo9uv",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.166s\n",
+      "stderr": ""
+    },
+    "compile": {
+      "argv": [
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-rsyqo9uv",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.232s [no tests to run]\n",
+      "stderr": ""
+    },
+    "author_tests": {
+      "argv": [
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-rsyqo9uv",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.117s\n",
+      "stderr": ""
+    },
+    "held_named": {
+      "argv": [
+        "go",
+        "test",
+        "-run",
+        "^TestControllerCancellationWithOpenInput$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-rsyqo9uv",
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerCancellationWithOpenInput (1.00s)\n    controller_contract_test.go:352: missing event: blocked admission observes cancellation before input closure\nFAIL\nFAIL\texample.com/service-owned-workers\t1.165s\nFAIL\n",
+      "stderr": ""
+    },
+    "qualified": true
+  }
+]

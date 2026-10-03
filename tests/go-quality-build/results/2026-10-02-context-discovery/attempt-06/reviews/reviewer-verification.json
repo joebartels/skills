@@ -1,0 +1,329 @@
+{
+  "candidate_hashes_before": {
+    "README.md": "82330f9481b3f29ac994542e9c201fc9648185d5e64d6a3fa066324fab1919cf",
+    "go.mod": "19309aefc19bace20ba72442c303a0bb5c944e5bbfaf8b0e220ef43e8c5d5b6e",
+    "range.go": "0e9e5ec26abe09a4f19bf32f385af43c2639ce3b7aeae0d61450812f86785ece",
+    "range_test.go": "22fa19f67ea83ea1fc6ca7d7e93b1f0867d01498903c9d796c82e08b46f07bab"
+  },
+  "candidate_hashes_after": {
+    "README.md": "82330f9481b3f29ac994542e9c201fc9648185d5e64d6a3fa066324fab1919cf",
+    "go.mod": "19309aefc19bace20ba72442c303a0bb5c944e5bbfaf8b0e220ef43e8c5d5b6e",
+    "range.go": "0e9e5ec26abe09a4f19bf32f385af43c2639ce3b7aeae0d61450812f86785ece",
+    "range_test.go": "22fa19f67ea83ea1fc6ca7d7e93b1f0867d01498903c9d796c82e08b46f07bab"
+  },
+  "candidate_unchanged": true,
+  "disposable_directory": "/private/tmp/packet03-review.ctgSf9",
+  "checks": [
+    {
+      "label": "current-toolchain",
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "version"
+      ],
+      "cwd": "/private/tmp/packet03-review.ctgSf9/candidate-copy",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/packet03-review.ctgSf9/go-cache",
+        "GOMODCACHE": "/private/tmp/packet03-review.ctgSf9/module-cache",
+        "GOWORK": "off",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOSUMDB": "off",
+        "GOFLAGS": ""
+      },
+      "status": 0,
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "elapsed_seconds": 0.009
+    },
+    {
+      "label": "selected-module-graph",
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "list",
+        "-m",
+        "all"
+      ],
+      "cwd": "/private/tmp/packet03-review.ctgSf9/candidate-copy",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/packet03-review.ctgSf9/go-cache",
+        "GOMODCACHE": "/private/tmp/packet03-review.ctgSf9/module-cache",
+        "GOWORK": "off",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOSUMDB": "off",
+        "GOFLAGS": ""
+      },
+      "status": 0,
+      "stdout": "example.com/rangecheck\n",
+      "stderr": "",
+      "elapsed_seconds": 0.009
+    },
+    {
+      "label": "author-build-current",
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "build",
+        "-mod=readonly",
+        "./..."
+      ],
+      "cwd": "/private/tmp/packet03-review.ctgSf9/candidate-copy",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/packet03-review.ctgSf9/go-cache",
+        "GOMODCACHE": "/private/tmp/packet03-review.ctgSf9/module-cache",
+        "GOWORK": "off",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOSUMDB": "off",
+        "GOFLAGS": ""
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.031
+    },
+    {
+      "label": "author-tests-current",
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/packet03-review.ctgSf9/candidate-copy",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/packet03-review.ctgSf9/go-cache",
+        "GOMODCACHE": "/private/tmp/packet03-review.ctgSf9/module-cache",
+        "GOWORK": "off",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOSUMDB": "off",
+        "GOFLAGS": ""
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/rangecheck\t0.172s\n",
+      "stderr": "",
+      "elapsed_seconds": 1.812
+    },
+    {
+      "label": "author-vet-current",
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "-mod=readonly",
+        "./..."
+      ],
+      "cwd": "/private/tmp/packet03-review.ctgSf9/candidate-copy",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/packet03-review.ctgSf9/go-cache",
+        "GOMODCACHE": "/private/tmp/packet03-review.ctgSf9/module-cache",
+        "GOWORK": "off",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOSUMDB": "off",
+        "GOFLAGS": ""
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.386
+    },
+    {
+      "label": "format-diff",
+      "argv": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-d",
+        "range.go",
+        "range_test.go"
+      ],
+      "cwd": "/private/tmp/packet03-review.ctgSf9/candidate-copy",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/packet03-review.ctgSf9/go-cache",
+        "GOMODCACHE": "/private/tmp/packet03-review.ctgSf9/module-cache",
+        "GOWORK": "off",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOSUMDB": "off",
+        "GOFLAGS": ""
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.007
+    },
+    {
+      "label": "minimum-toolchain",
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "version"
+      ],
+      "cwd": "/private/tmp/packet03-review.ctgSf9/candidate-copy",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/packet03-review.ctgSf9/go-cache",
+        "GOMODCACHE": "/private/tmp/packet03-review.ctgSf9/module-cache",
+        "GOWORK": "off",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOSUMDB": "off",
+        "GOFLAGS": ""
+      },
+      "status": 0,
+      "stdout": "go version go1.22.12 darwin/arm64\n",
+      "stderr": "",
+      "elapsed_seconds": 0.008
+    },
+    {
+      "label": "author-build-minimum",
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "build",
+        "-mod=readonly",
+        "./..."
+      ],
+      "cwd": "/private/tmp/packet03-review.ctgSf9/candidate-copy",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/packet03-review.ctgSf9/go-cache",
+        "GOMODCACHE": "/private/tmp/packet03-review.ctgSf9/module-cache",
+        "GOWORK": "off",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOSUMDB": "off",
+        "GOFLAGS": ""
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.018
+    },
+    {
+      "label": "author-tests-minimum",
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-mod=readonly",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/packet03-review.ctgSf9/candidate-copy",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/packet03-review.ctgSf9/go-cache",
+        "GOMODCACHE": "/private/tmp/packet03-review.ctgSf9/module-cache",
+        "GOWORK": "off",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOSUMDB": "off",
+        "GOFLAGS": ""
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/rangecheck\t0.173s\n",
+      "stderr": "",
+      "elapsed_seconds": 1.631
+    },
+    {
+      "label": "reviewer-contract-current",
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-run",
+        "^TestReviewer",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/packet03-review.ctgSf9/candidate-copy",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/packet03-review.ctgSf9/go-cache",
+        "GOMODCACHE": "/private/tmp/packet03-review.ctgSf9/module-cache",
+        "GOWORK": "off",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOSUMDB": "off",
+        "GOFLAGS": ""
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/rangecheck\t0.166s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.301
+    },
+    {
+      "label": "reviewer-contract-minimum",
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-mod=readonly",
+        "-run",
+        "^TestReviewer",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/packet03-review.ctgSf9/candidate-copy",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/packet03-review.ctgSf9/go-cache",
+        "GOMODCACHE": "/private/tmp/packet03-review.ctgSf9/module-cache",
+        "GOWORK": "off",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOSUMDB": "off",
+        "GOFLAGS": ""
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/rangecheck\t0.167s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.307
+    },
+    {
+      "label": "upper-bound-mutation-author-tests",
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-mod=readonly",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/packet03-review.ctgSf9/upper-bound-mutation",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/packet03-review.ctgSf9/go-cache",
+        "GOMODCACHE": "/private/tmp/packet03-review.ctgSf9/module-cache",
+        "GOWORK": "off",
+        "GOTOOLCHAIN": "local",
+        "GOPROXY": "off",
+        "GOSUMDB": "off",
+        "GOFLAGS": ""
+      },
+      "status": 1,
+      "stdout": "--- FAIL: TestInclusiveInterval (0.00s)\n    range_test.go:7: inclusive interval behavior changed\nFAIL\nFAIL\texample.com/rangecheck\t0.156s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 0.293
+    }
+  ],
+  "reviewer_diagnostics_source": "/private/tmp/packet03-review.ctgSf9/candidate-copy/reviewer_contract_test.go"
+}

@@ -1,0 +1,3 @@
+No applicable skill selected or opened. The workspace contains no `AGENTS.md`, `SKILL.md`, or Go files to identify a relevant task-specific skill, and the instruction points to no skill beyond the native catalog.
+
+I explicitly decline the concurrency, I/O, resource-lifetime, API-contract, package-boundary, interface, and test-isolation guidance: the described change is a deterministic integer helper correction with a local assertion, and you asked for selection only. No files were edited, tests run, external sites browsed, or agents delegated.

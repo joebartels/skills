@@ -1,0 +1,268 @@
+{
+  "supplementary_review_discovered_checks": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestReview(AvailableJobWithOpenInput|RunFailureCancelsPendingOpen)$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-sk08aq2c",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 1,
+      "stdout": "--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)\n    supplementary_contract_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required\nFAIL\nFAIL\texample.com/service-owned-workers\t0.428s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 0.596
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-run",
+        "^TestReview(AvailableJobWithOpenInput|RunFailureCancelsPendingOpen)$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-sk08aq2c",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 1,
+      "stdout": "--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)\n    supplementary_contract_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required\nFAIL\nFAIL\texample.com/service-owned-workers\t0.426s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 0.595
+    }
+  ],
+  "supplementary_limit": "Not a replacement for four original frozen mutation targets or primary frozen held observation.",
+  "reconstruction_hashes_match": true,
+  "ordinary_checks": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "apply",
+        "/Users/jb/.codex/worktrees/ed95/skills/tests/go-quality-build/results/2026-10-02-concurrency-study/attempt-12/source.patch"
+      ],
+      "cwd": "/private/tmp/go-check-sk08aq2c",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.012
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-check-sk08aq2c",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "elapsed_seconds": 0.008
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-check-sk08aq2c",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "go version go1.22.12 darwin/arm64\n",
+      "stderr": "",
+      "elapsed_seconds": 0.008
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "build",
+        "-o",
+        "/dev/null",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-sk08aq2c",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.043
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-sk08aq2c",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.226s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.362
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-sk08aq2c",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.077
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-l",
+        "."
+      ],
+      "cwd": "/private/tmp/go-check-sk08aq2c",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.007
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-sk08aq2c",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.176s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.313
+    }
+  ],
+  "held_contract_checks": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-sk08aq2c",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.219s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.375
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-sk08aq2c",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.224s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.381
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-shuffle=on",
+        "-count=3",
+        "-timeout=60s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-check-sk08aq2c",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 1,
+      "stdout": "-test.shuffle 1790985831665899000\n--- FAIL: TestControllerPartialStartAndBlockedAdmission (0.00s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (0.00s)\n        controller_contract_test.go:190: Run started on lease acquired after stopping\nFAIL\nFAIL\texample.com/service-owned-workers\t0.348s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 0.547
+    }
+  ],
+  "mutations": "Concrete author-specific mutation sensitivity recorded separately; no controller repair credit."
+}

@@ -1,0 +1,29 @@
+{
+  "id": "A-mutation-drop-unit-updates-host",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-mod=readonly",
+    "-count=1",
+    "-timeout=2s",
+    "-run",
+    "^TestConcurrentAdd",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A",
+  "environment_overrides": {
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOMODCACHE": "/private/tmp/go-neutral-library-study/independent-review/modcache",
+    "GOCACHE": "/private/tmp/go-neutral-library-study/independent-review/gocache"
+  },
+  "status": 1,
+  "timed_out": false,
+  "stdout": "panic: test timed out after 2s\n\trunning tests:\n\t\tTestConcurrentAddAndSnapshot (2s)\n\ngoroutine 49 [running]:\ntesting.(*M).startAlarm.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2802 +0x2cc\ncreated by time.goFunc\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/time/sleep.go:215 +0x38\n\ngoroutine 1 [chan receive]:\ntesting.(*T).Run(0x250ee1972008, {0x1044f19fe?, 0x1ad4d1f8044a73b0?}, 0x104644558)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2109 +0x3bc\ntesting.runTests.func1(0x250ee1972008)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2585 +0x40\ntesting.tRunner(0x250ee1972008, 0x250ee1965c48)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ntesting.runTests({0x1044f2d71, 0x20}, {0x1044f2d71, 0x20}, 0x250ee1910270, {0x104669ea0, 0x3, 0x3}, {0x808080142c7b576e?, 0x1044ede5a?, ...})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2583 +0x3f0\ntesting.(*M).Run(0x250ee190e8c0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2443 +0x578\nmain.main()\n\t_testmain.go:50 +0x80\n\ngoroutine 34 [sync.WaitGroup.Wait]:\nsync.runtime_SemacquireWaitGroup(0x250ee1900298?, 0xf0?)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/sema.go:114 +0x38\nsync.(*WaitGroup).Wait(0x250ee1902220)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/sync/waitgroup.go:206 +0xa8\nexample.com/library-shared-state.TestConcurrentAddAndSnapshot(0x250ee1972248)\n\t/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals_test.go:56 +0x164\ntesting.tRunner(0x250ee1972248, 0x104644558)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\n\ngoroutine 43 [runnable]:\nexample.com/library-shared-state.(*Totals).Snapshot(0x250ee1924060?)\n\t/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals.go:34 +0xbc\nexample.com/library-shared-state.TestConcurrentAddAndSnapshot.func2()\n\t/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals_test.go:43 +0x60\ncreated by example.com/library-shared-state.TestConcurrentAddAndSnapshot in goroutine 34\n\t/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals_test.go:39 +0x14c\nFAIL\texample.com/library-shared-state\t2.184s\nFAIL\n",
+  "stderr": "",
+  "elapsed_seconds": 2.325
+}

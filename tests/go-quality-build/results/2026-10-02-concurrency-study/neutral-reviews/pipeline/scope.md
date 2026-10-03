@@ -1,0 +1,1 @@
+Grade each candidate separately against original README/source and supplied held checks. All-nine applicability/card/rubric contracts unchanged; mandatory Correctness, CodeQuality, meaningful Testing. No reports/profiles/writing guidance/planning/prior reviews. Work only in packet/disposable copies; preserve source hashes, independent probes and raw results.

@@ -1,0 +1,170 @@
+--- a/cmd/pipeline/pipeline.go
++++ b/cmd/pipeline/pipeline.go
+@@ -6,9 +6,46 @@
+ )
+ 
+ func runPipeline(ctx context.Context, capacity int, produce func(context.Context, chan<- int) error, consume func(context.Context, <-chan int) error) error {
++	pipelineCtx, cancel := context.WithCancel(ctx)
++	defer cancel()
++
+ 	out := make(chan int, capacity)
+-	done := make(chan error, 1)
+-	go func() { defer close(out); done <- produce(ctx, out) }()
+-	consumerErr := consume(ctx, out)
+-	return errors.Join(consumerErr, <-done)
++	type result struct {
++		producer bool
++		err      error
++	}
++	results := make(chan result, 2)
++
++	go func() {
++		err := produce(pipelineCtx, out)
++		close(out)
++		results <- result{producer: true, err: err}
++	}()
++	go func() {
++		err := consume(pipelineCtx, out)
++		results <- result{err: err}
++	}()
++
++	first := <-results
++	// A successful producer has closed the stream, so let the consumer drain it.
++	// Every other first completion coordinates shutdown of the other callback.
++	if !first.producer || first.err != nil || ctx.Err() != nil {
++		cancel()
++	}
++	second := <-results
++
++	var producerErr, consumerErr error
++	if first.producer {
++		producerErr, consumerErr = first.err, second.err
++	} else {
++		consumerErr, producerErr = first.err, second.err
++	}
++	return errors.Join(ctx.Err(), suppressStopError(ctx, producerErr), suppressStopError(ctx, consumerErr))
+ }
++
++func suppressStopError(parent context.Context, err error) error {
++	if parent.Err() == nil && (err == context.Canceled || err == context.DeadlineExceeded) {
++		return nil
++	}
++	return err
++}
+--- a/cmd/pipeline/pipeline_test.go
++++ b/cmd/pipeline/pipeline_test.go
+@@ -2,8 +2,11 @@
+ 
+ import (
+ 	"context"
++	"errors"
++	"fmt"
+ 	"reflect"
+ 	"testing"
++	"time"
+ )
+ 
+ func TestFinitePipeline(t *testing.T) {
+@@ -27,3 +30,102 @@
+ 		t.Fatalf("got=%v err=%v", got, err)
+ 	}
+ }
++
++func TestConsumerEarlyCompletionCancelsAndJoinsProducer(t *testing.T) {
++	started := make(chan struct{})
++	cancelled := make(chan struct{})
++	cleanup := make(chan struct{})
++	joined := make(chan struct{})
++	err := make(chan error, 1)
++	go func() {
++		err <- runPipeline(context.Background(), 1, func(ctx context.Context, out chan<- int) error {
++			defer close(joined)
++			out <- 1
++			close(started)
++			select {
++			case out <- 2: // capacity fills; the next send blocks until cancellation.
++			case <-ctx.Done():
++				close(cancelled)
++				<-cleanup
++				return ctx.Err()
++			}
++			select {
++			case out <- 3:
++				return nil
++			case <-ctx.Done():
++				close(cancelled)
++				<-cleanup
++				return ctx.Err()
++			}
++		}, func(ctx context.Context, in <-chan int) error {
++			<-started
++			<-in
++			return nil // take-one behavior
++		})
++	}()
++
++	select {
++	case <-cancelled:
++	case <-time.After(time.Second):
++		t.Fatal("producer did not observe cancellation")
++	}
++	select {
++	case <-joined:
++		t.Fatal("producer returned before its cleanup gate opened")
++	default:
++	}
++	close(cleanup)
++	select {
++	case got := <-err:
++		if got != nil {
++			t.Fatalf("runPipeline error = %v", got)
++		}
++	case <-time.After(time.Second):
++		t.Fatal("runPipeline did not join producer")
++	}
++	select {
++	case <-joined:
++	default:
++		t.Fatal("producer was not joined before return")
++	}
++}
++
++func TestProducerFailureStopsConsumerAndPreservesBothErrors(t *testing.T) {
++	producerFailure := errors.Join(context.Canceled, errors.New("producer failed"))
++	consumerFailure := errors.Join(context.Canceled, errors.New("consumer failed"))
++	consumerStarted := make(chan struct{})
++	err := runPipeline(context.Background(), 1, func(ctx context.Context, out chan<- int) error {
++		<-consumerStarted
++		return producerFailure
++	}, func(ctx context.Context, in <-chan int) error {
++		close(consumerStarted)
++		<-ctx.Done()
++		return fmt.Errorf("consumer cleanup: %w", consumerFailure)
++	})
++	if !errors.Is(err, producerFailure) || !errors.Is(err, consumerFailure) {
++		t.Fatalf("error = %v, want both independent failures", err)
++	}
++}
++
++func TestCoordinatedCancellationIsSuppressedButCallerCancellationIsNot(t *testing.T) {
++	err := runPipeline(context.Background(), 1, func(ctx context.Context, out chan<- int) error {
++		<-ctx.Done()
++		return ctx.Err()
++	}, func(context.Context, <-chan int) error { return nil })
++	if err != nil {
++		t.Fatalf("coordinated stop error = %v, want nil", err)
++	}
++
++	ctx, cancel := context.WithCancel(context.Background())
++	cancel()
++	err = runPipeline(ctx, 1, func(ctx context.Context, out chan<- int) error {
++		<-ctx.Done()
++		return ctx.Err()
++	}, func(ctx context.Context, in <-chan int) error {
++		<-ctx.Done()
++		return ctx.Err()
++	})
++	if !errors.Is(err, context.Canceled) {
++		t.Fatalf("caller cancellation error = %v, want context.Canceled", err)
++	}
++}

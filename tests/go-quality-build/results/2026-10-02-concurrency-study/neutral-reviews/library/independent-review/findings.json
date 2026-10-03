@@ -1,0 +1,79 @@
+{
+  "scope_mode": "bounded code-area review; original supplied as contract/baseline context",
+  "confirmed": [
+    {
+      "id": "A-F1",
+      "candidate": "A",
+      "topic": "Testing",
+      "severity": "moderate",
+      "systemic": false,
+      "classification": "existing-in-scope",
+      "primary_owner": "candidate A concurrency test lifecycle",
+      "cause": "Reader completion is conditional on observing the expected final Count rather than on writer completion.",
+      "location": {
+        "path": "/private/tmp/go-neutral-library-study/candidates/A/totals_test.go",
+        "start": 48,
+        "end": 58
+      },
+      "trigger": "A coherent count-loss regression leaves Count==Sum but below 8000 after every writer returns.",
+      "consequence": "The reader continues polling forever and the test goroutine waits at snapshotsDone.Wait(); the final exact-count assertion is unreachable. A test-runner deadline rejects the run, but reports a timeout instead of the wrong final value and delays feedback.",
+      "impact_rationale": "Moderate test fragility: a normal important regression prevents orderly completion and result assertions. The suite still rejects through an external go test timeout, and incoherence/instance/arithmetic assertions are effective. This is not an unverified core contract, a production race, a systemic major or a critical failure.",
+      "evidence": [
+        "candidates/A/totals_test.go:42-51 has no stop event other than incoherence or exact expected Count; :55-58 joins the reader before asserting final state.",
+        "raw/A-mutation-drop-unit-updates-host.json and raw/A-mutation-drop-unit-updates-go122.json: all calls returning without unit updates leave coherent {0 0}; commands exit 1 only when panic: test timed out after 2s. Stack shows test waiting on snapshotsDone and reader polling Snapshot.",
+        "raw/A-mutation-drop-unit-updates-full-suite-go122.json reproduces the timeout in the whole candidate suite, not only a filtered test.",
+        "raw/A-mutation-drop-unit-updates-event-probe-go122.json: independent checkpoint/worker-completion probe terminates and reports checkpoint/final wrong state via explicit assertions."
+      ],
+      "correction": "Make reader shutdown depend on the writer-completion event (and give waits a bounded failure path), join the reader, then assert exact final Count/Sum on the test goroutine.",
+      "verification": "Keep the coherent dropped-unit-update mutant and require a prompt final-state assertion with got {0 0}, not a timeout; rerun ordinary and -race/-shuffle tests on Go 1.22.12 and host. Preserve the split-update incoherence assertion.",
+      "sources": [
+        "A/testing/F1"
+      ],
+      "related_topics": [],
+      "reconciliation": "One independently actionable test-lifecycle cause. Not duplicated into Architecture, Code Quality, Correctness, Performance or Observability; the production methods are unchanged and correct in the reviewed scope."
+    }
+  ],
+  "candidate_counts": {
+    "A": {
+      "critical": 0,
+      "major": 0,
+      "moderate": 1,
+      "minor": 0
+    },
+    "B": {
+      "critical": 0,
+      "major": 0,
+      "moderate": 0,
+      "minor": 0
+    }
+  },
+  "ungraded_or_rejected": [
+    {
+      "id": "Q1",
+      "candidates": [
+        "A",
+        "B"
+      ],
+      "concern": "No explicit guarantee that the original stress-test reader samples intermediate states before all writers finish.",
+      "decision": "Optional deterministic checkpoint improvement, not a confirmed defect. Existing candidate assertions actually reject a race-free split-update mutation on both toolchains; supplied/rerun -race checks exercise shared paths. No demonstrated false-pass failure for a required normal-use contract is claimed. The independent event-based probe closes the production outcome check without being credited as candidate-authored coverage."
+    },
+    {
+      "id": "Q2",
+      "candidates": [
+        "A"
+      ],
+      "concern": "No separate saved-snapshot test in A.",
+      "decision": "Not graded: the required public Snapshot contains only two int64 fields and returns by value. Independence follows from the unchanged public shape and is additionally checked by the external consumer probe. A pointer-return API mutation would be a build error and would not count as behavioral assertion sensitivity."
+    },
+    {
+      "id": "Q3",
+      "candidates": [
+        "A",
+        "B"
+      ],
+      "concern": "Mutex contention versus atomics/RWMutex.",
+      "decision": "Not graded: no performance budget, contention measurement or speed claim. Multi-field coherence requires joint publication, and a direct implementation is explicitly required. Fixed resource use is verified."
+    }
+  ],
+  "mutations_scope": "Supplementary independent probes only; no inference about unspecified original frozen mutation targets or author-specific outcomes."
+}

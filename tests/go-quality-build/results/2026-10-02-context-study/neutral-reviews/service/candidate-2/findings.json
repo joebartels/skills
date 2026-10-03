@@ -1,0 +1,50 @@
+{
+  "confirmed": [
+    {
+      "id": "P1",
+      "severity": "major",
+      "cause": "failedStageError preserves a custom cause but omits the independent standard ctx.Err cancellation classification.",
+      "evidence": "candidate-2/stages.go:58-62; supplementary.log: independent transport failure and custom stop are retained, but errors.Is(err, context.Canceled) is false.",
+      "correction": "Join the observed ctx.Err alongside the operation failure and context.Cause before releasing the stage scope.",
+      "sources": [
+        "candidate-2/architecture/P1",
+        "candidate-2/code-quality/P1",
+        "candidate-2/correctness/P1",
+        "candidate-2/resilience/P1"
+      ],
+      "owner": "failedStageError implementation",
+      "classification": "newly exposed"
+    },
+    {
+      "id": "T1",
+      "severity": "major",
+      "cause": "The author shared-total regression test fails the first stage and never observes a successful transition to stage two.",
+      "evidence": "candidate-2/stages_test.go:206-219; frozen lost-total-budget mutation compiles, author suite exits 0, and held TestTotalAndEarlierParentDeadline fails; independently repeated same statuses.",
+      "correction": "Exercise at least two completed stages and assert one total deadline across them, including earlier-parent clipping.",
+      "sources": [
+        "candidate-2/testing/T1"
+      ],
+      "owner": "Author regression tests",
+      "classification": "introduced"
+    },
+    {
+      "id": "T2",
+      "severity": "major",
+      "cause": "The custom-cause test reader returns ctx.Err itself, masking omission of cancellation classification from the error-aggregation helper on independent failures.",
+      "evidence": "candidate-2/stages_test.go:150-175,198-202; author suite exits 0 although supplementary independent transport failure + custom-cause test fails.",
+      "correction": "Have a failing transport/read/close return an independent sentinel after custom cancellation and assert all three identities: independent failure, custom cause, and context.Canceled.",
+      "sources": [
+        "candidate-2/testing/T2"
+      ],
+      "owner": "Author regression tests",
+      "classification": "introduced"
+    }
+  ],
+  "reconciliation": "Each shared implementation cause is counted once across topics. Test gaps have separate owners and corrections; they are not deduplicated with a production fix. All severities are contained; none critical/systemic. Additional mutations are diagnostics, not frozen efficacy outcomes.",
+  "rejected_or_ungraded": [
+    "No unsafe endpoint/TLS/redirect assumption from missing host policy",
+    "No unmeasured buffering/preallocation micro-optimization",
+    "No claim Context alone proves arbitrary remote work stopped",
+    "No style penalty for manual cancellation paths or small helper choices"
+  ]
+}

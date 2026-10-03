@@ -1,0 +1,107 @@
+{
+  "scope": "Supplied original/ to candidate/ changeset in /private/tmp/go-independent-concurrency-library; exact file snapshots in evidence/source-hashes-before.json. Library module example.com/library-shared-state; go 1.22; standard library only.",
+  "mode": "changeset; introduced/worsened/newly-exposed candidate issues only",
+  "original_contract": "original/README.md",
+  "review_type": "independent source/task/check outcome review",
+  "topics": [
+    {
+      "topic": "architecture-and-design",
+      "name": "Architecture & Design",
+      "applicable": true,
+      "status": "complete",
+      "grade": "A",
+      "reason": "The change places synchronization with each instance's private state, preserves the public API and ownership contract, and uses a direct implementation. No framework, constructor requirement, process effect, or additional public API is introduced.",
+      "primary_review_owner": "concurrency_library_outcome",
+      "card": "cards/architecture-and-design.md",
+      "skill": "review-guidance/go-architecture-and-design/SKILL.md"
+    },
+    {
+      "topic": "code-quality-and-idioms",
+      "name": "Code Quality & Go Idioms",
+      "applicable": true,
+      "status": "complete",
+      "grade": "A",
+      "reason": "Pointer receivers, a documented copy restriction, usable zero value, scalar snapshots, and short explicit lock scopes are clear and version-compatible; vet and formatting checks pass.",
+      "primary_review_owner": "concurrency_library_outcome",
+      "card": "cards/code-quality-and-idioms.md",
+      "skill": "review-guidance/go-code-quality-and-idioms/SKILL.md"
+    },
+    {
+      "topic": "correctness-and-compatibility",
+      "name": "Correctness & Compatibility",
+      "applicable": true,
+      "status": "complete",
+      "grade": "A",
+      "reason": "The README expressly requires concurrent Add/Snapshot coherence, independent values/instances, the existing public interface, and Go 1.22 support. Both shared fields are updated and copied under the same instance mutex.",
+      "primary_review_owner": "concurrency_library_outcome",
+      "card": "cards/correctness-and-compatibility.md",
+      "skill": "review-guidance/go-correctness-and-compatibility/SKILL.md"
+    },
+    {
+      "topic": "testing",
+      "name": "Testing",
+      "applicable": true,
+      "status": "complete",
+      "grade": "A",
+      "reason": "Changed concurrency and instance ownership contracts are checked by concrete intermediate and final assertions, deterministic start/wait synchronization, repeated race runs, and reproduced negative controls.",
+      "primary_review_owner": "concurrency_library_outcome",
+      "card": "cards/testing.md",
+      "skill": "review-guidance/go-testing/SKILL.md"
+    },
+    {
+      "topic": "security",
+      "name": "Security",
+      "applicable": false,
+      "status": "not_applicable",
+      "grade": "Not applicable",
+      "reason": "The changed code only updates private int64 totals under a mutex. It introduces no trust boundary, authentication/authorization, parsing, secret/crypto handling, unsafe code, file/network sink, dependency vulnerability claim, or attacker-controlled allocation/lifecycle path.",
+      "primary_review_owner": "concurrency_library_outcome",
+      "card": null,
+      "skill": null
+    },
+    {
+      "topic": "observability-and-resilience",
+      "name": "Observability & Resilience",
+      "applicable": false,
+      "status": "not_applicable",
+      "grade": "Not applicable",
+      "reason": "This synchronous in-memory scalar library has no new failure-reporting, retry, deadline, queue, overload, probe, or background lifecycle contract. Mutex coherence and contention are assessed under Correctness and Performance; the README promises no diagnostic or cancellation behavior.",
+      "primary_review_owner": "concurrency_library_outcome",
+      "card": null,
+      "skill": null
+    },
+    {
+      "topic": "performance-and-resource-management",
+      "name": "Performance & Resource Management",
+      "applicable": true,
+      "status": "complete",
+      "grade": "A",
+      "reason": "Synchronization is a relevant contention/resource decision. Critical sections perform bounded scalar work, each instance owns its mutex, and production methods create no queue, goroutine, I/O resource, or accumulating buffer. No workload budget or speed improvement is asserted.",
+      "primary_review_owner": "concurrency_library_outcome",
+      "card": "cards/performance-and-resource-management.md",
+      "skill": "review-guidance/go-performance-and-resource-management/SKILL.md"
+    },
+    {
+      "topic": "dependencies-and-reproducibility",
+      "name": "Dependencies & Reproducibility",
+      "applicable": true,
+      "status": "complete",
+      "grade": "A",
+      "reason": "The sync import and explicit Go 1.22 floor are build decisions. The unchanged module has no external requirements/replacements/generators, and standalone readonly/offline builds/tests and minimum-version tests succeed in disposable copies with packet-local caches.",
+      "primary_review_owner": "concurrency_library_outcome",
+      "card": "cards/dependencies-and-reproducibility.md",
+      "skill": "review-guidance/go-dependencies-and-reproducibility/SKILL.md"
+    },
+    {
+      "topic": "deployment-and-operations",
+      "name": "Deployment & Operations",
+      "applicable": false,
+      "status": "not_applicable",
+      "grade": "Not applicable",
+      "reason": "The supplied changeset is an in-memory library implementation and tests, with no executable artifact, CI/release setting, runtime configuration, health check, signal handling, deployment, rollout, or rollback change implicated. No absent broader pipeline is inferred.",
+      "primary_review_owner": "concurrency_library_outcome",
+      "card": null,
+      "skill": null
+    }
+  ]
+}

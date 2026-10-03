@@ -1,0 +1,507 @@
+{
+  "scope": {
+    "base": "c5ee3d0e337975d1de199c86c34bbe2f301ccf85",
+    "head": "d4a0a57a61ee76ab543d87169048111223c66c15",
+    "kind": "focused post-fix NG1 addendum"
+  },
+  "checks": [
+    {
+      "id": "normal-exact-gate",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "cwd": "/private/tmp/pr6-postfix-y6j_x23y/exact-head",
+      "environment_removed": [
+        "PYTHONOPTIMIZE"
+      ],
+      "environment_overrides": {},
+      "exit_code": 0,
+      "elapsed_seconds": 0.519,
+      "stdout": "PASS: portable31 reconstructions (26 completed/5 failed), five runtime0.2.0 skills, anchored seals and preserved counterevidence\n",
+      "stderr": ""
+    },
+    {
+      "id": "current-three-cli-regressions",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_go_study_integrity.py",
+        "-v"
+      ],
+      "cwd": "/private/tmp/pr6-postfix-y6j_x23y/exact-head",
+      "environment_removed": [
+        "PYTHONOPTIMIZE"
+      ],
+      "environment_overrides": {},
+      "exit_code": 0,
+      "elapsed_seconds": 2.578,
+      "stdout": "",
+      "stderr": "test_missing_delivery_seal_fails_closed (test_go_study_integrity.GoStudyIntegrityCLI.test_missing_delivery_seal_fails_closed) ... ok\ntest_normal_execution_verifies_current_evidence (test_go_study_integrity.GoStudyIntegrityCLI.test_normal_execution_verifies_current_evidence) ... ok\ntest_optimized_modes_fail_closed (test_go_study_integrity.GoStudyIntegrityCLI.test_optimized_modes_fail_closed) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 2.541s\n\nOK\n"
+    },
+    {
+      "id": "optimized-O",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "-O",
+        "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "cwd": "/private/tmp/pr6-postfix-y6j_x23y/exact-head",
+      "environment_removed": [
+        "PYTHONOPTIMIZE"
+      ],
+      "environment_overrides": {},
+      "exit_code": 1,
+      "elapsed_seconds": 0.028,
+      "stdout": "",
+      "stderr": "FAIL: Python optimization disables integrity checks; run without -O/-OO and unset PYTHONOPTIMIZE.\n"
+    },
+    {
+      "id": "optimized-OO",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "-OO",
+        "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "cwd": "/private/tmp/pr6-postfix-y6j_x23y/exact-head",
+      "environment_removed": [
+        "PYTHONOPTIMIZE"
+      ],
+      "environment_overrides": {},
+      "exit_code": 1,
+      "elapsed_seconds": 0.074,
+      "stdout": "",
+      "stderr": "FAIL: Python optimization disables integrity checks; run without -O/-OO and unset PYTHONOPTIMIZE.\n"
+    },
+    {
+      "id": "optimized-env",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "cwd": "/private/tmp/pr6-postfix-y6j_x23y/exact-head",
+      "environment_removed": [
+        "PYTHONOPTIMIZE"
+      ],
+      "environment_overrides": {
+        "PYTHONOPTIMIZE": "1"
+      },
+      "exit_code": 1,
+      "elapsed_seconds": 0.028,
+      "stdout": "",
+      "stderr": "FAIL: Python optimization disables integrity checks; run without -O/-OO and unset PYTHONOPTIMIZE.\n"
+    },
+    {
+      "id": "missing-current-index",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "cwd": "/private/tmp/pr6-postfix-y6j_x23y/exact-head",
+      "environment_removed": [
+        "PYTHONOPTIMIZE"
+      ],
+      "environment_overrides": {},
+      "exit_code": 1,
+      "elapsed_seconds": 0.494,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/private/tmp/pr6-postfix-y6j_x23y/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 147, in <module>\n    verify()\n    ~~~~~~^^\n  File \"/private/tmp/pr6-postfix-y6j_x23y/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 141, in verify\n    expected = sha(OUT / \"checksums.json\")\n  File \"/private/tmp/pr6-postfix-y6j_x23y/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 27, in sha\n    return hashlib.sha256(path.read_bytes()).hexdigest()\n                          ~~~~~~~~~~~~~~~^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py\", line 625, in read_bytes\n    with self.open(mode='rb') as f:\n         ~~~~~~~~~^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py\", line 537, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/pr6-postfix-y6j_x23y/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/checksums.json'\n"
+    },
+    {
+      "id": "missing-index-and-changed-delivery-readme",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "cwd": "/private/tmp/pr6-postfix-y6j_x23y/exact-head",
+      "environment_removed": [
+        "PYTHONOPTIMIZE"
+      ],
+      "environment_overrides": {},
+      "exit_code": 1,
+      "elapsed_seconds": 0.508,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/private/tmp/pr6-postfix-y6j_x23y/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 147, in <module>\n    verify()\n    ~~~~~~^^\n  File \"/private/tmp/pr6-postfix-y6j_x23y/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 141, in verify\n    expected = sha(OUT / \"checksums.json\")\n  File \"/private/tmp/pr6-postfix-y6j_x23y/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 27, in sha\n    return hashlib.sha256(path.read_bytes()).hexdigest()\n                          ~~~~~~~~~~~~~~~^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_abc.py\", line 625, in read_bytes\n    with self.open(mode='rb') as f:\n         ~~~~~~~~~^^^^^^^^^^^\n  File \"/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/pathlib/_local.py\", line 537, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/private/tmp/pr6-postfix-y6j_x23y/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/checksums.json'\n"
+    },
+    {
+      "id": "restored-index-same-changed-delivery-readme",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "cwd": "/private/tmp/pr6-postfix-y6j_x23y/exact-head",
+      "environment_removed": [
+        "PYTHONOPTIMIZE"
+      ],
+      "environment_overrides": {},
+      "exit_code": 1,
+      "elapsed_seconds": 0.523,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/private/tmp/pr6-postfix-y6j_x23y/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 147, in <module>\n    verify()\n    ~~~~~~^^\n  File \"/private/tmp/pr6-postfix-y6j_x23y/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 142, in verify\n    seal(OUT, expected, continuation)\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/private/tmp/pr6-postfix-y6j_x23y/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 57, in seal\n    assert actual == expected_files, (root.name, \"sealed bytes changed\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('2026-10-02-context-concurrency-delivery', 'sealed bytes changed')\n"
+    },
+    {
+      "id": "restored-exact-packet",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "cwd": "/private/tmp/pr6-postfix-y6j_x23y/exact-head",
+      "environment_removed": [
+        "PYTHONOPTIMIZE"
+      ],
+      "environment_overrides": {},
+      "exit_code": 0,
+      "elapsed_seconds": 0.499,
+      "stdout": "PASS: portable31 reconstructions (26 completed/5 failed), five runtime0.2.0 skills, anchored seals and preserved counterevidence\n",
+      "stderr": ""
+    },
+    {
+      "id": "missing-current-canonical-anchor",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "cwd": "/private/tmp/pr6-postfix-y6j_x23y/exact-head",
+      "environment_removed": [
+        "PYTHONOPTIMIZE"
+      ],
+      "environment_overrides": {},
+      "exit_code": 1,
+      "elapsed_seconds": 0.519,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/private/tmp/pr6-postfix-y6j_x23y/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 147, in <module>\n    verify()\n    ~~~~~~^^\n  File \"/private/tmp/pr6-postfix-y6j_x23y/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 142, in verify\n    seal(OUT, expected, continuation)\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/private/tmp/pr6-postfix-y6j_x23y/exact-head/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 48, in seal\n    assert expected in continuation, (root.name, \"canonical anchor missing\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('2026-10-02-context-concurrency-delivery', 'canonical anchor missing')\n"
+    },
+    {
+      "id": "restored-canonical-anchor-and-exact-packet",
+      "argv": [
+        "rtk",
+        "proxy",
+        "python3",
+        "-B",
+        "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "cwd": "/private/tmp/pr6-postfix-y6j_x23y/exact-head",
+      "environment_removed": [
+        "PYTHONOPTIMIZE"
+      ],
+      "environment_overrides": {},
+      "exit_code": 0,
+      "elapsed_seconds": 0.493,
+      "stdout": "PASS: portable31 reconstructions (26 completed/5 failed), five runtime0.2.0 skills, anchored seals and preserved counterevidence\n",
+      "stderr": ""
+    }
+  ],
+  "protected_identity_commands": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "ls-tree",
+        "-r",
+        "c5ee3d0e337975d1de199c86c34bbe2f301ccf85",
+        "--",
+        "docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+        "docs/go-quality-build/reviews/concurrency-readiness/preflight/raw/verify_example.py",
+        "docs/go-quality-build/reviews/concurrency-readiness/raw/verify-readiness.py",
+        "docs/go-quality-build/reviews/context-readiness",
+        "plugins/go-quality-build",
+        "plugins/go-quality-review",
+        "tests/go-quality-build/go-context-and-deadlines",
+        "tests/go-quality-build/go-concurrency-and-ownership",
+        "tests/go-quality-build/results/2026-10-02-context-discovery",
+        "tests/go-quality-build/results/2026-10-02-context-study",
+        "tests/go-quality-build/results/2026-10-02-concurrency-discovery",
+        "tests/go-quality-build/results/2026-10-02-concurrency-study",
+        "tests/go-quality-build/results/2026-10-02-context-concurrency-combined",
+        "docs/go-quality-build/reviews/context-concurrency-pr/round-1/delivery-before-optimization-fix"
+      ],
+      "exit_code": 0,
+      "tracked_entries": 2664,
+      "tree_inventory_sha256": "2406b73c798b741effb60a6972b7195b7d06e266b1936088c5091afd58c7ec68"
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "ls-tree",
+        "-r",
+        "d4a0a57a61ee76ab543d87169048111223c66c15",
+        "--",
+        "docs/go-quality-build/reviews/concurrency-readiness/preflight/example",
+        "docs/go-quality-build/reviews/concurrency-readiness/preflight/raw/verify_example.py",
+        "docs/go-quality-build/reviews/concurrency-readiness/raw/verify-readiness.py",
+        "docs/go-quality-build/reviews/context-readiness",
+        "plugins/go-quality-build",
+        "plugins/go-quality-review",
+        "tests/go-quality-build/go-context-and-deadlines",
+        "tests/go-quality-build/go-concurrency-and-ownership",
+        "tests/go-quality-build/results/2026-10-02-context-discovery",
+        "tests/go-quality-build/results/2026-10-02-context-study",
+        "tests/go-quality-build/results/2026-10-02-concurrency-discovery",
+        "tests/go-quality-build/results/2026-10-02-concurrency-study",
+        "tests/go-quality-build/results/2026-10-02-context-concurrency-combined",
+        "docs/go-quality-build/reviews/context-concurrency-pr/round-1/delivery-before-optimization-fix"
+      ],
+      "exit_code": 0,
+      "tracked_entries": 2664,
+      "tree_inventory_sha256": "2406b73c798b741effb60a6972b7195b7d06e266b1936088c5091afd58c7ec68"
+    }
+  ],
+  "protected_source_tree_identity_equal": true,
+  "exact_disposable_snapshot": {
+    "argv": [
+      "rtk",
+      "proxy",
+      "git",
+      "archive",
+      "d4a0a57a61ee76ab543d87169048111223c66c15"
+    ],
+    "exit_code": 0,
+    "archive_sha256": "7f8392361b19f9ef76960e7cdcce96731089c6b905899f79a3340b2223e804b3",
+    "head": "d4a0a57a61ee76ab543d87169048111223c66c15",
+    "no_worktree_edits_in_snapshot": true
+  },
+  "seal_identity": [
+    {
+      "path": "docs/go-quality-build/reviews/context-concurrency-pr/round-1/delivery-before-optimization-fix",
+      "index_sha256": "20387a7bb3d3ef460fe1231eb2c5a721a71075a84118a9e8086e1bd5a1913e93",
+      "exact_files": 13,
+      "index_identity": "pass",
+      "canonical_anchor": "present",
+      "listed_bytes": "pass"
+    },
+    {
+      "path": "docs/go-quality-build/reviews/context-concurrency-pr/closing-fix/delivery-before-required-seal-fix",
+      "index_sha256": "dd63309f526b323dea232650026ab34c91f30468d3c0bbcaa81d1793287a4909",
+      "exact_files": 13,
+      "index_identity": "pass",
+      "canonical_anchor": "present",
+      "listed_bytes": "pass"
+    },
+    {
+      "path": "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery",
+      "index_sha256": "f20d74230d19d3323c31f0697a31679786401b7cc612b53ba14a1e276790df2b",
+      "exact_files": 13,
+      "index_identity": "pass",
+      "canonical_anchor": "present",
+      "listed_bytes": "pass"
+    }
+  ],
+  "revision2_snapshot_matches_c5_delivery": [
+    {
+      "path": "local-link-checks.json",
+      "sha256": "a117b4066e8c66f24b5c55a9f6466b0ccf3a42b044fa224bcc34c14f1695d528",
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "show",
+        "c5ee3d0e337975d1de199c86c34bbe2f301ccf85:tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/local-link-checks.json"
+      ],
+      "exit_code": 0,
+      "exact_base_delivery_bytes_equal": true
+    },
+    {
+      "path": "raw-whitespace-exceptions.json",
+      "sha256": "b2f8aa197d34b35a6afa8a767295fa460b10b7cc4eaff2c61e0938da477a71c7",
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "show",
+        "c5ee3d0e337975d1de199c86c34bbe2f301ccf85:tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/raw-whitespace-exceptions.json"
+      ],
+      "exit_code": 0,
+      "exact_base_delivery_bytes_equal": true
+    },
+    {
+      "path": "post-review-shared-verification.json",
+      "sha256": "d621aa78e5677a05be7d7f940ca5caf7011f8566f3b720d47e23dd609483878b",
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "show",
+        "c5ee3d0e337975d1de199c86c34bbe2f301ccf85:tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/post-review-shared-verification.json"
+      ],
+      "exit_code": 0,
+      "exact_base_delivery_bytes_equal": true
+    },
+    {
+      "path": "verify-delivery.py",
+      "sha256": "09ff51b34e9511a305c8331db9de9dbee93b7114486ebc8d8b53383769e66579",
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "show",
+        "c5ee3d0e337975d1de199c86c34bbe2f301ccf85:tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py"
+      ],
+      "exit_code": 0,
+      "exact_base_delivery_bytes_equal": true
+    },
+    {
+      "path": "branch-whitespace-checks.json",
+      "sha256": "612e3dd6df0ec81c772510aa34b3481cb0aadbffa2367c304126968049f888f6",
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "show",
+        "c5ee3d0e337975d1de199c86c34bbe2f301ccf85:tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/branch-whitespace-checks.json"
+      ],
+      "exit_code": 0,
+      "exact_base_delivery_bytes_equal": true
+    },
+    {
+      "path": "README.md",
+      "sha256": "1c95f24819a913c37c37230ddb638d07b821b02e189e1edfaf2f0ad8eba256fe",
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "show",
+        "c5ee3d0e337975d1de199c86c34bbe2f301ccf85:tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/README.md"
+      ],
+      "exit_code": 0,
+      "exact_base_delivery_bytes_equal": true
+    },
+    {
+      "path": "runtime-identity.json",
+      "sha256": "43e5e7c45ec260757a1e416fceed7dceb6fa0ed2caf4fa838462fed0670023cc",
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "show",
+        "c5ee3d0e337975d1de199c86c34bbe2f301ccf85:tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/runtime-identity.json"
+      ],
+      "exit_code": 0,
+      "exact_base_delivery_bytes_equal": true
+    },
+    {
+      "path": "shared-verification.json",
+      "sha256": "35696b1a7e5ea917a9f68aa1eb8f7ab1372b0c382264811d6c7096367c95b329",
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "show",
+        "c5ee3d0e337975d1de199c86c34bbe2f301ccf85:tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/shared-verification.json"
+      ],
+      "exit_code": 0,
+      "exact_base_delivery_bytes_equal": true
+    },
+    {
+      "path": "portable-gate-checks.json",
+      "sha256": "e34bf4ff6769c76a303aa5973657cbd04a114bb8d7b932c4f726552069cde9b9",
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "show",
+        "c5ee3d0e337975d1de199c86c34bbe2f301ccf85:tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/portable-gate-checks.json"
+      ],
+      "exit_code": 0,
+      "exact_base_delivery_bytes_equal": true
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "4424c5a1a82812b4d3e21a2e810823db4105f9c7eda856f55c82a39b116b85e5",
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "show",
+        "c5ee3d0e337975d1de199c86c34bbe2f301ccf85:tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/manifest.json"
+      ],
+      "exit_code": 0,
+      "exact_base_delivery_bytes_equal": true
+    },
+    {
+      "path": "checksums.json",
+      "sha256": "dd63309f526b323dea232650026ab34c91f30468d3c0bbcaa81d1793287a4909",
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "show",
+        "c5ee3d0e337975d1de199c86c34bbe2f301ccf85:tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/checksums.json"
+      ],
+      "exit_code": 0,
+      "exact_base_delivery_bytes_equal": true
+    },
+    {
+      "path": "post-review-portable-checks.json",
+      "sha256": "f1fa1092b82a59b0b696ab77a86b5f01817fd477032e6d5ba0e1124f33296242",
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "show",
+        "c5ee3d0e337975d1de199c86c34bbe2f301ccf85:tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/post-review-portable-checks.json"
+      ],
+      "exit_code": 0,
+      "exact_base_delivery_bytes_equal": true
+    },
+    {
+      "path": "preparation-diagnostics.json",
+      "sha256": "c71b2c1760b81c42db9f97fe9f5b2507ad21ad8e4f0728e1a161ea30f0cf7b3d",
+      "argv": [
+        "rtk",
+        "proxy",
+        "git",
+        "show",
+        "c5ee3d0e337975d1de199c86c34bbe2f301ccf85:tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/preparation-diagnostics.json"
+      ],
+      "exit_code": 0,
+      "exact_base_delivery_bytes_equal": true
+    }
+  ],
+  "disposable_packet_restored_identity": true,
+  "historical_capture_writer_executions": 0,
+  "go_command_reruns": 0,
+  "result": {
+    "NG1": "resolved",
+    "new_actionable_findings_in_focused_scope": 0,
+    "go_cards_carried_by_exact_tree_identity": true,
+    "prior_go_grade": "A"
+  }
+}

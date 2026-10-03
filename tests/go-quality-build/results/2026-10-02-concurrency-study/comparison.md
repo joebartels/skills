@@ -1,0 +1,48 @@
+# Concurrency study comparison
+
+The exact draft passes accepting preflight and a second independent guidance check. The bounded study demonstrates **zero matched corrections of the fixed primary defect**, and fails clean transfer/preservation. All108 neutral topic cards are frozen and arm mapping disclosed; the separate [independent readiness report](readiness-review/readiness-review.md) records the disposition. The draft remains outside runtime.
+
+## Fixed comparisons and contrary checks
+
+All twelve study outputs reconstruct exactly from frozen originals plus their patches. Ordinary current/minimum suites, host build/vet and formatting pass. Each keeps its original Go1.22 module and standard-library dependency boundary. Every failure below is preserved rather than repaired or replaced by a later passing run.
+
+| Fixed pair: baseline/exposure | Case/profile | Supplied held results | Fixed-primary contribution |
+| --- | --- | --- | --- |
+| 13/4 | Shared-state library, reference | Both current/minimum/race pass | Strong production tie; neither is the primary worker task |
+| 14/5 | Worker, reference | Baseline passes; exposure fails partial-start progression on current/minimum/race | Baseline already starts sparse work; zero correction. Independent exposure review confirms missed later available-job admission and Close-failure stopping; raw partial-start setup failures remain separately scoped |
+| 15/6 | Private serial control, reference | Both current/minimum pass | Preserved control, no primary credit |
+| 7/8 | Unseen pipeline/CLI transfer, reference | Baseline loses a bare independent cancellation-class error; exposure passes original current/minimum/race | Bounded transfer improvement, never a primary repetition |
+| 9/10 | Worker, alternate model | Both current/minimum/race pass | Both already start sparse work; zero correction |
+| 11/12 | Worker, lower reasoning | Baseline current/race fail but minimum passes; exposure race fails but ordinary held passes | Both start sparse work; zero correction. Lifecycle preservation remains deficient |
+
+The primary is discovery F1: waiting for a full cohort before starting an available first job. Its original held observation is the first-work event before caller cancellation in `TestControllerCancellationWithOpenInput`. The sparse-input supplementary check isolates the same cause. All three fresh matched baselines already pass that observation; strong ties cannot be credited as corrections. Discovery1–3 used default toolchain policy and are excluded from matched benefit. No primary switching or late defect mining occurred.
+
+## Frozen neutral outcomes
+
+All nine review topics must be considered per output, with mandatory Correctness, Code Quality and meaningful Testing; contextual applicability and unavailable evidence remain distinct. Reviewers receive source/task/checks plus unchanged review guidance, without writing guidance, profiles, author reports or arm identity. Exact textual packets are frozen before mapping disclosure. Grades are never averaged.
+
+- Pure controls15/6: independent A/A, zero findings, twelve additional boundary cases per candidate and meaningful original off-by-one sensitivity.
+- Library13/4: production A/A. Baseline13 overallA; exposure4 overallB because its reader waits for the expected final count before termination. A coherent dropped-update mutant strands the test before its result assertion; the baseline reports wrong totals promptly. Both detect incoherent publication. This is a distinct test-lifecycle preservation loss, not a production data race.
+- Pipeline7/8: both overallC-. Exposure8 preserves first bare cancellation errors, unlike baseline7, but both lose an independent DeadlineExceeded error when the child stopped with Canceled. Exposure8 also has a vacuous cleanup-before-return assertion and missing independent-error regressions; baseline7 has its exact-error matrix gap. Independent real-binary floor/current cases pass, while contract probes and meaningful sensitivity expose these specific failures. Successful original held exposure checks do not supply a clean transfer gate.
+- Worker14/5: both overallC-, with different causes. Baseline14 has Close-failure admission, stale successful-Open stop handling and cancellation during final cleanup defects, plus three major test gaps and one moderate scheduling-fragility gap. Exposure5 has late available-job admission and Close-failure admission defects plus two important test gaps. Its supplied partial-start setup timeouts are retained, but are not treated as proof of an unstarted Run failure; the independent late-input probe establishes the graded admission cause. Passing baseline14 original checks was narrower than complete contract correctness.
+- Alternate model9/10: baseline9 overallA; exposure10 overallC because its Close-only failure tests fail to detect renewed admission after a Close error. No production defect is confirmed in either. Baseline9 detects the suspected missing-worker-stop mutation; that rejected testing concern is preserved rather than counted.
+- Lower reasoning11/12: both overallC-. Baseline11 prematurely cancels healthy cohorts, starts work acquired after stopping and decrements capacity before release; paced input reaches eight live leases at limit2. Exposure12 cannot supervise Run failure during input/acquisition, admits after Close failure and starts returned leases after cancellation. Each has three independently necessary major test gaps. Ordinary one-shot passes and supplied minimum successes do not override source/independent event observations.
+
+The disclosed [map](neutral-packet-map.json) binds12 exact source snapshots to four separately frozen packets. [Library](neutral-reviews/library/independent-review/review.md), [control](neutral-reviews/control/review.md), [pipeline](neutral-reviews/pipeline/independent-review/review.md) and [worker](neutral-reviews/service/independent-review/review.md) reports retain raw findings, applicability and calculators. Library considers six applicable/three N/A, control five/four, worker seven/two; pipeline includes the actual child/process obligations it assesses. No unavailable platform/load/threat evidence is called passing or replaced with N/A. Controls' actual minimum check is supplied controller evidence, separately attributed from their reviewer host checks.
+
+## Mutation, selection and cost boundaries
+
+[mutation-summary.json](mutation-summary.json) links exact compiling variants and raw assertions. Pure control regression is outside the four candidate mutation targets. Failed compilation, invalid original targets and unselected substitutions earn no detection credit. A runner timeout alone supplies no prompt assertion-quality credit. Exposure8's missing-producer-join variant and baseline14's release/admission variants survive their authored suites; the meaningful held assertions fail. Reviewer supplementary mutations remain independent diagnostics, never repaired authors or retroactive frozen efficacy targets.
+
+Native selection probes measure local catalog/body access separately from implementations, which receive the same explicit catalog metadata. All twelve probe processes complete with unchanged physical catalogs. Reference and alternate-model profiles match4/4 intended body decisions each. Lower-reasoning matches2/4: one applicable nonread and one serial-control body read followed by a declared decline. Overall five of six applicable body reads and five of six control nonreads are observed; no routing-consistency pass is claimed. Claude is unauthenticated and target OpenCode v2 unavailable. Native local access is neither global installation nor cross-harness implementation effectiveness.
+
+[cost-summary.json](cost-summary.json) preserves per-attempt reported tokens, elapsed time and production/test/source-patch sizes. They are single-run observations with no measured price or causal efficiency conclusion. Fifteen concurrency authors including discovery consume15/16; context16 plus concurrency15 consume31/36 group slots. One candidate reserve remains untouched. No extra author, retry, integrated fixture or guidance revision has been used to chase a favorable outcome.
+
+Actual Go1.22.12 and1.26.5 checks cover darwin/arm64 and supplied cooperative callbacks/real-child CLI contracts. Race repetitions do not prove exhaustive schedules. No other-platform, arbitrary-blocking-reader or hidden full-system-context claim is made. Supplementary service probes retain portable F1/F2 causes; the nonportable full baseline-specific suite is an excluded controller diagnostic.
+
+
+## Readiness gates and disposition
+
+Static guidance is accepted at exact0ab21aee. Repeated fixed-primary benefit is absent: three checked matched baselines already dispatch the first sparse job, so correction count is0, not2. Final-byte transfer has a shared independent-deadline defect and exposure assertion gaps. Preservation includes library test regression, worker lifecycle regressions and alternate-model test weakness. Native lower-reasoning routing has two deviations. These are distinct observations, not an average grade or a claim that sound wording caused every defect.
+
+The separate independent readiness report assesses this frozen evidence and records the disposition. No further author slot is spent, no guidance is revised, and no new primary or integrated task is substituted. The appropriate bounded conclusion is a reviewed uninstalled draft, with broader effectiveness and reuse unproven. Future work requires a separately scoped controlled extension, retaining these raw contrary results.

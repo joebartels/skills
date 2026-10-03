@@ -1,0 +1,27 @@
+{
+  "label": "contract-race",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-race",
+    "-shuffle=on",
+    "-run",
+    "^(TestReview|TestTotalAndEarlierParentDeadline|TestResponseScopeAndClose|TestStageBudgetAndCanceledAdmission|TestHTTPCancellationBoundary)",
+    "-count=3",
+    "-timeout=60s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-context-outcome-20261002/service/reviews/scratch/candidate-2",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-context-outcome-20261002/service/reviews/go-cache",
+    "GOWORK": "off",
+    "GOTOOLCHAIN": "local",
+    "GOPROXY": "off"
+  },
+  "status": 0,
+  "stdout": "ok  \texample.com/stages\t1.566s\n",
+  "stderr": "",
+  "elapsed_seconds": 5.649
+}

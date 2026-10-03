@@ -1,0 +1,30 @@
+{
+  "scope": "Bounded code-area review of candidate B source snapshot (see source-hashes-before.json), CLI/private runPipeline and delivered tests, judged against original README/source; Go1.22 minimum, actual Go1.22.12 and host Go1.26.5 darwin/arm64. Findings are existing-in-scope in this delivered snapshot.",
+  "coverage": [
+    {
+      "id": "testing",
+      "status": "complete",
+      "reason": "The delivered tests claim to verify concurrency and error preservation. Their assertions, event gates, isolation and mutation sensitivity require assessment."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B/F2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "The suite conflates cancellation-class independent failures with wrapped errors: it never asserts preservation of a bare sentinel returned before any coordinated stop, or an independent exact deadline after a Canceled stop.",
+      "evidence": "candidates/B/cmd/pipeline/pipeline_test.go:93-131; the candidate ordinary suite is green on host and actual Go1.22.12, while the supplied held test and independent exact-error probes deterministically fail. The both-error test meaningfully rejects broad errors.Is-based suppression, but that assertion does not cover this current provenance defect.",
+      "correction": "Add bounded tests for each callback returning bare context.Canceled while the child and parent are active, and for an independent context.DeadlineExceeded while cleanup observes Canceled. Assert error identity after joins, and retain the existing wrapped/joined cases.",
+      "sources": [
+        "B/testing/F2"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "B/testing/G1",
+      "evidence": "Finite/FIFO expectations use real values and error identity checks. The independent four-mutation probes each have an original-green target, compiling mutant and intended bounded assertion failure. These review probes assess current behavior but are not credited as candidate-authored regression coverage."
+    }
+  ],
+  "safeguards": []
+}

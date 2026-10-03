@@ -1,0 +1,18 @@
+{
+  "scope": "Candidate A complete bounded code area for Dependencies & Reproducibility; source SHA256 host.go=c45a48c184493ebe70f1f52cbb831194f2a25604e49776687930cd951fd34ab7; host_test.go=ea4fa70df361e0a53d6b563b009549c328abc0a8a8d0a3e198a5d3842e6db437",
+  "coverage": [
+    {
+      "id": "go-dependencies-and-reproducibility",
+      "status": "complete",
+      "reason": "Applicable: go.mod declares Go 1.22 and standard-library-only production/tests. Verified standalone readonly resolution, host and actual minimum compilation/test execution, imports, module graph and exact input hashes. No generated/native/release inputs or bit-identical artifact contract."
+    }
+  ],
+  "findings": [],
+  "strengths": [
+    {
+      "id": "A/go-dependencies-and-reproducibility/G1",
+      "evidence": "Actual go1.22.12 and go1.26.5 compile the standalone go 1.22 standard-library-only module with GOWORK=off, GOTOOLCHAIN=local, GOFLAGS=-mod=readonly; go list -m all returns only example.com/service-owned-workers. No external go.sum is needed."
+    }
+  ],
+  "safeguards": []
+}

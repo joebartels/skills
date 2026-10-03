@@ -1,0 +1,323 @@
+[
+  {
+    "toolchain": "minimum",
+    "path": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/sync/mutex.go",
+    "exists": true,
+    "patterns": [
+      "zero value",
+      "must not be copied",
+      "synchronizes before"
+    ],
+    "sha256": "bc38ff8baa185648ad3856eea516c37f86604afa21aacb24300da0617dc9bcb8",
+    "matches": [
+      {
+        "pattern": "zero value",
+        "line": 24,
+        "context": "22: \n23: // A Mutex is a mutual exclusion lock.\n24: // The zero value for a Mutex is an unlocked mutex.\n25: //\n26: // A Mutex must not be copied after first use.\n27: //"
+      },
+      {
+        "pattern": "must not be copied",
+        "line": 26,
+        "context": "24: // The zero value for a Mutex is an unlocked mutex.\n25: //\n26: // A Mutex must not be copied after first use.\n27: //\n28: // In the terminology of the Go memory model,\n29: // the n'th call to Unlock \u201csynchronizes before\u201d the m'th call to Lock"
+      },
+      {
+        "pattern": "synchronizes before",
+        "line": 29,
+        "context": "27: //\n28: // In the terminology of the Go memory model,\n29: // the n'th call to Unlock \u201csynchronizes before\u201d the m'th call to Lock\n30: // for any n < m.\n31: // A successful call to TryLock is equivalent to a call to Lock.\n32: // A failed call to TryLock does not establish any \u201csynchronizes before\u201d"
+      },
+      {
+        "pattern": "synchronizes before",
+        "line": 32,
+        "context": "30: // for any n < m.\n31: // A successful call to TryLock is equivalent to a call to Lock.\n32: // A failed call to TryLock does not establish any \u201csynchronizes before\u201d\n33: // relation at all.\n34: type Mutex struct {\n35: \tstate int32"
+      }
+    ]
+  },
+  {
+    "toolchain": "minimum",
+    "path": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/sync/waitgroup.go",
+    "exists": true,
+    "patterns": [
+      "must not be copied",
+      "before the statement creating",
+      "Done",
+      "func (wg *WaitGroup) Go"
+    ],
+    "sha256": "c14532b94fb4371097257ecf3ece89a070efafa59449fc05664d6b517d5adf1e",
+    "matches": [
+      {
+        "pattern": "must not be copied",
+        "line": 19,
+        "context": "17: // Wait can be used to block until all goroutines have finished.\n18: //\n19: // A WaitGroup must not be copied after first use.\n20: //\n21: // In the terminology of the Go memory model, a call to Done\n22: // \u201csynchronizes before\u201d the return of any Wait call that it unblocks."
+      },
+      {
+        "pattern": "Done",
+        "line": 16,
+        "context": "14: // The main goroutine calls Add to set the number of\n15: // goroutines to wait for. Then each of the goroutines\n16: // runs and calls Done when finished. At the same time,\n17: // Wait can be used to block until all goroutines have finished.\n18: //\n19: // A WaitGroup must not be copied after first use."
+      },
+      {
+        "pattern": "Done",
+        "line": 21,
+        "context": "19: // A WaitGroup must not be copied after first use.\n20: //\n21: // In the terminology of the Go memory model, a call to Done\n22: // \u201csynchronizes before\u201d the return of any Wait call that it unblocks.\n23: type WaitGroup struct {\n24: \tnoCopy noCopy"
+      },
+      {
+        "pattern": "Done",
+        "line": 85,
+        "context": "83: }\n84: \n85: // Done decrements the WaitGroup counter by one.\n86: func (wg *WaitGroup) Done() {\n87: \twg.Add(-1)\n88: }"
+      },
+      {
+        "pattern": "Done",
+        "line": 86,
+        "context": "84: \n85: // Done decrements the WaitGroup counter by one.\n86: func (wg *WaitGroup) Done() {\n87: \twg.Add(-1)\n88: }\n89: "
+      }
+    ]
+  },
+  {
+    "toolchain": "minimum",
+    "path": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/sync/atomic/doc.go",
+    "exists": true,
+    "patterns": [
+      "sequentially consistent"
+    ],
+    "sha256": "8a890370006d09ed58bc863270be2b5f278d3b80ef741c3df6d077fcc2f248ab",
+    "matches": [
+      {
+        "pattern": "sequentially consistent",
+        "line": 44,
+        "context": "42: // then A \u201csynchronizes before\u201d B.\n43: // Additionally, all the atomic operations executed in a program\n44: // behave as though executed in some sequentially consistent order.\n45: // This definition provides the same semantics as\n46: // C++'s sequentially consistent atomics and Java's volatile variables.\n47: package atomic"
+      },
+      {
+        "pattern": "sequentially consistent",
+        "line": 46,
+        "context": "44: // behave as though executed in some sequentially consistent order.\n45: // This definition provides the same semantics as\n46: // C++'s sequentially consistent atomics and Java's volatile variables.\n47: package atomic\n48: \n49: import ("
+      }
+    ]
+  },
+  {
+    "toolchain": "minimum",
+    "path": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/context/context.go",
+    "exists": true,
+    "patterns": [
+      "A CancelFunc",
+      "does not wait",
+      "canceled asynchronously"
+    ],
+    "sha256": "1f130bea835bec065d4867feb55374ac828bc3e78407e07aea3c11f80c6100b5",
+    "matches": [
+      {
+        "pattern": "A CancelFunc",
+        "line": 223,
+        "context": "221: }\n222: \n223: // A CancelFunc tells an operation to abandon its work.\n224: // A CancelFunc does not wait for the work to stop.\n225: // A CancelFunc may be called by multiple goroutines simultaneously.\n226: // After the first call, subsequent calls to a CancelFunc do nothing."
+      },
+      {
+        "pattern": "A CancelFunc",
+        "line": 224,
+        "context": "222: \n223: // A CancelFunc tells an operation to abandon its work.\n224: // A CancelFunc does not wait for the work to stop.\n225: // A CancelFunc may be called by multiple goroutines simultaneously.\n226: // After the first call, subsequent calls to a CancelFunc do nothing.\n227: type CancelFunc func()"
+      },
+      {
+        "pattern": "A CancelFunc",
+        "line": 225,
+        "context": "223: // A CancelFunc tells an operation to abandon its work.\n224: // A CancelFunc does not wait for the work to stop.\n225: // A CancelFunc may be called by multiple goroutines simultaneously.\n226: // After the first call, subsequent calls to a CancelFunc do nothing.\n227: type CancelFunc func()\n228: "
+      },
+      {
+        "pattern": "does not wait",
+        "line": 224,
+        "context": "222: \n223: // A CancelFunc tells an operation to abandon its work.\n224: // A CancelFunc does not wait for the work to stop.\n225: // A CancelFunc may be called by multiple goroutines simultaneously.\n226: // After the first call, subsequent calls to a CancelFunc do nothing.\n227: type CancelFunc func()"
+      },
+      {
+        "pattern": "does not wait",
+        "line": 309,
+        "context": "307: // either the context is done and f has been started in its own goroutine;\n308: // or f was already stopped.\n309: // The stop function does not wait for f to complete before returning.\n310: // If the caller needs to know whether f is completed,\n311: // it must coordinate with f explicitly.\n312: //"
+      }
+    ]
+  },
+  {
+    "toolchain": "minimum",
+    "path": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/api/go1.25.txt",
+    "exists": false,
+    "patterns": [
+      "WaitGroup) Go"
+    ]
+  },
+  {
+    "toolchain": "host",
+    "path": "/opt/homebrew/Cellar/go/1.26.5/libexec/src/sync/mutex.go",
+    "exists": true,
+    "patterns": [
+      "zero value",
+      "must not be copied",
+      "synchronizes before"
+    ],
+    "sha256": "3dec4264678744c4ce15a05ba0cc88e5e8b155f071b71d74eb7ed229ca72c114",
+    "matches": [
+      {
+        "pattern": "zero value",
+        "line": 18,
+        "context": "16: \n17: // A Mutex is a mutual exclusion lock.\n18: // The zero value for a Mutex is an unlocked mutex.\n19: //\n20: // A Mutex must not be copied after first use.\n21: //"
+      },
+      {
+        "pattern": "must not be copied",
+        "line": 20,
+        "context": "18: // The zero value for a Mutex is an unlocked mutex.\n19: //\n20: // A Mutex must not be copied after first use.\n21: //\n22: // In the terminology of [the Go memory model],\n23: // the n'th call to [Mutex.Unlock] \u201csynchronizes before\u201d the m'th call to [Mutex.Lock]"
+      },
+      {
+        "pattern": "synchronizes before",
+        "line": 23,
+        "context": "21: //\n22: // In the terminology of [the Go memory model],\n23: // the n'th call to [Mutex.Unlock] \u201csynchronizes before\u201d the m'th call to [Mutex.Lock]\n24: // for any n < m.\n25: // A successful call to [Mutex.TryLock] is equivalent to a call to Lock.\n26: // A failed call to TryLock does not establish any \u201csynchronizes before\u201d"
+      },
+      {
+        "pattern": "synchronizes before",
+        "line": 26,
+        "context": "24: // for any n < m.\n25: // A successful call to [Mutex.TryLock] is equivalent to a call to Lock.\n26: // A failed call to TryLock does not establish any \u201csynchronizes before\u201d\n27: // relation at all.\n28: //\n29: // [the Go memory model]: https://go.dev/ref/mem"
+      }
+    ]
+  },
+  {
+    "toolchain": "host",
+    "path": "/opt/homebrew/Cellar/go/1.26.5/libexec/src/sync/waitgroup.go",
+    "exists": true,
+    "patterns": [
+      "must not be copied",
+      "before the statement creating",
+      "Done",
+      "func (wg *WaitGroup) Go"
+    ],
+    "sha256": "274e43a7cbc76eb0da4635a2680785200dfaf94d85e2d55cdd5122c76a4791d9",
+    "matches": [
+      {
+        "pattern": "must not be copied",
+        "line": 47,
+        "context": "45: // This pattern is common in code that predates [WaitGroup.Go].\n46: //\n47: // A WaitGroup must not be copied after first use.\n48: type WaitGroup struct {\n49: \tnoCopy noCopy\n50: "
+      },
+      {
+        "pattern": "Done",
+        "line": 27,
+        "context": "25: //\n26: // A WaitGroup may also be used for tracking tasks without using Go to\n27: // start new goroutines by using [WaitGroup.Add] and [WaitGroup.Done].\n28: //\n29: // The previous example can be rewritten using explicitly created\n30: // goroutines along with Add and Done:"
+      },
+      {
+        "pattern": "Done",
+        "line": 30,
+        "context": "28: //\n29: // The previous example can be rewritten using explicitly created\n30: // goroutines along with Add and Done:\n31: //\n32: //\tvar wg sync.WaitGroup\n33: //\twg.Add(1)"
+      },
+      {
+        "pattern": "Done",
+        "line": 35,
+        "context": "33: //\twg.Add(1)\n34: //\tgo func() {\n35: //\t\tdefer wg.Done()\n36: //\t\ttask1()\n37: //\t}()\n38: //\twg.Add(1)"
+      },
+      {
+        "pattern": "Done",
+        "line": 40,
+        "context": "38: //\twg.Add(1)\n39: //\tgo func() {\n40: //\t\tdefer wg.Done()\n41: //\t\ttask2()\n42: //\t}()\n43: //\twg.Wait()"
+      },
+      {
+        "pattern": "Done",
+        "line": 146,
+        "context": "144: }\n145: \n146: // Done decrements the [WaitGroup] task counter by one.\n147: // It is equivalent to Add(-1).\n148: //\n149: // Callers should prefer [WaitGroup.Go]."
+      },
+      {
+        "pattern": "Done",
+        "line": 151,
+        "context": "149: // Callers should prefer [WaitGroup.Go].\n150: //\n151: // In the terminology of [the Go memory model], a call to Done\n152: // \"synchronizes before\" the return of any Wait call that it unblocks.\n153: //\n154: // [the Go memory model]: https://go.dev/ref/mem"
+      },
+      {
+        "pattern": "Done",
+        "line": 155,
+        "context": "153: //\n154: // [the Go memory model]: https://go.dev/ref/mem\n155: func (wg *WaitGroup) Done() {\n156: \twg.Add(-1)\n157: }\n158: "
+      },
+      {
+        "pattern": "Done",
+        "line": 244,
+        "context": "242: \t\t\t\t// this is a new goroutine.\n243: \t\t\t\t//\n244: \t\t\t\t// Calling Done will unblock Wait in the main goroutine,\n245: \t\t\t\t// allowing it to race with the fatal panic and\n246: \t\t\t\t// possibly even exit the process (os.Exit(0))\n247: \t\t\t\t// before the panic completes."
+      },
+      {
+        "pattern": "Done",
+        "line": 250,
+        "context": "248: \t\t\t\t//\n249: \t\t\t\t// This is almost certainly undesirable,\n250: \t\t\t\t// so instead avoid calling Done and simply panic.\n251: \t\t\t\tpanic(x)\n252: \t\t\t}\n253: "
+      },
+      {
+        "pattern": "Done",
+        "line": 256,
+        "context": "254: \t\t\t// f completed normally, or abruptly using goexit.\n255: \t\t\t// Either way, decrement the semaphore.\n256: \t\t\twg.Done()\n257: \t\t}()\n258: \t\tf()\n259: \t}()"
+      },
+      {
+        "pattern": "func (wg *WaitGroup) Go",
+        "line": 236,
+        "context": "234: //\n235: // [the Go memory model]: https://go.dev/ref/mem\n236: func (wg *WaitGroup) Go(f func()) {\n237: \twg.Add(1)\n238: \tgo func() {\n239: \t\tdefer func() {"
+      }
+    ]
+  },
+  {
+    "toolchain": "host",
+    "path": "/opt/homebrew/Cellar/go/1.26.5/libexec/src/sync/atomic/doc.go",
+    "exists": true,
+    "patterns": [
+      "sequentially consistent"
+    ],
+    "sha256": "fb448dacfc6b4d5c74ae203224dc31088c2cf45fc42391a4fdb04a47ccc62413",
+    "matches": [
+      {
+        "pattern": "sequentially consistent",
+        "line": 44,
+        "context": "42: // then A \u201csynchronizes before\u201d B.\n43: // Additionally, all the atomic operations executed in a program\n44: // behave as though executed in some sequentially consistent order.\n45: // This definition provides the same semantics as\n46: // C++'s sequentially consistent atomics and Java's volatile variables.\n47: //"
+      },
+      {
+        "pattern": "sequentially consistent",
+        "line": 46,
+        "context": "44: // behave as though executed in some sequentially consistent order.\n45: // This definition provides the same semantics as\n46: // C++'s sequentially consistent atomics and Java's volatile variables.\n47: //\n48: // [the Go memory model]: https://go.dev/ref/mem\n49: package atomic"
+      }
+    ]
+  },
+  {
+    "toolchain": "host",
+    "path": "/opt/homebrew/Cellar/go/1.26.5/libexec/src/context/context.go",
+    "exists": true,
+    "patterns": [
+      "A CancelFunc",
+      "does not wait",
+      "canceled asynchronously"
+    ],
+    "sha256": "765f99f7cc0710b0117ffa183e432524f429c21496fcbad9b63fb9886fdbaac7",
+    "matches": [
+      {
+        "pattern": "A CancelFunc",
+        "line": 227,
+        "context": "225: }\n226: \n227: // A CancelFunc tells an operation to abandon its work.\n228: // A CancelFunc does not wait for the work to stop.\n229: // A CancelFunc may be called by multiple goroutines simultaneously.\n230: // After the first call, subsequent calls to a CancelFunc do nothing."
+      },
+      {
+        "pattern": "A CancelFunc",
+        "line": 228,
+        "context": "226: \n227: // A CancelFunc tells an operation to abandon its work.\n228: // A CancelFunc does not wait for the work to stop.\n229: // A CancelFunc may be called by multiple goroutines simultaneously.\n230: // After the first call, subsequent calls to a CancelFunc do nothing.\n231: type CancelFunc func()"
+      },
+      {
+        "pattern": "A CancelFunc",
+        "line": 229,
+        "context": "227: // A CancelFunc tells an operation to abandon its work.\n228: // A CancelFunc does not wait for the work to stop.\n229: // A CancelFunc may be called by multiple goroutines simultaneously.\n230: // After the first call, subsequent calls to a CancelFunc do nothing.\n231: type CancelFunc func()\n232: "
+      },
+      {
+        "pattern": "does not wait",
+        "line": 228,
+        "context": "226: \n227: // A CancelFunc tells an operation to abandon its work.\n228: // A CancelFunc does not wait for the work to stop.\n229: // A CancelFunc may be called by multiple goroutines simultaneously.\n230: // After the first call, subsequent calls to a CancelFunc do nothing.\n231: type CancelFunc func()"
+      },
+      {
+        "pattern": "does not wait",
+        "line": 319,
+        "context": "317: // either the context is canceled and f has been started in its own goroutine;\n318: // or f was already stopped.\n319: // The stop function does not wait for f to complete before returning.\n320: // If the caller needs to know whether f is completed,\n321: // it must coordinate with f explicitly.\n322: //"
+      }
+    ]
+  },
+  {
+    "toolchain": "host",
+    "path": "/opt/homebrew/Cellar/go/1.26.5/libexec/api/go1.25.txt",
+    "exists": true,
+    "patterns": [
+      "WaitGroup) Go"
+    ],
+    "sha256": "8a0ef361fd1ad415078f440cbe155dc7a1c7e6a2ad83f97f93527f2c0530755d",
+    "matches": [
+      {
+        "pattern": "WaitGroup) Go",
+        "line": 96,
+        "context": "94: pkg runtime/trace, type FlightRecorderConfig struct, MaxBytes uint64 #63185\n95: pkg runtime/trace, type FlightRecorderConfig struct, MinAge time.Duration #63185\n96: pkg sync, method (*WaitGroup) Go(func()) #63796\n97: pkg testing, method (*B) Attr(string, string) #43936\n98: pkg testing, method (*B) Output() io.Writer #59928\n99: pkg testing, method (*F) Attr(string, string) #43936"
+      }
+    ]
+  }
+]

@@ -1,0 +1,4 @@
+old:
+!first.producer || first.err != nil || ctx.Err() != nil
+new:
+!first.producer || ctx.Err() != nil

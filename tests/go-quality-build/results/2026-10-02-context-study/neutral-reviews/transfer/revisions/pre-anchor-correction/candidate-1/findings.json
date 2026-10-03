@@ -1,0 +1,61 @@
+{
+  "confirmed": [
+    {
+      "id": "F1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Run treats errors.Is(applyErr, ctxErr) as proof that applyErr contains no independent failure and discards the entire apply error tree.",
+      "evidence": "candidate-1/run.go:16-21. Reviewer diagnostic returns errors.Join(workFailure, context.Canceled) after custom parent cancellation, then an independent finalization failure: accepted=1, finalCalls=1, canceled=true, parentCause=true, workFailure=false, finalFailure=true. Fails independently on actual Go 1.22.12 and 1.26.5; authored/unchanged supplied probes otherwise pass.",
+      "correction": "Always preserve the full apply error while also retaining observed cancellation classification/cause; deduplicate only if it can preserve the complete original error tree. Add the joined cancellation plus independent callback-failure case.",
+      "primary_owner": "Run error aggregation",
+      "sources": [
+        "candidate-1/correctness/F1",
+        "candidate-1/code-quality/F1",
+        "candidate-1/resilience/F1"
+      ],
+      "source_location": "candidate-1/run.go:19"
+    },
+    {
+      "id": "T1",
+      "severity": "moderate",
+      "systemic": false,
+      "cause": "The interrupted process test requires Go 1.26-specific signal cause text that is not part of the supplied stderr contract.",
+      "evidence": "candidate-1/cmd/finalize/main_test.go:154-155 expects context canceled then interrupt signal received. Actual Go 1.22.12 authored suite fails with context canceled twice, while exit/output/receipt assertions preceding this check pass and the supplied minimum-version process probes pass. Raw minimum authored and probe outcomes are separate.",
+      "correction": "Assert the contractual cancellation diagnostic without fixing signal-context implementation wording, and run the child binary with the actual declared-minimum compiler.",
+      "primary_owner": "Command test assertions",
+      "sources": [
+        "candidate-1/testing/T1"
+      ],
+      "source_location": "candidate-1/cmd/finalize/main_test.go:154"
+    },
+    {
+      "id": "T2",
+      "severity": "moderate",
+      "systemic": false,
+      "cause": "Authored error-preservation coverage exercises plain processing/finalization errors and a between-jobs cancellation, but never an apply error tree carrying both cancellation and an independent failure.",
+      "evidence": "candidate-1/run_test.go:19-79. Authored host tests and unchanged supplied probes pass despite F1; the narrow supplementary diagnostic fails on both compilers and demonstrates the omitted normal cancellation/error combination.",
+      "correction": "Add a behavioral case that cancels during apply, returns errors.Join(independentWorkFailure, context.Canceled), and asserts accepted count plus errors.Is for classification, parent cause, independent work failure and independent finalization failure.",
+      "primary_owner": "Run regression tests",
+      "sources": [
+        "candidate-1/testing/T2"
+      ],
+      "source_location": "candidate-1/run_test.go:70",
+      "reconciliation": "Distinct verification gap: a production fix alone leaves the exhibited regression unguarded, and a test alone does not repair F1. Moderate because existing tests meaningfully cover the other aggregation paths."
+    },
+    {
+      "id": "T3",
+      "severity": "moderate",
+      "systemic": false,
+      "cause": "The finalization barrier test releases its worker only on the success path, so t.Fatal on the startup/completion checks can abandon owned work.",
+      "evidence": "candidate-1/run_test.go:22-63: finalizer blocks on release at line 45; close(release) occurs only at line 59; startup timeout and early-return fatal branches precede it without cleanup. A finalizer that entered but the test misses readiness before its guard expires remains blocked after the test fails. This is source-traced failure-path ownership, not an independently observed leak in the passing immutable suite.",
+      "correction": "Give the release signal one cleanup owner on every exit path and cancel/join the test worker under a bounded controller. Keep explicit completion assertions.",
+      "primary_owner": "Run test fixture lifecycle",
+      "sources": [
+        "candidate-1/testing/T3"
+      ],
+      "source_location": "candidate-1/run_test.go:45"
+    }
+  ],
+  "reconciliation": "F1 is counted once across three topics; test corrections are independently required, not duplicates of production error aggregation. No topic-card grades are averaged. No unsupported context-value propagation contract or broad systemic reach is assumed.",
+  "ungraded_concerns": []
+}

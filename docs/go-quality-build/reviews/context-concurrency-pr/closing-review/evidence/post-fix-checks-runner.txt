@@ -1,0 +1,143 @@
+import hashlib
+import io
+import json
+import os
+from pathlib import Path
+import subprocess
+import tarfile
+import tempfile
+import time
+
+ROOT = Path('/Users/jb/.codex/worktrees/ed95/skills')
+OUT = ROOT / 'docs/go-quality-build/reviews/context-concurrency-pr/closing-review/evidence'
+BASE = 'c5ee3d0e337975d1de199c86c34bbe2f301ccf85'
+HEAD = 'd4a0a57a61ee76ab543d87169048111223c66c15'
+GATE = 'tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py'
+DELIVERY = str(Path(GATE).parent)
+ORIGINAL = 'docs/go-quality-build/reviews/context-concurrency-pr/round-1/delivery-before-optimization-fix'
+REV2 = 'docs/go-quality-build/reviews/context-concurrency-pr/closing-fix/delivery-before-required-seal-fix'
+ANCHORS = {ORIGINAL: '20387a7bb3d3ef460fe1231eb2c5a721a71075a84118a9e8086e1bd5a1913e93',
+           REV2: 'dd63309f526b323dea232650026ab34c91f30468d3c0bbcaa81d1793287a4909',
+           DELIVERY: 'f20d74230d19d3323c31f0697a31679786401b7cc612b53ba14a1e276790df2b'}
+report = {'scope': {'base': BASE, 'head': HEAD, 'kind': 'focused post-fix NG1 addendum'}, 'checks': []}
+
+def save():
+    (OUT / 'post-fix-checks.json').write_text(json.dumps(report, indent=2) + '\n')
+
+def run(label, argv, cwd=ROOT, env=None, timeout=60):
+    process_env = os.environ.copy()
+    process_env.pop('PYTHONOPTIMIZE', None)
+    process_env.update(env or {})
+    start = time.monotonic()
+    proc = subprocess.run(argv, cwd=cwd, env=process_env, capture_output=True, text=True, timeout=timeout)
+    row = {'id': label, 'argv': argv, 'cwd': str(cwd), 'environment_removed': ['PYTHONOPTIMIZE'],
+           'environment_overrides': env or {}, 'exit_code': proc.returncode,
+           'elapsed_seconds': round(time.monotonic()-start, 3), 'stdout': proc.stdout, 'stderr': proc.stderr}
+    report['checks'].append(row)
+    save()
+    print(label, proc.returncode, proc.stdout.strip()[:150], proc.stderr.strip()[-300:], flush=True)
+    return proc
+
+sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+tree = lambda p: {x.relative_to(p).as_posix(): sha(x) for x in p.rglob('*') if x.is_file()}
+
+protected = [
+    'docs/go-quality-build/reviews/concurrency-readiness/preflight/example',
+    'docs/go-quality-build/reviews/concurrency-readiness/preflight/raw/verify_example.py',
+    'docs/go-quality-build/reviews/concurrency-readiness/raw/verify-readiness.py',
+    'docs/go-quality-build/reviews/context-readiness',
+    'plugins/go-quality-build', 'plugins/go-quality-review',
+    'tests/go-quality-build/go-context-and-deadlines',
+    'tests/go-quality-build/go-concurrency-and-ownership',
+    'tests/go-quality-build/results/2026-10-02-context-discovery',
+    'tests/go-quality-build/results/2026-10-02-context-study',
+    'tests/go-quality-build/results/2026-10-02-concurrency-discovery',
+    'tests/go-quality-build/results/2026-10-02-concurrency-study',
+    'tests/go-quality-build/results/2026-10-02-context-concurrency-combined',
+    ORIGINAL,
+]
+comparison = []
+for rev in [BASE, HEAD]:
+    argv = ['rtk', 'proxy', 'git', 'ls-tree', '-r', rev, '--', *protected]
+    p = subprocess.run(argv, cwd=ROOT, capture_output=True)
+    assert p.returncode == 0, p.stderr
+    comparison.append(p.stdout)
+    report.setdefault('protected_identity_commands', []).append({'argv': argv, 'exit_code': p.returncode,
+        'tracked_entries': len(p.stdout.splitlines()), 'tree_inventory_sha256': hashlib.sha256(p.stdout).hexdigest()})
+assert comparison[0] == comparison[1]
+report['protected_source_tree_identity_equal'] = True
+save()
+
+with tempfile.TemporaryDirectory(prefix='pr6-postfix-', dir='/private/tmp') as temp:
+    exact = Path(temp) / 'exact-head'
+    exact.mkdir()
+    argv = ['rtk', 'proxy', 'git', 'archive', HEAD]
+    archive = subprocess.run(argv, cwd=ROOT, capture_output=True)
+    assert archive.returncode == 0, archive.stderr
+    with tarfile.open(fileobj=io.BytesIO(archive.stdout)) as tar:
+        tar.extractall(exact, filter='data')
+    report['exact_disposable_snapshot'] = {'argv': argv, 'exit_code': archive.returncode,
+        'archive_sha256': hashlib.sha256(archive.stdout).hexdigest(), 'head': HEAD,
+        'no_worktree_edits_in_snapshot': True}
+    canonical = (exact / 'docs/go-quality-build/README.md').read_bytes()
+    report['seal_identity'] = []
+    for folder, anchor in ANCHORS.items():
+        path = exact / folder
+        index = path / 'checksums.json'
+        assert sha(index) == anchor
+        assert anchor.encode() in canonical
+        actual = tree(path)
+        data = json.loads(index.read_text())
+        listed = data.get('sha256') or {r['path']: r['sha256'] for r in data['artifacts']}
+        assert {p: s for p, s in actual.items() if p != 'checksums.json'} == listed
+        report['seal_identity'].append({'path': folder, 'index_sha256': anchor,
+            'exact_files': len(actual), 'index_identity': 'pass', 'canonical_anchor': 'present', 'listed_bytes': 'pass'})
+    report['revision2_snapshot_matches_c5_delivery'] = []
+    for name, value in tree(exact / REV2).items():
+        command = ['rtk', 'proxy', 'git', 'show', BASE + ':' + DELIVERY + '/' + name]
+        old = subprocess.run(command, cwd=ROOT, capture_output=True)
+        assert old.returncode == 0, old.stderr
+        assert hashlib.sha256(old.stdout).hexdigest() == value
+        report['revision2_snapshot_matches_c5_delivery'].append({'path': name, 'sha256': value,
+            'argv': command, 'exit_code': old.returncode, 'exact_base_delivery_bytes_equal': True})
+    save()
+    normal = run('normal-exact-gate', ['rtk', 'proxy', 'python3', '-B', GATE], exact)
+    assert normal.returncode == 0 and 'PASS:' in normal.stdout
+    tests = run('current-three-cli-regressions', ['rtk', 'proxy', 'python3', '-B', '-m', 'unittest',
+        'discover', '-s', 'tests', '-p', 'test_go_study_integrity.py', '-v'], exact)
+    assert tests.returncode == 0
+    for label, flags, env in [('optimized-O', ['-O'], {}), ('optimized-OO', ['-OO'], {}),
+                               ('optimized-env', [], {'PYTHONOPTIMIZE': '1'})]:
+        result = run(label, ['rtk', 'proxy', 'python3', '-B', *flags, GATE], exact, env)
+        assert result.returncode != 0 and 'PASS:' not in result.stdout
+    folder = exact / DELIVERY
+    index = folder / 'checksums.json'
+    old_index = index.read_bytes()
+    readme = folder / 'README.md'
+    old_readme = readme.read_bytes()
+    index.unlink()
+    result = run('missing-current-index', ['rtk', 'proxy', 'python3', '-B', GATE], exact)
+    assert result.returncode != 0 and 'PASS:' not in result.stdout and 'FileNotFoundError' in result.stderr
+    readme.write_text('Deliberately changed delivery metadata for focused NG1 diagnostic.\n')
+    result = run('missing-index-and-changed-delivery-readme', ['rtk', 'proxy', 'python3', '-B', GATE], exact)
+    assert result.returncode != 0 and 'PASS:' not in result.stdout and 'FileNotFoundError' in result.stderr
+    index.write_bytes(old_index)
+    result = run('restored-index-same-changed-delivery-readme', ['rtk', 'proxy', 'python3', '-B', GATE], exact)
+    assert result.returncode != 0 and 'PASS:' not in result.stdout and 'sealed bytes changed' in result.stderr
+    readme.write_bytes(old_readme)
+    result = run('restored-exact-packet', ['rtk', 'proxy', 'python3', '-B', GATE], exact)
+    assert result.returncode == 0 and 'PASS:' in result.stdout
+    current_anchor = ANCHORS[DELIVERY].encode()
+    (exact / 'docs/go-quality-build/README.md').write_bytes(canonical.replace(current_anchor, b'removed-current-delivery-anchor-for-diagnostic'))
+    result = run('missing-current-canonical-anchor', ['rtk', 'proxy', 'python3', '-B', GATE], exact)
+    assert result.returncode != 0 and 'PASS:' not in result.stdout and 'canonical anchor missing' in result.stderr
+    (exact / 'docs/go-quality-build/README.md').write_bytes(canonical)
+    result = run('restored-canonical-anchor-and-exact-packet', ['rtk', 'proxy', 'python3', '-B', GATE], exact)
+    assert result.returncode == 0 and 'PASS:' in result.stdout
+    report['disposable_packet_restored_identity'] = all(sha(exact / p / 'checksums.json') == a for p, a in ANCHORS.items())
+    report['historical_capture_writer_executions'] = 0
+    report['go_command_reruns'] = 0
+    report['result'] = {'NG1': 'resolved', 'new_actionable_findings_in_focused_scope': 0,
+        'go_cards_carried_by_exact_tree_identity': True, 'prior_go_grade': 'A'}
+    save()
+print('Focused post-fix checks completed; NG1 resolved, original Go/source trees identical.', flush=True)

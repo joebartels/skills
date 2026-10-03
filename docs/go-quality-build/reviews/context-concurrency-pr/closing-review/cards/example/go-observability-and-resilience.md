@@ -1,0 +1,6 @@
+## Observability & Resilience — Not applicable
+Scope: Changeset 0d0a339b27cd1ff7ff3cc177f28a9a4455f91a96 → c5ee3d0e337975d1de199c86c34bbe2f301ccf85; only docs/go-quality-build/reviews/concurrency-readiness/preflight/example/totals.go, with docs/go-quality-build/reviews/concurrency-readiness/preflight/example/totals_test.go and docs/go-quality-build/reviews/concurrency-readiness/preflight/example/go.mod as contract/build context. Private exact-snippet example, not a shipped service or runtime package.
+Coverage: Applicability considered for failure boundaries, cancellation, retries, telemetry, queues and service lifecycle. The production example is synchronous local scalar state with no I/O, dependency failure or operational signal contract.
+Rationale: No relevant operational reliability or diagnostic decision is implicated. General mutex correctness/resource behavior is assessed by the applicable correctness and resource skills.
+
+Limits: This Not applicable state covers only the bounded Go example. The umbrella routing/reference and topic applicability criteria were consulted; no broader topic audit or scanner/service/deployment check is claimed. Archived model outcomes, current Python gate and unchanged installable package are outside this card.

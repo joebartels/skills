@@ -1,0 +1,25 @@
+{
+  "label": "lost-stage-budget-diagnostic",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-run",
+    "^TestReviewStageDeadlineCeiling$",
+    "-count=1",
+    "-timeout=30s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-context-outcome-20261002/service/reviews/scratch/lost-stage-budget-1",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-context-outcome-20261002/service/reviews/go-cache",
+    "GOWORK": "off",
+    "GOTOOLCHAIN": "local",
+    "GOPROXY": "off"
+  },
+  "status": 1,
+  "stdout": "--- FAIL: TestReviewStageDeadlineCeiling (0.00s)\n    review_diagnostic_test.go:73: bodies=[] err=Get \"http://example.test/a\": request deadline exceeds configured stage duration\nFAIL\nFAIL\texample.com/stages\t0.201s\nFAIL\n",
+  "stderr": "",
+  "elapsed_seconds": 0.442
+}

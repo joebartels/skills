@@ -1,0 +1,3 @@
+Selected and opened `go-behavior-tests` because the request describes fixing a deterministic behavior defect. Its guidance concerns adding and running tests, which you prohibited, so I stopped at skill selection.
+
+I declined the API contracts, concurrency and ownership, interfaces and composition, package boundaries, and test isolation skills: the request describes no changes in those areas. No source files were read or changed, and no tests were run.

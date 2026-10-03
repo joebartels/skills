@@ -1,0 +1,21 @@
+--- a/range.go
++++ b/range.go
+@@ -1,3 +1,3 @@
+ package rangecheck
+ 
+-func inRange(value, low, high int) bool { return value >= low && value < high }
++func inRange(value, low, high int) bool { return value >= low && value <= high }
+--- a/range_test.go
++++ b/range_test.go
+@@ -2,8 +2,8 @@
+ 
+ import "testing"
+ 
+-func TestInteriorAndLower(t *testing.T) {
+-	if !inRange(2, 2, 6) || !inRange(4, 2, 6) || inRange(1, 2, 6) || inRange(7, 2, 6) {
+-		t.Fatal("interior/lower/outside behavior changed")
++func TestInclusiveInterval(t *testing.T) {
++	if !inRange(2, 2, 6) || !inRange(4, 2, 6) || !inRange(6, 2, 6) || inRange(1, 2, 6) || inRange(7, 2, 6) {
++		t.Fatal("inclusive interval behavior changed")
+ 	}
+ }

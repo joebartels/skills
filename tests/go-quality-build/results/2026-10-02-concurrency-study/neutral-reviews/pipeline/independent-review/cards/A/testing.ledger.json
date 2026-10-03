@@ -1,0 +1,41 @@
+{
+  "scope": "Bounded code-area review of candidate A source snapshot (see source-hashes-before.json), CLI/private runPipeline and delivered tests, judged against original README/source; Go1.22 minimum, actual Go1.22.12 and host Go1.26.5 darwin/arm64. Findings are existing-in-scope in this delivered snapshot.",
+  "coverage": [
+    {
+      "id": "testing",
+      "status": "complete",
+      "reason": "The delivered tests claim to verify concurrency and error preservation. Their assertions, event gates, isolation and mutation sensitivity require assessment."
+    }
+  ],
+  "findings": [
+    {
+      "id": "A/F2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "The claimed early producer join assertion tests a flag assigned true after the pipeline call and waits for eventual producer cleanup after return; it never establishes cleanup completed before host return.",
+      "evidence": "candidates/A/cmd/pipeline/pipeline_test.go:44-69. A narrowly scoped, compiling mutation returns after normal consumer completion only while producerDone is false. Baseline author/probe targets pass; the mutant full author suite and claimed join test both pass at -count=10, while TestReviewEarlyStopJoin fails ASSERT host returned before producer cleanup release.",
+      "correction": "Run the host asynchronously, hold producer cleanup after observing its stop, and assert host completion is still unavailable before releasing cleanup; then check both callback completion and host result. Own cancellation and gate release in cleanup and bound every event wait.",
+      "sources": [
+        "A/testing/F2"
+      ]
+    },
+    {
+      "id": "A/F3",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Independent cancellation-class error tests cover a pre-stop producer joined error and first consumer sentinel, but do not verify independent error preservation after stopping for both callback roles/classes.",
+      "evidence": "candidates/A/cmd/pipeline/pipeline_test.go:88-109. The compiling broad-cancellation-suppression mutation survives the entire delivered suite. Baseline TestReviewWrappedFailures is green, and the mutant fails its consumer-cleanup independent-error assertion. The unmodified candidate also fails the independent DeadlineExceeded-during-Canceled-cleanup probe on both toolchains.",
+      "correction": "Add independent producer/consumer error assertions before and after coordinated stopping, including an exact error different from child ctx.Err() and wrapped/joined errors. Require original-green, compiled-mutant and intended assertion failures for suppression mutations.",
+      "sources": [
+        "A/testing/F3"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "A/testing/G1",
+      "evidence": "Finite/FIFO expectations use real values and error identity checks. The independent four-mutation probes each have an original-green target, compiling mutant and intended bounded assertion failure. These review probes assess current behavior but are not credited as candidate-authored regression coverage."
+    }
+  ],
+  "safeguards": []
+}

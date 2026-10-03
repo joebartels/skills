@@ -1,0 +1,26 @@
+# Packet 03 applicability and coverage
+
+Boundary: Completed requested inclusive upper-bound repair and focused author regression test in candidate `range.go`, `range_test.go`, unchanged `README.md`, and `go.mod`. This is a small cohesive private-library code-area review. Original files establish evolution; unrelated legacy behavior and unspecified reversed intervals are excluded. All four original and all four candidate files were inspected. Only packet 03 and the unchanged copied review skills were consulted.
+
+| Topic | Applicability / result | Coverage and evidence | Limits / reason |
+| --- | --- | --- | --- |
+| Correctness & Compatibility | Applicable — A | Full supported predicate traced; boundaries/outside cases, singleton and int extremes verified; signature and minimum preserved. | Host checks on darwin/arm64. Reversed intervals unspecified. Held-test source unavailable; supplied results retained separately. |
+| Code Quality & Go Idioms | Applicable — A | Direct predicate, local names and test call path inspected; current vet and nonmutating formatting diff clean; Go 1.22 syntax verified. | No actionable consequence established for optional assertion-message refinement. |
+| Testing | Applicable — A | Author assertions inspected and run under two toolchains. Separate mutation restores original bug and author test fails. | No singleton/extreme-int author cases; reviewer diagnostics are not author coverage. Unseen held assertions are an evidence limit. No broad mutation score claimed. |
+| Architecture & Design | Not applicable | No package, public API, dependency boundary, composition, ownership, or lifecycle design decision is implicated by this private comparison repair. Same signature and small serial implementation retained. | No absent architecture artifact was treated as a missing implementation. |
+| Performance & Resource Management | Not applicable | Two scalar comparisons and a conjunction; no allocation, I/O, dynamic work, resource lifecycle, or concurrency mechanism is introduced or implicated. | No performance contract or measured-cost question exists in the scoped repair; no benchmark claim made. |
+| Security | Not applicable | No trust boundary, authority, external effects, secrets, unsafe access, or dependency import is implicated. | No vulnerability audit of unrelated toolchain or system components performed. |
+| Observability & Resilience | Not applicable | Fixed synchronous CPU predicate with no dependency failures, cancellation, retries, overload, telemetry, or shutdown boundary. README explicitly excludes context/deadline work. | Lack of logging or cancellation is not a gap for this scoped helper. |
+| Dependencies & Reproducibility | Applicable, additional skill — A | Explicit Go 1.22 minimum assessed. Root-only graph; standalone readonly builds/tests under actual Go 1.22.12 and Go 1.26.5 with isolated caches and switching/network resolution disabled. | No graph change or external inputs. No separate target matrix or byte-identical output contract declared. |
+| Deployment & Operations | Not applicable | Private library predicate repair; no executable, container, runtime configuration, probes, CI gate, rollout, or release artifact path is changed or requested. | Packet is not a runtime/release audit; no inference that missing repository-wide CI files are defects. |
+
+The four graded topics have zero distinct actionable findings (critical=0, major=0, moderate=0, minor=0). Topic counts are not summed. The five Not applicable decisions reflect no relevant decision in the requested area; they do not stand in for unavailable applicable evidence.
+
+## Evidence provenance
+
+- Inspected facts: packet `scope.md`, original/candidate README, source, tests, and `go.mod`; the three assigned skills and their decision references; Dependencies & Reproducibility and its decision reference; supplied packet `verification.json`.
+- Executed checks: exact argv/environment/output/status in `reviewer-verification.json`, using disposable `/private/tmp/packet03-review.ctgSf9` copies. Current build/test/vet and formatting diff pass; actual Go 1.22.12 build/test pass; independent interval/extreme diagnostics pass under both; author tests reject the upper-bound regression mutation. Only the expected mutation command exits nonzero.
+- Supplied checks: packet `verification.json` reports reconstruction hash matching, ordinary build/test/vet/format success, current and explicit Go 1.22.12 held-contract success, and mutation rejection by author/held tests. These are supplied evidence; held-test source was not provided or inspected. Its ordinary `go` version is 1.26.5 despite a `GOQUALITY_GO` override pointing at a 1.22.12 path.
+- Assumptions/limits: README's `low <= high` defines the supported behavioral domain; there is no promised separate target matrix, concurrency or deployment contract. No source from other packets, planning trees, writing guidance, or result archives was inspected.
+
+Candidate SHA-256 hashes match before and after reviewer execution; only review artifacts and disposable copies were written. Reviewer-added diagnostics are preserved in `reviewer_contract_test.go` for inspection and were never added to candidate.

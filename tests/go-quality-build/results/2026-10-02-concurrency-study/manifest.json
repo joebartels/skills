@@ -1,0 +1,604 @@
+{
+  "date": "2026-10-02",
+  "candidate": "go-concurrency-and-ownership",
+  "guidance_frozen": true,
+  "draft_revision_sha256": "0ab21aee46b9446356b455d59776263a8160fcf2a0c3b5050c2b1792ecf13002",
+  "study_base": "ccf536c3eafd9526f9eb67844edb9c01f601112c",
+  "comparator_revision": "0d0a339b27cd1ff7ff3cc177f28a9a4455f91a96",
+  "discovery_archive": "tests/go-quality-build/results/2026-10-02-concurrency-discovery",
+  "input_hashes": {
+    "evals.json": "e47a71ef6e94ca5870c195596428c22345d4344f6c2f79d3c1cb73d92240c055",
+    "controller-probes/mutations.md": "2effb689871ab938c48e3d4052be1faf26759de883556636f307d81d25a78004",
+    "files/cli-pipeline-stop/go.mod": "d855a6416f06f2b3c76744e3b1bf965c7ac6dbf3f23835389738cb47453baf47",
+    "files/cli-pipeline-stop/README.md": "0a50a2b401859e1321f6e3f2b90b26aecff3d87d4a47022281def2ecfdf010f3",
+    "files/service-owned-workers/go.mod": "fed3cc3508ef6f75539c8012266acec88d21c6f0c99db0e5f85fab74e7a77f77",
+    "files/service-owned-workers/host_test.go": "acd9778033f758290792ad8e357d4a65c773e5948fd8cdbffc11cb8e8cc44a3f",
+    "files/service-owned-workers/host.go": "cee161bd8059862c88cbc09bd0949cae75f6a1d80c6414d09a6351a2238b4cf8",
+    "files/service-owned-workers/README.md": "ef879dacbe1931f44ba3e5f6c8810052a2364e069dfca5c07eb5d959899ed17b",
+    "files/not-concurrency-work/go.mod": "8c871664f11c26227de96d7137c84eed1b927ed2c29389984a1298ec10e28439",
+    "files/not-concurrency-work/README.md": "e6aa6043142833cfabc7e32a7ab158c09ac19333c852deccb1ba9595f1ce77af",
+    "files/not-concurrency-work/sum_test.go": "9106ddc4140981880224789ba4c49cfd989110b912e0607966cd302266b25523",
+    "files/not-concurrency-work/sum.go": "fc85ee5bbed33656472a0b44e6a627d1bacd4f50ee255e3c9ecc8a31b0753921",
+    "files/library-shared-state/go.mod": "d47ce82e74e606703251039a90fe35b8d8dc03885ec59258a6afbbf5dfef6381",
+    "files/library-shared-state/totals_test.go": "84c10f17b100d95d113e179de846114abc0aa13060217cb4a7eb0b292225cd16",
+    "files/library-shared-state/README.md": "4bcf2f67b4e9a32de0bd638d030fdfd09b01e769847378572a844909e95d1a3e",
+    "files/library-shared-state/totals.go": "f00a3e2b1eb4c76b89cc35dfc17a75b884611ab83a41ff15db637b57e31f7cce",
+    "files/cli-pipeline-stop/cmd/pipeline/pipeline_test.go": "c031432f812730c8b43c0aaae761d1fe7e42c0287d5a37d65232cbcb816e6073",
+    "files/cli-pipeline-stop/cmd/pipeline/pipeline.go": "510b633f18ffd21b0cb55eeb69af54cfae2bae4ede2859c087fa4c041652772d",
+    "files/cli-pipeline-stop/cmd/pipeline/main.go": "6a47518faa32d50083d05779d266b7db56400de67462312a8e682be4dfa9b7a6",
+    "controller-probes/cli-pipeline-stop/contract_test.go": "71206e3021afaf44fb8e3911d7c40f39b3d0c2868cade5d382e4e2c301bf62a3",
+    "controller-probes/service-owned-workers/contract_test.go": "319da1d4a8fa43eb6db0ec6549cdb0648d8811914e2c5c1eb9546fb523dbd3bb",
+    "controller-probes/not-concurrency-work/contract_test.go": "b1a4df70a98900c7ac209154a58127fc769a9e69e4d0df5546e353492db74bb1",
+    "controller-probes/library-shared-state/contract_test.go": "fafd23c1cb93928296b0d53c9914c89863468413f1a881cd17a05aedbe517d7e"
+  },
+  "skill_hashes": {
+    "go-package-boundaries/SKILL.md": "3245b2347309d6238950be43e269c05720dbcf5132548dd661955c9e428d3ca7",
+    "go-behavior-tests/SKILL.md": "c37b88cf03cdc9e1844e50f7061cdcbfc01609d6a8576f45fa619bd626407267",
+    "go-interfaces-and-composition/SKILL.md": "41c9cd023682e006b84b37ddadf39bc37f0f01b2bfd8af7609272799906d9621",
+    "go-test-isolation/SKILL.md": "7ff805a5e1d59e51817af235c48d086014d5b369f4ff4e9271f0ee016edfa246",
+    "go-concurrency-and-ownership/SKILL.md": "0ab21aee46b9446356b455d59776263a8160fcf2a0c3b5050c2b1792ecf13002",
+    "go-api-contracts/SKILL.md": "c655df596414850f06c66ffcb34b5c5606aa73d3381051942dc45e99cd54a0ba",
+    "go-test-isolation/references/isolation-patterns.md": "8e4740eb2ae35f7b3e9ebf2eebf52daf6d637692f16203ad9af623b1f0133291",
+    "go-behavior-tests/references/behavior-observations.md": "ffba4ee582a014add07d3ab2f622d701f062910cc3ac774bbc9190e0f50ebd2c",
+    "go-package-boundaries/references/package-maps.md": "19c2e6f964486abe11028ba04e443fc76eb39236538ee5d9ef25400cc8ecfc7f"
+  },
+  "host_disable_sha256": "ed201c2ac72758098918828a75762b08338d9a4eeb1d715e20a3b8f110b69527",
+  "profiles": {
+    "reference": {
+      "harness": "Codex CLI 0.157.0",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "permissions": "workspace-write plus automatic approval review",
+      "settings_source": "local model cache and CLI feature/help inventory",
+      "author_loading": "explicit local catalog; host skill discovery disabled; automatic routing measured separately"
+    },
+    "alternate-model": {
+      "harness": "Codex CLI 0.157.0",
+      "model": "gpt-6-sol",
+      "reasoning": "medium"
+    },
+    "alternate-reasoning": {
+      "harness": "Codex CLI 0.157.0",
+      "model": "gpt-6-luna",
+      "reasoning": "low"
+    },
+    "native-opencode": {
+      "harness": "OpenCode 1.18.7",
+      "model": "openai/gpt-5.6-luna",
+      "reasoning_variant": "medium",
+      "permissions": "scoped local fixture configuration; no automatic unrestricted permissions",
+      "settings_source": "actual native model/variant metadata",
+      "confounding": "harness and model change together; portable v2 source catalog loading remains unverified",
+      "available_for_target_v2_loading": false,
+      "runtime_gap": "Installed1.18.7 is v1; intended package loading targets v2, unavailable per repository multi-harness design. Do not substitute a simulated/v1 loading pass."
+    },
+    "native-claude": {
+      "harness": "Claude Code 2.1.207",
+      "available": false,
+      "reason": "auth status loggedIn=false; no authentication changes",
+      "authors_reserved": 2
+    }
+  },
+  "primary_case": "service-owned-workers",
+  "confirmed_primary_defect": {
+    "finding": "F1",
+    "case": "service-owned-workers",
+    "cause": "Full-cohort prefill delays an available first job indefinitely until capacity fills or caller input closes.",
+    "frozen_observation": "TestControllerCancellationWithOpenInput fails first-work-entered event before caller cancellation.",
+    "secondary_independent_diagnostic": "TestReviewAvailableJobWithOpenInput isolates progress while showing later cancellation itself returns.",
+    "limits": "Supplementary reviewer probes and test sensitivity variants do not replace the original four frozen mutation targets; F2 is a separate cause."
+  },
+  "authors_spent_before_study": 3,
+  "author_ceiling": 16,
+  "group_ceiling": 36,
+  "group_authors_spent_before_candidate": 16,
+  "attempts": [
+    {
+      "number": 4,
+      "case": "library-shared-state",
+      "arm": "exposure",
+      "profile": "reference",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-04",
+      "exit_code": 0,
+      "elapsed_seconds": 50.014
+    },
+    {
+      "number": 5,
+      "case": "service-owned-workers",
+      "arm": "exposure",
+      "profile": "reference",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-05",
+      "exit_code": 0,
+      "elapsed_seconds": 293.171
+    },
+    {
+      "number": 6,
+      "case": "not-concurrency-work",
+      "arm": "exposure",
+      "profile": "reference",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-06",
+      "exit_code": 0,
+      "elapsed_seconds": 24.701
+    },
+    {
+      "number": 13,
+      "case": "library-shared-state",
+      "arm": "baseline",
+      "profile": "checked-reference",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-13",
+      "exit_code": 0,
+      "elapsed_seconds": 53.012
+    },
+    {
+      "number": 14,
+      "case": "service-owned-workers",
+      "arm": "baseline",
+      "profile": "checked-reference",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-14",
+      "exit_code": 0,
+      "elapsed_seconds": 169.196
+    },
+    {
+      "number": 15,
+      "case": "not-concurrency-work",
+      "arm": "baseline",
+      "profile": "checked-reference",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-15",
+      "exit_code": 0,
+      "elapsed_seconds": 29.291
+    },
+    {
+      "number": 7,
+      "case": "cli-pipeline-stop",
+      "arm": "baseline",
+      "profile": "transfer",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-07",
+      "exit_code": 0,
+      "elapsed_seconds": 110.317
+    },
+    {
+      "number": 8,
+      "case": "cli-pipeline-stop",
+      "arm": "exposure",
+      "profile": "transfer",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-08",
+      "exit_code": 0,
+      "elapsed_seconds": 251.029
+    },
+    {
+      "number": 9,
+      "case": "service-owned-workers",
+      "arm": "baseline",
+      "profile": "alternate-model",
+      "model": "gpt-6-sol",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-09",
+      "exit_code": 0,
+      "elapsed_seconds": 390.969
+    },
+    {
+      "number": 10,
+      "case": "service-owned-workers",
+      "arm": "exposure",
+      "profile": "alternate-model",
+      "model": "gpt-6-sol",
+      "reasoning": "medium",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-10",
+      "exit_code": 0,
+      "elapsed_seconds": 339.143
+    },
+    {
+      "number": 11,
+      "case": "service-owned-workers",
+      "arm": "baseline",
+      "profile": "alternate-reasoning",
+      "model": "gpt-6-luna",
+      "reasoning": "low",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-11",
+      "exit_code": 0,
+      "elapsed_seconds": 515.988
+    },
+    {
+      "number": 12,
+      "case": "service-owned-workers",
+      "arm": "exposure",
+      "profile": "alternate-reasoning",
+      "model": "gpt-6-luna",
+      "reasoning": "low",
+      "status": "completed",
+      "counted": true,
+      "directory": "attempt-12",
+      "exit_code": 0,
+      "elapsed_seconds": 140.866
+    }
+  ],
+  "future_author_allocation": {
+    "reference_exposures": [
+      4,
+      5,
+      6
+    ],
+    "transfer_pair": [
+      7,
+      8
+    ],
+    "alternate_model_primary_pair": [
+      9,
+      10
+    ],
+    "alternate_reasoning_primary_pair": [
+      11,
+      12
+    ],
+    "revision_or_single_failed_retry_slots": [
+      16
+    ],
+    "environment_matched_reference_baselines": [
+      13,
+      14,
+      15
+    ]
+  },
+  "selection_probes_spent_before_study": 0,
+  "selection_probe_ceiling": 20,
+  "group_selection_probes_spent_before_candidate": 14,
+  "group_selection_probe_ceiling": 40,
+  "preflight": {
+    "disposition": "Accept",
+    "exact_draft_sha256": "0ab21aee46b9446356b455d59776263a8160fcf2a0c3b5050c2b1792ecf13002",
+    "artifact": "docs/go-quality-build/reviews/concurrency-readiness/preflight/preflight-review.md",
+    "artifact_sha256": "0872290ba92fa24538a5e8fc62ce2f51f6d0ee1f70032fa92762af1b04060329",
+    "index_sha256": "d4639503c4138b8c9d33cd865a2619ddfdab87b6cfc03f12a04a8cf63e3ccd74",
+    "continuation_status_updated_before_freeze": true
+  },
+  "supplementary_checks": {
+    "path": "preparation/supplementary-service-probes.go.txt",
+    "sha256": "42db449d9abbf0b4b4a7d08fe28b2d2b55c0e84ba0fb6351918210ed34ce4335",
+    "limit": "Two reviewer-discovered portable cause checks; original primary held observation and four mutation targets unchanged. Full baseline-layout-specific suite excluded."
+  },
+  "limits": [
+    "Context remains unavailable in every concurrency arm.",
+    "Claude unauthenticated; target OpenCodev2 unavailable; no native implementation pair or simulated loading claim.",
+    "Strong baseline ties cannot supply corrections. Require at least two independent primary corrections of fixedF1 and successful final-byte transfer/preservation/accepting review.",
+    "Every author attempt/failure/retry counted; guidance revisions reopen affected final-byte gates within cap."
+  ],
+  "reference_environment_correction": {
+    "discovery_environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-author-cache",
+      "GOMODCACHE": "/private/tmp/go-quality-author-modcache"
+    },
+    "study_environment_overrides": {
+      "GOCACHE": "/private/tmp/go-quality-author-cache",
+      "GOMODCACHE": "/private/tmp/go-quality-author-modcache",
+      "GOTOOLCHAIN": "local"
+    },
+    "observed_default_policy": "auto; inherited GOTOOLCHAIN absent",
+    "discovery_matched_benefit_eligible": false,
+    "replacement_baselines": [
+      13,
+      14,
+      15
+    ],
+    "pairs": [
+      [
+        13,
+        4
+      ],
+      [
+        14,
+        5
+      ],
+      [
+        15,
+        6
+      ]
+    ],
+    "cause_and_guidance_unchanged": true,
+    "cost": "Three reserved slots spent; one remaining author slot for retry/revision, insufficient rerun budget requires reviewed-draft disposition."
+  },
+  "authors_spent_total": 15,
+  "group_authors_spent_total": 31,
+  "declared_check_statuses": {
+    "4": {
+      "ordinary_checks": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "held_contract_checks": [
+        0,
+        0,
+        0
+      ],
+      "supplementary_review_discovered_checks": []
+    },
+    "5": {
+      "ordinary_checks": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "held_contract_checks": [
+        1,
+        1,
+        1
+      ],
+      "supplementary_review_discovered_checks": [
+        1,
+        1
+      ]
+    },
+    "6": {
+      "ordinary_checks": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "held_contract_checks": [
+        0,
+        0
+      ],
+      "supplementary_review_discovered_checks": []
+    },
+    "13": {
+      "ordinary_checks": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "held_contract_checks": [
+        0,
+        0,
+        0
+      ],
+      "supplementary_review_discovered_checks": []
+    },
+    "14": {
+      "ordinary_checks": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "held_contract_checks": [
+        0,
+        0,
+        0
+      ],
+      "supplementary_review_discovered_checks": [
+        0,
+        0
+      ]
+    },
+    "15": {
+      "ordinary_checks": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "held_contract_checks": [
+        0,
+        0
+      ],
+      "supplementary_review_discovered_checks": []
+    },
+    "7": {
+      "ordinary_checks": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "held_contract_checks": [
+        1,
+        1,
+        1
+      ],
+      "supplementary_review_discovered_checks": []
+    },
+    "8": {
+      "ordinary_checks": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "held_contract_checks": [
+        0,
+        0,
+        0
+      ],
+      "supplementary_review_discovered_checks": []
+    },
+    "9": {
+      "ordinary_checks": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "held_contract_checks": [
+        0,
+        0,
+        0
+      ],
+      "supplementary_review_discovered_checks": [
+        0,
+        0
+      ]
+    },
+    "10": {
+      "ordinary_checks": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "held_contract_checks": [
+        0,
+        0,
+        0
+      ],
+      "supplementary_review_discovered_checks": [
+        0,
+        0
+      ]
+    },
+    "11": {
+      "ordinary_checks": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "held_contract_checks": [
+        1,
+        0,
+        1
+      ],
+      "supplementary_review_discovered_checks": [
+        0,
+        0
+      ]
+    },
+    "12": {
+      "ordinary_checks": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "held_contract_checks": [
+        0,
+        0,
+        1
+      ],
+      "supplementary_review_discovered_checks": [
+        1,
+        1
+      ]
+    }
+  },
+  "selection_probes_spent_total": 12,
+  "group_selection_probes_spent_total": 26,
+  "selection_deviations": [
+    {
+      "profile": "alternate-reasoning",
+      "request": "applicable",
+      "body_read": false
+    },
+    {
+      "profile": "alternate-reasoning",
+      "request": "control",
+      "body_read": true
+    }
+  ],
+  "disposition": "reviewed-draft-not-promoted",
+  "readiness_review": {
+    "artifact": "readiness-review/readiness-review.md",
+    "sha256": "a154470d42baff2a324ddb2cfc71df2c9407563755f5ed58ec2ee156e7784ca1",
+    "index_sha256": "f68fc12440b7210b47c72a8560db6218ffa65680c7c686c8cd17dac3e66d9f80"
+  },
+  "promotion_gate_summary": {
+    "fixed_primary_corrections": 0,
+    "required": 2,
+    "clean_transfer": false,
+    "material_preservation": false,
+    "guidance_acceptance": true,
+    "native_selection_expected_decisions": 10,
+    "native_selection_attempts": 12,
+    "runtime_promoted": false,
+    "guidance_changed_after_freeze": false
+  }
+}

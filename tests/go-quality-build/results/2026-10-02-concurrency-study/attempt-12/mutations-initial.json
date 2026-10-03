@@ -1,0 +1,81 @@
+[
+  {
+    "meaning": "release-before-completion",
+    "qualified": false,
+    "reason": "No equivalent spelling selected; no detection credit."
+  },
+  {
+    "meaning": "unresponsive-admission",
+    "substitution": {
+      "file": "host.go",
+      "old": "case <-ctx.Done():",
+      "new": "case <-make(chan struct{}):"
+    },
+    "original_held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerCancellationWithOpenInput$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-i4a9ep01",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.177s\n",
+      "stderr": ""
+    },
+    "compile": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-i4a9ep01",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.162s [no tests to run]\n",
+      "stderr": ""
+    },
+    "author_tests": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-i4a9ep01",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.116s\n",
+      "stderr": ""
+    },
+    "held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerCancellationWithOpenInput$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-i4a9ep01",
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerCancellationWithOpenInput (1.00s)\n    controller_contract_test.go:352: missing event: blocked admission observes cancellation before input closure\nFAIL\nFAIL\texample.com/service-owned-workers\t1.165s\nFAIL\n",
+      "stderr": ""
+    },
+    "qualified": true,
+    "limit": "Inspect intended assertion before detection credit; compile failures/invalid original target excluded."
+  }
+]

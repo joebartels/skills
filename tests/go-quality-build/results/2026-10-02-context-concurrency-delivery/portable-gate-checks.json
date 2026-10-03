@@ -1,0 +1,47 @@
+{
+  "scope": "Disposable relocated copies only; original sealed archives never modified",
+  "checks": [
+    {
+      "case": "relocated checkout, unrelated working directory, platform temporary paths",
+      "status": 0,
+      "stdout": "PASS: portable31 reconstructions (26 completed/5 failed), five runtime0.2.0 skills, anchored seals and preserved counterevidence\n",
+      "stderr": "",
+      "expected_success": true
+    },
+    {
+      "case": "unexpected archive file refused",
+      "status": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-portable-delivery-en_34bqn/relocated/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 138, in <module>\n    verify()\n    ~~~~~~^^\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-portable-delivery-en_34bqn/relocated/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 74, in verify\n    seal(archive, record[\"checksum_index_sha256\"], continuation)\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-portable-delivery-en_34bqn/relocated/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 50, in seal\n    assert actual == expected_files, (root.name, \"sealed bytes changed\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('2026-10-02-context-discovery', 'sealed bytes changed')\n",
+      "expected_success": false
+    },
+    {
+      "case": "missing runtime guidance refused",
+      "status": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-portable-delivery-en_34bqn/relocated/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 138, in <module>\n    verify()\n    ~~~~~~^^\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-portable-delivery-en_34bqn/relocated/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 61, in verify\n    assert tree(package / \"skills\") == m[\"runtime_skill_sha256\"]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+      "expected_success": false
+    },
+    {
+      "case": "altered original input refused",
+      "status": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-portable-delivery-en_34bqn/relocated/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 138, in <module>\n    verify()\n    ~~~~~~^^\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-portable-delivery-en_34bqn/relocated/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 78, in verify\n    assert sha(safe_child(evals, name)) == expected, name\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: files/library-call-cause/process.go\n",
+      "expected_success": false
+    },
+    {
+      "case": "recomputed archive index cannot conceal altered evidence without external canonical anchor",
+      "status": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-portable-delivery-en_34bqn/relocated/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 138, in <module>\n    verify()\n    ~~~~~~^^\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-portable-delivery-en_34bqn/relocated/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 74, in verify\n    seal(archive, record[\"checksum_index_sha256\"], continuation)\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-portable-delivery-en_34bqn/relocated/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 41, in seal\n    assert expected in continuation, (root.name, \"canonical anchor missing\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('2026-10-02-context-study', 'canonical anchor missing')\n",
+      "expected_success": false
+    },
+    {
+      "case": "restored exact copy after all adverse probes",
+      "status": 0,
+      "stdout": "PASS: portable31 reconstructions (26 completed/5 failed), five runtime0.2.0 skills, anchored seals and preserved counterevidence\n",
+      "stderr": "",
+      "expected_success": true
+    }
+  ]
+}

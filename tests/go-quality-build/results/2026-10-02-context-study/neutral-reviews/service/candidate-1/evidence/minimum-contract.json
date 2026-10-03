@@ -1,0 +1,26 @@
+{
+  "label": "minimum-contract",
+  "argv": [
+    "rtk",
+    "proxy",
+    "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+    "test",
+    "-run",
+    "^(TestReview|TestTotalAndEarlierParentDeadline|TestResponseScopeAndClose|TestStageBudgetAndCanceledAdmission|TestHTTPCancellationBoundary)",
+    "-count=1",
+    "-timeout=30s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-context-outcome-20261002/service/reviews/scratch/candidate-1",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-context-outcome-20261002/service/reviews/go-cache-min",
+    "GOWORK": "off",
+    "GOTOOLCHAIN": "local",
+    "GOPROXY": "off",
+    "CGO_ENABLED": "0"
+  },
+  "status": 0,
+  "stdout": "ok  \texample.com/stages\t0.254s\n",
+  "stderr": "",
+  "elapsed_seconds": 0.514
+}

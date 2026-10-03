@@ -1,0 +1,3 @@
+package workers
+import("context";"errors";"sync";"sync/atomic";"testing")
+func TestIndependentStressAcquiredAfterCancel(t *testing.T){var ran atomic.Int64;var wg sync.WaitGroup;for n:=0;n<2000;n++{wg.Add(1);go func(){defer wg.Done();ctx,cancel:=context.WithCancel(context.Background());defer cancel();jobs:=make(chan Job,1);jobs<-1;close(jobs);err:=Serve(ctx,jobs,1,func(context.Context,Job)(Lease,error){cancel();return independentLease{run:func(context.Context,Job)error{ran.Add(1);return nil},close:func()error{return nil}},nil});if !errors.Is(err,context.Canceled){t.Errorf("cancellation missing: %v",err)}}()};wg.Wait();if n:=ran.Load();n!=0{t.Errorf("started %d Runs after Open canceled caller context",n)}}

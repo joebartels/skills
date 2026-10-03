@@ -1,0 +1,435 @@
+[
+  {
+    "name": "ordinary-test",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/baseline",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.268s\n",
+    "stderr": ""
+  },
+  {
+    "name": "ordinary-race",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/baseline",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=20s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t1.324s\n",
+    "stderr": ""
+  },
+  {
+    "name": "ordinary-vet",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/baseline",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "name": "ordinary-format",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/baseline",
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-d",
+      "host.go",
+      "host_test.go"
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "name": "minimum-version",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/baseline",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.214s\n",
+    "stderr": ""
+  },
+  {
+    "name": "standalone-build",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/baseline",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "build",
+      "-mod=readonly",
+      "-o",
+      "/dev/null",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "name": "selected-graph",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/baseline",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-m",
+      "all"
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 0,
+    "stdout": "example.com/service-owned-workers\n",
+    "stderr": ""
+  },
+  {
+    "name": "independent-probes",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/probes",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=TestReview",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewAvailableJobWithOpenInput (0.25s)\n    review_contract_test.go:59: available job did not start with capacity 2 and caller input left open\n--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)\n    review_contract_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required\nFAIL\nFAIL\texample.com/service-owned-workers\t0.740s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "name": "independent-probes-minimum",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/probes",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run=TestReview",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewAvailableJobWithOpenInput (0.25s)\n    review_contract_test.go:59: available job did not start with capacity 2 and caller input left open\n--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)\n    review_contract_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required\nFAIL\nFAIL\texample.com/service-owned-workers\t0.741s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "name": "mutant-no-run-stop-author-suite",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/mutant-no-run-stop",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestServe",
+      "-race",
+      "-count=5",
+      "-timeout=15s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t1.416s\n",
+    "stderr": ""
+  },
+  {
+    "name": "mutant-no-run-stop-sensitive-probe",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/mutant-no-run-stop",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestReviewRunFailureStopsSibling$",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewRunFailureStopsSibling (0.25s)\n    review_contract_test.go:260: Run failure did not stop sibling Run\nFAIL\nFAIL\texample.com/service-owned-workers\t0.431s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "name": "mutant-deferred-close-author-suite",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/mutant-deferred-close",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestServe",
+      "-race",
+      "-count=5",
+      "-timeout=15s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t1.414s\n",
+    "stderr": ""
+  },
+  {
+    "name": "mutant-deferred-close-sensitive-probe",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/mutant-deferred-close",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestReviewCapacityIncludesCloseCompletion$",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewCapacityIncludesCloseCompletion (0.00s)\n    review_contract_test.go:214: acquired 3 leases before first held Close completed; want 2\n    review_contract_test.go:219: maxHeld=3 held=0 opens=3; want 2,0,3\nFAIL\nFAIL\texample.com/service-owned-workers\t0.174s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "name": "controller-original-all",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/controller-baseline",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestController",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestControllerCancellationWithOpenInput (1.00s)\n    controller_contract_test.go:348: missing event: first work entered before in-flight cancellation\nFAIL\nFAIL\texample.com/service-owned-workers\t1.267s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "name": "controller-original-passing",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/controller-baseline",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestController(PartialStartAndBlockedAdmission|CapacityAndAcceptedWork)$",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=20s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t1.354s\n",
+    "stderr": ""
+  },
+  {
+    "name": "controller-release-mutant-compile",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/mutant-release-before-join",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^$",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.177s [no tests to run]\n",
+    "stderr": ""
+  },
+  {
+    "name": "controller-release-mutant-author-suite",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/mutant-release-before-join",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestServe",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestServeCapacityAndJoinBeforeRelease (3.04s)\n    host_test.go:84: timed out waiting for third Run\n--- FAIL: TestServeJoinsIndependentFailures (0.00s)\n    host_test.go:117: Serve error close\n        close does not include run\nFAIL\nFAIL\texample.com/service-owned-workers\t3.163s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "name": "controller-release-mutant-held",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/mutant-release-before-join",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=^TestControllerPartialStartAndBlockedAdmission$",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestControllerPartialStartAndBlockedAdmission (0.00s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/startup_failure (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/worker_failure (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:206: worker failure lost: independent close failure\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/caller_cancellation (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:209: cancellation lost: independent close failure\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:218: lease closed before all started users joined\nFAIL\nFAIL\texample.com/service-owned-workers\t0.150s\nFAIL\n",
+    "stderr": ""
+  },
+  {
+    "name": "independent-probes-race",
+    "cwd": "/private/tmp/go-independent-concurrency-service/review-validation/probes",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run=TestReview",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=20s",
+      "./..."
+    ],
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-review-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off"
+    },
+    "status": 1,
+    "stdout": "-test.shuffle 1790982588661568000\n--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)\n    review_contract_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required\n--- FAIL: TestReviewAvailableJobWithOpenInput (0.25s)\n    review_contract_test.go:59: available job did not start with capacity 2 and caller input left open\n--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)\n    review_contract_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required\n--- FAIL: TestReviewAvailableJobWithOpenInput (0.25s)\n    review_contract_test.go:59: available job did not start with capacity 2 and caller input left open\n--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)\n    review_contract_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required\n--- FAIL: TestReviewAvailableJobWithOpenInput (0.25s)\n    review_contract_test.go:59: available job did not start with capacity 2 and caller input left open\nFAIL\nFAIL\texample.com/service-owned-workers\t1.899s\nFAIL\n",
+    "stderr": ""
+  }
+]

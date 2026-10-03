@@ -1,0 +1,23 @@
+{
+  "mode": "explicit allowed catalog; automatic native selection not tested",
+  "evidence": "events.jsonl command trace and author-report.md declarations",
+  "allowed_skills": [
+    "go-api-contracts/SKILL.md",
+    "go-behavior-tests/SKILL.md",
+    "go-behavior-tests/references/behavior-observations.md",
+    "go-interfaces-and-composition/SKILL.md",
+    "go-package-boundaries/SKILL.md",
+    "go-package-boundaries/references/package-maps.md",
+    "go-test-isolation/SKILL.md",
+    "go-test-isolation/references/isolation-patterns.md"
+  ],
+  "host_discovery_disabled": true,
+  "observed_catalog_commands": [
+    "/bin/zsh -lc \"rtk pwd && rtk rg --files -g 'README.md' -g 'AGENTS.md' -g '*.go' -g '.allowed-skills/**/SKILL.md'\"",
+    "/bin/zsh -lc 'rtk cat /Users/jb/.codex/RTK.md && rtk cat README.md && rtk cat stages.go && rtk cat stages_test.go && rtk cat .allowed-skills/go-behavior-tests/SKILL.md && rtk cat .allowed-skills/go-test-isolation/SKILL.md && rtk cat .allowed-skills/go-interfaces-and-composition/SKILL.md && rtk cat .allowed-skills/go-api-contracts/SKILL.md'",
+    "/bin/zsh -lc \"rtk rg --files -g 'go.mod' -g 'go.sum' -g '*.go' -g 'references/**' -g 'AGENTS.md' && rtk cat .allowed-skills/go-behavior-tests/references/behavior-observations.md && rtk cat .allowed-skills/go-test-isolation/references/isolation-patterns.md\""
+  ],
+  "limits": [
+    "Host scan warnings persist despite requested skip_host_skill_discovery; complete absence of host metadata not proven. Trace shows explicit catalog reads; this is not a native-routing trial."
+  ]
+}

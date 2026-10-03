@@ -1,0 +1,36 @@
+{
+  "candidate": "B",
+  "name": "host-independent",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-run",
+    "^TestIndependent",
+    "-count=1",
+    "-timeout=20s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly"
+  },
+  "status": 1,
+  "elapsed_seconds": 0.509
+}
+STDOUT
+--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)
+    review_independent_test.go:10: after observed Close failure err=Close failure
+        Close failure
+        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release
+--- FAIL: TestIndependentAcquiredAfterCancelSkipsRun (0.00s)
+    review_independent_test.go:15: acquired after cancellation err=context canceled runs=1 closes=1; want canceled, zero Runs, one Close
+FAIL
+FAIL	example.com/service-owned-workers	0.394s
+FAIL
+
+STDERR

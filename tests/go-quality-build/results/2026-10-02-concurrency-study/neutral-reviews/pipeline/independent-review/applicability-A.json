@@ -1,0 +1,106 @@
+{
+  "candidate": "A",
+  "scope": "Bounded code-area review of candidate A source snapshot (see source-hashes-before.json), CLI/private runPipeline and delivered tests, judged against original README/source; Go1.22 minimum, actual Go1.22.12 and host Go1.26.5 darwin/arm64. Findings are existing-in-scope in this delivered snapshot.",
+  "all_nine_considered": true,
+  "topics": [
+    {
+      "topic": "architecture-and-design",
+      "state": "applicable",
+      "reason": "Callback/context/error ownership and cross-boundary completion are the central design decisions; the fixed private API and supplied host must remain usable.",
+      "coverage": "complete",
+      "skill_read": "/private/tmp/go-neutral-pipeline-study/review-guidance/go-architecture-and-design/SKILL.md",
+      "references_read": [
+        "/private/tmp/go-neutral-pipeline-study/review-guidance/go-architecture-and-design/references/design-decisions.md"
+      ],
+      "card": "cards/A/architecture-and-design.md"
+    },
+    {
+      "topic": "code-quality-and-idioms",
+      "state": "applicable",
+      "reason": "The local context state and error classification need clear, truthful semantics; Go 1.22, formatting and vet also apply.",
+      "coverage": "complete",
+      "skill_read": "/private/tmp/go-neutral-pipeline-study/review-guidance/go-code-quality-and-idioms/SKILL.md",
+      "references_read": [
+        "/private/tmp/go-neutral-pipeline-study/review-guidance/go-code-quality-and-idioms/references/idiom-decisions.md"
+      ],
+      "card": "cards/A/code-quality-and-idioms.md"
+    },
+    {
+      "topic": "correctness-and-compatibility",
+      "state": "applicable",
+      "reason": "FIFO, early normal completion, failure cancellation, callback joining, error identity and CLI output/status are explicit important contracts.",
+      "coverage": "complete",
+      "skill_read": "/private/tmp/go-neutral-pipeline-study/review-guidance/go-correctness-and-compatibility/SKILL.md",
+      "references_read": [
+        "/private/tmp/go-neutral-pipeline-study/review-guidance/go-correctness-and-compatibility/references/correctness-compatibility-decisions.md"
+      ],
+      "card": "cards/A/correctness-and-compatibility.md"
+    },
+    {
+      "topic": "testing",
+      "state": "applicable",
+      "reason": "The delivered tests claim to verify concurrency and error preservation. Their assertions, event gates, isolation and mutation sensitivity require assessment.",
+      "coverage": "complete",
+      "skill_read": "/private/tmp/go-neutral-pipeline-study/review-guidance/go-testing/SKILL.md",
+      "references_read": [
+        "/private/tmp/go-neutral-pipeline-study/review-guidance/go-testing/references/testing-decisions.md"
+      ],
+      "card": "cards/A/testing.md"
+    },
+    {
+      "topic": "security",
+      "state": "applicable",
+      "reason": "The CLI parses caller-controlled integer-line input and emits only integers/diagnostics; resource amplification and input-to-sink paths can be assessed within this local CLI boundary.",
+      "coverage": "complete",
+      "skill_read": "/private/tmp/go-neutral-pipeline-study/review-guidance/go-security/SKILL.md",
+      "references_read": [
+        "/private/tmp/go-neutral-pipeline-study/review-guidance/go-security/references/security-decisions.md"
+      ],
+      "card": "cards/A/security.md"
+    },
+    {
+      "topic": "observability-and-resilience",
+      "state": "applicable",
+      "reason": "Cooperative stop, callback failure propagation and caller-visible success/error signals govern failure containment and diagnostics.",
+      "coverage": "complete",
+      "skill_read": "/private/tmp/go-neutral-pipeline-study/review-guidance/go-observability-and-resilience/SKILL.md",
+      "references_read": [
+        "/private/tmp/go-neutral-pipeline-study/review-guidance/go-observability-and-resilience/references/observability-resilience-decisions.md"
+      ],
+      "card": "cards/A/observability-and-resilience.md"
+    },
+    {
+      "topic": "performance-and-resource-management",
+      "state": "applicable",
+      "reason": "The code owns a bounded channel and two callbacks; blocked sends/receives, cleanup joins and constant per-call work are relevant resources.",
+      "coverage": "complete",
+      "skill_read": "/private/tmp/go-neutral-pipeline-study/review-guidance/go-performance-and-resource-management/SKILL.md",
+      "references_read": [
+        "/private/tmp/go-neutral-pipeline-study/review-guidance/go-performance-and-resource-management/references/performance-decisions.md"
+      ],
+      "card": "cards/A/performance-and-resource-management.md"
+    },
+    {
+      "topic": "dependencies-and-reproducibility",
+      "state": "applicable",
+      "reason": "The documented Go 1.22 minimum and standard-library-only standalone module are a rebuild contract, checked with an actual minimum toolchain.",
+      "coverage": "complete",
+      "skill_read": "/private/tmp/go-neutral-pipeline-study/review-guidance/go-dependencies-and-reproducibility/SKILL.md",
+      "references_read": [
+        "/private/tmp/go-neutral-pipeline-study/review-guidance/go-dependencies-and-reproducibility/references/dependency-reproducibility-decisions.md"
+      ],
+      "card": "cards/A/dependencies-and-reproducibility.md"
+    },
+    {
+      "topic": "deployment-and-operations",
+      "state": "applicable",
+      "reason": "This artifact is a CLI. Actual binary build, startup/configuration, stdout/stderr, exit codes and finite-input termination are relevant; containers, signals and rollouts are outside this scope.",
+      "coverage": "complete",
+      "skill_read": "/private/tmp/go-neutral-pipeline-study/review-guidance/go-deployment-and-operations/SKILL.md",
+      "references_read": [
+        "/private/tmp/go-neutral-pipeline-study/review-guidance/go-deployment-and-operations/references/deployment-operations-decisions.md"
+      ],
+      "card": "cards/A/deployment-and-operations.md"
+    }
+  ]
+}

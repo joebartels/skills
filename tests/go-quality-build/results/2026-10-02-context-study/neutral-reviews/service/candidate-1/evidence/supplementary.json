@@ -1,0 +1,25 @@
+{
+  "label": "supplementary",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-run",
+    "^TestSupplementary",
+    "-count=1",
+    "-timeout=30s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-context-outcome-20261002/service/reviews/scratch/candidate-1",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-context-outcome-20261002/service/reviews/go-cache",
+    "GOWORK": "off",
+    "GOTOOLCHAIN": "local",
+    "GOPROXY": "off"
+  },
+  "status": 1,
+  "stdout": "--- FAIL: TestSupplementaryCanceledEmpty (0.00s)\n    supplementary_contract_test.go:16: empty endpoints must succeed without calls: bodies=[] err=context canceled\n        context canceled\nFAIL\nFAIL\texample.com/stages\t0.379s\nFAIL\n",
+  "stderr": "",
+  "elapsed_seconds": 0.617
+}

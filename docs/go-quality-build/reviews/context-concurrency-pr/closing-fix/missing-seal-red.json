@@ -1,0 +1,14 @@
+{
+  "break": "Conditional self-seal validation permits absent delivery checksums.json to return PASS",
+  "argv": [
+    "rtk",
+    "proxy",
+    "python3",
+    "-B",
+    "tests/test_go_study_integrity.py",
+    "GoStudyIntegrityCLI.test_missing_delivery_seal_fails_closed"
+  ],
+  "status": 1,
+  "stdout": "",
+  "stderr": "F\n======================================================================\nFAIL: test_missing_delivery_seal_fails_closed (__main__.GoStudyIntegrityCLI.test_missing_delivery_seal_fails_closed)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/Users/jb/.codex/worktrees/ed95/skills/tests/test_go_study_integrity.py\", line 39, in test_missing_delivery_seal_fails_closed\n    self.assertNotEqual(result.returncode, 0, result.stdout)\n    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 0 == 0 : PASS: portable31 reconstructions (26 completed/5 failed), five runtime0.2.0 skills, anchored seals and preserved counterevidence\n\n\n----------------------------------------------------------------------\nRan 1 test in 2.194s\n\nFAILED (failures=1)\n"
+}

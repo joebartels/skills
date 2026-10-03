@@ -1,0 +1,7 @@
+old:
+consumerStopped = r.stoppedAtReturn
+				cancel()
+new:
+consumerStopped = r.stoppedAtReturn
+				cancel()
+				if r.err == nil && ctx.Err() == nil { return nil }

@@ -1,0 +1,3 @@
+**Selected and opened:** `go-behavior-tests`, because the task fixes a behavior defect and requests a focused regression test. Its guidance calls for a small test with an independent expected value that catches the missing final positive value.
+
+**Declined as irrelevant:** `go-test-isolation` (pure deterministic helper with local inputs), `go-concurrency-and-ownership` (explicitly private and serial), and `go-api-contracts` (no exported or external contract change). No other skills or task materials were read. I made no edits and ran no tests.

@@ -1,0 +1,491 @@
+[
+  {
+    "id": "go-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.01
+  },
+  {
+    "id": "minimum-go-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "go version go1.22.12 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.008
+  },
+  {
+    "id": "module-graph",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-m",
+      "all"
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "example.com/library-shared-state\n",
+    "stderr": "",
+    "elapsed_seconds": 0.008
+  },
+  {
+    "id": "nonstandard-packages",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-deps",
+      "-f",
+      "{{if not .Standard}}{{.ImportPath}}{{end}}",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "example.com/library-shared-state\n",
+    "stderr": "",
+    "elapsed_seconds": 0.107
+  },
+  {
+    "id": "build",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "build",
+      "-o",
+      "/dev/null",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.795
+  },
+  {
+    "id": "ordinary-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "ok  \texample.com/library-shared-state\t0.229s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.161
+  },
+  {
+    "id": "vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.384
+  },
+  {
+    "id": "format-diff",
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-d",
+      "."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.007
+  },
+  {
+    "id": "race-shuffle-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "ok  \texample.com/library-shared-state\t1.219s\n",
+    "stderr": "",
+    "elapsed_seconds": 4.116
+  },
+  {
+    "id": "minimum-version-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/candidate",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "ok  \texample.com/library-shared-state\t0.173s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.631
+  },
+  {
+    "id": "independent-contract-race-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/candidate-contract",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "ok  \texample.com/library-shared-state\t1.240s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.41
+  },
+  {
+    "id": "minimum-version-contract-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/candidate-contract",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "ok  \texample.com/library-shared-state\t0.179s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.331
+  },
+  {
+    "id": "original-negative-control",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run=TestConcurrentAddAndSnapshot",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "expected_status": 1,
+    "stdout": "==================\nWARNING: DATA RACE\nRead at 0x00c0001921e0 by goroutine 7:\n  example.com/library-shared-state.(*Totals).Add()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0xe0\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8\n\nPrevious write at 0x00c0001921e0 by goroutine 14:\n  example.com/library-shared-state.(*Totals).Add()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0xf0\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8\n\nGoroutine 7 (running) created at:\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0\n  testing.tRunner()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164\n  testing.(*T).Run.gowrap1()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34\n\nGoroutine 14 (running) created at:\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0\n  testing.tRunner()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164\n  testing.(*T).Run.gowrap1()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34\n==================\n==================\nWARNING: DATA RACE\nWrite at 0x00c0001921e0 by goroutine 7:\n  example.com/library-shared-state.(*Totals).Add()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0xf0\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8\n\nPrevious write at 0x00c0001921e0 by goroutine 11:\n  example.com/library-shared-state.(*Totals).Add()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0xf0\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8\n\nGoroutine 7 (running) created at:\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0\n  testing.tRunner()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164\n  testing.(*T).Run.gowrap1()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34\n\nGoroutine 11 (running) created at:\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0\n  testing.tRunner()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164\n  testing.(*T).Run.gowrap1()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34\n==================\n==================\nWARNING: DATA RACE\nWrite at 0x00c0001921e0 by goroutine 10:\n  example.com/library-shared-state.(*Totals).Add()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0xf0\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8\n\nPrevious read at 0x00c0001921e0 by goroutine 7:\n  example.com/library-shared-state.(*Totals).Snapshot()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:19 +0x148\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:36 +0x144\n\nGoroutine 10 (running) created at:\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0\n  testing.tRunner()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164\n  testing.(*T).Run.gowrap1()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34\n\nGoroutine 7 (finished) created at:\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0\n  testing.tRunner()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164\n  testing.(*T).Run.gowrap1()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34\n==================\n==================\nWARNING: DATA RACE\nRead at 0x00c0001921e8 by goroutine 10:\n  example.com/library-shared-state.(*Totals).Add()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0x108\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8\n\nPrevious write at 0x00c0001921e8 by goroutine 7:\n  example.com/library-shared-state.(*Totals).Add()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0x11c\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8\n\nGoroutine 10 (running) created at:\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0\n  testing.tRunner()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164\n  testing.(*T).Run.gowrap1()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34\n\nGoroutine 7 (finished) created at:\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0\n  testing.tRunner()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164\n  testing.(*T).Run.gowrap1()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34\n==================\n==================\nWARNING: DATA RACE\nWrite at 0x00c0001921e8 by goroutine 10:\n  example.com/library-shared-state.(*Totals).Add()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0x11c\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8\n\nPrevious write at 0x00c0001921e8 by goroutine 9:\n  example.com/library-shared-state.(*Totals).Add()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0x11c\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8\n\nGoroutine 10 (running) created at:\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0\n  testing.tRunner()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164\n  testing.(*T).Run.gowrap1()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34\n\nGoroutine 9 (running) created at:\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0\n  testing.tRunner()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164\n  testing.(*T).Run.gowrap1()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34\n==================\n==================\nWARNING: DATA RACE\nWrite at 0x00c0001921e8 by goroutine 8:\n  example.com/library-shared-state.(*Totals).Add()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0x11c\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8\n\nPrevious read at 0x00c0001921e8 by goroutine 10:\n  example.com/library-shared-state.(*Totals).Snapshot()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:19 +0x15c\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:36 +0x144\n\nGoroutine 8 (running) created at:\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0\n  testing.tRunner()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164\n  testing.(*T).Run.gowrap1()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34\n\nGoroutine 10 (finished) created at:\n  example.com/library-shared-state.TestConcurrentAddAndSnapshot()\n      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0\n  testing.tRunner()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164\n  testing.(*T).Run.gowrap1()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34\n==================\n--- FAIL: TestConcurrentAddAndSnapshot (0.00s)\n    totals_test.go:49: incoherent snapshot: {Count:2002 Sum:2001}\n    totals_test.go:49: incoherent snapshot: {Count:2004 Sum:2002}\n    totals_test.go:49: incoherent snapshot: {Count:2004 Sum:2003}\n    totals_test.go:49: incoherent snapshot: {Count:2005 Sum:2004}\n    totals_test.go:49: incoherent snapshot: {Count:2007 Sum:2005}\n    totals_test.go:49: incoherent snapshot: {Count:2007 Sum:2005}\n    totals_test.go:49: incoherent snapshot: {Count:2007 Sum:2006}\n    totals_test.go:54: final snapshot={Count:2007 Sum:2006}, want count and sum 16000\n    testing.go:1712: race detected during execution of test\nFAIL\nFAIL\texample.com/library-shared-state\t0.177s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.327
+  },
+  {
+    "id": "controller-contract-race-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/candidate-controller",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "ok  \texample.com/library-shared-state\t1.325s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.482
+  },
+  {
+    "id": "minimum-version-controller-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/candidate-controller",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "ok  \texample.com/library-shared-state\t0.176s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.323
+  },
+  {
+    "id": "split-mutation-compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^$",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/split-publication-mutation",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "ok  \texample.com/library-shared-state\t0.204s [no tests to run]\n",
+    "stderr": "",
+    "elapsed_seconds": 0.343
+  },
+  {
+    "id": "split-mutation-candidate-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-run",
+      "^TestConcurrentAddAndSnapshot$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/split-publication-mutation",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "expected_status": 1,
+    "stdout": "--- FAIL: TestConcurrentAddAndSnapshot (0.00s)\n    totals_test.go:49: incoherent snapshot: {Count:27 Sum:26}\n    totals_test.go:49: incoherent snapshot: {Count:35 Sum:34}\n    totals_test.go:49: incoherent snapshot: {Count:44 Sum:42}\n    totals_test.go:49: incoherent snapshot: {Count:49 Sum:47}\n    totals_test.go:49: incoherent snapshot: {Count:49 Sum:47}\n    totals_test.go:49: incoherent snapshot: {Count:51 Sum:50}\n    totals_test.go:49: incoherent snapshot: {Count:49 Sum:50}\n    totals_test.go:54: final snapshot={Count:2047 Sum:2047}, want count and sum 16000\nFAIL\nFAIL\texample.com/library-shared-state\t0.182s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.342
+  },
+  {
+    "id": "split-mutation-controller-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestControllerCoherentSnapshots$",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-library/disposable-checks/split-publication-mutation",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-library/evidence/go-module-cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "expected_status": 1,
+    "stdout": "--- FAIL: TestControllerCoherentSnapshots (0.01s)\n    controller_contract_test.go:48: incoherent Count/Sum publication\nFAIL\nFAIL\texample.com/library-shared-state\t0.124s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.238
+  }
+]

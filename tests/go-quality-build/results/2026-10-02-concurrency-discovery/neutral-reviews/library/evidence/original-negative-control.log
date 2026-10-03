@@ -1,0 +1,193 @@
+==================
+WARNING: DATA RACE
+Read at 0x00c0001921e0 by goroutine 7:
+  example.com/library-shared-state.(*Totals).Add()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0xe0
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8
+
+Previous write at 0x00c0001921e0 by goroutine 14:
+  example.com/library-shared-state.(*Totals).Add()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0xf0
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8
+
+Goroutine 7 (running) created at:
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0
+  testing.tRunner()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164
+  testing.(*T).Run.gowrap1()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34
+
+Goroutine 14 (running) created at:
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0
+  testing.tRunner()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164
+  testing.(*T).Run.gowrap1()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34
+==================
+==================
+WARNING: DATA RACE
+Write at 0x00c0001921e0 by goroutine 7:
+  example.com/library-shared-state.(*Totals).Add()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0xf0
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8
+
+Previous write at 0x00c0001921e0 by goroutine 11:
+  example.com/library-shared-state.(*Totals).Add()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0xf0
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8
+
+Goroutine 7 (running) created at:
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0
+  testing.tRunner()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164
+  testing.(*T).Run.gowrap1()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34
+
+Goroutine 11 (running) created at:
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0
+  testing.tRunner()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164
+  testing.(*T).Run.gowrap1()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34
+==================
+==================
+WARNING: DATA RACE
+Write at 0x00c0001921e0 by goroutine 10:
+  example.com/library-shared-state.(*Totals).Add()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0xf0
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8
+
+Previous read at 0x00c0001921e0 by goroutine 7:
+  example.com/library-shared-state.(*Totals).Snapshot()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:19 +0x148
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:36 +0x144
+
+Goroutine 10 (running) created at:
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0
+  testing.tRunner()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164
+  testing.(*T).Run.gowrap1()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34
+
+Goroutine 7 (finished) created at:
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0
+  testing.tRunner()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164
+  testing.(*T).Run.gowrap1()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34
+==================
+==================
+WARNING: DATA RACE
+Read at 0x00c0001921e8 by goroutine 10:
+  example.com/library-shared-state.(*Totals).Add()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0x108
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8
+
+Previous write at 0x00c0001921e8 by goroutine 7:
+  example.com/library-shared-state.(*Totals).Add()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0x11c
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8
+
+Goroutine 10 (running) created at:
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0
+  testing.tRunner()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164
+  testing.(*T).Run.gowrap1()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34
+
+Goroutine 7 (finished) created at:
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0
+  testing.tRunner()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164
+  testing.(*T).Run.gowrap1()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34
+==================
+==================
+WARNING: DATA RACE
+Write at 0x00c0001921e8 by goroutine 10:
+  example.com/library-shared-state.(*Totals).Add()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0x11c
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8
+
+Previous write at 0x00c0001921e8 by goroutine 9:
+  example.com/library-shared-state.(*Totals).Add()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0x11c
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8
+
+Goroutine 10 (running) created at:
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0
+  testing.tRunner()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164
+  testing.(*T).Run.gowrap1()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34
+
+Goroutine 9 (running) created at:
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0
+  testing.tRunner()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164
+  testing.(*T).Run.gowrap1()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34
+==================
+==================
+WARNING: DATA RACE
+Write at 0x00c0001921e8 by goroutine 8:
+  example.com/library-shared-state.(*Totals).Add()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:16 +0x11c
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:34 +0xd8
+
+Previous read at 0x00c0001921e8 by goroutine 10:
+  example.com/library-shared-state.(*Totals).Snapshot()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals.go:19 +0x15c
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot.func1()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:36 +0x144
+
+Goroutine 8 (running) created at:
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0
+  testing.tRunner()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164
+  testing.(*T).Run.gowrap1()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34
+
+Goroutine 10 (finished) created at:
+  example.com/library-shared-state.TestConcurrentAddAndSnapshot()
+      /private/tmp/go-independent-concurrency-library/disposable-checks/original-with-candidate-tests/totals_test.go:30 +0xa0
+  testing.tRunner()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164
+  testing.(*T).Run.gowrap1()
+      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34
+==================
+--- FAIL: TestConcurrentAddAndSnapshot (0.00s)
+    totals_test.go:49: incoherent snapshot: {Count:2002 Sum:2001}
+    totals_test.go:49: incoherent snapshot: {Count:2004 Sum:2002}
+    totals_test.go:49: incoherent snapshot: {Count:2004 Sum:2003}
+    totals_test.go:49: incoherent snapshot: {Count:2005 Sum:2004}
+    totals_test.go:49: incoherent snapshot: {Count:2007 Sum:2005}
+    totals_test.go:49: incoherent snapshot: {Count:2007 Sum:2005}
+    totals_test.go:49: incoherent snapshot: {Count:2007 Sum:2006}
+    totals_test.go:54: final snapshot={Count:2007 Sum:2006}, want count and sum 16000
+    testing.go:1712: race detected during execution of test
+FAIL
+FAIL	example.com/library-shared-state	0.177s
+FAIL

@@ -1,0 +1,4 @@
+old:
+(err == context.Canceled || err == context.DeadlineExceeded)
+new:
+(errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded))

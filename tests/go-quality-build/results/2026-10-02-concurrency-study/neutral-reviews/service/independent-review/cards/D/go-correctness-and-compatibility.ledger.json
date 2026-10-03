@@ -1,0 +1,41 @@
+{
+  "scope": "Candidate D complete bounded code area for Correctness & Compatibility; source SHA256 host.go=2ce34acd60ee9a1e1c3c18df4756a0aa62fe82ab48c994edaa443e132b694cd3; host_test.go=a8bc3745ad54f20a67a51a82ff91eeea7ceb38c30b02e9d9af4131df57c3123c",
+  "coverage": [
+    {
+      "id": "go-correctness-and-compatibility",
+      "status": "complete",
+      "reason": "Applicable: reviewed every README result/lifecycle obligation, API shape, empty/finite/open input, partial acquisition, all three failure stages, cancellation before/during/stopping, successful effects and supported Go minimum."
+    }
+  ],
+  "findings": [
+    {
+      "id": "D/P1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Nonblocking job snapshot fixes a potentially one-job cohort and prevents admission of later available jobs while Run/Close proceeds.",
+      "evidence": "candidates/D/host.go:43; candidates/D/host.go:73; candidates/D/host.go:139; evidence/D-host-independent.log: TestIndependentLaterAvailableInputStarts misses second Run while first holds 1 of 2 slots; evidence/D-minimum-independent.log: same positive first-start and bounded second-start test; evidence/D-host-contract.log: supplied partial-start setup cannot reach blocked third admission",
+      "correction": "Keep admission responsive while capacity remains and successful acquired jobs can run; retain the cohort join/Close barrier at release.",
+      "sources": [
+        "cards/D/go-correctness-and-compatibility.md#D-P1"
+      ]
+    },
+    {
+      "id": "D/P2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Close results are accumulated in result but never mark the cohort failed.",
+      "evidence": "candidates/D/host.go:156; candidates/D/host.go:161; evidence/D-host-independent.log: limit 1 produces three opens/closes after first Close failure; evidence/D-minimum-independent.log: same intended count assertion",
+      "correction": "Set failed/cancel after any Close error while finishing every acquired release, then stop admission.",
+      "sources": [
+        "cards/D/go-correctness-and-compatibility.md#D-P2"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "D/go-correctness-and-compatibility/G1",
+      "evidence": "Already-canceled/input-wait cancellation and finite owned cleanup are exercised by the authored/held suites; successful independent Open/Run/Close causes remain errors.Is inspectable. Source API shape remains unchanged on actual Go 1.22.12 and host 1.26.5."
+    }
+  ],
+  "safeguards": []
+}

@@ -1,0 +1,30 @@
+{
+  "scope": "Candidate E complete bounded code area for Testing; source SHA256 host.go=f2f7dd6470aae322fe98a33d39e71addae18d9d749424e94723e7ca9213d208d; host_test.go=12acf3330e3334e1f802ff8a3a21a39a1110370ae1e804a9672cf15aff09fd43",
+  "coverage": [
+    {
+      "id": "go-testing",
+      "status": "complete",
+      "reason": "Applicable: reviewed candidate host_test.go assertions, doubles, event gates, cleanup and whether meaningful contract violations evade its authored suite. External held/supplementary/independent probes verify behavior; they are not additions to the candidate regression suite."
+    }
+  ],
+  "findings": [
+    {
+      "id": "E/T1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Close-only failure fixtures cannot distinguish retaining the error from stopping future admission.",
+      "evidence": "candidates/E/host_test.go:310; candidates/E/host_test.go:345; evidence/mutation-commands.json: remove-close-failure-stop authored suite passes host and minimum; evidence/mutation-commands.json: intended TestIndependentCloseFailureStopsNextAdmission fails with opened=3, closed=3 on both versions; mutations/E/remove-close-failure-stop/mutation.patch.txt",
+      "correction": "Add a healthy Run and failing Close at limit 1 with later jobs queued; assert no further Open while retaining Close error.",
+      "sources": [
+        "cards/E/go-testing.md#E-T1"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "E/go-testing/G1",
+      "evidence": "Authored tests include meaningful finite work/error identity assertions and bounded channel waits rather than only test names; the independently executed authored suites pass once on both actual versions. Candidate-specific additional positives/limits are below."
+    }
+  ],
+  "safeguards": []
+}

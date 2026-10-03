@@ -1,0 +1,150 @@
+[
+  {
+    "meaning": "release-before-completion",
+    "substitution": {
+      "file": "host.go",
+      "old": "workers.Wait()",
+      "new": "_ = workers // mutation: no completion observation"
+    },
+    "original_held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerPartialStartAndBlockedAdmission$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-qvmdo8sk",
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerPartialStartAndBlockedAdmission (0.00s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (0.00s)\n        controller_contract_test.go:190: Run started on lease acquired after stopping\nFAIL\nFAIL\texample.com/service-owned-workers\t0.230s\nFAIL\n",
+      "stderr": ""
+    },
+    "compile": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-qvmdo8sk",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.183s [no tests to run]\n",
+      "stderr": ""
+    },
+    "author_tests": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-qvmdo8sk",
+      "status": 1,
+      "stdout": "--- FAIL: TestServeRunsUpToCapacityAndClosesAfterRuns (5.00s)\n    host_test.go:68: timed out waiting for first Close\n--- FAIL: TestServeJoinsWholeCohortBeforeClosingAndCloseHoldsCapacity (5.00s)\n    host_test.go:121: timed out waiting for first Close\n--- FAIL: TestServeOpenFailureStopsAndReleasesStartedWork (0.00s)\n    host_test.go:208: Serve error = <nil>, want open failure\n--- FAIL: TestServeRetainsRunAndCloseErrors (0.00s)\n    host_test.go:232: Serve error = <nil>, want both Run and Close failures\n--- FAIL: TestServeRetainsIndependentOpenAndCloseErrors (0.00s)\n    host_test.go:252: Serve error = <nil>, want Open and Close failures\nFAIL\nFAIL\texample.com/service-owned-workers\t10.127s\nFAIL\n",
+      "stderr": ""
+    },
+    "held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerPartialStartAndBlockedAdmission$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-qvmdo8sk",
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerPartialStartAndBlockedAdmission (0.00s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/startup_failure (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:203: startup failure lost: close job 1: independent close failure\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/worker_failure (0.00s)\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:184: later job opened despite bounded/stopped admission\n        controller_contract_test.go:200: close failure lost: open job 3: unexpected later open\n        controller_contract_test.go:206: worker failure lost: open job 3: unexpected later open\n        controller_contract_test.go:212: first closes=0\n        controller_contract_test.go:215: second closes=0\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/caller_cancellation (0.00s)\n        controller_contract_test.go:175: lease closed before all started users joined\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:209: cancellation lost: close job 1: independent close failure\n        controller_contract_test.go:215: second closes=0\n        controller_contract_test.go:218: lease closed before all started users joined\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (0.00s)\n        controller_contract_test.go:179: host returned before held cleanup completed\n        controller_contract_test.go:184: later job opened despite bounded/stopped admission\n        controller_contract_test.go:190: Run started on lease acquired after stopping\n        controller_contract_test.go:200: close failure lost: context canceled\n            open job 3: unexpected later open\n        controller_contract_test.go:212: first closes=0\n        controller_contract_test.go:215: second closes=0\nFAIL\nFAIL\texample.com/service-owned-workers\t0.181s\nFAIL\n",
+      "stderr": ""
+    },
+    "qualified": false,
+    "limit": "Inspect intended assertion before detection credit; compile failures/invalid original target excluded."
+  },
+  {
+    "meaning": "unresponsive-admission",
+    "substitution": {
+      "file": "host.go",
+      "old": "case <-ctx.Done():",
+      "new": "case <-make(chan struct{}):"
+    },
+    "original_held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerCancellationWithOpenInput$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-nk79b21r",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.165s\n",
+      "stderr": ""
+    },
+    "compile": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-nk79b21r",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.162s [no tests to run]\n",
+      "stderr": ""
+    },
+    "author_tests": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-nk79b21r",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.115s\n",
+      "stderr": ""
+    },
+    "held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerCancellationWithOpenInput$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-nk79b21r",
+      "status": 0,
+      "stdout": "ok  \texample.com/service-owned-workers\t0.165s\n",
+      "stderr": ""
+    },
+    "qualified": false,
+    "limit": "Inspect intended assertion before detection credit; compile failures/invalid original target excluded."
+  }
+]

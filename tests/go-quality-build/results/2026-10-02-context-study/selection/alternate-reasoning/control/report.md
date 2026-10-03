@@ -1,0 +1,3 @@
+**Selection-only result:** the workspace contains no Go source, tests, `go.mod`, or `AGENTS.md` files, so I couldn’t identify the predicate or test location. I made no edits and ran no tests.
+
+I selected and opened `go-behavior-tests` because the task changes behavior and requests a regression test; I also read its `behavior-observations.md` reference for guidance on focused boundary cases. I explicitly excluded `go-test-isolation` because this is a pure deterministic predicate with no shared state or external resources, and `go-api-contracts` because the request describes a private range predicate, not a supported external contract.

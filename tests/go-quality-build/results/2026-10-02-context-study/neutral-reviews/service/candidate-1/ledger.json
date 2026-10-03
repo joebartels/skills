@@ -1,0 +1,112 @@
+{
+  "scope": "Changeset review: neutral original snapshot to candidate-1, the complete supplied README.md, go.mod, stages.go and stages_test.go. This is a sequential outbound HTTP library function, Go minimum 1.22. Snapshot hashes: snapshot.json. No repository or planning context inspected.",
+  "coverage": [
+    {
+      "id": "architecture",
+      "status": "complete",
+      "reason": "API/dependency shape; total/stage ownership, synchronous success, body ownership, and error propagation across FetchAll/fetchStage/failedWithContext; no missing material architecture context for this bounded function."
+    },
+    {
+      "id": "code-quality",
+      "status": "complete",
+      "reason": "All production/test Go, local error flow, nil/empty result semantics, helper scope, documentation and Go 1.22 idioms; gofmt and vet executed."
+    },
+    {
+      "id": "correctness",
+      "status": "complete",
+      "reason": "Ordered GET/200-only acceptance; prefix on failures; total sharing/earlier parent; configured stage ceiling; canceled admission; cooperative read/close cancellation; independent errors/custom cause; empty input; success after later cancellation; unchanged signature/minimum. All supplied paths inspected and targeted checks executed."
+    },
+    {
+      "id": "testing",
+      "status": "complete",
+      "reason": "All author assertions, doubles, channels/timers, cleanup and supplied checks/probes; frozen total-reset sensitivity independently reproduced. Additional stage/combined-error mutations are review diagnostics only."
+    },
+    {
+      "id": "security",
+      "status": "not_applicable",
+      "reason": "No changed security-relevant trust or authorization boundary is established in this bounded changeset. These edits derive budgets and aggregate errors using the supplied client, finite HTTP/HTTPS endpoints and positive durations; they do not alter destinations, redirects, TLS policy, credentials or privilege."
+    },
+    {
+      "id": "resilience",
+      "status": "complete",
+      "reason": "Caller/total/stage budgets, active HTTP/body cancellation, synchronous completion, prefix/error containment, and borrowed client lifetime. No telemetry/retry/service process is owned by this function."
+    },
+    {
+      "id": "resources",
+      "status": "complete",
+      "reason": "Every body acquisition/close exit, read buffering, per-stage timer cancellation, total cancellation, client reuse and sequential in-flight work. Workload byte/concurrency profiles are unknown; no performance improvement or fixed response-size bound is claimed."
+    },
+    {
+      "id": "reproducibility",
+      "status": "complete",
+      "reason": "Compared original/candidate go.mod and all imports; standalone GOWORK=off/GOTOOLCHAIN=local/GOPROXY=off build/test/vet checks; independently executed Go 1.22.12 tests with CGO_ENABLED=0 and supplied original minimum-version check records. No external sums, vendor, local replace, generation or native inputs are required by these edits."
+    },
+    {
+      "id": "deployment",
+      "status": "not_applicable",
+      "reason": "No release workflow, process startup/shutdown, packaging, CI enforcement or deployed runtime configuration is changed by this library function implementation. The explicit Go minimum build obligation is assessed under Dependencies & Reproducibility."
+    }
+  ],
+  "findings": [
+    {
+      "id": "P1",
+      "severity": "moderate",
+      "cause": "The caller cancellation guard executes before the empty-endpoint no-op policy.",
+      "evidence": "candidate-1/stages.go:14-15; original/README.md empty-success rule; evidence/supplementary.log fails TestSupplementaryCanceledEmpty.",
+      "correction": "Return empty success before inspecting cancellation when len(endpoints)==0.",
+      "sources": [
+        "candidate-1/correctness/P1",
+        "candidate-1/code-quality/P1"
+      ],
+      "owner": "FetchAll implementation",
+      "classification": "introduced",
+      "systemic": false
+    },
+    {
+      "id": "T1",
+      "severity": "major",
+      "cause": "The author suite never establishes that the stage duration is the request deadline ceiling when it is shorter than the total budget.",
+      "evidence": "candidate-1/stages_test.go:109-134 uses stage longer than total; all other supplied author stages are one second with immediate work or explicit cancellation. lost-stage-budget compile and author suite exit 0, while stage-ceiling-original exits 0 and lost-stage-budget-diagnostic exits 1.",
+      "correction": "Add a stage-shorter-than-total deadline assertion plus cooperative body/close timing verification at that stage scope.",
+      "sources": [
+        "candidate-1/testing/T1"
+      ],
+      "owner": "Author regression tests",
+      "classification": "newly exposed",
+      "systemic": false
+    },
+    {
+      "id": "T2",
+      "severity": "moderate",
+      "cause": "The canceled-admission test passes nil endpoints and asserts a cancellation failure, codifying the wrong no-op result and never asking the transport to admit real work.",
+      "evidence": "candidate-1/stages_test.go:136-147; supplementary.log demonstrates required empty success fails.",
+      "correction": "Separate canceled empty success from canceled nonempty no-request admission, asserting zero calls in both.",
+      "sources": [
+        "candidate-1/testing/T2"
+      ],
+      "owner": "Author regression tests",
+      "classification": "introduced",
+      "systemic": false
+    },
+    {
+      "id": "T3",
+      "severity": "moderate",
+      "cause": "Read and close failures are tested independently, so discarding close failure when reading also fails remains undetected.",
+      "evidence": "candidate-1/stages_test.go:76-78,95-96; lost-close-error-on-read compile and author suite exit 0; review-created TestReviewDualReadCloseErrors passes original and fails mutation.",
+      "correction": "Add a combined read/close failure case asserting errors.Is for both and retaining only the completed prefix.",
+      "sources": [
+        "candidate-1/testing/T3"
+      ],
+      "owner": "Author regression tests",
+      "classification": "newly exposed",
+      "systemic": false
+    }
+  ],
+  "strengths": [
+    {
+      "id": "G1",
+      "evidence": "contract-diagnostics.log, contract-race.log and stage-ceiling-original.log pass budget/lifetime/prefix/close boundary checks; Go 1.22 minimum and standalone source tests pass."
+    }
+  ],
+  "safeguards": []
+}

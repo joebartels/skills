@@ -1,0 +1,32 @@
+[
+  {
+    "label": "minimum",
+    "source_path": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/sync/waitgroup.go",
+    "sha256": "c14532b94fb4371097257ecf3ece89a070efafa59449fc05664d6b517d5adf1e",
+    "matches": [
+      {
+        "line": 38,
+        "excerpt": "36: // positive delta that start when the counter is greater than zero, may happen\n37: // at any time.\n38: // Typically this means the calls to Add should execute before the statement\n39: // creating the goroutine or other event to be waited for.\n40: // If a WaitGroup is reused to wait for several independent sets of events,\n41: // new Add calls must happen after all previous Wait calls have returned.\n42: // See the WaitGroup example.\n43: func (wg *WaitGroup) Add(delta int) {\n44: \tif race.Enabled {"
+      },
+      {
+        "line": 39,
+        "excerpt": "37: // at any time.\n38: // Typically this means the calls to Add should execute before the statement\n39: // creating the goroutine or other event to be waited for.\n40: // If a WaitGroup is reused to wait for several independent sets of events,\n41: // new Add calls must happen after all previous Wait calls have returned.\n42: // See the WaitGroup example.\n43: func (wg *WaitGroup) Add(delta int) {\n44: \tif race.Enabled {\n45: \t\tif delta < 0 {"
+      }
+    ]
+  },
+  {
+    "label": "host",
+    "source_path": "/opt/homebrew/Cellar/go/1.26.5/libexec/src/sync/waitgroup.go",
+    "sha256": "274e43a7cbc76eb0da4635a2680785200dfaf94d85e2d55cdd5122c76a4791d9",
+    "matches": [
+      {
+        "line": 72,
+        "excerpt": "70: // positive delta that start when the counter is greater than zero, may happen\n71: // at any time.\n72: // Typically this means the calls to Add should execute before the statement\n73: // creating the goroutine or other event to be waited for.\n74: // If a WaitGroup is reused to wait for several independent sets of events,\n75: // new Add calls must happen after all previous Wait calls have returned.\n76: // See the WaitGroup example.\n77: func (wg *WaitGroup) Add(delta int) {\n78: \tif race.Enabled {"
+      },
+      {
+        "line": 73,
+        "excerpt": "71: // at any time.\n72: // Typically this means the calls to Add should execute before the statement\n73: // creating the goroutine or other event to be waited for.\n74: // If a WaitGroup is reused to wait for several independent sets of events,\n75: // new Add calls must happen after all previous Wait calls have returned.\n76: // See the WaitGroup example.\n77: func (wg *WaitGroup) Add(delta int) {\n78: \tif race.Enabled {\n79: \t\tif delta < 0 {"
+      }
+    ]
+  }
+]

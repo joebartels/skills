@@ -1,0 +1,224 @@
+[
+  {
+    "name": "host-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-control-disposable/candidate",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/go-independent-concurrency-control-disposable/cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-control-disposable/module-cache"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.009
+  },
+  {
+    "name": "minimum-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-control-disposable/candidate",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/go-independent-concurrency-control-disposable/cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-control-disposable/module-cache"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "go version go1.22.12 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.008
+  },
+  {
+    "name": "host-build",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "build",
+      "-mod=readonly",
+      "-o",
+      "/dev/null",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-control-disposable/candidate",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/go-independent-concurrency-control-disposable/cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-control-disposable/module-cache"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.031
+  },
+  {
+    "name": "host-test",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-control-disposable/candidate",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/go-independent-concurrency-control-disposable/cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-control-disposable/module-cache"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "ok  \texample.com/not-concurrency-work\t0.197s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.838
+  },
+  {
+    "name": "host-vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "-mod=readonly",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-control-disposable/candidate",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/go-independent-concurrency-control-disposable/cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-control-disposable/module-cache"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.43
+  },
+  {
+    "name": "gofmt",
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-d",
+      "sum.go",
+      "sum_test.go"
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-control-disposable/candidate",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/go-independent-concurrency-control-disposable/cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-control-disposable/module-cache"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.007
+  },
+  {
+    "name": "minimum-build",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "build",
+      "-mod=readonly",
+      "-o",
+      "/dev/null",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-control-disposable/candidate",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/go-independent-concurrency-control-disposable/cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-control-disposable/module-cache"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.019
+  },
+  {
+    "name": "minimum-test",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-control-disposable/candidate",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/go-independent-concurrency-control-disposable/cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-control-disposable/module-cache"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "ok  \texample.com/not-concurrency-work\t0.172s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.683
+  },
+  {
+    "name": "original-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-independent-concurrency-control-disposable/original",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "",
+      "GOCACHE": "/private/tmp/go-independent-concurrency-control-disposable/cache",
+      "GOMODCACHE": "/private/tmp/go-independent-concurrency-control-disposable/module-cache"
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "ok  \texample.com/not-concurrency-work\t0.180s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.316
+  }
+]

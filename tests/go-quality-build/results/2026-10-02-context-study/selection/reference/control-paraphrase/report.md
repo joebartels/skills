@@ -1,0 +1,3 @@
+Selected and opened **`go-behavior-tests`** because the request changes a helper’s behavior and asks for a targeted regression test. Its boundary-testing guidance supports checking both numeric endpoints.
+
+I explicitly decline the I/O, cancellation, concurrency, lifecycle, API/composition, and package-boundary guidance as irrelevant to this pure helper. `rtk-prefixed` was unavailable; the workspace’s RTK instructions specify `rtk`, which I used. I made no edits and ran no tests.

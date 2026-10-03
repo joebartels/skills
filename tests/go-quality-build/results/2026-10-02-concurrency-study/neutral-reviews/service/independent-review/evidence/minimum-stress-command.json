@@ -1,0 +1,27 @@
+{
+  "candidate": "A",
+  "name": "A-minimum-stress-acquired-cancel",
+  "argv": [
+    "rtk",
+    "proxy",
+    "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+    "test",
+    "-race",
+    "-run",
+    "^TestIndependentStressAcquiredAfterCancel$",
+    "-count=3",
+    "-timeout=20s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly",
+    "GOMAXPROCS": "16"
+  },
+  "status": 1,
+  "stdout": "--- FAIL: TestIndependentStressAcquiredAfterCancel (0.03s)\n    review_stress_test.go:3: started 1 Runs after Open canceled caller context\n--- FAIL: TestIndependentStressAcquiredAfterCancel (0.03s)\n    review_stress_test.go:3: started 1 Runs after Open canceled caller context\n--- FAIL: TestIndependentStressAcquiredAfterCancel (0.03s)\n    review_stress_test.go:3: started 6 Runs after Open canceled caller context\nFAIL\nFAIL\texample.com/service-owned-workers\t0.330s\nFAIL\n",
+  "stderr": ""
+}

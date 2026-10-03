@@ -1,0 +1,2667 @@
+{
+  "A": {
+    "architecture-and-design": {
+      "ledger": "independent-review/cards/A/go-architecture-and-design.ledger.json",
+      "title": "Architecture & Design",
+      "selected": [
+        {
+          "id": "A/P1",
+          "candidate": "A",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close failures are appended but never enter the stop state before the next cohort.",
+          "locations": [
+            "candidates/A/host.go:60",
+            "candidates/A/host.go:85"
+          ],
+          "evidence": [
+            "evidence/A-host-independent.log: TestIndependentCloseFailureStopsNextAdmission",
+            "evidence/A-minimum-independent.log: same intended assertion",
+            "evidence/A-host-race.log: repeated intended assertion"
+          ],
+          "impact": "At limit 1, three leases are opened/closed after the first Close fails, where the contract permits only one; unbounded input would continue admissions after observed failure. Contained important admission contract failure, not systemic/critical.",
+          "correction": "Have closeCohort set stop/cancel on any Close error, while still closing all owned leases exactly once.",
+          "verification": "Close-only sentinel with three queued jobs, limit 1: errors.Is cause true and Open/Close counts exactly one.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "A/P2",
+          "candidate": "A",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Successful Open results can start Run using only stale stop state without rechecking caller/work context.",
+          "locations": [
+            "candidates/A/host.go:143",
+            "candidates/A/host.go:174"
+          ],
+          "evidence": [
+            "evidence/stress-commands.json: 3 forbidden Runs in 2000 concurrent valid calls on host race build",
+            "evidence/minimum-stress-command.json: 1, 1 and 6 forbidden Runs per 2000 calls on actual minimum race build"
+          ],
+          "impact": "Open deliberately cancels the caller context before returning its nonnil lease successfully. If its buffered result and cancellation are both ready, selecting the result starts Run after stopping; acquired lease must instead be owned and closed without Run. Reach is one host call; major contract failure.",
+          "correction": "After collecting/owning the Open result, observe context cancellation and set stop before starting Run; retain cancellation cause.",
+          "verification": "Use callback cancellation-before-success with bounded concurrent pressure; assert zero Runs, one Close and errors.Is(context.Canceled).",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "A/P3",
+          "candidate": "A",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Final join/Close cleanup does not observe caller cancellation again before returning accumulated errors.",
+          "locations": [
+            "candidates/A/host.go:181",
+            "candidates/A/host.go:183"
+          ],
+          "evidence": [
+            "evidence/A-host-independent.log: TestIndependentCallerCancellationDuringFailureCleanup",
+            "evidence/A-minimum-independent.log: same intended error identity assertion"
+          ],
+          "impact": "After a Run failure, canceling the caller while a gated Close is held loses context.Canceled, although independent Run and Close errors remain inspectable. This breaks the explicit stopping-time diagnostic contract at the single Serve boundary.",
+          "correction": "Append the caller cancellation observed after owned cleanup before returning, without dropping independent errors.",
+          "verification": "Gate Close entry after Run failure, cancel caller, release Close, require errors.Is for Run, Close and cancellation.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "code-quality-and-idioms": {
+      "ledger": "independent-review/cards/A/go-code-quality-and-idioms.ledger.json",
+      "title": "Code Quality & Go Idioms",
+      "selected": [
+        {
+          "id": "A/P1",
+          "candidate": "A",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close failures are appended but never enter the stop state before the next cohort.",
+          "locations": [
+            "candidates/A/host.go:60",
+            "candidates/A/host.go:85"
+          ],
+          "evidence": [
+            "evidence/A-host-independent.log: TestIndependentCloseFailureStopsNextAdmission",
+            "evidence/A-minimum-independent.log: same intended assertion",
+            "evidence/A-host-race.log: repeated intended assertion"
+          ],
+          "impact": "At limit 1, three leases are opened/closed after the first Close fails, where the contract permits only one; unbounded input would continue admissions after observed failure. Contained important admission contract failure, not systemic/critical.",
+          "correction": "Have closeCohort set stop/cancel on any Close error, while still closing all owned leases exactly once.",
+          "verification": "Close-only sentinel with three queued jobs, limit 1: errors.Is cause true and Open/Close counts exactly one.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "A/P2",
+          "candidate": "A",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Successful Open results can start Run using only stale stop state without rechecking caller/work context.",
+          "locations": [
+            "candidates/A/host.go:143",
+            "candidates/A/host.go:174"
+          ],
+          "evidence": [
+            "evidence/stress-commands.json: 3 forbidden Runs in 2000 concurrent valid calls on host race build",
+            "evidence/minimum-stress-command.json: 1, 1 and 6 forbidden Runs per 2000 calls on actual minimum race build"
+          ],
+          "impact": "Open deliberately cancels the caller context before returning its nonnil lease successfully. If its buffered result and cancellation are both ready, selecting the result starts Run after stopping; acquired lease must instead be owned and closed without Run. Reach is one host call; major contract failure.",
+          "correction": "After collecting/owning the Open result, observe context cancellation and set stop before starting Run; retain cancellation cause.",
+          "verification": "Use callback cancellation-before-success with bounded concurrent pressure; assert zero Runs, one Close and errors.Is(context.Canceled).",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "A/P3",
+          "candidate": "A",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Final join/Close cleanup does not observe caller cancellation again before returning accumulated errors.",
+          "locations": [
+            "candidates/A/host.go:181",
+            "candidates/A/host.go:183"
+          ],
+          "evidence": [
+            "evidence/A-host-independent.log: TestIndependentCallerCancellationDuringFailureCleanup",
+            "evidence/A-minimum-independent.log: same intended error identity assertion"
+          ],
+          "impact": "After a Run failure, canceling the caller while a gated Close is held loses context.Canceled, although independent Run and Close errors remain inspectable. This breaks the explicit stopping-time diagnostic contract at the single Serve boundary.",
+          "correction": "Append the caller cancellation observed after owned cleanup before returning, without dropping independent errors.",
+          "verification": "Gate Close entry after Run failure, cancel caller, release Close, require errors.Is for Run, Close and cancellation.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "correctness-and-compatibility": {
+      "ledger": "independent-review/cards/A/go-correctness-and-compatibility.ledger.json",
+      "title": "Correctness & Compatibility",
+      "selected": [
+        {
+          "id": "A/P1",
+          "candidate": "A",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close failures are appended but never enter the stop state before the next cohort.",
+          "locations": [
+            "candidates/A/host.go:60",
+            "candidates/A/host.go:85"
+          ],
+          "evidence": [
+            "evidence/A-host-independent.log: TestIndependentCloseFailureStopsNextAdmission",
+            "evidence/A-minimum-independent.log: same intended assertion",
+            "evidence/A-host-race.log: repeated intended assertion"
+          ],
+          "impact": "At limit 1, three leases are opened/closed after the first Close fails, where the contract permits only one; unbounded input would continue admissions after observed failure. Contained important admission contract failure, not systemic/critical.",
+          "correction": "Have closeCohort set stop/cancel on any Close error, while still closing all owned leases exactly once.",
+          "verification": "Close-only sentinel with three queued jobs, limit 1: errors.Is cause true and Open/Close counts exactly one.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "A/P2",
+          "candidate": "A",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Successful Open results can start Run using only stale stop state without rechecking caller/work context.",
+          "locations": [
+            "candidates/A/host.go:143",
+            "candidates/A/host.go:174"
+          ],
+          "evidence": [
+            "evidence/stress-commands.json: 3 forbidden Runs in 2000 concurrent valid calls on host race build",
+            "evidence/minimum-stress-command.json: 1, 1 and 6 forbidden Runs per 2000 calls on actual minimum race build"
+          ],
+          "impact": "Open deliberately cancels the caller context before returning its nonnil lease successfully. If its buffered result and cancellation are both ready, selecting the result starts Run after stopping; acquired lease must instead be owned and closed without Run. Reach is one host call; major contract failure.",
+          "correction": "After collecting/owning the Open result, observe context cancellation and set stop before starting Run; retain cancellation cause.",
+          "verification": "Use callback cancellation-before-success with bounded concurrent pressure; assert zero Runs, one Close and errors.Is(context.Canceled).",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "A/P3",
+          "candidate": "A",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Final join/Close cleanup does not observe caller cancellation again before returning accumulated errors.",
+          "locations": [
+            "candidates/A/host.go:181",
+            "candidates/A/host.go:183"
+          ],
+          "evidence": [
+            "evidence/A-host-independent.log: TestIndependentCallerCancellationDuringFailureCleanup",
+            "evidence/A-minimum-independent.log: same intended error identity assertion"
+          ],
+          "impact": "After a Run failure, canceling the caller while a gated Close is held loses context.Canceled, although independent Run and Close errors remain inspectable. This breaks the explicit stopping-time diagnostic contract at the single Serve boundary.",
+          "correction": "Append the caller cancellation observed after owned cleanup before returning, without dropping independent errors.",
+          "verification": "Gate Close entry after Run failure, cancel caller, release Close, require errors.Is for Run, Close and cancellation.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "testing": {
+      "ledger": "independent-review/cards/A/go-testing.ledger.json",
+      "title": "Testing",
+      "selected": [
+        {
+          "id": "A/T1",
+          "candidate": "A",
+          "kind": "test",
+          "severity": "major",
+          "systemic": false,
+          "cause": "No authored Close-only failure test asserts that subsequent queued jobs are never opened.",
+          "locations": [
+            "candidates/A/host_test.go:107",
+            "candidates/A/host_test.go:140"
+          ],
+          "evidence": [
+            "evidence/A-host-authored.log: authored suite passes unchanged defective implementation",
+            "evidence/A-host-independent.log: Close-only next-admission assertion fails"
+          ],
+          "impact": "An important explicit stop-admission contract evades regression detection because the Close sentinel is paired with an already stopping Run failure. Independent test correction is required even after P1 is fixed.",
+          "correction": "Add a healthy Run followed by failing Close with later queued jobs and an exact Open count.",
+          "verification": "The unchanged source must fail the intended assertion; a correct stop transition must pass without build/runner failures.",
+          "primary_owner": "host_test.go regression tests",
+          "topics": [
+            "testing"
+          ],
+          "topic_severities": {
+            "testing": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "A/T2",
+          "candidate": "A",
+          "kind": "test",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Cancellation-during-Open fixture asserts release but never asserts that returned leases skip Run.",
+          "locations": [
+            "candidates/A/host_test.go:151"
+          ],
+          "evidence": [
+            "evidence/stress-commands.json: forbidden Runs under valid cancellation-before-success",
+            "evidence/A-host-authored.log: cancellation test and full authored suite pass"
+          ],
+          "impact": "The explicit never-start-after-stop contract is unchecked despite a fixture already returning a lease after cancellation; a forbidden extra Run is accepted by the test.",
+          "correction": "Add a Run counter/forbidden event and assert zero Runs plus owned release; cover simultaneously ready Open-result/cancellation.",
+          "verification": "Bounded stress or event-gated ready result must reject P2 while checking exactly one Close.",
+          "primary_owner": "host_test.go regression tests",
+          "topics": [
+            "testing"
+          ],
+          "topic_severities": {
+            "testing": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "A/T3",
+          "candidate": "A",
+          "kind": "test",
+          "severity": "major",
+          "systemic": false,
+          "cause": "No authored assertion retains caller cancellation introduced during final held failure cleanup.",
+          "locations": [
+            "candidates/A/host_test.go:107",
+            "candidates/A/host_test.go:151"
+          ],
+          "evidence": [
+            "evidence/A-host-authored.log: authored suite passes",
+            "evidence/A-host-independent.log: errors.Is cancellation fails after gated Close"
+          ],
+          "impact": "Independent Run/Close error checks and initial cancellation checks do not cover cancellation observed while stopping, an explicit important diagnostic requirement.",
+          "correction": "Gate final Close after an independent Run failure, cancel the caller, and assert all independent causes plus cancellation.",
+          "verification": "The intended errors.Is assertion must fail unchanged A and pass corrected cleanup observation.",
+          "primary_owner": "host_test.go regression tests",
+          "topics": [
+            "testing"
+          ],
+          "topic_severities": {
+            "testing": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "A/T4",
+          "candidate": "A",
+          "kind": "test",
+          "severity": "moderate",
+          "systemic": false,
+          "cause": "Failure fixture expects two acquired leases without ensuring second acquisition precedes the first Run failure.",
+          "locations": [
+            "candidates/A/host_test.go:107",
+            "candidates/A/host_test.go:135"
+          ],
+          "evidence": [
+            "evidence/stress-commands.json: authored TestServeFailureJoinsAndClosesOwnedLeases reports closed=1 in 3 of 1000 race repetitions with GOMAXPROCS=16"
+          ],
+          "impact": "A legal early stop leaves only the first lease acquired and released; the test produces a false failure. This is a localized meaningful scheduling fragility, moderate rather than an unverified production defect.",
+          "correction": "Use an explicit second-acquisition/second-start gate before releasing the failing first Run; assert releases only for leases actually acquired.",
+          "verification": "Repeat the gated authored case under race/shuffle and verify one early acquired lease is allowed when no second acquisition was established.",
+          "primary_owner": "host_test.go regression tests",
+          "topics": [
+            "testing"
+          ],
+          "topic_severities": {
+            "testing": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "security": {
+      "ledger": "independent-review/cards/A/go-security.ledger.json",
+      "title": "Security",
+      "selected": [],
+      "applicable": false
+    },
+    "observability-and-resilience": {
+      "ledger": "independent-review/cards/A/go-observability-and-resilience.ledger.json",
+      "title": "Observability & Resilience",
+      "selected": [
+        {
+          "id": "A/P1",
+          "candidate": "A",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close failures are appended but never enter the stop state before the next cohort.",
+          "locations": [
+            "candidates/A/host.go:60",
+            "candidates/A/host.go:85"
+          ],
+          "evidence": [
+            "evidence/A-host-independent.log: TestIndependentCloseFailureStopsNextAdmission",
+            "evidence/A-minimum-independent.log: same intended assertion",
+            "evidence/A-host-race.log: repeated intended assertion"
+          ],
+          "impact": "At limit 1, three leases are opened/closed after the first Close fails, where the contract permits only one; unbounded input would continue admissions after observed failure. Contained important admission contract failure, not systemic/critical.",
+          "correction": "Have closeCohort set stop/cancel on any Close error, while still closing all owned leases exactly once.",
+          "verification": "Close-only sentinel with three queued jobs, limit 1: errors.Is cause true and Open/Close counts exactly one.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "A/P2",
+          "candidate": "A",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Successful Open results can start Run using only stale stop state without rechecking caller/work context.",
+          "locations": [
+            "candidates/A/host.go:143",
+            "candidates/A/host.go:174"
+          ],
+          "evidence": [
+            "evidence/stress-commands.json: 3 forbidden Runs in 2000 concurrent valid calls on host race build",
+            "evidence/minimum-stress-command.json: 1, 1 and 6 forbidden Runs per 2000 calls on actual minimum race build"
+          ],
+          "impact": "Open deliberately cancels the caller context before returning its nonnil lease successfully. If its buffered result and cancellation are both ready, selecting the result starts Run after stopping; acquired lease must instead be owned and closed without Run. Reach is one host call; major contract failure.",
+          "correction": "After collecting/owning the Open result, observe context cancellation and set stop before starting Run; retain cancellation cause.",
+          "verification": "Use callback cancellation-before-success with bounded concurrent pressure; assert zero Runs, one Close and errors.Is(context.Canceled).",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "A/P3",
+          "candidate": "A",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Final join/Close cleanup does not observe caller cancellation again before returning accumulated errors.",
+          "locations": [
+            "candidates/A/host.go:181",
+            "candidates/A/host.go:183"
+          ],
+          "evidence": [
+            "evidence/A-host-independent.log: TestIndependentCallerCancellationDuringFailureCleanup",
+            "evidence/A-minimum-independent.log: same intended error identity assertion"
+          ],
+          "impact": "After a Run failure, canceling the caller while a gated Close is held loses context.Canceled, although independent Run and Close errors remain inspectable. This breaks the explicit stopping-time diagnostic contract at the single Serve boundary.",
+          "correction": "Append the caller cancellation observed after owned cleanup before returning, without dropping independent errors.",
+          "verification": "Gate Close entry after Run failure, cancel caller, release Close, require errors.Is for Run, Close and cancellation.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "performance-and-resource-management": {
+      "ledger": "independent-review/cards/A/go-performance-and-resource-management.ledger.json",
+      "title": "Performance & Resource Management",
+      "selected": [
+        {
+          "id": "A/P1",
+          "candidate": "A",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close failures are appended but never enter the stop state before the next cohort.",
+          "locations": [
+            "candidates/A/host.go:60",
+            "candidates/A/host.go:85"
+          ],
+          "evidence": [
+            "evidence/A-host-independent.log: TestIndependentCloseFailureStopsNextAdmission",
+            "evidence/A-minimum-independent.log: same intended assertion",
+            "evidence/A-host-race.log: repeated intended assertion"
+          ],
+          "impact": "At limit 1, three leases are opened/closed after the first Close fails, where the contract permits only one; unbounded input would continue admissions after observed failure. Contained important admission contract failure, not systemic/critical.",
+          "correction": "Have closeCohort set stop/cancel on any Close error, while still closing all owned leases exactly once.",
+          "verification": "Close-only sentinel with three queued jobs, limit 1: errors.Is cause true and Open/Close counts exactly one.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "A/P2",
+          "candidate": "A",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Successful Open results can start Run using only stale stop state without rechecking caller/work context.",
+          "locations": [
+            "candidates/A/host.go:143",
+            "candidates/A/host.go:174"
+          ],
+          "evidence": [
+            "evidence/stress-commands.json: 3 forbidden Runs in 2000 concurrent valid calls on host race build",
+            "evidence/minimum-stress-command.json: 1, 1 and 6 forbidden Runs per 2000 calls on actual minimum race build"
+          ],
+          "impact": "Open deliberately cancels the caller context before returning its nonnil lease successfully. If its buffered result and cancellation are both ready, selecting the result starts Run after stopping; acquired lease must instead be owned and closed without Run. Reach is one host call; major contract failure.",
+          "correction": "After collecting/owning the Open result, observe context cancellation and set stop before starting Run; retain cancellation cause.",
+          "verification": "Use callback cancellation-before-success with bounded concurrent pressure; assert zero Runs, one Close and errors.Is(context.Canceled).",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "dependencies-and-reproducibility": {
+      "ledger": "independent-review/cards/A/go-dependencies-and-reproducibility.ledger.json",
+      "title": "Dependencies & Reproducibility",
+      "selected": [],
+      "applicable": true
+    },
+    "deployment-and-operations": {
+      "ledger": "independent-review/cards/A/go-deployment-and-operations.ledger.json",
+      "title": "Deployment & Operations",
+      "selected": [],
+      "applicable": false
+    }
+  },
+  "B": {
+    "architecture-and-design": {
+      "ledger": "independent-review/cards/B/go-architecture-and-design.ledger.json",
+      "title": "Architecture & Design",
+      "selected": [
+        {
+          "id": "B/P1",
+          "candidate": "B",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Run errors cannot request stop while the controller is admitting input or blocked in synchronous Open.",
+          "locations": [
+            "candidates/B/host.go:39",
+            "candidates/B/host.go:48",
+            "candidates/B/host.go:61",
+            "candidates/B/host.go:86"
+          ],
+          "evidence": [
+            "evidence/B-host-contract.log: TestReviewRunFailureCancelsPendingOpen requires caller cancellation",
+            "evidence/B-minimum-contract.log: same intended assertion",
+            "evidence/B-host-race.log: repeated behavioral failure"
+          ],
+          "impact": "The first Run returns its independent error while Open 2 cooperatively waits for work context stop. The error remains buffered until admission completes, so Serve retains its owned lease indefinitely without a caller cancel. This is a contained important liveness/stop contract failure.",
+          "correction": "Let a failing Run cancel the cohort immediately, or observe Run outcomes concurrently with pending Open while collecting its returned ownership.",
+          "verification": "Open 2 announces entry and waits for workCtx.Done; Run 1 fails after that event. Require autonomous stop, returned Run cause and exactly one Close. No caller cancel may be needed for progress.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "B/P2",
+          "candidate": "B",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close errors never set failed, so the outer loop admits another cohort after observed Close failure.",
+          "locations": [
+            "candidates/B/host.go:99",
+            "candidates/B/host.go:105"
+          ],
+          "evidence": [
+            "evidence/B-host-independent.log: three opens/closes at limit 1 after first Close failure",
+            "evidence/B-minimum-independent.log: same intended assertion"
+          ],
+          "impact": "Three valid jobs are acquired instead of stopping after the first failing Close, while the error remains inspectable. Material admission contract break is confined to Serve.",
+          "correction": "Mark failure/stop on Close error and finish all releases before returning.",
+          "verification": "Close-only sentinel, three jobs, limit 1; expect one Open, one Close and retained sentinel.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "B/P3",
+          "candidate": "B",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Open success launches Run unconditionally without checking cancellation that occurred inside Open.",
+          "locations": [
+            "candidates/B/host.go:57",
+            "candidates/B/host.go:59"
+          ],
+          "evidence": [
+            "evidence/B-host-independent.log: TestIndependentAcquiredAfterCancelSkipsRun observes runs=1",
+            "evidence/B-minimum-independent.log: same intended assertion",
+            "evidence/B-host-race.log: repeated forbidden Run"
+          ],
+          "impact": "A lease returned successfully after callback cancellation still runs once; the fixture policy explicitly requires ownership/release with no Run. Contained important startup/stop contract break.",
+          "correction": "Append the acquired lease, recheck cohort/caller stop, and skip Run while retaining the lease for release.",
+          "verification": "Open cancels caller before success; assert zero Runs, exactly one Close and cancellation identity.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "code-quality-and-idioms": {
+      "ledger": "independent-review/cards/B/go-code-quality-and-idioms.ledger.json",
+      "title": "Code Quality & Go Idioms",
+      "selected": [
+        {
+          "id": "B/P1",
+          "candidate": "B",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Run errors cannot request stop while the controller is admitting input or blocked in synchronous Open.",
+          "locations": [
+            "candidates/B/host.go:39",
+            "candidates/B/host.go:48",
+            "candidates/B/host.go:61",
+            "candidates/B/host.go:86"
+          ],
+          "evidence": [
+            "evidence/B-host-contract.log: TestReviewRunFailureCancelsPendingOpen requires caller cancellation",
+            "evidence/B-minimum-contract.log: same intended assertion",
+            "evidence/B-host-race.log: repeated behavioral failure"
+          ],
+          "impact": "The first Run returns its independent error while Open 2 cooperatively waits for work context stop. The error remains buffered until admission completes, so Serve retains its owned lease indefinitely without a caller cancel. This is a contained important liveness/stop contract failure.",
+          "correction": "Let a failing Run cancel the cohort immediately, or observe Run outcomes concurrently with pending Open while collecting its returned ownership.",
+          "verification": "Open 2 announces entry and waits for workCtx.Done; Run 1 fails after that event. Require autonomous stop, returned Run cause and exactly one Close. No caller cancel may be needed for progress.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "B/P2",
+          "candidate": "B",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close errors never set failed, so the outer loop admits another cohort after observed Close failure.",
+          "locations": [
+            "candidates/B/host.go:99",
+            "candidates/B/host.go:105"
+          ],
+          "evidence": [
+            "evidence/B-host-independent.log: three opens/closes at limit 1 after first Close failure",
+            "evidence/B-minimum-independent.log: same intended assertion"
+          ],
+          "impact": "Three valid jobs are acquired instead of stopping after the first failing Close, while the error remains inspectable. Material admission contract break is confined to Serve.",
+          "correction": "Mark failure/stop on Close error and finish all releases before returning.",
+          "verification": "Close-only sentinel, three jobs, limit 1; expect one Open, one Close and retained sentinel.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "B/P3",
+          "candidate": "B",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Open success launches Run unconditionally without checking cancellation that occurred inside Open.",
+          "locations": [
+            "candidates/B/host.go:57",
+            "candidates/B/host.go:59"
+          ],
+          "evidence": [
+            "evidence/B-host-independent.log: TestIndependentAcquiredAfterCancelSkipsRun observes runs=1",
+            "evidence/B-minimum-independent.log: same intended assertion",
+            "evidence/B-host-race.log: repeated forbidden Run"
+          ],
+          "impact": "A lease returned successfully after callback cancellation still runs once; the fixture policy explicitly requires ownership/release with no Run. Contained important startup/stop contract break.",
+          "correction": "Append the acquired lease, recheck cohort/caller stop, and skip Run while retaining the lease for release.",
+          "verification": "Open cancels caller before success; assert zero Runs, exactly one Close and cancellation identity.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "correctness-and-compatibility": {
+      "ledger": "independent-review/cards/B/go-correctness-and-compatibility.ledger.json",
+      "title": "Correctness & Compatibility",
+      "selected": [
+        {
+          "id": "B/P1",
+          "candidate": "B",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Run errors cannot request stop while the controller is admitting input or blocked in synchronous Open.",
+          "locations": [
+            "candidates/B/host.go:39",
+            "candidates/B/host.go:48",
+            "candidates/B/host.go:61",
+            "candidates/B/host.go:86"
+          ],
+          "evidence": [
+            "evidence/B-host-contract.log: TestReviewRunFailureCancelsPendingOpen requires caller cancellation",
+            "evidence/B-minimum-contract.log: same intended assertion",
+            "evidence/B-host-race.log: repeated behavioral failure"
+          ],
+          "impact": "The first Run returns its independent error while Open 2 cooperatively waits for work context stop. The error remains buffered until admission completes, so Serve retains its owned lease indefinitely without a caller cancel. This is a contained important liveness/stop contract failure.",
+          "correction": "Let a failing Run cancel the cohort immediately, or observe Run outcomes concurrently with pending Open while collecting its returned ownership.",
+          "verification": "Open 2 announces entry and waits for workCtx.Done; Run 1 fails after that event. Require autonomous stop, returned Run cause and exactly one Close. No caller cancel may be needed for progress.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "B/P2",
+          "candidate": "B",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close errors never set failed, so the outer loop admits another cohort after observed Close failure.",
+          "locations": [
+            "candidates/B/host.go:99",
+            "candidates/B/host.go:105"
+          ],
+          "evidence": [
+            "evidence/B-host-independent.log: three opens/closes at limit 1 after first Close failure",
+            "evidence/B-minimum-independent.log: same intended assertion"
+          ],
+          "impact": "Three valid jobs are acquired instead of stopping after the first failing Close, while the error remains inspectable. Material admission contract break is confined to Serve.",
+          "correction": "Mark failure/stop on Close error and finish all releases before returning.",
+          "verification": "Close-only sentinel, three jobs, limit 1; expect one Open, one Close and retained sentinel.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "B/P3",
+          "candidate": "B",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Open success launches Run unconditionally without checking cancellation that occurred inside Open.",
+          "locations": [
+            "candidates/B/host.go:57",
+            "candidates/B/host.go:59"
+          ],
+          "evidence": [
+            "evidence/B-host-independent.log: TestIndependentAcquiredAfterCancelSkipsRun observes runs=1",
+            "evidence/B-minimum-independent.log: same intended assertion",
+            "evidence/B-host-race.log: repeated forbidden Run"
+          ],
+          "impact": "A lease returned successfully after callback cancellation still runs once; the fixture policy explicitly requires ownership/release with no Run. Contained important startup/stop contract break.",
+          "correction": "Append the acquired lease, recheck cohort/caller stop, and skip Run while retaining the lease for release.",
+          "verification": "Open cancels caller before success; assert zero Runs, exactly one Close and cancellation identity.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "testing": {
+      "ledger": "independent-review/cards/B/go-testing.ledger.json",
+      "title": "Testing",
+      "selected": [
+        {
+          "id": "B/T1",
+          "candidate": "B",
+          "kind": "test",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Authored Run failure fixtures only observe failure after admission can finish, leaving pending-Open stop unverified.",
+          "locations": [
+            "candidates/B/host_test.go:111",
+            "candidates/B/host_test.go:145"
+          ],
+          "evidence": [
+            "evidence/B-host-authored.log: suite passes P1",
+            "evidence/B-host-contract.log: independently executed pending-Open assertion fails"
+          ],
+          "impact": "An important failure-containment/liveness contract is not detected: the cooperating pending Open needs caller cancellation despite Run failure.",
+          "correction": "Add a pending cooperative Open gated against a failing prior Run; assert it receives stop and Serve completes without caller cancel.",
+          "verification": "Intended stop-progress assertion must reject unchanged B on both supported test toolchains.",
+          "primary_owner": "host_test.go regression tests",
+          "topics": [
+            "testing"
+          ],
+          "topic_severities": {
+            "testing": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "B/T2",
+          "candidate": "B",
+          "kind": "test",
+          "severity": "major",
+          "systemic": false,
+          "cause": "The Close-only regression case closes input after one job, so it cannot detect renewed admission after Close failure.",
+          "locations": [
+            "candidates/B/host_test.go:258"
+          ],
+          "evidence": [
+            "evidence/B-host-authored.log: suite passes P2",
+            "evidence/B-host-independent.log: Close-only queued-job assertion fails"
+          ],
+          "impact": "The important stop-after-Close-failure contract remains unverified independently of error identity.",
+          "correction": "Keep later jobs queued after the failing Close and assert one acquisition/release at limit 1.",
+          "verification": "Run unchanged B to verify intended Open-count failure, then corrected behavior to pass.",
+          "primary_owner": "host_test.go regression tests",
+          "topics": [
+            "testing"
+          ],
+          "topic_severities": {
+            "testing": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "B/T3",
+          "candidate": "B",
+          "kind": "test",
+          "severity": "major",
+          "systemic": false,
+          "cause": "The acquired-but-not-started test neither establishes a stop during Open nor checks zero Runs; it explicitly expects the second Run to start.",
+          "locations": [
+            "candidates/B/host_test.go:225",
+            "candidates/B/host_test.go:253"
+          ],
+          "evidence": [
+            "candidates/B/host_test.go:253 checks startedSecond.Load()!=1",
+            "evidence/B-host-authored.log: suite passes P3",
+            "evidence/B-host-independent.log: cancellation-before-success observes forbidden Run"
+          ],
+          "impact": "The test name suggests a crucial ownership transition is protected, but the actual fixture allows the broken transition and checks only a normally started second Run.",
+          "correction": "Add an Open callback that cancels before returning success; assert zero second Runs and release of every acquired lease after joining existing Runs.",
+          "verification": "Use the cancellation-before-success probe to reject P3 and keep ordinary peer failure coverage separately.",
+          "primary_owner": "host_test.go regression tests",
+          "topics": [
+            "testing"
+          ],
+          "topic_severities": {
+            "testing": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "security": {
+      "ledger": "independent-review/cards/B/go-security.ledger.json",
+      "title": "Security",
+      "selected": [],
+      "applicable": false
+    },
+    "observability-and-resilience": {
+      "ledger": "independent-review/cards/B/go-observability-and-resilience.ledger.json",
+      "title": "Observability & Resilience",
+      "selected": [
+        {
+          "id": "B/P1",
+          "candidate": "B",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Run errors cannot request stop while the controller is admitting input or blocked in synchronous Open.",
+          "locations": [
+            "candidates/B/host.go:39",
+            "candidates/B/host.go:48",
+            "candidates/B/host.go:61",
+            "candidates/B/host.go:86"
+          ],
+          "evidence": [
+            "evidence/B-host-contract.log: TestReviewRunFailureCancelsPendingOpen requires caller cancellation",
+            "evidence/B-minimum-contract.log: same intended assertion",
+            "evidence/B-host-race.log: repeated behavioral failure"
+          ],
+          "impact": "The first Run returns its independent error while Open 2 cooperatively waits for work context stop. The error remains buffered until admission completes, so Serve retains its owned lease indefinitely without a caller cancel. This is a contained important liveness/stop contract failure.",
+          "correction": "Let a failing Run cancel the cohort immediately, or observe Run outcomes concurrently with pending Open while collecting its returned ownership.",
+          "verification": "Open 2 announces entry and waits for workCtx.Done; Run 1 fails after that event. Require autonomous stop, returned Run cause and exactly one Close. No caller cancel may be needed for progress.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "B/P2",
+          "candidate": "B",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close errors never set failed, so the outer loop admits another cohort after observed Close failure.",
+          "locations": [
+            "candidates/B/host.go:99",
+            "candidates/B/host.go:105"
+          ],
+          "evidence": [
+            "evidence/B-host-independent.log: three opens/closes at limit 1 after first Close failure",
+            "evidence/B-minimum-independent.log: same intended assertion"
+          ],
+          "impact": "Three valid jobs are acquired instead of stopping after the first failing Close, while the error remains inspectable. Material admission contract break is confined to Serve.",
+          "correction": "Mark failure/stop on Close error and finish all releases before returning.",
+          "verification": "Close-only sentinel, three jobs, limit 1; expect one Open, one Close and retained sentinel.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "B/P3",
+          "candidate": "B",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Open success launches Run unconditionally without checking cancellation that occurred inside Open.",
+          "locations": [
+            "candidates/B/host.go:57",
+            "candidates/B/host.go:59"
+          ],
+          "evidence": [
+            "evidence/B-host-independent.log: TestIndependentAcquiredAfterCancelSkipsRun observes runs=1",
+            "evidence/B-minimum-independent.log: same intended assertion",
+            "evidence/B-host-race.log: repeated forbidden Run"
+          ],
+          "impact": "A lease returned successfully after callback cancellation still runs once; the fixture policy explicitly requires ownership/release with no Run. Contained important startup/stop contract break.",
+          "correction": "Append the acquired lease, recheck cohort/caller stop, and skip Run while retaining the lease for release.",
+          "verification": "Open cancels caller before success; assert zero Runs, exactly one Close and cancellation identity.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "performance-and-resource-management": {
+      "ledger": "independent-review/cards/B/go-performance-and-resource-management.ledger.json",
+      "title": "Performance & Resource Management",
+      "selected": [
+        {
+          "id": "B/P1",
+          "candidate": "B",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Run errors cannot request stop while the controller is admitting input or blocked in synchronous Open.",
+          "locations": [
+            "candidates/B/host.go:39",
+            "candidates/B/host.go:48",
+            "candidates/B/host.go:61",
+            "candidates/B/host.go:86"
+          ],
+          "evidence": [
+            "evidence/B-host-contract.log: TestReviewRunFailureCancelsPendingOpen requires caller cancellation",
+            "evidence/B-minimum-contract.log: same intended assertion",
+            "evidence/B-host-race.log: repeated behavioral failure"
+          ],
+          "impact": "The first Run returns its independent error while Open 2 cooperatively waits for work context stop. The error remains buffered until admission completes, so Serve retains its owned lease indefinitely without a caller cancel. This is a contained important liveness/stop contract failure.",
+          "correction": "Let a failing Run cancel the cohort immediately, or observe Run outcomes concurrently with pending Open while collecting its returned ownership.",
+          "verification": "Open 2 announces entry and waits for workCtx.Done; Run 1 fails after that event. Require autonomous stop, returned Run cause and exactly one Close. No caller cancel may be needed for progress.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "B/P2",
+          "candidate": "B",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close errors never set failed, so the outer loop admits another cohort after observed Close failure.",
+          "locations": [
+            "candidates/B/host.go:99",
+            "candidates/B/host.go:105"
+          ],
+          "evidence": [
+            "evidence/B-host-independent.log: three opens/closes at limit 1 after first Close failure",
+            "evidence/B-minimum-independent.log: same intended assertion"
+          ],
+          "impact": "Three valid jobs are acquired instead of stopping after the first failing Close, while the error remains inspectable. Material admission contract break is confined to Serve.",
+          "correction": "Mark failure/stop on Close error and finish all releases before returning.",
+          "verification": "Close-only sentinel, three jobs, limit 1; expect one Open, one Close and retained sentinel.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "B/P3",
+          "candidate": "B",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Open success launches Run unconditionally without checking cancellation that occurred inside Open.",
+          "locations": [
+            "candidates/B/host.go:57",
+            "candidates/B/host.go:59"
+          ],
+          "evidence": [
+            "evidence/B-host-independent.log: TestIndependentAcquiredAfterCancelSkipsRun observes runs=1",
+            "evidence/B-minimum-independent.log: same intended assertion",
+            "evidence/B-host-race.log: repeated forbidden Run"
+          ],
+          "impact": "A lease returned successfully after callback cancellation still runs once; the fixture policy explicitly requires ownership/release with no Run. Contained important startup/stop contract break.",
+          "correction": "Append the acquired lease, recheck cohort/caller stop, and skip Run while retaining the lease for release.",
+          "verification": "Open cancels caller before success; assert zero Runs, exactly one Close and cancellation identity.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "dependencies-and-reproducibility": {
+      "ledger": "independent-review/cards/B/go-dependencies-and-reproducibility.ledger.json",
+      "title": "Dependencies & Reproducibility",
+      "selected": [],
+      "applicable": true
+    },
+    "deployment-and-operations": {
+      "ledger": "independent-review/cards/B/go-deployment-and-operations.ledger.json",
+      "title": "Deployment & Operations",
+      "selected": [],
+      "applicable": false
+    }
+  },
+  "C": {
+    "architecture-and-design": {
+      "ledger": "independent-review/cards/C/go-architecture-and-design.ledger.json",
+      "title": "Architecture & Design",
+      "selected": [],
+      "applicable": true
+    },
+    "code-quality-and-idioms": {
+      "ledger": "independent-review/cards/C/go-code-quality-and-idioms.ledger.json",
+      "title": "Code Quality & Go Idioms",
+      "selected": [],
+      "applicable": true
+    },
+    "correctness-and-compatibility": {
+      "ledger": "independent-review/cards/C/go-correctness-and-compatibility.ledger.json",
+      "title": "Correctness & Compatibility",
+      "selected": [],
+      "applicable": true
+    },
+    "testing": {
+      "ledger": "independent-review/cards/C/go-testing.ledger.json",
+      "title": "Testing",
+      "selected": [],
+      "applicable": true
+    },
+    "security": {
+      "ledger": "independent-review/cards/C/go-security.ledger.json",
+      "title": "Security",
+      "selected": [],
+      "applicable": false
+    },
+    "observability-and-resilience": {
+      "ledger": "independent-review/cards/C/go-observability-and-resilience.ledger.json",
+      "title": "Observability & Resilience",
+      "selected": [],
+      "applicable": true
+    },
+    "performance-and-resource-management": {
+      "ledger": "independent-review/cards/C/go-performance-and-resource-management.ledger.json",
+      "title": "Performance & Resource Management",
+      "selected": [],
+      "applicable": true
+    },
+    "dependencies-and-reproducibility": {
+      "ledger": "independent-review/cards/C/go-dependencies-and-reproducibility.ledger.json",
+      "title": "Dependencies & Reproducibility",
+      "selected": [],
+      "applicable": true
+    },
+    "deployment-and-operations": {
+      "ledger": "independent-review/cards/C/go-deployment-and-operations.ledger.json",
+      "title": "Deployment & Operations",
+      "selected": [],
+      "applicable": false
+    }
+  },
+  "D": {
+    "architecture-and-design": {
+      "ledger": "independent-review/cards/D/go-architecture-and-design.ledger.json",
+      "title": "Architecture & Design",
+      "selected": [
+        {
+          "id": "D/P1",
+          "candidate": "D",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Nonblocking job snapshot fixes a potentially one-job cohort and prevents admission of later available jobs while Run/Close proceeds.",
+          "locations": [
+            "candidates/D/host.go:43",
+            "candidates/D/host.go:73",
+            "candidates/D/host.go:139"
+          ],
+          "evidence": [
+            "evidence/D-host-independent.log: TestIndependentLaterAvailableInputStarts misses second Run while first holds 1 of 2 slots",
+            "evidence/D-minimum-independent.log: same positive first-start and bounded second-start test",
+            "evidence/D-host-contract.log: supplied partial-start setup cannot reach blocked third admission"
+          ],
+          "impact": "After job 1 starts on open input, job 2 becomes available while capacity 2 has one owned lease. Its sender and Run cannot progress until job 1 is released. This is serial execution under sparse input, forbidden by the explicit fixture contract. The accepted batch policy does not permit leaving an available second job blocked behind a one-job batch. One contained important admission/concurrency cause; setup timeouts are not four separate defects.",
+          "correction": "Keep admission responsive while capacity remains and successful acquired jobs can run; retain the cohort join/Close barrier at release.",
+          "verification": "First job arrives and starts; while its Run is gated, make job 2 available. Require job 2 to start before first release, then release/join both and close owned leases.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "D/P2",
+          "candidate": "D",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close results are accumulated in result but never mark the cohort failed.",
+          "locations": [
+            "candidates/D/host.go:156",
+            "candidates/D/host.go:161"
+          ],
+          "evidence": [
+            "evidence/D-host-independent.log: limit 1 produces three opens/closes after first Close failure",
+            "evidence/D-minimum-independent.log: same intended count assertion"
+          ],
+          "impact": "The next cohort is admitted after an observed Close error; retained diagnostic identity does not enforce the explicit stop-admission contract. Failure is contained in the helper.",
+          "correction": "Set failed/cancel after any Close error while finishing every acquired release, then stop admission.",
+          "verification": "Healthy Run, failing Close, later queued jobs, limit 1: expect one Open/Close and errors.Is sentinel.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "code-quality-and-idioms": {
+      "ledger": "independent-review/cards/D/go-code-quality-and-idioms.ledger.json",
+      "title": "Code Quality & Go Idioms",
+      "selected": [
+        {
+          "id": "D/P2",
+          "candidate": "D",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close results are accumulated in result but never mark the cohort failed.",
+          "locations": [
+            "candidates/D/host.go:156",
+            "candidates/D/host.go:161"
+          ],
+          "evidence": [
+            "evidence/D-host-independent.log: limit 1 produces three opens/closes after first Close failure",
+            "evidence/D-minimum-independent.log: same intended count assertion"
+          ],
+          "impact": "The next cohort is admitted after an observed Close error; retained diagnostic identity does not enforce the explicit stop-admission contract. Failure is contained in the helper.",
+          "correction": "Set failed/cancel after any Close error while finishing every acquired release, then stop admission.",
+          "verification": "Healthy Run, failing Close, later queued jobs, limit 1: expect one Open/Close and errors.Is sentinel.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "correctness-and-compatibility": {
+      "ledger": "independent-review/cards/D/go-correctness-and-compatibility.ledger.json",
+      "title": "Correctness & Compatibility",
+      "selected": [
+        {
+          "id": "D/P1",
+          "candidate": "D",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Nonblocking job snapshot fixes a potentially one-job cohort and prevents admission of later available jobs while Run/Close proceeds.",
+          "locations": [
+            "candidates/D/host.go:43",
+            "candidates/D/host.go:73",
+            "candidates/D/host.go:139"
+          ],
+          "evidence": [
+            "evidence/D-host-independent.log: TestIndependentLaterAvailableInputStarts misses second Run while first holds 1 of 2 slots",
+            "evidence/D-minimum-independent.log: same positive first-start and bounded second-start test",
+            "evidence/D-host-contract.log: supplied partial-start setup cannot reach blocked third admission"
+          ],
+          "impact": "After job 1 starts on open input, job 2 becomes available while capacity 2 has one owned lease. Its sender and Run cannot progress until job 1 is released. This is serial execution under sparse input, forbidden by the explicit fixture contract. The accepted batch policy does not permit leaving an available second job blocked behind a one-job batch. One contained important admission/concurrency cause; setup timeouts are not four separate defects.",
+          "correction": "Keep admission responsive while capacity remains and successful acquired jobs can run; retain the cohort join/Close barrier at release.",
+          "verification": "First job arrives and starts; while its Run is gated, make job 2 available. Require job 2 to start before first release, then release/join both and close owned leases.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "D/P2",
+          "candidate": "D",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close results are accumulated in result but never mark the cohort failed.",
+          "locations": [
+            "candidates/D/host.go:156",
+            "candidates/D/host.go:161"
+          ],
+          "evidence": [
+            "evidence/D-host-independent.log: limit 1 produces three opens/closes after first Close failure",
+            "evidence/D-minimum-independent.log: same intended count assertion"
+          ],
+          "impact": "The next cohort is admitted after an observed Close error; retained diagnostic identity does not enforce the explicit stop-admission contract. Failure is contained in the helper.",
+          "correction": "Set failed/cancel after any Close error while finishing every acquired release, then stop admission.",
+          "verification": "Healthy Run, failing Close, later queued jobs, limit 1: expect one Open/Close and errors.Is sentinel.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "testing": {
+      "ledger": "independent-review/cards/D/go-testing.ledger.json",
+      "title": "Testing",
+      "selected": [
+        {
+          "id": "D/T1",
+          "candidate": "D",
+          "kind": "test",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Concurrency tests preload closed full batches and the partial-open fixture forbids any Run, leaving sparse-input concurrent admission unverified.",
+          "locations": [
+            "candidates/D/host_test.go:29",
+            "candidates/D/host_test.go:109"
+          ],
+          "evidence": [
+            "evidence/D-host-authored.log: suite passes P1",
+            "evidence/D-host-independent.log: later-available-input assertion fails"
+          ],
+          "impact": "The important capacity/concurrency contract is verified only for an already full buffered batch; the implementation can serialize ordinary unbuffered input while these tests pass.",
+          "correction": "Add separately arriving jobs on caller-owned open input; gate first Run, require second Run with available capacity, and check partial startup cleanup separately.",
+          "verification": "Use positive first-start and actual second availability; no claim that every Open must complete in a particular relative order.",
+          "primary_owner": "host_test.go regression tests",
+          "topics": [
+            "testing"
+          ],
+          "topic_severities": {
+            "testing": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "D/T2",
+          "candidate": "D",
+          "kind": "test",
+          "severity": "major",
+          "systemic": false,
+          "cause": "The error-retention fixture has one job and combined Run/Close failure, so Close-only stop-admission is unverified.",
+          "locations": [
+            "candidates/D/host_test.go:74"
+          ],
+          "evidence": [
+            "evidence/D-host-authored.log: suite passes P2",
+            "evidence/D-host-independent.log: Close-only admission continues"
+          ],
+          "impact": "The important Close-stage admission boundary can regress while existing independent error-identity checks remain green.",
+          "correction": "Add healthy Run plus independent Close failure with remaining jobs and exact acquired/released counts.",
+          "verification": "Intended count assertion rejects unchanged D and accepts corrected stop transition.",
+          "primary_owner": "host_test.go regression tests",
+          "topics": [
+            "testing"
+          ],
+          "topic_severities": {
+            "testing": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "security": {
+      "ledger": "independent-review/cards/D/go-security.ledger.json",
+      "title": "Security",
+      "selected": [],
+      "applicable": false
+    },
+    "observability-and-resilience": {
+      "ledger": "independent-review/cards/D/go-observability-and-resilience.ledger.json",
+      "title": "Observability & Resilience",
+      "selected": [
+        {
+          "id": "D/P1",
+          "candidate": "D",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Nonblocking job snapshot fixes a potentially one-job cohort and prevents admission of later available jobs while Run/Close proceeds.",
+          "locations": [
+            "candidates/D/host.go:43",
+            "candidates/D/host.go:73",
+            "candidates/D/host.go:139"
+          ],
+          "evidence": [
+            "evidence/D-host-independent.log: TestIndependentLaterAvailableInputStarts misses second Run while first holds 1 of 2 slots",
+            "evidence/D-minimum-independent.log: same positive first-start and bounded second-start test",
+            "evidence/D-host-contract.log: supplied partial-start setup cannot reach blocked third admission"
+          ],
+          "impact": "After job 1 starts on open input, job 2 becomes available while capacity 2 has one owned lease. Its sender and Run cannot progress until job 1 is released. This is serial execution under sparse input, forbidden by the explicit fixture contract. The accepted batch policy does not permit leaving an available second job blocked behind a one-job batch. One contained important admission/concurrency cause; setup timeouts are not four separate defects.",
+          "correction": "Keep admission responsive while capacity remains and successful acquired jobs can run; retain the cohort join/Close barrier at release.",
+          "verification": "First job arrives and starts; while its Run is gated, make job 2 available. Require job 2 to start before first release, then release/join both and close owned leases.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "D/P2",
+          "candidate": "D",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close results are accumulated in result but never mark the cohort failed.",
+          "locations": [
+            "candidates/D/host.go:156",
+            "candidates/D/host.go:161"
+          ],
+          "evidence": [
+            "evidence/D-host-independent.log: limit 1 produces three opens/closes after first Close failure",
+            "evidence/D-minimum-independent.log: same intended count assertion"
+          ],
+          "impact": "The next cohort is admitted after an observed Close error; retained diagnostic identity does not enforce the explicit stop-admission contract. Failure is contained in the helper.",
+          "correction": "Set failed/cancel after any Close error while finishing every acquired release, then stop admission.",
+          "verification": "Healthy Run, failing Close, later queued jobs, limit 1: expect one Open/Close and errors.Is sentinel.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "performance-and-resource-management": {
+      "ledger": "independent-review/cards/D/go-performance-and-resource-management.ledger.json",
+      "title": "Performance & Resource Management",
+      "selected": [
+        {
+          "id": "D/P1",
+          "candidate": "D",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Nonblocking job snapshot fixes a potentially one-job cohort and prevents admission of later available jobs while Run/Close proceeds.",
+          "locations": [
+            "candidates/D/host.go:43",
+            "candidates/D/host.go:73",
+            "candidates/D/host.go:139"
+          ],
+          "evidence": [
+            "evidence/D-host-independent.log: TestIndependentLaterAvailableInputStarts misses second Run while first holds 1 of 2 slots",
+            "evidence/D-minimum-independent.log: same positive first-start and bounded second-start test",
+            "evidence/D-host-contract.log: supplied partial-start setup cannot reach blocked third admission"
+          ],
+          "impact": "After job 1 starts on open input, job 2 becomes available while capacity 2 has one owned lease. Its sender and Run cannot progress until job 1 is released. This is serial execution under sparse input, forbidden by the explicit fixture contract. The accepted batch policy does not permit leaving an available second job blocked behind a one-job batch. One contained important admission/concurrency cause; setup timeouts are not four separate defects.",
+          "correction": "Keep admission responsive while capacity remains and successful acquired jobs can run; retain the cohort join/Close barrier at release.",
+          "verification": "First job arrives and starts; while its Run is gated, make job 2 available. Require job 2 to start before first release, then release/join both and close owned leases.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "D/P2",
+          "candidate": "D",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close results are accumulated in result but never mark the cohort failed.",
+          "locations": [
+            "candidates/D/host.go:156",
+            "candidates/D/host.go:161"
+          ],
+          "evidence": [
+            "evidence/D-host-independent.log: limit 1 produces three opens/closes after first Close failure",
+            "evidence/D-minimum-independent.log: same intended count assertion"
+          ],
+          "impact": "The next cohort is admitted after an observed Close error; retained diagnostic identity does not enforce the explicit stop-admission contract. Failure is contained in the helper.",
+          "correction": "Set failed/cancel after any Close error while finishing every acquired release, then stop admission.",
+          "verification": "Healthy Run, failing Close, later queued jobs, limit 1: expect one Open/Close and errors.Is sentinel.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "dependencies-and-reproducibility": {
+      "ledger": "independent-review/cards/D/go-dependencies-and-reproducibility.ledger.json",
+      "title": "Dependencies & Reproducibility",
+      "selected": [],
+      "applicable": true
+    },
+    "deployment-and-operations": {
+      "ledger": "independent-review/cards/D/go-deployment-and-operations.ledger.json",
+      "title": "Deployment & Operations",
+      "selected": [],
+      "applicable": false
+    }
+  },
+  "E": {
+    "architecture-and-design": {
+      "ledger": "independent-review/cards/E/go-architecture-and-design.ledger.json",
+      "title": "Architecture & Design",
+      "selected": [],
+      "applicable": true
+    },
+    "code-quality-and-idioms": {
+      "ledger": "independent-review/cards/E/go-code-quality-and-idioms.ledger.json",
+      "title": "Code Quality & Go Idioms",
+      "selected": [],
+      "applicable": true
+    },
+    "correctness-and-compatibility": {
+      "ledger": "independent-review/cards/E/go-correctness-and-compatibility.ledger.json",
+      "title": "Correctness & Compatibility",
+      "selected": [],
+      "applicable": true
+    },
+    "testing": {
+      "ledger": "independent-review/cards/E/go-testing.ledger.json",
+      "title": "Testing",
+      "selected": [
+        {
+          "id": "E/T1",
+          "candidate": "E",
+          "kind": "test",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Close-only failure fixtures cannot distinguish retaining the error from stopping future admission.",
+          "locations": [
+            "candidates/E/host_test.go:310",
+            "candidates/E/host_test.go:345"
+          ],
+          "evidence": [
+            "evidence/mutation-commands.json: remove-close-failure-stop authored suite passes host and minimum",
+            "evidence/mutation-commands.json: intended TestIndependentCloseFailureStopsNextAdmission fails with opened=3, closed=3 on both versions",
+            "mutations/E/remove-close-failure-stop/mutation.patch.txt"
+          ],
+          "impact": "The source implements the important stop-after-Close contract correctly, but a compiled mutation removing only that transition evades all authored tests. The held-Close case also cancels the caller, masking the independent Close-only cause. This is a major verification gap requiring its own regression assertion, not a production defect.",
+          "correction": "Add a healthy Run and failing Close at limit 1 with later jobs queued; assert no further Open while retaining Close error.",
+          "verification": "Current E must pass; the isolated mutation must fail the intended admission-count assertion. Unrelated compile/runner failure is not detection.",
+          "primary_owner": "host_test.go regression tests",
+          "topics": [
+            "testing"
+          ],
+          "topic_severities": {
+            "testing": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "security": {
+      "ledger": "independent-review/cards/E/go-security.ledger.json",
+      "title": "Security",
+      "selected": [],
+      "applicable": false
+    },
+    "observability-and-resilience": {
+      "ledger": "independent-review/cards/E/go-observability-and-resilience.ledger.json",
+      "title": "Observability & Resilience",
+      "selected": [],
+      "applicable": true
+    },
+    "performance-and-resource-management": {
+      "ledger": "independent-review/cards/E/go-performance-and-resource-management.ledger.json",
+      "title": "Performance & Resource Management",
+      "selected": [],
+      "applicable": true
+    },
+    "dependencies-and-reproducibility": {
+      "ledger": "independent-review/cards/E/go-dependencies-and-reproducibility.ledger.json",
+      "title": "Dependencies & Reproducibility",
+      "selected": [],
+      "applicable": true
+    },
+    "deployment-and-operations": {
+      "ledger": "independent-review/cards/E/go-deployment-and-operations.ledger.json",
+      "title": "Deployment & Operations",
+      "selected": [],
+      "applicable": false
+    }
+  },
+  "F": {
+    "architecture-and-design": {
+      "ledger": "independent-review/cards/F/go-architecture-and-design.ledger.json",
+      "title": "Architecture & Design",
+      "selected": [
+        {
+          "id": "F/P1",
+          "candidate": "F",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "The cohort context is unconditionally canceled when admission ends, even for a healthy full cohort or normal input closure.",
+          "locations": [
+            "candidates/F/host.go:93",
+            "candidates/F/host.go:94"
+          ],
+          "evidence": [
+            "evidence/F-host-independent.log: healthy two-job cohort sees canceled context before release and returns both Run cancellation errors",
+            "evidence/F-minimum-independent.log: same intended assertions"
+          ],
+          "impact": "Healthy cooperative Runs are stopped before their requested work completes, and completed uncanceled input returns a failure. This is a contained important success/lifecycle contract failure.",
+          "correction": "Cancel only for an observed failure/caller stop; join normal Runs without canceling their work, then release leases.",
+          "verification": "Two healthy Runs announce entry and wait for an external success gate. Before release neither work context may be canceled; after release Serve must return nil.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "F/P2",
+          "candidate": "F",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "A successful Open always calls Run without checking that stopping happened during acquisition.",
+          "locations": [
+            "candidates/F/host.go:84",
+            "candidates/F/host.go:85"
+          ],
+          "evidence": [
+            "evidence/F-host-independent.log: callback cancellation-before-success still starts one Run",
+            "evidence/F-minimum-independent.log: same intended assertion",
+            "evidence/F-host-contract.log: held acquired-before-stop fixture detects forbidden Run"
+          ],
+          "impact": "The explicit fixture requires a lease acquired before stop to remain owned but unstarted; F starts it after caller cancellation and later closes it. One contained important startup/stop failure.",
+          "correction": "Record acquired lease ownership, observe stop before Run entry, and skip Run while joining/releasing all prior work.",
+          "verification": "Callback cancels before success; require cancellation cause, zero Runs, exactly one Close.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "F/P3",
+          "candidate": "F",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Capacity is decremented on Run completion while the acquired lease remains unreleased until later cohort Close.",
+          "locations": [
+            "candidates/F/host.go:38",
+            "candidates/F/host.go:61",
+            "candidates/F/host.go:103"
+          ],
+          "evidence": [
+            "evidence/F-host-independent.log: TestIndependentCompletedRunsRetainCapacity records peak=8 with limit 2",
+            "evidence/F-minimum-independent.log: same measured peak=8",
+            "evidence/F-host-race.log: three repeated peak=8 intended assertions"
+          ],
+          "impact": "Eight paced successful jobs on open input retain eight acquired leases at capacity 2, with no Close until input ends. Peak is 4x declared bound for eight jobs; for a stream of completed Runs retention grows with jobs rather than limit. This is a contained major resource and lifecycle-contract failure; no unobserved system exhaustion is claimed.",
+          "correction": "Track acquired leases and pending reservations through completed Close, and stop admitting once those owned slots reach limit; completion alone cannot release capacity.",
+          "verification": "Pace valid jobs by observable Run-return events, count leases on successful Open and decrement only at Close completion; require peak<=2 and all eight successful effects/releases.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "code-quality-and-idioms": {
+      "ledger": "independent-review/cards/F/go-code-quality-and-idioms.ledger.json",
+      "title": "Code Quality & Go Idioms",
+      "selected": [
+        {
+          "id": "F/P1",
+          "candidate": "F",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "The cohort context is unconditionally canceled when admission ends, even for a healthy full cohort or normal input closure.",
+          "locations": [
+            "candidates/F/host.go:93",
+            "candidates/F/host.go:94"
+          ],
+          "evidence": [
+            "evidence/F-host-independent.log: healthy two-job cohort sees canceled context before release and returns both Run cancellation errors",
+            "evidence/F-minimum-independent.log: same intended assertions"
+          ],
+          "impact": "Healthy cooperative Runs are stopped before their requested work completes, and completed uncanceled input returns a failure. This is a contained important success/lifecycle contract failure.",
+          "correction": "Cancel only for an observed failure/caller stop; join normal Runs without canceling their work, then release leases.",
+          "verification": "Two healthy Runs announce entry and wait for an external success gate. Before release neither work context may be canceled; after release Serve must return nil.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "F/P2",
+          "candidate": "F",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "A successful Open always calls Run without checking that stopping happened during acquisition.",
+          "locations": [
+            "candidates/F/host.go:84",
+            "candidates/F/host.go:85"
+          ],
+          "evidence": [
+            "evidence/F-host-independent.log: callback cancellation-before-success still starts one Run",
+            "evidence/F-minimum-independent.log: same intended assertion",
+            "evidence/F-host-contract.log: held acquired-before-stop fixture detects forbidden Run"
+          ],
+          "impact": "The explicit fixture requires a lease acquired before stop to remain owned but unstarted; F starts it after caller cancellation and later closes it. One contained important startup/stop failure.",
+          "correction": "Record acquired lease ownership, observe stop before Run entry, and skip Run while joining/releasing all prior work.",
+          "verification": "Callback cancels before success; require cancellation cause, zero Runs, exactly one Close.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "F/P3",
+          "candidate": "F",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Capacity is decremented on Run completion while the acquired lease remains unreleased until later cohort Close.",
+          "locations": [
+            "candidates/F/host.go:38",
+            "candidates/F/host.go:61",
+            "candidates/F/host.go:103"
+          ],
+          "evidence": [
+            "evidence/F-host-independent.log: TestIndependentCompletedRunsRetainCapacity records peak=8 with limit 2",
+            "evidence/F-minimum-independent.log: same measured peak=8",
+            "evidence/F-host-race.log: three repeated peak=8 intended assertions"
+          ],
+          "impact": "Eight paced successful jobs on open input retain eight acquired leases at capacity 2, with no Close until input ends. Peak is 4x declared bound for eight jobs; for a stream of completed Runs retention grows with jobs rather than limit. This is a contained major resource and lifecycle-contract failure; no unobserved system exhaustion is claimed.",
+          "correction": "Track acquired leases and pending reservations through completed Close, and stop admitting once those owned slots reach limit; completion alone cannot release capacity.",
+          "verification": "Pace valid jobs by observable Run-return events, count leases on successful Open and decrement only at Close completion; require peak<=2 and all eight successful effects/releases.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "correctness-and-compatibility": {
+      "ledger": "independent-review/cards/F/go-correctness-and-compatibility.ledger.json",
+      "title": "Correctness & Compatibility",
+      "selected": [
+        {
+          "id": "F/P1",
+          "candidate": "F",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "The cohort context is unconditionally canceled when admission ends, even for a healthy full cohort or normal input closure.",
+          "locations": [
+            "candidates/F/host.go:93",
+            "candidates/F/host.go:94"
+          ],
+          "evidence": [
+            "evidence/F-host-independent.log: healthy two-job cohort sees canceled context before release and returns both Run cancellation errors",
+            "evidence/F-minimum-independent.log: same intended assertions"
+          ],
+          "impact": "Healthy cooperative Runs are stopped before their requested work completes, and completed uncanceled input returns a failure. This is a contained important success/lifecycle contract failure.",
+          "correction": "Cancel only for an observed failure/caller stop; join normal Runs without canceling their work, then release leases.",
+          "verification": "Two healthy Runs announce entry and wait for an external success gate. Before release neither work context may be canceled; after release Serve must return nil.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "F/P2",
+          "candidate": "F",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "A successful Open always calls Run without checking that stopping happened during acquisition.",
+          "locations": [
+            "candidates/F/host.go:84",
+            "candidates/F/host.go:85"
+          ],
+          "evidence": [
+            "evidence/F-host-independent.log: callback cancellation-before-success still starts one Run",
+            "evidence/F-minimum-independent.log: same intended assertion",
+            "evidence/F-host-contract.log: held acquired-before-stop fixture detects forbidden Run"
+          ],
+          "impact": "The explicit fixture requires a lease acquired before stop to remain owned but unstarted; F starts it after caller cancellation and later closes it. One contained important startup/stop failure.",
+          "correction": "Record acquired lease ownership, observe stop before Run entry, and skip Run while joining/releasing all prior work.",
+          "verification": "Callback cancels before success; require cancellation cause, zero Runs, exactly one Close.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "F/P3",
+          "candidate": "F",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Capacity is decremented on Run completion while the acquired lease remains unreleased until later cohort Close.",
+          "locations": [
+            "candidates/F/host.go:38",
+            "candidates/F/host.go:61",
+            "candidates/F/host.go:103"
+          ],
+          "evidence": [
+            "evidence/F-host-independent.log: TestIndependentCompletedRunsRetainCapacity records peak=8 with limit 2",
+            "evidence/F-minimum-independent.log: same measured peak=8",
+            "evidence/F-host-race.log: three repeated peak=8 intended assertions"
+          ],
+          "impact": "Eight paced successful jobs on open input retain eight acquired leases at capacity 2, with no Close until input ends. Peak is 4x declared bound for eight jobs; for a stream of completed Runs retention grows with jobs rather than limit. This is a contained major resource and lifecycle-contract failure; no unobserved system exhaustion is claimed.",
+          "correction": "Track acquired leases and pending reservations through completed Close, and stop admitting once those owned slots reach limit; completion alone cannot release capacity.",
+          "verification": "Pace valid jobs by observable Run-return events, count leases on successful Open and decrement only at Close completion; require peak<=2 and all eight successful effects/releases.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "testing": {
+      "ledger": "independent-review/cards/F/go-testing.ledger.json",
+      "title": "Testing",
+      "selected": [
+        {
+          "id": "F/T1",
+          "candidate": "F",
+          "kind": "test",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Healthy capacity fixtures ignore their Run contexts, so premature coordinated stop is invisible.",
+          "locations": [
+            "candidates/F/host_test.go:33",
+            "candidates/F/host_test.go:78",
+            "candidates/F/host_test.go:148"
+          ],
+          "evidence": [
+            "evidence/F-host-authored.log: suite passes P1",
+            "evidence/F-host-independent.log: cooperative healthy Run contexts detect premature cancellation"
+          ],
+          "impact": "The important uncanceled success contract is tested with callbacks that keep succeeding after any stop request. Their gates verify sequencing while masking whether work was allowed to complete cooperatively.",
+          "correction": "Make healthy callbacks verify they are not canceled before their external success gate and return ctx.Err when improperly stopped.",
+          "verification": "Unchanged F must fail the intended healthy-work cancellation/success assertions.",
+          "primary_owner": "host_test.go regression tests",
+          "topics": [
+            "testing"
+          ],
+          "topic_severities": {
+            "testing": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "F/T2",
+          "candidate": "F",
+          "kind": "test",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Authored cancellation coverage does not exercise an acquired success returned after stopping and assert no Run.",
+          "locations": [
+            "candidates/F/host_test.go:135",
+            "candidates/F/host_test.go:259"
+          ],
+          "evidence": [
+            "evidence/F-host-authored.log: suite passes P2",
+            "evidence/F-host-independent.log: forbidden Run after callback cancellation"
+          ],
+          "impact": "Input-wait/already-canceled tests do not protect the important partial acquisition ownership transition.",
+          "correction": "Return a successful lease after callback cancellation, assert zero Runs, and still require owned Close after cohort join.",
+          "verification": "Reject P2 via the intended zero-Run assertion on a compiled package.",
+          "primary_owner": "host_test.go regression tests",
+          "topics": [
+            "testing"
+          ],
+          "topic_severities": {
+            "testing": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "F/T3",
+          "candidate": "F",
+          "kind": "test",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Capacity tests inspect only a full initial cohort and later Run starts, without counting live acquired leases across completed Runs on open input.",
+          "locations": [
+            "candidates/F/host_test.go:33",
+            "candidates/F/host_test.go:78",
+            "candidates/F/host_test.go:148"
+          ],
+          "evidence": [
+            "evidence/F-host-authored.log: suite passes P3",
+            "evidence/F-host-independent.log: eight held leases at capacity 2"
+          ],
+          "impact": "An explicit important capacity bound through Close is effectively unverified for a stream of successful completions; Run concurrency is insufficient as its proxy.",
+          "correction": "Track live acquisition/release counts and use paced successful jobs on open input to assert the lease bound, plus held Close.",
+          "verification": "An implementation that releases active capacity at Run return must fail the intended peak-owned-leases assertion.",
+          "primary_owner": "host_test.go regression tests",
+          "topics": [
+            "testing"
+          ],
+          "topic_severities": {
+            "testing": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "security": {
+      "ledger": "independent-review/cards/F/go-security.ledger.json",
+      "title": "Security",
+      "selected": [],
+      "applicable": false
+    },
+    "observability-and-resilience": {
+      "ledger": "independent-review/cards/F/go-observability-and-resilience.ledger.json",
+      "title": "Observability & Resilience",
+      "selected": [
+        {
+          "id": "F/P1",
+          "candidate": "F",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "The cohort context is unconditionally canceled when admission ends, even for a healthy full cohort or normal input closure.",
+          "locations": [
+            "candidates/F/host.go:93",
+            "candidates/F/host.go:94"
+          ],
+          "evidence": [
+            "evidence/F-host-independent.log: healthy two-job cohort sees canceled context before release and returns both Run cancellation errors",
+            "evidence/F-minimum-independent.log: same intended assertions"
+          ],
+          "impact": "Healthy cooperative Runs are stopped before their requested work completes, and completed uncanceled input returns a failure. This is a contained important success/lifecycle contract failure.",
+          "correction": "Cancel only for an observed failure/caller stop; join normal Runs without canceling their work, then release leases.",
+          "verification": "Two healthy Runs announce entry and wait for an external success gate. Before release neither work context may be canceled; after release Serve must return nil.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "F/P2",
+          "candidate": "F",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "A successful Open always calls Run without checking that stopping happened during acquisition.",
+          "locations": [
+            "candidates/F/host.go:84",
+            "candidates/F/host.go:85"
+          ],
+          "evidence": [
+            "evidence/F-host-independent.log: callback cancellation-before-success still starts one Run",
+            "evidence/F-minimum-independent.log: same intended assertion",
+            "evidence/F-host-contract.log: held acquired-before-stop fixture detects forbidden Run"
+          ],
+          "impact": "The explicit fixture requires a lease acquired before stop to remain owned but unstarted; F starts it after caller cancellation and later closes it. One contained important startup/stop failure.",
+          "correction": "Record acquired lease ownership, observe stop before Run entry, and skip Run while joining/releasing all prior work.",
+          "verification": "Callback cancels before success; require cancellation cause, zero Runs, exactly one Close.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "F/P3",
+          "candidate": "F",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Capacity is decremented on Run completion while the acquired lease remains unreleased until later cohort Close.",
+          "locations": [
+            "candidates/F/host.go:38",
+            "candidates/F/host.go:61",
+            "candidates/F/host.go:103"
+          ],
+          "evidence": [
+            "evidence/F-host-independent.log: TestIndependentCompletedRunsRetainCapacity records peak=8 with limit 2",
+            "evidence/F-minimum-independent.log: same measured peak=8",
+            "evidence/F-host-race.log: three repeated peak=8 intended assertions"
+          ],
+          "impact": "Eight paced successful jobs on open input retain eight acquired leases at capacity 2, with no Close until input ends. Peak is 4x declared bound for eight jobs; for a stream of completed Runs retention grows with jobs rather than limit. This is a contained major resource and lifecycle-contract failure; no unobserved system exhaustion is claimed.",
+          "correction": "Track acquired leases and pending reservations through completed Close, and stop admitting once those owned slots reach limit; completion alone cannot release capacity.",
+          "verification": "Pace valid jobs by observable Run-return events, count leases on successful Open and decrement only at Close completion; require peak<=2 and all eight successful effects/releases.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "performance-and-resource-management": {
+      "ledger": "independent-review/cards/F/go-performance-and-resource-management.ledger.json",
+      "title": "Performance & Resource Management",
+      "selected": [
+        {
+          "id": "F/P1",
+          "candidate": "F",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "The cohort context is unconditionally canceled when admission ends, even for a healthy full cohort or normal input closure.",
+          "locations": [
+            "candidates/F/host.go:93",
+            "candidates/F/host.go:94"
+          ],
+          "evidence": [
+            "evidence/F-host-independent.log: healthy two-job cohort sees canceled context before release and returns both Run cancellation errors",
+            "evidence/F-minimum-independent.log: same intended assertions"
+          ],
+          "impact": "Healthy cooperative Runs are stopped before their requested work completes, and completed uncanceled input returns a failure. This is a contained important success/lifecycle contract failure.",
+          "correction": "Cancel only for an observed failure/caller stop; join normal Runs without canceling their work, then release leases.",
+          "verification": "Two healthy Runs announce entry and wait for an external success gate. Before release neither work context may be canceled; after release Serve must return nil.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "F/P2",
+          "candidate": "F",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "A successful Open always calls Run without checking that stopping happened during acquisition.",
+          "locations": [
+            "candidates/F/host.go:84",
+            "candidates/F/host.go:85"
+          ],
+          "evidence": [
+            "evidence/F-host-independent.log: callback cancellation-before-success still starts one Run",
+            "evidence/F-minimum-independent.log: same intended assertion",
+            "evidence/F-host-contract.log: held acquired-before-stop fixture detects forbidden Run"
+          ],
+          "impact": "The explicit fixture requires a lease acquired before stop to remain owned but unstarted; F starts it after caller cancellation and later closes it. One contained important startup/stop failure.",
+          "correction": "Record acquired lease ownership, observe stop before Run entry, and skip Run while joining/releasing all prior work.",
+          "verification": "Callback cancels before success; require cancellation cause, zero Runs, exactly one Close.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "moderate"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        },
+        {
+          "id": "F/P3",
+          "candidate": "F",
+          "kind": "production",
+          "severity": "major",
+          "systemic": false,
+          "cause": "Capacity is decremented on Run completion while the acquired lease remains unreleased until later cohort Close.",
+          "locations": [
+            "candidates/F/host.go:38",
+            "candidates/F/host.go:61",
+            "candidates/F/host.go:103"
+          ],
+          "evidence": [
+            "evidence/F-host-independent.log: TestIndependentCompletedRunsRetainCapacity records peak=8 with limit 2",
+            "evidence/F-minimum-independent.log: same measured peak=8",
+            "evidence/F-host-race.log: three repeated peak=8 intended assertions"
+          ],
+          "impact": "Eight paced successful jobs on open input retain eight acquired leases at capacity 2, with no Close until input ends. Peak is 4x declared bound for eight jobs; for a stream of completed Runs retention grows with jobs rather than limit. This is a contained major resource and lifecycle-contract failure; no unobserved system exhaustion is claimed.",
+          "correction": "Track acquired leases and pending reservations through completed Close, and stop admitting once those owned slots reach limit; completion alone cannot release capacity.",
+          "verification": "Pace valid jobs by observable Run-return events, count leases on successful Open and decrement only at Close completion; require peak<=2 and all eight successful effects/releases.",
+          "primary_owner": "host.go implementation",
+          "topics": [
+            "architecture-and-design",
+            "code-quality-and-idioms",
+            "correctness-and-compatibility",
+            "observability-and-resilience",
+            "performance-and-resource-management"
+          ],
+          "topic_severities": {
+            "architecture-and-design": "major",
+            "code-quality-and-idioms": "major",
+            "correctness-and-compatibility": "major",
+            "observability-and-resilience": "major",
+            "performance-and-resource-management": "major"
+          },
+          "status": "confirmed",
+          "reconciliation": "Existing in scoped candidate; one causal change per ID. Production and independent regression-test corrections remain separate; topic cross-references do not add overall counts."
+        }
+      ],
+      "applicable": true
+    },
+    "dependencies-and-reproducibility": {
+      "ledger": "independent-review/cards/F/go-dependencies-and-reproducibility.ledger.json",
+      "title": "Dependencies & Reproducibility",
+      "selected": [],
+      "applicable": true
+    },
+    "deployment-and-operations": {
+      "ledger": "independent-review/cards/F/go-deployment-and-operations.ledger.json",
+      "title": "Deployment & Operations",
+      "selected": [],
+      "applicable": false
+    }
+  }
+}

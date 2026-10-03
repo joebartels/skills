@@ -1,0 +1,37 @@
+{
+  "candidate": "A",
+  "name": "host-independent",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-run",
+    "^TestIndependent",
+    "-count=1",
+    "-timeout=20s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly"
+  },
+  "status": 1,
+  "elapsed_seconds": 0.527
+}
+STDOUT
+--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)
+    review_independent_test.go:10: after observed Close failure err=Close failure
+        Close failure
+        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release
+--- FAIL: TestIndependentCallerCancellationDuringFailureCleanup (0.00s)
+    review_independent_test.go:22: missing context canceled after cancellation during held Close: Run failure
+        Close failure
+FAIL
+FAIL	example.com/service-owned-workers	0.410s
+FAIL
+
+STDERR

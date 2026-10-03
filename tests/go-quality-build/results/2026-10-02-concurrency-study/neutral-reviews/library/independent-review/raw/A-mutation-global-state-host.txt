@@ -1,0 +1,14 @@
+COMMAND: rtk proxy go test -mod=readonly -count=1 -timeout=2s -run Independent|Isolated ./...
+CWD: /private/tmp/go-neutral-library-study/independent-review/work/global-state-A
+ENV: {"GOCACHE": "/private/tmp/go-neutral-library-study/independent-review/gocache", "GOMODCACHE": "/private/tmp/go-neutral-library-study/independent-review/modcache", "GOPROXY": "off", "GOSUMDB": "off", "GOTOOLCHAIN": "local", "GOWORK": "off"}
+STDOUT:
+--- FAIL: TestTotalsInstancesAreIndependent (0.00s)
+    totals_test.go:69: first totals={Count:3 Sum:5}, want {Count:2 Sum:3}
+FAIL
+FAIL	example.com/library-shared-state	0.161s
+FAIL
+
+STDERR:
+
+STATUS: 1
+TIMED_OUT: False

@@ -1,0 +1,34 @@
+{
+  "confirmed": [],
+  "rejected_or_uncertain": [],
+  "primary_remediation_owner": null,
+  "reconciliation": "No confirmed introduced/worsened/newly exposed causes. Counts remain zero; no topic grades averaged. The pre-existing off-by-one is corrected by candidate and is not graded as a candidate defect.",
+  "strengths": [
+    {
+      "id": "G1",
+      "cause": "Correct final-element inclusion with unchanged private local serial behavior",
+      "evidence": [
+        "candidate/sum.go:3-10",
+        "independent-checks/behavior-checks.json"
+      ]
+    },
+    {
+      "id": "G2",
+      "cause": "Focused regression detects the original off-by-one",
+      "evidence": [
+        "candidate/sum_test.go:11-15",
+        "independent-checks/regression-original-host.log",
+        "independent-checks/regression-original-minimum.log"
+      ]
+    },
+    {
+      "id": "G3",
+      "cause": "Maintains declared Go 1.22 support and mechanical clarity",
+      "evidence": [
+        "candidate/go.mod:3",
+        "independent-checks/ordinary-checks.json"
+      ]
+    }
+  ],
+  "safeguards": []
+}

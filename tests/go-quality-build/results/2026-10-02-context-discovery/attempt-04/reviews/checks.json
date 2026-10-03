@@ -1,0 +1,157 @@
+{
+  "packet": "packet-01",
+  "review_date": "2026-10-02",
+  "candidate_preserved": true,
+  "diagnostic_root": "/private/tmp/packet-01-review-5F9kpJ",
+  "source": "Independent commands run by packet-01 reviewer; supplied verification.json is separately described in evidence.md",
+  "checks": [
+    {
+      "id": "host-version",
+      "cmd": "rtk proxy go version",
+      "cwd": "/Users/jb/.codex/worktrees/ed95/skills",
+      "exit_code": 0,
+      "output": "go version go1.26.5 darwin/arm64\n"
+    },
+    {
+      "id": "host-test",
+      "cmd": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPROXY=off GOCACHE=/private/tmp/packet-01-review-5F9kpJ/cache go test -count=1 -timeout=30s ./...",
+      "chunk_id": "71c072",
+      "wall_time_seconds": 0.000006791,
+      "original_token_count": 8,
+      "output": "ok  \texample.com/process\t0.352s\n",
+      "exit_code": 0,
+      "cwd": "/private/tmp/packet-01-review-5F9kpJ/author"
+    },
+    {
+      "id": "go122-test",
+      "cmd": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPROXY=off GOCACHE=/private/tmp/packet-01-review-5F9kpJ/cache122 /private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go test -count=1 -timeout=30s ./...",
+      "chunk_id": "c8b50a",
+      "wall_time_seconds": 0.0000045,
+      "original_token_count": 8,
+      "output": "ok  \texample.com/process\t0.159s\n",
+      "exit_code": 0,
+      "cwd": "/private/tmp/packet-01-review-5F9kpJ/author"
+    },
+    {
+      "id": "format",
+      "cmd": "rtk proxy gofmt -d process.go process_test.go",
+      "chunk_id": "aac5e2",
+      "wall_time_seconds": 0.000006542,
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": "",
+      "cwd": "/private/tmp/packet-01-review-5F9kpJ/author"
+    },
+    {
+      "id": "host-diagnostic",
+      "cwd": "/private/tmp/packet-01-review-5F9kpJ/diagnostic",
+      "cmd": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPROXY=off GOCACHE=/private/tmp/packet-01-review-5F9kpJ/cache go test -run '^TestReviewer' -count=1 -timeout=30s ./...",
+      "chunk_id": "1f2863",
+      "wall_time_seconds": 0.294413083,
+      "exit_code": 1,
+      "original_token_count": 83,
+      "output": "--- FAIL: TestReviewerCanceledEmpty (0.00s)\n    reviewer_contract_test.go:20: jobs=[]int(nil) accepted=0 calls=0 err=<nil> cause=process.sliceCause{values:[]int(nil)}\n    reviewer_contract_test.go:20: jobs=[]int{} accepted=0 calls=0 err=<nil> cause=process.sliceCause{values:[]int(nil)}\nFAIL\nFAIL\texample.com/process\t0.176s\nFAIL\n"
+    },
+    {
+      "id": "host-vet",
+      "cwd": "/private/tmp/packet-01-review-5F9kpJ/author",
+      "cmd": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPROXY=off GOCACHE=/private/tmp/packet-01-review-5F9kpJ/cache go vet ./...",
+      "chunk_id": "0c15f0",
+      "wall_time_seconds": 0.415280292,
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": ""
+    },
+    {
+      "id": "host-build",
+      "cwd": "/private/tmp/packet-01-review-5F9kpJ/author",
+      "cmd": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPROXY=off GOCACHE=/private/tmp/packet-01-review-5F9kpJ/cache go build -mod=readonly ./...",
+      "chunk_id": "0b8040",
+      "wall_time_seconds": 0.000009458,
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": ""
+    },
+    {
+      "id": "module-graph",
+      "cwd": "/private/tmp/packet-01-review-5F9kpJ/author",
+      "cmd": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPROXY=off GOCACHE=/private/tmp/packet-01-review-5F9kpJ/cache go list -m all",
+      "chunk_id": "ac6802",
+      "wall_time_seconds": 0.000007,
+      "exit_code": 0,
+      "original_token_count": 5,
+      "output": "example.com/process\n"
+    },
+    {
+      "id": "go122-diagnostic",
+      "cwd": "/private/tmp/packet-01-review-5F9kpJ/diagnostic",
+      "cmd": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPROXY=off GOCACHE=/private/tmp/packet-01-review-5F9kpJ/cache122 /private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go test -run '^TestReviewer' -v -count=1 -timeout=30s ./...",
+      "chunk_id": "cb8499",
+      "wall_time_seconds": 0.490545791,
+      "exit_code": 1,
+      "original_token_count": 170,
+      "output": "=== RUN   TestReviewerCanceledEmpty\n    reviewer_contract_test.go:20: jobs=[]int(nil) accepted=0 calls=0 err=<nil> cause=process.sliceCause{values:[]int(nil)}\n    reviewer_contract_test.go:20: jobs=[]int{} accepted=0 calls=0 err=<nil> cause=process.sliceCause{values:[]int(nil)}\n--- FAIL: TestReviewerCanceledEmpty (0.00s)\n=== RUN   TestReviewerCauseReturnedByCallback\n--- PASS: TestReviewerCauseReturnedByCallback (0.00s)\n=== RUN   TestReviewerDeadlineAndIndependentFailure\n--- PASS: TestReviewerDeadlineAndIndependentFailure (0.00s)\n=== RUN   TestReviewerSuccessThenCancellation\n--- PASS: TestReviewerSuccessThenCancellation (0.00s)\nFAIL\nFAIL\texample.com/process\t0.312s\nFAIL\n"
+    },
+    {
+      "id": "mutation-author",
+      "cwd": "/private/tmp/packet-01-review-5F9kpJ/mutation",
+      "cmd": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPROXY=off GOCACHE=/private/tmp/packet-01-review-5F9kpJ/cache go test -run '^(TestSequentialProgress|TestProcessCancellationAndResults)$' -count=1 -timeout=30s ./...",
+      "chunk_id": "34cbea",
+      "wall_time_seconds": 0.265322792,
+      "exit_code": 0,
+      "original_token_count": 8,
+      "output": "ok  \texample.com/process\t0.204s\n"
+    },
+    {
+      "id": "mutation-probe",
+      "cwd": "/private/tmp/packet-01-review-5F9kpJ/mutation",
+      "cmd": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPROXY=off GOCACHE=/private/tmp/packet-01-review-5F9kpJ/cache go test -run '^TestReviewerCauseReturnedByCallback$' -count=1 -timeout=30s ./...",
+      "chunk_id": "88f21b",
+      "wall_time_seconds": 0.371537208,
+      "exit_code": 1,
+      "original_token_count": 280,
+      "output": "--- FAIL: TestReviewerCauseReturnedByCallback (0.00s)\npanic: runtime error: comparing uncomparable type process.sliceCause [recovered, repanicked]\n\ngoroutine 6 [running]:\ntesting.tRunner.func1.2({0x100717120, 0x403c52688440})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x100717120?, 0x403c52688440?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nexample.com/process.Process({0x100742e98, 0x403c52672230}, {0x403c5278ce98, 0x3, 0x1006ba438?}, 0x403c5278cf18)\n\t/private/tmp/packet-01-review-5F9kpJ/mutation/process.go:16 +0xe0\nexample.com/process.TestReviewerCauseReturnedByCallback(0x403c527de248)\n\t/private/tmp/packet-01-review-5F9kpJ/mutation/reviewer_contract_test.go:30 +0xc0\ntesting.tRunner(0x403c527de248, 0x100740b08)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.com/process\t0.304s\nFAIL\n"
+    },
+    {
+      "id": "go122-build",
+      "cwd": "/private/tmp/packet-01-review-5F9kpJ/author",
+      "cmd": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPROXY=off GOCACHE=/private/tmp/packet-01-review-5F9kpJ/cache122 /private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go build -mod=readonly ./...",
+      "chunk_id": "416c36",
+      "wall_time_seconds": 0.000006458,
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": ""
+    },
+    {
+      "id": "diagnostic-race",
+      "cwd": "/private/tmp/packet-01-review-5F9kpJ/diagnostic",
+      "cmd": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPROXY=off GOCACHE=/private/tmp/packet-01-review-5F9kpJ/cache go test -race -shuffle=on -count=3 -timeout=30s -run '^(TestSequentialProgress|TestProcessCancellationAndResults|TestReviewerCauseReturnedByCallback|TestReviewerDeadlineAndIndependentFailure|TestReviewerSuccessThenCancellation|TestReviewerConcurrentCooperativeCancellation)$' ./...",
+      "chunk_id": "b8d8e0",
+      "wall_time_seconds": 0.000014458,
+      "original_token_count": 8,
+      "output": "ok  \texample.com/process\t1.252s\n",
+      "exit_code": 0
+    },
+    {
+      "id": "go122-version",
+      "cwd": "/private/tmp/packet-01-review-5F9kpJ/author",
+      "cmd": "rtk proxy /private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go version",
+      "chunk_id": "b96c66",
+      "wall_time_seconds": 0.000007125,
+      "exit_code": 0,
+      "original_token_count": 9,
+      "output": "go version go1.22.12 darwin/arm64\n"
+    },
+    {
+      "id": "source-unchanged",
+      "cwd": "/private/tmp/packet-01-review-5F9kpJ/author",
+      "cmd": "rtk proxy diff -rq /private/tmp/go-outcome-review-20261002/packet-01/candidate /private/tmp/packet-01-review-5F9kpJ/author",
+      "chunk_id": "706dcc",
+      "wall_time_seconds": 0.00000775,
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": ""
+    }
+  ]
+}
+
