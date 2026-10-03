@@ -70,7 +70,7 @@ The first context snapshot (`6368240e5a000cd8f056afa5980099317882d8ebcefa0e1f299
 
 ## Concurrency draft before exposure
 
-Exact original draft0ab21aee46b9446356b455d59776263a8160fcf2a0c3b5050c2b1792ecf13002 expresses audited invariant/publication, bounded dispatch/supervision, completion/release and closure decisions. No upstream prose/code imported, no new references/dependencies/notices. Independent preflight accepts this exact guidance against eight comparator/23 review files and20 pinned captures, with minimum/current example checks. This is guidance acceptance, not behavioral benefit or runtime promotion; the fixed primary and unseen transfer study remain pending.
+Exact original draft0ab21aee46b9446356b455d59776263a8160fcf2a0c3b5050c2b1792ecf13002 expresses audited invariant/publication, bounded dispatch/supervision, completion/release and closure decisions. No upstream prose/code imported, no new references/dependencies/notices. Independent preflight accepts this exact guidance against eight comparator/23 review files and20 pinned captures, with minimum/current example checks. This is guidance acceptance, not behavioral benefit or runtime promotion; the completed fixed-primary/transfer study below determines runtime eligibility.
 
 
 ## Concurrency study disposition

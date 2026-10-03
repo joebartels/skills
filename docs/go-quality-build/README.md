@@ -62,7 +62,7 @@ Test combinations of neighboring skills on the same task. Resolve contradictory 
 
 ## Work status and next steps
 
-**Current continuation:** Concurrency Task4 reviewed draft, not promoted: exact guidance accepted, zero primary corrections and failed transfer/preservation/routing consistency. Study sealed and Task4 committed; Task5 interaction skipped as ineligible. Task6 package/portable-seal/whole-branch closeout remains. Runtime five0.2.0; both new drafts outside runtime.
+**Current continuation:** Both context/deadline and concurrency/ownership candidates are independently accepted-content reviewed drafts, not promoted. Individual studies complete/sealed; interaction skipped as ineligible. Task6 package and portable integrity checks pass; one fresh whole-branch review and final delivery seal/closure remain. Runtime stays five skills0.2.0.
 
 - **Completed:** Compared the local review approach with the upstream collection; proposed candidate boundaries and the reuse and evaluation policy in this record. Added repository agent instructions and a continuation protocol so later workers maintain this record. Pinned the upstream revision for the first architecture-group audit.
 - **Written spec revised:** The first group is `go-package-boundaries`, `go-api-contracts`, and `go-interfaces-and-composition` in a peer `plugins/go-quality-build/` package. After reviewing the [first-group design spec](../superpowers/specs/2026-09-30-go-quality-build-architecture-group-design.md), the user clarified that transport and database persistence are examples, not the center of package-boundary guidance. The spec now requires package maps across libraries, CLIs, services, and workers, plus a broader component palette.
@@ -1171,3 +1171,22 @@ After each meaningful stage and before finishing a task, update the status above
 - Task4 committed7b0839f after read-only integrity and exact30-path whitespace verification. Both individually accepted-content drafts remain unpromoted.
 - [Interaction eligibility record](../../tests/go-quality-build/results/2026-10-02-context-concurrency-combined/manifest.json) preserves exact individual manifest hashes and mandatory skip: neither qualified; zero fixture/arms/combined cards.31/36 authors and26/40 selection probes unchanged; build cases46.
 - Next Task6 unchanged five-skill0.2.0 package verification, portable reconstructions/seals and one independent whole-branch delivery review. No publication/install.
+
+
+#### 2026-10-02 — Portable delivery identities and discovery seals
+
+- Task5 committed986fcd4, mandatory eligibility skip verified; zero integration launches. Task6 shared root6/build10/layout1/grade12, validator46build/120review, Claude package/marketplace and seven runtime/draft quick validations pass.39 runtime/review/package/notice files equal original comparator0d0a339b;226 maintained local links resolve.
+- First immutable discovery/skip seals exclude only their exact checksum indexes:
+  - [2026-10-02-context-discovery](../../tests/go-quality-build/results/2026-10-02-context-discovery/checksums.json):182 files; index SHA-256 **ef03a5bdc2594cacd143558d21617fa60764ffdb303d6b87fda7c397ac54fd03**.
+  - [2026-10-02-concurrency-discovery](../../tests/go-quality-build/results/2026-10-02-concurrency-discovery/checksums.json):353 files; index SHA-256 **e34967c595baca2b0ecd9b77abfca3bd94295ee0a9c9710a11fe643eacdd0648**.
+  - [2026-10-02-context-concurrency-combined](../../tests/go-quality-build/results/2026-10-02-context-concurrency-combined/checksums.json):3 files; index SHA-256 **1b93b99d0b5a16fc763d4132775019751682af2e049fe591683ae928f30df250**.
+- Existing context664/concurrency1347 study seals remain unchanged. Portable gate is being completed to reconstruct all31 original+patch outputs (26 completed/5 unchanged failed); historical absolute paths and capture writers remain provenance, never replay requirements. No new native author/selection or runtime promotion.
+- Next: relocated read-only gate/tamper checks, final sealed delivery packet and one strongest-model independent whole-branch review.
+
+
+#### 2026-10-02 — Delivery prepared for whole-branch review
+
+- [Portable delivery gate](../../tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py) verifies31 original+patch outcomes/130 source files,26 completions/5 unchanged failed attempts,39 original package/review/notice files and all externally anchored individual/discovery/skip/readiness seals. No historical temporary compiler, authentication or model replay needed.
+- Relocated unrelated-CWD copy/restored copy pass; four adverse copied-artifact cases fail as intended, including recomputed index unable to hide corruption without an external canonical anchor. Original sealed evidence never modified. Initial schema/incomplete-copy diagnostics retained as checker preparation, not author failures.81 exact raw whitespace exceptions unioned.
+- Shared14 checks pass; unit counts6/10/1/12, validator46build/120review and both Claude manifests/seven draft/runtime validations. Existing routing/capability/model/Go/platform limits remain explicit. No publication/global install/new author/selection.
+- Execution sequencing ruling: one final whole-branch review of prepared evidence/underlying seals before Task6 completion, honoring Task6 review gate; final seal/status-only bookkeeping follows and gets structural verification. Next strongest-model independent reviewer, supported fixes if any, final delivery seal and durable ledger cleanup.
