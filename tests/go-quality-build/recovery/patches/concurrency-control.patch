@@ -1,0 +1,14 @@
+--- a/calc.go
++++ b/calc.go
+@@ -6 +6 @@
+-		total += value
++		total += value * value
+--- a/calc_test.go
++++ b/calc_test.go
+@@ -9,0 +10,6 @@
++
++func TestSquareSumIncludesEverySquare(t *testing.T) {
++	if got := SquareSum([]int{-3, 2, 0, 4}); got != 29 {
++		t.Fatalf("SquareSum([-3 2 0 4]) = %d, want 29", got)
++	}
++}

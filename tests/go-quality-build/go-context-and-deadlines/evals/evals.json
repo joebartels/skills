@@ -1,0 +1,50 @@
+{
+  "skill_name": "go-context-and-deadlines",
+  "evals": [
+    {
+      "id": "http-stages",
+      "prompt": "Update FetchAll and its tests according to README.md, preserving the public API, supplied client and Go minimum.",
+      "expected_output": "Operation/stage budgets and body lifetime preserve empty/completed success, accepted prefix and independent failures.",
+      "assertions": [
+        "One total deadline and earlier parent span all stages; stage scopes remain live through body close and release promptly.",
+        "Empty and fully completed success remain successful; independent read/close/cancellation causes survive without arbitrary error equality."
+      ],
+      "files": [
+        "files/http-stages/README.md",
+        "files/http-stages/go.mod",
+        "files/http-stages/stages.go",
+        "files/http-stages/stages_test.go"
+      ]
+    },
+    {
+      "id": "accepted-finalization",
+      "prompt": "Implement ApplyBatch and focused tests according to README.md, keeping the public API and Go minimum.",
+      "expected_output": "Ordered accepted progress and required bounded receipts preserve cancellation/result/error policies.",
+      "assertions": [
+        "Accepted work is finalized exactly once with metadata under a live owned deadline after caller cancellation.",
+        "Empty/completed success and independent apply/finalization errors retain their stated meaning."
+      ],
+      "files": [
+        "files/accepted-finalization/README.md",
+        "files/accepted-finalization/go.mod",
+        "files/accepted-finalization/receipt.go",
+        "files/accepted-finalization/receipt_test.go"
+      ]
+    },
+    {
+      "id": "pure-control",
+      "prompt": "Fix SumPositive per README.md, selecting only applicable skills. Also decide whether context guidance applies to the HTTP and accepted-finalization contract cards.",
+      "expected_output": "A simple synchronous positive sum, no context machinery; context guidance selected only for the two lifetime/budget contracts.",
+      "assertions": [
+        "The pure calculation preserves its API and receives no context parameter, goroutine or lifecycle abstraction.",
+        "The context skill is declined for the calculation and selected for the two applicable contract cards."
+      ],
+      "files": [
+        "files/pure-control/README.md",
+        "files/pure-control/go.mod",
+        "files/pure-control/calc.go",
+        "files/pure-control/calc_test.go"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "skill_name": "go-concurrency-and-ownership",
+  "evals": [
+    {
+      "id": "lease-workers",
+      "prompt": "Implement the existing function and focused tests according to README.md, preserving the API and Go minimum.",
+      "expected_output": "Bounded independent lease lifetimes with progress, supervised stopping and observable release.",
+      "assertions": [
+        "Sparse input progresses, slots remain held through Close, failures interrupt acquisitions, and every admitted lifetime is joined.",
+        "Independent errors and caller cancellation survive while coordinated stopping remains normal."
+      ],
+      "files": [
+        "files/lease-workers/README.md",
+        "files/lease-workers/go.mod",
+        "files/lease-workers/workers.go",
+        "files/lease-workers/workers_test.go"
+      ]
+    },
+    {
+      "id": "early-pipeline",
+      "prompt": "Implement the existing function and focused tests according to README.md, preserving the API and Go minimum.",
+      "expected_output": "Early consumer completion and independent failures preserve accepted effects and join both callbacks.",
+      "assertions": [
+        "Both callbacks stop and actually return before the pipeline returns; producer owns completion before channel closure.",
+        "Independent cancellation-shaped failures remain visible while normal early completion succeeds."
+      ],
+      "files": [
+        "files/early-pipeline/README.md",
+        "files/early-pipeline/go.mod",
+        "files/early-pipeline/pipeline.go",
+        "files/early-pipeline/pipeline_test.go"
+      ]
+    },
+    {
+      "id": "serial-control",
+      "prompt": "Fix SquareSum and select applicable skills. Decide context/concurrency applicability for the lease-worker and pipeline contract cards separately.",
+      "expected_output": "Simple serial calculation without context or synchronization machinery; concurrency selected for the two lifecycle contract cards.",
+      "assertions": [
+        "Context and concurrency are declined for the calculation; API and arithmetic results remain correct.",
+        "Concurrency selected for worker admission/resource lifetime and callback/channel joining."
+      ],
+      "files": [
+        "files/serial-control/README.md",
+        "files/serial-control/go.mod",
+        "files/serial-control/calc.go",
+        "files/serial-control/calc_test.go"
+      ]
+    }
+  ]
+}

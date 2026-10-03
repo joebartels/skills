@@ -1,0 +1,82 @@
+{
+  "current_go": {
+    "command": [
+      "go",
+      "version"
+    ],
+    "exit_code": 0,
+    "output": "go version go1.26.5 darwin/arm64\n"
+  },
+  "results": [
+    {
+      "name": "context-transfer-guided",
+      "checks": [
+        {
+          "command": [
+            "git",
+            "apply",
+            "--unidiff-zero",
+            "/Users/jb/.codex/worktrees/0bc1/skills/tests/go-quality-build/recovery/patches/context-transfer-guided.patch"
+          ],
+          "exit_code": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": "ok  \texample.test/receipt\t0.254s\n"
+        },
+        {
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": "ok  \texample.test/receipt\t0.208s\n"
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": "ok  \texample.test/receipt\t0.193s\n"
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-shuffle=on",
+            "-count=3",
+            "-timeout=30s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": "ok  \texample.test/receipt\t1.261s\n"
+        }
+      ]
+    }
+  ]
+}

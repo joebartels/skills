@@ -1,0 +1,316 @@
+{
+  "scope": "Bounded recovery: one development comparison and one fresh transfer comparison per skill; fixed neighboring skills; no historical bulk archive import.",
+  "historical_checkpoint": "350d06f0d636ca85da998ce66e6f9f97eb6d290e",
+  "author_settings": "Inherited parent settings, fresh context per trial. Tool does not expose the exact inherited model/reasoning ID.",
+  "guidance_sha256": {
+    "go-api-contracts/SKILL.md": "c655df596414850f06c66ffcb34b5c5606aa73d3381051942dc45e99cd54a0ba",
+    "go-behavior-tests/SKILL.md": "c37b88cf03cdc9e1844e50f7061cdcbfc01609d6a8576f45fa619bd626407267",
+    "go-behavior-tests/references/behavior-observations.md": "ffba4ee582a014add07d3ab2f622d701f062910cc3ac774bbc9190e0f50ebd2c",
+    "go-interfaces-and-composition/SKILL.md": "41c9cd023682e006b84b37ddadf39bc37f0f01b2bfd8af7609272799906d9621",
+    "go-package-boundaries/SKILL.md": "3245b2347309d6238950be43e269c05720dbcf5132548dd661955c9e428d3ca7",
+    "go-package-boundaries/references/package-maps.md": "19c2e6f964486abe11028ba04e443fc76eb39236538ee5d9ef25400cc8ecfc7f",
+    "go-test-isolation/SKILL.md": "7ff805a5e1d59e51817af235c48d086014d5b369f4ff4e9271f0ee016edfa246",
+    "go-test-isolation/references/isolation-patterns.md": "8e4740eb2ae35f7b3e9ebf2eebf52daf6d637692f16203ad9af623b1f0133291"
+  },
+  "trials": [
+    {
+      "name": "context-development-baseline",
+      "input": "tests/go-quality-build/go-context-and-deadlines/evals/files/http-stages",
+      "input_sha256": {
+        "go.mod": "8e1e0e3517ef00b5581398bfb9fe68ca47fc958d67a3bf6488b73ded33a3b99c",
+        "README.md": "47be49120740cf575442ef2dc830bb1aa4ef53c0faf968c008a7a748a35d3f4a",
+        "stages_test.go": "a21adb0c3bd018418bbb4b7e444cfbd0d4f465c4c5f4e4dc8e52cab61acc8fc6",
+        "stages.go": "5fc27874088d0c9b39160355b3800dfee9ccfca5cc6f63dce036f67777cb164e"
+      },
+      "patch": "patches/context-development-baseline.patch",
+      "patch_sha256": "215419bc0add9f550e9b75290ebb04380d08595c86d7e9e0784e05cb82065237",
+      "output_sha256": {
+        "go.mod": "8e1e0e3517ef00b5581398bfb9fe68ca47fc958d67a3bf6488b73ded33a3b99c",
+        "README.md": "47be49120740cf575442ef2dc830bb1aa4ef53c0faf968c008a7a748a35d3f4a",
+        "stages_test.go": "b4e654a6b9dcf1beddf77d008b9d3367c28da286bf080036ee54cbf1510aa434",
+        "stages.go": "e5b807544dde6128cd54be7c12491a0360511d85387a1d24891d38abbe3819c8"
+      },
+      "probes": [
+        "tests/go-quality-build/go-context-and-deadlines/evals/controller-probes/http-stages_test.go"
+      ],
+      "race": true
+    },
+    {
+      "name": "context-transfer-baseline",
+      "input": "tests/go-quality-build/go-context-and-deadlines/evals/files/accepted-finalization",
+      "input_sha256": {
+        "go.mod": "f481e32f605385b63bec52d5bfd81beabee8a312c508635a4f86fd7bd7240dfa",
+        "README.md": "6de83c3a32e111a4c3571859221aa6c8fd00ec74c2048248616abd9e05838b5a",
+        "receipt.go": "07bd15479ebd5ccce6ebcaaf3bf5066e7c022bf39785b3ca51030af5a466bf67",
+        "receipt_test.go": "bc8c97d28b9128aa584e10cabaab15c3b16c2df6919e7a8ce00011b04f45f29f"
+      },
+      "patch": "patches/context-transfer-baseline.patch",
+      "patch_sha256": "71ff7d1a8bc0518d134c180bc69fffee059b8d401515e0a101bd6816ac7c8200",
+      "output_sha256": {
+        "go.mod": "f481e32f605385b63bec52d5bfd81beabee8a312c508635a4f86fd7bd7240dfa",
+        "README.md": "6de83c3a32e111a4c3571859221aa6c8fd00ec74c2048248616abd9e05838b5a",
+        "receipt.go": "b462979e88ce03a626a8f77c752e36631b18186ba16d30aa9845b50f17233f21",
+        "receipt_test.go": "64ce70b2b47d680c37fa16707b579e263a2a0bbb01ff9be7b5453a067cc66c40"
+      },
+      "probes": [
+        "tests/go-quality-build/go-context-and-deadlines/evals/controller-probes/accepted-finalization_test.go"
+      ],
+      "race": true
+    },
+    {
+      "name": "context-transfer-guided",
+      "input": "tests/go-quality-build/go-context-and-deadlines/evals/files/accepted-finalization",
+      "input_sha256": {
+        "go.mod": "f481e32f605385b63bec52d5bfd81beabee8a312c508635a4f86fd7bd7240dfa",
+        "README.md": "6de83c3a32e111a4c3571859221aa6c8fd00ec74c2048248616abd9e05838b5a",
+        "receipt.go": "07bd15479ebd5ccce6ebcaaf3bf5066e7c022bf39785b3ca51030af5a466bf67",
+        "receipt_test.go": "bc8c97d28b9128aa584e10cabaab15c3b16c2df6919e7a8ce00011b04f45f29f"
+      },
+      "patch": "patches/context-transfer-guided.patch",
+      "patch_sha256": "cd541d8f9da19336427ad88f01088292bbfcca7ddf7ea9016c398a1bd32c2397",
+      "output_sha256": {
+        "go.mod": "f481e32f605385b63bec52d5bfd81beabee8a312c508635a4f86fd7bd7240dfa",
+        "README.md": "6de83c3a32e111a4c3571859221aa6c8fd00ec74c2048248616abd9e05838b5a",
+        "receipt.go": "25e1f8489c1992c7f9d246d11a0ee65313121bcfface4612de06aa7ef437e31d",
+        "receipt_test.go": "18b7fac4c87d3dce00801f7ed702798133f9c8b3b60d5d01c03782ae05f8fcfd"
+      },
+      "extra_guidance_sha256": {
+        "go-context-and-deadlines/SKILL.md": "50ac9186e3132c3771bde754cf8f27dd0135f6c23d7cc1b8a84afb9cc6578eb5"
+      },
+      "probes": [
+        "tests/go-quality-build/go-context-and-deadlines/evals/controller-probes/accepted-finalization_test.go"
+      ],
+      "race": true
+    },
+    {
+      "name": "context-development-guided",
+      "input": "tests/go-quality-build/go-context-and-deadlines/evals/files/http-stages",
+      "input_sha256": {
+        "go.mod": "8e1e0e3517ef00b5581398bfb9fe68ca47fc958d67a3bf6488b73ded33a3b99c",
+        "README.md": "47be49120740cf575442ef2dc830bb1aa4ef53c0faf968c008a7a748a35d3f4a",
+        "stages_test.go": "a21adb0c3bd018418bbb4b7e444cfbd0d4f465c4c5f4e4dc8e52cab61acc8fc6",
+        "stages.go": "5fc27874088d0c9b39160355b3800dfee9ccfca5cc6f63dce036f67777cb164e"
+      },
+      "patch": "patches/context-development-guided.patch",
+      "patch_sha256": "9b2e909498eb48c5bcc75d61e6cb79c62674280c7861e561f38b0da1c9bfa88b",
+      "output_sha256": {
+        "go.mod": "8e1e0e3517ef00b5581398bfb9fe68ca47fc958d67a3bf6488b73ded33a3b99c",
+        "README.md": "47be49120740cf575442ef2dc830bb1aa4ef53c0faf968c008a7a748a35d3f4a",
+        "stages_test.go": "fa3f3314a05a3b8a7b8ddb51e17df9382cbbc38d8b1ab1f2cfa56f4363d8a53b",
+        "stages.go": "b2de2180968e0d685faa12e89a9f907945113bd86217932ef276f09a1476810d"
+      },
+      "extra_guidance_sha256": {
+        "go-context-and-deadlines/SKILL.md": "50ac9186e3132c3771bde754cf8f27dd0135f6c23d7cc1b8a84afb9cc6578eb5"
+      },
+      "probes": [
+        "tests/go-quality-build/go-context-and-deadlines/evals/controller-probes/http-stages_test.go"
+      ],
+      "race": true
+    },
+    {
+      "name": "context-control",
+      "input": "tests/go-quality-build/go-context-and-deadlines/evals/files/pure-control",
+      "input_sha256": {
+        "calc_test.go": "ac9936b13228fc54f8f38c0ade5f03fefdb771e5a738028a4e7c5acbd7e78d20",
+        "go.mod": "2261d594e363d0cd94e53782304f44540afcd9c478342e9ba033f9a0517332e6",
+        "README.md": "b2c4dd395eed087e7a41366be3d62c21d2747dbbc11e331188d8c4bcd91ece08",
+        "calc.go": "ebd150a70dde2cc1abbccd843a81452b72646ae6c31ba5029a886248265461cc"
+      },
+      "patch": "patches/context-control.patch",
+      "patch_sha256": "18e342864f6d1c3f9d27f3813cefa6b5f1500d0919d3a5312f1e3b1ed1cfc547",
+      "output_sha256": {
+        "calc_test.go": "221aa4c46a2ccaaf1d82111b9e0151d0fa0a365fdf3652852b28b6fd24d63188",
+        "go.mod": "2261d594e363d0cd94e53782304f44540afcd9c478342e9ba033f9a0517332e6",
+        "README.md": "b2c4dd395eed087e7a41366be3d62c21d2747dbbc11e331188d8c4bcd91ece08",
+        "calc.go": "0d466c5bd4d22f0b088d335933dc9adc5929617999fae3866bad70486a99ff1b"
+      },
+      "probes": [],
+      "race": true,
+      "extra_guidance_sha256": {
+        "go-context-and-deadlines/SKILL.md": "50ac9186e3132c3771bde754cf8f27dd0135f6c23d7cc1b8a84afb9cc6578eb5"
+      }
+    },
+    {
+      "name": "context-development-r2",
+      "input": "tests/go-quality-build/go-context-and-deadlines/evals/files/http-stages",
+      "input_sha256": {
+        "go.mod": "8e1e0e3517ef00b5581398bfb9fe68ca47fc958d67a3bf6488b73ded33a3b99c",
+        "README.md": "47be49120740cf575442ef2dc830bb1aa4ef53c0faf968c008a7a748a35d3f4a",
+        "stages_test.go": "a21adb0c3bd018418bbb4b7e444cfbd0d4f465c4c5f4e4dc8e52cab61acc8fc6",
+        "stages.go": "5fc27874088d0c9b39160355b3800dfee9ccfca5cc6f63dce036f67777cb164e"
+      },
+      "patch": "patches/context-development-r2.patch",
+      "patch_sha256": "80b3aa0984f24769e91371851c187818da589d178068f7b4a5adbd2a3d2d893e",
+      "output_sha256": {
+        "go.mod": "8e1e0e3517ef00b5581398bfb9fe68ca47fc958d67a3bf6488b73ded33a3b99c",
+        "stages_regression_test.go": "c1effbd06979610facbaf6e616a54986bef908603d946054e8ef91d303031a70",
+        "README.md": "47be49120740cf575442ef2dc830bb1aa4ef53c0faf968c008a7a748a35d3f4a",
+        "stages_test.go": "a21adb0c3bd018418bbb4b7e444cfbd0d4f465c4c5f4e4dc8e52cab61acc8fc6",
+        "stages.go": "f86aa75301823549c7eaad2a0b6732653785aa1c950a53420049a862d3325d4b"
+      },
+      "probes": [
+        "tests/go-quality-build/go-context-and-deadlines/evals/controller-probes/http-stages_test.go",
+        "tests/go-quality-build/go-context-and-deadlines/evals/controller-probes/redirect-ownership_test.go"
+      ],
+      "race": true,
+      "extra_guidance_sha256": {
+        "go-context-and-deadlines/SKILL.md": "6c56ce76b2fa6e8ed67ec30aef190b40c1b592b15e5c8ef3f3ac7fa19385a47a"
+      },
+      "note": "Fresh author from original development input, revised guidance only; second probe is labelled post-inspection development feedback."
+    },
+    {
+      "name": "concurrency-transfer-baseline",
+      "input": "tests/go-quality-build/go-concurrency-and-ownership/evals/files/early-pipeline",
+      "input_sha256": {
+        "pipeline_test.go": "e6253cb6868589e95505d619957ed7057b9cc2ddf6df6eea23b6e8902887aaf7",
+        "go.mod": "b15bb53c62e1bbeda4f167d2c48c497a98b606e22ecc04880bece83e988d5cc6",
+        "README.md": "665d91b8418291248bb0a834f291dcee3609f3dafcee86b5d5c6616b5a6dccb4",
+        "pipeline.go": "026d245b4cf8e75957a77ff8c73bc71a1a54bb94128d6e5d7b21720a17901f9b"
+      },
+      "patch": "patches/concurrency-transfer-baseline.patch",
+      "patch_sha256": "176652fcbc24c8c770eff827b6e6f82cb3b0217857c2c64a606bbef2625d88d9",
+      "output_sha256": {
+        "pipeline_test.go": "96d16fa392e76636dce68b8a198a2afe936570cae47533ee09580f6e453c57f3",
+        "go.mod": "b15bb53c62e1bbeda4f167d2c48c497a98b606e22ecc04880bece83e988d5cc6",
+        "README.md": "665d91b8418291248bb0a834f291dcee3609f3dafcee86b5d5c6616b5a6dccb4",
+        "pipeline.go": "b7d0c4c0f65d320c39d4cf553b133b3e0a8cbf65499db2867bdfbface13e3973"
+      },
+      "probes": [
+        "tests/go-quality-build/go-concurrency-and-ownership/evals/controller-probes/early-pipeline_test.go"
+      ],
+      "race": true,
+      "shared_guidance_sha256": {
+        "go-context-and-deadlines/SKILL.md": "6c56ce76b2fa6e8ed67ec30aef190b40c1b592b15e5c8ef3f3ac7fa19385a47a"
+      }
+    },
+    {
+      "name": "concurrency-development-baseline",
+      "input": "tests/go-quality-build/go-concurrency-and-ownership/evals/files/lease-workers",
+      "input_sha256": {
+        "go.mod": "2301b9bd46635383742d314146fada21c3908b576636e686dd5f02fd6e6a77dd",
+        "workers_test.go": "e202d5b22f8baa4cdc42fabccbd539438e2db7bb5ef635b97df99fa238177e59",
+        "README.md": "2354f4d39987adb3c62038cb3c836324eb85798e938202519e2b89dfb8527d63",
+        "workers.go": "a03feb09f2fc6365de24c1fb2330fa19f4fbb848c185a1c0c4f52f4ef75f5b0a"
+      },
+      "patch": "patches/concurrency-development-baseline.patch",
+      "patch_sha256": "9696ff5ec268a229033b76a4e7f4cc7a8ab6fac3cd99f6a17d39bdf79c4ea48d",
+      "output_sha256": {
+        "go.mod": "2301b9bd46635383742d314146fada21c3908b576636e686dd5f02fd6e6a77dd",
+        "workers_test.go": "af10d9e29ec6c8e481b3f1128fa1c832f973a232d81794031c38851dcc917b4d",
+        "README.md": "2354f4d39987adb3c62038cb3c836324eb85798e938202519e2b89dfb8527d63",
+        "workers.go": "12e2e5acc599245e9d695962c781f1229763f05b397cc7f15e478f644f1eae4c"
+      },
+      "probes": [
+        "tests/go-quality-build/go-concurrency-and-ownership/evals/controller-probes/lease-workers_test.go"
+      ],
+      "race": true,
+      "shared_guidance_sha256": {
+        "go-context-and-deadlines/SKILL.md": "6c56ce76b2fa6e8ed67ec30aef190b40c1b592b15e5c8ef3f3ac7fa19385a47a"
+      }
+    },
+    {
+      "name": "concurrency-control",
+      "input": "tests/go-quality-build/go-concurrency-and-ownership/evals/files/serial-control",
+      "input_sha256": {
+        "calc_test.go": "23dc7bb6ec4454b591cb92e9677b8b81a37c78d837c11d169d6c6286996e3340",
+        "go.mod": "a6de8147b54bd71b6fe10784d760db27bbf6903f87562fd4aeb272a292bbbc0c",
+        "README.md": "12e2503053c629c7a271bc65a130a6d4c1b0394707db1b2f79e8081802f25ca8",
+        "calc.go": "22a58ec4607b31bca2120d8eb2658879ce8c3f54494476c716b1819d15bd0e4f"
+      },
+      "patch": "patches/concurrency-control.patch",
+      "patch_sha256": "773dadf4bc2a0e7598a5cd01d9e0cac0025ebee9c9bf8a6dab05534e011ab227",
+      "output_sha256": {
+        "calc_test.go": "e24cdc214fc269fb3cc7207a25c133c14632fc6e772b826f46adb36bfbe31526",
+        "go.mod": "a6de8147b54bd71b6fe10784d760db27bbf6903f87562fd4aeb272a292bbbc0c",
+        "README.md": "12e2503053c629c7a271bc65a130a6d4c1b0394707db1b2f79e8081802f25ca8",
+        "calc.go": "98123c87a23c5c81764f334de50cb52f8a4e57fdf4acd0880b31c67ed0c9692c"
+      },
+      "probes": [],
+      "race": false,
+      "extra_guidance_sha256": {
+        "go-concurrency-and-ownership/SKILL.md": "5585688c8985c86916405e15c27106eb30707888c6a8b49754afaff622590760"
+      },
+      "shared_guidance_sha256": {
+        "go-context-and-deadlines/SKILL.md": "6c56ce76b2fa6e8ed67ec30aef190b40c1b592b15e5c8ef3f3ac7fa19385a47a"
+      }
+    },
+    {
+      "name": "concurrency-transfer-guided",
+      "input": "tests/go-quality-build/go-concurrency-and-ownership/evals/files/early-pipeline",
+      "input_sha256": {
+        "pipeline_test.go": "e6253cb6868589e95505d619957ed7057b9cc2ddf6df6eea23b6e8902887aaf7",
+        "go.mod": "b15bb53c62e1bbeda4f167d2c48c497a98b606e22ecc04880bece83e988d5cc6",
+        "README.md": "665d91b8418291248bb0a834f291dcee3609f3dafcee86b5d5c6616b5a6dccb4",
+        "pipeline.go": "026d245b4cf8e75957a77ff8c73bc71a1a54bb94128d6e5d7b21720a17901f9b"
+      },
+      "patch": "patches/concurrency-transfer-guided.patch",
+      "patch_sha256": "63ef2489c0e7298a58a238d5f49e4064499b65728f1eaaf8d1a7404a8f5058c4",
+      "output_sha256": {
+        "pipeline_test.go": "35a0804e90d456e9724b9afa2477e2e59361ebbb511c6e6bb76020694e075440",
+        "go.mod": "b15bb53c62e1bbeda4f167d2c48c497a98b606e22ecc04880bece83e988d5cc6",
+        "README.md": "665d91b8418291248bb0a834f291dcee3609f3dafcee86b5d5c6616b5a6dccb4",
+        "pipeline.go": "6997f755fb008ac06a86a50bf0fdd51025b948d127e5b01000ea9d40548dd4aa"
+      },
+      "probes": [
+        "tests/go-quality-build/go-concurrency-and-ownership/evals/controller-probes/early-pipeline_test.go"
+      ],
+      "race": true,
+      "extra_guidance_sha256": {
+        "go-concurrency-and-ownership/SKILL.md": "5585688c8985c86916405e15c27106eb30707888c6a8b49754afaff622590760"
+      },
+      "shared_guidance_sha256": {
+        "go-context-and-deadlines/SKILL.md": "6c56ce76b2fa6e8ed67ec30aef190b40c1b592b15e5c8ef3f3ac7fa19385a47a"
+      }
+    },
+    {
+      "name": "concurrency-development-guided",
+      "input": "tests/go-quality-build/go-concurrency-and-ownership/evals/files/lease-workers",
+      "input_sha256": {
+        "go.mod": "2301b9bd46635383742d314146fada21c3908b576636e686dd5f02fd6e6a77dd",
+        "workers_test.go": "e202d5b22f8baa4cdc42fabccbd539438e2db7bb5ef635b97df99fa238177e59",
+        "README.md": "2354f4d39987adb3c62038cb3c836324eb85798e938202519e2b89dfb8527d63",
+        "workers.go": "a03feb09f2fc6365de24c1fb2330fa19f4fbb848c185a1c0c4f52f4ef75f5b0a"
+      },
+      "patch": "patches/concurrency-development-guided.patch",
+      "patch_sha256": "088e3ee07fd5ed2fa98965c2f57840e566040cf25c967844abcbaf3d9cb906db",
+      "output_sha256": {
+        "go.mod": "2301b9bd46635383742d314146fada21c3908b576636e686dd5f02fd6e6a77dd",
+        "workers_test.go": "3192775471994756149bc1e93ad36ef3724a7762c5ed2e6b2eb68be01e48fac6",
+        "README.md": "2354f4d39987adb3c62038cb3c836324eb85798e938202519e2b89dfb8527d63",
+        "workers.go": "48ecb3c3fbcac4c294c6f30b6ad17c45af9f6bdd1d8d04210ab9748b13f57d5a"
+      },
+      "probes": [
+        "tests/go-quality-build/go-concurrency-and-ownership/evals/controller-probes/lease-workers_test.go"
+      ],
+      "race": true,
+      "extra_guidance_sha256": {
+        "go-concurrency-and-ownership/SKILL.md": "5585688c8985c86916405e15c27106eb30707888c6a8b49754afaff622590760"
+      },
+      "shared_guidance_sha256": {
+        "go-context-and-deadlines/SKILL.md": "6c56ce76b2fa6e8ed67ec30aef190b40c1b592b15e5c8ef3f3ac7fa19385a47a"
+      }
+    }
+  ],
+  "probe_sha256": {
+    "tests/go-quality-build/go-context-and-deadlines/evals/controller-probes/http-stages_test.go": "b27bc5ebf6ab935a3e8a1892d64fa90b6d278d9c4945166b6ecb696d267dc5d6",
+    "tests/go-quality-build/go-context-and-deadlines/evals/controller-probes/accepted-finalization_test.go": "b1c790dc5aae17fc8e01fdf4b731ef5acf98842db2dc3c6960e3b4088a3deb81",
+    "tests/go-quality-build/go-context-and-deadlines/evals/controller-probes/redirect-ownership_test.go": "547537f1de50113815cc531ea216f923e7327308ac5dc0f533bf8727e7b12a4b",
+    "tests/go-quality-build/go-concurrency-and-ownership/evals/controller-probes/lease-workers_test.go": "0c5cd0a3c86e52b52e736db67108858d95b4763369164a94126643bb56d40651",
+    "tests/go-quality-build/go-concurrency-and-ownership/evals/controller-probes/early-pipeline_test.go": "cf28617eaccda3f048231b98f62bc80055633e5f441529603ff80df2b6d9fc28",
+    "tests/go-quality-build/go-concurrency-and-ownership/evals/controller-probes/open-error-origin_test.go": "57a265d5f68e79d5e889a87534b49f8be01151b5f3272139c3e81fb6962ae4bd"
+  },
+  "guidance_revisions": {
+    "go-context-and-deadlines": {
+      "revision_1": "50ac9186e3132c3771bde754cf8f27dd0135f6c23d7cc1b8a84afb9cc6578eb5",
+      "revision_2": "6c56ce76b2fa6e8ed67ec30aef190b40c1b592b15e5c8ef3f3ac7fa19385a47a",
+      "delta": "patches/context-guidance-r2.patch",
+      "delta_sha256": "d5dd50e960d9ba80ae71f9e262dbc00fc7121f248c887f0dd69d96c2b11a92ca"
+    },
+    "go-concurrency-and-ownership": {
+      "revision_1": "5585688c8985c86916405e15c27106eb30707888c6a8b49754afaff622590760"
+    }
+  },
+  "concurrency_shared_guidance_sha256": {
+    "go-context-and-deadlines/SKILL.md": "6c56ce76b2fa6e8ed67ec30aef190b40c1b592b15e5c8ef3f3ac7fa19385a47a"
+  }
+}

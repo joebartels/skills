@@ -1,0 +1,155 @@
+{
+  "current_go": {
+    "command": [
+      "go",
+      "version"
+    ],
+    "exit_code": 0,
+    "output": "go version go1.26.5 darwin/arm64\n"
+  },
+  "additional_probes": {
+    "tests/go-quality-build/go-context-and-deadlines/evals/controller-probes/redirect-ownership_test.go": "547537f1de50113815cc531ea216f923e7327308ac5dc0f533bf8727e7b12a4b"
+  },
+  "results": [
+    {
+      "name": "context-development-baseline",
+      "checks": [
+        {
+          "command": [
+            "git",
+            "apply",
+            "--unidiff-zero",
+            "/Users/jb/.codex/worktrees/0bc1/skills/tests/go-quality-build/recovery/patches/context-development-baseline.patch"
+          ],
+          "exit_code": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": "ok  \texample.com/stages\t0.393s\n"
+        },
+        {
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 1,
+          "output": "--- FAIL: TestRecoveryRedirectBodyOwnership (0.00s)\n    controller_redirect-ownership_test.go:52: bodies=[] closes=2 policy=true repeated-close-error=true error=Get \"http://example.test/next\": redirect policy rejected target\n        body closed twice\nFAIL\nFAIL\texample.com/stages\t0.339s\nFAIL\n"
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 1,
+          "output": "--- FAIL: TestRecoveryRedirectBodyOwnership (0.00s)\n    controller_redirect-ownership_test.go:52: bodies=[] closes=2 policy=true repeated-close-error=true error=Get \"http://example.test/next\": redirect policy rejected target\n        body closed twice\nFAIL\nFAIL\texample.com/stages\t0.332s\nFAIL\n"
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-shuffle=on",
+            "-count=3",
+            "-timeout=30s",
+            "./..."
+          ],
+          "exit_code": 1,
+          "output": "-test.shuffle 1791039966925141000\n--- FAIL: TestRecoveryRedirectBodyOwnership (0.00s)\n    controller_redirect-ownership_test.go:52: bodies=[] closes=2 policy=true repeated-close-error=true error=Get \"http://example.test/next\": redirect policy rejected target\n        body closed twice\n--- FAIL: TestRecoveryRedirectBodyOwnership (0.00s)\n    controller_redirect-ownership_test.go:52: bodies=[] closes=2 policy=true repeated-close-error=true error=Get \"http://example.test/next\": redirect policy rejected target\n        body closed twice\n--- FAIL: TestRecoveryRedirectBodyOwnership (0.00s)\n    controller_redirect-ownership_test.go:52: bodies=[] closes=2 policy=true repeated-close-error=true error=Get \"http://example.test/next\": redirect policy rejected target\n        body closed twice\nFAIL\nFAIL\texample.com/stages\t0.648s\nFAIL\n"
+        }
+      ]
+    },
+    {
+      "name": "context-development-guided",
+      "checks": [
+        {
+          "command": [
+            "git",
+            "apply",
+            "--unidiff-zero",
+            "/Users/jb/.codex/worktrees/0bc1/skills/tests/go-quality-build/recovery/patches/context-development-guided.patch"
+          ],
+          "exit_code": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": "ok  \texample.com/stages\t0.217s\n"
+        },
+        {
+          "command": [
+            "go",
+            "vet",
+            "./..."
+          ],
+          "exit_code": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 1,
+          "output": "--- FAIL: TestRecoveryRedirectBodyOwnership (0.00s)\n    controller_redirect-ownership_test.go:52: bodies=[] closes=2 policy=true repeated-close-error=true error=Get \"http://example.test/next\": redirect policy rejected target\n        body closed twice\nFAIL\nFAIL\texample.com/stages\t0.216s\nFAIL\n"
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-count=1",
+            "-timeout=15s",
+            "./..."
+          ],
+          "exit_code": 1,
+          "output": "--- FAIL: TestRecoveryRedirectBodyOwnership (0.00s)\n    controller_redirect-ownership_test.go:52: bodies=[] closes=2 policy=true repeated-close-error=true error=Get \"http://example.test/next\": redirect policy rejected target\n        body closed twice\nFAIL\nFAIL\texample.com/stages\t0.212s\nFAIL\n"
+        },
+        {
+          "command": [
+            "go",
+            "test",
+            "-race",
+            "-shuffle=on",
+            "-count=3",
+            "-timeout=30s",
+            "./..."
+          ],
+          "exit_code": 1,
+          "output": "-test.shuffle 1791039969314148000\n--- FAIL: TestRecoveryRedirectBodyOwnership (0.00s)\n    controller_redirect-ownership_test.go:52: bodies=[] closes=2 policy=true repeated-close-error=true error=Get \"http://example.test/next\": redirect policy rejected target\n        body closed twice\n--- FAIL: TestRecoveryRedirectBodyOwnership (0.00s)\n    controller_redirect-ownership_test.go:52: bodies=[] closes=2 policy=true repeated-close-error=true error=Get \"http://example.test/next\": redirect policy rejected target\n        body closed twice\n--- FAIL: TestRecoveryRedirectBodyOwnership (0.00s)\n    controller_redirect-ownership_test.go:52: bodies=[] closes=2 policy=true repeated-close-error=true error=Get \"http://example.test/next\": redirect policy rejected target\n        body closed twice\nFAIL\nFAIL\texample.com/stages\t0.260s\nFAIL\n"
+        }
+      ]
+    }
+  ]
+}

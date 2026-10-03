@@ -1,0 +1,16 @@
+--- a/calc.go
++++ b/calc.go
+@@ -6 +6,3 @@
+-		total += value
++		if value > 0 {
++			total += value
++		}
+--- a/calc_test.go
++++ b/calc_test.go
+@@ -9,0 +10,6 @@
++
++func TestIgnoresNonpositiveValues(t *testing.T) {
++	if got := SumPositive([]int{-5, 2, 0, -1, 3}); got != 5 {
++		t.Fatalf("sum = %d, want 5", got)
++	}
++}
