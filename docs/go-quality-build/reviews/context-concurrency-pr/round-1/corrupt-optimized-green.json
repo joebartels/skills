@@ -1,0 +1,47 @@
+{
+  "scope": "Disposable relocated clone; no original archived data modified",
+  "results": [
+    {
+      "case": "corrupt manifest",
+      "flags": [],
+      "PYTHONOPTIMIZE": null,
+      "status": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-optimize-green-kv75xhuj/repo/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 148, in <module>\n    verify()\n    ~~~~~~^^\n  File \"/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-optimize-green-kv75xhuj/repo/tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py\", line 64, in verify\n    assert m[\"author_attempts\"] == 31 and m[\"selection_attempts\"] == 26\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+    },
+    {
+      "case": "corrupt manifest",
+      "flags": [
+        "-O"
+      ],
+      "PYTHONOPTIMIZE": null,
+      "status": 1,
+      "stdout": "",
+      "stderr": "FAIL: Python optimization disables integrity checks; run without -O/-OO and unset PYTHONOPTIMIZE.\n"
+    },
+    {
+      "case": "corrupt manifest",
+      "flags": [
+        "-OO"
+      ],
+      "PYTHONOPTIMIZE": null,
+      "status": 1,
+      "stdout": "",
+      "stderr": "FAIL: Python optimization disables integrity checks; run without -O/-OO and unset PYTHONOPTIMIZE.\n"
+    },
+    {
+      "case": "corrupt manifest",
+      "flags": [],
+      "PYTHONOPTIMIZE": "1",
+      "status": 1,
+      "stdout": "",
+      "stderr": "FAIL: Python optimization disables integrity checks; run without -O/-OO and unset PYTHONOPTIMIZE.\n"
+    },
+    {
+      "case": "restored relocated exact snapshot",
+      "status": 0,
+      "stdout": "PASS: portable31 reconstructions (26 completed/5 failed), five runtime0.2.0 skills, anchored seals and preserved counterevidence\n",
+      "stderr": ""
+    }
+  ]
+}

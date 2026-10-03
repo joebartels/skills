@@ -10,14 +10,7 @@ import json
 from pathlib import Path
 import shutil
 import subprocess
-import sys
 import tempfile
-
-if sys.flags.optimize:
-    raise SystemExit(
-        "FAIL: Python optimization disables integrity checks; run without -O/-OO "
-        "and unset PYTHONOPTIMIZE."
-    )
 
 OUT = Path(__file__).resolve().parent
 ROOT = OUT.parents[3]

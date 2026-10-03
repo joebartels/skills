@@ -1,0 +1,22 @@
+{
+  "review_id": 5398980118,
+  "reviewed_commit": "85a7cd2de65e4b4b439b6ada64d9b60801a657ec",
+  "findings": [
+    {
+      "comment_id": 4171677988,
+      "path": "tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py",
+      "decision": "VALID",
+      "cause": "Optimization removes assert validations and permits false PASS",
+      "fix": "Fail closed before verification when sys.flags.optimize is nonzero",
+      "proof": "Actual-O/-OO/PYTHONOPTIMIZE CLI RED->GREEN; corrupt manifest falsely passed before fix and is rejected after",
+      "scope": "Named advertised current gate only; original12-file delivery copied exactly and all earlier author/guidance/source seals unchanged",
+      "current_delivery_index_sha256": "dd63309f526b323dea232650026ab34c91f30468d3c0bbcaa81d1793287a4909"
+    }
+  ],
+  "broader_pattern": {
+    "other_historical_verifiers": 18,
+    "estimated_lines": 1771,
+    "expanded": false,
+    "reason": "Historical snapshots are preserved; only the current advertised gate is corrected"
+  }
+}

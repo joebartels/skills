@@ -1,0 +1,30 @@
+{
+  "data": {
+    "repository": {
+      "pullRequest": {
+        "reviewThreads": {
+          "nodes": [
+            {
+              "id": "PRRT_kwDOUvGCaM6oj51M",
+              "isResolved": false,
+              "isOutdated": false,
+              "comments": {
+                "nodes": [
+                  {
+                    "databaseId": 4171677988,
+                    "id": "PRRC_kwDOUvGCaM74psEk",
+                    "body": "This gate relies entirely on `assert`, but optimized Python (`python -O` or `PYTHONOPTIMIZE`) removes every assertion. In that mode a corrupted archive can reach the unconditional `PASS` output without validating counts, hashes, seals, or reconstruction results. Refuse optimized execution (or replace assertions with explicit checks) and update the delivery seal/anchor so the advertised integrity gate cannot report a false success.",
+                    "url": "https://github.com/joebartels/skills/pull/6#discussion_r4171677988",
+                    "author": {
+                      "login": "copilot-pull-request-reviewer"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

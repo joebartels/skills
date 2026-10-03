@@ -19,8 +19,6 @@ From any checkout location, run:
 python3 -B tests/go-quality-build/results/2026-10-02-context-concurrency-delivery/verify-delivery.py
 ```
 
-The current gate refuses Python optimization (`-O`, `-OO` or inherited `PYTHONOPTIMIZE`) because its assertions must execute. Normal verification remains read-only. The exact original12-file delivery and index are preserved in the [pre-fix snapshot](../../../../docs/go-quality-build/reviews/context-concurrency-pr/round-1/delivery-before-optimization-fix/checksums.json); it is historical evidence, not the current executable entrypoint.
-
 Python3 and Git reconstruct all31 original+patch trees and130 final source-file identities in platform temporary storage, verify the exact five-skill/runtime/review package, dispatched input/catalog hashes, separately frozen review identities, raw exceptions and externally anchored archive indexes. This is a read-only byte-integrity gate; it does not rerun models or old Go checks. It needs no historical absolute temporary path, model authentication or downloaded minimum compiler. Capture writers in historical archives must never be rerun in place. Only each archive's exact checksum index is excluded from its own seal; independently sealed preflight has its own index.
 
 [Shared checks](shared-verification.json) pass root6/build10/layout1/grade12,46 build/120 review cases, Claude manifests and all seven runtime/draft quick validations.39 runtime/review/package/notice files equal original comparator0d0a339b. Maintained local links resolve. Structural validation is distinct from native loading and behavioral utility. Original drafts/fixtures are authored here; the pinned upstream section audit introduces no copied text/code or new runtime notice/dependency.

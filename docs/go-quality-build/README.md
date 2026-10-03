@@ -1227,3 +1227,25 @@ After each meaningful stage and before finishing a task, update the status above
 
 - User replied “i approve” to the explicit question naming full study prompts/results, historical machine paths, controller executable and PUBLIC https://github.com/joebartels/skills. This supplies the payload/destination authorization required by automatic review; permission persists through this PR workflow.
 - Next direct git push of the same branch, create/attach PR against main, request/wait Copilot and resolve actionable findings with minimal verified fixes/replies. No merge requested; immutable archives/drafts/runtime dispositions remain exact.
+
+
+#### 2026-10-02 — PR6 created and Copilot requested
+
+- Explicit full public-payload approval permitted the direct push; GitHub branch codex/go-quality-build-context-concurrency now tracks origin. Created [PR#6](https://github.com/joebartels/skills/pull/6) against main and attached it to this chat. Published head85a7cd2.
+- Copilot review requested via gh pr edit6 --add-reviewer @copilot. Review/comments/CI will be read from GitHub; current sealed study evidence/runtime package remain unchanged.
+- Next wait for completed review, classify each comment VALID/INVALID/NIT, verify minimal named-case fixes and reasoned replies, resolve threads/re-request as needed, then fresh non-test-scope closing review and bounded size comparison. No merge requested.
+
+
+#### 2026-10-02 — Copilot round1 optimized-Python correction
+
+- Copilot [review5398980118](https://github.com/joebartels/skills/pull/6#pullrequestreview-5398980118) at85a7cd2 posts one [finding4171677988](https://github.com/joebartels/skills/pull/6#discussion_r4171677988), classified VALID. Real CLI regression is RED for-O/-OO/PYTHONOPTIMIZE: each returnedPASS; a disposable corrupt author_attempts999manifest also falselyPASSed under-O/-OO while normal Python refused it. Root cause is interpreter removal of assert checks.
+- Minimal current gate guard refuses optimized execution before validation. Two real CLI regression tests cover normal success and all three optimized modes; evidence lies under [round1](reviews/context-concurrency-pr/round-1/optimization-red.json). No skill/fixture/author outcome revision or new behavioral launch.
+- Before correction, exact12-file delivery/index copied to [original snapshot](reviews/context-concurrency-pr/round-1/delivery-before-optimization-fix/checksums.json), SHA-256 **20387a7bb3d3ef460fe1231eb2c5a721a71075a84118a9e8086e1bd5a1913e93**, original bytes verified. The current gate also verifies that separate original seal. Current corrected12-file delivery index SHA-256 **dd63309f526b323dea232650026ab34c91f30468d3c0bbcaa81d1793287a4909** externally anchored here; original studies/discovery/skip/readiness seals remain untouched.
+- Related pattern inventory counts19assert-based verifier files/1912lines including this current141-line gate; other18 are historical capture/review snapshots, not expanded in this fix. Broader historical updates would require separate scope and preserve snapshots; only named advertised gate corrected. Next GREEN corrupt/exact/optimized checks, full suite/size comparison, commit/push/reply/resolve/re-request.
+
+
+#### 2026-10-02 — Copilot round1 correction verified
+
+- Normal CLI success and all three optimized modes have real regression tests; root count increases6→8. [GREEN checks](reviews/context-concurrency-pr/round-1/checks-green.json) pass root8/build10/layout1/grade12, validator46build/120review and current31-outcome gate. [Corrupt optimized proof](reviews/context-concurrency-pr/round-1/corrupt-optimized-green.json) refuses corrupt manifest normally/-O/-OO/PYTHONOPTIMIZE and accepts restored relocated data; original RED captures retained.
+- [Classification](reviews/context-concurrency-pr/round-1/classification.json) accepts only4171677988, records minimal fail-closed guard/current revision2 and original20387 snapshot provenance. No source/skill/fixture repair, no native author/selection launch, no grade/promotion change. Historical assertion-tool pattern18files/~1771lines remains outside the named-case fix.
+- Next full-diff size/scoped whitespace check, commit/push verified change, update PR description, reply/resolve exact thread and re-request Copilot. Original snapshots are historical evidence; current advertised entrypoint requires unoptimized Python and validates their exact seals.
