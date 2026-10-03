@@ -1,0 +1,121 @@
+[
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test*.py"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.093s\n\nOK\n",
+    "elapsed_seconds": 0.144
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/go-quality-build",
+      "-p",
+      "test_*.py"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.022s\n\nOK\n",
+    "elapsed_seconds": 0.083
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "tests/go-quality-review/test_layout.py"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": ".\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n",
+    "elapsed_seconds": 0.051
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "tests/go-quality-review/go-quality-report/evals/test_grade.py"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.000s\n\nOK\n",
+    "elapsed_seconds": 0.043
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "scripts/validate.py"
+    ],
+    "status": 0,
+    "stdout": "PASS: 10 skills; matching grading/report contracts; 120 valid evaluation cases\nPASS: 46 valid build evaluation cases\n",
+    "stderr": "",
+    "elapsed_seconds": 0.062
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "claude",
+      "plugin",
+      "validate",
+      "./plugins/go-quality-build"
+    ],
+    "status": 0,
+    "stdout": "Validating plugin manifest: /Users/jb/.codex/worktrees/ed95/skills/plugins/go-quality-build/.claude-plugin/plugin.json\n\n\u2714 Validation passed\n",
+    "stderr": "",
+    "elapsed_seconds": 0.192
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "claude",
+      "plugin",
+      "validate",
+      "."
+    ],
+    "status": 0,
+    "stdout": "Validating marketplace manifest: /Users/jb/.codex/worktrees/ed95/skills/.claude-plugin/marketplace.json\n\n\u2714 Validation passed\n",
+    "stderr": "",
+    "elapsed_seconds": 0.181
+  },
+  {
+    "argv": [
+      "rtk",
+      "proxy",
+      "python3",
+      "-B",
+      "/Users/jb/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+      "tests/go-quality-build/go-concurrency-and-ownership/draft"
+    ],
+    "status": 0,
+    "stdout": "Skill is valid!\n",
+    "stderr": "",
+    "elapsed_seconds": 0.032
+  }
+]

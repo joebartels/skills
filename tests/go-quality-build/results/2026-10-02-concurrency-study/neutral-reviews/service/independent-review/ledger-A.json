@@ -1,0 +1,151 @@
+{
+  "scope": "Candidate A complete bounded code-area review at exact supplied source hashes; standard-library worker-host API, Go 1.22 minimum.",
+  "coverage": [
+    {
+      "id": "go-architecture-and-design",
+      "status": "complete",
+      "reason": "Applicable: the host-supplied Lease protocol, injected Open dependency, cancellation/error propagation and cohort ownership are design boundaries; reviewed API, ownership and composition without demanding another framework."
+    },
+    {
+      "id": "go-code-quality-and-idioms",
+      "status": "complete",
+      "reason": "Applicable: reviewed local state transitions, result collection, checked errors, context guards, docs, value/closure semantics under go 1.22; gofmt and vet independently executed."
+    },
+    {
+      "id": "go-correctness-and-compatibility",
+      "status": "complete",
+      "reason": "Applicable: reviewed every README result/lifecycle obligation, API shape, empty/finite/open input, partial acquisition, all three failure stages, cancellation before/during/stopping, successful effects and supported Go minimum."
+    },
+    {
+      "id": "go-testing",
+      "status": "complete",
+      "reason": "Applicable: reviewed candidate host_test.go assertions, doubles, event gates, cleanup and whether meaningful contract violations evade its authored suite. External held/supplementary/independent probes verify behavior; they are not additions to the candidate regression suite."
+    },
+    {
+      "id": "go-security",
+      "status": "not_applicable",
+      "reason": "Not applicable within this bounded trusted-host API: Job is a caller-supplied integer; Open and Lease are trusted collaborators; there is no demonstrated attacker, authorization boundary, sensitive sink, credential, cryptographic or network/file parsing decision. General resource failures are not recast as vulnerabilities. No advisory scan or security assessment of an unspecified host is claimed."
+    },
+    {
+      "id": "go-observability-and-resilience",
+      "status": "complete",
+      "reason": "Applicable: cancellation, stop propagation, failure containment, joining actual cleanup and errors.Is diagnostics are the available library signals. No service telemetry, retries or arbitrary timeout requirement is inferred."
+    },
+    {
+      "id": "go-performance-and-resource-management",
+      "status": "complete",
+      "reason": "Applicable: limit bounds acquired leases through Close, cohort completion controls goroutines/resources, and available capacity must be used. Assessed scaling/lifetime and bounded event counts; no microbenchmark or production latency claim."
+    },
+    {
+      "id": "go-dependencies-and-reproducibility",
+      "status": "complete",
+      "reason": "Applicable: go.mod declares Go 1.22 and standard-library-only production/tests. Verified standalone readonly resolution, host and actual minimum compilation/test execution, imports, module graph and exact input hashes. No generated/native/release inputs or bit-identical artifact contract."
+    },
+    {
+      "id": "go-deployment-and-operations",
+      "status": "not_applicable",
+      "reason": "Not applicable to the bounded library code area: no configured release artifact, CI/promotion path, process signals, container, runtime configuration, health/routing or grace budget decision is supplied or promised. Host deployment evidence is unavailable outside scope and excluded, not reported as passing. Library lifecycle is assessed by the applicable topics."
+    }
+  ],
+  "findings": [
+    {
+      "id": "A/P1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Close failures are appended but never enter the stop state before the next cohort.",
+      "evidence": "candidates/A/host.go:60; candidates/A/host.go:85; evidence/A-host-independent.log: TestIndependentCloseFailureStopsNextAdmission; evidence/A-minimum-independent.log: same intended assertion; evidence/A-host-race.log: repeated intended assertion; At limit 1, three leases are opened/closed after the first Close fails, where the contract permits only one; unbounded input would continue admissions after observed failure. Contained important admission contract failure, not systemic/critical.",
+      "correction": "Have closeCohort set stop/cancel on any Close error, while still closing all owned leases exactly once.",
+      "sources": [
+        "cards/A/go-architecture-and-design.md",
+        "cards/A/go-code-quality-and-idioms.md",
+        "cards/A/go-correctness-and-compatibility.md",
+        "cards/A/go-observability-and-resilience.md",
+        "cards/A/go-performance-and-resource-management.md"
+      ]
+    },
+    {
+      "id": "A/P2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Successful Open results can start Run using only stale stop state without rechecking caller/work context.",
+      "evidence": "candidates/A/host.go:143; candidates/A/host.go:174; evidence/stress-commands.json: 3 forbidden Runs in 2000 concurrent valid calls on host race build; evidence/minimum-stress-command.json: 1, 1 and 6 forbidden Runs per 2000 calls on actual minimum race build; Open deliberately cancels the caller context before returning its nonnil lease successfully. If its buffered result and cancellation are both ready, selecting the result starts Run after stopping; acquired lease must instead be owned and closed without Run. Reach is one host call; major contract failure.",
+      "correction": "After collecting/owning the Open result, observe context cancellation and set stop before starting Run; retain cancellation cause.",
+      "sources": [
+        "cards/A/go-architecture-and-design.md",
+        "cards/A/go-code-quality-and-idioms.md",
+        "cards/A/go-correctness-and-compatibility.md",
+        "cards/A/go-observability-and-resilience.md",
+        "cards/A/go-performance-and-resource-management.md"
+      ]
+    },
+    {
+      "id": "A/P3",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Final join/Close cleanup does not observe caller cancellation again before returning accumulated errors.",
+      "evidence": "candidates/A/host.go:181; candidates/A/host.go:183; evidence/A-host-independent.log: TestIndependentCallerCancellationDuringFailureCleanup; evidence/A-minimum-independent.log: same intended error identity assertion; After a Run failure, canceling the caller while a gated Close is held loses context.Canceled, although independent Run and Close errors remain inspectable. This breaks the explicit stopping-time diagnostic contract at the single Serve boundary.",
+      "correction": "Append the caller cancellation observed after owned cleanup before returning, without dropping independent errors.",
+      "sources": [
+        "cards/A/go-architecture-and-design.md",
+        "cards/A/go-code-quality-and-idioms.md",
+        "cards/A/go-correctness-and-compatibility.md",
+        "cards/A/go-observability-and-resilience.md"
+      ]
+    },
+    {
+      "id": "A/T1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "No authored Close-only failure test asserts that subsequent queued jobs are never opened.",
+      "evidence": "candidates/A/host_test.go:107; candidates/A/host_test.go:140; evidence/A-host-authored.log: authored suite passes unchanged defective implementation; evidence/A-host-independent.log: Close-only next-admission assertion fails; An important explicit stop-admission contract evades regression detection because the Close sentinel is paired with an already stopping Run failure. Independent test correction is required even after P1 is fixed.",
+      "correction": "Add a healthy Run followed by failing Close with later queued jobs and an exact Open count.",
+      "sources": [
+        "cards/A/go-testing.md"
+      ]
+    },
+    {
+      "id": "A/T2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Cancellation-during-Open fixture asserts release but never asserts that returned leases skip Run.",
+      "evidence": "candidates/A/host_test.go:151; evidence/stress-commands.json: forbidden Runs under valid cancellation-before-success; evidence/A-host-authored.log: cancellation test and full authored suite pass; The explicit never-start-after-stop contract is unchecked despite a fixture already returning a lease after cancellation; a forbidden extra Run is accepted by the test.",
+      "correction": "Add a Run counter/forbidden event and assert zero Runs plus owned release; cover simultaneously ready Open-result/cancellation.",
+      "sources": [
+        "cards/A/go-testing.md"
+      ]
+    },
+    {
+      "id": "A/T3",
+      "severity": "major",
+      "systemic": false,
+      "cause": "No authored assertion retains caller cancellation introduced during final held failure cleanup.",
+      "evidence": "candidates/A/host_test.go:107; candidates/A/host_test.go:151; evidence/A-host-authored.log: authored suite passes; evidence/A-host-independent.log: errors.Is cancellation fails after gated Close; Independent Run/Close error checks and initial cancellation checks do not cover cancellation observed while stopping, an explicit important diagnostic requirement.",
+      "correction": "Gate final Close after an independent Run failure, cancel the caller, and assert all independent causes plus cancellation.",
+      "sources": [
+        "cards/A/go-testing.md"
+      ]
+    },
+    {
+      "id": "A/T4",
+      "severity": "moderate",
+      "systemic": false,
+      "cause": "Failure fixture expects two acquired leases without ensuring second acquisition precedes the first Run failure.",
+      "evidence": "candidates/A/host_test.go:107; candidates/A/host_test.go:135; evidence/stress-commands.json: authored TestServeFailureJoinsAndClosesOwnedLeases reports closed=1 in 3 of 1000 race repetitions with GOMAXPROCS=16; A legal early stop leaves only the first lease acquired and released; the test produces a false failure. This is a localized meaningful scheduling fragility, moderate rather than an unverified production defect.",
+      "correction": "Use an explicit second-acquisition/second-start gate before releasing the failing first Run; assert releases only for leases actually acquired.",
+      "sources": [
+        "cards/A/go-testing.md"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "A/G1",
+      "evidence": "The exact Job/Lease/Serve API remains compatible and construction stays host-owned through the Open function, with no unrelated framework/public API; both actual toolchains compile every source package."
+    },
+    {
+      "id": "A/G2",
+      "evidence": "Actual go1.22.12 and go1.26.5 compile the standalone go 1.22 standard-library-only module with GOWORK=off, GOTOOLCHAIN=local, GOFLAGS=-mod=readonly; go list -m all returns only example.com/service-owned-workers. No external go.sum is needed."
+    }
+  ],
+  "safeguards": []
+}

@@ -62,7 +62,7 @@ Test combinations of neighboring skills on the same task. Resolve contradictory 
 
 ## Work status and next steps
 
-**Current continuation:** Concurrency snapshot/settings committed42f1355; matched reference exposures4-6 dispatched (six total concurrency attempts/group22). Library/control complete; worker author and checks are running. Transfer/model/reasoning pairs remain frozen next. Context is excluded/unpromoted; runtime five0.2.0.
+**Current continuation:** Concurrency Task4 reviewed draft, not promoted: exact guidance accepted, zero primary corrections and failed transfer/preservation/routing consistency. Study sealed; Task4 final gate/commit next, then ineligible interaction skip and Task6 closeout. Runtime five0.2.0; both new drafts outside runtime.
 
 - **Completed:** Compared the local review approach with the upstream collection; proposed candidate boundaries and the reuse and evaluation policy in this record. Added repository agent instructions and a continuation protocol so later workers maintain this record. Pinned the upstream revision for the first architecture-group audit.
 - **Written spec revised:** The first group is `go-package-boundaries`, `go-api-contracts`, and `go-interfaces-and-composition` in a peer `plugins/go-quality-build/` package. After reviewing the [first-group design spec](../superpowers/specs/2026-09-30-go-quality-build-architecture-group-design.md), the user clarified that transport and database persistence are examples, not the center of package-boundary guidance. The spec now requires package maps across libraries, CLIs, services, and workers, plus a broader component palette.
@@ -1074,3 +1074,93 @@ After each meaningful stage and before finishing a task, update the status above
 - All three exposure authors4-6 completed; library/control reconstruction/ordinary/minimum/held checks green, service checks next. Detected wrapper environment difference before remaining profile/transfer outcomes: discovery inherits observed GOTOOLCHAIN auto; study explicitly sets local. Modules remain1.22 and compiler is the same, but exact matching is required, so original three discovery outcomes retain counterevidence and receive no matched-benefit credit.
 - Ruled a bounded reallocation: three fresh local-policy reference baselines13/14/15 paired with final-byte exposures4/5/6. All task/catalog/profile settings except candidate exposure then match. Guidance/inputs/primaryF1 unchanged; transfer7/8, alternate-model9/10 and lower-reasoning11/12 unchanged. Fifteen maximum planned attempts including old discovery, one reserve left; every launch counts. Additional affected reruns beyond remaining cap require reviewed draft/declared extension, not a fabricated pass.
 - Next: commit corrected allocation then run checked references and remaining fixed pairs sequentially across shared-manifest launchers. No new baseline, promotion or runtime claim yet.
+
+
+#### 2026-10-02 — Concurrency exposure counterevidence
+
+- Exposed library/control4/6 reconstruct and pass ordinary/held actual1.22.12/1.26.5 checks, including library race/shuffle. Exposed worker5 reconstructs and passes its authored ordinary suites but fails all four held partial-start variants on first progression events; supplementary pending-Open probe cannot observe the first Run because this implementation completes all acquisitions before launching users. Sparse-input observation passes, but that is not a clean overall correction or preservation result. All contrary outputs retained for neutral review.
+- Corrected reference baselines13-15 launched after allocation commit; every attempt counts (nine concurrency/group25). Control15 completed; library/service still active. One reserved author slot remains after all planned fixed pairs. No guidance edit, promotion or extra-harness pass. Next: finish checked references, fixed transfer/profile pairs and fresh source-only outcome cards; compare repeated primary cause and material preservation independently.
+
+
+#### 2026-10-02 — Checked references and transfer dispatch
+
+- Fresh exact-environment baselines13/14/15 completed; control15 green ordinary/held floor/current, library/service reconstruction and checks running. Only pairs13/4,14/5,15/6 are eligible for reference matched comparison; original discovery remains separate. No guidance/input/primary change.
+- Frozen unseen transfer pair7/8 dispatched after guidance freeze; eleven concurrency attempts/group27 counted, including all completed and in-flight authors. Next alternate-model9/10 and lower-reasoning11/12 complete the15 planned attempts, leaving one reserve. Shared-manifest launcher batches remain sequential; no rerun/extra native target claim.
+- Fresh neutral control packet A/B contains sources/original contract/actual checks/unchanged review guidance only; independent all-nine outcome reviewer dispatched. Reports/settings/guidance/arm mapping withheld until frozen cards. Next: finish reconstruction/verification and remaining fixed pairs, native selection, then fresh library/service/transfer reviews and independent readiness disposition.
+
+
+#### 2026-10-02 — Concurrency transfer checks and neutral controls
+
+- All checked references13-15 pass ordinary and supplied held actual1.22.12/1.26.5 checks; worker14 also passes both qualified portable F1/F2 diagnostics. Exposed5 retains held startup regression, so no reference correction is claimed. Concrete14 release-before-completion/admission mutations compile and fail intended held assertions while author suites pass; limitations preserved.
+- Transfer7/8 reconstruct and pass ordinary floor/current; baseline7 fails independent cancellation-class-before-stop held assertion on both versions/race, exposure8 passes. This is transfer evidence, not fixed-primary repetition. Alternate-model9/10 running;13 concurrency/group29 counted, lower-reasoning11/12 next after shared-manifest launcher finishes.
+- Independent control A15/B6 produces18 cards, A/A zero findings;98 exact textual artifacts frozen before mapping disclosure, generated caches excluded. Fresh neutral library pair independently reviewing; pipeline packet prepared after concrete sensitivity checks. Guidance/input/primary unchanged; selection/readiness disposition remain next.
+
+
+#### 2026-10-02 — Final concurrency author allocation
+
+- Alternate-model9/10 complete, exact reconstruction/ordinary/held actual1.22.12/1.26.5/race and portable F1/F2 all green. Both already fix primary sparse-progress cause, so no matched correction supplied. Both authored suites fail under qualified lifecycle mutations; model10 admission failure depends on its runner deadline rather than a prompt assertion, so no assertion-quality credit is claimed. Exact diagnostics retained.
+- Lower-reasoning11/12 launched after previous launcher completed;15 concurrency/group31 attempts counted, one reserve remains. Exposure12 ordinary/floor held green but held shuffled race fails acquired-after-stop Run assertion, with source corroboration; portable pending-Open failure fails both compilers. Every failure retained, no assisted outcome repair. Baseline11 remains active and must finish before final packet.
+- Transfer7 qualified missing-join mutation is detected;8 first spelling compile-failed (excluded) and second equivalent compiled spelling fails held join assertions while its authored suite passes. Pure controls both detect off-by-one regression outside candidate four targets; library both detect split-publication.
+- Shared checks root6/build10/layout1/grade12, validator46build/120review, Claude manifests and draft quick validation pass. Read-only closeout gate correctly refuses pending independent disposition. Neutral library/pipeline reviews running; twelve native selection probes and six-worker neutral packet next when process slots free. No primary switch, guidance revision or promotion claim.
+
+
+#### 2026-10-02 — All concurrency authors complete
+
+- Lower-reasoning baseline11 finished after515.988seconds; all twelve study sources reconstruct and ordinary current/floor checks pass. Its held checks retain host/race failures despite minimum held pass; exposure12 retains race failure despite ordinary held passes. Exact commands/schedules/failures remain original, not rerun into a clean verdict. Both fixed-primary sparse-start observations pass, so neither lower-reasoning arm supplies primary correction. Six worker outcomes queued for one fresh neutral all-nine review.
+- Study manifest records15/16 concurrency and31/36 group authors, with one candidate reserve untouched. Exact-environment matching pairs and original excluded discovery retained. Cost summary preserves raw model token usage/durations/source sizes without price or efficiency attribution. Reference native selection started separately; no implementation launch remains.
+- Next: complete twelve selection probes, freeze library/pipeline/worker cards before disclosure, compare fixed-primary/preservation/transfer, obtain independent exact-guidance/evidence disposition and seal. Runtime unchanged; no integration eligibility or promotion claim.
+
+
+#### 2026-10-02 — Library study outcome frozen
+
+- Fresh neutral library A4/B13 review completes all18 cards: both productionA; exposed4 overallB due one moderate reader-termination test defect, checked baseline13 overallA. Coherent dropped updates strand the exposure reader before its exact-count assertion; reviewer bounded deadline catches it on both actual compilers, while baseline reports wrong totals promptly. Race/build/vet/format/contract checks pass.236 textual packet artifacts frozen before mapping disclosure; source bytes unchanged.
+- Pipeline reviewer independently confirms baseline cancellation-class loss plus a DeadlineExceeded cleanup error lost by both implementations; final cards pending. This narrows earlier passing supplied transfer evidence without rewriting frozen probes or repairing authors. Native reference4 probes match two body reads/two control declines; alternate-model4 active. Worker six-candidate all-nine review active.
+- Next: remaining native profile probes and neutral packet freezes, then disclosed comparison/independent readiness/nonpromotion gate. No guidance/runtime/publication change.
+
+
+#### 2026-10-02 — Pipeline outcome and routing limits frozen
+
+- Neutral pipeline A8/B7 final cards18 freeze218 textual artifacts before mapping disclosure; both overallC-. Baseline7 loses first independent bare cancellation errors; exposure8 fixes that specific path, but both suppress independent DeadlineExceeded during a Canceled cleanup. Exposure also misses early-producer join ordering and independent consumer error assertions; baseline has its exact-error matrix gap. Actual floor/host binary cases pass; independent probes/mutations and raw timeout-only limits retained. Passing original exposure held checks do not establish clean final-byte transfer.
+- All12 native selection captures complete and temporary physical nine-file catalogs remain exact. Reference and alternate-model each match4/4 intended body decisions. Lower-reasoning misses one applicable body read and opens the candidate for one serial control before declaring it irrelevant;2/4 match, not a routing pass. Five applicable opens and five control nonreads out of six each. These deviations surfaced in summary validation and are retained as measured limitations; no favorable rerun. Concurrency12/20, group26/40 probes.
+- Worker six-candidate neutral review remains active. Next final freeze/disclosed comparison, independent readiness and Task4 seal; zero runtime/guidance change.
+
+
+#### 2026-10-02 — Independent concurrency readiness checks started
+
+- Independent readiness reviewer received exact guidance/preflight, all completed reconstructions/profiles/counts/costs and declared selection deviations. Static/identity checks begin while final worker cards complete; final evidence verdict explicitly held until final worker freeze, map disclosure and comparison. Reviewer writes only readiness siblings, root maintains canonical continuation to avoid concurrent edits.
+- Control/library/pipeline total54 topic cards are durably frozen; workers require54 more. All nine applicability contracts remain unchanged, and packet sources/guidance untouched. No further authors/selection or guidance changes; fifteen authors/twelve probes final. Next worker freeze/disclosure/readiness, then Task4 integrity/seal/commit.
+
+
+#### 2026-10-02 — Independent exact concurrency guidance accepted
+
+- [Readiness guidance check](reviews/concurrency-readiness/guidance-check.md) independently accepts unchanged0ab21aee as a focused reviewed/uninstalled draft, with no material decision-owner/version/source-copy conflict. Fresh raw identity stage checks64 preflight artifacts/copy,8 comparator files,23 review-guidance files,9 catalog files,23 input hashes,20 source captures,12 reconstructed outcomes and launch/profile/cost records. This is static/identity acceptance, not a promotion verdict.
+- Reviewer separately confirms native routing10/12 with lower-reasoning deviations and precise outcome scope: control five applicable/four N/A, minimum execution supplied separately from control reviewer host checks; library moderate test regression and pipeline shared independent-deadline classification gaps remain. No grade averaging or wider platform/runtime claim. Final evidence disposition still held for worker freeze/disclosed map/final comparison.
+- Next: freeze all108 cards and exact source/map identities, final readiness, then seal/commit/Task4 completion. Guidance and raw author sources unchanged.
+
+
+#### 2026-10-02 — Readiness discovery/count identity check
+
+- Independent [extended identity stage](reviews/concurrency-readiness/raw/extended-identity-stage.json) also reconstructs all three excluded discovery outcomes and checks their original usage/durations and absent GOTOOLCHAIN override. Budget15 candidate/31 group and one remaining candidate slot independently corroborated. These discovery sources remain excluded from matched benefit under the corrected local study environment.
+- Final packet checker is prepared but final verdict remains held until six-worker cards/freeze, map disclosure and final comparison. No new author/selection launch, source/guidance/rubric edit or change in acceptance gates.
+
+
+#### 2026-10-02 — All concurrency outcome cards frozen and disclosed
+
+- Worker394 textual artifacts/54 cards frozen before disclosure; all108 study topic cards complete. A14C-,B12C-,C9A,D5C-,E10C,F11C-, unique causes/strengths/rejected claims/calculator traces retained. Seven worker topics apply; Security/Deployment scoped N/A, broader load/platform/threat evidence unavailable. Actual floor/current independent probes corroborate release-failure admission, post-Open stop races, cleanup cancellation and held-capacity errors. Baseline9 rejected test gap is not counted; exposure10 Close-stop mutation survives own suite.
+- Independent D5 grade uses confirmed later-input admission and Close-failure causes; raw partial-start setup timeouts remain separately attributed and do not establish an unstarted Run failure. Baseline14 original checks passed, but broader review finds three production majors and test gaps, so earlier passing observations stay narrow. Three primary first-sparse-start baselines still supply zero matched corrections.
+- [Final disclosed comparison](../../tests/go-quality-build/results/2026-10-02-concurrency-study/comparison.md), [map](../../tests/go-quality-build/results/2026-10-02-concurrency-study/neutral-packet-map.json) and per-attempt packet links ready for readiness. Independent extended identity/evidence checks saved by readiness reviewer; final verdict requested next. No source/guidance/rubric repair or extra launch.
+
+
+#### 2026-10-02 — Final readiness packet identities verified
+
+- Independent final packet checker verifies all108 cards, original/candidate source/map identities,23 unchanged review files per packet and98/236/218/394 frozen textual artifacts. D5 setup observations remain separate from confirmed later-input cause. Static acceptance stands; final negative promotion reasoning being saved.
+- Corrected root-authored comparison presentation prefixes before final hash pin; no raw card/source/guide edit. Historical direct CLI version/auth raw outputs were not durably captured; fresh closeout capability record corroborates same versions and Claude loggedIn=false, explicitly not historical replay/new native loading evidence. Scope/provenance gap retained rather than simulated.
+- Next accepting nonpromotion disposition, exact whitespace inventory/seal/commit and Task4 completion.
+
+
+#### 2026-10-02 — Concurrency readiness disposition and seal
+
+- [Independent readiness](reviews/concurrency-readiness/readiness-review.md) accepts exact0ab21aee guidance and rejects runtime promotion:0/2 fixed-primary corrections, failed clean transfer/preservation and2 routing deviations. Verified15 authors/62 reconstructed source files,108 cards, all original/candidate/catalog/freezes, budgets/costs and limits. No material guidance fix remains; raw counterevidence retained, no extra slot spent.
+- Final readiness20-artifact index SHA-256 **f68fc12440b7210b47c72a8560db6218ffa65680c7c686c8cd17dac3e66d9f80** externally anchored here, copied exactly into study. Preflight64 index remains unchanged. Final comparison SHA000dcff477fbef57edf2ba55fc1f8b979fcd3dc97bc814945a6502d19a7d4b51.
+- Concurrency study seal1347 files; [checksum index](../../tests/go-quality-build/results/2026-10-02-concurrency-study/checksums.json) SHA-256 **3c6235e6ee75c3544e80d177f8e28199bc0249142f8531f5d09621de6db5bc60** anchored outside archive. Exact30 raw whitespace paths preserved, no glob exception.15/16 candidate,31/36 group authors;12/20 candidate,26/40 group selection. Runtime five0.2.0 and both accepted-content drafts uninstalled.
+- Next final read-only closeout gate/scoped whitespace/commit/Task4 completion, then Task5 skip because context is not promoted, and exact unchanged package/portable seal/whole-branch review in Task6. No publication/global installation.

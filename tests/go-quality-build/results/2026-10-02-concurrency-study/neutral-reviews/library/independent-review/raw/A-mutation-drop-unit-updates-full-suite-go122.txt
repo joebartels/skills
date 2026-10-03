@@ -1,0 +1,54 @@
+COMMAND: rtk proxy /private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go test -mod=readonly -count=1 -timeout=2s ./...
+CWD: /private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A
+ENV: {"GOCACHE": "/private/tmp/go-neutral-library-study/independent-review/gocache", "GOMODCACHE": "/private/tmp/go-neutral-library-study/independent-review/modcache", "GOPROXY": "off", "GOSUMDB": "off", "GOTOOLCHAIN": "local", "GOWORK": "off"}
+STDOUT:
+panic: test timed out after 2s
+running tests:
+	TestConcurrentAddAndSnapshot (2s)
+
+goroutine 3 [running]:
+testing.(*M).startAlarm.func1()
+	/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:2366 +0x30c
+created by time.goFunc
+	/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/time/sleep.go:177 +0x38
+
+goroutine 1 [chan receive]:
+testing.(*T).Run(0x140001244e0, {0x1050665e0?, 0x14000108b38?}, 0x1050c93e0)
+	/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:1750 +0x32c
+testing.runTests.func1(0x140001244e0)
+	/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:2161 +0x40
+testing.tRunner(0x140001244e0, 0x14000108c58)
+	/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:1689 +0xec
+testing.runTests(0x1400012e030, {0x1051944c0, 0x3, 0x3}, {0x14000108d18?, 0x10501acf0?, 0x105198e60?})
+	/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:2159 +0x3b0
+testing.(*M).Run(0x1400010e0a0)
+	/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:2027 +0x5a4
+main.main()
+	_testmain.go:51 +0x16c
+
+goroutine 35 [semacquire]:
+sync.runtime_Semacquire(0x140001201c0?)
+	/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/runtime/sema.go:62 +0x2c
+sync.(*WaitGroup).Wait(0x140001160d0)
+	/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/sync/waitgroup.go:116 +0x74
+example.com/library-shared-state.TestConcurrentAddAndSnapshot(0x14000124820)
+	/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals_test.go:56 +0x17c
+testing.tRunner(0x14000124820, 0x1050c93e0)
+	/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:1689 +0xec
+created by testing.(*T).Run in goroutine 1
+	/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/src/testing/testing.go:1742 +0x318
+
+goroutine 44 [runnable]:
+example.com/library-shared-state.(*Totals).Snapshot(0x1400011a030?)
+	/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals.go:34 +0xc8
+example.com/library-shared-state.TestConcurrentAddAndSnapshot.func2()
+	/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals_test.go:43 +0x70
+created by example.com/library-shared-state.TestConcurrentAddAndSnapshot in goroutine 35
+	/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-A/totals_test.go:39 +0x164
+FAIL	example.com/library-shared-state	2.203s
+FAIL
+
+STDERR:
+
+STATUS: 1
+TIMED_OUT: False

@@ -1,0 +1,5 @@
+Implemented bounded lease cohorts in [host.go](/private/tmp/go-task-hkpe1mxy/host.go) and added lifecycle tests in [host_test.go](/private/tmp/go-task-hkpe1mxy/host_test.go). Serve now observes Open failures as they arrive, stops the cohort, joins Runs before releasing leases, closes acquired leases once, and preserves Run and Close errors with `errors.Is`. The `Lease` API and Go 1.22 module version remain unchanged.
+
+Skills opened and used: `go-api-contracts`, `go-behavior-tests`, `go-concurrency-and-ownership`, and `go-test-isolation`.
+
+Checks passed: `rtk go test ./...` and `rtk go test -race ./...`. `rtk git diff --check` could not run because this directory is not a Git repository. Limitation: admission uses batches; it may wait for the current cohort to finish before admitting a job that arrives later, even if that cohort has unused capacity.

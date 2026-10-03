@@ -1,0 +1,273 @@
+package workers
+
+import (
+	"context"
+	"errors"
+	"sync"
+	"sync/atomic"
+	"testing"
+	"time"
+)
+
+const waitBound = 3 * time.Second
+
+func receive[T any](t *testing.T, ch <-chan T) T {
+	t.Helper()
+	select {
+	case v := <-ch:
+		return v
+	case <-time.After(waitBound):
+		t.Fatal("timed out waiting for event")
+		var zero T
+		return zero
+	}
+}
+
+func await(t *testing.T, ch <-chan struct{}) {
+	t.Helper()
+	receive(t, ch)
+}
+
+type testLease struct {
+	run    func(context.Context, Job) error
+	close  func() error
+	closed atomic.Int64
+}
+
+func (l *testLease) Run(ctx context.Context, job Job) error { return l.run(ctx, job) }
+func (l *testLease) Close() error {
+	l.closed.Add(1)
+	if l.close != nil {
+		return l.close()
+	}
+	return nil
+}
+
+func TestServeBoundsConcurrentLeasesAndWaitsForRunBeforeClose(t *testing.T) {
+	jobs := make(chan Job, 3)
+	jobs <- 1
+	jobs <- 2
+	jobs <- 3
+	close(jobs)
+
+	started := make(chan Job, 3)
+	release := make(chan struct{})
+	var mu sync.Mutex
+	leases := make([]*testLease, 0, 3)
+	result := make(chan error, 1)
+	go func() {
+		result <- Serve(context.Background(), jobs, 2, func(context.Context, Job) (Lease, error) {
+			l := &testLease{run: func(ctx context.Context, job Job) error {
+				started <- job
+				select {
+				case <-release:
+					return nil
+				case <-ctx.Done():
+					return ctx.Err()
+				}
+			}}
+			mu.Lock()
+			leases = append(leases, l)
+			mu.Unlock()
+			return l, nil
+		})
+	}()
+
+	first := receive(t, started)
+	second := receive(t, started)
+	if first == second {
+		t.Fatalf("duplicate jobs started: %d", first)
+	}
+	mu.Lock()
+	if len(leases) != 2 {
+		t.Fatalf("leases admitted at capacity = %d, want 2", len(leases))
+	}
+	for _, l := range leases {
+		if l.closed.Load() != 0 {
+			t.Fatal("lease closed while Run was held")
+		}
+	}
+	mu.Unlock()
+	close(release)
+	third := receive(t, started)
+	if third == first || third == second {
+		t.Fatalf("third job repeated: %d", third)
+	}
+	if err := receive(t, result); err != nil {
+		t.Fatalf("Serve: %v", err)
+	}
+	mu.Lock()
+	defer mu.Unlock()
+	if len(leases) != 3 {
+		t.Fatalf("leases acquired = %d, want 3", len(leases))
+	}
+	for _, l := range leases {
+		if got := l.closed.Load(); got != 1 {
+			t.Errorf("Close calls = %d, want 1", got)
+		}
+	}
+}
+
+func TestServeRunFailureStopsPeersAndRetainsCloseFailures(t *testing.T) {
+	runErr := errors.New("run failed")
+	closeErr := errors.New("close failed")
+	jobs := make(chan Job, 2)
+	jobs <- 1
+	jobs <- 2
+	close(jobs)
+	peerStarted := make(chan struct{})
+	peerDone := make(chan struct{})
+	var closes atomic.Int64
+	err := Serve(context.Background(), jobs, 2, func(_ context.Context, job Job) (Lease, error) {
+		return &testLease{
+			run: func(ctx context.Context, _ Job) error {
+				if job == 1 {
+					return runErr
+				}
+				close(peerStarted)
+				<-ctx.Done()
+				close(peerDone)
+				return ctx.Err()
+			},
+			close: func() error { closes.Add(1); return closeErr },
+		}, nil
+	})
+	if !errors.Is(err, runErr) || !errors.Is(err, closeErr) {
+		t.Fatalf("Serve error = %v, want run and close errors", err)
+	}
+	await(t, peerStarted)
+	await(t, peerDone)
+	if got := closes.Load(); got != 2 {
+		t.Fatalf("Close calls = %d, want 2", got)
+	}
+}
+
+func TestServeOpenFailureClosesAcquiredLeaseAfterJoining(t *testing.T) {
+	openErr := errors.New("open failed")
+	jobs := make(chan Job, 2)
+	jobs <- 1
+	jobs <- 2
+	close(jobs)
+	started := make(chan struct{})
+	var closed atomic.Int64
+	var mu sync.Mutex
+	var first *testLease
+	result := make(chan error, 1)
+	go func() {
+		result <- Serve(context.Background(), jobs, 2, func(_ context.Context, job Job) (Lease, error) {
+			if job == 2 {
+				return nil, openErr
+			}
+			lease := &testLease{run: func(context.Context, Job) error { close(started); return nil }, close: func() error { closed.Add(1); return nil }}
+			mu.Lock()
+			first = lease
+			mu.Unlock()
+			return lease, nil
+		})
+	}()
+	await(t, started)
+	if err := receive(t, result); !errors.Is(err, openErr) {
+		t.Fatalf("Serve error = %v, want open error", err)
+	}
+	if got := closed.Load(); got != 1 {
+		t.Fatalf("acquired lease Close calls = %d, want 1", got)
+	}
+	mu.Lock()
+	if first == nil || first.closed.Load() != 1 {
+		t.Fatal("successful lease was not released")
+	}
+	mu.Unlock()
+}
+
+func TestServeCancellationWhileWaitingForInput(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	jobs := make(chan Job)
+	opened := atomic.Int64{}
+	result := make(chan error, 1)
+	go func() {
+		result <- Serve(ctx, jobs, 2, func(context.Context, Job) (Lease, error) { opened.Add(1); return nil, nil })
+	}()
+	cancel()
+	if err := receive(t, result); !errors.Is(err, context.Canceled) {
+		t.Fatalf("Serve error = %v, want context cancellation", err)
+	}
+	if got := opened.Load(); got != 0 {
+		t.Fatalf("Open calls = %d, want 0", got)
+	}
+}
+
+func TestServeCancellationStopsRunAndReturnsOnlyAfterClose(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	jobs := make(chan Job, 1)
+	jobs <- 1
+	close(jobs)
+	started := make(chan struct{})
+	closed := make(chan struct{})
+	result := make(chan error, 1)
+	go func() {
+		result <- Serve(ctx, jobs, 2, func(context.Context, Job) (Lease, error) {
+			return &testLease{
+				run:   func(ctx context.Context, _ Job) error { close(started); <-ctx.Done(); return ctx.Err() },
+				close: func() error { close(closed); return nil },
+			}, nil
+		})
+	}()
+	await(t, started)
+	cancel()
+	err := receive(t, result)
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("Serve error = %v, want caller cancellation", err)
+	}
+	await(t, closed)
+}
+
+func TestServeAcquiredLeaseNotStartedStillCloses(t *testing.T) {
+	runErr := errors.New("run failed")
+	jobs := make(chan Job, 2)
+	jobs <- 1
+	jobs <- 2
+	close(jobs)
+	var startedSecond, closedFirst atomic.Int64
+	err := Serve(context.Background(), jobs, 2, func(_ context.Context, job Job) (Lease, error) {
+		return &testLease{
+			run: func(ctx context.Context, _ Job) error {
+				if job == 1 {
+					return runErr
+				}
+				startedSecond.Add(1)
+				<-ctx.Done()
+				return ctx.Err()
+			},
+			close: func() error {
+				if job == 1 {
+					closedFirst.Add(1)
+				}
+				return nil
+			},
+		}, nil
+	})
+	if !errors.Is(err, runErr) {
+		t.Fatalf("Serve error = %v, want run error", err)
+	}
+	if startedSecond.Load() != 1 || closedFirst.Load() != 1 {
+		t.Fatalf("second runs=%d first lease closes=%d, want 1 each", startedSecond.Load(), closedFirst.Load())
+	}
+}
+
+func TestServeCloseFailureAfterSuccessfulRun(t *testing.T) {
+	closeErr := errors.New("close failed")
+	jobs := make(chan Job, 1)
+	jobs <- 1
+	close(jobs)
+	var accepted, closes atomic.Int64
+	err := Serve(context.Background(), jobs, 2, func(context.Context, Job) (Lease, error) {
+		return &testLease{run: func(context.Context, Job) error { accepted.Add(1); return nil }, close: func() error { closes.Add(1); return closeErr }}, nil
+	})
+	if !errors.Is(err, closeErr) {
+		t.Fatalf("Serve error = %v, want close error", err)
+	}
+	if accepted.Load() != 1 || closes.Load() != 1 {
+		t.Fatalf("accepted=%d closes=%d, want 1 each", accepted.Load(), closes.Load())
+	}
+}

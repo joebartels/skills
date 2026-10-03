@@ -1,0 +1,67 @@
+[
+  {
+    "meaning": "split-compound-publication",
+    "substitution": {
+      "file": "totals.go",
+      "old": "package totals\n\nimport \"sync\"\n\n// Snapshot is a value observation of accepted updates.\ntype Snapshot struct {\n\tCount int64\n\tSum   int64\n}\n\n// Totals collects updates. Its zero value is usable; do not copy after use.\ntype Totals struct {\n\tmu    sync.Mutex\n\tcount int64\n\tsum   int64\n}\n\n// Add accepts one update.\nfunc (t *Totals) Add(delta int64) {\n\tt.mu.Lock()\n\tt.count++\n\tt.sum += delta\n\tt.mu.Unlock()\n}\n\n// Snapshot returns current totals.\nfunc (t *Totals) Snapshot() Snapshot {\n\tt.mu.Lock()\n\tdefer t.mu.Unlock()\n\treturn Snapshot{Count: t.count, Sum: t.sum}\n}\n",
+      "new": "package totals\n\nimport (\n\t\"runtime\"\n\t\"sync/atomic\"\n)\n\ntype Snapshot struct {\n\tCount int64\n\tSum   int64\n}\ntype Totals struct{ count, sum atomic.Int64 }\n\nfunc (t *Totals) Add(delta int64) { t.count.Add(1); runtime.Gosched(); t.sum.Add(delta) }\nfunc (t *Totals) Snapshot() Snapshot {\n\tcount := t.count.Load()\n\truntime.Gosched()\n\treturn Snapshot{count, t.sum.Load()}\n}\n"
+    },
+    "original_held_named": {
+      "argv": [
+        "go",
+        "test",
+        "-run",
+        "^TestControllerCoherentSnapshots$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-gxiwubz4",
+      "status": 0,
+      "stdout": "ok  \texample.com/library-shared-state\t0.167s\n",
+      "stderr": ""
+    },
+    "compile": {
+      "argv": [
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-gxiwubz4",
+      "status": 0,
+      "stdout": "ok  \texample.com/library-shared-state\t0.162s [no tests to run]\n",
+      "stderr": ""
+    },
+    "author_tests": {
+      "argv": [
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-gxiwubz4",
+      "status": 1,
+      "stdout": "--- FAIL: TestConcurrentAddsAndSnapshots (0.00s)\n    totals_test.go:46: incoherent snapshot: {Count:50 Sum:49}\nFAIL\nFAIL\texample.com/library-shared-state\t0.116s\nFAIL\n",
+      "stderr": ""
+    },
+    "held_named": {
+      "argv": [
+        "go",
+        "test",
+        "-run",
+        "^TestControllerCoherentSnapshots$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-gxiwubz4",
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerCoherentSnapshots (0.01s)\n    controller_contract_test.go:48: incoherent Count/Sum publication\nFAIL\nFAIL\texample.com/library-shared-state\t0.184s\nFAIL\n",
+      "stderr": ""
+    },
+    "qualified": true
+  }
+]

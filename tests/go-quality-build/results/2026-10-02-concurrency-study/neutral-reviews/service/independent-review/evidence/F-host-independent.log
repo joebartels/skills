@@ -1,0 +1,38 @@
+{
+  "candidate": "F",
+  "name": "host-independent",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-run",
+    "^TestIndependent",
+    "-count=1",
+    "-timeout=20s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/F",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly"
+  },
+  "status": 1,
+  "elapsed_seconds": 0.421
+}
+STDOUT
+--- FAIL: TestIndependentAcquiredAfterCancelSkipsRun (0.00s)
+    review_independent_test.go:15: acquired after cancellation err=context canceled runs=1 closes=1; want canceled, zero Runs, one Close
+--- FAIL: TestIndependentHealthyCohortNotCanceled (0.00s)
+    review_independent_test.go:29: healthy full cohort was canceled before successful work was released
+    review_independent_test.go:30: uncanceled successful input returned failure: run job 1: context canceled
+        run job 2: context canceled
+--- FAIL: TestIndependentCompletedRunsRetainCapacity (0.17s)
+    review_independent_test.go:36: acquired leases until Close: err=<nil> peak=8 alive=0 closes=8; want nil, peak<=2, zero alive, eight closes
+FAIL
+FAIL	example.com/service-owned-workers	0.299s
+FAIL
+
+STDERR

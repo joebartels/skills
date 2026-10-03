@@ -1,0 +1,29 @@
+{
+  "id": "B-mutation-split-update-go122",
+  "argv": [
+    "rtk",
+    "proxy",
+    "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+    "test",
+    "-mod=readonly",
+    "-count=1",
+    "-timeout=2s",
+    "-run",
+    "^TestConcurrentAdd",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-library-study/independent-review/work/split-update-B",
+  "environment_overrides": {
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOMODCACHE": "/private/tmp/go-neutral-library-study/independent-review/modcache",
+    "GOCACHE": "/private/tmp/go-neutral-library-study/independent-review/gocache"
+  },
+  "status": 1,
+  "timed_out": false,
+  "stdout": "--- FAIL: TestConcurrentAddsAndSnapshots (0.00s)\n    totals_test.go:46: incoherent snapshot: {Count:2 Sum:0}\nFAIL\nFAIL\texample.com/library-shared-state\t0.157s\nFAIL\n",
+  "stderr": "",
+  "elapsed_seconds": 0.295
+}

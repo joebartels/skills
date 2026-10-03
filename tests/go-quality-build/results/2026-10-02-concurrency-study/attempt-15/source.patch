@@ -1,0 +1,27 @@
+--- a/sum.go
++++ b/sum.go
+@@ -2,9 +2,9 @@
+ 
+ func sumPositive(values []int) int {
+ 	sum := 0
+-	for i := 0; i+1 < len(values); i++ {
+-		if values[i] > 0 {
+-			sum += values[i]
++	for _, value := range values {
++		if value > 0 {
++			sum += value
+ 		}
+ 	}
+ 	return sum
+--- a/sum_test.go
++++ b/sum_test.go
+@@ -7,3 +7,9 @@
+ 		t.Fatalf("sum=%d", got)
+ 	}
+ }
++
++func TestSumIncludesFinalPositiveValue(t *testing.T) {
++	if got := sumPositive([]int{2, -1, 3}); got != 5 {
++		t.Fatalf("sum=%d, want 5", got)
++	}
++}

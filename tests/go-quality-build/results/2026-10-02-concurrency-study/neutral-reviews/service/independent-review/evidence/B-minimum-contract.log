@@ -1,0 +1,32 @@
+{
+  "candidate": "B",
+  "name": "minimum-contract",
+  "argv": [
+    "rtk",
+    "proxy",
+    "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+    "test",
+    "-run",
+    "^TestController|^TestReview",
+    "-count=1",
+    "-timeout=20s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly"
+  },
+  "status": 1,
+  "elapsed_seconds": 0.582
+}
+STDOUT
+--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)
+    review_supplementary_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required
+FAIL
+FAIL	example.com/service-owned-workers	0.449s
+FAIL
+
+STDERR

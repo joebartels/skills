@@ -1,0 +1,32 @@
+{
+  "candidate": "B",
+  "name": "host-contract",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-run",
+    "^TestController|^TestReview",
+    "-count=1",
+    "-timeout=20s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly"
+  },
+  "status": 1,
+  "elapsed_seconds": 0.583
+}
+STDOUT
+--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)
+    review_supplementary_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required
+FAIL
+FAIL	example.com/service-owned-workers	0.454s
+FAIL
+
+STDERR

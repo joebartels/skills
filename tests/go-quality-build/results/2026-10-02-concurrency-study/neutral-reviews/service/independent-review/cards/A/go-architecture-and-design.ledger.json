@@ -1,0 +1,52 @@
+{
+  "scope": "Candidate A complete bounded code area for Architecture & Design; source SHA256 host.go=c45a48c184493ebe70f1f52cbb831194f2a25604e49776687930cd951fd34ab7; host_test.go=ea4fa70df361e0a53d6b563b009549c328abc0a8a8d0a3e198a5d3842e6db437",
+  "coverage": [
+    {
+      "id": "go-architecture-and-design",
+      "status": "complete",
+      "reason": "Applicable: the host-supplied Lease protocol, injected Open dependency, cancellation/error propagation and cohort ownership are design boundaries; reviewed API, ownership and composition without demanding another framework."
+    }
+  ],
+  "findings": [
+    {
+      "id": "A/P1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Close failures are appended but never enter the stop state before the next cohort.",
+      "evidence": "candidates/A/host.go:60; candidates/A/host.go:85; evidence/A-host-independent.log: TestIndependentCloseFailureStopsNextAdmission; evidence/A-minimum-independent.log: same intended assertion; evidence/A-host-race.log: repeated intended assertion",
+      "correction": "Have closeCohort set stop/cancel on any Close error, while still closing all owned leases exactly once.",
+      "sources": [
+        "cards/A/go-architecture-and-design.md#A-P1"
+      ]
+    },
+    {
+      "id": "A/P2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Successful Open results can start Run using only stale stop state without rechecking caller/work context.",
+      "evidence": "candidates/A/host.go:143; candidates/A/host.go:174; evidence/stress-commands.json: 3 forbidden Runs in 2000 concurrent valid calls on host race build; evidence/minimum-stress-command.json: 1, 1 and 6 forbidden Runs per 2000 calls on actual minimum race build",
+      "correction": "After collecting/owning the Open result, observe context cancellation and set stop before starting Run; retain cancellation cause.",
+      "sources": [
+        "cards/A/go-architecture-and-design.md#A-P2"
+      ]
+    },
+    {
+      "id": "A/P3",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Final join/Close cleanup does not observe caller cancellation again before returning accumulated errors.",
+      "evidence": "candidates/A/host.go:181; candidates/A/host.go:183; evidence/A-host-independent.log: TestIndependentCallerCancellationDuringFailureCleanup; evidence/A-minimum-independent.log: same intended error identity assertion",
+      "correction": "Append the caller cancellation observed after owned cleanup before returning, without dropping independent errors.",
+      "sources": [
+        "cards/A/go-architecture-and-design.md#A-P3"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "A/go-architecture-and-design/G1",
+      "evidence": "The exact Job/Lease/Serve API remains compatible and construction stays host-owned through the Open function, with no unrelated framework/public API; both actual toolchains compile every source package."
+    }
+  ],
+  "safeguards": []
+}

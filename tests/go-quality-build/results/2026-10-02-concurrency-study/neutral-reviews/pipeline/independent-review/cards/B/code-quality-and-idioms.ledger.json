@@ -1,0 +1,30 @@
+{
+  "scope": "Bounded code-area review of candidate B source snapshot (see source-hashes-before.json), CLI/private runPipeline and delivered tests, judged against original README/source; Go1.22 minimum, actual Go1.22.12 and host Go1.26.5 darwin/arm64. Findings are existing-in-scope in this delivered snapshot.",
+  "coverage": [
+    {
+      "id": "code-quality-and-idioms",
+      "status": "complete",
+      "reason": "The local context state and error classification need clear, truthful semantics; Go 1.22, formatting and vet also apply."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B/F1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "suppressStopError uses only an active parent and membership in the two exact cancellation sentinels; it has no evidence that a callback error was caused by coordinated stopping.",
+      "evidence": "candidates/B/cmd/pipeline/pipeline.go:43,46-49. TestControllerIndependentCancellationClassBeforeStop fails on host, actual Go1.22.12 and race/shuffle. Independent TestReviewIndependentExactBeforeStop reproduces both producer and consumer first exact-Canceled errors being lost before child cancellation. TestReviewIndependentDeadlineAfterStop also loses DeadlineExceeded when the actual child stop is Canceled.",
+      "correction": "Attach actual child stop/error state to each callback result, retain the first independent failure observed before stopping, and suppress only the exact matching context error generated for coordinated stopping. Preserve other exact cancellation-class errors and every wrapped/joined independent error.",
+      "sources": [
+        "B/code-quality-and-idioms/F1"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "B/code-quality-and-idioms/G1",
+      "evidence": "The code uses supported context/errors primitives, direction-restricted channel parameters and exact equality to avoid stripping wrapped causes. gofmt -d is empty and both actual toolchains pass vet; this does not validate the faulty suppression predicate."
+    }
+  ],
+  "safeguards": []
+}

@@ -1,0 +1,29 @@
+{
+  "id": "B-mutation-drop-unit-updates-host",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-mod=readonly",
+    "-count=1",
+    "-timeout=2s",
+    "-run",
+    "^TestConcurrentAdd",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-library-study/independent-review/work/drop-unit-updates-B",
+  "environment_overrides": {
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOPROXY": "off",
+    "GOSUMDB": "off",
+    "GOMODCACHE": "/private/tmp/go-neutral-library-study/independent-review/modcache",
+    "GOCACHE": "/private/tmp/go-neutral-library-study/independent-review/gocache"
+  },
+  "status": 1,
+  "timed_out": false,
+  "stdout": "--- FAIL: TestConcurrentAddsAndSnapshots (0.00s)\n    totals_test.go:59: final snapshot = {Count:0 Sum:0}\nFAIL\nFAIL\texample.com/library-shared-state\t0.161s\nFAIL\n",
+  "stderr": "",
+  "elapsed_seconds": 0.312
+}

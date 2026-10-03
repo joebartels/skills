@@ -1,0 +1,323 @@
+--- a/host.go
++++ b/host.go
+@@ -2,6 +2,7 @@
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"sync"
+ )
+ 
+@@ -14,18 +15,159 @@
+ 	Close() error
+ }
+ 
+-// Serve runs supplied jobs using leases acquired by the host.
++// Serve runs supplied jobs using at most limit leases at a time.
+ func Serve(ctx context.Context, jobs <-chan Job, limit int, open func(context.Context, Job) (Lease, error)) error {
+-	var runs sync.WaitGroup
+-	for job := range jobs {
+-		lease, err := open(ctx, job)
+-		if err != nil {
+-			return err
++	if err := ctx.Err(); err != nil {
++		return err
++	}
++	workCtx, cancel := context.WithCancel(ctx)
++	defer cancel()
++	var result error
++
++	for {
++		if err := ctx.Err(); err != nil {
++			result = errors.Join(result, err)
++			break
+ 		}
+-		runs.Add(1)
+-		go func(l Lease, j Job) { defer runs.Done(); _ = l.Run(ctx, j) }(lease, job)
+-		_ = lease.Close()
++		cohort := make([]Job, 0, limit)
++		select {
++		case <-ctx.Done():
++			result = errors.Join(result, ctx.Err())
++			goto stop
++		case job, ok := <-jobs:
++			if !ok {
++				return result
++			}
++			cohort = append(cohort, job)
++		}
++		for len(cohort) < limit {
++			select {
++			case job, ok := <-jobs:
++				if !ok {
++					goto process
++				}
++				cohort = append(cohort, job)
++			default:
++				goto process
++			}
++		}
++	process:
++		if len(cohort) == 0 {
++			return result
++		}
++		leases := make([]Lease, len(cohort))
++		type openResult struct {
++			i     int
++			lease Lease
++			err   error
++		}
++		opened := make(chan openResult, len(cohort))
++		for i, job := range cohort {
++			go func(i int, job Job) {
++				lease, err := open(workCtx, job)
++				opened <- openResult{i: i, lease: lease, err: err}
++			}(i, job)
++		}
++		failed := false
++		callerDone := ctx.Done()
++		for received := 0; received < len(cohort); received++ {
++			select {
++			case outcome := <-opened:
++				leases[outcome.i] = outcome.lease
++				if outcome.err != nil {
++					result = errors.Join(result, outcome.err)
++					failed = true
++					cancel()
++				} else if outcome.lease == nil {
++					result = errors.Join(result, errors.New("open returned a nil lease without error"))
++					failed = true
++					cancel()
++				}
++			case <-callerDone:
++				result = errors.Join(result, ctx.Err())
++				failed = true
++				cancel()
++				// Open cooperates with this stop; continue collecting owned leases.
++				callerDone = nil
++				received--
++			}
++		}
++		if ctx.Err() != nil {
++			result = errors.Join(result, ctx.Err())
++			failed = true
++		}
++		type runResult struct{ err error }
++		done := make(chan runResult, len(leases))
++		var runs sync.WaitGroup
++		runCount := 0
++		for i, lease := range leases {
++			if lease == nil {
++				continue
++			}
++			if failed {
++				continue
++			}
++			runs.Add(1)
++			runCount++
++			go func(i int, l Lease, j Job) {
++				defer runs.Done()
++				done <- runResult{err: l.Run(workCtx, j)}
++			}(i, lease, cohort[i])
++		}
++		if !failed {
++			// Observe failures while siblings are running so they can be asked to stop.
++			completed := 0
++			for completed < runCount {
++				select {
++				case outcome := <-done:
++					completed++
++					if outcome.err != nil {
++						result = errors.Join(result, outcome.err)
++						failed = true
++						cancel()
++					}
++				case <-ctx.Done():
++					result = errors.Join(result, ctx.Err())
++					failed = true
++					cancel()
++					// The caller's done channel stays ready; drain remaining runs below.
++					goto joinRuns
++				}
++			}
++		}
++	joinRuns:
++		runs.Wait()
++		// Collect any outcomes not consumed by the live failure observer.
++		for {
++			select {
++			case outcome := <-done:
++				if outcome.err != nil {
++					result = errors.Join(result, outcome.err)
++				}
++			default:
++				goto outcomesCollected
++			}
++		}
++	outcomesCollected:
++		if failed {
++			cancel()
++		}
++		// The cohort-wide Run join above is the release barrier.
++		for _, lease := range leases {
++			if lease != nil {
++				result = errors.Join(result, lease.Close())
++			}
++		}
++		if failed || ctx.Err() != nil {
++			if ctx.Err() != nil {
++				result = errors.Join(result, ctx.Err())
++			}
++			break
++		}
+ 	}
+-	runs.Wait()
+-	return nil
++	return result
++
++stop:
++	cancel()
++	return result
+ }
+--- a/host_test.go
++++ b/host_test.go
+@@ -2,25 +2,129 @@
+ 
+ import (
+ 	"context"
++	"errors"
++	"sync"
+ 	"sync/atomic"
+ 	"testing"
++	"time"
+ )
+ 
+-type basicLease struct {
+-	accepted *atomic.Int64
+-	closed   *atomic.Int64
++type testLease struct {
++	run   func(context.Context, Job) error
++	close func() error
+ }
+ 
+-func (l *basicLease) Run(context.Context, Job) error { l.accepted.Add(1); return nil }
+-func (l *basicLease) Close() error                   { l.closed.Add(1); return nil }
+-func TestServeFiniteJobs(t *testing.T) {
++func (l *testLease) Run(ctx context.Context, j Job) error { return l.run(ctx, j) }
++func (l *testLease) Close() error                         { return l.close() }
++
++func waitSignal(t *testing.T, ch <-chan struct{}, what string) {
++	t.Helper()
++	select {
++	case <-ch:
++	case <-time.After(2 * time.Second):
++		t.Fatalf("timed out waiting for %s", what)
++	}
++}
++
++func TestServeRunsConcurrentlyAndJoinsCohortBeforeClose(t *testing.T) {
+ 	jobs := make(chan Job, 2)
+ 	jobs <- 1
+ 	jobs <- 2
+ 	close(jobs)
+-	var accepted, closed atomic.Int64
+-	err := Serve(context.Background(), jobs, 2, func(context.Context, Job) (Lease, error) { return &basicLease{&accepted, &closed}, nil })
+-	if err != nil || accepted.Load() != 2 || closed.Load() != 2 {
+-		t.Fatalf("accepted=%d closed=%d err=%v", accepted.Load(), closed.Load(), err)
++	started := make(chan struct{}, 2)
++	release := make(chan struct{})
++	var finished atomic.Int32
++	var closed atomic.Int32
++	served := make(chan error, 1)
++	go func() {
++		served <- Serve(context.Background(), jobs, 2, func(context.Context, Job) (Lease, error) {
++			return &testLease{
++				run: func(context.Context, Job) error { started <- struct{}{}; <-release; finished.Add(1); return nil },
++				close: func() error {
++					if finished.Load() != 2 {
++						t.Errorf("lease closed before cohort Runs finished: %d", finished.Load())
++					}
++					closed.Add(1)
++					return nil
++				},
++			}, nil
++		})
++	}()
++	waitSignal(t, started, "first Run")
++	waitSignal(t, started, "second concurrent Run")
++	select {
++	case err := <-served:
++		t.Fatalf("Serve returned before Runs completed: %v", err)
++	default:
++	}
++	close(release)
++	select {
++	case err := <-served:
++		if err != nil {
++			t.Fatal(err)
++		}
++	case <-time.After(2 * time.Second):
++		t.Fatal("Serve did not finish after Runs were released")
++	}
++	if closed.Load() != 2 {
++		t.Fatalf("closed=%d, want 2", closed.Load())
+ 	}
+ }
++
++func TestServeRetainsIndependentRunAndCloseErrors(t *testing.T) {
++	runErr, closeErr := errors.New("run failed"), errors.New("close failed")
++	jobs := make(chan Job, 1)
++	jobs <- 7
++	close(jobs)
++	err := Serve(context.Background(), jobs, 1, func(context.Context, Job) (Lease, error) {
++		return &testLease{run: func(context.Context, Job) error { return runErr }, close: func() error { return closeErr }}, nil
++	})
++	if !errors.Is(err, runErr) || !errors.Is(err, closeErr) {
++		t.Fatalf("Serve error %v must retain Run and Close errors", err)
++	}
++}
++
++func TestServeCancellationInterruptsOpenInputWait(t *testing.T) {
++	ctx, cancel := context.WithCancel(context.Background())
++	jobs := make(chan Job)
++	var opened atomic.Int32
++	done := make(chan error, 1)
++	go func() {
++		done <- Serve(ctx, jobs, 2, func(context.Context, Job) (Lease, error) { opened.Add(1); return nil, nil })
++	}()
++	cancel()
++	select {
++	case err := <-done:
++		if !errors.Is(err, context.Canceled) {
++			t.Fatalf("Serve error=%v, want context.Canceled", err)
++		}
++	case <-time.After(2 * time.Second):
++		t.Fatal("Serve remained blocked on open jobs channel after cancellation")
++	}
++	if opened.Load() != 0 {
++		t.Fatalf("opened=%d after already-canceled call", opened.Load())
++	}
++}
++
++func TestServeClosesAcquiredLeaseWhenOpenPeerFails(t *testing.T) {
++	openErr := errors.New("open failed")
++	jobs := make(chan Job, 2)
++	jobs <- 1
++	jobs <- 2
++	close(jobs)
++	var once sync.Once
++	var closed atomic.Int32
++	err := Serve(context.Background(), jobs, 2, func(_ context.Context, job Job) (Lease, error) {
++		if job == 2 {
++			once.Do(func() {})
++			return nil, openErr
++		}
++		return &testLease{run: func(context.Context, Job) error { t.Error("Run started after cohort Open failure"); return nil }, close: func() error { closed.Add(1); return nil }}, nil
++	})
++	if !errors.Is(err, openErr) {
++		t.Fatalf("Serve error=%v, want Open error", err)
++	}
++	if closed.Load() != 1 {
++		t.Fatalf("closed=%d, want acquired lease released once", closed.Load())
++	}
++}

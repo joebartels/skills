@@ -1,0 +1,33 @@
+{
+  "candidate": "F",
+  "name": "host-contract",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-run",
+    "^TestController|^TestReview",
+    "-count=1",
+    "-timeout=20s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/F",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly"
+  },
+  "status": 1,
+  "elapsed_seconds": 0.325
+}
+STDOUT
+--- FAIL: TestControllerPartialStartAndBlockedAdmission (0.00s)
+    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (0.00s)
+        review_held_test.go:190: Run started on lease acquired after stopping
+FAIL
+FAIL	example.com/service-owned-workers	0.198s
+FAIL
+
+STDERR

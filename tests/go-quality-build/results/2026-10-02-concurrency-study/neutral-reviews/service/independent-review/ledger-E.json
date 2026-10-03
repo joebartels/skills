@@ -1,0 +1,74 @@
+{
+  "scope": "Candidate E complete bounded code-area review at exact supplied source hashes; standard-library worker-host API, Go 1.22 minimum.",
+  "coverage": [
+    {
+      "id": "go-architecture-and-design",
+      "status": "complete",
+      "reason": "Applicable: the host-supplied Lease protocol, injected Open dependency, cancellation/error propagation and cohort ownership are design boundaries; reviewed API, ownership and composition without demanding another framework."
+    },
+    {
+      "id": "go-code-quality-and-idioms",
+      "status": "complete",
+      "reason": "Applicable: reviewed local state transitions, result collection, checked errors, context guards, docs, value/closure semantics under go 1.22; gofmt and vet independently executed."
+    },
+    {
+      "id": "go-correctness-and-compatibility",
+      "status": "complete",
+      "reason": "Applicable: reviewed every README result/lifecycle obligation, API shape, empty/finite/open input, partial acquisition, all three failure stages, cancellation before/during/stopping, successful effects and supported Go minimum."
+    },
+    {
+      "id": "go-testing",
+      "status": "complete",
+      "reason": "Applicable: reviewed candidate host_test.go assertions, doubles, event gates, cleanup and whether meaningful contract violations evade its authored suite. External held/supplementary/independent probes verify behavior; they are not additions to the candidate regression suite."
+    },
+    {
+      "id": "go-security",
+      "status": "not_applicable",
+      "reason": "Not applicable within this bounded trusted-host API: Job is a caller-supplied integer; Open and Lease are trusted collaborators; there is no demonstrated attacker, authorization boundary, sensitive sink, credential, cryptographic or network/file parsing decision. General resource failures are not recast as vulnerabilities. No advisory scan or security assessment of an unspecified host is claimed."
+    },
+    {
+      "id": "go-observability-and-resilience",
+      "status": "complete",
+      "reason": "Applicable: cancellation, stop propagation, failure containment, joining actual cleanup and errors.Is diagnostics are the available library signals. No service telemetry, retries or arbitrary timeout requirement is inferred."
+    },
+    {
+      "id": "go-performance-and-resource-management",
+      "status": "complete",
+      "reason": "Applicable: limit bounds acquired leases through Close, cohort completion controls goroutines/resources, and available capacity must be used. Assessed scaling/lifetime and bounded event counts; no microbenchmark or production latency claim."
+    },
+    {
+      "id": "go-dependencies-and-reproducibility",
+      "status": "complete",
+      "reason": "Applicable: go.mod declares Go 1.22 and standard-library-only production/tests. Verified standalone readonly resolution, host and actual minimum compilation/test execution, imports, module graph and exact input hashes. No generated/native/release inputs or bit-identical artifact contract."
+    },
+    {
+      "id": "go-deployment-and-operations",
+      "status": "not_applicable",
+      "reason": "Not applicable to the bounded library code area: no configured release artifact, CI/promotion path, process signals, container, runtime configuration, health/routing or grace budget decision is supplied or promised. Host deployment evidence is unavailable outside scope and excluded, not reported as passing. Library lifecycle is assessed by the applicable topics."
+    }
+  ],
+  "findings": [
+    {
+      "id": "E/T1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Close-only failure fixtures cannot distinguish retaining the error from stopping future admission.",
+      "evidence": "candidates/E/host_test.go:310; candidates/E/host_test.go:345; evidence/mutation-commands.json: remove-close-failure-stop authored suite passes host and minimum; evidence/mutation-commands.json: intended TestIndependentCloseFailureStopsNextAdmission fails with opened=3, closed=3 on both versions; mutations/E/remove-close-failure-stop/mutation.patch.txt; The source implements the important stop-after-Close contract correctly, but a compiled mutation removing only that transition evades all authored tests. The held-Close case also cancels the caller, masking the independent Close-only cause. This is a major verification gap requiring its own regression assertion, not a production defect.",
+      "correction": "Add a healthy Run and failing Close at limit 1 with later jobs queued; assert no further Open while retaining Close error.",
+      "sources": [
+        "cards/E/go-testing.md"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "E/G1",
+      "evidence": "The exact Job/Lease/Serve API remains compatible and construction stays host-owned through the Open function, with no unrelated framework/public API; both actual toolchains compile every source package."
+    },
+    {
+      "id": "E/G2",
+      "evidence": "Actual go1.22.12 and go1.26.5 compile the standalone go 1.22 standard-library-only module with GOWORK=off, GOTOOLCHAIN=local, GOFLAGS=-mod=readonly; go list -m all returns only example.com/service-owned-workers. No external go.sum is needed."
+    }
+  ],
+  "safeguards": []
+}

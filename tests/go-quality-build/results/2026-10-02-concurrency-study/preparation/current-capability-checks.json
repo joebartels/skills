@@ -1,0 +1,58 @@
+{
+  "captured": "2026-10-02 closeout recheck, not historical replay",
+  "rows": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "codex",
+        "--version"
+      ],
+      "status": 0,
+      "stdout": "codex-cli 0.157.0\n",
+      "stderr": "WARNING: proceeding, even though we could not create PATH aliases: Operation not permitted (os error 1)\n",
+      "elapsed_seconds": 0.014
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "claude",
+        "--version"
+      ],
+      "status": 0,
+      "stdout": "2.1.207 (Claude Code)\n",
+      "stderr": "",
+      "elapsed_seconds": 0.049
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "claude",
+        "auth",
+        "status"
+      ],
+      "status": 1,
+      "stdout": "{\n  \"loggedIn\": false,\n  \"authMethod\": \"none\",\n  \"apiProvider\": \"firstParty\"\n}\n",
+      "stderr": "",
+      "elapsed_seconds": 0.179
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "opencode",
+        "--version"
+      ],
+      "status": 0,
+      "stdout": "1.18.7\n",
+      "stderr": "",
+      "elapsed_seconds": 0.343
+    }
+  ],
+  "limits": [
+    "Original direct version/auth observations recorded in canonical/manifests but their raw tool outputs were not preserved in portable preparation.",
+    "This fresh read-only capture corroborates current capabilities, without supplying a missing historical raw capture or an implementation/loading trial."
+  ]
+}

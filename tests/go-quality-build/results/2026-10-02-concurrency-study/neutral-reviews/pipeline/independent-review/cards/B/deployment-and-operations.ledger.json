@@ -1,0 +1,18 @@
+{
+  "scope": "Bounded code-area review of candidate B source snapshot (see source-hashes-before.json), CLI/private runPipeline and delivered tests, judged against original README/source; Go1.22 minimum, actual Go1.22.12 and host Go1.26.5 darwin/arm64. Findings are existing-in-scope in this delivered snapshot.",
+  "coverage": [
+    {
+      "id": "deployment-and-operations",
+      "status": "complete",
+      "reason": "This artifact is a CLI. Actual binary build, startup/configuration, stdout/stderr, exit codes and finite-input termination are relevant; containers, signals and rollouts are outside this scope."
+    }
+  ],
+  "findings": [],
+  "strengths": [
+    {
+      "id": "B/deployment-and-operations/G1",
+      "evidence": "The actual independently built host/minimum binaries terminate within the five-second bound for finite input, early --take=2, malformed-first, empty input and invalid --take=0. Expected stdout and 0/2 exit status match, success stderr stays empty and malformed-first stderr contains integer input."
+    }
+  ],
+  "safeguards": []
+}

@@ -1,0 +1,7 @@
+# Bounded command pipeline
+
+Go 1.22 minimum; standard library only. Repair private runPipeline in cmd/pipeline, preserving its signature and supplied parser/consumer/host. The capacity is positive; primary checks use 1. The producer alone sends and the pipeline owns closing its output after production ends. Consumer receives in order. Both callbacks cooperate through context-aware sends/receives; callback cleanup can be held after cancellation and must be joined.
+
+Normal consumer completion (including --take early completion) stops and joins production and succeeds. Producer failure stops a blocked consumer. Join both callbacks on all outcomes. Preserve independently failing producer/consumer errors, even if they contain cancellation; only the exact standard context error returned solely for coordinated stopping is suppressible when the caller did not cancel. Caller cancellation remains an error. Input/output effects accepted before stopping remain accepted.
+
+The supplied command emits integer lines in order, accepts positive --take, exits 0 on normal/early completion, exits 2 on independent failure, writes diagnostics to stderr, and preserves accepted stdout. Finite ordinary integer-line input is supported; malformed first input deterministically fails before output. Arbitrary blocking Reader calls are outside this cancellation promise; a context cannot kill them. Do not invent signal or process lifecycle machinery.

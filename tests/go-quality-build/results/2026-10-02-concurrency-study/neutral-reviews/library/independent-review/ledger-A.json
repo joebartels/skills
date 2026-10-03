@@ -1,0 +1,78 @@
+{
+  "scope": "Candidate A: complete bounded 4-file local library code area; frozen SHA-256 source snapshots in manifest.json.",
+  "coverage": [
+    {
+      "id": "architecture",
+      "status": "complete",
+      "reason": "Applicable: per-instance ownership, zero-value construction, public API and coherent value publication are library design decisions. The complete supplied API and implementation are assessed."
+    },
+    {
+      "id": "code-quality",
+      "status": "complete",
+      "reason": "Applicable and mandatory: complete Go implementation and tests contain receiver, mutex ownership, documentation and Go-version idiom decisions."
+    },
+    {
+      "id": "correctness",
+      "status": "complete",
+      "reason": "Applicable and mandatory: exact update count/sum, zero value, simultaneous Add/Snapshot, coherent independent values, isolated instances and retained public signatures are explicit README contracts."
+    },
+    {
+      "id": "testing",
+      "status": "complete",
+      "reason": "Applicable and mandatory: candidate tests must meaningfully detect concurrent coherence, accepted-count, arithmetic and instance-state regressions. Assertions and termination are checked with compiled behavioral mutations."
+    },
+    {
+      "id": "security",
+      "status": "not_applicable",
+      "reason": "Not applicable in this bounded code area: fixed-width integer arithmetic and a caller-owned local mutex introduce no attacker-controlled I/O, privilege boundary, credentials, sensitive sink or input-sized resource amplification. No external dependency is selected. This is a scope judgment, not a claim that any embedding application is secure."
+    },
+    {
+      "id": "observability",
+      "status": "not_applicable",
+      "reason": "Not applicable in this bounded code area: synchronous local arithmetic has no fallible external dependency, retry, queue, telemetry export or service lifecycle contract. Mutex ownership/liveness is assessed under Correctness and Performance. No context, instrumentation or operational machinery is required by the supplied contract."
+    },
+    {
+      "id": "performance",
+      "status": "complete",
+      "reason": "Applicable: adding synchronization changes contention and resource ownership. Fixed work/state, finite critical sections, no internal goroutines, per-instance locks and allocations are assessed. No throughput/latency budget or speed claim is supplied."
+    },
+    {
+      "id": "dependencies",
+      "status": "complete",
+      "reason": "Applicable: standard-library-only and minimum Go 1.22 are explicit build contracts. Standalone module resolution and compilation/tests on Go 1.22.12 and host 1.26.5 are assessed with network disabled."
+    },
+    {
+      "id": "deployment",
+      "status": "not_applicable",
+      "reason": "Not applicable in this bounded code area: it supplies a local library and no change to release tags, packaging, CI enforcement, process configuration, deployment or operator contract. Source builds are assessed under Dependencies and Correctness. Excluded surrounding delivery infrastructure is not alleged to be missing."
+    }
+  ],
+  "findings": [
+    {
+      "id": "A-F1",
+      "severity": "moderate",
+      "systemic": false,
+      "cause": "Reader completion is conditional on observing the expected final Count rather than on writer completion.",
+      "evidence": "candidates/A/totals_test.go:48-58; raw dropped-unit-update host/go122 and full-suite Go1.22 logs show 2s timeout with test waiting for reader. Event-based reviewer probe terminates with wrong-state assertions.",
+      "correction": "Make reader shutdown depend on the writer-completion event (and give waits a bounded failure path), join the reader, then assert exact final Count/Sum on the test goroutine.",
+      "sources": [
+        "A/testing/F1"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "A-G1",
+      "evidence": "totals.go:20-30 uses one per-instance mutex around both update fields and snapshot publication; independent race/checkpoint/mixed-delta/value-ownership tests pass on Go1.22.12 and1.26.5."
+    },
+    {
+      "id": "A-G2",
+      "evidence": "Actual Go1.22.12 and host standalone network-disabled readonly builds/tests/vet pass; standard-library-only selected module graph; gofmt diff empty."
+    },
+    {
+      "id": "A-G3",
+      "evidence": "Candidate-authored assertions reject compiled split-update, global-state and wrong-signed-sum behavioral mutations on both toolchains; raw logs preserve exact failing assertions."
+    }
+  ],
+  "safeguards": []
+}

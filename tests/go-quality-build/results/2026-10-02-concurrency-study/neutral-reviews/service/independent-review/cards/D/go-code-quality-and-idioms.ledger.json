@@ -1,0 +1,30 @@
+{
+  "scope": "Candidate D complete bounded code area for Code Quality & Go Idioms; source SHA256 host.go=2ce34acd60ee9a1e1c3c18df4756a0aa62fe82ab48c994edaa443e132b694cd3; host_test.go=a8bc3745ad54f20a67a51a82ff91eeea7ceb38c30b02e9d9af4131df57c3123c",
+  "coverage": [
+    {
+      "id": "go-code-quality-and-idioms",
+      "status": "complete",
+      "reason": "Applicable: reviewed local state transitions, result collection, checked errors, context guards, docs, value/closure semantics under go 1.22; gofmt and vet independently executed."
+    }
+  ],
+  "findings": [
+    {
+      "id": "D/P2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Close results are accumulated in result but never mark the cohort failed.",
+      "evidence": "candidates/D/host.go:156; candidates/D/host.go:161; evidence/D-host-independent.log: limit 1 produces three opens/closes after first Close failure; evidence/D-minimum-independent.log: same intended count assertion",
+      "correction": "Set failed/cancel after any Close error while finishing every acquired release, then stop admission.",
+      "sources": [
+        "cards/D/go-code-quality-and-idioms.md#D-P2"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "D/go-code-quality-and-idioms/G1",
+      "evidence": "Returned Open/Run/Close error causes are collected using errors.Join or %w and checked at useful lifecycle boundaries; candidate authored error-identity tests pass. gofmt -l reports no candidate changes; go vet is clean."
+    }
+  ],
+  "safeguards": []
+}

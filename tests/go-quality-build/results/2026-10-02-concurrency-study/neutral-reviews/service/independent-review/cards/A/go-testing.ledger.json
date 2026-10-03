@@ -1,0 +1,63 @@
+{
+  "scope": "Candidate A complete bounded code area for Testing; source SHA256 host.go=c45a48c184493ebe70f1f52cbb831194f2a25604e49776687930cd951fd34ab7; host_test.go=ea4fa70df361e0a53d6b563b009549c328abc0a8a8d0a3e198a5d3842e6db437",
+  "coverage": [
+    {
+      "id": "go-testing",
+      "status": "complete",
+      "reason": "Applicable: reviewed candidate host_test.go assertions, doubles, event gates, cleanup and whether meaningful contract violations evade its authored suite. External held/supplementary/independent probes verify behavior; they are not additions to the candidate regression suite."
+    }
+  ],
+  "findings": [
+    {
+      "id": "A/T1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "No authored Close-only failure test asserts that subsequent queued jobs are never opened.",
+      "evidence": "candidates/A/host_test.go:107; candidates/A/host_test.go:140; evidence/A-host-authored.log: authored suite passes unchanged defective implementation; evidence/A-host-independent.log: Close-only next-admission assertion fails",
+      "correction": "Add a healthy Run followed by failing Close with later queued jobs and an exact Open count.",
+      "sources": [
+        "cards/A/go-testing.md#A-T1"
+      ]
+    },
+    {
+      "id": "A/T2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Cancellation-during-Open fixture asserts release but never asserts that returned leases skip Run.",
+      "evidence": "candidates/A/host_test.go:151; evidence/stress-commands.json: forbidden Runs under valid cancellation-before-success; evidence/A-host-authored.log: cancellation test and full authored suite pass",
+      "correction": "Add a Run counter/forbidden event and assert zero Runs plus owned release; cover simultaneously ready Open-result/cancellation.",
+      "sources": [
+        "cards/A/go-testing.md#A-T2"
+      ]
+    },
+    {
+      "id": "A/T3",
+      "severity": "major",
+      "systemic": false,
+      "cause": "No authored assertion retains caller cancellation introduced during final held failure cleanup.",
+      "evidence": "candidates/A/host_test.go:107; candidates/A/host_test.go:151; evidence/A-host-authored.log: authored suite passes; evidence/A-host-independent.log: errors.Is cancellation fails after gated Close",
+      "correction": "Gate final Close after an independent Run failure, cancel the caller, and assert all independent causes plus cancellation.",
+      "sources": [
+        "cards/A/go-testing.md#A-T3"
+      ]
+    },
+    {
+      "id": "A/T4",
+      "severity": "moderate",
+      "systemic": false,
+      "cause": "Failure fixture expects two acquired leases without ensuring second acquisition precedes the first Run failure.",
+      "evidence": "candidates/A/host_test.go:107; candidates/A/host_test.go:135; evidence/stress-commands.json: authored TestServeFailureJoinsAndClosesOwnedLeases reports closed=1 in 3 of 1000 race repetitions with GOMAXPROCS=16",
+      "correction": "Use an explicit second-acquisition/second-start gate before releasing the failing first Run; assert releases only for leases actually acquired.",
+      "sources": [
+        "cards/A/go-testing.md#A-T4"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "A/go-testing/G1",
+      "evidence": "Authored tests include meaningful finite work/error identity assertions and bounded channel waits rather than only test names; the independently executed authored suites pass once on both actual versions. Candidate-specific additional positives/limits are below."
+    }
+  ],
+  "safeguards": []
+}

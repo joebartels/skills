@@ -1,0 +1,149 @@
+[
+  {
+    "meaning": "unjoined-early-producer",
+    "substitution": {
+      "file": "cmd/pipeline/pipeline.go",
+      "old": "for !producerDone || !consumerDone {",
+      "new": "for !consumerDone {"
+    },
+    "original_held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerEarlyConsumerAndProducerFailure$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-fa9yhx0k",
+      "status": 0,
+      "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.225s\n",
+      "stderr": ""
+    },
+    "compile": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-fa9yhx0k",
+      "status": 1,
+      "stdout": "FAIL\texample.com/cli-pipeline-stop/cmd/pipeline [build failed]\nFAIL\n",
+      "stderr": "# example.com/cli-pipeline-stop/cmd/pipeline [example.com/cli-pipeline-stop/cmd/pipeline.test]\ncmd/pipeline/pipeline.go:28:2: declared and not used: producerDone\n"
+    },
+    "author_tests": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-fa9yhx0k",
+      "status": 1,
+      "stdout": "FAIL\texample.com/cli-pipeline-stop/cmd/pipeline [build failed]\nFAIL\n",
+      "stderr": "# example.com/cli-pipeline-stop/cmd/pipeline [example.com/cli-pipeline-stop/cmd/pipeline.test]\ncmd/pipeline/pipeline.go:28:2: declared and not used: producerDone\n"
+    },
+    "held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerEarlyConsumerAndProducerFailure$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-fa9yhx0k",
+      "status": 1,
+      "stdout": "FAIL\texample.com/cli-pipeline-stop/cmd/pipeline [build failed]\nFAIL\n",
+      "stderr": "# example.com/cli-pipeline-stop/cmd/pipeline [example.com/cli-pipeline-stop/cmd/pipeline.test]\ncmd/pipeline/pipeline.go:28:2: declared and not used: producerDone\n"
+    },
+    "qualified": false
+  },
+  {
+    "meaning": "unjoined-early-producer",
+    "substitution": {
+      "file": "cmd/pipeline/pipeline.go",
+      "old": "for !producerDone || !consumerDone {",
+      "new": "for (!producerDone && false) || !consumerDone {"
+    },
+    "original_held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerEarlyConsumerAndProducerFailure$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-1j6jy53k",
+      "status": 0,
+      "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.232s\n",
+      "stderr": ""
+    },
+    "compile": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^$",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-1j6jy53k",
+      "status": 0,
+      "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.171s [no tests to run]\n",
+      "stderr": ""
+    },
+    "author_tests": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-1j6jy53k",
+      "status": 0,
+      "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.115s\n",
+      "stderr": ""
+    },
+    "held_named": {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-run",
+        "^TestControllerEarlyConsumerAndProducerFailure$",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-study-mutation-1j6jy53k",
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerEarlyConsumerAndProducerFailure (0.00s)\n    --- FAIL: TestControllerEarlyConsumerAndProducerFailure/early_consumer_joins_blocked_producer (0.00s)\n        controller_contract_test.go:83: returned before producer cleanup joined\n        controller_contract_test.go:96: producer not joined\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.159s\nFAIL\n",
+      "stderr": ""
+    },
+    "qualified": true,
+    "note": "First candidate substitution did not compile; retained with no detection credit. This second spelling retains variable use while removing producer join."
+  }
+]

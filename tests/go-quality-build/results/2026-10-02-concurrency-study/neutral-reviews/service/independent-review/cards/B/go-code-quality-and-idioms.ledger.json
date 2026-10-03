@@ -1,0 +1,52 @@
+{
+  "scope": "Candidate B complete bounded code area for Code Quality & Go Idioms; source SHA256 host.go=718c14538b977d31400614c6e32ea2d2452c88d6fbb9f24f536b89d67078dc29; host_test.go=83321712342ef7dbb318135853a9fb748f392d891f89e9f255c6f79d437d5bb2",
+  "coverage": [
+    {
+      "id": "go-code-quality-and-idioms",
+      "status": "complete",
+      "reason": "Applicable: reviewed local state transitions, result collection, checked errors, context guards, docs, value/closure semantics under go 1.22; gofmt and vet independently executed."
+    }
+  ],
+  "findings": [
+    {
+      "id": "B/P1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Run errors cannot request stop while the controller is admitting input or blocked in synchronous Open.",
+      "evidence": "candidates/B/host.go:39; candidates/B/host.go:48; candidates/B/host.go:61; candidates/B/host.go:86; evidence/B-host-contract.log: TestReviewRunFailureCancelsPendingOpen requires caller cancellation; evidence/B-minimum-contract.log: same intended assertion; evidence/B-host-race.log: repeated behavioral failure",
+      "correction": "Let a failing Run cancel the cohort immediately, or observe Run outcomes concurrently with pending Open while collecting its returned ownership.",
+      "sources": [
+        "cards/B/go-code-quality-and-idioms.md#B-P1"
+      ]
+    },
+    {
+      "id": "B/P2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Close errors never set failed, so the outer loop admits another cohort after observed Close failure.",
+      "evidence": "candidates/B/host.go:99; candidates/B/host.go:105; evidence/B-host-independent.log: three opens/closes at limit 1 after first Close failure; evidence/B-minimum-independent.log: same intended assertion",
+      "correction": "Mark failure/stop on Close error and finish all releases before returning.",
+      "sources": [
+        "cards/B/go-code-quality-and-idioms.md#B-P2"
+      ]
+    },
+    {
+      "id": "B/P3",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Open success launches Run unconditionally without checking cancellation that occurred inside Open.",
+      "evidence": "candidates/B/host.go:57; candidates/B/host.go:59; evidence/B-host-independent.log: TestIndependentAcquiredAfterCancelSkipsRun observes runs=1; evidence/B-minimum-independent.log: same intended assertion; evidence/B-host-race.log: repeated forbidden Run",
+      "correction": "Append the acquired lease, recheck cohort/caller stop, and skip Run while retaining the lease for release.",
+      "sources": [
+        "cards/B/go-code-quality-and-idioms.md#B-P3"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "B/go-code-quality-and-idioms/G1",
+      "evidence": "Returned Open/Run/Close error causes are collected using errors.Join or %w and checked at useful lifecycle boundaries; candidate authored error-identity tests pass. gofmt -l reports no candidate changes; go vet is clean."
+    }
+  ],
+  "safeguards": []
+}

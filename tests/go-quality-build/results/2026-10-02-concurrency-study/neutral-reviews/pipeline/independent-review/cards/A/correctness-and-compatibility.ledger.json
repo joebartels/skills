@@ -1,0 +1,30 @@
+{
+  "scope": "Bounded code-area review of candidate A source snapshot (see source-hashes-before.json), CLI/private runPipeline and delivered tests, judged against original README/source; Go1.22 minimum, actual Go1.22.12 and host Go1.26.5 darwin/arm64. Findings are existing-in-scope in this delivered snapshot.",
+  "coverage": [
+    {
+      "id": "correctness-and-compatibility",
+      "status": "complete",
+      "reason": "FIFO, early normal completion, failure cancellation, callback joining, error identity and CLI output/status are explicit important contracts."
+    }
+  ],
+  "findings": [
+    {
+      "id": "A/F1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "The stop snapshot stores only a boolean; suppression then treats both Canceled and DeadlineExceeded as the coordinated stop error without matching the actual child context error.",
+      "evidence": "candidates/A/cmd/pipeline/pipeline.go:13,19,24,57-59; TestReviewIndependentDeadlineAfterStop has an active parent, observes child ctx.Err()==context.Canceled, then independently returns context.DeadlineExceeded during cleanup. Host Go1.26.5, actual Go1.22.12 and host race/shuffle all return nil and fail the intended error-identity assertion.",
+      "correction": "Record the actual child context error observed with each callback result and suppress only the exact matching context stop error for that coordinated stop. Preserve a DeadlineExceeded error when the work context was only Canceled, plus wrapped/joined independent causes. Keep the first independent exact error before stopping.",
+      "sources": [
+        "A/correctness-and-compatibility/F1"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "A/correctness-and-compatibility/G1",
+      "evidence": "Independent FIFO probes at capacity 1/3, held early/failure cancellation checks, accepted-output writer-failure probe and actual host/minimum executable output/status cases pass. Public-facing parser, consumer, host and private signature are preserved."
+    }
+  ],
+  "safeguards": []
+}

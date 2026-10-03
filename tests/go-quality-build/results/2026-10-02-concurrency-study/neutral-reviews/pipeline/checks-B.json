@@ -1,0 +1,205 @@
+{
+  "supplementary_review_discovered_checks": [],
+  "supplementary_limit": "Not a replacement for four original frozen mutation targets or primary frozen held observation.",
+  "reconstruction_hashes_match": true,
+  "ordinary_checks": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-neutral-pipeline-study/candidates/B",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "go version go1.26.5 darwin/arm64\n",
+      "stderr": "",
+      "elapsed_seconds": 0.007
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "version"
+      ],
+      "cwd": "/private/tmp/go-neutral-pipeline-study/candidates/B",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "go version go1.22.12 darwin/arm64\n",
+      "stderr": "",
+      "elapsed_seconds": 0.008
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "build",
+        "-o",
+        "/dev/null",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-neutral-pipeline-study/candidates/B",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.12
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-neutral-pipeline-study/candidates/B",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.169s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.346
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "vet",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-neutral-pipeline-study/candidates/B",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.068
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "gofmt",
+        "-l",
+        "."
+      ],
+      "cwd": "/private/tmp/go-neutral-pipeline-study/candidates/B",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 0,
+      "stdout": "",
+      "stderr": "",
+      "elapsed_seconds": 0.007
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-neutral-pipeline-study/candidates/B",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 0,
+      "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.132s\n",
+      "stderr": "",
+      "elapsed_seconds": 0.278
+    }
+  ],
+  "held_contract_checks": [
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-neutral-pipeline-study/candidates/B",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerIndependentCancellationClassBeforeStop (0.00s)\n    controller_contract_test.go:227: independent cancellation-class failure lost: <nil>\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.389s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 0.536
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+        "test",
+        "-count=1",
+        "-timeout=30s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-neutral-pipeline-study/candidates/B",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local",
+        "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+      },
+      "status": 1,
+      "stdout": "--- FAIL: TestControllerIndependentCancellationClassBeforeStop (0.00s)\n    controller_contract_test.go:227: independent cancellation-class failure lost: <nil>\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.427s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 0.573
+    },
+    {
+      "argv": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-race",
+        "-shuffle=on",
+        "-count=3",
+        "-timeout=60s",
+        "./..."
+      ],
+      "cwd": "/private/tmp/go-neutral-pipeline-study/candidates/B",
+      "environment_overrides": {
+        "GOCACHE": "/private/tmp/go-quality-concurrency-cache",
+        "GOTOOLCHAIN": "local"
+      },
+      "status": 1,
+      "stdout": "-test.shuffle 1790985213020611000\n--- FAIL: TestControllerIndependentCancellationClassBeforeStop (0.00s)\n    controller_contract_test.go:227: independent cancellation-class failure lost: <nil>\n--- FAIL: TestControllerIndependentCancellationClassBeforeStop (0.00s)\n    controller_contract_test.go:227: independent cancellation-class failure lost: <nil>\n--- FAIL: TestControllerIndependentCancellationClassBeforeStop (0.00s)\n    controller_contract_test.go:227: independent cancellation-class failure lost: <nil>\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.781s\nFAIL\n",
+      "stderr": "",
+      "elapsed_seconds": 0.96
+    }
+  ],
+  "mutations": "Concrete author-specific mutation sensitivity recorded separately; no controller repair credit."
+}

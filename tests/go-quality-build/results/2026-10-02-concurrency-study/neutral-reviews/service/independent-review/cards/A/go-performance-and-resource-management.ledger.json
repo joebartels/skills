@@ -1,0 +1,41 @@
+{
+  "scope": "Candidate A complete bounded code area for Performance & Resource Management; source SHA256 host.go=c45a48c184493ebe70f1f52cbb831194f2a25604e49776687930cd951fd34ab7; host_test.go=ea4fa70df361e0a53d6b563b009549c328abc0a8a8d0a3e198a5d3842e6db437",
+  "coverage": [
+    {
+      "id": "go-performance-and-resource-management",
+      "status": "complete",
+      "reason": "Applicable: limit bounds acquired leases through Close, cohort completion controls goroutines/resources, and available capacity must be used. Assessed scaling/lifetime and bounded event counts; no microbenchmark or production latency claim."
+    }
+  ],
+  "findings": [
+    {
+      "id": "A/P1",
+      "severity": "moderate",
+      "systemic": false,
+      "cause": "Close failures are appended but never enter the stop state before the next cohort.",
+      "evidence": "candidates/A/host.go:60; candidates/A/host.go:85; evidence/A-host-independent.log: TestIndependentCloseFailureStopsNextAdmission; evidence/A-minimum-independent.log: same intended assertion; evidence/A-host-race.log: repeated intended assertion",
+      "correction": "Have closeCohort set stop/cancel on any Close error, while still closing all owned leases exactly once.",
+      "sources": [
+        "cards/A/go-performance-and-resource-management.md#A-P1"
+      ]
+    },
+    {
+      "id": "A/P2",
+      "severity": "moderate",
+      "systemic": false,
+      "cause": "Successful Open results can start Run using only stale stop state without rechecking caller/work context.",
+      "evidence": "candidates/A/host.go:143; candidates/A/host.go:174; evidence/stress-commands.json: 3 forbidden Runs in 2000 concurrent valid calls on host race build; evidence/minimum-stress-command.json: 1, 1 and 6 forbidden Runs per 2000 calls on actual minimum race build",
+      "correction": "After collecting/owning the Open result, observe context cancellation and set stop before starting Run; retain cancellation cause.",
+      "sources": [
+        "cards/A/go-performance-and-resource-management.md#A-P2"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "A/go-performance-and-resource-management/G1",
+      "evidence": "The held capacity/release fixture checks five accepted finite jobs, acquires at most two in the full-cohort schedule, holds Close before release and verifies exactly one Close for acquired leases. This positive schedule does not prove paced-input capacity."
+    }
+  ],
+  "safeguards": []
+}

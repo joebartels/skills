@@ -1,0 +1,36 @@
+{
+  "candidate": "D",
+  "name": "host-independent",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-run",
+    "^TestIndependent",
+    "-count=1",
+    "-timeout=20s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/D",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly"
+  },
+  "status": 1,
+  "elapsed_seconds": 0.781
+}
+STDOUT
+--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)
+    review_independent_test.go:10: after observed Close failure err=Close failure
+        Close failure
+        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release
+--- FAIL: TestIndependentLaterAvailableInputStarts (0.25s)
+    review_independent_test.go:45: second available job did not start while first Run held only one of two capacity slots
+FAIL
+FAIL	example.com/service-owned-workers	0.651s
+FAIL
+
+STDERR

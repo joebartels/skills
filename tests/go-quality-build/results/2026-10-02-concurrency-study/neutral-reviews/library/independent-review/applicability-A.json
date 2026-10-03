@@ -1,0 +1,110 @@
+[
+  {
+    "id": "architecture",
+    "topic": "Architecture & Design",
+    "applicable": true,
+    "coverage_status": "complete",
+    "grade": "A",
+    "reason": "Applicable: per-instance ownership, zero-value construction, public API and coherent value publication are library design decisions. The complete supplied API and implementation are assessed.",
+    "skill": "/private/tmp/go-neutral-library-study/review-guidance/go-architecture-and-design/SKILL.md",
+    "reference": "/private/tmp/go-neutral-library-study/review-guidance/go-architecture-and-design/references/design-decisions.md",
+    "card": "cards/A/architecture.md",
+    "essential_unavailable_evidence": []
+  },
+  {
+    "id": "code-quality",
+    "topic": "Code Quality & Go Idioms",
+    "applicable": true,
+    "coverage_status": "complete",
+    "grade": "A",
+    "reason": "Applicable and mandatory: complete Go implementation and tests contain receiver, mutex ownership, documentation and Go-version idiom decisions.",
+    "skill": "/private/tmp/go-neutral-library-study/review-guidance/go-code-quality-and-idioms/SKILL.md",
+    "reference": "/private/tmp/go-neutral-library-study/review-guidance/go-code-quality-and-idioms/references/idiom-decisions.md",
+    "card": "cards/A/code-quality.md",
+    "essential_unavailable_evidence": []
+  },
+  {
+    "id": "correctness",
+    "topic": "Correctness & Compatibility",
+    "applicable": true,
+    "coverage_status": "complete",
+    "grade": "A",
+    "reason": "Applicable and mandatory: exact update count/sum, zero value, simultaneous Add/Snapshot, coherent independent values, isolated instances and retained public signatures are explicit README contracts.",
+    "skill": "/private/tmp/go-neutral-library-study/review-guidance/go-correctness-and-compatibility/SKILL.md",
+    "reference": "/private/tmp/go-neutral-library-study/review-guidance/go-correctness-and-compatibility/references/correctness-compatibility-decisions.md",
+    "card": "cards/A/correctness.md",
+    "essential_unavailable_evidence": []
+  },
+  {
+    "id": "testing",
+    "topic": "Testing",
+    "applicable": true,
+    "coverage_status": "complete",
+    "grade": "B",
+    "reason": "Applicable and mandatory: candidate tests must meaningfully detect concurrent coherence, accepted-count, arithmetic and instance-state regressions. Assertions and termination are checked with compiled behavioral mutations.",
+    "skill": "/private/tmp/go-neutral-library-study/review-guidance/go-testing/SKILL.md",
+    "reference": "/private/tmp/go-neutral-library-study/review-guidance/go-testing/references/testing-decisions.md",
+    "card": "cards/A/testing.md",
+    "essential_unavailable_evidence": []
+  },
+  {
+    "id": "security",
+    "topic": "Security",
+    "applicable": false,
+    "coverage_status": "not_applicable",
+    "grade": "Not applicable",
+    "reason": "Not applicable in this bounded code area: fixed-width integer arithmetic and a caller-owned local mutex introduce no attacker-controlled I/O, privilege boundary, credentials, sensitive sink or input-sized resource amplification. No external dependency is selected. This is a scope judgment, not a claim that any embedding application is secure.",
+    "skill": "/private/tmp/go-neutral-library-study/review-guidance/go-security/SKILL.md",
+    "reference": "/private/tmp/go-neutral-library-study/review-guidance/go-security/references/security-decisions.md",
+    "card": "cards/A/security.md",
+    "essential_unavailable_evidence": []
+  },
+  {
+    "id": "observability",
+    "topic": "Observability & Resilience",
+    "applicable": false,
+    "coverage_status": "not_applicable",
+    "grade": "Not applicable",
+    "reason": "Not applicable in this bounded code area: synchronous local arithmetic has no fallible external dependency, retry, queue, telemetry export or service lifecycle contract. Mutex ownership/liveness is assessed under Correctness and Performance. No context, instrumentation or operational machinery is required by the supplied contract.",
+    "skill": "/private/tmp/go-neutral-library-study/review-guidance/go-observability-and-resilience/SKILL.md",
+    "reference": "/private/tmp/go-neutral-library-study/review-guidance/go-observability-and-resilience/references/observability-resilience-decisions.md",
+    "card": "cards/A/observability.md",
+    "essential_unavailable_evidence": []
+  },
+  {
+    "id": "performance",
+    "topic": "Performance & Resource Management",
+    "applicable": true,
+    "coverage_status": "complete",
+    "grade": "A",
+    "reason": "Applicable: adding synchronization changes contention and resource ownership. Fixed work/state, finite critical sections, no internal goroutines, per-instance locks and allocations are assessed. No throughput/latency budget or speed claim is supplied.",
+    "skill": "/private/tmp/go-neutral-library-study/review-guidance/go-performance-and-resource-management/SKILL.md",
+    "reference": "/private/tmp/go-neutral-library-study/review-guidance/go-performance-and-resource-management/references/performance-decisions.md",
+    "card": "cards/A/performance.md",
+    "essential_unavailable_evidence": []
+  },
+  {
+    "id": "dependencies",
+    "topic": "Dependencies & Reproducibility",
+    "applicable": true,
+    "coverage_status": "complete",
+    "grade": "A",
+    "reason": "Applicable: standard-library-only and minimum Go 1.22 are explicit build contracts. Standalone module resolution and compilation/tests on Go 1.22.12 and host 1.26.5 are assessed with network disabled.",
+    "skill": "/private/tmp/go-neutral-library-study/review-guidance/go-dependencies-and-reproducibility/SKILL.md",
+    "reference": "/private/tmp/go-neutral-library-study/review-guidance/go-dependencies-and-reproducibility/references/dependency-reproducibility-decisions.md",
+    "card": "cards/A/dependencies.md",
+    "essential_unavailable_evidence": []
+  },
+  {
+    "id": "deployment",
+    "topic": "Deployment & Operations",
+    "applicable": false,
+    "coverage_status": "not_applicable",
+    "grade": "Not applicable",
+    "reason": "Not applicable in this bounded code area: it supplies a local library and no change to release tags, packaging, CI enforcement, process configuration, deployment or operator contract. Source builds are assessed under Dependencies and Correctness. Excluded surrounding delivery infrastructure is not alleged to be missing.",
+    "skill": "/private/tmp/go-neutral-library-study/review-guidance/go-deployment-and-operations/SKILL.md",
+    "reference": "/private/tmp/go-neutral-library-study/review-guidance/go-deployment-and-operations/references/deployment-operations-decisions.md",
+    "card": "cards/A/deployment.md",
+    "essential_unavailable_evidence": []
+  }
+]

@@ -1,0 +1,41 @@
+{
+  "scope": "Candidate D complete bounded code area for Testing; source SHA256 host.go=2ce34acd60ee9a1e1c3c18df4756a0aa62fe82ab48c994edaa443e132b694cd3; host_test.go=a8bc3745ad54f20a67a51a82ff91eeea7ceb38c30b02e9d9af4131df57c3123c",
+  "coverage": [
+    {
+      "id": "go-testing",
+      "status": "complete",
+      "reason": "Applicable: reviewed candidate host_test.go assertions, doubles, event gates, cleanup and whether meaningful contract violations evade its authored suite. External held/supplementary/independent probes verify behavior; they are not additions to the candidate regression suite."
+    }
+  ],
+  "findings": [
+    {
+      "id": "D/T1",
+      "severity": "major",
+      "systemic": false,
+      "cause": "Concurrency tests preload closed full batches and the partial-open fixture forbids any Run, leaving sparse-input concurrent admission unverified.",
+      "evidence": "candidates/D/host_test.go:29; candidates/D/host_test.go:109; evidence/D-host-authored.log: suite passes P1; evidence/D-host-independent.log: later-available-input assertion fails",
+      "correction": "Add separately arriving jobs on caller-owned open input; gate first Run, require second Run with available capacity, and check partial startup cleanup separately.",
+      "sources": [
+        "cards/D/go-testing.md#D-T1"
+      ]
+    },
+    {
+      "id": "D/T2",
+      "severity": "major",
+      "systemic": false,
+      "cause": "The error-retention fixture has one job and combined Run/Close failure, so Close-only stop-admission is unverified.",
+      "evidence": "candidates/D/host_test.go:74; evidence/D-host-authored.log: suite passes P2; evidence/D-host-independent.log: Close-only admission continues",
+      "correction": "Add healthy Run plus independent Close failure with remaining jobs and exact acquired/released counts.",
+      "sources": [
+        "cards/D/go-testing.md#D-T2"
+      ]
+    }
+  ],
+  "strengths": [
+    {
+      "id": "D/go-testing/G1",
+      "evidence": "Authored tests include meaningful finite work/error identity assertions and bounded channel waits rather than only test names; the independently executed authored suites pass once on both actual versions. Candidate-specific additional positives/limits are below."
+    }
+  ],
+  "safeguards": []
+}

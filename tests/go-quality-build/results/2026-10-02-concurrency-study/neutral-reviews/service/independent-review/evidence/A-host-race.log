@@ -1,0 +1,54 @@
+{
+  "candidate": "A",
+  "name": "host-race",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-race",
+    "-shuffle=on",
+    "-run",
+    "^TestServe|^TestIndependent|^TestController|^TestReview",
+    "-count=3",
+    "-timeout=60s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly"
+  },
+  "status": 1,
+  "elapsed_seconds": 4.076
+}
+STDOUT
+-test.shuffle 1790986694314828000
+--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)
+    review_independent_test.go:10: after observed Close failure err=Close failure
+        Close failure
+        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release
+--- FAIL: TestIndependentCallerCancellationDuringFailureCleanup (0.00s)
+    review_independent_test.go:22: missing context canceled after cancellation during held Close: Run failure
+        Close failure
+--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)
+    review_independent_test.go:10: after observed Close failure err=Close failure
+        Close failure
+        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release
+--- FAIL: TestIndependentCallerCancellationDuringFailureCleanup (0.00s)
+    review_independent_test.go:22: missing context canceled after cancellation during held Close: Run failure
+        Close failure
+--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)
+    review_independent_test.go:10: after observed Close failure err=Close failure
+        Close failure
+        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release
+--- FAIL: TestIndependentCallerCancellationDuringFailureCleanup (0.00s)
+    review_independent_test.go:22: missing context canceled after cancellation during held Close: Run failure
+        Close failure
+FAIL
+FAIL	example.com/service-owned-workers	1.188s
+FAIL
+
+STDERR

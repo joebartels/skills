@@ -1,0 +1,1910 @@
+[
+  {
+    "candidate": "A",
+    "name": "host-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.008
+  },
+  {
+    "candidate": "A",
+    "name": "host-authored",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestServe",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.227s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.887
+  },
+  {
+    "candidate": "A",
+    "name": "host-independent",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestIndependent",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)\n    review_independent_test.go:10: after observed Close failure err=Close failure\n        Close failure\n        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release\n--- FAIL: TestIndependentCallerCancellationDuringFailureCleanup (0.00s)\n    review_independent_test.go:22: missing context canceled after cancellation during held Close: Run failure\n        Close failure\nFAIL\nFAIL\texample.com/service-owned-workers\t0.410s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.527
+  },
+  {
+    "candidate": "A",
+    "name": "host-contract",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestController|^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.197s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.323
+  },
+  {
+    "candidate": "A",
+    "name": "minimum-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "go version go1.22.12 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.013
+  },
+  {
+    "candidate": "A",
+    "name": "minimum-authored",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestServe",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.170s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.637
+  },
+  {
+    "candidate": "A",
+    "name": "minimum-independent",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestIndependent",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)\n    review_independent_test.go:10: after observed Close failure err=Close failure\n        Close failure\n        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release\n--- FAIL: TestIndependentCallerCancellationDuringFailureCleanup (0.00s)\n    review_independent_test.go:22: missing context canceled after cancellation during held Close: Run failure\n        Close failure\nFAIL\nFAIL\texample.com/service-owned-workers\t0.395s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.516
+  },
+  {
+    "candidate": "A",
+    "name": "minimum-contract",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestController|^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.196s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.326
+  },
+  {
+    "candidate": "A",
+    "name": "host-vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.377
+  },
+  {
+    "candidate": "A",
+    "name": "host-build",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "build",
+      "-o",
+      "/dev/null",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.046
+  },
+  {
+    "candidate": "A",
+    "name": "format",
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "host.go",
+      "host_test.go"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.007
+  },
+  {
+    "candidate": "A",
+    "name": "host-race",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-run",
+      "^TestServe|^TestIndependent|^TestController|^TestReview",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "-test.shuffle 1790986694314828000\n--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)\n    review_independent_test.go:10: after observed Close failure err=Close failure\n        Close failure\n        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release\n--- FAIL: TestIndependentCallerCancellationDuringFailureCleanup (0.00s)\n    review_independent_test.go:22: missing context canceled after cancellation during held Close: Run failure\n        Close failure\n--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)\n    review_independent_test.go:10: after observed Close failure err=Close failure\n        Close failure\n        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release\n--- FAIL: TestIndependentCallerCancellationDuringFailureCleanup (0.00s)\n    review_independent_test.go:22: missing context canceled after cancellation during held Close: Run failure\n        Close failure\n--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)\n    review_independent_test.go:10: after observed Close failure err=Close failure\n        Close failure\n        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release\n--- FAIL: TestIndependentCallerCancellationDuringFailureCleanup (0.00s)\n    review_independent_test.go:22: missing context canceled after cancellation during held Close: Run failure\n        Close failure\nFAIL\nFAIL\texample.com/service-owned-workers\t1.188s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 4.076
+  },
+  {
+    "candidate": "A",
+    "name": "minimum-graph",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "list",
+      "-m",
+      "all"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/A",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "example.com/service-owned-workers\n",
+    "stderr": "",
+    "elapsed_seconds": 0.009
+  },
+  {
+    "candidate": "B",
+    "name": "host-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.008
+  },
+  {
+    "candidate": "B",
+    "name": "host-authored",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestServe",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.151s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.31
+  },
+  {
+    "candidate": "B",
+    "name": "host-independent",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestIndependent",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)\n    review_independent_test.go:10: after observed Close failure err=Close failure\n        Close failure\n        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release\n--- FAIL: TestIndependentAcquiredAfterCancelSkipsRun (0.00s)\n    review_independent_test.go:15: acquired after cancellation err=context canceled runs=1 closes=1; want canceled, zero Runs, one Close\nFAIL\nFAIL\texample.com/service-owned-workers\t0.394s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.509
+  },
+  {
+    "candidate": "B",
+    "name": "host-contract",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestController|^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)\n    review_supplementary_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required\nFAIL\nFAIL\texample.com/service-owned-workers\t0.454s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.583
+  },
+  {
+    "candidate": "B",
+    "name": "minimum-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "go version go1.22.12 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.016
+  },
+  {
+    "candidate": "B",
+    "name": "minimum-authored",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestServe",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.177s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.337
+  },
+  {
+    "candidate": "B",
+    "name": "minimum-independent",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestIndependent",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)\n    review_independent_test.go:10: after observed Close failure err=Close failure\n        Close failure\n        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release\n--- FAIL: TestIndependentAcquiredAfterCancelSkipsRun (0.00s)\n    review_independent_test.go:15: acquired after cancellation err=context canceled runs=1 closes=1; want canceled, zero Runs, one Close\nFAIL\nFAIL\texample.com/service-owned-workers\t0.386s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.514
+  },
+  {
+    "candidate": "B",
+    "name": "minimum-contract",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestController|^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)\n    review_supplementary_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required\nFAIL\nFAIL\texample.com/service-owned-workers\t0.449s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.582
+  },
+  {
+    "candidate": "B",
+    "name": "host-vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.084
+  },
+  {
+    "candidate": "B",
+    "name": "host-build",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "build",
+      "-o",
+      "/dev/null",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.047
+  },
+  {
+    "candidate": "B",
+    "name": "format",
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "host.go",
+      "host_test.go"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.007
+  },
+  {
+    "candidate": "B",
+    "name": "host-race",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-run",
+      "^TestServe|^TestIndependent|^TestController|^TestReview",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "-test.shuffle 1790986698732588000\n--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)\n    review_supplementary_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required\n--- FAIL: TestIndependentAcquiredAfterCancelSkipsRun (0.00s)\n    review_independent_test.go:15: acquired after cancellation err=context canceled runs=1 closes=1; want canceled, zero Runs, one Close\n--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)\n    review_independent_test.go:10: after observed Close failure err=Close failure\n        Close failure\n        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release\n--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)\n    review_supplementary_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required\n--- FAIL: TestIndependentAcquiredAfterCancelSkipsRun (0.00s)\n    review_independent_test.go:15: acquired after cancellation err=context canceled runs=1 closes=1; want canceled, zero Runs, one Close\n--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)\n    review_independent_test.go:10: after observed Close failure err=Close failure\n        Close failure\n        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release\n--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)\n    review_supplementary_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required\n--- FAIL: TestIndependentAcquiredAfterCancelSkipsRun (0.00s)\n    review_independent_test.go:15: acquired after cancellation err=context canceled runs=1 closes=1; want canceled, zero Runs, one Close\n--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)\n    review_independent_test.go:10: after observed Close failure err=Close failure\n        Close failure\n        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release\nFAIL\nFAIL\texample.com/service-owned-workers\t1.965s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 2.162
+  },
+  {
+    "candidate": "B",
+    "name": "minimum-graph",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "list",
+      "-m",
+      "all"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "example.com/service-owned-workers\n",
+    "stderr": "",
+    "elapsed_seconds": 0.015
+  },
+  {
+    "candidate": "C",
+    "name": "host-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/C",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.011
+  },
+  {
+    "candidate": "C",
+    "name": "host-authored",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestServe",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/C",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.178s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.341
+  },
+  {
+    "candidate": "C",
+    "name": "host-independent",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestIndependent",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/C",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.394s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.518
+  },
+  {
+    "candidate": "C",
+    "name": "host-contract",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestController|^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/C",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.206s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.333
+  },
+  {
+    "candidate": "C",
+    "name": "minimum-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/C",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "go version go1.22.12 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.012
+  },
+  {
+    "candidate": "C",
+    "name": "minimum-authored",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestServe",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/C",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.175s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.338
+  },
+  {
+    "candidate": "C",
+    "name": "minimum-independent",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestIndependent",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/C",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.393s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.522
+  },
+  {
+    "candidate": "C",
+    "name": "minimum-contract",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestController|^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/C",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.194s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.325
+  },
+  {
+    "candidate": "C",
+    "name": "host-vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/C",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.081
+  },
+  {
+    "candidate": "C",
+    "name": "host-build",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "build",
+      "-o",
+      "/dev/null",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/C",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.042
+  },
+  {
+    "candidate": "C",
+    "name": "format",
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "host.go",
+      "host_test.go"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/C",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.007
+  },
+  {
+    "candidate": "C",
+    "name": "host-race",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-run",
+      "^TestServe|^TestIndependent|^TestController|^TestReview",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/C",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t2.195s\n",
+    "stderr": "",
+    "elapsed_seconds": 2.397
+  },
+  {
+    "candidate": "C",
+    "name": "minimum-graph",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "list",
+      "-m",
+      "all"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/C",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "example.com/service-owned-workers\n",
+    "stderr": "",
+    "elapsed_seconds": 0.016
+  },
+  {
+    "candidate": "D",
+    "name": "host-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/D",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.011
+  },
+  {
+    "candidate": "D",
+    "name": "host-authored",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestServe",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/D",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.232s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.39
+  },
+  {
+    "candidate": "D",
+    "name": "host-independent",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestIndependent",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/D",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)\n    review_independent_test.go:10: after observed Close failure err=Close failure\n        Close failure\n        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release\n--- FAIL: TestIndependentLaterAvailableInputStarts (0.25s)\n    review_independent_test.go:45: second available job did not start while first Run held only one of two capacity slots\nFAIL\nFAIL\texample.com/service-owned-workers\t0.651s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.781
+  },
+  {
+    "candidate": "D",
+    "name": "host-contract",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestController|^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/D",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestControllerPartialStartAndBlockedAdmission (4.01s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/startup_failure (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/worker_failure (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/caller_cancellation (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n--- FAIL: TestReviewRunFailureCancelsPendingOpen (1.00s)\n    review_supplementary_test.go:88: missing event: Run 1 failed while Open 2 awaited stop\nFAIL\nFAIL\texample.com/service-owned-workers\t5.207s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 5.34
+  },
+  {
+    "candidate": "D",
+    "name": "minimum-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/D",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "go version go1.22.12 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.016
+  },
+  {
+    "candidate": "D",
+    "name": "minimum-authored",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestServe",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/D",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.180s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.346
+  },
+  {
+    "candidate": "D",
+    "name": "minimum-independent",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestIndependent",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/D",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)\n    review_independent_test.go:10: after observed Close failure err=Close failure\n        Close failure\n        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release\n--- FAIL: TestIndependentLaterAvailableInputStarts (0.25s)\n    review_independent_test.go:45: second available job did not start while first Run held only one of two capacity slots\nFAIL\nFAIL\texample.com/service-owned-workers\t0.644s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.772
+  },
+  {
+    "candidate": "D",
+    "name": "minimum-contract",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestController|^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/D",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestControllerPartialStartAndBlockedAdmission (4.01s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/startup_failure (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/worker_failure (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/caller_cancellation (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n--- FAIL: TestReviewRunFailureCancelsPendingOpen (1.00s)\n    review_supplementary_test.go:88: missing event: Run 1 failed while Open 2 awaited stop\nFAIL\nFAIL\texample.com/service-owned-workers\t5.208s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 5.346
+  },
+  {
+    "candidate": "D",
+    "name": "host-vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/D",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.083
+  },
+  {
+    "candidate": "D",
+    "name": "host-build",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "build",
+      "-o",
+      "/dev/null",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/D",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.051
+  },
+  {
+    "candidate": "D",
+    "name": "format",
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "host.go",
+      "host_test.go"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/D",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.007
+  },
+  {
+    "candidate": "D",
+    "name": "host-race",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-run",
+      "^TestServe|^TestIndependent|^TestController|^TestReview",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/D",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "-test.shuffle 1790986719005172000\n--- FAIL: TestReviewRunFailureCancelsPendingOpen (1.00s)\n    review_supplementary_test.go:88: missing event: Run 1 failed while Open 2 awaited stop\n--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)\n    review_independent_test.go:10: after observed Close failure err=Close failure\n        Close failure\n        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release\n--- FAIL: TestIndependentLaterAvailableInputStarts (0.25s)\n    review_independent_test.go:45: second available job did not start while first Run held only one of two capacity slots\n--- FAIL: TestControllerPartialStartAndBlockedAdmission (4.01s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/startup_failure (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/worker_failure (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/caller_cancellation (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n--- FAIL: TestReviewRunFailureCancelsPendingOpen (1.00s)\n    review_supplementary_test.go:88: missing event: Run 1 failed while Open 2 awaited stop\n--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)\n    review_independent_test.go:10: after observed Close failure err=Close failure\n        Close failure\n        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release\n--- FAIL: TestIndependentLaterAvailableInputStarts (0.25s)\n    review_independent_test.go:45: second available job did not start while first Run held only one of two capacity slots\n--- FAIL: TestControllerPartialStartAndBlockedAdmission (4.01s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/startup_failure (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/worker_failure (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/caller_cancellation (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n--- FAIL: TestReviewRunFailureCancelsPendingOpen (1.00s)\n    review_supplementary_test.go:88: missing event: Run 1 failed while Open 2 awaited stop\n--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)\n    review_independent_test.go:10: after observed Close failure err=Close failure\n        Close failure\n        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release\n--- FAIL: TestIndependentLaterAvailableInputStarts (0.25s)\n    review_independent_test.go:45: second available job did not start while first Run held only one of two capacity slots\n--- FAIL: TestControllerPartialStartAndBlockedAdmission (4.01s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/startup_failure (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/worker_failure (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/caller_cancellation (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (1.00s)\n        review_held_test.go:160: missing event: blocked third admission attempted\nFAIL\nFAIL\texample.com/service-owned-workers\t16.975s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 17.172
+  },
+  {
+    "candidate": "D",
+    "name": "minimum-graph",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "list",
+      "-m",
+      "all"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/D",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "example.com/service-owned-workers\n",
+    "stderr": "",
+    "elapsed_seconds": 0.015
+  },
+  {
+    "candidate": "E",
+    "name": "host-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/E",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.011
+  },
+  {
+    "candidate": "E",
+    "name": "host-authored",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestServe",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/E",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.256s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.418
+  },
+  {
+    "candidate": "E",
+    "name": "host-independent",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestIndependent",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/E",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.426s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.555
+  },
+  {
+    "candidate": "E",
+    "name": "host-contract",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestController|^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/E",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.196s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.323
+  },
+  {
+    "candidate": "E",
+    "name": "minimum-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/E",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "go version go1.22.12 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.012
+  },
+  {
+    "candidate": "E",
+    "name": "minimum-authored",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestServe",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/E",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.240s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.41
+  },
+  {
+    "candidate": "E",
+    "name": "minimum-independent",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestIndependent",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/E",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.423s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.559
+  },
+  {
+    "candidate": "E",
+    "name": "minimum-contract",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestController|^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/E",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.194s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.327
+  },
+  {
+    "candidate": "E",
+    "name": "host-vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/E",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.082
+  },
+  {
+    "candidate": "E",
+    "name": "host-build",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "build",
+      "-o",
+      "/dev/null",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/E",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.044
+  },
+  {
+    "candidate": "E",
+    "name": "format",
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "host.go",
+      "host_test.go"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/E",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.007
+  },
+  {
+    "candidate": "E",
+    "name": "host-race",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-run",
+      "^TestServe|^TestIndependent|^TestController|^TestReview",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/E",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t2.390s\n",
+    "stderr": "",
+    "elapsed_seconds": 2.599
+  },
+  {
+    "candidate": "E",
+    "name": "minimum-graph",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "list",
+      "-m",
+      "all"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/E",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "example.com/service-owned-workers\n",
+    "stderr": "",
+    "elapsed_seconds": 0.015
+  },
+  {
+    "candidate": "F",
+    "name": "host-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/F",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.011
+  },
+  {
+    "candidate": "F",
+    "name": "host-authored",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestServe",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/F",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.181s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.338
+  },
+  {
+    "candidate": "F",
+    "name": "host-independent",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestIndependent",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/F",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestIndependentAcquiredAfterCancelSkipsRun (0.00s)\n    review_independent_test.go:15: acquired after cancellation err=context canceled runs=1 closes=1; want canceled, zero Runs, one Close\n--- FAIL: TestIndependentHealthyCohortNotCanceled (0.00s)\n    review_independent_test.go:29: healthy full cohort was canceled before successful work was released\n    review_independent_test.go:30: uncanceled successful input returned failure: run job 1: context canceled\n        run job 2: context canceled\n--- FAIL: TestIndependentCompletedRunsRetainCapacity (0.17s)\n    review_independent_test.go:36: acquired leases until Close: err=<nil> peak=8 alive=0 closes=8; want nil, peak<=2, zero alive, eight closes\nFAIL\nFAIL\texample.com/service-owned-workers\t0.299s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.421
+  },
+  {
+    "candidate": "F",
+    "name": "host-contract",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-run",
+      "^TestController|^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/F",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestControllerPartialStartAndBlockedAdmission (0.00s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (0.00s)\n        review_held_test.go:190: Run started on lease acquired after stopping\nFAIL\nFAIL\texample.com/service-owned-workers\t0.198s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.325
+  },
+  {
+    "candidate": "F",
+    "name": "minimum-version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/F",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "go version go1.22.12 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.013
+  },
+  {
+    "candidate": "F",
+    "name": "minimum-authored",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestServe",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/F",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/service-owned-workers\t0.323s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.484
+  },
+  {
+    "candidate": "F",
+    "name": "minimum-independent",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestIndependent",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/F",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestIndependentAcquiredAfterCancelSkipsRun (0.00s)\n    review_independent_test.go:15: acquired after cancellation err=context canceled runs=1 closes=1; want canceled, zero Runs, one Close\n--- FAIL: TestIndependentHealthyCohortNotCanceled (0.00s)\n    review_independent_test.go:29: healthy full cohort was canceled before successful work was released\n    review_independent_test.go:30: uncanceled successful input returned failure: run job 2: context canceled\n        run job 1: context canceled\n--- FAIL: TestIndependentCompletedRunsRetainCapacity (0.17s)\n    review_independent_test.go:36: acquired leases until Close: err=<nil> peak=8 alive=0 closes=8; want nil, peak<=2, zero alive, eight closes\nFAIL\nFAIL\texample.com/service-owned-workers\t0.294s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.426
+  },
+  {
+    "candidate": "F",
+    "name": "minimum-contract",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-run",
+      "^TestController|^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/F",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestControllerPartialStartAndBlockedAdmission (0.00s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (0.00s)\n        review_held_test.go:190: Run started on lease acquired after stopping\nFAIL\nFAIL\texample.com/service-owned-workers\t0.204s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.34
+  },
+  {
+    "candidate": "F",
+    "name": "host-vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/F",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.081
+  },
+  {
+    "candidate": "F",
+    "name": "host-build",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "build",
+      "-o",
+      "/dev/null",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/F",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.052
+  },
+  {
+    "candidate": "F",
+    "name": "format",
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-l",
+      "host.go",
+      "host_test.go"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/F",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.007
+  },
+  {
+    "candidate": "F",
+    "name": "host-race",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-run",
+      "^TestServe|^TestIndependent|^TestController|^TestReview",
+      "-count=3",
+      "-timeout=60s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/F",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 1,
+    "stdout": "-test.shuffle 1790986744080896000\n--- FAIL: TestIndependentCompletedRunsRetainCapacity (0.18s)\n    review_independent_test.go:36: acquired leases until Close: err=<nil> peak=8 alive=0 closes=8; want nil, peak<=2, zero alive, eight closes\n--- FAIL: TestIndependentAcquiredAfterCancelSkipsRun (0.00s)\n    review_independent_test.go:15: acquired after cancellation err=context canceled runs=1 closes=1; want canceled, zero Runs, one Close\n--- FAIL: TestIndependentHealthyCohortNotCanceled (0.00s)\n    review_independent_test.go:29: healthy full cohort was canceled before successful work was released\n    review_independent_test.go:30: uncanceled successful input returned failure: run job 1: context canceled\n        run job 2: context canceled\n--- FAIL: TestIndependentCompletedRunsRetainCapacity (0.17s)\n    review_independent_test.go:36: acquired leases until Close: err=<nil> peak=8 alive=0 closes=8; want nil, peak<=2, zero alive, eight closes\n--- FAIL: TestIndependentAcquiredAfterCancelSkipsRun (0.00s)\n    review_independent_test.go:15: acquired after cancellation err=context canceled runs=1 closes=1; want canceled, zero Runs, one Close\n--- FAIL: TestControllerPartialStartAndBlockedAdmission (0.00s)\n    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (0.00s)\n        review_held_test.go:190: Run started on lease acquired after stopping\n--- FAIL: TestIndependentHealthyCohortNotCanceled (0.00s)\n    review_independent_test.go:29: healthy full cohort was canceled before successful work was released\n    review_independent_test.go:30: uncanceled successful input returned failure: run job 2: context canceled\n        run job 1: context canceled\n--- FAIL: TestIndependentCompletedRunsRetainCapacity (0.17s)\n    review_independent_test.go:36: acquired leases until Close: err=<nil> peak=8 alive=0 closes=8; want nil, peak<=2, zero alive, eight closes\n--- FAIL: TestIndependentAcquiredAfterCancelSkipsRun (0.00s)\n    review_independent_test.go:15: acquired after cancellation err=context canceled runs=1 closes=1; want canceled, zero Runs, one Close\n--- FAIL: TestIndependentHealthyCohortNotCanceled (0.00s)\n    review_independent_test.go:29: healthy full cohort was canceled before successful work was released\n    review_independent_test.go:30: uncanceled successful input returned failure: run job 1: context canceled\n        run job 2: context canceled\nFAIL\nFAIL\texample.com/service-owned-workers\t0.892s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 1.093
+  },
+  {
+    "candidate": "F",
+    "name": "minimum-graph",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "list",
+      "-m",
+      "all"
+    ],
+    "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/F",
+    "environment_overrides": {
+      "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOFLAGS": "-mod=readonly"
+    },
+    "status": 0,
+    "stdout": "example.com/service-owned-workers\n",
+    "stderr": "",
+    "elapsed_seconds": 0.016
+  }
+]

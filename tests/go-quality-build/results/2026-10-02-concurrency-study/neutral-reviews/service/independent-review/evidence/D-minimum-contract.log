@@ -1,0 +1,41 @@
+{
+  "candidate": "D",
+  "name": "minimum-contract",
+  "argv": [
+    "rtk",
+    "proxy",
+    "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+    "test",
+    "-run",
+    "^TestController|^TestReview",
+    "-count=1",
+    "-timeout=20s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/D",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly"
+  },
+  "status": 1,
+  "elapsed_seconds": 5.346
+}
+STDOUT
+--- FAIL: TestControllerPartialStartAndBlockedAdmission (4.01s)
+    --- FAIL: TestControllerPartialStartAndBlockedAdmission/startup_failure (1.00s)
+        review_held_test.go:160: missing event: blocked third admission attempted
+    --- FAIL: TestControllerPartialStartAndBlockedAdmission/worker_failure (1.00s)
+        review_held_test.go:160: missing event: blocked third admission attempted
+    --- FAIL: TestControllerPartialStartAndBlockedAdmission/caller_cancellation (1.00s)
+        review_held_test.go:160: missing event: blocked third admission attempted
+    --- FAIL: TestControllerPartialStartAndBlockedAdmission/acquired_before_stop (1.00s)
+        review_held_test.go:160: missing event: blocked third admission attempted
+--- FAIL: TestReviewRunFailureCancelsPendingOpen (1.00s)
+    review_supplementary_test.go:88: missing event: Run 1 failed while Open 2 awaited stop
+FAIL
+FAIL	example.com/service-owned-workers	5.208s
+FAIL
+
+STDERR

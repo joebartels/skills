@@ -1,0 +1,2242 @@
+[
+  {
+    "label": "A/host/version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.009
+  },
+  {
+    "label": "A/host/build",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "build",
+      "-mod=readonly",
+      "-o",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-host-pipeline",
+      "./cmd/pipeline"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 1.271
+  },
+  {
+    "label": "A/host/ordinary-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.174s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.735
+  },
+  {
+    "label": "A/host/vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "-mod=readonly",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.382
+  },
+  {
+    "label": "A/host/executable/finite",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-host-pipeline"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "5\n4\n3\n2\n1\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.217,
+    "expected_status": 0,
+    "expected_stdout": "5\n4\n3\n2\n1\n",
+    "contract_match": true
+  },
+  {
+    "label": "A/host/executable/early-prefix",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-host-pipeline",
+      "--take",
+      "2"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "5\n4\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.009,
+    "expected_status": 0,
+    "expected_stdout": "5\n4\n",
+    "contract_match": true
+  },
+  {
+    "label": "A/host/executable/malformed-first",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-host-pipeline",
+      "--take",
+      "2"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 2,
+    "stdout": "",
+    "stderr": "integer input: strconv.Atoi: parsing \"bad\": invalid syntax\n",
+    "timed_out": false,
+    "elapsed_seconds": 0.008,
+    "expected_status": 2,
+    "expected_stdout": "",
+    "contract_match": true
+  },
+  {
+    "label": "A/host/executable/empty",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-host-pipeline"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.007,
+    "expected_status": 0,
+    "expected_stdout": "",
+    "contract_match": true
+  },
+  {
+    "label": "A/host/executable/invalid-take",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-host-pipeline",
+      "--take",
+      "0"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 2,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.007,
+    "expected_status": 2,
+    "expected_stdout": "",
+    "contract_match": true
+  },
+  {
+    "label": "A/minimum/version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "go version go1.22.12 darwin/arm64\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.009
+  },
+  {
+    "label": "A/minimum/build",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "build",
+      "-mod=readonly",
+      "-o",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-minimum-pipeline",
+      "./cmd/pipeline"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 1.153
+  },
+  {
+    "label": "A/minimum/ordinary-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.168s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.604
+  },
+  {
+    "label": "A/minimum/vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "vet",
+      "-mod=readonly",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.334
+  },
+  {
+    "label": "A/minimum/executable/finite",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-minimum-pipeline"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "5\n4\n3\n2\n1\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.172,
+    "expected_status": 0,
+    "expected_stdout": "5\n4\n3\n2\n1\n",
+    "contract_match": true
+  },
+  {
+    "label": "A/minimum/executable/early-prefix",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-minimum-pipeline",
+      "--take",
+      "2"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "5\n4\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.009,
+    "expected_status": 0,
+    "expected_stdout": "5\n4\n",
+    "contract_match": true
+  },
+  {
+    "label": "A/minimum/executable/malformed-first",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-minimum-pipeline",
+      "--take",
+      "2"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 2,
+    "stdout": "",
+    "stderr": "integer input: strconv.Atoi: parsing \"bad\": invalid syntax\n",
+    "timed_out": false,
+    "elapsed_seconds": 0.007,
+    "expected_status": 2,
+    "expected_stdout": "",
+    "contract_match": true
+  },
+  {
+    "label": "A/minimum/executable/empty",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-minimum-pipeline"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.007,
+    "expected_status": 0,
+    "expected_stdout": "",
+    "contract_match": true
+  },
+  {
+    "label": "A/minimum/executable/invalid-take",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-minimum-pipeline",
+      "--take",
+      "0"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 2,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.007,
+    "expected_status": 2,
+    "expected_stdout": "",
+    "contract_match": true
+  },
+  {
+    "label": "A/format",
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-d",
+      "."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.007
+  },
+  {
+    "label": "A/host/held-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-held",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.437s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.584
+  },
+  {
+    "label": "A/minimum/held-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-held",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.419s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.566
+  },
+  {
+    "label": "A/held-race-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-held",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t1.820s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 4.731
+  },
+  {
+    "label": "A/host/independent-probes",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-probe",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewIndependentDeadlineAfterStop (0.00s)\n    review_probe_test.go:140: ASSERT independent deadline during cleanup lost: <nil>\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.175s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.327
+  },
+  {
+    "label": "A/minimum/independent-probes",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-probe",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewIndependentDeadlineAfterStop (0.00s)\n    review_probe_test.go:140: ASSERT independent deadline during cleanup lost: <nil>\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.159s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.311
+  },
+  {
+    "label": "A/probe-race-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=30s",
+      "-run",
+      "^TestReview",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-probe",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "-test.shuffle 1790986147230276000\n--- FAIL: TestReviewIndependentDeadlineAfterStop (0.00s)\n    review_probe_test.go:140: ASSERT independent deadline during cleanup lost: <nil>\n--- FAIL: TestReviewIndependentDeadlineAfterStop (0.00s)\n    review_probe_test.go:140: ASSERT independent deadline during cleanup lost: <nil>\n--- FAIL: TestReviewIndependentDeadlineAfterStop (0.00s)\n    review_probe_test.go:140: ASSERT independent deadline during cleanup lost: <nil>\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.186s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.368
+  },
+  {
+    "label": "A/mutation/no-early-stop/original-target-green",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewEarlyStopJoin$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-probe",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.121s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.235
+  },
+  {
+    "label": "A/mutation/no-early-stop/compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-early-stop",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.192s [no tests to run]\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.336
+  },
+  {
+    "label": "A/mutation/no-early-stop/ordinary-suite",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=8s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-early-stop",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "panic: test timed out after 8s\n\trunning tests:\n\t\tTestEarlyConsumerCompletionStopsAndJoinsProducer (8s)\n\ngoroutine 17 [running]:\ntesting.(*M).startAlarm.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2802 +0x2cc\ncreated by time.goFunc\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/time/sleep.go:215 +0x38\n\ngoroutine 1 [chan receive]:\ntesting.(*T).Run(0x68a3cc58e008, {0x104e58aee?, 0x285acf804e06ba0?}, 0x104fad930)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2109 +0x3bc\ntesting.runTests.func1(0x68a3cc58e008)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2585 +0x40\ntesting.tRunner(0x68a3cc58e008, 0x68a3cc4d8c48)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ntesting.runTests({0x104e53bf8, 0x1d}, {0x104e57718, 0x2a}, 0x68a3cc43a288, {0x104fd21e0, 0x7, 0x7}, {0x80783a6e6867284a?, 0x104e4fb2d?, ...})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2583 +0x3f0\ntesting.(*M).Run(0x68a3cc4dc820)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2443 +0x578\nmain.main()\n\t_testmain.go:58 +0x80\n\ngoroutine 9 [select]:\nexample.com/cli-pipeline-stop/cmd/pipeline.runPipeline({0x104fafbe8, 0x104ffdc80}, 0x68a3cc4d9f38?, 0x68a3cc43a378, 0x68a3cc43a390)\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-early-stop/cmd/pipeline/pipeline.go:32 +0x208\nexample.com/cli-pipeline-stop/cmd/pipeline.TestEarlyConsumerCompletionStopsAndJoinsProducer(0x68a3cc58e488)\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-early-stop/cmd/pipeline/pipeline_test.go:47 +0xf0\ntesting.tRunner(0x68a3cc58e488, 0x104fad930)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\n\ngoroutine 10 [select]:\nexample.com/cli-pipeline-stop/cmd/pipeline.TestEarlyConsumerCompletionStopsAndJoinsProducer.func1({0x104fafc90, 0x68a3cc58c1e0}, 0x68a3cc4cc400)\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-early-stop/cmd/pipeline/pipeline_test.go:50 +0x90\nexample.com/cli-pipeline-stop/cmd/pipeline.runPipeline.func1()\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-early-stop/cmd/pipeline/pipeline.go:18 +0x3c\ncreated by example.com/cli-pipeline-stop/cmd/pipeline.runPipeline in goroutine 9\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-early-stop/cmd/pipeline/pipeline.go:17 +0xd8\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t8.122s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 8.247
+  },
+  {
+    "label": "A/mutation/no-early-stop/independent-target",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewEarlyStopJoin$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-early-stop",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewEarlyStopJoin (1.00s)\n    review_probe_test.go:68: ASSERT missing event: early consumer must stop producer\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t1.178s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 1.347,
+    "confirmed_detection": true
+  },
+  {
+    "label": "A/mutation/no-failure-stop/original-target-green",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewFailureStopJoin$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-probe",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.142s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.268
+  },
+  {
+    "label": "A/mutation/no-failure-stop/compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-failure-stop",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.160s [no tests to run]\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.305
+  },
+  {
+    "label": "A/mutation/no-failure-stop/ordinary-suite",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=8s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-failure-stop",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "panic: test timed out after 8s\n\trunning tests:\n\t\tTestProducerFailureStopsConsumerAndPreservesError (8s)\n\ngoroutine 3 [running]:\ntesting.(*M).startAlarm.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2802 +0x2cc\ncreated by time.goFunc\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/time/sleep.go:215 +0x38\n\ngoroutine 1 [chan receive]:\ntesting.(*T).Run(0xb5627066008, {0x1044d4cfe?, 0xc974c1004482ba0?}, 0x104629948)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2109 +0x3bc\ntesting.runTests.func1(0xb5627066008)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2585 +0x40\ntesting.tRunner(0xb5627066008, 0xb5627022c48)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ntesting.runTests({0x1044cfbf8, 0x1d}, {0x1044d3718, 0x2a}, 0xb5627028270, {0x10464e1e0, 0x7, 0x7}, {0x8080800958062809?, 0x1044cbb2d?, ...})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2583 +0x3f0\ntesting.(*M).Run(0xb56270266e0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2443 +0x578\nmain.main()\n\t_testmain.go:58 +0x80\n\ngoroutine 26 [select]:\nexample.com/cli-pipeline-stop/cmd/pipeline.runPipeline({0x10462bbe8, 0x104679c80}, 0xb5627023f38?, 0xb56270283f0, 0xb5627012460)\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-failure-stop/cmd/pipeline/pipeline.go:32 +0x208\nexample.com/cli-pipeline-stop/cmd/pipeline.TestProducerFailureStopsConsumerAndPreservesError(0xb56270666c8)\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-failure-stop/cmd/pipeline/pipeline_test.go:75 +0xf8\ntesting.tRunner(0xb56270666c8, 0x104629948)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\n\ngoroutine 28 [chan receive]:\nexample.com/cli-pipeline-stop/cmd/pipeline.TestProducerFailureStopsConsumerAndPreservesError.func2({0x10462bc90, 0xb5627062280}, 0x0?)\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-failure-stop/cmd/pipeline/pipeline_test.go:78 +0x3c\nexample.com/cli-pipeline-stop/cmd/pipeline.runPipeline.func2()\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-failure-stop/cmd/pipeline/pipeline.go:23 +0x38\ncreated by example.com/cli-pipeline-stop/cmd/pipeline.runPipeline in goroutine 26\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-failure-stop/cmd/pipeline/pipeline.go:22 +0x140\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t8.122s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 8.243
+  },
+  {
+    "label": "A/mutation/no-failure-stop/independent-target",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewFailureStopJoin$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-no-failure-stop",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewFailureStopJoin (1.00s)\n    review_probe_test.go:94: ASSERT missing event: producer failure must stop consumer\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t1.181s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 1.348,
+    "confirmed_detection": true
+  },
+  {
+    "label": "A/mutation/skip-early-join/original-target-green",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewEarlyStopJoin$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-probe",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.145s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.27
+  },
+  {
+    "label": "A/mutation/skip-early-join/compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-skip-early-join",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.159s [no tests to run]\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.308
+  },
+  {
+    "label": "A/mutation/skip-early-join/ordinary-suite",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=8s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-skip-early-join",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestCommandTakeAndMalformedInput (0.00s)\n    pipeline_test.go:143: malformed input: code=0 stdout=\"\" stderr=\"\"\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.116s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.235
+  },
+  {
+    "label": "A/mutation/skip-early-join/independent-target",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewEarlyStopJoin$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-skip-early-join",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewEarlyStopJoin (0.00s)\n    review_probe_test.go:69: ASSERT host returned before producer cleanup release\n    review_probe_test.go:73: ASSERT producer not joined\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.157s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.302,
+    "confirmed_detection": true
+  },
+  {
+    "label": "A/mutation/broad-cancel-suppression/original-target-green",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewWrappedFailures$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-probe",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.116s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.231
+  },
+  {
+    "label": "A/mutation/broad-cancel-suppression/compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-broad-cancel-suppression",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.160s [no tests to run]\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.304
+  },
+  {
+    "label": "A/mutation/broad-cancel-suppression/ordinary-suite",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=8s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-broad-cancel-suppression",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.117s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.234
+  },
+  {
+    "label": "A/mutation/broad-cancel-suppression/independent-target",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewWrappedFailures$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/A-mutant-broad-cancel-suppression",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewWrappedFailures (0.00s)\n    review_probe_test.go:147: ASSERT wrapped independent failures lost: context canceled\n        producer operation\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.161s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.308,
+    "confirmed_detection": true
+  },
+  {
+    "label": "B/host/version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.011
+  },
+  {
+    "label": "B/host/build",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "build",
+      "-mod=readonly",
+      "-o",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-host-pipeline",
+      "./cmd/pipeline"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.104
+  },
+  {
+    "label": "B/host/ordinary-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.170s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.312
+  },
+  {
+    "label": "B/host/vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "-mod=readonly",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.076
+  },
+  {
+    "label": "B/host/executable/finite",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-host-pipeline"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "5\n4\n3\n2\n1\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.145,
+    "expected_status": 0,
+    "expected_stdout": "5\n4\n3\n2\n1\n",
+    "contract_match": true
+  },
+  {
+    "label": "B/host/executable/early-prefix",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-host-pipeline",
+      "--take",
+      "2"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "5\n4\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.008,
+    "expected_status": 0,
+    "expected_stdout": "5\n4\n",
+    "contract_match": true
+  },
+  {
+    "label": "B/host/executable/malformed-first",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-host-pipeline",
+      "--take",
+      "2"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 2,
+    "stdout": "",
+    "stderr": "integer input: strconv.Atoi: parsing \"bad\": invalid syntax\n",
+    "timed_out": false,
+    "elapsed_seconds": 0.007,
+    "expected_status": 2,
+    "expected_stdout": "",
+    "contract_match": true
+  },
+  {
+    "label": "B/host/executable/empty",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-host-pipeline"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.007,
+    "expected_status": 0,
+    "expected_stdout": "",
+    "contract_match": true
+  },
+  {
+    "label": "B/host/executable/invalid-take",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-host-pipeline",
+      "--take",
+      "0"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 2,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.006,
+    "expected_status": 2,
+    "expected_stdout": "",
+    "contract_match": true
+  },
+  {
+    "label": "B/minimum/version",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "go version go1.22.12 darwin/arm64\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.009
+  },
+  {
+    "label": "B/minimum/build",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "build",
+      "-mod=readonly",
+      "-o",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-minimum-pipeline",
+      "./cmd/pipeline"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.106
+  },
+  {
+    "label": "B/minimum/ordinary-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.170s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.307
+  },
+  {
+    "label": "B/minimum/vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "vet",
+      "-mod=readonly",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.084
+  },
+  {
+    "label": "B/minimum/executable/finite",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-minimum-pipeline"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "5\n4\n3\n2\n1\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.138,
+    "expected_status": 0,
+    "expected_stdout": "5\n4\n3\n2\n1\n",
+    "contract_match": true
+  },
+  {
+    "label": "B/minimum/executable/early-prefix",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-minimum-pipeline",
+      "--take",
+      "2"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "5\n4\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.007,
+    "expected_status": 0,
+    "expected_stdout": "5\n4\n",
+    "contract_match": true
+  },
+  {
+    "label": "B/minimum/executable/malformed-first",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-minimum-pipeline",
+      "--take",
+      "2"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 2,
+    "stdout": "",
+    "stderr": "integer input: strconv.Atoi: parsing \"bad\": invalid syntax\n",
+    "timed_out": false,
+    "elapsed_seconds": 0.007,
+    "expected_status": 2,
+    "expected_stdout": "",
+    "contract_match": true
+  },
+  {
+    "label": "B/minimum/executable/empty",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-minimum-pipeline"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.006,
+    "expected_status": 0,
+    "expected_stdout": "",
+    "contract_match": true
+  },
+  {
+    "label": "B/minimum/executable/invalid-take",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-minimum-pipeline",
+      "--take",
+      "0"
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 2,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.006,
+    "expected_status": 2,
+    "expected_stdout": "",
+    "contract_match": true
+  },
+  {
+    "label": "B/format",
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-d",
+      "."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-ordinary",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.007
+  },
+  {
+    "label": "B/host/held-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-held",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestControllerIndependentCancellationClassBeforeStop (0.00s)\n    controller_contract_test.go:227: independent cancellation-class failure lost: <nil>\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.430s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.574
+  },
+  {
+    "label": "B/minimum/held-tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-held",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestControllerIndependentCancellationClassBeforeStop (0.00s)\n    controller_contract_test.go:227: independent cancellation-class failure lost: <nil>\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.419s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.572
+  },
+  {
+    "label": "B/held-race-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-held",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "-test.shuffle 1790986172654229000\n--- FAIL: TestControllerIndependentCancellationClassBeforeStop (0.00s)\n    controller_contract_test.go:227: independent cancellation-class failure lost: <nil>\n--- FAIL: TestControllerIndependentCancellationClassBeforeStop (0.00s)\n    controller_contract_test.go:227: independent cancellation-class failure lost: <nil>\n--- FAIL: TestControllerIndependentCancellationClassBeforeStop (0.00s)\n    controller_contract_test.go:227: independent cancellation-class failure lost: <nil>\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.822s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 1.002
+  },
+  {
+    "label": "B/host/independent-probes",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-probe",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewIndependentExactBeforeStop (0.00s)\n    --- FAIL: TestReviewIndependentExactBeforeStop/true (0.00s)\n        review_probe_test.go:119: ASSERT independent exact before stop lost: <nil>\n    --- FAIL: TestReviewIndependentExactBeforeStop/false (0.00s)\n        review_probe_test.go:119: ASSERT independent exact before stop lost: <nil>\n--- FAIL: TestReviewIndependentDeadlineAfterStop (0.00s)\n    review_probe_test.go:140: ASSERT independent deadline during cleanup lost: <nil>\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.162s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.307
+  },
+  {
+    "label": "B/minimum/independent-probes",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReview",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-probe",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "/private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewIndependentExactBeforeStop (0.00s)\n    --- FAIL: TestReviewIndependentExactBeforeStop/true (0.00s)\n        review_probe_test.go:119: ASSERT independent exact before stop lost: <nil>\n    --- FAIL: TestReviewIndependentExactBeforeStop/false (0.00s)\n        review_probe_test.go:119: ASSERT independent exact before stop lost: <nil>\n--- FAIL: TestReviewIndependentDeadlineAfterStop (0.00s)\n    review_probe_test.go:140: ASSERT independent deadline during cleanup lost: <nil>\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.164s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.309
+  },
+  {
+    "label": "B/probe-race-shuffle",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-race",
+      "-shuffle=on",
+      "-count=3",
+      "-timeout=30s",
+      "-run",
+      "^TestReview",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-probe",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "-test.shuffle 1790986174272907000\n--- FAIL: TestReviewIndependentDeadlineAfterStop (0.00s)\n    review_probe_test.go:140: ASSERT independent deadline during cleanup lost: <nil>\n--- FAIL: TestReviewIndependentExactBeforeStop (0.00s)\n    --- FAIL: TestReviewIndependentExactBeforeStop/true (0.00s)\n        review_probe_test.go:119: ASSERT independent exact before stop lost: <nil>\n    --- FAIL: TestReviewIndependentExactBeforeStop/false (0.00s)\n        review_probe_test.go:119: ASSERT independent exact before stop lost: <nil>\n--- FAIL: TestReviewIndependentDeadlineAfterStop (0.00s)\n    review_probe_test.go:140: ASSERT independent deadline during cleanup lost: <nil>\n--- FAIL: TestReviewIndependentExactBeforeStop (0.00s)\n    --- FAIL: TestReviewIndependentExactBeforeStop/true (0.00s)\n        review_probe_test.go:119: ASSERT independent exact before stop lost: <nil>\n    --- FAIL: TestReviewIndependentExactBeforeStop/false (0.00s)\n        review_probe_test.go:119: ASSERT independent exact before stop lost: <nil>\n--- FAIL: TestReviewIndependentDeadlineAfterStop (0.00s)\n    review_probe_test.go:140: ASSERT independent deadline during cleanup lost: <nil>\n--- FAIL: TestReviewIndependentExactBeforeStop (0.00s)\n    --- FAIL: TestReviewIndependentExactBeforeStop/true (0.00s)\n        review_probe_test.go:119: ASSERT independent exact before stop lost: <nil>\n    --- FAIL: TestReviewIndependentExactBeforeStop/false (0.00s)\n        review_probe_test.go:119: ASSERT independent exact before stop lost: <nil>\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.188s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.368
+  },
+  {
+    "label": "B/mutation/no-early-stop/original-target-green",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewEarlyStopJoin$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-probe",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.119s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.235
+  },
+  {
+    "label": "B/mutation/no-early-stop/compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-early-stop",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.157s [no tests to run]\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.295
+  },
+  {
+    "label": "B/mutation/no-early-stop/ordinary-suite",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=8s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-early-stop",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestConsumerEarlyCompletionCancelsAndJoinsProducer (1.00s)\n    pipeline_test.go:70: producer did not observe cancellation\npanic: test timed out after 8s\n\trunning tests:\n\t\tTestCoordinatedCancellationIsSuppressedButCallerCancellationIsNot (7s)\n\ngoroutine 18 [running]:\ntesting.(*M).startAlarm.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2802 +0x2cc\ncreated by time.goFunc\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/time/sleep.go:215 +0x38\n\ngoroutine 1 [chan receive]:\ntesting.(*T).Run(0x3ae23b5dc008, {0x102164104?, 0x2960490021121f0?}, 0x1022b50a0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2109 +0x3bc\ntesting.runTests.func1(0x3ae23b5dc008)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2585 +0x40\ntesting.tRunner(0x3ae23b5dc008, 0x3ae23b58cc48)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ntesting.runTests({0x10215dd0f, 0x1d}, {0x1021617a5, 0x2a}, 0x3ae23b592270, {0x1022d9f00, 0x4, 0x4}, {0x8080808032073f3d?, 0x102159c62?, ...})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2583 +0x3f0\ntesting.(*M).Run(0x3ae23b5908c0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2443 +0x578\nmain.main()\n\t_testmain.go:52 +0x80\n\ngoroutine 52 [chan receive]:\nexample.com/cli-pipeline-stop/cmd/pipeline.runPipeline({0x1022b7308, 0x102305b60}, 0x1, 0x1022b5138, 0x1022b5140)\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-early-stop/cmd/pipeline/pipeline.go:35 +0x1b8\nexample.com/cli-pipeline-stop/cmd/pipeline.TestCoordinatedCancellationIsSuppressedButCallerCancellationIsNot(0x3ae23b622248)\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-early-stop/cmd/pipeline/pipeline_test.go:111 +0x44\ntesting.tRunner(0x3ae23b622248, 0x1022b50a0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\n\ngoroutine 39 [select]:\nexample.com/cli-pipeline-stop/cmd/pipeline.TestConsumerEarlyCompletionCancelsAndJoinsProducer.func1.1({0x1022b73b0, 0x3ae23b5d81e0}, 0x3ae23b5c8380)\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-early-stop/cmd/pipeline/pipeline_test.go:52 +0x120\nexample.com/cli-pipeline-stop/cmd/pipeline.runPipeline.func1()\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-early-stop/cmd/pipeline/pipeline.go:20 +0x34\ncreated by example.com/cli-pipeline-stop/cmd/pipeline.runPipeline in goroutine 38\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-early-stop/cmd/pipeline/pipeline.go:19 +0xec\n\ngoroutine 38 [chan receive]:\nexample.com/cli-pipeline-stop/cmd/pipeline.runPipeline({0x1022b7308, 0x102305b60}, 0x1, 0x3ae23b595080, 0x3ae23b596400)\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-early-stop/cmd/pipeline/pipeline.go:35 +0x1b8\nexample.com/cli-pipeline-stop/cmd/pipeline.TestConsumerEarlyCompletionCancelsAndJoinsProducer.func1()\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-early-stop/cmd/pipeline/pipeline_test.go:41 +0xf4\ncreated by example.com/cli-pipeline-stop/cmd/pipeline.TestConsumerEarlyCompletionCancelsAndJoinsProducer in goroutine 37\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-early-stop/cmd/pipeline/pipeline_test.go:40 +0xf4\n\ngoroutine 53 [chan receive]:\nexample.com/cli-pipeline-stop/cmd/pipeline.TestCoordinatedCancellationIsSuppressedButCallerCancellationIsNot.func1({0x1022b73b0, 0x3ae23b61e0f0}, 0x1022b73b0?)\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-early-stop/cmd/pipeline/pipeline_test.go:112 +0x34\nexample.com/cli-pipeline-stop/cmd/pipeline.runPipeline.func1()\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-early-stop/cmd/pipeline/pipeline.go:20 +0x34\ncreated by example.com/cli-pipeline-stop/cmd/pipeline.runPipeline in goroutine 52\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-early-stop/cmd/pipeline/pipeline.go:19 +0xec\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t8.123s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 8.245
+  },
+  {
+    "label": "B/mutation/no-early-stop/independent-target",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewEarlyStopJoin$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-early-stop",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewEarlyStopJoin (1.00s)\n    review_probe_test.go:68: ASSERT missing event: early consumer must stop producer\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t1.181s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 1.345,
+    "confirmed_detection": true
+  },
+  {
+    "label": "B/mutation/no-failure-stop/original-target-green",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewFailureStopJoin$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-probe",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.143s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.266
+  },
+  {
+    "label": "B/mutation/no-failure-stop/compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-failure-stop",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.159s [no tests to run]\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.3
+  },
+  {
+    "label": "B/mutation/no-failure-stop/ordinary-suite",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=8s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-failure-stop",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "panic: test timed out after 8s\n\trunning tests:\n\t\tTestProducerFailureStopsConsumerAndPreservesBothErrors (8s)\n\ngoroutine 39 [running]:\ntesting.(*M).startAlarm.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2802 +0x2cc\ncreated by time.goFunc\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/time/sleep.go:215 +0x38\n\ngoroutine 1 [chan receive]:\ntesting.(*T).Run(0x39651d55c008, {0x1043fb4b2?, 0xc3ebc30043aa1f0?}, 0x10454d0b0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2109 +0x3bc\ntesting.runTests.func1(0x39651d55c008)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2585 +0x40\ntesting.tRunner(0x39651d55c008, 0x39651d50ac48)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ntesting.runTests({0x1043f5d0f, 0x1d}, {0x1043f97a5, 0x2a}, 0x39651d510270, {0x104571f00, 0x4, 0x4}, {0x8080808004265362?, 0x1043f1c62?, ...})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2583 +0x3f0\ntesting.(*M).Run(0x39651d50e6e0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2443 +0x578\nmain.main()\n\t_testmain.go:52 +0x80\n\ngoroutine 21 [chan receive]:\nexample.com/cli-pipeline-stop/cmd/pipeline.runPipeline({0x10454f308, 0x10459db60}, 0x1, 0x39651d494080, 0x39651d4940a0)\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-failure-stop/cmd/pipeline/pipeline.go:35 +0x1b4\nexample.com/cli-pipeline-stop/cmd/pipeline.TestProducerFailureStopsConsumerAndPreservesBothErrors(0x39651d4aa008)\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-failure-stop/cmd/pipeline/pipeline_test.go:97 +0x38c\ntesting.tRunner(0x39651d4aa008, 0x10454d0b0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\n\ngoroutine 23 [chan receive]:\nexample.com/cli-pipeline-stop/cmd/pipeline.TestProducerFailureStopsConsumerAndPreservesBothErrors.func2({0x10454f3b0, 0x39651d49c0a0}, 0x0?)\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-failure-stop/cmd/pipeline/pipeline_test.go:102 +0x4c\nexample.com/cli-pipeline-stop/cmd/pipeline.runPipeline.func2()\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-failure-stop/cmd/pipeline/pipeline.go:25 +0x30\ncreated by example.com/cli-pipeline-stop/cmd/pipeline.runPipeline in goroutine 21\n\t/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-failure-stop/cmd/pipeline/pipeline.go:24 +0x154\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t8.120s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 8.243
+  },
+  {
+    "label": "B/mutation/no-failure-stop/independent-target",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewFailureStopJoin$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-no-failure-stop",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewFailureStopJoin (1.00s)\n    review_probe_test.go:94: ASSERT missing event: producer failure must stop consumer\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t1.189s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 1.355,
+    "confirmed_detection": true
+  },
+  {
+    "label": "B/mutation/skip-early-join/original-target-green",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewEarlyStopJoin$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-probe",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.143s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.265
+  },
+  {
+    "label": "B/mutation/skip-early-join/compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-skip-early-join",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.163s [no tests to run]\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.307
+  },
+  {
+    "label": "B/mutation/skip-early-join/ordinary-suite",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=8s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-skip-early-join",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestConsumerEarlyCompletionCancelsAndJoinsProducer (0.00s)\n    pipeline_test.go:89: producer was not joined before return\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.123s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.239
+  },
+  {
+    "label": "B/mutation/skip-early-join/independent-target",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewEarlyStopJoin$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-skip-early-join",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewEarlyStopJoin (0.00s)\n    review_probe_test.go:69: ASSERT host returned before producer cleanup release\n    review_probe_test.go:73: ASSERT producer not joined\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.158s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.307,
+    "confirmed_detection": true
+  },
+  {
+    "label": "B/mutation/broad-cancel-suppression/original-target-green",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewWrappedFailures$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-probe",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.118s\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.231
+  },
+  {
+    "label": "B/mutation/broad-cancel-suppression/compile",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-broad-cancel-suppression",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 0,
+    "stdout": "ok  \texample.com/cli-pipeline-stop/cmd/pipeline\t0.159s [no tests to run]\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.3
+  },
+  {
+    "label": "B/mutation/broad-cancel-suppression/ordinary-suite",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=8s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-broad-cancel-suppression",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestProducerFailureStopsConsumerAndPreservesBothErrors (0.00s)\n    pipeline_test.go:106: error = <nil>, want both independent failures\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.118s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.231
+  },
+  {
+    "label": "B/mutation/broad-cancel-suppression/independent-target",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-run",
+      "^TestReviewWrappedFailures$",
+      "-count=1",
+      "-timeout=10s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-pipeline-study/independent-review/work/B-mutant-broad-cancel-suppression",
+    "environment_overrides": {
+      "GOTOOLCHAIN": "local",
+      "GOWORK": "off",
+      "GOPROXY": "off",
+      "GOSUMDB": "off",
+      "GOCACHE": "/private/tmp/go-neutral-pipeline-study/independent-review/cache",
+      "GOQUALITY_GO": "go"
+    },
+    "status": 1,
+    "stdout": "--- FAIL: TestReviewWrappedFailures (0.00s)\n    review_probe_test.go:147: ASSERT wrapped independent failures lost: <nil>\nFAIL\nFAIL\texample.com/cli-pipeline-stop/cmd/pipeline\t0.246s\nFAIL\n",
+    "stderr": "",
+    "timed_out": false,
+    "elapsed_seconds": 0.395,
+    "confirmed_detection": true
+  }
+]

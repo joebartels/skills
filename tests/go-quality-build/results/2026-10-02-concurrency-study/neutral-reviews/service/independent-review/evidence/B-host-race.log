@@ -1,0 +1,57 @@
+{
+  "candidate": "B",
+  "name": "host-race",
+  "argv": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-race",
+    "-shuffle=on",
+    "-run",
+    "^TestServe|^TestIndependent|^TestController|^TestReview",
+    "-count=3",
+    "-timeout=60s",
+    "./..."
+  ],
+  "cwd": "/private/tmp/go-neutral-workers-study/independent-review/disposable/B",
+  "environment_overrides": {
+    "GOCACHE": "/private/tmp/go-neutral-workers-study/independent-review/cache",
+    "GOTOOLCHAIN": "local",
+    "GOWORK": "off",
+    "GOFLAGS": "-mod=readonly"
+  },
+  "status": 1,
+  "elapsed_seconds": 2.162
+}
+STDOUT
+-test.shuffle 1790986698732588000
+--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)
+    review_supplementary_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required
+--- FAIL: TestIndependentAcquiredAfterCancelSkipsRun (0.00s)
+    review_independent_test.go:15: acquired after cancellation err=context canceled runs=1 closes=1; want canceled, zero Runs, one Close
+--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)
+    review_independent_test.go:10: after observed Close failure err=Close failure
+        Close failure
+        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release
+--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)
+    review_supplementary_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required
+--- FAIL: TestIndependentAcquiredAfterCancelSkipsRun (0.00s)
+    review_independent_test.go:15: acquired after cancellation err=context canceled runs=1 closes=1; want canceled, zero Runs, one Close
+--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)
+    review_independent_test.go:10: after observed Close failure err=Close failure
+        Close failure
+        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release
+--- FAIL: TestReviewRunFailureCancelsPendingOpen (0.25s)
+    review_supplementary_test.go:102: Run failure did not cancel cooperating pending Open; caller cancellation was required
+--- FAIL: TestIndependentAcquiredAfterCancelSkipsRun (0.00s)
+    review_independent_test.go:15: acquired after cancellation err=context canceled runs=1 closes=1; want canceled, zero Runs, one Close
+--- FAIL: TestIndependentCloseFailureStopsNextAdmission (0.00s)
+    review_independent_test.go:10: after observed Close failure err=Close failure
+        Close failure
+        Close failure opened=3 closed=3; want retained Close cause and one acquisition/release
+FAIL
+FAIL	example.com/service-owned-workers	1.965s
+FAIL
+
+STDERR

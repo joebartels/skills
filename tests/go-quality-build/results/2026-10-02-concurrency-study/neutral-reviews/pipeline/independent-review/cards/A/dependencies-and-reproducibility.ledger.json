@@ -1,0 +1,18 @@
+{
+  "scope": "Bounded code-area review of candidate A source snapshot (see source-hashes-before.json), CLI/private runPipeline and delivered tests, judged against original README/source; Go1.22 minimum, actual Go1.22.12 and host Go1.26.5 darwin/arm64. Findings are existing-in-scope in this delivered snapshot.",
+  "coverage": [
+    {
+      "id": "dependencies-and-reproducibility",
+      "status": "complete",
+      "reason": "The documented Go 1.22 minimum and standard-library-only standalone module are a rebuild contract, checked with an actual minimum toolchain."
+    }
+  ],
+  "findings": [],
+  "strengths": [
+    {
+      "id": "A/dependencies-and-reproducibility/G1",
+      "evidence": "The standard-library-only standalone module has no external module requirements, replacement, workspace, vendor or generation inputs. Both host and the actual Go1.22.12 compiler build and test readonly offline disposable copies with GOWORK=off; source hashes remain unchanged."
+    }
+  ],
+  "safeguards": []
+}

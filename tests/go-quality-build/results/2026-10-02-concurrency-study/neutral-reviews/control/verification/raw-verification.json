@@ -1,0 +1,338 @@
+[
+  {
+    "label": "local toolchain",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "version"
+    ],
+    "cwd": "/private/tmp/go-neutral-control-study",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOCACHE": "/private/tmp/go-neutral-control-study/verification/cache",
+      "GOFLAGS": ""
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "go version go1.26.5 darwin/arm64\n",
+    "stderr": "",
+    "elapsed_seconds": 0.009
+  },
+  {
+    "label": "A ordinary tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-control-study/verification/work/A/ordinary",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOCACHE": "/private/tmp/go-neutral-control-study/verification/cache",
+      "GOFLAGS": ""
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "ok  \texample.com/not-concurrency-work\t0.223s\n",
+    "stderr": "",
+    "elapsed_seconds": 1.877
+  },
+  {
+    "label": "A vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "-mod=readonly",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-control-study/verification/work/A/ordinary",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOCACHE": "/private/tmp/go-neutral-control-study/verification/cache",
+      "GOFLAGS": ""
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.375
+  },
+  {
+    "label": "A formatting",
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-d",
+      "sum.go",
+      "sum_test.go"
+    ],
+    "cwd": "/private/tmp/go-neutral-control-study/verification/work/A/ordinary",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOCACHE": "/private/tmp/go-neutral-control-study/verification/cache",
+      "GOFLAGS": ""
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.007
+  },
+  {
+    "label": "A selected modules",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-mod=readonly",
+      "-m",
+      "all"
+    ],
+    "cwd": "/private/tmp/go-neutral-control-study/verification/work/A/ordinary",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOCACHE": "/private/tmp/go-neutral-control-study/verification/cache",
+      "GOFLAGS": ""
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "example.com/not-concurrency-work\n",
+    "stderr": "",
+    "elapsed_seconds": 0.008
+  },
+  {
+    "label": "A independent contract observation",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestReviewContractCases$",
+      "-v",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-control-study/verification/work/A/observed",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOCACHE": "/private/tmp/go-neutral-control-study/verification/cache",
+      "GOFLAGS": ""
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "=== RUN   TestReviewContractCases\n=== RUN   TestReviewContractCases/nil\n=== RUN   TestReviewContractCases/empty\n=== RUN   TestReviewContractCases/positive_singleton\n=== RUN   TestReviewContractCases/zero_singleton\n=== RUN   TestReviewContractCases/negative_singleton\n=== RUN   TestReviewContractCases/negative_only\n=== RUN   TestReviewContractCases/zeros_only\n=== RUN   TestReviewContractCases/positive_first\n=== RUN   TestReviewContractCases/positive_middle\n=== RUN   TestReviewContractCases/positive_final\n=== RUN   TestReviewContractCases/all_positive\n=== RUN   TestReviewContractCases/mixed\n--- PASS: TestReviewContractCases (0.00s)\n    --- PASS: TestReviewContractCases/nil (0.00s)\n    --- PASS: TestReviewContractCases/empty (0.00s)\n    --- PASS: TestReviewContractCases/positive_singleton (0.00s)\n    --- PASS: TestReviewContractCases/zero_singleton (0.00s)\n    --- PASS: TestReviewContractCases/negative_singleton (0.00s)\n    --- PASS: TestReviewContractCases/negative_only (0.00s)\n    --- PASS: TestReviewContractCases/zeros_only (0.00s)\n    --- PASS: TestReviewContractCases/positive_first (0.00s)\n    --- PASS: TestReviewContractCases/positive_middle (0.00s)\n    --- PASS: TestReviewContractCases/positive_final (0.00s)\n    --- PASS: TestReviewContractCases/all_positive (0.00s)\n    --- PASS: TestReviewContractCases/mixed (0.00s)\nPASS\nok  \texample.com/not-concurrency-work\t0.178s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.305
+  },
+  {
+    "label": "A supplied regression sensitivity to original implementation",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "Final",
+      "-v",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-control-study/verification/work/A/original-implementation",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOCACHE": "/private/tmp/go-neutral-control-study/verification/cache",
+      "GOFLAGS": ""
+    },
+    "status": 1,
+    "expected_status": 1,
+    "stdout": "=== RUN   TestSumIncludesFinalPositiveValue\n    sum_test.go:13: sum=2, want 5\n--- FAIL: TestSumIncludesFinalPositiveValue (0.00s)\nFAIL\nFAIL\texample.com/not-concurrency-work\t0.163s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.303
+  },
+  {
+    "label": "B ordinary tests",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-control-study/verification/work/B/ordinary",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOCACHE": "/private/tmp/go-neutral-control-study/verification/cache",
+      "GOFLAGS": ""
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "ok  \texample.com/not-concurrency-work\t0.167s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.301
+  },
+  {
+    "label": "B vet",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "vet",
+      "-mod=readonly",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-control-study/verification/work/B/ordinary",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOCACHE": "/private/tmp/go-neutral-control-study/verification/cache",
+      "GOFLAGS": ""
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.072
+  },
+  {
+    "label": "B formatting",
+    "argv": [
+      "rtk",
+      "proxy",
+      "gofmt",
+      "-d",
+      "sum.go",
+      "sum_test.go"
+    ],
+    "cwd": "/private/tmp/go-neutral-control-study/verification/work/B/ordinary",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOCACHE": "/private/tmp/go-neutral-control-study/verification/cache",
+      "GOFLAGS": ""
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "",
+    "stderr": "",
+    "elapsed_seconds": 0.007
+  },
+  {
+    "label": "B selected modules",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "list",
+      "-mod=readonly",
+      "-m",
+      "all"
+    ],
+    "cwd": "/private/tmp/go-neutral-control-study/verification/work/B/ordinary",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOCACHE": "/private/tmp/go-neutral-control-study/verification/cache",
+      "GOFLAGS": ""
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "example.com/not-concurrency-work\n",
+    "stderr": "",
+    "elapsed_seconds": 0.008
+  },
+  {
+    "label": "B independent contract observation",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "^TestReviewContractCases$",
+      "-v",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-control-study/verification/work/B/observed",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOCACHE": "/private/tmp/go-neutral-control-study/verification/cache",
+      "GOFLAGS": ""
+    },
+    "status": 0,
+    "expected_status": 0,
+    "stdout": "=== RUN   TestReviewContractCases\n=== RUN   TestReviewContractCases/nil\n=== RUN   TestReviewContractCases/empty\n=== RUN   TestReviewContractCases/positive_singleton\n=== RUN   TestReviewContractCases/zero_singleton\n=== RUN   TestReviewContractCases/negative_singleton\n=== RUN   TestReviewContractCases/negative_only\n=== RUN   TestReviewContractCases/zeros_only\n=== RUN   TestReviewContractCases/positive_first\n=== RUN   TestReviewContractCases/positive_middle\n=== RUN   TestReviewContractCases/positive_final\n=== RUN   TestReviewContractCases/all_positive\n=== RUN   TestReviewContractCases/mixed\n--- PASS: TestReviewContractCases (0.00s)\n    --- PASS: TestReviewContractCases/nil (0.00s)\n    --- PASS: TestReviewContractCases/empty (0.00s)\n    --- PASS: TestReviewContractCases/positive_singleton (0.00s)\n    --- PASS: TestReviewContractCases/zero_singleton (0.00s)\n    --- PASS: TestReviewContractCases/negative_singleton (0.00s)\n    --- PASS: TestReviewContractCases/negative_only (0.00s)\n    --- PASS: TestReviewContractCases/zeros_only (0.00s)\n    --- PASS: TestReviewContractCases/positive_first (0.00s)\n    --- PASS: TestReviewContractCases/positive_middle (0.00s)\n    --- PASS: TestReviewContractCases/positive_final (0.00s)\n    --- PASS: TestReviewContractCases/all_positive (0.00s)\n    --- PASS: TestReviewContractCases/mixed (0.00s)\nPASS\nok  \texample.com/not-concurrency-work\t0.178s\n",
+    "stderr": "",
+    "elapsed_seconds": 0.306
+  },
+  {
+    "label": "B supplied regression sensitivity to original implementation",
+    "argv": [
+      "rtk",
+      "proxy",
+      "go",
+      "test",
+      "-mod=readonly",
+      "-count=1",
+      "-timeout=30s",
+      "-run",
+      "Final",
+      "-v",
+      "./..."
+    ],
+    "cwd": "/private/tmp/go-neutral-control-study/verification/work/B/original-implementation",
+    "environment_overrides": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOCACHE": "/private/tmp/go-neutral-control-study/verification/cache",
+      "GOFLAGS": ""
+    },
+    "status": 1,
+    "expected_status": 1,
+    "stdout": "=== RUN   TestSumIncludesPositiveFinalElement\n    sum_test.go:13: sum=2, want 5\n--- FAIL: TestSumIncludesPositiveFinalElement (0.00s)\nFAIL\nFAIL\texample.com/not-concurrency-work\t0.169s\nFAIL\n",
+    "stderr": "",
+    "elapsed_seconds": 0.307
+  }
+]

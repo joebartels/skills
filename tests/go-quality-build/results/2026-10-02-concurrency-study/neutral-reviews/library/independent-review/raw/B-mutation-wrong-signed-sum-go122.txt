@@ -1,0 +1,14 @@
+COMMAND: rtk proxy /private/tmp/go-quality-toolchains/golang.org/toolchain@v0.0.1-go1.22.12.darwin-arm64/bin/go test -mod=readonly -count=1 -timeout=2s -run ^TestSequentialTotals$ ./...
+CWD: /private/tmp/go-neutral-library-study/independent-review/work/wrong-signed-sum-B
+ENV: {"GOCACHE": "/private/tmp/go-neutral-library-study/independent-review/gocache", "GOMODCACHE": "/private/tmp/go-neutral-library-study/independent-review/modcache", "GOPROXY": "off", "GOSUMDB": "off", "GOTOOLCHAIN": "local", "GOWORK": "off"}
+STDOUT:
+--- FAIL: TestSequentialTotals (0.00s)
+    totals_test.go:13: totals={Count:2 Sum:5}
+FAIL
+FAIL	example.com/library-shared-state	0.162s
+FAIL
+
+STDERR:
+
+STATUS: 1
+TIMED_OUT: False
