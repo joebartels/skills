@@ -1,0 +1,49 @@
+// ResolveRequestID returns the request id for a request whose X-Request-Id
+// header carried candidate, and reports whether a value that was sent had to be
+// replaced. An empty candidate gets a new id with rejected=false; a candidate
+// that satisfies uids.IsValidRequestID is returned as is; anything else is
+// replaced with a new id and rejected=true, so the caller can log that it did.
+//
+// An invalid candidate is replaced rather than repaired, so no fragment the
+// caller chose reaches our logs. A valid id proves nothing about who minted it:
+// a service facing untrusted callers must still strip the header unless a
+// trusted proxy mints it. An upstream that mints ids in another format has
+// every one replaced and warned about once per request; accepting it means
+// changing uids.IsValidRequestID, not config.
+func ResolveRequestID(candidate string) (id string, rejected bool)
+
+// TestHandlerOptions_ResolvesTheClientAddressWithItsPolicy pins that the policy
+// HandlerOptions is given is the policy the mounted chain resolves client
+// addresses with — the one thing about the argument that a caller of this
+// package can observe, and the one thing that breaks silently if it is
+// dropped: every request would then be seen as the peer it arrives from, which
+// behind a load balancer is the load balancer.
+//
+// A connect.HandlerOption is opaque — there is no accessor for the
+// interceptors inside one — so, as with StrictJSON, nothing short of driving a
+// real handler shows which policy took effect. The address the handler reads
+// off its context is the observation: under the policy below the last
+// X-Forwarded-For entry is the client, while under the zero policy no
+// forwarded header is believed at all and the answer is the loopback peer
+// httptest connects from.
+//
+// The procedure carries emptypb.Empty in both directions and belongs to no
+// .proto file: the subject is how a handler is wired, so nothing here should
+// depend on the service's own schema.
+func TestHandlerOptions_ResolvesTheClientAddressWithItsPolicy(t *testing.T)
+
+// KeyCodeFingerprint carries a log-safe identifier for a one-time OAuth
+// authorization code: a truncation of the code's hash, never the code
+// itself. Every record about one code must use the same derivation so the
+// records correlate.
+const KeyCodeFingerprint = "code_fingerprint"
+
+// Parse converts configured entries into a Set. An entry is a CIDR block
+// ("192.0.2.0/24") or a bare address, which covers that address alone. It
+// returns an error for an entry that is empty, padded with whitespace, not an
+// address, an IPv4-mapped IPv6 prefix (peers are unmapped before matching, so
+// it could never match), or a prefix with host bits set. A malformed entry
+// fails boot rather than being skipped, because a silently distrusted proxy
+// would put every client behind one address: one rate-limit bucket, one logged
+// IP.
+func Parse(entries []string) (Set, error)

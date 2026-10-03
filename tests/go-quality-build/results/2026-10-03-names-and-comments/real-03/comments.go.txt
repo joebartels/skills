@@ -1,0 +1,35 @@
+// ResolveRequestID resolves candidate from the X-Request-Id header. It returns
+// candidate unchanged if uids.IsValidRequestID accepts it; otherwise it returns
+// a new ID. rejected is true only when a non-empty candidate was replaced.
+//
+// Invalid candidates are replaced rather than repaired to keep their fragments
+// out of logs. A valid ID does not establish its origin: services facing
+// untrusted callers must strip the header unless a trusted proxy mints it.
+// Upstream IDs in an unsupported format are replaced and warned about on each
+// request. Accepting another format requires changing uids.IsValidRequestID;
+// it is not configurable.
+func ResolveRequestID(candidate string) (id string, rejected bool)
+
+// A connect.HandlerOption is opaque, so this test drives a real handler to
+// verify that HandlerOptions applies the supplied client-address policy. The
+// handler's context contains the last X-Forwarded-For entry under this policy,
+// versus the loopback peer under the zero policy.
+//
+// The procedure uses emptypb.Empty in both directions and no .proto file to
+// keep the wiring test independent of the service schema.
+func TestHandlerOptions_ResolvesTheClientAddressWithItsPolicy(t *testing.T)
+
+// KeyCodeFingerprint is the log key for a truncated hash of a one-time OAuth
+// authorization code. Never log the code itself. Use the same derivation for
+// every record about a code so the records correlate.
+const KeyCodeFingerprint = "code_fingerprint"
+
+// Parse converts configured CIDR blocks ("192.0.2.0/24") and bare addresses
+// into a Set. A bare address covers only that address. Parse rejects empty or
+// whitespace-padded entries, invalid addresses, prefixes with host bits set,
+// and IPv4-mapped IPv6 prefixes. Mapped prefixes cannot match because peers
+// are unmapped before matching.
+//
+// A malformed entry fails boot rather than being skipped: silently distrusting
+// a proxy would group its clients under one rate-limit bucket and logged IP.
+func Parse(entries []string) (Set, error)

@@ -1,6 +1,6 @@
 # Names and documentation in Go changes
 
-Use [go-names-and-comments](../../../plugins/go-quality-build/skills/go-names-and-comments/SKILL.md) for naming and comment style. Use this reference when verifying that documentation accurately describes API, error, value or composition decisions.
+Status: reviewed authoring reference proposed for reuse; not a standalone skill or a measured effectiveness result. Names and documentation usually express decisions owned by the API, error, value and composition skills. Use this reference for a requested documentation/naming change or a concrete ambiguity that affects correct use.
 
 Judge a name at its use site: package-qualified symbols, related operations and the project's domain vocabulary. Prefer a concise name that communicates the actual operation. Conventional initialisms and Go casing help consistency, but do not justify changing a public identifier or protocol method. Avoid automatic boolean prefixes, mutation suffixes, forced Get removal or enum-zero changes. A local predicate name should clarify its domain meaning without changing lazy evaluation or side effects.
 

@@ -1,0 +1,19 @@
+// ResolveRequestID returns candidate if uids.IsValidRequestID accepts it,
+// otherwise a new request ID. rejected is true only when a nonempty invalid
+// candidate was replaced. Invalid candidates are replaced in full.
+// Validity does not establish who minted the ID.
+func ResolveRequestID(candidate string) (id string, rejected bool)
+
+func TestHandlerOptions_ResolvesTheClientAddressWithItsPolicy(t *testing.T)
+
+// KeyCodeFingerprint is the log key for a truncated hash of a one-time OAuth
+// authorization code. Use the same derivation across records about one code,
+// and never log the code itself.
+const KeyCodeFingerprint = "code_fingerprint"
+
+// Parse converts CIDR blocks and bare IP addresses into a Set.
+// Bare addresses match only themselves. Parse returns an error for empty or
+// whitespace-padded entries, invalid addresses or prefixes, IPv4-mapped IPv6
+// prefixes, and prefixes with host bits set. IPv4-mapped IPv6 prefixes cannot
+// match peers, which are unmapped before matching.
+func Parse(entries []string) (Set, error)

@@ -1,0 +1,31 @@
+# Source review
+
+Reviewed every supplied original, task text, A/B excerpt and full-source output. Judgments use the original comments as the factual oracle where bodies are absent; no compilation or runtime verification is claimed. A choice identifies the more useful submitted arm, with remaining weaknesses called out below.
+
+## Contract and ownership
+
+All ten excerpts preserve the four declarations, the request-ID return/rejection cases, fingerprint derivation and secret-exclusion rule, and the enumerated Parse rejection cases. Each intends to preserve bare-address matching, with a wording ambiguity flagged below. No declaration or executable-code change appears in these excerpts.
+
+The useful request-ID caveat is that format validation does not establish provenance. That limits what callers may infer from this function and merits keeping near its contract. The instruction that services must strip a header belongs at the HTTP trust boundary; per-request warning behavior belongs to the logging caller. The replacement-versus-repair explanation is accurate and useful but partly restates the return contract. Changing the validator to accept another format is useful compatibility guidance; the unsupported-upstream warning narrative is optional.
+
+For Parse, rejecting rather than skipping invalid entries is its own contract. Boot failure and rate-limit/logging consequences describe configuration integration and belong at that boundary. The unmapped-peer explanation is a useful reason for the otherwise surprising mapped-prefix restriction. The handler test's opaque-option observation and contrasting addresses explain why the fixture exercises a real handler; this is maintainability rationale, not a public operation contract. Its schema independence is also useful. Every arm preserves the essential fingerprint safety rule.
+
+## Paired excerpts
+
+| Pair | Choice | Specific assessment |
+| --- | --- | --- |
+| 01 | A | Keeps the provenance limitation and the real-handler observation, while removing the startup/rate-limit narrative. B preserves return cases and Parse errors accurately, but drops the provenance caveat and explains only the schema fixture, losing why this wiring test must exercise a handler. A's ingress instruction could move to ingress documentation. |
+| 02 | A | Clearly explains that the context address demonstrates application of the supplied policy, including the zero policy ignoring forwarded headers. B loses that rationale and the provenance limit. Both correctly describe the fingerprint and Parse restrictions. A's explicit mapped-prefix reason is useful; its ingress policy remains separable from the resolver contract. |
+| 03 | A | Preserves the provenance limitation, unsupported-format compatibility detail, and observable test distinction. B is accurate about return values but omits the provenance warning and most fixture rationale. A retains unnecessary logging and boot/rate-limit narrative; the Parse return-error contract is sufficient at this declaration. These are ownership/verbosity weaknesses, not invented behavior. |
+| 04 | Neither | A has accurate core cases but loses the provenance caveat and useful handler rationale. B restores them, but “CIDR blocks or bare addresses, which match only that address” ambiguously applies single-address matching to CIDR blocks; the original applies it only to bare addresses. B is otherwise the stronger source, but this misleading simplification should be repaired before accepting it. Its proxy/rate-limit rationale is optional integration prose. |
+| 05 | B | Preserves the provenance limit and explains that the context address detects a policy dropped during handler wiring. A retains only the schema rationale. B's Parse restrictions and mapped-peer explanation are clear, but its startup/rate-limit paragraph belongs in configuration integration documentation. A's split request-ID sentence layout does not itself affect correctness. |
+
+The shorter arms' missing provenance caveat is the material safety-information loss. Their removed stripping, logging and boot policy should not automatically be treated as lost symbol-owned contracts. Omission of test rationale is a maintainability loss, not a runtime contract change. Apart from pair 04 B's matching ambiguity, no unsupported behavioral claim or changed declaration was found.
+
+## Full-source tasks
+
+- **Arithmetic: meets the task.** The sole change is `return maximum - 1` to `return maximum` in the upper-bound branch. Identifiers and branch order are unchanged, preserving the negative-value and all other behavior, including behavior when maximum is negative. No documentation or naming work was added beyond the requested calculation fix.
+- **Collector: meets the task.** All exported identifiers, signatures and implementation statements are preserved. The new documentation accurately exposes unlimited/negative limit behavior, empty-prefix matching, zero-value usability, concurrency and copy restrictions, Add's unchanged-on-rejection contract, and Values' independent copy and ordering. The mutex comment explains the protected state rather than narrating lock calls. Existing names fit their operations; no rename was necessary. The panic fact appears on both Options.Limit and New, which is useful at either reading point rather than excessive narrative.
+- **Ledger: meets the task.** Exported names, signatures and operation behavior are preserved. The private `doIt` to `parseRow` and `raw` to `rawValue` changes improve specificity and are consistently applied. The new Load comment keeps non-nil destination, accepted-count semantics, duplicate replacement/counting, partial writes on failure, reader ownership and scanner line-size constraints. The added ErrInvalidRow-wrapping statement follows directly from the parser and Load body. Removing promotional prose, parameter/return inventories and line-by-line implementation narration improves maintainability without losing useful contracts.
+
+Overall, the full-source edits are useful and scoped. The fuller paired excerpts usually retain more consequential source context, but they would benefit from separating provenance limits and parser contracts from application-level trust, logging and startup policy. Pair 04 needs a wording correction before acceptance.

@@ -1,0 +1,38 @@
+[
+  {
+    "name": "repository-validator",
+    "command": "rtk proxy python3 scripts/validate.py",
+    "exit_code": 0,
+    "output": "PASS: 10 skills; matching grading/report contracts; 120 valid evaluation cases\nPASS: 48 valid build evaluation cases\n"
+  },
+  {
+    "name": "skill-frontmatter",
+    "command": "rtk proxy python3 /Users/jb/.codex/skills/.system/skill-creator/scripts/quick_validate.py plugins/go-quality-build/skills/go-names-and-comments",
+    "exit_code": 0,
+    "output": "Skill is valid!\n"
+  },
+  {
+    "name": "claude-build",
+    "command": "rtk proxy claude plugin validate ./plugins/go-quality-build",
+    "exit_code": 0,
+    "output": "Validating plugin manifest: /Users/jb/.codex/worktrees/b312/skills/plugins/go-quality-build/.claude-plugin/plugin.json\n\n✔ Validation passed\n"
+  },
+  {
+    "name": "claude-review",
+    "command": "rtk proxy claude plugin validate ./plugins/go-quality-review",
+    "exit_code": 0,
+    "output": "Validating plugin manifest: /Users/jb/.codex/worktrees/b312/skills/plugins/go-quality-review/.claude-plugin/plugin.json\n\n✔ Validation passed\n"
+  },
+  {
+    "name": "claude-marketplace",
+    "command": "rtk proxy claude plugin validate .",
+    "exit_code": 0,
+    "output": "Validating marketplace manifest: /Users/jb/.codex/worktrees/b312/skills/.claude-plugin/marketplace.json\n\n✔ Validation passed\n"
+  },
+  {
+    "name": "diff-whitespace",
+    "command": "rtk git diff --check",
+    "exit_code": 0,
+    "output": "\n"
+  }
+]
