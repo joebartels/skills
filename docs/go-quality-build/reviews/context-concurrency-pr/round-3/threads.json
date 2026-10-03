@@ -1,0 +1,39 @@
+{
+  "data": {
+    "repository": {
+      "pullRequest": {
+        "reviewThreads": {
+          "nodes": [
+            {
+              "id": "PRRT_kwDOUvGCaM6oj51M",
+              "isResolved": true,
+              "isOutdated": false,
+              "comments": {
+                "nodes": [
+                  {
+                    "databaseId": 4171677988,
+                    "id": "PRRC_kwDOUvGCaM74psEk",
+                    "body": "This gate relies entirely on `assert`, but optimized Python (`python -O` or `PYTHONOPTIMIZE`) removes every assertion. In that mode a corrupted archive can reach the unconditional `PASS` output without validating counts, hashes, seals, or reconstruction results. Refuse optimized execution (or replace assertions with explicit checks) and update the delivery seal/anchor so the advertised integrity gate cannot report a false success.",
+                    "url": "https://github.com/joebartels/skills/pull/6#discussion_r4171677988",
+                    "author": {
+                      "login": "copilot-pull-request-reviewer"
+                    }
+                  },
+                  {
+                    "databaseId": 4171712666,
+                    "id": "PRRC_kwDOUvGCaM74p0ia",
+                    "body": "VALID. Fixed in c5ee3d0: the advertised gate now refuses optimized Python before any assertion-dependent validation. Real CLI regressions cover -O, -OO and inherited PYTHONOPTIMIZE; each was RED before the fix and now exits nonzero without PASS. A deliberately corrupt manifest is rejected in all modes, while normal verification and restored relocated data pass.\n\nThe original12-file delivery/index20387a7b is preserved byte-for-byte as historical evidence. The corrected current tool has externally anchored indexdd63309f and also verifies that preserved snapshot. All original author/guidance/input/review seals remain unchanged. Full structural checks pass (root8/build10/layout1/grade12;46build/120review cases). Diff growth is1.774%, below the25% gate.\n",
+                    "url": "https://github.com/joebartels/skills/pull/6#discussion_r4171712666",
+                    "author": {
+                      "login": "joebartels"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
