@@ -1,0 +1,118 @@
+=== RUN   TestExistingSuccess
+--- PASS: TestExistingSuccess (0.00s)
+=== RUN   TestCanceledProbeDoesNotRecover
+--- PASS: TestCanceledProbeDoesNotRecover (0.35s)
+=== RUN   TestOldCompletionCannotChangeNewGeneration
+--- PASS: TestOldCompletionCannotChangeNewGeneration (0.11s)
+=== RUN   TestExcludedRejectionDoesNotResetFailures
+--- PASS: TestExcludedRejectionDoesNotResetFailures (0.00s)
+=== RUN   TestDisabledClientStaysMinimal
+--- PASS: TestDisabledClientStaysMinimal (0.00s)
+=== RUN   TestPairSuppliedRedirectPolicy
+=== RUN   TestPairSuppliedRedirectPolicy/disabled
+    pair_review_test.go:37: result=HTTP 302 calls=1 supplied redirect callbacks=1
+=== RUN   TestPairSuppliedRedirectPolicy/enabled
+    pair_review_test.go:37: result=HTTP 302 calls=1 supplied redirect callbacks=1
+--- PASS: TestPairSuppliedRedirectPolicy (0.00s)
+    --- PASS: TestPairSuppliedRedirectPolicy/disabled (0.00s)
+    --- PASS: TestPairSuppliedRedirectPolicy/enabled (0.00s)
+=== RUN   TestPairOperationDeadline503IsNeutral
+    pair_review_test.go:62: after operation deadline: result=HTTP 503 calls=3->4
+--- PASS: TestPairOperationDeadline503IsNeutral (0.25s)
+=== RUN   TestPairOversized200Observation
+    pair_review_test.go:78: oversized 200: returned bytes=0 error=response exceeds 4096 bytes
+--- PASS: TestPairOversized200Observation (0.00s)
+=== RUN   TestFetchStatusAndBounds
+=== RUN   TestFetchStatusAndBounds/success
+=== RUN   TestFetchStatusAndBounds/exact_limit
+=== RUN   TestFetchStatusAndBounds/oversized
+=== RUN   TestFetchStatusAndBounds/created
+=== RUN   TestFetchStatusAndBounds/partial
+=== RUN   TestFetchStatusAndBounds/rejection
+=== RUN   TestFetchStatusAndBounds/unavailable
+--- PASS: TestFetchStatusAndBounds (0.00s)
+    --- PASS: TestFetchStatusAndBounds/success (0.00s)
+    --- PASS: TestFetchStatusAndBounds/exact_limit (0.00s)
+    --- PASS: TestFetchStatusAndBounds/oversized (0.00s)
+    --- PASS: TestFetchStatusAndBounds/created (0.00s)
+    --- PASS: TestFetchStatusAndBounds/partial (0.00s)
+    --- PASS: TestFetchStatusAndBounds/rejection (0.00s)
+    --- PASS: TestFetchStatusAndBounds/unavailable (0.00s)
+=== RUN   TestFetchBoundsDiagnosticsAndKeepsCause
+--- PASS: TestFetchBoundsDiagnosticsAndKeepsCause (0.00s)
+=== RUN   TestFetchReadErrorClosesBody
+--- PASS: TestFetchReadErrorClosesBody (0.00s)
+=== RUN   TestFetchRedirectErrorDoesNotCloseBodyTwice
+--- PASS: TestFetchRedirectErrorDoesNotCloseBodyTwice (0.00s)
+=== RUN   TestFetchKeepsBorrowedClientPolicy
+--- PASS: TestFetchKeepsBorrowedClientPolicy (0.00s)
+=== RUN   TestFetchTotalBudgetThroughBody
+=== RUN   TestFetchTotalBudgetThroughBody/operation_budget
+=== RUN   TestFetchTotalBudgetThroughBody/earlier_parent
+--- PASS: TestFetchTotalBudgetThroughBody (0.30s)
+    --- PASS: TestFetchTotalBudgetThroughBody/operation_budget (0.25s)
+    --- PASS: TestFetchTotalBudgetThroughBody/earlier_parent (0.04s)
+=== RUN   TestFetchRequestDeadline
+--- PASS: TestFetchRequestDeadline (0.00s)
+=== RUN   TestBreakerScopeAndDisabled
+=== RUN   TestBreakerScopeAndDisabled/disabled
+=== RUN   TestBreakerScopeAndDisabled/enabled
+--- PASS: TestBreakerScopeAndDisabled (0.00s)
+    --- PASS: TestBreakerScopeAndDisabled/disabled (0.00s)
+    --- PASS: TestBreakerScopeAndDisabled/enabled (0.00s)
+=== RUN   TestBreakerExclusionsPreserveFailureHistory
+=== RUN   TestBreakerExclusionsPreserveFailureHistory/400
+=== RUN   TestBreakerExclusionsPreserveFailureHistory/500
+=== RUN   TestBreakerExclusionsPreserveFailureHistory/transport_error
+=== RUN   TestBreakerExclusionsPreserveFailureHistory/canceled_200
+=== RUN   TestBreakerExclusionsPreserveFailureHistory/canceled_503
+--- PASS: TestBreakerExclusionsPreserveFailureHistory (0.00s)
+    --- PASS: TestBreakerExclusionsPreserveFailureHistory/400 (0.00s)
+    --- PASS: TestBreakerExclusionsPreserveFailureHistory/500 (0.00s)
+    --- PASS: TestBreakerExclusionsPreserveFailureHistory/transport_error (0.00s)
+    --- PASS: TestBreakerExclusionsPreserveFailureHistory/canceled_200 (0.00s)
+    --- PASS: TestBreakerExclusionsPreserveFailureHistory/canceled_503 (0.00s)
+=== RUN   TestBreakerSuccessResetsFailureHistory
+--- PASS: TestBreakerSuccessResetsFailureHistory (0.00s)
+=== RUN   TestBreakerRecoveryAdmissionAndNeutralCompletion
+=== RUN   TestBreakerRecoveryAdmissionAndNeutralCompletion/400
+=== RUN   TestBreakerRecoveryAdmissionAndNeutralCompletion/canceled_200
+=== RUN   TestBreakerRecoveryAdmissionAndNeutralCompletion/canceled_503
+--- PASS: TestBreakerRecoveryAdmissionAndNeutralCompletion (0.67s)
+    --- PASS: TestBreakerRecoveryAdmissionAndNeutralCompletion/400 (0.22s)
+    --- PASS: TestBreakerRecoveryAdmissionAndNeutralCompletion/canceled_200 (0.22s)
+    --- PASS: TestBreakerRecoveryAdmissionAndNeutralCompletion/canceled_503 (0.22s)
+=== RUN   TestBreakerIgnoresLateFailureFromOldGeneration
+--- PASS: TestBreakerIgnoresLateFailureFromOldGeneration (0.11s)
+=== RUN   TestBreakerIgnoresLateSuccessDuringRecovery
+--- PASS: TestBreakerIgnoresLateSuccessDuringRecovery (0.11s)
+=== RUN   TestReviewCanceled200PreservesFailureHistory
+    supplemental_review_test.go:57: canceled completion: data="ok" error=<nil> parent=context canceled
+    supplemental_review_test.go:67: after third eligible failure: error=circuit breaker is open calls=4->4
+--- PASS: TestReviewCanceled200PreservesFailureHistory (0.00s)
+=== RUN   TestReviewCanceled200DoesNotEstablishRecovery
+    supplemental_review_test.go:100: canceled recovery completion: data="ok" error=<nil> parent=context canceled
+    supplemental_review_test.go:113: after failed replacement probe: error=circuit breaker is open calls=6->6
+--- PASS: TestReviewCanceled200DoesNotEstablishRecovery (0.11s)
+=== RUN   TestReviewDiagnosticsAreBounded
+=== RUN   TestReviewDiagnosticsAreBounded/parse-disabled
+    supplemental_review_test.go:138: diagnostic bytes=4096
+=== RUN   TestReviewDiagnosticsAreBounded/transport-disabled
+    supplemental_review_test.go:138: diagnostic bytes=4096
+=== RUN   TestReviewDiagnosticsAreBounded/body-disabled
+    supplemental_review_test.go:138: diagnostic bytes=4096
+=== RUN   TestReviewDiagnosticsAreBounded/parse-enabled
+    supplemental_review_test.go:138: diagnostic bytes=4096
+=== RUN   TestReviewDiagnosticsAreBounded/transport-enabled
+    supplemental_review_test.go:138: diagnostic bytes=4096
+=== RUN   TestReviewDiagnosticsAreBounded/body-enabled
+    supplemental_review_test.go:138: diagnostic bytes=4096
+--- PASS: TestReviewDiagnosticsAreBounded (0.00s)
+    --- PASS: TestReviewDiagnosticsAreBounded/parse-disabled (0.00s)
+    --- PASS: TestReviewDiagnosticsAreBounded/transport-disabled (0.00s)
+    --- PASS: TestReviewDiagnosticsAreBounded/body-disabled (0.00s)
+    --- PASS: TestReviewDiagnosticsAreBounded/parse-enabled (0.00s)
+    --- PASS: TestReviewDiagnosticsAreBounded/transport-enabled (0.00s)
+    --- PASS: TestReviewDiagnosticsAreBounded/body-enabled (0.00s)
+PASS
+ok  	example.invalid/breaker-recovery	2.193s

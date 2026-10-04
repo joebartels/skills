@@ -1,0 +1,23 @@
+import argparse,hashlib,json,pathlib,secrets,shutil
+repo=pathlib.Path('/Users/jb/.codex/worktrees/b312/skills');out=repo/'tests/go-quality-build/results/go-client-calls'
+p=argparse.ArgumentParser();p.add_argument('case');p.add_argument('baseline');p.add_argument('guided');p.add_argument('--baseline-arm',default='baseline');p.add_argument('--guided-arm',default='skill-on');args=p.parse_args()
+packet=pathlib.Path('/private/tmp/go-client-campaign/reviews/pairs')/args.case
+if packet.exists():raise FileExistsError(packet)
+trials=[(args.baseline_arm,args.baseline),(args.guided_arm,args.guided)]
+if secrets.randbits(1):trials.reverse()
+mapping={};hashes={}
+for label,(arm,trial_id) in zip(['A','B'],trials):
+ archive=out/arm/trial_id;metadata=json.loads((archive/'manifest.json').read_text())
+ shutil.copytree(archive/'output',packet/label/'source')
+ checks=out/arm/f'{trial_id}-comparison-checks.json'
+ if not checks.exists():checks=out/arm/f'{trial_id}-checks.json'
+ shutil.copyfile(checks,packet/label/'checks.json')
+ hashes[label]=metadata['output_hashes'];mapping[label]={'arm':arm,'trial_id':trial_id}
+probes=packet/'probes';probes.mkdir()
+shutil.copyfile(repo/f'tests/go-quality-build/go-client-calls/probes/{args.case}_test.go.txt',probes/'frozen_test.go.txt')
+supplemental=out/f'supplemental-review-probes/{args.case}_test.go.txt'
+if supplemental.exists():shutil.copyfile(supplemental,probes/'supplemental_test.go.txt')
+(packet/'source-hashes.json').write_text(json.dumps(hashes,indent=2)+'\n')
+maps=out/'arm-maps';maps.mkdir(exist_ok=True)
+(maps/f'{args.case}.json').write_text(json.dumps(mapping,indent=2)+'\n')
+print(packet)

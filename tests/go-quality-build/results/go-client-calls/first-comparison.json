@@ -1,0 +1,53 @@
+{
+  "candidate": "candidate-v1-manifest.json",
+  "runtime_disposition": "Not promoted: confirmed introduced timeout regression; one guidance revision in progress",
+  "reviews_frozen_before_controller_arm_interpretation": true,
+  "cases": [
+    {
+      "case": "http-write-replay",
+      "baseline": "t01",
+      "guided": "t06",
+      "report": "reviews/pair-http-and-control.md",
+      "result": "Introduced major effective Client.Timeout/legacy-cancellation regression W1; original identity/replay controls preserved"
+    },
+    {
+      "case": "http-retry-budget",
+      "baseline": "t02",
+      "guided": "t07",
+      "report": "reviews/pair-http-and-control.md",
+      "result": "Meaningful diagnostic-bound gain R3; both omit known redirect-policy status and lose independent timeout body causes",
+      "interpretation": "Initial versus final redirect acceptance is ambiguous, per reviewer clarification; the initial-status rejection assertion is not a confirmed finding",
+      "clarification": "reviews/pair-http-and-control-clarification.txt"
+    },
+    {
+      "case": "breaker-recovery",
+      "baseline": "t04",
+      "guided": "t09",
+      "report": "reviews/pair-breaker-recovery.md",
+      "result": "Meaningful neutral-health, bounded-diagnostic and active borrowed-policy gains; production behavior preserved on read-error health; guided test gap B-T1 mutation-confirmed"
+    },
+    {
+      "case": "grpc-policy",
+      "baseline": "t03",
+      "guided": "t08",
+      "report": "reviews/pair-grpc-policy.md",
+      "result": "Substantive tie, zero findings; existing native-policy, commitment, deadline and ownership controls preserved"
+    },
+    {
+      "case": "pure-control",
+      "baseline": "t05",
+      "guided": "t10",
+      "report": "reviews/pair-http-and-control.md",
+      "result": "Substantive tie; identical production code and no client machinery; author reports skipping candidate"
+    }
+  ],
+  "limits": [
+    "One fresh author per arm/case; nondeterministic model variation is not estimated",
+    "Inherited author settings matched, exact runtime model and effort IDs unavailable",
+    "Description catalog with author-reported reads does not establish automatic routing",
+    "Shared filesystem and source style make blinding procedural, not enforced",
+    "Supplemental discoveries follow initial outcomes; symmetric checks reduce but cannot eliminate comparison bias",
+    "Local Go 1.22.12/1.26.5 boundaries, with external linking for 1.22 on this host; no production transport validation",
+    "Exact launches/reports/source patches/check receipts retained; full author tool transcripts unavailable"
+  ]
+}

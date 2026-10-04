@@ -1,0 +1,192 @@
+[
+  {
+    "arm": "A",
+    "kind": "host",
+    "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off go test -ldflags=-linkmode=external -count=1 -timeout=20s ./...",
+    "result": {
+      "chunk_id": "8a9a8a",
+      "wall_time_seconds": 1.000660375,
+      "session_id": 40480,
+      "original_token_count": 0,
+      "output": ""
+    },
+    "completed": {
+      "chunk_id": "6451ca",
+      "wall_time_seconds": 0.000013833,
+      "exit_code": 0,
+      "original_token_count": 10,
+      "output": "ok  \texample.invalid/grpc-policy\t1.057s\n"
+    }
+  },
+  {
+    "arm": "B",
+    "kind": "host",
+    "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off go test -ldflags=-linkmode=external -count=1 -timeout=20s ./...",
+    "result": {
+      "chunk_id": "af35da",
+      "wall_time_seconds": 1.001052625,
+      "session_id": 15114,
+      "original_token_count": 0,
+      "output": ""
+    },
+    "completed": {
+      "chunk_id": "8f3010",
+      "wall_time_seconds": 0.000003583,
+      "exit_code": 0,
+      "original_token_count": 10,
+      "output": "ok  \texample.invalid/grpc-policy\t0.974s\n"
+    }
+  },
+  {
+    "arm": "A",
+    "kind": "minimum",
+    "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go test -ldflags=-linkmode=external -count=1 -timeout=20s ./...",
+    "result": {
+      "chunk_id": "09800d",
+      "wall_time_seconds": 1.001316458,
+      "session_id": 42644,
+      "original_token_count": 0,
+      "output": ""
+    },
+    "completed": {
+      "chunk_id": "a3fa93",
+      "wall_time_seconds": 0.000004,
+      "exit_code": 0,
+      "original_token_count": 10,
+      "output": "ok  \texample.invalid/grpc-policy\t1.049s\n"
+    }
+  },
+  {
+    "arm": "B",
+    "kind": "minimum",
+    "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go test -ldflags=-linkmode=external -count=1 -timeout=20s ./...",
+    "result": {
+      "chunk_id": "8aa223",
+      "wall_time_seconds": 1.001651125,
+      "session_id": 96681,
+      "original_token_count": 0,
+      "output": ""
+    },
+    "completed": {
+      "chunk_id": "2150ab",
+      "wall_time_seconds": 0.000005708,
+      "exit_code": 0,
+      "original_token_count": 10,
+      "output": "ok  \texample.invalid/grpc-policy\t0.925s\n"
+    }
+  },
+  {
+    "arm": "A",
+    "kind": "race",
+    "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off go test -race -ldflags=-linkmode=external -count=1 -timeout=20s ./...",
+    "result": {
+      "chunk_id": "9c5684",
+      "wall_time_seconds": 1.00092225,
+      "session_id": 4235,
+      "original_token_count": 0,
+      "output": ""
+    },
+    "completed": {
+      "chunk_id": "4fe8dd",
+      "wall_time_seconds": 0.000009875,
+      "exit_code": 0,
+      "original_token_count": 10,
+      "output": "ok  \texample.invalid/grpc-policy\t2.434s\n"
+    }
+  },
+  {
+    "arm": "B",
+    "kind": "race",
+    "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off go test -race -ldflags=-linkmode=external -count=1 -timeout=20s ./...",
+    "result": {
+      "chunk_id": "57f53a",
+      "wall_time_seconds": 1.000654209,
+      "session_id": 80725,
+      "original_token_count": 0,
+      "output": ""
+    },
+    "completed": {
+      "chunk_id": "e1666e",
+      "wall_time_seconds": 0.000005042,
+      "exit_code": 0,
+      "original_token_count": 10,
+      "output": "ok  \texample.invalid/grpc-policy\t2.285s\n"
+    }
+  },
+  {
+    "arm": "A",
+    "kind": "boundary-race",
+    "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off go test -race -ldflags=-linkmode=external -count=1 -timeout=20s -v -run '^TestReview' ./...",
+    "result": {
+      "chunk_id": "ee1d19",
+      "wall_time_seconds": 1.002724875,
+      "session_id": 98704,
+      "original_token_count": 0,
+      "output": ""
+    },
+    "completed": {
+      "chunk_id": "0a5161",
+      "wall_time_seconds": 0.000012542,
+      "exit_code": 0,
+      "original_token_count": 147,
+      "output": "=== RUN   TestReviewBorrowedConnectionKeepsPolicyAndOwnership\n--- PASS: TestReviewBorrowedConnectionKeepsPolicyAndOwnership (0.00s)\n=== RUN   TestReviewHostDialOptionsRemainEffective\n=== RUN   TestReviewHostDialOptionsRemainEffective/disable_retries\n=== RUN   TestReviewHostDialOptionsRemainEffective/host_empty_default\n--- PASS: TestReviewHostDialOptionsRemainEffective (0.00s)\n    --- PASS: TestReviewHostDialOptionsRemainEffective/disable_retries (0.00s)\n    --- PASS: TestReviewHostDialOptionsRemainEffective/host_empty_default (0.00s)\nPASS\nok  \texample.invalid/grpc-policy\t1.551s\n"
+    }
+  },
+  {
+    "arm": "B",
+    "kind": "boundary-race",
+    "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off go test -race -ldflags=-linkmode=external -count=1 -timeout=20s -v -run '^TestReview' ./...",
+    "result": {
+      "chunk_id": "c1905e",
+      "wall_time_seconds": 1.000275667,
+      "session_id": 39095,
+      "original_token_count": 0,
+      "output": ""
+    },
+    "completed": {
+      "chunk_id": "9ccf75",
+      "wall_time_seconds": 0.00000375,
+      "exit_code": 0,
+      "original_token_count": 147,
+      "output": "=== RUN   TestReviewBorrowedConnectionKeepsPolicyAndOwnership\n--- PASS: TestReviewBorrowedConnectionKeepsPolicyAndOwnership (0.00s)\n=== RUN   TestReviewHostDialOptionsRemainEffective\n=== RUN   TestReviewHostDialOptionsRemainEffective/disable_retries\n=== RUN   TestReviewHostDialOptionsRemainEffective/host_empty_default\n--- PASS: TestReviewHostDialOptionsRemainEffective (0.00s)\n    --- PASS: TestReviewHostDialOptionsRemainEffective/disable_retries (0.00s)\n    --- PASS: TestReviewHostDialOptionsRemainEffective/host_empty_default (0.00s)\nPASS\nok  \texample.invalid/grpc-policy\t1.790s\n"
+    }
+  },
+  {
+    "arm": "A",
+    "kind": "boundary-minimum",
+    "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go test -ldflags=-linkmode=external -count=1 -timeout=20s -v -run '^TestReview' ./...",
+    "result": {
+      "chunk_id": "0df034",
+      "wall_time_seconds": 0.722391958,
+      "exit_code": 0,
+      "original_token_count": 147,
+      "output": "=== RUN   TestReviewBorrowedConnectionKeepsPolicyAndOwnership\n--- PASS: TestReviewBorrowedConnectionKeepsPolicyAndOwnership (0.00s)\n=== RUN   TestReviewHostDialOptionsRemainEffective\n=== RUN   TestReviewHostDialOptionsRemainEffective/disable_retries\n=== RUN   TestReviewHostDialOptionsRemainEffective/host_empty_default\n--- PASS: TestReviewHostDialOptionsRemainEffective (0.00s)\n    --- PASS: TestReviewHostDialOptionsRemainEffective/disable_retries (0.00s)\n    --- PASS: TestReviewHostDialOptionsRemainEffective/host_empty_default (0.00s)\nPASS\nok  \texample.invalid/grpc-policy\t0.240s\n"
+    },
+    "completed": {
+      "chunk_id": "0df034",
+      "wall_time_seconds": 0.722391958,
+      "exit_code": 0,
+      "original_token_count": 147,
+      "output": "=== RUN   TestReviewBorrowedConnectionKeepsPolicyAndOwnership\n--- PASS: TestReviewBorrowedConnectionKeepsPolicyAndOwnership (0.00s)\n=== RUN   TestReviewHostDialOptionsRemainEffective\n=== RUN   TestReviewHostDialOptionsRemainEffective/disable_retries\n=== RUN   TestReviewHostDialOptionsRemainEffective/host_empty_default\n--- PASS: TestReviewHostDialOptionsRemainEffective (0.00s)\n    --- PASS: TestReviewHostDialOptionsRemainEffective/disable_retries (0.00s)\n    --- PASS: TestReviewHostDialOptionsRemainEffective/host_empty_default (0.00s)\nPASS\nok  \texample.invalid/grpc-policy\t0.240s\n"
+    }
+  },
+  {
+    "arm": "B",
+    "kind": "boundary-minimum",
+    "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go test -ldflags=-linkmode=external -count=1 -timeout=20s -v -run '^TestReview' ./...",
+    "result": {
+      "chunk_id": "b6fa2a",
+      "wall_time_seconds": 0.884816375,
+      "exit_code": 0,
+      "original_token_count": 147,
+      "output": "=== RUN   TestReviewBorrowedConnectionKeepsPolicyAndOwnership\n--- PASS: TestReviewBorrowedConnectionKeepsPolicyAndOwnership (0.00s)\n=== RUN   TestReviewHostDialOptionsRemainEffective\n=== RUN   TestReviewHostDialOptionsRemainEffective/disable_retries\n=== RUN   TestReviewHostDialOptionsRemainEffective/host_empty_default\n--- PASS: TestReviewHostDialOptionsRemainEffective (0.00s)\n    --- PASS: TestReviewHostDialOptionsRemainEffective/disable_retries (0.00s)\n    --- PASS: TestReviewHostDialOptionsRemainEffective/host_empty_default (0.00s)\nPASS\nok  \texample.invalid/grpc-policy\t0.402s\n"
+    },
+    "completed": {
+      "chunk_id": "b6fa2a",
+      "wall_time_seconds": 0.884816375,
+      "exit_code": 0,
+      "original_token_count": 147,
+      "output": "=== RUN   TestReviewBorrowedConnectionKeepsPolicyAndOwnership\n--- PASS: TestReviewBorrowedConnectionKeepsPolicyAndOwnership (0.00s)\n=== RUN   TestReviewHostDialOptionsRemainEffective\n=== RUN   TestReviewHostDialOptionsRemainEffective/disable_retries\n=== RUN   TestReviewHostDialOptionsRemainEffective/host_empty_default\n--- PASS: TestReviewHostDialOptionsRemainEffective (0.00s)\n    --- PASS: TestReviewHostDialOptionsRemainEffective/disable_retries (0.00s)\n    --- PASS: TestReviewHostDialOptionsRemainEffective/host_empty_default (0.00s)\nPASS\nok  \texample.invalid/grpc-policy\t0.402s\n"
+    }
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "contract": "One application request, exact final 200, complete response bounded by caller limit, owned body closure, retained transport cause.",
+  "red": "Undefined FetchOnce before guidance example creation.",
+  "green": [
+    "Go 1.26.5 test -count=1 ./...: exit 0",
+    "Go 1.22.12 test -ldflags=-linkmode=external -count=1 ./...: exit 0",
+    "Both toolchains go vet ./...: exit 0"
+  ],
+  "limitations": "Uses a controlled RoundTripper for this simple content/ownership example; network retry claims are separately tested by the behavioral fixtures."
+}

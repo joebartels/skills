@@ -1,0 +1,98 @@
+[
+  {
+    "private": false,
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/breaker-recovery\t1.398s\n"
+  },
+  {
+    "private": false,
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "private": false,
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/breaker-recovery\t2.438s\n"
+  },
+  {
+    "private": false,
+    "command": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/breaker-recovery\t1.392s\n"
+  },
+  {
+    "private": false,
+    "command": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "private": true,
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/breaker-recovery\t2.335s\n"
+  },
+  {
+    "private": true,
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/breaker-recovery\t3.379s\n"
+  },
+  {
+    "private": true,
+    "command": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/breaker-recovery\t2.329s\n"
+  }
+]

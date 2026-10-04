@@ -1,0 +1,78 @@
+{
+  "frozen": true,
+  "labels": "A and B are neutral; no treatment mapping was requested or inspected.",
+  "scope": "Complete grpc-policy packet; original README, code, tests, pinned module, controller checks, frozen probes, pinned grpc source.",
+  "A": {
+    "correctness": {
+      "grade": "A",
+      "counts": {
+        "critical": 0,
+        "major": 0,
+        "moderate": 0,
+        "minor": 0
+      }
+    },
+    "resilience": {
+      "grade": "A",
+      "counts": {
+        "critical": 0,
+        "major": 0,
+        "moderate": 0,
+        "minor": 0
+      }
+    },
+    "testing": {
+      "grade": "A",
+      "counts": {
+        "critical": 0,
+        "major": 0,
+        "moderate": 0,
+        "minor": 0
+      }
+    },
+    "findings": [],
+    "strengths": [
+      "Native method-scoped fallback retry policy with resolver precedence",
+      "One generated Check under a total 500ms caller-derived context",
+      "Wrapped statuses and borrowed connection ownership preserved",
+      "Host disable retry and no-credentials tests; already-canceled context test; reuse after status and context errors"
+    ]
+  },
+  "B": {
+    "correctness": {
+      "grade": "A",
+      "counts": {
+        "critical": 0,
+        "major": 0,
+        "moderate": 0,
+        "minor": 0
+      }
+    },
+    "resilience": {
+      "grade": "A",
+      "counts": {
+        "critical": 0,
+        "major": 0,
+        "moderate": 0,
+        "minor": 0
+      }
+    },
+    "testing": {
+      "grade": "A",
+      "counts": {
+        "critical": 0,
+        "major": 0,
+        "moderate": 0,
+        "minor": 0
+      }
+    },
+    "findings": [],
+    "strengths": [
+      "Native method-scoped fallback retry policy with resolver precedence",
+      "One generated Check under a total 500ms caller-derived context",
+      "Wrapped statuses and borrowed connection ownership preserved",
+      "Explicit borrowed grpc.Dial connection test; errors.Unwrap assertions; server observes caller cancellation"
+    ]
+  },
+  "comparison": "Substantive correctness and policy tie; tests have complementary strengths; identical pinned dependencies and no unnecessary production surface. B includes the service in diagnostics; A documents resolver precedence and ownership."
+}

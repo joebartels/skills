@@ -1,0 +1,20 @@
+{
+  "hashes": {
+    "SKILL.md": "95504b0ce3136d3ece9376b492248a0f3867c0dbd3267478f9ddb17306dfda3d",
+    "references/grpc-clients.md": "38d27e688cd9ca0a5c2ce2af52b283f65113ac346c6a2e59bdb65ae4a85ab2a3",
+    "references/http-clients.md": "25b94135ff902318dee33c6efddc8b32a086535073cd575010c0ccba8ee4d58f"
+  },
+  "main_words": 730,
+  "guidance_revisions_used": 1,
+  "changed_files": [
+    "references/http-clients.md"
+  ],
+  "reason": "Confirmed loss of effective supplied Client.Timeout cancellation and missed timeout body-cause/known-status policies; preserved independent raw findings and matched checks.",
+  "affected_reruns": [
+    "http-write-replay",
+    "http-retry-budget",
+    "breaker-recovery",
+    "pure-control"
+  ],
+  "unaffected": "grpc-policy main and reference bytes unchanged; final transfer receives exact v2 catalog"
+}

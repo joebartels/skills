@@ -1,0 +1,110 @@
+[
+  {
+    "pair": "revision-breaker-recovery",
+    "label": "A",
+    "kind": "candidate",
+    "command": [
+      "go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/breaker-recovery\t1.705s\n"
+  },
+  {
+    "pair": "revision-breaker-recovery",
+    "label": "A",
+    "kind": "candidate",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "pair": "revision-breaker-recovery",
+    "label": "B",
+    "kind": "candidate",
+    "command": [
+      "go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/breaker-recovery\t1.881s\n"
+  },
+  {
+    "pair": "revision-breaker-recovery",
+    "label": "B",
+    "kind": "candidate",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "pair": "revision-pure-control",
+    "label": "A",
+    "kind": "candidate",
+    "command": [
+      "go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/pure-control\t0.177s\n"
+  },
+  {
+    "pair": "revision-pure-control",
+    "label": "A",
+    "kind": "candidate",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "pair": "revision-pure-control",
+    "label": "B",
+    "kind": "candidate",
+    "command": [
+      "go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/pure-control\t0.167s\n"
+  },
+  {
+    "pair": "revision-pure-control",
+    "label": "B",
+    "kind": "candidate",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  }
+]

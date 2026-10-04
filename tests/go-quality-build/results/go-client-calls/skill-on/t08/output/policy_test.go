@@ -1,0 +1,376 @@
+package client
+
+import (
+	"context"
+	"errors"
+	"net"
+	"sync/atomic"
+	"testing"
+	"time"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/health/grpc_health_v1"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/resolver"
+	"google.golang.org/grpc/resolver/manual"
+	"google.golang.org/grpc/status"
+	"google.golang.org/grpc/test/bufconn"
+)
+
+var (
+	_ func(string, ...grpc.DialOption) (*grpc.ClientConn, error) = Dial
+	_ func(context.Context, *grpc.ClientConn, string) error      = Probe
+)
+
+type healthServer struct {
+	grpc_health_v1.UnimplementedHealthServer
+	check func(context.Context, *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error)
+}
+
+func (s *healthServer) Check(ctx context.Context, req *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+	return s.check(ctx, req)
+}
+
+func dialHealthServer(t *testing.T, h grpc_health_v1.HealthServer, opts ...grpc.DialOption) *grpc.ClientConn {
+	t.Helper()
+	l := bufconn.Listen(1 << 20)
+	s := grpc.NewServer(grpc.WaitForHandlers(true))
+	grpc_health_v1.RegisterHealthServer(s, h)
+	done := make(chan error, 1)
+	go func() { done <- s.Serve(l) }()
+	t.Cleanup(func() {
+		s.Stop()
+		l.Close()
+		select {
+		case err := <-done:
+			if err != nil && !errors.Is(err, grpc.ErrServerStopped) {
+				t.Errorf("serve: %v", err)
+			}
+		case <-time.After(3 * time.Second):
+			t.Error("server did not stop")
+		}
+	})
+	dialOpts := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithContextDialer(func(ctx context.Context, _ string) (net.Conn, error) { return l.DialContext(ctx) }),
+		grpc.WithBlock(),
+		grpc.WithTimeout(3 * time.Second),
+	}
+	dialOpts = append(dialOpts, opts...)
+	conn, err := Dial("passthrough:///bufconn", dialOpts...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { conn.Close() })
+	return conn
+}
+
+func TestDialFallbackConfiguration(t *testing.T) {
+	conn := dialHealthServer(t, &healthServer{check: func(context.Context, *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+		return &grpc_health_v1.HealthCheckResponse{Status: grpc_health_v1.HealthCheckResponse_SERVING}, nil
+	}})
+	rp := conn.GetMethodConfig(grpc_health_v1.Health_Check_FullMethodName).RetryPolicy
+	if rp == nil {
+		t.Fatal("health Check has no retry policy")
+	}
+	if rp.MaxAttempts != 3 || rp.InitialBackoff != 10*time.Millisecond || rp.MaxBackoff != 20*time.Millisecond || rp.BackoffMultiplier != 2 {
+		t.Errorf("retry policy = %+v, want 3 attempts, 10ms/20ms backoff, multiplier 2", rp)
+	}
+	if len(rp.RetryableStatusCodes) != 1 || !rp.RetryableStatusCodes[codes.Unavailable] {
+		t.Errorf("retryable codes = %v, want only UNAVAILABLE", rp.RetryableStatusCodes)
+	}
+	for _, method := range []string{grpc_health_v1.Health_Watch_FullMethodName, "/other.Service/Check"} {
+		if rp := conn.GetMethodConfig(method).RetryPolicy; rp != nil {
+			t.Errorf("%s has unexpected retry policy: %+v", method, rp)
+		}
+	}
+}
+
+func TestDialRequiresHostCredentials(t *testing.T) {
+	conn, err := Dial("passthrough:///unused")
+	if conn != nil {
+		conn.Close()
+	}
+	if err == nil {
+		t.Fatal("Dial without host credentials succeeded")
+	}
+}
+
+func TestDialNativeRetries(t *testing.T) {
+	for _, tc := range []struct {
+		name         string
+		failure      codes.Code
+		failures     int32
+		commit       bool
+		disableRetry bool
+		wantCode     codes.Code
+		wantAttempts int32
+	}{
+		{name: "serves on third attempt", failure: codes.Unavailable, failures: 2, wantCode: codes.OK, wantAttempts: 3},
+		{name: "exhausts unavailable", failure: codes.Unavailable, failures: 10, wantCode: codes.Unavailable, wantAttempts: 3},
+		{name: "permanent rejection", failure: codes.PermissionDenied, failures: 10, wantCode: codes.PermissionDenied, wantAttempts: 1},
+		{name: "headers commit call", failure: codes.Unavailable, failures: 10, commit: true, wantCode: codes.Unavailable, wantAttempts: 1},
+		{name: "host disables retries", failure: codes.Unavailable, failures: 10, disableRetry: true, wantCode: codes.Unavailable, wantAttempts: 1},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var attempts, invocations atomic.Int32
+			h := &healthServer{check: func(ctx context.Context, req *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+				if req.Service != "payments" {
+					return nil, status.Error(codes.InvalidArgument, "wrong service")
+				}
+				n := attempts.Add(1)
+				if n <= tc.failures {
+					if tc.commit {
+						if err := grpc.SendHeader(ctx, metadata.Pairs("committed", "true")); err != nil {
+							return nil, err
+						}
+					}
+					return nil, status.Error(tc.failure, "health check failed")
+				}
+				return &grpc_health_v1.HealthCheckResponse{Status: grpc_health_v1.HealthCheckResponse_SERVING}, nil
+			}}
+			opts := []grpc.DialOption{grpc.WithUnaryInterceptor(func(ctx context.Context, method string, req, reply any, cc *grpc.ClientConn, invoke grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+				invocations.Add(1)
+				return invoke(ctx, method, req, reply, cc, opts...)
+			})}
+			if tc.disableRetry {
+				opts = append(opts, grpc.WithDisableRetry())
+			}
+			conn := dialHealthServer(t, h, opts...)
+			if err := Probe(context.Background(), conn, "payments"); status.Code(err) != tc.wantCode {
+				t.Errorf("Probe = %v, want code %s", err, tc.wantCode)
+			}
+			if got := attempts.Load(); got != tc.wantAttempts {
+				t.Errorf("server attempts = %d, want %d", got, tc.wantAttempts)
+			}
+			if got := invocations.Load(); got != 1 {
+				t.Errorf("application invocations = %d, want 1", got)
+			}
+		})
+	}
+}
+
+func TestDialResolverConfiguration(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		config string
+		want   int32
+	}{
+		{"two attempts", `{"methodConfig":[{"name":[{"service":"grpc.health.v1.Health","method":"Check"}],"retryPolicy":{"maxAttempts":2,"initialBackoff":"0.010s","maxBackoff":"0.020s","backoffMultiplier":2,"retryableStatusCodes":["UNAVAILABLE"]}}]}`, 2},
+		{"empty policy", `{}`, 1},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			r := manual.NewBuilderWithScheme("passthrough")
+			configured := make(chan error, 1)
+			r.BuildCallback = func(_ resolver.Target, cc resolver.ClientConn, _ resolver.BuildOptions) {
+				config := cc.ParseServiceConfig(tc.config)
+				if config.Err != nil {
+					configured <- config.Err
+					return
+				}
+				configured <- cc.UpdateState(resolver.State{Addresses: []resolver.Address{{Addr: "bufconn"}}, ServiceConfig: config})
+			}
+			var attempts atomic.Int32
+			conn := dialHealthServer(t, &healthServer{check: func(context.Context, *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+				attempts.Add(1)
+				return nil, status.Error(codes.Unavailable, "unavailable")
+			}}, grpc.WithResolvers(r))
+			select {
+			case err := <-configured:
+				if err != nil {
+					t.Fatal(err)
+				}
+			case <-time.After(3 * time.Second):
+				t.Fatal("resolver configuration was not applied")
+			}
+			rp := conn.GetMethodConfig(grpc_health_v1.Health_Check_FullMethodName).RetryPolicy
+			if tc.want == 1 {
+				if rp != nil {
+					t.Fatalf("empty resolver policy has retries: %+v", rp)
+				}
+			} else if rp == nil || rp.MaxAttempts != int(tc.want) {
+				t.Fatalf("resolver retry policy = %+v, want %d attempts", rp, tc.want)
+			}
+			if err := Probe(context.Background(), conn, ""); status.Code(err) != codes.Unavailable {
+				t.Errorf("Probe = %v, want UNAVAILABLE", err)
+			}
+			if got := attempts.Load(); got != tc.want {
+				t.Errorf("server attempts = %d, want %d", got, tc.want)
+			}
+		})
+	}
+}
+
+func TestProbeHealthStatuses(t *testing.T) {
+	for _, healthStatus := range []grpc_health_v1.HealthCheckResponse_ServingStatus{
+		grpc_health_v1.HealthCheckResponse_SERVING,
+		grpc_health_v1.HealthCheckResponse_UNKNOWN,
+		grpc_health_v1.HealthCheckResponse_NOT_SERVING,
+		grpc_health_v1.HealthCheckResponse_SERVICE_UNKNOWN,
+	} {
+		t.Run(healthStatus.String(), func(t *testing.T) {
+			var attempts atomic.Int32
+			conn := dialHealthServer(t, &healthServer{check: func(_ context.Context, req *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+				if req.Service == "reuse" {
+					return &grpc_health_v1.HealthCheckResponse{Status: grpc_health_v1.HealthCheckResponse_SERVING}, nil
+				}
+				attempts.Add(1)
+				return &grpc_health_v1.HealthCheckResponse{Status: healthStatus}, nil
+			}})
+			err := Probe(context.Background(), conn, "")
+			if wantErr := healthStatus != grpc_health_v1.HealthCheckResponse_SERVING; (err != nil) != wantErr {
+				t.Errorf("Probe = %v, want error %t", err, wantErr)
+			}
+			if got := attempts.Load(); got != 1 {
+				t.Errorf("server attempts = %d, want 1", got)
+			}
+			assertConnectionReusable(t, conn)
+		})
+	}
+}
+
+func assertConnectionReusable(t *testing.T, conn *grpc.ClientConn) {
+	t.Helper()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := grpc_health_v1.NewHealthClient(conn).Check(ctx, &grpc_health_v1.HealthCheckRequest{Service: "reuse"})
+	if err != nil {
+		t.Fatalf("reuse connection: %v", err)
+	}
+	if r.Status != grpc_health_v1.HealthCheckResponse_SERVING {
+		t.Errorf("reuse health status = %s, want SERVING", r.Status)
+	}
+}
+
+func TestProbeBudget(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		parent time.Duration
+		retry  bool
+	}{
+		{"total across retries", 3 * time.Second, true},
+		{"earlier caller deadline", 100 * time.Millisecond, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var attempts atomic.Int32
+			deadlines := make(chan time.Time, 3)
+			var invocations atomic.Int32
+			var appDeadline time.Time
+			conn := dialHealthServer(t, &healthServer{check: func(ctx context.Context, req *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+				if req.Service == "reuse" {
+					return &grpc_health_v1.HealthCheckResponse{Status: grpc_health_v1.HealthCheckResponse_SERVING}, nil
+				}
+				n := attempts.Add(1)
+				deadline, _ := ctx.Deadline()
+				select {
+				case deadlines <- deadline:
+				default:
+				}
+				if tc.retry && n == 1 {
+					timer := time.NewTimer(100 * time.Millisecond)
+					defer timer.Stop()
+					select {
+					case <-timer.C:
+						return nil, status.Error(codes.Unavailable, "retry")
+					case <-ctx.Done():
+					}
+				}
+				<-ctx.Done()
+				return nil, status.FromContextError(ctx.Err()).Err()
+			}}, grpc.WithUnaryInterceptor(func(ctx context.Context, method string, req, reply any, cc *grpc.ClientConn, invoke grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+				if method == grpc_health_v1.Health_Check_FullMethodName && req.(*grpc_health_v1.HealthCheckRequest).Service != "reuse" {
+					if invocations.Add(1) == 1 {
+						appDeadline, _ = ctx.Deadline()
+					}
+				}
+				return invoke(ctx, method, req, reply, cc, opts...)
+			}))
+			ctx, cancel := context.WithTimeout(context.Background(), tc.parent)
+			defer cancel()
+			parentDeadline, _ := ctx.Deadline()
+			start := time.Now()
+			if err := Probe(ctx, conn, "budget"); status.Code(err) != codes.DeadlineExceeded {
+				t.Fatalf("Probe = %v, want DEADLINE_EXCEEDED", err)
+			}
+			if got := invocations.Load(); got != 1 {
+				t.Errorf("application invocations = %d, want 1", got)
+			}
+			if tc.retry {
+				if budget := appDeadline.Sub(start); budget < 500*time.Millisecond || budget > 550*time.Millisecond {
+					t.Errorf("application budget = %v, want 500ms", budget)
+				}
+				if got := attempts.Load(); got != 2 {
+					t.Fatalf("server attempts = %d, want 2", got)
+				}
+				first, second := <-deadlines, <-deadlines
+				if difference := second.Sub(first); difference < -10*time.Millisecond || difference > 10*time.Millisecond {
+					t.Errorf("retry moved total deadline by %v", difference)
+				}
+			} else if !appDeadline.Equal(parentDeadline) {
+				t.Errorf("application deadline = %v, want caller deadline %v", appDeadline, parentDeadline)
+			}
+			assertConnectionReusable(t, conn)
+		})
+	}
+}
+
+func TestProbeCallerCancellation(t *testing.T) {
+	started := make(chan struct{}, 1)
+	conn := dialHealthServer(t, &healthServer{check: func(ctx context.Context, req *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+		if req.Service == "reuse" {
+			return &grpc_health_v1.HealthCheckResponse{Status: grpc_health_v1.HealthCheckResponse_SERVING}, nil
+		}
+		started <- struct{}{}
+		<-ctx.Done()
+		return nil, status.FromContextError(ctx.Err()).Err()
+	}})
+	ctx, cancel := context.WithCancel(context.Background())
+	t.Cleanup(cancel)
+	done := make(chan error, 1)
+	finished := make(chan struct{})
+	go func() {
+		defer close(finished)
+		done <- Probe(ctx, conn, "cancel")
+	}()
+	t.Cleanup(func() {
+		cancel()
+		select {
+		case <-finished:
+		case <-time.After(3 * time.Second):
+			t.Error("Probe did not finish during cleanup")
+		}
+	})
+	select {
+	case <-started:
+	case <-time.After(3 * time.Second):
+		t.Fatal("health Check did not start")
+	}
+	cancel()
+	select {
+	case err := <-done:
+		if status.Code(err) != codes.Canceled {
+			t.Errorf("Probe = %v, want CANCELED", err)
+		}
+	case <-time.After(3 * time.Second):
+		t.Fatal("Probe did not finish after caller cancellation")
+	}
+	assertConnectionReusable(t, conn)
+}
+
+func TestProbeAlreadyCanceled(t *testing.T) {
+	var attempts atomic.Int32
+	conn := dialHealthServer(t, &healthServer{check: func(context.Context, *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+		attempts.Add(1)
+		return &grpc_health_v1.HealthCheckResponse{Status: grpc_health_v1.HealthCheckResponse_SERVING}, nil
+	}})
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if err := Probe(ctx, conn, ""); status.Code(err) != codes.Canceled {
+		t.Errorf("Probe = %v, want CANCELED", err)
+	}
+	if got := attempts.Load(); got != 0 {
+		t.Errorf("server attempts = %d, want 0", got)
+	}
+}

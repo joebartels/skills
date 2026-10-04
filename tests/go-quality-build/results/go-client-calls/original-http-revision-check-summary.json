@@ -1,0 +1,26 @@
+{
+  "checks": {
+    "baseline/t01": {
+      "commands": 8,
+      "failed_commands": 0,
+      "receipt_sha256": "820068306ee75c4cdc8d147b2d632c25eec943dc18fd121acb1bc9dd985c2593"
+    },
+    "baseline/t02": {
+      "commands": 8,
+      "failed_commands": 3,
+      "receipt_sha256": "6278ea34675e61ebc74843aaf06a638b757ba834c49a873abefbfdcca740b024"
+    },
+    "skill-on/t06": {
+      "commands": 8,
+      "failed_commands": 3,
+      "receipt_sha256": "ba9f6da8fdf447287684fa669c4b5f6c054a211970ebbb2041e734e3896de8bb"
+    },
+    "skill-on/t07": {
+      "commands": 8,
+      "failed_commands": 3,
+      "receipt_sha256": "40ee9ced2497e32afe9e0d5785d7c919fdea2e776d8ccb0899f40fbe29c698ff"
+    }
+  },
+  "unchanged_original_checks": "Retained per-trial -checks.json; these receipts add symmetric independent reviewer tests",
+  "interpretation": "t01 preserved effective timeout; v1 t06 fails legacy cancellation. Both Fetch arms lose known policy-error status and timeout body causes; baseline t02 also exceeds diagnostic bounds."
+}

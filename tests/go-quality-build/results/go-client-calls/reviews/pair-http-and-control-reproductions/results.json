@@ -1,0 +1,306 @@
+{
+  "minimum": {
+    "toolchain": "go1.22.12",
+    "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go test -ldflags=-linkmode=external -run TestReview -v -count=1 -timeout=20s ./...",
+    "results": [
+      {
+        "case": "http-write-replay A",
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "7763a0",
+          "wall_time_seconds": 1.023561208,
+          "exit_code": 0,
+          "original_token_count": 153,
+          "output": "=== RUN   TestReviewSubmitLegacyClientTimeout\n    neutral_review_test.go:28: direct client: elapsed=27.235042ms error=Post \"http://example.invalid\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\n    neutral_review_test.go:37: Submit: elapsed=26.381333ms calls=1 deadline=true timeout=25ms error=POST transport failed; outcome unknown: Post \"http://example.invalid\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\n        context deadline exceeded\n--- PASS: TestReviewSubmitLegacyClientTimeout (0.05s)\nPASS\nok  \texample.invalid/http-write-replay\t0.669s\n"
+        }
+      },
+      {
+        "case": "http-write-replay B",
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "1286fc",
+          "wall_time_seconds": 1.260765167,
+          "exit_code": 1,
+          "original_token_count": 165,
+          "output": "=== RUN   TestReviewSubmitLegacyClientTimeout\n    neutral_review_test.go:28: direct client: elapsed=27.150959ms error=Post \"http://example.invalid\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\n    neutral_review_test.go:37: Submit: elapsed=701.618584ms calls=1 deadline=true timeout=25ms error=Post \"http://example.invalid\": context deadline exceeded\n        context deadline exceeded\n        context deadline exceeded\n    neutral_review_test.go:38: supplied 25ms client timeout lost; total 500ms budget also exceeded\n--- FAIL: TestReviewSubmitLegacyClientTimeout (0.73s)\nFAIL\nFAIL\texample.invalid/http-write-replay\t0.923s\nFAIL\n"
+        }
+      },
+      {
+        "case": "http-retry-budget A",
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "d8e4eb",
+          "wall_time_seconds": 0.683396208,
+          "exit_code": 1,
+          "original_token_count": 277,
+          "output": "=== RUN   TestReviewFetchRedirectTerminal\n    neutral_review_test.go:30: redirect: calls=2 result=\"result\" error=<nil>\n    neutral_review_test.go:31: 302 was not terminal\n--- FAIL: TestReviewFetchRedirectTerminal (0.00s)\n=== RUN   TestReviewFetchPolicyStatus\n    neutral_review_test.go:42: redirect policy: cause=true error=request failed: Get \"/next\": caller rejects redirect\n    neutral_review_test.go:43: status or policy cause lost\n--- FAIL: TestReviewFetchPolicyStatus (0.00s)\n=== RUN   TestReviewFetchLongDiagnostics\n    neutral_review_test.go:50: diagnostic bytes=4096 cause=true\n--- PASS: TestReviewFetchLongDiagnostics (0.00s)\n=== RUN   TestReviewFetchClientTimeoutCauses\n    neutral_review_test.go:61: client timeout: bodyCause=false deadline=false closes=1 error=request failed: response failed: independent read failure\n        context deadline exceeded (Client.Timeout or context cancellation while reading body)\n    neutral_review_test.go:62: client timeout masked underlying failures\n--- FAIL: TestReviewFetchClientTimeoutCauses (0.02s)\nFAIL\nFAIL\texample.invalid/http-retry-budget\t0.352s\nFAIL\n"
+        }
+      },
+      {
+        "case": "http-retry-budget B",
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "b98e43",
+          "wall_time_seconds": 0.821301458,
+          "exit_code": 1,
+          "original_token_count": 287,
+          "output": "=== RUN   TestReviewFetchRedirectTerminal\n    neutral_review_test.go:30: redirect: calls=2 result=\"result\" error=<nil>\n    neutral_review_test.go:31: 302 was not terminal\n--- FAIL: TestReviewFetchRedirectTerminal (0.00s)\n=== RUN   TestReviewFetchPolicyStatus\n    neutral_review_test.go:42: redirect policy: cause=true error=Get \"/next\": caller rejects redirect\n    neutral_review_test.go:43: status or policy cause lost\n--- FAIL: TestReviewFetchPolicyStatus (0.00s)\n=== RUN   TestReviewFetchLongDiagnostics\n    neutral_review_test.go:50: diagnostic bytes=10030 cause=true\n    neutral_review_test.go:51: diagnostic not capped independently of error identity\n--- FAIL: TestReviewFetchLongDiagnostics (0.00s)\n=== RUN   TestReviewFetchClientTimeoutCauses\n    neutral_review_test.go:61: client timeout: bodyCause=false deadline=false closes=1 error=independent read failure\n        context deadline exceeded (Client.Timeout or context cancellation while reading body)\n    neutral_review_test.go:62: client timeout masked underlying failures\n--- FAIL: TestReviewFetchClientTimeoutCauses (0.02s)\nFAIL\nFAIL\texample.invalid/http-retry-budget\t0.480s\nFAIL\n"
+        }
+      }
+    ]
+  },
+  "current": {
+    "toolchain": "go1.26.5",
+    "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off go test -ldflags=-linkmode=external -run TestReview -v -count=1 -timeout=20s ./...",
+    "results": [
+      {
+        "case": "http-write-replay A",
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "f51cdc",
+          "wall_time_seconds": 1.073819458,
+          "exit_code": 0,
+          "original_token_count": 144,
+          "output": "=== RUN   TestReviewSubmitLegacyClientTimeout\n    neutral_review_test.go:28: direct client: elapsed=27.241125ms error=Post \"http://example.invalid\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\n    neutral_review_test.go:37: Submit: elapsed=27.097458ms calls=1 deadline=true timeout=25ms error=POST transport failed; outcome unknown: Post \"http://example.invalid\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\n--- PASS: TestReviewSubmitLegacyClientTimeout (0.05s)\nPASS\nok  \texample.invalid/http-write-replay\t0.707s\n"
+        }
+      },
+      {
+        "case": "http-write-replay B",
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "cede29",
+          "wall_time_seconds": 1.610108292,
+          "exit_code": 1,
+          "original_token_count": 165,
+          "output": "=== RUN   TestReviewSubmitLegacyClientTimeout\n    neutral_review_test.go:28: direct client: elapsed=27.176417ms error=Post \"http://example.invalid\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\n    neutral_review_test.go:37: Submit: elapsed=702.061125ms calls=1 deadline=true timeout=25ms error=Post \"http://example.invalid\": context deadline exceeded\n        context deadline exceeded\n        context deadline exceeded\n    neutral_review_test.go:38: supplied 25ms client timeout lost; total 500ms budget also exceeded\n--- FAIL: TestReviewSubmitLegacyClientTimeout (0.73s)\nFAIL\nFAIL\texample.invalid/http-write-replay\t1.244s\nFAIL\n"
+        }
+      },
+      {
+        "case": "http-retry-budget A",
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "ddfa02",
+          "wall_time_seconds": 0.732900625,
+          "exit_code": 1,
+          "original_token_count": 277,
+          "output": "=== RUN   TestReviewFetchRedirectTerminal\n    neutral_review_test.go:30: redirect: calls=2 result=\"result\" error=<nil>\n    neutral_review_test.go:31: 302 was not terminal\n--- FAIL: TestReviewFetchRedirectTerminal (0.00s)\n=== RUN   TestReviewFetchPolicyStatus\n    neutral_review_test.go:42: redirect policy: cause=true error=request failed: Get \"/next\": caller rejects redirect\n    neutral_review_test.go:43: status or policy cause lost\n--- FAIL: TestReviewFetchPolicyStatus (0.00s)\n=== RUN   TestReviewFetchLongDiagnostics\n    neutral_review_test.go:50: diagnostic bytes=4096 cause=true\n--- PASS: TestReviewFetchLongDiagnostics (0.00s)\n=== RUN   TestReviewFetchClientTimeoutCauses\n    neutral_review_test.go:61: client timeout: bodyCause=false deadline=true closes=1 error=request failed: response failed: independent read failure\n        context deadline exceeded (Client.Timeout or context cancellation while reading body)\n    neutral_review_test.go:62: client timeout masked underlying failures\n--- FAIL: TestReviewFetchClientTimeoutCauses (0.02s)\nFAIL\nFAIL\texample.invalid/http-retry-budget\t0.386s\nFAIL\n"
+        }
+      },
+      {
+        "case": "http-retry-budget B",
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "a1c0f0",
+          "wall_time_seconds": 0.591946667,
+          "exit_code": 1,
+          "original_token_count": 286,
+          "output": "=== RUN   TestReviewFetchRedirectTerminal\n    neutral_review_test.go:30: redirect: calls=2 result=\"result\" error=<nil>\n    neutral_review_test.go:31: 302 was not terminal\n--- FAIL: TestReviewFetchRedirectTerminal (0.00s)\n=== RUN   TestReviewFetchPolicyStatus\n    neutral_review_test.go:42: redirect policy: cause=true error=Get \"/next\": caller rejects redirect\n    neutral_review_test.go:43: status or policy cause lost\n--- FAIL: TestReviewFetchPolicyStatus (0.00s)\n=== RUN   TestReviewFetchLongDiagnostics\n    neutral_review_test.go:50: diagnostic bytes=10030 cause=true\n    neutral_review_test.go:51: diagnostic not capped independently of error identity\n--- FAIL: TestReviewFetchLongDiagnostics (0.00s)\n=== RUN   TestReviewFetchClientTimeoutCauses\n    neutral_review_test.go:61: client timeout: bodyCause=false deadline=true closes=1 error=independent read failure\n        context deadline exceeded (Client.Timeout or context cancellation while reading body)\n    neutral_review_test.go:62: client timeout masked underlying failures\n--- FAIL: TestReviewFetchClientTimeoutCauses (0.02s)\nFAIL\nFAIL\texample.invalid/http-retry-budget\t0.257s\nFAIL\n"
+        }
+      }
+    ]
+  },
+  "baselineCurrent": {
+    "jobs": [
+      {
+        "case": "http-write-replay",
+        "label": "A",
+        "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off go test -ldflags=-linkmode=external -race -count=1 -timeout=20s ./...",
+        "dir": "/private/tmp/go-neutral-http-review/baseline/http-write-replay/A"
+      },
+      {
+        "case": "http-write-replay",
+        "label": "B",
+        "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off go test -ldflags=-linkmode=external -race -count=1 -timeout=20s ./...",
+        "dir": "/private/tmp/go-neutral-http-review/baseline/http-write-replay/B"
+      },
+      {
+        "case": "http-retry-budget",
+        "label": "A",
+        "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off go test -ldflags=-linkmode=external -race -count=1 -timeout=20s ./...",
+        "dir": "/private/tmp/go-neutral-http-review/baseline/http-retry-budget/A"
+      },
+      {
+        "case": "http-retry-budget",
+        "label": "B",
+        "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off go test -ldflags=-linkmode=external -race -count=1 -timeout=20s ./...",
+        "dir": "/private/tmp/go-neutral-http-review/baseline/http-retry-budget/B"
+      },
+      {
+        "case": "pure-control",
+        "label": "A",
+        "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off go test -ldflags=-linkmode=external -count=1 -timeout=20s ./...",
+        "dir": "/private/tmp/go-neutral-http-review/baseline/pure-control/A"
+      },
+      {
+        "case": "pure-control",
+        "label": "B",
+        "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off go test -ldflags=-linkmode=external -count=1 -timeout=20s ./...",
+        "dir": "/private/tmp/go-neutral-http-review/baseline/pure-control/B"
+      }
+    ],
+    "results": [
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "ee41ad",
+          "wall_time_seconds": 2.25594925,
+          "exit_code": 0,
+          "original_token_count": 12,
+          "output": "ok  \texample.invalid/http-write-replay\t1.989s\n"
+        }
+      },
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "b2d72b",
+          "wall_time_seconds": 2.740105042,
+          "exit_code": 0,
+          "original_token_count": 12,
+          "output": "ok  \texample.invalid/http-write-replay\t2.477s\n"
+        }
+      },
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "e0e23d",
+          "wall_time_seconds": 2.394787667,
+          "exit_code": 0,
+          "original_token_count": 12,
+          "output": "ok  \texample.invalid/http-retry-budget\t2.139s\n"
+        }
+      },
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "4a82b4",
+          "wall_time_seconds": 2.184559375,
+          "exit_code": 0,
+          "original_token_count": 12,
+          "output": "ok  \texample.invalid/http-retry-budget\t1.905s\n"
+        }
+      },
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "a7cd84",
+          "wall_time_seconds": 0.307150583,
+          "exit_code": 0,
+          "original_token_count": 11,
+          "output": "ok  \texample.invalid/pure-control\t0.190s\n"
+        }
+      },
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "8a5c9c",
+          "wall_time_seconds": 0.284755375,
+          "exit_code": 0,
+          "original_token_count": 11,
+          "output": "ok  \texample.invalid/pure-control\t0.154s\n"
+        }
+      }
+    ]
+  },
+  "baselineVet": {
+    "jobs": [
+      {
+        "case": "http-write-replay",
+        "label": "A",
+        "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go vet ./...",
+        "dir": "/private/tmp/go-neutral-http-review/baseline/http-write-replay/A"
+      },
+      {
+        "case": "http-write-replay",
+        "label": "B",
+        "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go vet ./...",
+        "dir": "/private/tmp/go-neutral-http-review/baseline/http-write-replay/B"
+      },
+      {
+        "case": "http-retry-budget",
+        "label": "A",
+        "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go vet ./...",
+        "dir": "/private/tmp/go-neutral-http-review/baseline/http-retry-budget/A"
+      },
+      {
+        "case": "http-retry-budget",
+        "label": "B",
+        "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go vet ./...",
+        "dir": "/private/tmp/go-neutral-http-review/baseline/http-retry-budget/B"
+      },
+      {
+        "case": "pure-control",
+        "label": "A",
+        "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go vet ./...",
+        "dir": "/private/tmp/go-neutral-http-review/baseline/pure-control/A"
+      },
+      {
+        "case": "pure-control",
+        "label": "B",
+        "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go vet ./...",
+        "dir": "/private/tmp/go-neutral-http-review/baseline/pure-control/B"
+      }
+    ],
+    "results": [
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "5385d7",
+          "wall_time_seconds": 0.136118167,
+          "exit_code": 0,
+          "original_token_count": 0,
+          "output": ""
+        }
+      },
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "1d95c0",
+          "wall_time_seconds": 0.132615791,
+          "exit_code": 0,
+          "original_token_count": 0,
+          "output": ""
+        }
+      },
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "fa9a26",
+          "wall_time_seconds": 0.130919125,
+          "exit_code": 0,
+          "original_token_count": 0,
+          "output": ""
+        }
+      },
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "a59aa5",
+          "wall_time_seconds": 0.127169375,
+          "exit_code": 0,
+          "original_token_count": 0,
+          "output": ""
+        }
+      },
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "2da961",
+          "wall_time_seconds": 0.090683375,
+          "exit_code": 0,
+          "original_token_count": 0,
+          "output": ""
+        }
+      },
+      {
+        "status": "fulfilled",
+        "value": {
+          "chunk_id": "841f95",
+          "wall_time_seconds": 0.090589959,
+          "exit_code": 0,
+          "original_token_count": 0,
+          "output": ""
+        }
+      }
+    ]
+  }
+}

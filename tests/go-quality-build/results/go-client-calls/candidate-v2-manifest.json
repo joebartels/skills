@@ -1,0 +1,21 @@
+{
+  "hashes": {
+    "SKILL.md": "95504b0ce3136d3ece9376b492248a0f3867c0dbd3267478f9ddb17306dfda3d",
+    "references/grpc-clients.md": "38d27e688cd9ca0a5c2ce2af52b283f65113ac346c6a2e59bdb65ae4a85ab2a3",
+    "references/http-clients.md": "d579f9381c93e4edd3d63cbfb89251ed5a04e080b41e5c4cc5d1a35ecd56fa9d"
+  },
+  "main_words": 730,
+  "guidance_revisions_used": 1,
+  "changed_files": [
+    "references/http-clients.md"
+  ],
+  "reason": "Confirmed loss of effective supplied Client.Timeout cancellation and missed timeout body-cause/known-status policies; preserved independent raw findings and matched checks. Finalized before dispatch with completed-body health guidance for the independently mutation-confirmed test gap.",
+  "affected_reruns": [
+    "http-write-replay",
+    "http-retry-budget",
+    "breaker-recovery",
+    "pure-control"
+  ],
+  "unaffected": "grpc-policy main and reference bytes unchanged; final transfer receives exact v2 catalog",
+  "pre_dispatch_draft": "candidate-v2-pre-dispatch-manifest.json (not evaluated/exposed)"
+}

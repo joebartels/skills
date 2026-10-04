@@ -1,0 +1,18 @@
+from pathlib import Path
+import hashlib,json
+root=Path('/Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls')
+raw=root/'reviews/pair-http-and-control-reproductions'
+dest=root/'supplemental-review-probes'
+write=(raw/'submit-review_test.go').read_text()
+fetch=(raw/'fetch-review_test.go').read_text()
+start=fetch.index('func TestReviewFetchRedirectTerminal(')
+end=fetch.index('func TestReviewFetchPolicyStatus(',start)
+fetch=fetch[:start]+fetch[end:]
+records={}
+for case,content in [('http-write-replay',write),('http-retry-budget',fetch)]:
+ p=dest/(case+'_test.go.txt')
+ if p.exists():raise FileExistsError(p)
+ p.write_text(content)
+ records[p.name]=hashlib.sha256(p.read_bytes()).hexdigest()
+(dest/'http-manifest.json').write_text(json.dumps({'hashes':records,'source':'reviews/pair-http-and-control-reproductions/','adaptation':'Omit only the initial-response redirect rejection assertion, which the reviewer clarified as contract ambiguity. Keep known-status policy-error, cause-identity, diagnostic-bound and legacy-timeout assertions unchanged.','comparison':'Same supplemental files applied to original baseline, original guided and revised guided; original probes and outcomes untouched.','timing':'Frozen before candidate v2 and before revision authors.','bias_limit':'Post-outcome discovery may bias comparisons; retained raw reports and rejected ambiguous interpretation.'},indent=2)+'\n')
+print(records)

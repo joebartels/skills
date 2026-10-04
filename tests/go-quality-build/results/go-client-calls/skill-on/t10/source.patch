@@ -1,0 +1,30 @@
+diff --git a/client.go b/client.go
+index 800709afe51fd19d5e69a09cc92a0af0a7562e17..d0d99af873861afbf7d7cede685439b0ec56ac99 100644
+--- a/client.go
++++ b/client.go
+@@ -3,7 +3,9 @@ package client
+ func SumPositive(values []int) int {
+ 	sum := 0
+ 	for _, v := range values {
+-		sum += v
++		if v > 0 {
++			sum += v
++		}
+ 	}
+ 	return sum
+ }
+diff --git a/client_test.go b/client_test.go
+index fb742e337f623cabeb383de50d5fb36191752658..8b092922fd8f5693adfb0dfca0b6f73e3588af04 100644
+--- a/client_test.go
++++ b/client_test.go
+@@ -7,3 +7,10 @@ func TestExistingPositives(t *testing.T) {
+ 		t.Fatalf("got %d", got)
+ 	}
+ }
++
++func TestSumPositiveIgnoresNonPositive(t *testing.T) {
++	var sum func([]int) int = SumPositive
++	if got := sum([]int{-4, 0, 2, -3, 5}); got != 7 {
++		t.Fatalf("SumPositive() = %d, want 7", got)
++	}
++}

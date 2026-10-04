@@ -1,0 +1,13 @@
+=== RUN   TestPairBodyReadErrorIsNeutral
+=== RUN   TestPairBodyReadErrorIsNeutral/consecutive_history
+    body_health_review_test.go:45: after excluded read failure: result=HTTP 503 calls=4->5
+    body_health_review_test.go:46: read failure reset history or established recovery
+=== RUN   TestPairBodyReadErrorIsNeutral/recovery
+    body_health_review_test.go:45: after excluded read failure: result=HTTP 503 calls=5->6
+    body_health_review_test.go:46: read failure reset history or established recovery
+--- FAIL: TestPairBodyReadErrorIsNeutral (0.11s)
+    --- FAIL: TestPairBodyReadErrorIsNeutral/consecutive_history (0.00s)
+    --- FAIL: TestPairBodyReadErrorIsNeutral/recovery (0.11s)
+FAIL
+FAIL	example.invalid/breaker-recovery	0.495s
+FAIL

@@ -39,6 +39,82 @@
       "fork_turns": "none",
       "model_override": null,
       "effort_override": null
+    },
+    {
+      "trial_id": "t06",
+      "task_name": "/root/author_t06",
+      "launch_file": "launch-t06.txt",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null
+    },
+    {
+      "trial_id": "t07",
+      "task_name": "/root/author_t07",
+      "launch_file": "launch-t07.txt",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null
+    },
+    {
+      "trial_id": "t08",
+      "task_name": "/root/author_t08",
+      "launch_file": "launch-t08.txt",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null
+    },
+    {
+      "trial_id": "t09",
+      "task_name": "/root/author_t09",
+      "launch_file": "launch-t09.txt",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null
+    },
+    {
+      "trial_id": "t10",
+      "task_name": "/root/author_t10",
+      "launch_file": "launch-t10.txt",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null
+    },
+    {
+      "trial_id": "r01",
+      "task_name": "/root/author_r01",
+      "launch_file": "launch-r01.txt",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null,
+      "candidate": "candidate-v2"
+    },
+    {
+      "trial_id": "r02",
+      "task_name": "/root/author_r02",
+      "launch_file": "launch-r02.txt",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null,
+      "candidate": "candidate-v2"
+    },
+    {
+      "trial_id": "r03",
+      "task_name": "/root/author_r03",
+      "launch_file": "launch-r03.txt",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null,
+      "candidate": "candidate-v2"
+    },
+    {
+      "trial_id": "r04",
+      "task_name": "/root/author_r04",
+      "launch_file": "launch-r04.txt",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null,
+      "candidate": "candidate-v2"
     }
   ],
   "review_launches": [
@@ -67,6 +143,90 @@
         "breaker-recovery"
       ],
       "report": "reviews/initial-c.md"
+    },
+    {
+      "task_name": "/root/pair_review_grpc",
+      "allowed_sources": "/private/tmp/go-client-campaign/reviews/pairs/grpc-policy",
+      "cases": [
+        "grpc-policy"
+      ],
+      "report": "reviews/pair-grpc-policy.md",
+      "instructions_file": "launch-pair-grpc-policy.txt",
+      "launch_message": "Read /Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/launch-pair-grpc-policy.txt and perform that independent neutral-pair review. Your allowed inputs and outputs are defined there. Do not inspect any other campaign material. No sub-agents.",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null,
+      "blinding": "neutral labels; no catalog/author reports/arm maps allowed; findings sealed before controller interpretation"
+    },
+    {
+      "task_name": "/root/pair_review_http",
+      "allowed_sources": [
+        "/private/tmp/go-client-campaign/reviews/pairs/http-write-replay",
+        "/private/tmp/go-client-campaign/reviews/pairs/http-retry-budget",
+        "/private/tmp/go-client-campaign/reviews/pairs/pure-control"
+      ],
+      "cases": [
+        "http-write-replay",
+        "http-retry-budget",
+        "pure-control"
+      ],
+      "report": "reviews/pair-http-and-control.md",
+      "instructions_file": "launch-pair-http-and-control.txt",
+      "launch_message": "Read /Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/launch-pair-http-and-control.txt and perform that independent neutral-pair review. Your allowed inputs and outputs are defined there. Do not inspect any other campaign material. No sub-agents.",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null,
+      "blinding": "neutral labels; no catalog/author reports/arm maps allowed; findings sealed before controller interpretation"
+    },
+    {
+      "task_name": "/root/pair_review_breaker",
+      "allowed_sources": "/private/tmp/go-client-campaign/reviews/pairs/breaker-recovery",
+      "cases": [
+        "breaker-recovery"
+      ],
+      "report": "reviews/pair-breaker-recovery.md",
+      "instructions_file": "launch-pair-breaker-recovery.txt",
+      "launch_message": "Read /Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/launch-pair-breaker-recovery.txt and perform that independent neutral-pair review. Your allowed inputs and outputs are defined there. Do not inspect any other campaign material. No sub-agents.",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null,
+      "blinding": "neutral labels; no catalog/author reports/arm maps allowed; findings sealed before controller interpretation"
+    },
+    {
+      "task_name": "/root/pair_review_revision_http",
+      "allowed_sources": [
+        "/private/tmp/go-client-campaign/reviews/pairs/revision-http-write-replay",
+        "/private/tmp/go-client-campaign/reviews/pairs/revision-http-retry-budget"
+      ],
+      "cases": [
+        "revision-http-write-replay",
+        "revision-http-retry-budget"
+      ],
+      "report": "reviews/pair-revision-http.md",
+      "instructions_file": "launch-pair-revision-http.txt",
+      "launch_message": "Read /Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/launch-pair-revision-http.txt and perform that independent neutral-pair review. Your allowed inputs and outputs are defined there. Do not inspect any other campaign material. No sub-agents.",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null,
+      "blinding": "neutral labels; source/checks/probes only; no catalog/reports/arm maps before frozen findings"
+    },
+    {
+      "task_name": "/root/pair_review_revision_breaker",
+      "allowed_sources": [
+        "/private/tmp/go-client-campaign/reviews/pairs/revision-breaker-recovery",
+        "/private/tmp/go-client-campaign/reviews/pairs/revision-pure-control"
+      ],
+      "cases": [
+        "revision-breaker-recovery",
+        "revision-pure-control"
+      ],
+      "report": "reviews/pair-revision-breaker-and-control.md",
+      "instructions_file": "launch-pair-revision-breaker-and-control.txt",
+      "launch_message": "Read /Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/launch-pair-revision-breaker-and-control.txt and perform that independent neutral-pair review. Your allowed inputs and outputs are defined there. Do not inspect any other campaign material. No sub-agents.",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null,
+      "blinding": "neutral labels; source/checks/probes only; no catalog/reports/arm maps before frozen findings"
     }
   ],
   "review_contract": "Full final code areas against original README; unchanged correctness/resilience/testing skills; substantiated findings, strengths, complexity and limits; no target grades; disposable reproductions; no edits to candidates or probes; no other trials or author reports.",

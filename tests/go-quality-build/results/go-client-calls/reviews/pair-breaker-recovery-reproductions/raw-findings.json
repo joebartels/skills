@@ -1,0 +1,22 @@
+{
+  "blind_review": true,
+  "arm_disclosure_received": false,
+  "findings_frozen_before_disclosure": true,
+  "source_hashes_verified": true,
+  "findings": [
+    {"id":"A-F1","label":"A","owner":"Correctness & Compatibility","topics":["Correctness & Compatibility","Observability & Resilience"],"severity":"major","location":"A/source/client.go:62-68,82-87","finding":"Caller return errors are used directly as health outcomes. Canceled completed 200 resets failures or establishes recovery; the 250ms operation deadline is not considered when classifying a completed 503.","evidence":["A-host.log","A-race.log","A-minimum.log"]},
+    {"id":"A-F2","label":"A","owner":"Correctness & Compatibility","topics":["Correctness & Compatibility","Observability & Resilience"],"severity":"moderate","location":"A/source/client.go:51-59,98-106","finding":"Parse, transport and body errors are returned without the required diagnostic bound. Reproduced 8245, 8233 and 8192 byte messages in enabled and disabled modes.","evidence":["A-host.log","A-race.log","A-minimum.log"]},
+    {"id":"A-F3","label":"A","owner":"Correctness & Compatibility","topics":["Correctness & Compatibility"],"severity":"moderate","location":"A/source/client.go:95-98","finding":"Per-call copied client overwrites and bypasses supplied CheckRedirect policy, even when that policy itself already prevents a second transport request.","evidence":["A-host.log","A-race.log","A-minimum.log"],"interpretation":"Application request means one Client.Do operation, consistent with preserving supplied client policy; wire-request cap versus redirect policy is stated as a contract limit."},
+    {"id":"A-T1","label":"A","owner":"Testing","topics":["Testing"],"severity":"major","location":"A/source/contracts_test.go:230,296,332","finding":"Cancellation tests exclude only already-canceled or errored calls and canceled 503; they do not exercise successful body reading while canceled or operation-deadline health accounting. All candidate checks pass despite A-F1.","evidence":["A/checks.json","A-host.log"]},
+    {"id":"A-T2","label":"A","owner":"Testing","topics":["Testing"],"severity":"moderate","location":"A/source/contracts_test.go:56,91","finding":"Body-result limits and short read causes are tested, but long parse/transport/body diagnostics are not bounded in assertions, leaving A-F2 undetected.","evidence":["A/checks.json","A-host.log"]},
+    {"id":"A-T3","label":"A","owner":"Testing","topics":["Testing"],"severity":"moderate","location":"A/source/contracts_test.go:115-149","finding":"Borrowed-client test explicitly expects supplied redirect callback not to execute and checks the original client later; it entrenches policy bypass rather than proving Fetch honors borrowed policy.","evidence":["A-host.log","pair_review_test.go"]},
+    {"id":"B-T1","label":"B","owner":"Testing","topics":["Testing"],"severity":"moderate","location":"B/source/policy_test.go:101-114,245-288,366-438; B/source/client.go:73","finding":"Supplied read-error test uses disabled mode; enabled health-exclusion tests omit HTTP 200 with a read error. Removing only the health classifier err == nil condition survives candidate tests and both probe sets but fails equal reviewer body-health probes.","evidence":["B-mutant-existing.log","B-mutant-body-health.log","B-body-health.log"]}
+  ],
+  "non_findings": [
+    "Both pass original frozen probes and current body-read-error health reproduction.",
+    "Both use unchanged API, Go 1.22.0 module directive and pinned dependency graph.",
+    "B correctly separates successful caller bytes from neutral canceled health, and bounds messages with unwrap causes.",
+    "A truncates oversized successful bodies; B rejects them. The README does not specify oversize or partial-result policy, so this is recorded as an ambiguity rather than an additional finding.",
+    "A allocates an unused breaker map in disabled mode; it adds no breaker behavior and is only a small optional minimality refinement."
+  ]
+}
