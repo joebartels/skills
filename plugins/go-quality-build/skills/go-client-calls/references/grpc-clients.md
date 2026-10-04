@@ -17,8 +17,11 @@ the first configured attempt. Transparent retries are a separate mechanism and
 may not consume that count. Applicable library caps, retry throttling, server
 pushback and buffered request limits can further affect actual behavior.
 
-In grpc-go, `WithDefaultServiceConfig` is a fallback when the resolver supplies
-no valid service config. `WithDisableServiceConfig` changes that precedence.
+In grpc-go, `WithDefaultServiceConfig` can supply an initial policy when the
+resolver supplies no service config. Invalid resolver configuration is a
+separate case: it can fail calls before a valid policy exists or retain a
+previous policy. Check the selected implementation's handling.
+`WithDisableServiceConfig` changes that precedence.
 Keep host/resolver policy when the contract calls for a fallback; do not disable
 resolver configs merely to force your defaults. A valid empty resolver policy
 can also supersede the fallback. Inspect the public effective method config

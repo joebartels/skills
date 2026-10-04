@@ -116,6 +116,21 @@ class ClientCallTrialsTests(unittest.TestCase):
         self.assertEqual((self.archive / "t01/output/new.go").read_text(),
                          "package client\nvar Value = 7\n")
 
+    def test_reconstructs_when_temporary_directory_is_inside_git(self):
+        self.trials.run(["git", "init", "-q"], self.trials.REPO)
+        temporary = self.trials.REPO / "temporary"
+        temporary.mkdir()
+        trial = self.prepare()
+        (trial / "trial-report.md").write_text("Result\n")
+        (trial / "source/client.go").unlink()
+        (trial / "source/new.go").write_text("package client\nvar Value = 7\n")
+        with patch.object(tempfile, "tempdir", str(temporary)):
+            self.trials.archive_trial(trial, self.archive)
+        output = self.archive / "t01/output"
+        self.assertEqual({p.name for p in output.iterdir()}, {"README.md", "new.go"})
+        self.assertEqual((output / "README.md").read_text(), "Task contract\n")
+        self.assertEqual((output / "new.go").read_text(), "package client\nvar Value = 7\n")
+
     def test_cli_mismatch_cannot_seal_an_archive(self):
         trial = self.prepare()
         (trial / "trial-report.md").write_text("Result\n")

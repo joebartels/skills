@@ -137,16 +137,17 @@ def archive_trial(trial: Path, archive: Path) -> dict:
             shutil.copyfile(trial / name, staging / name)
         patch_file = staging / "source.patch"
         patch_file.write_text(patch_text)
-        # Git apply from a subdirectory of a parent repository can skip paths.
-        # Reconstruct outside that repository before sealing a plain file tree.
+        # Isolate Git discovery even when the temporary directory is inside a
+        # parent repository, then seal only the reconstructed plain file tree.
         with tempfile.TemporaryDirectory(prefix="client-reconstruct-") as reconstructed:
             check = Path(reconstructed) / "output"
             shutil.copytree(trial / "input", check)
+            run(["git", "init", "-q"], check)
             if patch_text:
                 run(["git", "apply", str(patch_file)], check)
             if hashes(check) != output_hashes:
                 raise ValueError("patch reconstruction mismatch")
-            shutil.copytree(check, staging / "output")
+            shutil.copytree(check, staging / "output", ignore=shutil.ignore_patterns(".git"))
         metadata.update(output_hashes=output_hashes,
                         patch_sha256=hashlib.sha256(patch_text.encode()).hexdigest(), reconstruction="PASS")
         (staging / "manifest.json").write_text(json.dumps(metadata, indent=2) + "\n")
