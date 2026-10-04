@@ -12,6 +12,7 @@ Focused Go authoring skills. Select those relevant to the change; follow the pro
 | [go-test-isolation](skills/go-test-isolation/SKILL.md) | Dependency fidelity, fixtures, process state and asynchronous test cleanup. |
 | [go-context-and-deadlines](skills/go-context-and-deadlines/SKILL.md) | Propagation, time budgets, cancellation policies, scope ownership and required finalization. |
 | [go-concurrency-and-ownership](skills/go-concurrency-and-ownership/SKILL.md) | Shared invariants, aliases, capacity, supervision, channels and stop/join/release. |
+| [go-client-calls](skills/go-client-calls/SKILL.md) | Outbound HTTP/unary gRPC operation policy, replay safety, retry ownership, remote failures and breaker health. |
 
 Use the separate [Go quality review package](../go-quality-review/README.md) to assess completed code.
 

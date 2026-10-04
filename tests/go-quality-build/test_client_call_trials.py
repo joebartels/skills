@@ -68,6 +68,27 @@ class ClientCallTrialsTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.prepare()
 
+    def test_guided_catalog_survives_runtime_promotion(self):
+        runtime = self.trials.REPO / "plugins/go-quality-build/skills/go-client-calls"
+        runtime.mkdir()
+        (runtime / "SKILL.md").write_text(
+            "---\nname: go-client-calls\ndescription: Use when calling.\n---\n")
+        references = runtime / "references"
+        references.mkdir()
+        (references / "http-clients.md").write_text("Promoted HTTP guidance\n")
+        guided = self.prepare("skill-on")
+        self.assertEqual(self.trials.hashes(guided / "catalog/go-client-calls"),
+                         self.trials.hashes(runtime))
+        draft = self.evals.parent / "draft"
+        draft.mkdir()
+        (draft / "SKILL.md").write_text(
+            "---\nname: go-client-calls\ndescription: Use when revising calls.\n---\n")
+        revised = self.prepare("skill-on", "t02")
+        self.assertEqual(self.trials.hashes(revised / "catalog/go-client-calls"),
+                         self.trials.hashes(draft))
+        baseline = self.prepare("baseline", "t03")
+        self.assertFalse((baseline / "catalog/go-client-calls").exists())
+
     def test_refuses_archive_overwrite(self):
         trial = self.prepare()
         (trial / "trial-report.md").write_text("Result\n")

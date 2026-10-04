@@ -76,6 +76,8 @@ def prepare_trial(case: str, arm: str, trial_id: str, scratch: Path, archive: Pa
         shutil.copytree(original, catalog / name)
     if arm == "skill-on":
         original = evals.parent / "draft"
+        if not original.exists():
+            original = REPO / "plugins/go-quality-build/skills/go-client-calls"
         hashes(original)
         shutil.copytree(original, catalog / "go-client-calls")
     descriptions = []
