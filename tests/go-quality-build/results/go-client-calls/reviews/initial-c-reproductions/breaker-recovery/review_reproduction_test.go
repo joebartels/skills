@@ -1,0 +1,150 @@
+package client
+
+import (
+	"context"
+	"errors"
+	"io"
+	"net/http"
+	"strings"
+	"sync/atomic"
+	"testing"
+	"time"
+
+	"github.com/sony/gobreaker/v2"
+)
+
+type reviewTransport func(*http.Request) (*http.Response, error)
+
+func (f reviewTransport) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+type reviewBody struct {
+	io.Reader
+	cancel context.CancelFunc
+}
+
+// Cancellation occurs before body consumption finishes. The available bytes
+// still produce a successful read, so Fetch must classify cancellation itself.
+func (b *reviewBody) Read(p []byte) (int, error) {
+	if b.cancel != nil {
+		b.cancel()
+		b.cancel = nil
+	}
+	return b.Reader.Read(p)
+}
+func (b *reviewBody) Close() error { return nil }
+
+func reviewResponse(status int, cancel context.CancelFunc) *http.Response {
+	return &http.Response{StatusCode: status, Body: &reviewBody{Reader: strings.NewReader("ok"), cancel: cancel}}
+}
+
+func TestReviewCanceled200PreservesFailureHistory(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	var calls atomic.Int32
+	c := New(&http.Client{Transport: reviewTransport(func(r *http.Request) (*http.Response, error) {
+		calls.Add(1)
+		if r.URL.Path == "/canceled200" {
+			return reviewResponse(200, cancel), nil
+		}
+		return reviewResponse(503, nil), nil
+	})}, true)
+	for i := 0; i < 2; i++ {
+		_, err := c.Fetch(context.Background(), "http://dep.test/fail")
+		if err == nil || err.Error() != "HTTP 503" {
+			t.Fatalf("initial failure = %v", err)
+		}
+	}
+	data, err := c.Fetch(ctx, "http://dep.test/canceled200")
+	t.Logf("canceled completion: data=%q error=%v parent=%v", data, err, ctx.Err())
+	if ctx.Err() != context.Canceled {
+		t.Fatal("cancellation did not occur before Fetch returned")
+	}
+	_, err = c.Fetch(context.Background(), "http://dep.test/fail")
+	if err == nil || err.Error() != "HTTP 503" {
+		t.Fatalf("third eligible failure = %v", err)
+	}
+	before := calls.Load()
+	_, err = c.Fetch(context.Background(), "http://dep.test/fail")
+	t.Logf("after third eligible failure: error=%v calls=%d->%d", err, before, calls.Load())
+	if !errors.Is(err, gobreaker.ErrOpenState) || calls.Load() != before {
+		t.Fatal("canceled 200 reset history; fourth eligible request contacted dependency")
+	}
+}
+
+func TestReviewCanceled200DoesNotEstablishRecovery(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	var calls atomic.Int32
+	c := New(&http.Client{Transport: reviewTransport(func(r *http.Request) (*http.Response, error) {
+		calls.Add(1)
+		switch r.URL.Path {
+		case "/canceled200":
+			return reviewResponse(200, cancel), nil
+		case "/excluded":
+			return reviewResponse(400, nil), nil
+		default:
+			return reviewResponse(503, nil), nil
+		}
+	})}, true)
+	for i := 0; i < 3; i++ {
+		_, err := c.Fetch(context.Background(), "http://dep.test/fail")
+		if err == nil || err.Error() != "HTTP 503" {
+			t.Fatalf("initial failure = %v", err)
+		}
+	}
+	if _, err := c.Fetch(context.Background(), "http://dep.test/fail"); !errors.Is(err, gobreaker.ErrOpenState) {
+		t.Fatalf("expected open: %v", err)
+	}
+	// Elapsed time is the specified open interval, not asynchronous progress.
+	time.Sleep(110 * time.Millisecond)
+	data, err := c.Fetch(ctx, "http://dep.test/canceled200")
+	t.Logf("canceled recovery completion: data=%q error=%v parent=%v", data, err, ctx.Err())
+	if ctx.Err() != context.Canceled {
+		t.Fatal("cancellation did not occur before accounting")
+	}
+	if _, err := c.Fetch(context.Background(), "http://dep.test/excluded"); err == nil || err.Error() != "HTTP 400" {
+		t.Fatalf("excluded replacement probe = %v", err)
+	}
+	// If cancellation was excluded, one subsequent eligible 503 must reopen.
+	if _, err := c.Fetch(context.Background(), "http://dep.test/fail"); err == nil || err.Error() != "HTTP 503" {
+		t.Fatalf("failed replacement probe = %v", err)
+	}
+	before := calls.Load()
+	_, err = c.Fetch(context.Background(), "http://dep.test/fail")
+	t.Logf("after failed replacement probe: error=%v calls=%d->%d", err, before, calls.Load())
+	if !errors.Is(err, gobreaker.ErrOpenState) || calls.Load() != before {
+		t.Fatal("canceled 200 established recovery; failed replacement probe did not reopen")
+	}
+}
+
+func TestReviewDiagnosticsAreBounded(t *testing.T) {
+	for _, enabled := range []bool{false, true} {
+		for _, failure := range []string{"parse", "transport", "body"} {
+			t.Run(failure+map[bool]string{false: "-disabled", true: "-enabled"}[enabled], func(t *testing.T) {
+				longErr := errors.New(strings.Repeat("x", 8192))
+				endpoint := "http://dep.test/" + strings.Repeat("p", 8192)
+				h := &http.Client{Transport: reviewTransport(func(*http.Request) (*http.Response, error) {
+					if failure == "body" {
+						return &http.Response{StatusCode: 200, Body: io.NopCloser(reviewErrorReader{err: longErr})}, nil
+					}
+					return nil, errors.New("connection failed")
+				})}
+				if failure == "parse" {
+					endpoint += "%zz"
+				}
+				_, err := New(h, enabled).Fetch(context.Background(), endpoint)
+				if err == nil {
+					t.Fatal("missing error")
+				}
+				t.Logf("diagnostic bytes=%d", len(err.Error()))
+				if len(err.Error()) > 4096 {
+					t.Fatalf("diagnostic bytes=%d; want <=4096", len(err.Error()))
+				}
+			})
+		}
+	}
+}
+
+type reviewErrorReader struct{ err error }
+
+func (r reviewErrorReader) Read([]byte) (int, error) { return 0, r.err }

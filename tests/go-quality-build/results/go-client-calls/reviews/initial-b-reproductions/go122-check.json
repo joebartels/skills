@@ -1,0 +1,24 @@
+{
+  "command": [
+    "rtk",
+    "proxy",
+    "/private/tmp/go-client-campaign/tools/go/bin/go",
+    "test",
+    "-ldflags=-linkmode=external",
+    "-count=1",
+    "-timeout=20s",
+    "-v",
+    "./..."
+  ],
+  "cwd": "/Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/reviews/initial-b-reproductions/source",
+  "environment": {
+    "GOWORK": "off",
+    "GOTOOLCHAIN": "local",
+    "GOPATH": "/private/tmp/go-client-campaign/gopath",
+    "GOMODCACHE": "/private/tmp/go-client-campaign/modcache",
+    "GOCACHE": "/private/tmp/go-client-campaign/cache",
+    "GOPROXY": "off"
+  },
+  "exit": 1,
+  "output": "=== RUN   TestExistingSuccess\n--- FAIL: TestExistingSuccess (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered]\n\tpanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted\n\ngoroutine 5 [running]:\ntesting.tRunner.func1.2({0x1051ae4e0, 0x1400002a340})\n\t/private/tmp/go-client-campaign/tools/go/src/testing/testing.go:1631 +0x1c4\ntesting.tRunner.func1()\n\t/private/tmp/go-client-campaign/tools/go/src/testing/testing.go:1634 +0x33c\npanic({0x1051ae4e0?, 0x1400002a340?})\n\t/private/tmp/go-client-campaign/tools/go/src/runtime/panic.go:770 +0x124\nnet/http/httptest.newLocalListener()\n\t/private/tmp/go-client-campaign/tools/go/src/net/http/httptest/server.go:71 +0xdc\nnet/http/httptest.NewUnstartedServer(...)\n\t/private/tmp/go-client-campaign/tools/go/src/net/http/httptest/server.go:119\nnet/http/httptest.NewServer({0x10521def8, 0x10521ba38})\n\t/private/tmp/go-client-campaign/tools/go/src/net/http/httptest/server.go:106 +0x28\nexample.invalid/http-write-replay.TestExistingSuccess(0x140000aa680)\n\t/Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/reviews/initial-b-reproductions/source/client_test.go:51 +0x34\ntesting.tRunner(0x140000aa680, 0x10521b940)\n\t/private/tmp/go-client-campaign/tools/go/src/testing/testing.go:1689 +0xec\ncreated by testing.(*T).Run in goroutine 1\n\t/private/tmp/go-client-campaign/tools/go/src/testing/testing.go:1742 +0x318\nFAIL\texample.invalid/http-write-replay\t0.205s\nFAIL\n"
+}

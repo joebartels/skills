@@ -1,0 +1,535 @@
+package client
+
+import (
+	"bytes"
+	"context"
+	"errors"
+	"fmt"
+	"io"
+	"net/http"
+	"net/http/cookiejar"
+	"net/http/httptest"
+	"net/url"
+	"strings"
+	"sync"
+	"testing"
+	"time"
+)
+
+var _ func(context.Context, *http.Client, string, string, []byte, bool) ([]byte, error) = Submit
+
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+type observedBody struct {
+	io.Reader
+	readBytes int
+	closes    int
+	onClose   func()
+}
+
+func (b *observedBody) Read(p []byte) (int, error) {
+	n, err := b.Reader.Read(p)
+	b.readBytes += n
+	return n, err
+}
+
+func (b *observedBody) Close() error {
+	b.closes++
+	if b.onClose != nil {
+		b.onClose()
+	}
+	return nil
+}
+
+func response(status int, body io.ReadCloser) *http.Response {
+	return &http.Response{StatusCode: status, Header: make(http.Header), Body: body}
+}
+
+func TestExistingSuccess(t *testing.T) {
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("ok")) }))
+	t.Cleanup(s.Close)
+	got, err := Submit(context.Background(), s.Client(), s.URL, "op-1", []byte("x"), true)
+	if err != nil || string(got) != "ok" {
+		t.Fatalf("got %q, %v", got, err)
+	}
+}
+
+func TestSubmitAttempts(t *testing.T) {
+	transportErr := errors.New("connection lost after write")
+	for _, tc := range []struct {
+		name         string
+		deduplicates bool
+		statuses     []int
+		failures     int
+		wantCalls    int
+		wantStatus   int
+		wantError    error
+	}{
+		{name: "success", deduplicates: true, statuses: []int{200}, wantCalls: 1},
+		{name: "success without deduplication", statuses: []int{200}, wantCalls: 1},
+		{name: "only 200 succeeds", deduplicates: true, statuses: []int{201}, wantCalls: 1, wantStatus: 201},
+		{name: "bad request", deduplicates: true, statuses: []int{400}, wantCalls: 1, wantStatus: 400},
+		{name: "rate limited", deduplicates: true, statuses: []int{429}, wantCalls: 1, wantStatus: 429},
+		{name: "other server error", deduplicates: true, statuses: []int{500}, wantCalls: 1, wantStatus: 500},
+		{name: "503 then success", deduplicates: true, statuses: []int{503, 200}, wantCalls: 2},
+		{name: "503 exhausted", deduplicates: true, statuses: []int{503, 503, 503}, wantCalls: 3, wantStatus: 503},
+		{name: "503 without deduplication", statuses: []int{503}, wantCalls: 1, wantStatus: 503},
+		{name: "transport then success", deduplicates: true, failures: 2, statuses: []int{200}, wantCalls: 3},
+		{name: "transport exhausted", deduplicates: true, failures: 3, wantCalls: 3, wantError: transportErr},
+		{name: "transport without deduplication", failures: 1, wantCalls: 1, wantError: transportErr},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			calls := 0
+			var bodies []*observedBody
+			var deadline time.Time
+			var operationCtx context.Context
+			payload := []byte{0, 255, 'x', '\n'}
+			client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+				for _, body := range bodies {
+					if body.closes != 1 {
+						t.Errorf("body closed %d times before next attempt", body.closes)
+					}
+				}
+				calls++
+				if calls > tc.wantCalls {
+					return nil, errors.New("unexpected extra attempt")
+				}
+				got, err := io.ReadAll(r.Body)
+				r.Body.Close()
+				if err != nil || !bytes.Equal(got, payload) || r.Method != http.MethodPost {
+					t.Errorf("request = %s %q, %v", r.Method, got, err)
+				}
+				wantKey := ""
+				if tc.deduplicates {
+					wantKey = "operation-7"
+				}
+				if gotKey := r.Header.Get("Idempotency-Key"); gotKey != wantKey {
+					t.Errorf("key = %q, want %q", gotKey, wantKey)
+				}
+				if !tc.deduplicates {
+					if _, exists := r.Header["Idempotency-Key"]; exists {
+						t.Error("idempotency header present without deduplication")
+					}
+				}
+				d, ok := r.Context().Deadline()
+				if !ok || time.Until(d) > 500*time.Millisecond {
+					t.Errorf("request deadline = %v, %v", d, ok)
+				}
+				if calls == 1 {
+					deadline, operationCtx = d, r.Context()
+				} else if !deadline.Equal(d) {
+					t.Errorf("deadline restarted: %v -> %v", deadline, d)
+				}
+				if calls <= tc.failures {
+					return nil, transportErr
+				}
+				body := &observedBody{Reader: strings.NewReader("ok")}
+				bodies = append(bodies, body)
+				return response(tc.statuses[calls-tc.failures-1], body), nil
+			})}
+			got, err := Submit(context.Background(), client, "http://example.test", "operation-7", payload, tc.deduplicates)
+			if tc.wantStatus == 0 && tc.wantError == nil {
+				if err != nil || string(got) != "ok" {
+					t.Errorf("Submit = %q, %v", got, err)
+				}
+			} else if err == nil || got != nil {
+				t.Errorf("Submit = %q, %v, want failure", got, err)
+			}
+			if tc.wantStatus != 0 && (err == nil || !strings.Contains(err.Error(), fmt.Sprintf("HTTP %d", tc.wantStatus))) {
+				t.Errorf("status error = %v", err)
+			}
+			if tc.wantError != nil && !errors.Is(err, tc.wantError) {
+				t.Errorf("error = %v, want cause %v", err, tc.wantError)
+			}
+			if tc.wantError != nil && !tc.deduplicates && !strings.Contains(err.Error(), "outcome unknown") {
+				t.Errorf("ambiguous write error = %v", err)
+			}
+			if calls != tc.wantCalls {
+				t.Errorf("attempts = %d, want %d", calls, tc.wantCalls)
+			}
+			for _, body := range bodies {
+				if body.closes != 1 {
+					t.Errorf("body closed %d times", body.closes)
+				}
+			}
+			if operationCtx != nil && operationCtx.Err() == nil {
+				t.Error("operation context not released on return")
+			}
+		})
+	}
+}
+
+func TestSubmitRejectsBeforeWork(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	for _, tc := range []struct {
+		name string
+		ctx  context.Context
+		key  string
+	}{
+		{"missing identity", context.Background(), ""},
+		{"canceled caller", ctx, "op"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			calls := 0
+			client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+				calls++
+				return response(200, io.NopCloser(strings.NewReader("ok"))), nil
+			})}
+			_, err := Submit(tc.ctx, client, "http://example.test", tc.key, nil, true)
+			if err == nil || calls != 0 {
+				t.Errorf("error = %v, attempts = %d", err, calls)
+			}
+			if tc.ctx.Err() != nil && !errors.Is(err, context.Canceled) {
+				t.Errorf("error = %v, want cancellation", err)
+			}
+		})
+	}
+}
+
+type failedReader struct{ err error }
+
+func (r failedReader) Read([]byte) (int, error) { return 0, r.err }
+
+func TestSubmitBodyBoundsAndFailures(t *testing.T) {
+	readErr := errors.New("response stream failed")
+	for _, tc := range []struct {
+		name       string
+		status     int
+		size       int
+		readError  bool
+		wantCalls  int
+		wantBytes  int
+		wantResult bool
+	}{
+		{"exact success limit", 200, 4096, false, 1, 4096, true},
+		{"oversized success", 200, 100000, false, 1, 4097, false},
+		{"bounded diagnostic", 400, 100000, false, 1, 4097, false},
+		{"success read failure", 200, 0, true, 3, 0, false},
+		{"503 read failure", 503, 0, true, 3, 0, false},
+		{"terminal status read failure", 400, 0, true, 1, 0, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var bodies []*observedBody
+			client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+				r.Body.Close()
+				var reader io.Reader = strings.NewReader(strings.Repeat("x", tc.size))
+				if tc.readError {
+					reader = failedReader{readErr}
+				}
+				body := &observedBody{Reader: reader}
+				bodies = append(bodies, body)
+				return response(tc.status, body), nil
+			})}
+			got, err := Submit(context.Background(), client, "http://example.test", "op", nil, true)
+			if tc.wantResult {
+				if err != nil || len(got) != 4096 {
+					t.Errorf("Submit returned %d bytes, %v", len(got), err)
+				}
+			} else if err == nil || got != nil {
+				t.Errorf("Submit returned %d bytes, %v, want rejection", len(got), err)
+			}
+			if tc.status != 200 && (err == nil || !strings.Contains(err.Error(), fmt.Sprintf("HTTP %d", tc.status))) {
+				t.Errorf("missing status in %v", err)
+			}
+			if tc.readError && !errors.Is(err, readErr) {
+				t.Errorf("missing read cause in %v", err)
+			}
+			if tc.name == "bounded diagnostic" && err != nil && len(err.Error()) > len("HTTP 400: ")+4096 {
+				t.Errorf("diagnostic has %d bytes", len(err.Error()))
+			}
+			if len(bodies) != tc.wantCalls {
+				t.Errorf("attempts = %d, want %d", len(bodies), tc.wantCalls)
+			}
+			for _, body := range bodies {
+				if body.readBytes > tc.wantBytes || body.closes != 1 {
+					t.Errorf("body read %d bytes, closed %d times", body.readBytes, body.closes)
+				}
+			}
+		})
+	}
+}
+
+func TestSubmitCancellationRetainsFailure(t *testing.T) {
+	ctx, cancel := context.WithCancelCause(context.Background())
+	defer cancel(nil)
+	cause := errors.New("caller stopped")
+	transportErr := errors.New("independent transport failure")
+	calls := 0
+	client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		calls++
+		r.Body.Close()
+		cancel(cause)
+		return nil, transportErr
+	})}
+	_, err := Submit(ctx, client, "http://example.test", "op", nil, true)
+	for _, want := range []error{context.Canceled, cause, transportErr} {
+		if !errors.Is(err, want) {
+			t.Errorf("error = %v, want cause %v", err, want)
+		}
+	}
+	if calls != 1 {
+		t.Errorf("attempts = %d", calls)
+	}
+}
+
+func TestSubmitCancellableBackoff(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Millisecond)
+	defer cancel()
+	calls := 0
+	client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		calls++
+		r.Body.Close()
+		return response(503, io.NopCloser(strings.NewReader("try later"))), nil
+	})}
+	_, err := Submit(ctx, client, "http://example.test", "op", nil, true)
+	if !errors.Is(err, context.DeadlineExceeded) || calls > 1 {
+		t.Errorf("error = %v, attempts = %d", err, calls)
+	}
+}
+
+func TestSubmitClientPolicy(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		policy error
+	}{
+		{"default redirects", nil},
+		{"caller rejects redirect", errors.New("redirect forbidden")},
+		{"caller requests last response", http.ErrUseLastResponse},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			calls, policyCalls := 0, 0
+			body := &observedBody{Reader: strings.NewReader("redirect")}
+			transport := roundTripFunc(func(r *http.Request) (*http.Response, error) {
+				calls++
+				r.Body.Close()
+				resp := response(302, body)
+				resp.Header.Set("Location", "http://example.test/next")
+				resp.Request = r
+				return resp, nil
+			})
+			client := &http.Client{Transport: transport, Timeout: 250 * time.Millisecond}
+			if tc.policy != nil {
+				client.CheckRedirect = func(*http.Request, []*http.Request) error {
+					policyCalls++
+					return tc.policy
+				}
+			}
+			_, err := Submit(context.Background(), client, "http://example.test", "op", nil, true)
+			if err == nil || !strings.Contains(err.Error(), "HTTP 302") || calls != 1 || body.closes != 1 {
+				t.Errorf("error = %v, requests = %d, closes = %d", err, calls, body.closes)
+			}
+			if tc.policy != nil && policyCalls != 1 {
+				t.Errorf("redirect callbacks = %d", policyCalls)
+			}
+			if tc.policy != nil && tc.policy != http.ErrUseLastResponse && !errors.Is(err, tc.policy) {
+				t.Errorf("missing policy cause in %v", err)
+			}
+			if client.Timeout != 250*time.Millisecond || (client.CheckRedirect != nil) != (tc.policy != nil) {
+				t.Error("caller client configuration changed")
+			}
+		})
+	}
+}
+
+func TestSubmitPreservesJar(t *testing.T) {
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	u, err := url.Parse("http://example.test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	jar.SetCookies(u, []*http.Cookie{{Name: "session", Value: "caller"}})
+	client := &http.Client{Jar: jar, Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		r.Body.Close()
+		cookie, err := r.Cookie("session")
+		if err != nil || cookie.Value != "caller" {
+			t.Errorf("caller cookie = %v, %v", cookie, err)
+		}
+		resp := response(200, io.NopCloser(strings.NewReader("ok")))
+		resp.Header.Set("Set-Cookie", "result=stored; Path=/")
+		return resp, nil
+	})}
+	if _, err := Submit(context.Background(), client, u.String(), "op", nil, true); err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, cookie := range jar.Cookies(u) {
+		found = found || cookie.Name == "result" && cookie.Value == "stored"
+	}
+	if !found || client.Jar != jar {
+		t.Error("caller jar was not retained")
+	}
+}
+
+func TestSubmitNetworkBudgetIncludesBody(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		budget time.Duration
+	}{
+		{"total invocation budget", 500 * time.Millisecond},
+		{"earlier caller deadline", 50 * time.Millisecond},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var mu sync.Mutex
+			calls := 0
+			s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				mu.Lock()
+				calls++
+				call := calls
+				mu.Unlock()
+				if call == 1 {
+					w.WriteHeader(503)
+					return
+				}
+				w.WriteHeader(200)
+				w.(http.Flusher).Flush()
+				select {
+				case <-r.Context().Done():
+				case <-time.After(2 * time.Second):
+				}
+			}))
+			t.Cleanup(s.Close)
+			ctx := context.Background()
+			if tc.budget < 500*time.Millisecond {
+				var cancel context.CancelFunc
+				ctx, cancel = context.WithTimeout(ctx, tc.budget)
+				t.Cleanup(cancel)
+			}
+			start := time.Now()
+			_, err := Submit(ctx, s.Client(), s.URL, "op", []byte("x"), true)
+			elapsed := time.Since(start)
+			if !errors.Is(err, context.DeadlineExceeded) {
+				t.Errorf("error = %v, want deadline", err)
+			}
+			// A wide scheduling allowance detects lost cancellation without
+			// treating a slow test host as a deadline precision failure.
+			if elapsed < tc.budget*8/10 || elapsed > tc.budget+time.Second {
+				t.Errorf("elapsed = %v for budget %v", elapsed, tc.budget)
+			}
+			mu.Lock()
+			defer mu.Unlock()
+			if calls != 2 {
+				t.Errorf("requests = %d, want 2", calls)
+			}
+		})
+	}
+}
+
+func TestSubmitCommittedWriteReplay(t *testing.T) {
+	for _, deduplicates := range []bool{true, false} {
+		t.Run(fmt.Sprintf("deduplicates=%v", deduplicates), func(t *testing.T) {
+			var mu sync.Mutex
+			calls, effects := 0, 0
+			var seenBodies, seenKeys []string
+			var handlerErr error
+			s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				body, err := io.ReadAll(r.Body)
+				mu.Lock()
+				defer mu.Unlock()
+				if err != nil {
+					handlerErr = err
+					return
+				}
+				calls++
+				seenBodies = append(seenBodies, string(body))
+				seenKeys = append(seenKeys, r.Header.Get("Idempotency-Key"))
+				if !deduplicates || effects == 0 {
+					effects++
+				}
+				if calls <= 3 {
+					conn, _, err := w.(http.Hijacker).Hijack()
+					if err != nil {
+						handlerErr = err
+						return
+					}
+					conn.Close()
+					return
+				}
+				w.Write([]byte("original-result"))
+			}))
+			t.Cleanup(s.Close)
+			client := s.Client()
+			_, err := Submit(context.Background(), client, s.URL, "outer-operation", []byte("exact body"), deduplicates)
+			if err == nil {
+				t.Fatal("lost replies unexpectedly succeeded")
+			}
+			wantCalls := 1
+			wantKey := ""
+			if deduplicates {
+				wantCalls = 4
+				wantKey = "outer-operation"
+				got, err := Submit(context.Background(), client, s.URL, "outer-operation", []byte("exact body"), true)
+				if err != nil || string(got) != "original-result" {
+					t.Errorf("outer replay = %q, %v", got, err)
+				}
+			} else if !strings.Contains(err.Error(), "outcome unknown") {
+				t.Errorf("ambiguous result = %v", err)
+			}
+			mu.Lock()
+			defer mu.Unlock()
+			if handlerErr != nil || calls != wantCalls || effects != 1 {
+				t.Errorf("server error = %v, requests = %d, effects = %d", handlerErr, calls, effects)
+			}
+			for i := range seenBodies {
+				if seenBodies[i] != "exact body" || seenKeys[i] != wantKey {
+					t.Errorf("request %d: body %q, key %q", i, seenBodies[i], seenKeys[i])
+				}
+			}
+		})
+	}
+}
+
+func TestSubmitMalformedRedirectIsTerminal(t *testing.T) {
+	calls := 0
+	body := &observedBody{Reader: strings.NewReader("redirect")}
+	client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		calls++
+		r.Body.Close()
+		resp := response(302, body)
+		resp.Request = r
+		resp.Header.Set("Location", "://invalid")
+		return resp, nil
+	})}
+	_, err := Submit(context.Background(), client, "http://example.test", "op", nil, true)
+	if err == nil || !strings.Contains(err.Error(), "HTTP 302") || calls != 1 || body.closes != 1 {
+		t.Errorf("error = %v, attempts = %d, closes = %d", err, calls, body.closes)
+	}
+}
+
+func TestSubmitRetainsClientTimeout(t *testing.T) {
+	client := &http.Client{Timeout: 5 * time.Millisecond, Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		defer r.Body.Close()
+		<-r.Context().Done()
+		return nil, r.Context().Err()
+	})}
+	_, err := Submit(context.Background(), client, "http://example.test", "", nil, false)
+	if !errors.Is(err, context.DeadlineExceeded) || client.Timeout != 5*time.Millisecond {
+		t.Errorf("error = %v, client timeout = %v", err, client.Timeout)
+	}
+}
+
+type readerFunc func([]byte) (int, error)
+
+func (f readerFunc) Read(p []byte) (int, error) { return f(p) }
+
+func TestSubmitClientTimeoutRetainsBodyFailure(t *testing.T) {
+	readErr := errors.New("independent body failure")
+	body := &observedBody{}
+	client := &http.Client{Timeout: 5 * time.Millisecond, Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		r.Body.Close()
+		body.Reader = readerFunc(func([]byte) (int, error) {
+			<-r.Context().Done()
+			return 0, errors.Join(readErr, r.Context().Err())
+		})
+		return response(200, body), nil
+	})}
+	_, err := Submit(context.Background(), client, "http://example.test", "", nil, false)
+	if !errors.Is(err, context.DeadlineExceeded) || !errors.Is(err, readErr) || body.closes != 1 {
+		t.Errorf("error = %v, body closes = %d", err, body.closes)
+	}
+}

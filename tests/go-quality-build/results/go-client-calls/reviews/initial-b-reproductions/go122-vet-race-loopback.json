@@ -1,0 +1,46 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/reviews/initial-b-reproductions/source",
+    "environment": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPATH": "/private/tmp/go-client-campaign/gopath",
+      "GOMODCACHE": "/private/tmp/go-client-campaign/modcache",
+      "GOCACHE": "/private/tmp/go-client-campaign/cache",
+      "GOPROXY": "off"
+    },
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-race",
+      "-ldflags=-linkmode=external",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/reviews/initial-b-reproductions/source",
+    "environment": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPATH": "/private/tmp/go-client-campaign/gopath",
+      "GOMODCACHE": "/private/tmp/go-client-campaign/modcache",
+      "GOCACHE": "/private/tmp/go-client-campaign/cache",
+      "GOPROXY": "off"
+    },
+    "exit": 0,
+    "output": "# example.invalid/http-write-replay.test\nld: warning: '/private/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-link-3196298710/000012.o' has malformed LC_DYSYMTAB, expected 98 undefined symbols to start at index 1626, found 95 undefined symbols starting at index 1626\nok  \texample.invalid/http-write-replay\t2.037s\n"
+  }
+]

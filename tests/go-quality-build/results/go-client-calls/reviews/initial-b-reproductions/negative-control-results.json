@@ -1,0 +1,53 @@
+[
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-count=1",
+      "-timeout=20s",
+      "-run",
+      "^Test(Existing|Submit)",
+      "./..."
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/reviews/initial-b-reproductions/negative-control",
+    "environment": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPATH": "/private/tmp/go-client-campaign/gopath",
+      "GOMODCACHE": "/private/tmp/go-client-campaign/modcache",
+      "GOCACHE": "/private/tmp/go-client-campaign/cache",
+      "GOPROXY": "off"
+    },
+    "exit": 1,
+    "output": "--- FAIL: TestSubmitRetainsClientTimeout (0.01s)\n    client_test.go:512: error = POST transport failed; outcome unknown: Post \"http://example.test\": context deadline exceeded (Client.Timeout exceeded while awaiting headers), client timeout = 5ms\nFAIL\nFAIL\texample.invalid/http-write-replay\t0.984s\nFAIL\n"
+  },
+  {
+    "command": [
+      "rtk",
+      "proxy",
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-count=1",
+      "-timeout=20s",
+      "-v",
+      "-run",
+      "^TestReviewerClientTimeoutRetainsIndependentTransportCause$",
+      "./..."
+    ],
+    "cwd": "/Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/reviews/initial-b-reproductions/negative-control",
+    "environment": {
+      "GOWORK": "off",
+      "GOTOOLCHAIN": "local",
+      "GOPATH": "/private/tmp/go-client-campaign/gopath",
+      "GOMODCACHE": "/private/tmp/go-client-campaign/modcache",
+      "GOCACHE": "/private/tmp/go-client-campaign/cache",
+      "GOPROXY": "off"
+    },
+    "exit": 1,
+    "output": "=== RUN   TestReviewerClientTimeoutRetainsIndependentTransportCause\n    reviewer_boundary_test.go:27: error=POST transport failed; outcome unknown: Post \"http://example.test\": independent transport cause\n        context deadline exceeded (Client.Timeout exceeded while awaiting headers); independent cause=false; calls=1\n--- FAIL: TestReviewerClientTimeoutRetainsIndependentTransportCause (0.01s)\nFAIL\nFAIL\texample.invalid/http-write-replay\t0.183s\nFAIL\n"
+  }
+]

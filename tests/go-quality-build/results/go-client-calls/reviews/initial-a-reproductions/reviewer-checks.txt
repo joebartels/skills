@@ -1,0 +1,20 @@
+Independent reviewer verification; original source and controller probes unchanged.
+
+Working directory: /private/tmp/go-client-campaign/reviews/initial-a/http-retry-budget/source
+Command: rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go test -mod=readonly -ldflags=-linkmode=external -count=1 -timeout=20s ./...
+Loopback test execution: require_escalated.
+Exit: 0
+Raw output:
+ok  	example.invalid/http-retry-budget	0.893s
+
+Working directory: /private/tmp/go-client-campaign/reviews/initial-a/grpc-policy/source
+Command: rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go test -mod=readonly -ldflags=-linkmode=external -count=1 -timeout=20s ./...
+Exit: 0
+Raw output:
+ok  	example.invalid/grpc-policy	0.953s
+
+Working directory: /private/tmp/go-client-campaign/reviews/initial-a/pure-control/source
+Command: rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go test -mod=readonly -ldflags=-linkmode=external -count=1 -timeout=20s ./...
+Exit: 0
+Raw output:
+ok  	example.invalid/pure-control	0.143s

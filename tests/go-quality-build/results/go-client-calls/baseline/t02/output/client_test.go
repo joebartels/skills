@@ -1,0 +1,480 @@
+package client
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"sync/atomic"
+	"testing"
+	"time"
+)
+
+var _ func(context.Context, *http.Client, string) ([]byte, error) = Fetch
+
+func TestExistingSuccess(t *testing.T) {
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("ok")) }))
+	defer s.Close()
+	got, err := Fetch(context.Background(), s.Client(), s.URL)
+	if err != nil || string(got) != "ok" {
+		t.Fatalf("got %q, %v", got, err)
+	}
+}
+
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+type observedBody struct {
+	io.Reader
+	readBytes int
+	closes    int
+	closeErr  error
+}
+
+func (b *observedBody) Read(p []byte) (int, error) {
+	n, err := b.Reader.Read(p)
+	b.readBytes += n
+	return n, err
+}
+
+func (b *observedBody) Close() error {
+	b.closes++
+	return b.closeErr
+}
+
+func response(status int, body io.ReadCloser, hint string) *http.Response {
+	return &http.Response{StatusCode: status, Body: body, Header: http.Header{"Retry-After": {hint}}}
+}
+
+func TestFetchStatusAndAttempts(t *testing.T) {
+	for _, tc := range []struct {
+		name     string
+		statuses []int
+		want     string
+		wantErr  string
+	}{
+		{"success", []int{200}, "ok", ""},
+		{"created is terminal", []int{201}, "", "HTTP 201"},
+		{"partial content is terminal", []int{206}, "", "HTTP 206"},
+		{"redirect is terminal", []int{302}, "", "HTTP 302"},
+		{"bad request is terminal", []int{400}, "", "HTTP 400"},
+		{"server error is terminal", []int{500}, "", "HTTP 500"},
+		{"retryable statuses", []int{429, 503, 200}, "ok", ""},
+		{"three attempts", []int{503, 429, 503}, "", "HTTP 503"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var bodies []*observedBody
+			client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+				if len(bodies) >= len(tc.statuses) {
+					return nil, errors.New("unexpected request")
+				}
+				for _, b := range bodies {
+					if b.closes != 1 {
+						t.Errorf("previous body closed %d times before next attempt", b.closes)
+					}
+				}
+				b := &observedBody{Reader: strings.NewReader("ok")}
+				status := tc.statuses[len(bodies)]
+				bodies = append(bodies, b)
+				return response(status, b, "0"), nil
+			})}
+			got, err := Fetch(context.Background(), client, "https://example.invalid/")
+			if string(got) != tc.want {
+				t.Errorf("body = %q, want %q", got, tc.want)
+			}
+			if tc.wantErr == "" && err != nil || tc.wantErr != "" && (err == nil || !strings.Contains(err.Error(), tc.wantErr)) {
+				t.Errorf("error = %v, want %q", err, tc.wantErr)
+			}
+			if len(bodies) != len(tc.statuses) {
+				t.Errorf("attempts = %d, want %d", len(bodies), len(tc.statuses))
+			}
+			for _, b := range bodies {
+				if b.closes != 1 {
+					t.Errorf("body closed %d times, want 1", b.closes)
+				}
+			}
+		})
+	}
+}
+
+func TestFetchBodyLimit(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		status int
+		size   int
+	}{
+		{"exact success", 200, 4096},
+		{"oversized success", 200, 10000},
+		{"bounded rejection", 400, 10000},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			b := &observedBody{Reader: strings.NewReader(strings.Repeat("x", tc.size))}
+			client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+				return response(tc.status, b, ""), nil
+			})}
+			got, err := Fetch(context.Background(), client, "https://example.invalid/")
+			if tc.status == 200 && tc.size == 4096 {
+				if err != nil || string(got) != strings.Repeat("x", 4096) {
+					t.Errorf("got %d bytes, %v", len(got), err)
+				}
+			} else if err == nil || got != nil {
+				t.Errorf("got %d bytes, %v; want failure", len(got), err)
+			}
+			if tc.status != 200 && (err == nil || !strings.Contains(err.Error(), "HTTP 400") || strings.Count(err.Error(), "x") != 4096) {
+				t.Errorf("diagnostic not bounded to 4096 body bytes: %v", err)
+			}
+			wantRead := tc.size
+			if wantRead > 4097 {
+				wantRead = 4097
+			}
+			if b.readBytes != wantRead || b.closes != 1 {
+				t.Errorf("body read %d bytes, closed %d times; want %d, 1", b.readBytes, b.closes, wantRead)
+			}
+		})
+	}
+}
+
+type errorReader struct{ err error }
+
+func (r errorReader) Read([]byte) (int, error) { return 0, r.err }
+
+func TestFetchBodyErrors(t *testing.T) {
+	readErr := errors.New("read failed")
+	closeErr := errors.New("close failed")
+	for _, tc := range []struct {
+		name          string
+		status        int
+		read, cleanup error
+	}{
+		{"success read error", 200, readErr, nil},
+		{"success close error", 200, nil, closeErr},
+		{"success both errors", 200, readErr, closeErr},
+		{"rejection read error", 503, readErr, nil},
+		{"rejection close error", 503, nil, closeErr},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var reader io.Reader = strings.NewReader("ok")
+			if tc.read != nil {
+				reader = errorReader{tc.read}
+			}
+			b := &observedBody{Reader: reader, closeErr: tc.cleanup}
+			calls := 0
+			client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+				calls++
+				return response(tc.status, b, "0"), nil
+			})}
+			_, err := Fetch(context.Background(), client, "https://example.invalid/")
+			for _, want := range []error{tc.read, tc.cleanup} {
+				if want != nil && !errors.Is(err, want) {
+					t.Errorf("error = %v, missing %v", err, want)
+				}
+			}
+			if tc.status != 200 && (err == nil || !strings.Contains(err.Error(), "HTTP 503")) {
+				t.Errorf("error = %v, missing HTTP rejection", err)
+			}
+			if b.closes != 1 || calls != 1 {
+				t.Errorf("close calls = %d, attempts = %d; want 1, 1", b.closes, calls)
+			}
+		})
+	}
+}
+
+func TestFetchTransportFailureIsTerminal(t *testing.T) {
+	transportErr := errors.New("transport failed")
+	for _, firstReject := range []bool{false, true} {
+		t.Run(fmt.Sprint(firstReject), func(t *testing.T) {
+			calls := 0
+			client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+				calls++
+				if firstReject && calls == 1 {
+					return response(429, io.NopCloser(strings.NewReader("busy")), "0"), nil
+				}
+				return nil, transportErr
+			})}
+			_, err := Fetch(context.Background(), client, "https://example.invalid/")
+			wantCalls := 1
+			if firstReject {
+				wantCalls = 2
+				if err == nil || !strings.Contains(err.Error(), "HTTP 429") {
+					t.Errorf("error = %v, missing last rejection", err)
+				}
+			}
+			if !errors.Is(err, transportErr) || calls != wantCalls {
+				t.Errorf("error = %v, attempts = %d; want transport failure, %d", err, calls, wantCalls)
+			}
+		})
+	}
+}
+
+func TestFetchRetryAfter(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		hint string
+		fit  bool
+	}{
+		{"zero", "0", true},
+		{"past date", "Mon, 02 Jan 2006 15:04:05 GMT", true},
+		{"malformed", "invalid", true},
+		{"negative", "-1", true},
+		{"delta cannot fit", "1", false},
+		{"future date cannot fit", time.Now().Add(time.Hour).UTC().Format(http.TimeFormat), false},
+		{"duration overflow", "9223372037", false},
+		{"integer overflow", strings.Repeat("9", 100), false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			calls := 0
+			var first time.Time
+			client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+				calls++
+				if calls == 1 {
+					first = time.Now()
+					return response(503, io.NopCloser(strings.NewReader("busy")), tc.hint), nil
+				}
+				if (tc.name == "malformed" || tc.name == "negative") && time.Since(first) < 10*time.Millisecond {
+					t.Error("retry started before fallback delay")
+				}
+				return response(200, io.NopCloser(strings.NewReader("ok")), ""), nil
+			})}
+			start := time.Now()
+			got, err := Fetch(context.Background(), client, "https://example.invalid/")
+			if tc.fit {
+				if calls != 2 || err != nil || string(got) != "ok" {
+					t.Errorf("got %q, %v after %d attempts", got, err, calls)
+				}
+			} else {
+				if calls != 1 || err == nil || !strings.Contains(err.Error(), "HTTP 503") {
+					t.Errorf("got %q, %v after %d attempts; want last rejection", got, err, calls)
+				}
+				if elapsed := time.Since(start); elapsed >= 200*time.Millisecond {
+					t.Errorf("unfit delay waited %v", elapsed)
+				}
+			}
+		})
+	}
+}
+
+func TestFetchWaitingCancellationRetainsRejection(t *testing.T) {
+	cause := errors.New("caller stopped")
+	ctx, cancel := context.WithCancelCause(context.Background())
+	defer cancel(nil)
+	b := &observedBody{Reader: strings.NewReader("busy")}
+	calls := 0
+	client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+		calls++
+		cancel(cause)
+		return response(429, b, "malformed"), nil
+	})}
+	_, err := Fetch(ctx, client, "https://example.invalid/")
+	if err == nil || !strings.Contains(err.Error(), "HTTP 429") || !errors.Is(err, context.Canceled) || !errors.Is(err, cause) {
+		t.Errorf("error = %v, want rejection and cancellation causes", err)
+	}
+	if calls != 1 || b.closes != 1 {
+		t.Errorf("attempts = %d, closes = %d; want 1, 1", calls, b.closes)
+	}
+}
+
+type readFunc func([]byte) (int, error)
+
+func (f readFunc) Read(p []byte) (int, error) { return f(p) }
+
+type cancellationCause []string
+
+func (c cancellationCause) Error() string { return strings.Join(c, ", ") }
+
+func TestFetchBodyFailureDuringCancellation(t *testing.T) {
+	readErr := errors.New("independent body failure")
+	for _, status := range []int{200, 503} {
+		t.Run(fmt.Sprint(status), func(t *testing.T) {
+			ctx, cancel := context.WithCancelCause(context.Background())
+			defer cancel(nil)
+			b := &observedBody{Reader: readFunc(func([]byte) (int, error) {
+				cancel(cancellationCause{"caller stopped"})
+				return 0, errors.Join(readErr, context.Canceled)
+			})}
+			client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+				return response(status, b, "0"), nil
+			})}
+			_, err := Fetch(ctx, client, "https://example.invalid/")
+			var cause cancellationCause
+			if !errors.Is(err, readErr) || !errors.Is(err, context.Canceled) || !errors.As(err, &cause) {
+				t.Errorf("error = %v, missing independent failure or cancellation causes", err)
+			}
+			if status == 503 && (err == nil || !strings.Contains(err.Error(), "HTTP 503")) {
+				t.Errorf("error = %v, missing rejection", err)
+			}
+			if b.closes != 1 {
+				t.Errorf("body closed %d times, want 1", b.closes)
+			}
+		})
+	}
+}
+
+func TestRetryDelayFutureDate(t *testing.T) {
+	now := time.Date(2026, time.October, 3, 12, 0, 0, 900000000, time.UTC)
+	got := retryDelay("Sat, 03 Oct 2026 12:00:01 GMT", now)
+	if got != 100*time.Millisecond {
+		t.Errorf("future date delay = %v, want 100ms", got)
+	}
+}
+
+func TestWaitRetryCancellation(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if err := waitRetry(ctx, time.Second); !errors.Is(err, context.Canceled) {
+		t.Errorf("wait error = %v, want canceled", err)
+	}
+}
+
+func TestFetchCanceledAtEntry(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	calls := 0
+	client := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+		calls++
+		return response(200, io.NopCloser(strings.NewReader("ok")), ""), nil
+	})}
+	_, err := Fetch(ctx, client, "https://example.invalid/")
+	if !errors.Is(err, context.Canceled) || calls != 0 {
+		t.Errorf("error = %v, attempts = %d; want canceled, 0", err, calls)
+	}
+}
+
+func TestFetchSharedDeadline(t *testing.T) {
+	for _, tc := range []struct {
+		name  string
+		limit time.Duration
+	}{
+		{"total budget", 250 * time.Millisecond},
+		{"earlier parent", 80 * time.Millisecond},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			ctx := context.Background()
+			if tc.name == "earlier parent" {
+				var cancel context.CancelFunc
+				ctx, cancel = context.WithTimeout(ctx, tc.limit)
+				defer cancel()
+			}
+			start := time.Now()
+			var deadline time.Time
+			calls := 0
+			client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+				calls++
+				d, ok := r.Context().Deadline()
+				if !ok || d.Sub(start) > tc.limit+20*time.Millisecond {
+					t.Errorf("request deadline = %v, want within %v of entry", d, tc.limit)
+				}
+				if calls == 1 {
+					deadline = d
+					return response(503, io.NopCloser(strings.NewReader("busy")), "invalid"), nil
+				}
+				if !d.Equal(deadline) {
+					t.Errorf("retry deadline = %v, first deadline = %v", d, deadline)
+				}
+				<-r.Context().Done()
+				return nil, r.Context().Err()
+			})}
+			_, err := Fetch(ctx, client, "https://example.invalid/")
+			if !errors.Is(err, context.DeadlineExceeded) || err == nil || !strings.Contains(err.Error(), "HTTP 503") || calls != 2 {
+				t.Errorf("error = %v, attempts = %d; want retained rejection and deadline", err, calls)
+			}
+			if elapsed := time.Since(start); elapsed > tc.limit+time.Second {
+				t.Errorf("deadline return took %v", elapsed)
+			}
+		})
+	}
+}
+
+func TestFetchNetworkBodyDeadline(t *testing.T) {
+	for _, parentLimit := range []time.Duration{0, 80 * time.Millisecond} {
+		t.Run(parentLimit.String(), func(t *testing.T) {
+			finished := make(chan struct{})
+			release := make(chan struct{})
+			s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				defer close(finished)
+				w.WriteHeader(http.StatusOK)
+				w.(http.Flusher).Flush()
+				select {
+				case <-r.Context().Done():
+				case <-release:
+				}
+			}))
+			t.Cleanup(func() {
+				close(release)
+				s.Close()
+			})
+			ctx := context.Background()
+			if parentLimit != 0 {
+				var cancel context.CancelFunc
+				ctx, cancel = context.WithTimeout(ctx, parentLimit)
+				defer cancel()
+			}
+			client := s.Client()
+			client.Timeout = 2 * time.Second
+			start := time.Now()
+			_, err := Fetch(ctx, client, s.URL)
+			if !errors.Is(err, context.DeadlineExceeded) || time.Since(start) > time.Second {
+				t.Errorf("error = %v after %v, want body deadline within 1s", err, time.Since(start))
+			}
+			select {
+			case <-finished:
+			case <-time.After(time.Second):
+				t.Fatal("server request did not observe cancellation")
+			}
+		})
+	}
+}
+
+func TestFetchRedirectErrorBodyAlreadyClosed(t *testing.T) {
+	b := &observedBody{Reader: strings.NewReader("redirect")}
+	redirectErr := errors.New("redirect denied")
+	client := &http.Client{
+		Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
+			resp := response(302, b, "")
+			resp.Header.Set("Location", "https://example.invalid/next")
+			return resp, nil
+		}),
+		CheckRedirect: func(*http.Request, []*http.Request) error { return redirectErr },
+	}
+	_, err := Fetch(context.Background(), client, "https://example.invalid/")
+	if !errors.Is(err, redirectErr) || b.closes != 1 {
+		t.Errorf("error = %v, closes = %d; want redirect error and one close", err, b.closes)
+	}
+}
+
+func TestFetchRetainsClientPolicy(t *testing.T) {
+	var requests atomic.Int32
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests.Add(1)
+		if r.URL.Path == "/redirect" {
+			http.Redirect(w, r, "/success", http.StatusFound)
+			return
+		}
+		w.Write([]byte("ok"))
+	}))
+	t.Cleanup(s.Close)
+	client := s.Client()
+	redirectErr := errors.New("redirect denied")
+	redirects := 0
+	client.CheckRedirect = func(*http.Request, []*http.Request) error {
+		redirects++
+		return redirectErr
+	}
+	client.Timeout = time.Second
+	transport := client.Transport
+	_, err := Fetch(context.Background(), client, s.URL+"/redirect")
+	if !errors.Is(err, redirectErr) || redirects != 1 || requests.Load() != 1 {
+		t.Errorf("error = %v, redirects = %d, requests = %d", err, redirects, requests.Load())
+	}
+	if client.Timeout != time.Second || client.Transport != transport || client.CheckRedirect == nil {
+		t.Error("caller client settings changed")
+	}
+	client.CheckRedirect = nil
+	got, err := Fetch(context.Background(), client, s.URL+"/success")
+	if err != nil || string(got) != "ok" {
+		t.Errorf("borrowed client reuse: got %q, %v", got, err)
+	}
+}

@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+import subprocess
 from unittest.mock import patch
 
 
@@ -93,6 +94,28 @@ class ClientCallTrialsTests(unittest.TestCase):
         self.assertFalse((self.archive / "t01/output/client.go").exists())
         self.assertEqual((self.archive / "t01/output/new.go").read_text(),
                          "package client\nvar Value = 7\n")
+
+    def test_cli_mismatch_cannot_seal_an_archive(self):
+        trial = self.prepare()
+        (trial / "trial-report.md").write_text("Result\n")
+        result = subprocess.run(
+            ["rtk", "proxy", "python3", "-B", str(Path(__file__).with_name("client_call_trials.py")),
+             "archive", "--case", "wrong", "--arm", "baseline", "--trial-id", "t01",
+             "--scratch", str(self.scratch), "--archive", str(self.archive)],
+            capture_output=True, text=True)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse((self.archive / "t01").exists(),
+                         "a mismatched CLI invocation sealed an output before rejecting it")
+
+    def test_archive_reconstructs_inside_a_parent_repository(self):
+        self.trials.run(["git", "init", "-q"], self.trials.REPO)
+        self.archive = self.trials.REPO / "results"
+        trial = self.prepare()
+        (trial / "trial-report.md").write_text("Result\n")
+        (trial / "source/client.go").write_text("package client\nvar Changed = true\n")
+        self.trials.archive_trial(trial, self.archive)
+        self.assertEqual((self.archive / "t01/output/client.go").read_text(),
+                         "package client\nvar Changed = true\n")
 
 
 if __name__ == "__main__":

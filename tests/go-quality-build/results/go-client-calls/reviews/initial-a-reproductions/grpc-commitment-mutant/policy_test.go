@@ -1,0 +1,355 @@
+package client
+
+import (
+	"context"
+	"errors"
+	"net"
+	"sync/atomic"
+	"testing"
+	"time"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/connectivity"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/health/grpc_health_v1"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/resolver"
+	"google.golang.org/grpc/resolver/manual"
+	"google.golang.org/grpc/status"
+	"google.golang.org/grpc/test/bufconn"
+)
+
+var (
+	_ func(string, ...grpc.DialOption) (*grpc.ClientConn, error) = Dial
+	_ func(context.Context, *grpc.ClientConn, string) error      = Probe
+)
+
+type checkServer struct {
+	grpc_health_v1.UnimplementedHealthServer
+	check func(context.Context, *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error)
+}
+
+func (s *checkServer) Check(ctx context.Context, req *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+	return s.check(ctx, req)
+}
+
+func testConn(t *testing.T, dial func(string, ...grpc.DialOption) (*grpc.ClientConn, error), check func(context.Context, *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error), opts ...grpc.DialOption) *grpc.ClientConn {
+	t.Helper()
+	l := bufconn.Listen(1 << 20)
+	t.Cleanup(func() { l.Close() })
+	s := grpc.NewServer()
+	grpc_health_v1.RegisterHealthServer(s, &checkServer{check: check})
+	served := make(chan error, 1)
+	go func() { served <- s.Serve(l) }()
+	t.Cleanup(func() {
+		s.Stop()
+		select {
+		case err := <-served:
+			if err != nil && !errors.Is(err, grpc.ErrServerStopped) {
+				t.Errorf("serve: %v", err)
+			}
+		case <-time.After(5 * time.Second):
+			t.Error("server did not stop")
+		}
+	})
+	options := append([]grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithContextDialer(func(ctx context.Context, _ string) (net.Conn, error) { return l.DialContext(ctx) }),
+	}, opts...)
+	c, err := dial("passthrough:///local", options...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { c.Close() })
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	for state := c.GetState(); state != connectivity.Ready; state = c.GetState() {
+		if !c.WaitForStateChange(ctx, state) {
+			t.Fatalf("connection did not become ready: %v", ctx.Err())
+		}
+	}
+	return c
+}
+
+func TestDialFallbackPolicy(t *testing.T) {
+	c := testConn(t, Dial, func(context.Context, *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+		return &grpc_health_v1.HealthCheckResponse{Status: grpc_health_v1.HealthCheckResponse_SERVING}, nil
+	})
+	p := c.GetMethodConfig(grpc_health_v1.Health_Check_FullMethodName).RetryPolicy
+	if p == nil {
+		t.Fatal("Health/Check has no retry policy")
+	}
+	if p.MaxAttempts != 3 || p.InitialBackoff != 10*time.Millisecond || p.MaxBackoff != 20*time.Millisecond || p.BackoffMultiplier != 2 {
+		t.Errorf("retry policy = %+v, want 3 attempts and 10ms/20ms backoff with multiplier 2", p)
+	}
+	if len(p.RetryableStatusCodes) != 1 || !p.RetryableStatusCodes[codes.Unavailable] {
+		t.Errorf("retryable codes = %v, want only Unavailable", p.RetryableStatusCodes)
+	}
+	for _, method := range []string{grpc_health_v1.Health_Watch_FullMethodName, "/other.Service/Check"} {
+		if p := c.GetMethodConfig(method).RetryPolicy; p != nil {
+			t.Errorf("%s has unexpected retry policy: %+v", method, p)
+		}
+	}
+}
+
+func TestProbeNativeRetries(t *testing.T) {
+	for _, tc := range []struct {
+		name      string
+		code      codes.Code
+		recover   bool
+		commit    bool
+		wantCalls int32
+		wantCode  codes.Code
+	}{
+		{name: "recovers on third attempt", code: codes.Unavailable, recover: true, wantCalls: 3, wantCode: codes.OK},
+		{name: "exhausts three attempts", code: codes.Unavailable, wantCalls: 3, wantCode: codes.Unavailable},
+		{name: "permanent failure", code: codes.InvalidArgument, wantCalls: 1, wantCode: codes.InvalidArgument},
+		{name: "response headers commit call", code: codes.Unavailable, commit: true, wantCalls: 1, wantCode: codes.Unavailable},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var attempts, intercepted atomic.Int32
+			requests := make(chan string, 4)
+			c := testConn(t, Dial, func(ctx context.Context, req *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+				n := attempts.Add(1)
+				select {
+				case requests <- req.Service:
+				case <-ctx.Done():
+					return nil, status.FromContextError(ctx.Err()).Err()
+				}
+				if tc.recover && n == 3 {
+					return &grpc_health_v1.HealthCheckResponse{Status: grpc_health_v1.HealthCheckResponse_SERVING}, nil
+				}
+				if tc.commit {
+					if err := grpc.SendHeader(ctx, metadata.Pairs("committed", "true")); err != nil {
+						return nil, err
+					}
+				}
+				return nil, status.Error(tc.code, "check failed")
+			}, grpc.WithUnaryInterceptor(func(ctx context.Context, method string, req, reply any, conn *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+				intercepted.Add(1)
+				return invoker(ctx, method, req, reply, conn, opts...)
+			}))
+			err := Probe(context.Background(), c, "payments")
+			if got := status.Code(err); got != tc.wantCode {
+				t.Fatalf("Probe code = %v (%v), want %v", got, err, tc.wantCode)
+			}
+			if err != nil && errors.Unwrap(err) == nil {
+				t.Errorf("Probe error has no wrapped cause: %v", err)
+			}
+			if got := attempts.Load(); got != tc.wantCalls {
+				t.Errorf("server attempts = %d, want %d", got, tc.wantCalls)
+			}
+			if got := intercepted.Load(); got != 1 {
+				t.Errorf("application Check calls = %d, want 1", got)
+			}
+			for n := int32(0); n < attempts.Load(); n++ {
+				select {
+				case service := <-requests:
+					if service != "payments" {
+						t.Errorf("requested service = %q, want payments", service)
+					}
+				case <-time.After(5 * time.Second):
+					t.Fatal("request was not observed")
+				}
+			}
+		})
+	}
+}
+
+func TestDialResolverPolicyPrecedence(t *testing.T) {
+	for _, tc := range []struct {
+		name      string
+		config    string
+		wantCalls int32
+	}{
+		{
+			name:      "two attempt policy",
+			config:    `{"methodConfig":[{"name":[{"service":"grpc.health.v1.Health","method":"Check"}],"retryPolicy":{"maxAttempts":2,"initialBackoff":"0.001s","maxBackoff":"0.002s","backoffMultiplier":2,"retryableStatusCodes":["UNAVAILABLE"]}}]}`,
+			wantCalls: 2,
+		},
+		{name: "empty policy", config: `{}`, wantCalls: 1},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var attempts atomic.Int32
+			r := manual.NewBuilderWithScheme("passthrough")
+			resolved := make(chan error, 1)
+			r.BuildCallback = func(_ resolver.Target, cc resolver.ClientConn, _ resolver.BuildOptions) {
+				config := cc.ParseServiceConfig(tc.config)
+				if config.Err != nil {
+					resolved <- config.Err
+					return
+				}
+				resolved <- cc.UpdateState(resolver.State{Addresses: []resolver.Address{{Addr: "local"}}, ServiceConfig: config})
+			}
+			c := testConn(t, Dial, func(context.Context, *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+				attempts.Add(1)
+				return nil, status.Error(codes.Unavailable, "not ready")
+			}, grpc.WithResolvers(r))
+			select {
+			case err := <-resolved:
+				if err != nil {
+					t.Fatalf("resolver configuration: %v", err)
+				}
+			case <-time.After(5 * time.Second):
+				t.Fatal("resolver did not publish configuration")
+			}
+			if err := Probe(context.Background(), c, ""); status.Code(err) != codes.Unavailable {
+				t.Fatalf("Probe = %v, want Unavailable", err)
+			}
+			if got := attempts.Load(); got != tc.wantCalls {
+				t.Errorf("server attempts = %d, want resolver policy's %d", got, tc.wantCalls)
+			}
+		})
+	}
+}
+
+func TestProbeBorrowedConnection(t *testing.T) {
+	var attempts atomic.Int32
+	c := testConn(t, grpc.Dial, func(context.Context, *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+		if attempts.Add(1) == 1 {
+			return nil, status.Error(codes.Unavailable, "not ready")
+		}
+		return &grpc_health_v1.HealthCheckResponse{Status: grpc_health_v1.HealthCheckResponse_SERVING}, nil
+	})
+	if err := Probe(context.Background(), c, ""); status.Code(err) != codes.Unavailable {
+		t.Fatalf("first Probe = %v, want Unavailable", err)
+	}
+	if got := attempts.Load(); got != 1 {
+		t.Fatalf("first Probe made %d attempts, want 1 on the supplied connection", got)
+	}
+	if err := Probe(context.Background(), c, ""); err != nil {
+		t.Fatalf("second Probe on borrowed connection: %v", err)
+	}
+	if got := attempts.Load(); got != 2 {
+		t.Errorf("two Probes made %d attempts, want 2", got)
+	}
+}
+
+func TestProbeHealthValues(t *testing.T) {
+	for _, value := range []grpc_health_v1.HealthCheckResponse_ServingStatus{
+		grpc_health_v1.HealthCheckResponse_SERVING,
+		grpc_health_v1.HealthCheckResponse_NOT_SERVING,
+		grpc_health_v1.HealthCheckResponse_UNKNOWN,
+		grpc_health_v1.HealthCheckResponse_SERVICE_UNKNOWN,
+	} {
+		t.Run(value.String(), func(t *testing.T) {
+			c := testConn(t, Dial, func(context.Context, *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+				return &grpc_health_v1.HealthCheckResponse{Status: value}, nil
+			})
+			err := Probe(context.Background(), c, "")
+			if (err == nil) != (value == grpc_health_v1.HealthCheckResponse_SERVING) {
+				t.Errorf("Probe for %v = %v", value, err)
+			}
+		})
+	}
+}
+
+func TestProbeTotalBudgetAcrossRetries(t *testing.T) {
+	var attempts atomic.Int32
+	deadlines := make(chan time.Time, 4)
+	c := testConn(t, Dial, func(ctx context.Context, _ *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+		n := attempts.Add(1)
+		deadline, _ := ctx.Deadline()
+		deadlines <- deadline
+		delay := 200 * time.Millisecond
+		if n >= 3 {
+			delay = 2 * time.Second // Bound the fixture if Probe omits its deadline.
+		}
+		timer := time.NewTimer(delay)
+		defer timer.Stop()
+		select {
+		case <-ctx.Done():
+			return nil, status.FromContextError(ctx.Err()).Err()
+		case <-timer.C:
+			if n >= 3 {
+				return nil, status.Error(codes.Aborted, "fixture deadline exceeded")
+			}
+			return nil, status.Error(codes.Unavailable, "not ready")
+		}
+	})
+	start := time.Now()
+	err := Probe(context.Background(), c, "")
+	if status.Code(err) != codes.DeadlineExceeded {
+		t.Fatalf("Probe = %v, want DeadlineExceeded", err)
+	}
+	if errors.Unwrap(err) == nil {
+		t.Errorf("deadline error has no wrapped cause: %v", err)
+	}
+	if got := attempts.Load(); got < 2 || got > 3 {
+		t.Fatalf("server attempts = %d, want multiple native attempts within one budget", got)
+	}
+	for n := int32(0); n < attempts.Load(); n++ {
+		deadline := <-deadlines
+		if offset := deadline.Sub(start); offset < 400*time.Millisecond || offset > 600*time.Millisecond {
+			t.Errorf("attempt %d deadline offset = %v, want the original 500ms budget", n+1, offset)
+		}
+	}
+}
+
+func TestProbePreservesCallerDeadlineAndCancellation(t *testing.T) {
+	for _, cancelCaller := range []bool{false, true} {
+		name := "earlier deadline"
+		if cancelCaller {
+			name = "in-flight cancellation"
+		}
+		t.Run(name, func(t *testing.T) {
+			started := make(chan time.Time, 1)
+			finished := make(chan struct{}, 1)
+			c := testConn(t, Dial, func(ctx context.Context, _ *grpc_health_v1.HealthCheckRequest) (*grpc_health_v1.HealthCheckResponse, error) {
+				deadline, _ := ctx.Deadline()
+				started <- deadline
+				<-ctx.Done()
+				finished <- struct{}{}
+				return nil, status.FromContextError(ctx.Err()).Err()
+			})
+			budget := 150 * time.Millisecond
+			if cancelCaller {
+				budget = 3 * time.Second
+			}
+			ctx, cancel := context.WithTimeout(context.Background(), budget)
+			defer cancel()
+			parentDeadline, _ := ctx.Deadline()
+			result := make(chan error, 1)
+			done := make(chan struct{})
+			go func() {
+				defer close(done)
+				result <- Probe(ctx, c, "")
+			}()
+			t.Cleanup(func() {
+				cancel()
+				select {
+				case <-done:
+				case <-time.After(5 * time.Second):
+					t.Error("Probe did not stop during cleanup")
+				}
+			})
+			var deadline time.Time
+			select {
+			case deadline = <-started:
+			case <-time.After(5 * time.Second):
+				t.Fatal("Check did not start")
+			}
+			wantCode := codes.DeadlineExceeded
+			if cancelCaller {
+				cancel()
+				wantCode = codes.Canceled
+			} else if delta := deadline.Sub(parentDeadline); delta < -50*time.Millisecond || delta > 50*time.Millisecond {
+				t.Errorf("server deadline differs from caller deadline by %v", delta)
+			}
+			select {
+			case err := <-result:
+				if status.Code(err) != wantCode {
+					t.Errorf("Probe = %v, want %v", err, wantCode)
+				}
+			case <-time.After(5 * time.Second):
+				t.Fatal("Probe did not finish")
+			}
+			select {
+			case <-finished:
+			case <-time.After(5 * time.Second):
+				t.Fatal("Check did not observe cancellation")
+			}
+		})
+	}
+}

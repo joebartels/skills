@@ -135,11 +135,16 @@ def archive_trial(trial: Path, archive: Path) -> dict:
             shutil.copyfile(trial / name, staging / name)
         patch_file = staging / "source.patch"
         patch_file.write_text(patch_text)
-        shutil.copytree(trial / "input", staging / "output")
-        if patch_text:
-            run(["git", "apply", str(patch_file)], staging / "output")
-        if hashes(staging / "output") != output_hashes:
-            raise ValueError("patch reconstruction mismatch")
+        # Git apply from a subdirectory of a parent repository can skip paths.
+        # Reconstruct outside that repository before sealing a plain file tree.
+        with tempfile.TemporaryDirectory(prefix="client-reconstruct-") as reconstructed:
+            check = Path(reconstructed) / "output"
+            shutil.copytree(trial / "input", check)
+            if patch_text:
+                run(["git", "apply", str(patch_file)], check)
+            if hashes(check) != output_hashes:
+                raise ValueError("patch reconstruction mismatch")
+            shutil.copytree(check, staging / "output")
         metadata.update(output_hashes=output_hashes,
                         patch_sha256=hashlib.sha256(patch_text.encode()).hexdigest(), reconstruction="PASS")
         (staging / "manifest.json").write_text(json.dumps(metadata, indent=2) + "\n")
@@ -159,7 +164,9 @@ if __name__ == "__main__":
     if args.action == "prepare":
         print(prepare_trial(args.case, args.arm, args.trial_id, args.scratch, args.archive))
     else:
-        result = archive_trial(args.scratch.resolve() / component(args.trial_id), args.archive)
-        if (result["case"], result["arm"]) != (args.case, args.arm):
+        trial = args.scratch.resolve() / component(args.trial_id)
+        metadata = json.loads((trial / "metadata.json").read_text())
+        if (metadata["case"], metadata["arm"]) != (args.case, args.arm):
             raise ValueError("case/arm mismatch")
+        result = archive_trial(trial, args.archive)
         print(json.dumps(result))

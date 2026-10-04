@@ -1,0 +1,59 @@
+Deliberate disposable mutations to verify existing test signal. These do not describe defects in the original reviewed code areas. Each directory contains a complete copy of its original source area with one client.go mutation. Original source and controller probes were unchanged.
+
+Common command prefix and flags:
+rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go test -mod=readonly -ldflags=-linkmode=external -run '<test named below>' -count=1 -timeout=20s ./...
+
+Working directory: /Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/reviews/initial-a-reproductions/http-read-bound-mutant
+Mutation: io.LimitReader(resp.Body, bodyLimit+1) becomes io.LimitReader(resp.Body, 2*bodyLimit).
+Test: TestFetchBodyLimit
+Exit: 1 (expected mutant rejection)
+Raw output:
+--- FAIL: TestFetchBodyLimit (0.00s)
+    --- FAIL: TestFetchBodyLimit/oversized_success (0.00s)
+        client_test.go:135: body read 8192 bytes, closed 1 times; want 4097, 1
+    --- FAIL: TestFetchBodyLimit/bounded_rejection (0.00s)
+        client_test.go:135: body read 8192 bytes, closed 1 times; want 4097, 1
+FAIL
+FAIL	example.invalid/http-retry-budget	0.189s
+FAIL
+
+Working directory: /Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/reviews/initial-a-reproductions/http-budget-mutant
+Mutation: context.WithTimeout(ctx, 250*time.Millisecond) becomes context.WithTimeout(ctx, 2*time.Second).
+Test: TestFetchSharedDeadline
+Exit: 1 (expected mutant rejection)
+Raw output:
+--- FAIL: TestFetchSharedDeadline (2.08s)
+    --- FAIL: TestFetchSharedDeadline/total_budget (2.00s)
+        client_test.go:368: request deadline = 2026-10-04 00:13:24.3196 -0500 CDT m=+2.000778585, want within 250ms of entry
+        client_test.go:368: request deadline = 2026-10-04 00:13:24.3196 -0500 CDT m=+2.000778585, want within 250ms of entry
+        client_test.go:385: deadline return took 2.001598041s
+FAIL
+FAIL	example.invalid/http-retry-budget	2.418s
+FAIL
+
+Working directory: /Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/reviews/initial-a-reproductions/grpc-resolver-mutant
+Mutation: add grpc.WithDisableServiceConfig() to Dial's default options.
+Test: TestDialResolverPolicyPrecedence
+Exit: 1 (expected mutant rejection)
+Raw output:
+--- FAIL: TestDialResolverPolicyPrecedence (0.04s)
+    --- FAIL: TestDialResolverPolicyPrecedence/two_attempt_policy (0.02s)
+        policy_test.go:201: server attempts = 3, want resolver policy's 2
+    --- FAIL: TestDialResolverPolicyPrecedence/empty_policy (0.02s)
+        policy_test.go:201: server attempts = 3, want resolver policy's 1
+FAIL
+FAIL	example.invalid/grpc-policy	0.463s
+FAIL
+
+Working directory: /Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/reviews/initial-a-reproductions/grpc-commitment-mutant
+Mutation: after the original Check, retry the generated Check at the application boundary twice when err != nil.
+Test: TestProbeNativeRetries/response_headers_commit_call
+Exit: 1 (expected mutant rejection)
+Raw output:
+--- FAIL: TestProbeNativeRetries (0.00s)
+    --- FAIL: TestProbeNativeRetries/response_headers_commit_call (0.00s)
+        policy_test.go:141: server attempts = 3, want 1
+        policy_test.go:144: application Check calls = 3, want 1
+FAIL
+FAIL	example.invalid/grpc-policy	0.587s
+FAIL

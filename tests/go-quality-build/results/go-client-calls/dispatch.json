@@ -1,0 +1,82 @@
+{
+  "author_launches": [
+    {
+      "trial_id": "t01",
+      "task_name": "/root/author_t01",
+      "launch_file": "launch-t01.txt",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null
+    },
+    {
+      "trial_id": "t02",
+      "task_name": "/root/author_t02",
+      "launch_file": "launch-t02.txt",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null
+    },
+    {
+      "trial_id": "t03",
+      "task_name": "/root/author_t03",
+      "launch_file": "launch-t03.txt",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null
+    },
+    {
+      "trial_id": "t04",
+      "task_name": "/root/author_t04",
+      "launch_file": "launch-t04.txt",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null
+    },
+    {
+      "trial_id": "t05",
+      "task_name": "/root/author_t05",
+      "launch_file": "launch-t05.txt",
+      "fork_turns": "none",
+      "model_override": null,
+      "effort_override": null
+    }
+  ],
+  "review_launches": [
+    {
+      "task_name": "/root/baseline_review_a",
+      "allowed_sources": "/private/tmp/go-client-campaign/reviews/initial-a",
+      "cases": [
+        "http-retry-budget",
+        "grpc-policy",
+        "pure-control"
+      ],
+      "report": "reviews/initial-a.md"
+    },
+    {
+      "task_name": "/root/baseline_review_b",
+      "allowed_sources": "/private/tmp/go-client-campaign/reviews/initial-b",
+      "cases": [
+        "http-write-replay"
+      ],
+      "report": "reviews/initial-b.md"
+    },
+    {
+      "task_name": "/root/baseline_review_c",
+      "allowed_sources": "/private/tmp/go-client-campaign/reviews/initial-c",
+      "cases": [
+        "breaker-recovery"
+      ],
+      "report": "reviews/initial-c.md"
+    }
+  ],
+  "review_contract": "Full final code areas against original README; unchanged correctness/resilience/testing skills; substantiated findings, strengths, complexity and limits; no target grades; disposable reproductions; no edits to candidates or probes; no other trials or author reports.",
+  "review_skill_hashes": {
+    "go-correctness-and-compatibility/SKILL.md": "3edc61fb59573b7e45b914dcb6f9bd790e2e34eef82a3a3a52a657e34413ac1e",
+    "go-correctness-and-compatibility/references/correctness-compatibility-decisions.md": "50304e855cea48bfe3241a792296b22c0d297a2a119f0ea802bb9a29d3703655",
+    "go-observability-and-resilience/SKILL.md": "70dfb9bc6332aeb9371229f686d659545092e73f91f3458526cfa415300b9372",
+    "go-observability-and-resilience/references/observability-resilience-decisions.md": "0ec7d05db58e86f7bdb9ed8549ec054f28c516d53936f14ce179bdadf6305d1d",
+    "go-testing/SKILL.md": "7f59f7017c1a5132c847b4ec821f7f87fd6ac71b0b57428ee7f9f1b9f18d47af",
+    "go-testing/references/testing-decisions.md": "34811a7b16122e74188fe254373a84d8dd3dfae49d5327af732ae3632d66e229"
+  },
+  "transcript_limit": "Author final messages, exact launch strings, reports, exact patches and independently executed raw checks retained; full underlying author tool transcripts not exposed by collaboration API."
+}

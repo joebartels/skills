@@ -1,0 +1,58 @@
+{
+  "cases": [
+    {
+      "case": "http-write-replay",
+      "trial": "t01",
+      "raw_review": "reviews/initial-b.md",
+      "correctness": "A+",
+      "resilience": "A+",
+      "testing": "A+",
+      "findings": []
+    },
+    {
+      "case": "http-retry-budget",
+      "trial": "t02",
+      "raw_review": "reviews/initial-a.md",
+      "correctness": "A",
+      "resilience": "A",
+      "testing": "A+",
+      "findings": []
+    },
+    {
+      "case": "grpc-policy",
+      "trial": "t03",
+      "raw_review": "reviews/initial-a.md",
+      "correctness": "A",
+      "resilience": "A",
+      "testing": "A+",
+      "findings": []
+    },
+    {
+      "case": "breaker-recovery",
+      "trial": "t04",
+      "raw_review": "reviews/initial-c.md",
+      "correctness": "C",
+      "resilience": "C",
+      "testing": "C+",
+      "findings": [
+        "Caller cancellation during a nil-error 200 read changes health history/recovery.",
+        "Parse/transport/read diagnostic text is not capped."
+      ]
+    },
+    {
+      "case": "pure-control",
+      "trial": "t05",
+      "raw_review": "reviews/initial-a.md",
+      "correctness": "A",
+      "resilience": "Not applicable",
+      "testing": "A",
+      "findings": []
+    }
+  ],
+  "controller_checks": {
+    "count": 38,
+    "failed": 0
+  },
+  "supplemental_checks": "supplemental-review-probes/manifest.json",
+  "interpretation": "Strong baselines preserved; passing original probes did not prove complete breaker behavior. No baseline repairs."
+}
