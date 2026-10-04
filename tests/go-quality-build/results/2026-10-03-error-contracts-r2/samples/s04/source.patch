@@ -1,0 +1,295 @@
+--- a/README.md
++++ b/README.md
+@@ -1,10 +1,24 @@
+ # recordload
+-Go 1.22 library. Load reads key=value records in order. Blank lines are ignored.
+-The current task adds comment lines beginning with # and reports malformed records
+-using an exported *LineError with Line (one-based physical line) and Text fields.
+-Load returns the valid prefix on malformed input or read failure. The caller's
+-reader errors remain inspectable. Process bytes returned alongside a read error;
+-EOF is normal completion. Successful errors are nil interfaces. No line-size cap
+-is promised. Empty keys and values are accepted. Readers are borrowed.
+-If malformed bytes arrive with an independent read failure, retain the valid
+-prefix and make both the structured parse error and reader cause inspectable.
++
++A Go 1.22 library for reading `key=value` records in order. Empty lines and lines
++whose first byte is `#` are ignored. Records split at the first `=`; empty keys,
++empty values and repeated keys are accepted. Whitespace is preserved.
++
++`Load` returns the valid prefix before the first malformed line, together with a
++`*LineError` containing its one-based physical `Line` and original `Text` (without
++the newline separator). Reader failures remain inspectable with `errors.Is` or
++`errors.As`, including when malformed input and a reader failure occur together.
++Bytes returned alongside a reader error are parsed; EOF is normal completion and
++successful calls return a nil error.
++
++```go
++records, err := recordload.Load(strings.NewReader("#settings\nhost=localhost\nbroken"))
++// records contains {Key: "host", Value: "localhost"}.
++var lineErr *recordload.LineError
++if errors.As(err, &lineErr) {
++    fmt.Printf("line %d: %q\n", lineErr.Line, lineErr.Text) // line 3: "broken"
++}
++```
++
++`Load` reads the entire input into memory without imposing a line-size cap. The
++reader is borrowed and is never closed by `Load`.
+--- /dev/null
++++ b/example_test.go
+@@ -0,0 +1,21 @@
++package recordload_test
++
++import (
++	"errors"
++	"fmt"
++	"strings"
++
++	"example.com/recordload"
++)
++
++func ExampleLoad() {
++	records, err := recordload.Load(strings.NewReader("#settings\nhost=localhost\nbroken\nport=8080"))
++	fmt.Println(records)
++	var lineErr *recordload.LineError
++	if errors.As(err, &lineErr) {
++		fmt.Printf("line %d: %q\n", lineErr.Line, lineErr.Text)
++	}
++	// Output:
++	// [{host localhost}]
++	// line 3: "broken"
++}
+--- a/load.go
++++ b/load.go
+@@ -1,28 +1,46 @@
+ package recordload
+ 
+ import (
++	"errors"
+ 	"fmt"
+ 	"io"
+ 	"strings"
+ )
+ 
++// Record is a key=value pair.
+ type Record struct{ Key, Value string }
+ 
++// LineError reports a malformed record. Line is the one-based physical line
++// number, and Text is the unmodified line without its newline separator.
++type LineError struct {
++	Line int
++	Text string
++}
++
++func (e *LineError) Error() string {
++	return fmt.Sprintf("line %d: malformed record", e.Line)
++}
++
++// Load reads key=value records in order, ignoring empty lines and lines
++// beginning with #. It returns the valid prefix on a malformed record or reader
++// failure. Malformed records are reported as *LineError, joined with any reader
++// failure. Load does not close r.
+ func Load(r io.Reader) ([]Record, error) {
+-	data, err := io.ReadAll(r)
+-	if err != nil {
+-		return nil, err
+-	}
++	data, readErr := io.ReadAll(r)
+ 	var records []Record
+ 	for n, text := range strings.Split(string(data), "\n") {
+-		if text == "" {
++		if text == "" || strings.HasPrefix(text, "#") {
+ 			continue
+ 		}
+ 		key, value, ok := strings.Cut(text, "=")
+ 		if !ok {
+-			return records, fmt.Errorf("line %d: malformed record", n+1)
++			lineErr := &LineError{Line: n + 1, Text: text}
++			if readErr != nil {
++				return records, errors.Join(lineErr, readErr)
++			}
++			return records, lineErr
+ 		}
+ 		records = append(records, Record{Key: key, Value: value})
+ 	}
+-	return records, nil
++	return records, readErr
+ }
+--- a/load_test.go
++++ b/load_test.go
+@@ -1,6 +1,9 @@
+ package recordload
+ 
+ import (
++	"errors"
++	"io"
++	"slices"
+ 	"strings"
+ 	"testing"
+ )
+@@ -11,3 +14,166 @@
+ 		t.Fatalf("%v %v", got, err)
+ 	}
+ }
++
++func TestLoadRecords(t *testing.T) {
++	longValue := strings.Repeat("x", 70*1024)
++	for _, tc := range []struct {
++		name  string
++		input string
++		want  []Record
++	}{
++		{
++			name:  "comments blanks and order",
++			input: "#=ignored\n\na=1\n#ignored\nb=2=3\n=empty-key\nempty-value=\n=\na=again",
++			want: []Record{
++				{Key: "a", Value: "1"},
++				{Key: "b", Value: "2=3"},
++				{Value: "empty-key"},
++				{Key: "empty-value"},
++				{},
++				{Key: "a", Value: "again"},
++			},
++		},
++		{name: "empty"},
++		{name: "only comments and blanks", input: "#comment\n\n#last"},
++		{name: "unterminated line", input: "a=1", want: []Record{{Key: "a", Value: "1"}}},
++		{name: "whitespace preserved", input: " a = b ", want: []Record{{Key: " a ", Value: " b "}}},
++		{name: "long line", input: "a=" + longValue, want: []Record{{Key: "a", Value: longValue}}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			got, err := Load(strings.NewReader(tc.input))
++			if err != nil {
++				t.Fatalf("Load() error = %v, want nil", err)
++			}
++			if !slices.Equal(got, tc.want) {
++				t.Errorf("Load() records = %v, want %v", got, tc.want)
++			}
++		})
++	}
++}
++
++func TestLoadReadError(t *testing.T) {
++	readErr := errors.New("reader failed")
++	for _, tc := range []struct {
++		name     string
++		input    string
++		terminal error
++		withData bool
++		want     []Record
++		wantErr  error
++	}{
++		{name: "before data", terminal: readErr, wantErr: readErr},
++		{
++			name: "with data", input: "a=1\nb=2", terminal: readErr, withData: true,
++			want: []Record{{Key: "a", Value: "1"}, {Key: "b", Value: "2"}}, wantErr: readErr,
++		},
++		{
++			name: "after data", input: "a=1\nb=2\n", terminal: readErr,
++			want: []Record{{Key: "a", Value: "1"}, {Key: "b", Value: "2"}}, wantErr: readErr,
++		},
++		{
++			name: "EOF with data", input: "a=1", terminal: io.EOF, withData: true,
++			want: []Record{{Key: "a", Value: "1"}},
++		},
++		{name: "empty EOF", terminal: io.EOF},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			r := &terminalReader{reader: strings.NewReader(tc.input), err: tc.terminal, withData: tc.withData}
++			got, err := Load(r)
++			if tc.wantErr == nil {
++				if err != nil {
++					t.Errorf("Load() error = %v, want nil", err)
++				}
++			} else if !errors.Is(err, tc.wantErr) {
++				t.Errorf("Load() error = %v, want cause %v", err, tc.wantErr)
++			}
++			if !slices.Equal(got, tc.want) {
++				t.Errorf("Load() records = %v, want %v", got, tc.want)
++			}
++			if r.closed {
++				t.Error("Load() closed the borrowed reader")
++			}
++		})
++	}
++}
++
++func TestLoadLineError(t *testing.T) {
++	readErr := errors.New("reader failed")
++	for _, tc := range []struct {
++		name     string
++		input    string
++		line     int
++		text     string
++		want     []Record
++		terminal error
++		withData bool
++	}{
++		{name: "first line", input: "bad\nlater=2", line: 1, text: "bad"},
++		{
++			name: "physical line and raw text", input: "#comment\n\na=1\n bad \nlater=2",
++			line: 4, text: " bad ", want: []Record{{Key: "a", Value: "1"}},
++		},
++		{name: "indented hash", input: " #comment", line: 1, text: " #comment"},
++		{name: "whitespace line", input: " \t", line: 1, text: " \t"},
++		{
++			name: "EOF with malformed data", input: "a=1\nbad", line: 2, text: "bad",
++			want: []Record{{Key: "a", Value: "1"}}, terminal: io.EOF, withData: true,
++		},
++		{
++			name: "reader error with malformed data", input: "a=1\nbad\nlater=2", line: 2, text: "bad",
++			want: []Record{{Key: "a", Value: "1"}}, terminal: readErr, withData: true,
++		},
++		{
++			name: "reader error after malformed data", input: "a=1\nbad\nlater=2", line: 2, text: "bad",
++			want: []Record{{Key: "a", Value: "1"}}, terminal: readErr,
++		},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			terminal := tc.terminal
++			if terminal == nil {
++				terminal = io.EOF
++			}
++			r := &terminalReader{reader: strings.NewReader(tc.input), err: terminal, withData: tc.withData}
++			got, err := Load(r)
++			if !slices.Equal(got, tc.want) {
++				t.Errorf("Load() records = %v, want %v", got, tc.want)
++			}
++			var lineErr *LineError
++			if !errors.As(err, &lineErr) {
++				t.Fatalf("Load() error = %v, want *LineError", err)
++			}
++			if lineErr.Line != tc.line || lineErr.Text != tc.text {
++				t.Errorf("LineError = %+v, want Line %d, Text %q", lineErr, tc.line, tc.text)
++			}
++			if tc.terminal != nil && tc.terminal != io.EOF && !errors.Is(err, tc.terminal) {
++				t.Errorf("Load() error = %v, want reader cause %v", err, tc.terminal)
++			}
++			if errors.Is(err, io.EOF) {
++				t.Error("Load() exposed EOF as a failure")
++			}
++			if r.closed {
++				t.Error("Load() closed the borrowed reader")
++			}
++		})
++	}
++}
++
++type terminalReader struct {
++	reader   *strings.Reader
++	err      error
++	withData bool
++	closed   bool
++}
++
++func (r *terminalReader) Read(p []byte) (int, error) {
++	n, err := r.reader.Read(p)
++	if r.reader.Len() == 0 && (r.withData || err != nil) {
++		return n, r.err
++	}
++	return n, err
++}
++
++func (r *terminalReader) Close() error {
++	r.closed = true
++	return nil
++}

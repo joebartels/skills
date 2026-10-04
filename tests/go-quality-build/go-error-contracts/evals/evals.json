@@ -98,6 +98,23 @@
         "files/cursor-iteration/go.mod"
       ],
       "role": "bounded-supplemental-search"
+    },
+    {
+      "id": "archive-completion",
+      "prompt": "Add WriteSelected and preserve WriteArchive according to README.md. Implement the change, meaningful tests and concise usage documentation.",
+      "expected_output": "Selected ZIP entries preserve borrowed resources and report body/central-directory completion failures truthfully.",
+      "assertions": [
+        "A successful archive has a readable central directory with selected names, bodies and order.",
+        "Lone caller errors retain identity; independent body and archive completion errors remain inspectable.",
+        "Borrowed bodies/output are not closed and rejected entry bodies are not read."
+      ],
+      "files": [
+        "files/archive-completion/README.md",
+        "files/archive-completion/go.mod",
+        "files/archive-completion/archive.go",
+        "files/archive-completion/archive_test.go"
+      ],
+      "role": "reserved-transfer"
     }
   ]
 }

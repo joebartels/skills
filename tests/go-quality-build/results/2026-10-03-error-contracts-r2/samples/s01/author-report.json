@@ -1,0 +1,146 @@
+{
+  "selected_skills": [
+    "go-api-contracts",
+    "go-behavior-tests",
+    "go-names-and-comments",
+    "go-test-isolation"
+  ],
+  "opened_guidance": [
+    "/Users/jb/.codex/RTK.md",
+    "/Users/jb/.agents/skills/superpowers/using-superpowers/SKILL.md",
+    "/Users/jb/.agents/skills/golang/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/test-driven-development/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/test-driven-development/writing-good-tests.md",
+    "/Users/jb/.agents/skills/superpowers/verification-before-completion/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/brainstorming/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/writing-plans/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s01/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s01/guidance/go-behavior-tests/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s01/guidance/go-behavior-tests/references/behavior-observations.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s01/guidance/go-names-and-comments/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s01/guidance/go-test-isolation/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s01/guidance/go-test-isolation/references/isolation-patterns.md"
+  ],
+  "global_process_style_skills": [
+    {
+      "name": "superpowers:using-superpowers",
+      "application": "Read; its SUBAGENT-STOP directs dispatched subagents to ignore its workflow."
+    },
+    {
+      "name": "go-core-style",
+      "application": "Applied small standard-library implementation, early returns, gofmt, vet and race suite; staticcheck was attempted but unavailable."
+    },
+    {
+      "name": "superpowers:test-driven-development",
+      "application": "Observed existing implementation fail comment/partial-read assertions, then observed comment/read fixes pass; observed malformed input hide an independent read cause before implementing combined errors."
+    },
+    {
+      "name": "superpowers:verification-before-completion",
+      "application": "Ran and inspected final build, formatting, vet, race tests and focused subtest before completion."
+    },
+    {
+      "name": "superpowers:brainstorming",
+      "application": "Read; continued the task's already-approved bounded design without another approval round."
+    },
+    {
+      "name": "superpowers:writing-plans",
+      "application": "Read for applicability; no plan document because this approved bounded change does not use the architectural path."
+    }
+  ],
+  "implementation_notes": [
+    "Preserved Load(io.Reader) ([]Record, error), Record's exported fields, order, first '=' splitting, empty fields and literal whitespace/carriage-return behavior.",
+    "Added exported *LineError with Line and Text, retaining the previous human-readable malformed-record message.",
+    "Ignored empty lines and lines beginning with '#' while retaining physical line numbers.",
+    "Retained io.ReadAll to avoid introducing a scanner line cap. Parsed all retained bytes even when the reader returned an independent failure.",
+    "Returned a direct *LineError for parse-only failures and errors.Join(LineError, readErr) for independent parse/read failures. Successful completion returns a nil error interface.",
+    "Added external-package contract tests for valid records, comments, empty input/fields, literal bytes, a 128 KiB line, exact error fields, omitted records after malformed input, read failure before/after/alongside bytes, EOF alongside valid/malformed bytes, wrapped non-comparable typed reader causes and borrowed-reader ownership.",
+    "Added a runnable ExampleLoad and concise README/Godoc covering error inspection, prefix retention, parsing rules, reader ownership and buffering.",
+    "No dependencies, Go version changes, Git commits, installations or external actions."
+  ],
+  "checks": [
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test ./...",
+      "exit_code": 0,
+      "output": "ok  \texample.com/recordload\t0.200s\n",
+      "stage": "baseline"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test ./...",
+      "exit_code": 1,
+      "output": "--- FAIL: TestLoad (0.00s)\n    --- FAIL: TestLoad/comments_and_blanks (0.00s)\n        load_test.go:29: Load error = line 1: malformed record, want nil\n    --- FAIL: TestLoad/only_comments_and_blanks (0.00s)\n        load_test.go:29: Load error = line 2: malformed record, want nil\n--- FAIL: TestLoadReadFailure (0.00s)\n    --- FAIL: TestLoadReadFailure/alongside_bytes (0.00s)\n        load_test.go:56: Load records = []recordload.Record(nil), want []recordload.Record{recordload.Record{Key:\"a\", Value:\"1\"}, recordload.Record{Key:\"b\", Value:\"2\"}}\n    --- FAIL: TestLoadReadFailure/after_bytes (0.00s)\n        load_test.go:56: Load records = []recordload.Record(nil), want []recordload.Record{recordload.Record{Key:\"a\", Value:\"1\"}, recordload.Record{Key:\"b\", Value:\"2\"}}\nFAIL\nFAIL\texample.com/recordload\t0.182s\nFAIL\n",
+      "stage": "red: comment and partial-read behavior"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test ./...",
+      "exit_code": 0,
+      "output": "ok  \texample.com/recordload\t0.177s\n",
+      "stage": "green: comment and partial-read behavior"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test ./...",
+      "exit_code": 1,
+      "output": "--- FAIL: TestLoadMalformedWithReadFailure (0.00s)\n    load_test.go:84: Load error = line 4: malformed record, want cause read failed\nFAIL\nFAIL\texample.com/recordload\t0.153s\nFAIL\n",
+      "stage": "red: preserve independent read failure on malformed data"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test ./...",
+      "exit_code": 0,
+      "output": "ok  \texample.com/recordload\t0.175s\n",
+      "stage": "green: structured and combined failures"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache gofmt -s -w load.go load_test.go",
+      "exit_code": 0,
+      "output": "",
+      "stage": "format"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v -race ./...",
+      "exit_code": 0,
+      "output": "=== RUN   TestLoad\n=== RUN   TestLoad/records_in_order\n=== RUN   TestLoad/comments_and_blanks\n=== RUN   TestLoad/empty_input\n=== RUN   TestLoad/only_comments_and_blanks\n=== RUN   TestLoad/empty_fields\n=== RUN   TestLoad/literal_bytes\n=== RUN   TestLoad/long_line\n--- PASS: TestLoad (0.00s)\n    --- PASS: TestLoad/records_in_order (0.00s)\n    --- PASS: TestLoad/comments_and_blanks (0.00s)\n    --- PASS: TestLoad/empty_input (0.00s)\n    --- PASS: TestLoad/only_comments_and_blanks (0.00s)\n    --- PASS: TestLoad/empty_fields (0.00s)\n    --- PASS: TestLoad/literal_bytes (0.00s)\n    --- PASS: TestLoad/long_line (0.00s)\n=== RUN   TestLoadReadFailure\n=== RUN   TestLoadReadFailure/before_bytes\n=== RUN   TestLoadReadFailure/alongside_bytes\n=== RUN   TestLoadReadFailure/after_bytes\n--- PASS: TestLoadReadFailure (0.00s)\n    --- PASS: TestLoadReadFailure/before_bytes (0.00s)\n    --- PASS: TestLoadReadFailure/alongside_bytes (0.00s)\n    --- PASS: TestLoadReadFailure/after_bytes (0.00s)\n=== RUN   TestLoadBytesWithEOF\n--- PASS: TestLoadBytesWithEOF (0.00s)\n=== RUN   TestLoadMalformedWithReadFailure\n--- PASS: TestLoadMalformedWithReadFailure (0.00s)\n=== RUN   TestLoadLineError\n=== RUN   TestLoadLineError/first_line\n=== RUN   TestLoadLineError/physical_line\n=== RUN   TestLoadLineError/spaced_comment_is_not_a_comment\n--- PASS: TestLoadLineError (0.00s)\n    --- PASS: TestLoadLineError/first_line (0.00s)\n    --- PASS: TestLoadLineError/physical_line (0.00s)\n    --- PASS: TestLoadLineError/spaced_comment_is_not_a_comment (0.00s)\n=== RUN   TestLoadTypedReadFailure\n=== RUN   TestLoadTypedReadFailure/a=1\n=== RUN   TestLoadTypedReadFailure/a=1_malformed\n--- PASS: TestLoadTypedReadFailure (0.00s)\n    --- PASS: TestLoadTypedReadFailure/a=1 (0.00s)\n    --- PASS: TestLoadTypedReadFailure/a=1_malformed (0.00s)\n=== RUN   TestLoadMalformedWithEOF\n--- PASS: TestLoadMalformedWithEOF (0.00s)\n=== RUN   ExampleLoad\n--- PASS: ExampleLoad (0.00s)\nPASS\nok  \texample.com/recordload\t1.169s\n",
+      "stage": "final verification"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go vet ./...",
+      "exit_code": 0,
+      "output": "",
+      "stage": "final verification"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache staticcheck ./...",
+      "exit_code": 127,
+      "output": "env: staticcheck: No such file or directory\n",
+      "stage": "final verification"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go build ./...",
+      "exit_code": 0,
+      "output": "",
+      "stage": "final verification"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache gofmt -l load.go load_test.go",
+      "exit_code": 0,
+      "output": "",
+      "stage": "final verification"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go version",
+      "exit_code": 0,
+      "output": "go version go1.26.5 darwin/arm64\n",
+      "stage": "final verification"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -run '^TestLoadReadFailure$/^alongside_bytes$' -count=1 ./...",
+      "exit_code": 0,
+      "output": "ok  \texample.com/recordload\t0.199s\n",
+      "stage": "focused isolation check"
+    }
+  ],
+  "material_limits": [
+    "Staticcheck was not installed; its attempted command exited 127.",
+    "Verification used the installed Go 1.26.5 toolchain on darwin/arm64. The module still declares Go 1.22 and uses APIs available there, but Go 1.22 itself was not executed.",
+    "Load buffers the complete input in memory; no fixed line-size cap is imposed, but input size remains bounded by available memory.",
+    "No downstream consumer repositories or platform-specific integrations were inspected."
+  ]
+}

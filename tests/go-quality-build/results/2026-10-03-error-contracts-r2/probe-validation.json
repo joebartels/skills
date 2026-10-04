@@ -1,0 +1,31 @@
+{
+  "scope": "controller-only reference, not author result or skill benefit",
+  "checks": [
+    {
+      "mode": "reference",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "./..."
+      ],
+      "exit_code": 0,
+      "output": "ok  \texample.com/entryzip\t0.179s\n"
+    },
+    {
+      "mode": "discarded-finalization",
+      "command": [
+        "rtk",
+        "proxy",
+        "go",
+        "test",
+        "-count=1",
+        "./..."
+      ],
+      "exit_code": 1,
+      "output": "--- FAIL: TestContractArchiveCompletion (0.00s)\n    --- FAIL: TestContractArchiveCompletion/completion (0.00s)\n        zz_controller_contract_test.go:57: lone completion identity: <nil>\n    --- FAIL: TestContractArchiveCompletion/both (0.00s)\n        zz_controller_contract_test.go:53: lost cause: source failed\nFAIL\nFAIL\texample.com/entryzip\t0.145s\nFAIL\n"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+[
+  {
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": "ok  \texample.com/accountlookup\t0.173s\n",
+    "scope": "candidate"
+  },
+  {
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": "",
+    "scope": "candidate"
+  },
+  {
+    "command": [
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "exit_code": 0,
+    "output": "",
+    "scope": "candidate"
+  },
+  {
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "-run",
+      "TestContract",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": "ok  \texample.com/accountlookup\t0.174s\n",
+    "scope": "held-contract-probes"
+  }
+]

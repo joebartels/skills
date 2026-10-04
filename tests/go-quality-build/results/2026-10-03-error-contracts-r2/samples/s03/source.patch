@@ -1,0 +1,217 @@
+--- a/README.md
++++ b/README.md
+@@ -1,8 +1,26 @@
+ # accountlookup
+-Go 1.22 library. Backend is an extension protocol; its diagnostics may contain
+-credentials or SQL. Service exposes ErrMissing directly for absent accounts:
+-existing callers use err == ErrMissing. All other backend failures are classified
+-as ErrUnavailable without exposing backend identity, type or sensitive text.
+-A nonempty value is usable only on success. Empty keys currently reach the backend.
+-The task adds ErrInvalidKey for blank keys and adds safe key/operation context to
+-unavailable failures. Preserve existing error contracts and keep the public API.
++
++A Go 1.22 library for looking up account values through a supplied `Backend`.
++`Service.Lookup` rejects empty or Unicode-whitespace-only keys with
++`ErrInvalidKey` before calling the backend. Nonblank keys reach the backend
++unchanged. Use the returned value only when the error is nil; every failure
++returns an empty value.
++
++Absent accounts return `ErrMissing` directly, preserving `err == ErrMissing`.
++Other backend failures wrap `ErrUnavailable` with the lookup operation and quoted
++key. Backend error identity, type, and diagnostic text remain private. Quoting
++escapes control characters in the key.
++
++```go
++value, err := service.Lookup(key)
++switch {
++case err == accountlookup.ErrMissing:
++	// Account does not exist.
++case errors.Is(err, accountlookup.ErrInvalidKey):
++	// Supply a nonblank key.
++case errors.Is(err, accountlookup.ErrUnavailable):
++	// Retry or report the safe lookup context in err.
++case err == nil:
++	// Use value.
++}
++```
+--- a/lookup.go
++++ b/lookup.go
+@@ -1,21 +1,36 @@
+ package accountlookup
+ 
+-import "errors"
++import (
++	"errors"
++	"fmt"
++	"strings"
++)
+ 
+ var ErrMissing = errors.New("account missing")
+ var ErrUnavailable = errors.New("account unavailable")
++
++// ErrInvalidKey indicates an empty or whitespace-only account key.
++var ErrInvalidKey = errors.New("invalid account key")
++
+ var BackendMissing = errors.New("backend missing")
+ 
+ type Backend interface{ Find(string) (string, error) }
+ type Service struct{ Backend Backend }
+ 
++// Lookup returns an account value, or an empty value on failure.
++// Missing accounts return ErrMissing directly; unavailable errors wrap
++// ErrUnavailable with lookup and quoted-key context, without backend diagnostics.
+ func (s Service) Lookup(key string) (string, error) {
++	if strings.TrimSpace(key) == "" {
++		return "", ErrInvalidKey
++	}
++
+ 	value, err := s.Backend.Find(key)
+ 	if errors.Is(err, BackendMissing) {
+ 		return "", ErrMissing
+ 	}
+ 	if err != nil {
+-		return "", ErrUnavailable
++		return "", fmt.Errorf("lookup account %q: %w", key, ErrUnavailable)
+ 	}
+ 	return value, nil
+ }
+--- a/lookup_test.go
++++ b/lookup_test.go
+@@ -1,13 +1,129 @@
+-package accountlookup
++package accountlookup_test
+ 
+-import "testing"
++import (
++	"errors"
++	"fmt"
++	"strconv"
++	"strings"
++	"testing"
+ 
+-type missingBackend struct{}
++	"example.com/accountlookup"
++)
+ 
+-func (missingBackend) Find(string) (string, error) { return "", BackendMissing }
+-func TestMissing(t *testing.T) {
+-	_, err := (Service{Backend: missingBackend{}}).Lookup("u")
+-	if err != ErrMissing {
+-		t.Fatal(err)
++type backendFunc func(string) (string, error)
++
++func (f backendFunc) Find(key string) (string, error) { return f(key) }
++
++type diagnosticError struct{ text string }
++
++func (e *diagnosticError) Error() string { return e.text }
++
++type sliceError []string
++
++func (e sliceError) Error() string { return strings.Join(e, " ") }
++
++func TestLookupRejectsBlankKey(t *testing.T) {
++	for _, key := range []string{"", " \t\n\r", "\u00a0\u2003"} {
++		t.Run(strconv.Quote(key), func(t *testing.T) {
++			calls := 0
++			service := accountlookup.Service{Backend: backendFunc(func(string) (string, error) {
++				calls++
++				return "unexpected account", nil
++			})}
++			value, err := service.Lookup(key)
++			if !errors.Is(err, accountlookup.ErrInvalidKey) {
++				t.Errorf("Lookup error = %v, want ErrInvalidKey classification", err)
++			}
++			if value != "" {
++				t.Errorf("Lookup value = %q, want empty on failure", value)
++			}
++			if calls != 0 {
++				t.Errorf("backend calls = %d, want 0", calls)
++			}
++		})
+ 	}
+ }
++
++func TestMissing(t *testing.T) {
++	for _, backendErr := range []error{
++		accountlookup.BackendMissing,
++		fmt.Errorf("backend query: %w", accountlookup.BackendMissing),
++		errors.Join(accountlookup.BackendMissing, errors.New("password=secret")),
++	} {
++		service := accountlookup.Service{Backend: backendFunc(func(string) (string, error) {
++			return "unusable account", backendErr
++		})}
++		value, err := service.Lookup("u")
++		if err != accountlookup.ErrMissing {
++			t.Errorf("Lookup error = %v, want direct ErrMissing", err)
++		}
++		if value != "" {
++			t.Errorf("Lookup value = %q, want empty on failure", value)
++		}
++	}
++}
++
++func TestLookupUnavailable(t *testing.T) {
++	const secret = "password=secret SELECT * FROM accounts"
++	for _, tc := range []struct {
++		name string
++		err  error
++	}{
++		{"direct", &diagnosticError{text: secret}},
++		{"wrapped", fmt.Errorf("query: %w", &diagnosticError{text: secret})},
++		{"noncomparable", sliceError{secret}},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			const key = "account\"\n\r\t42"
++			service := accountlookup.Service{Backend: backendFunc(func(gotKey string) (string, error) {
++				if gotKey != key {
++					t.Errorf("backend key = %q, want %q", gotKey, key)
++				}
++				return "unusable account", tc.err
++			})}
++			value, err := service.Lookup(key)
++			if !errors.Is(err, accountlookup.ErrUnavailable) {
++				t.Fatalf("Lookup error = %v, want ErrUnavailable classification", err)
++			}
++			if value != "" {
++				t.Errorf("Lookup value = %q, want empty on failure", value)
++			}
++			if !strings.Contains(err.Error(), "lookup") || !strings.Contains(err.Error(), strconv.Quote(key)) {
++				t.Errorf("Lookup error = %q, want lookup and quoted key context", err)
++			}
++			if strings.Contains(err.Error(), secret) || strings.ContainsAny(err.Error(), "\n\r\t") {
++				t.Errorf("Lookup error exposes sensitive text or unescaped controls: %q", err)
++			}
++			if errors.Is(err, tc.err) {
++				t.Error("Lookup error exposes backend identity")
++			}
++			var diagnostic *diagnosticError
++			if errors.As(err, &diagnostic) {
++				t.Error("Lookup error exposes backend diagnostic type")
++			}
++			var noncomparable sliceError
++			if errors.As(err, &noncomparable) {
++				t.Error("Lookup error exposes backend slice error type")
++			}
++		})
++	}
++}
++
++func TestLookupSuccessPreservesKey(t *testing.T) {
++	const key = " \tu\n "
++	calls := 0
++	service := accountlookup.Service{Backend: backendFunc(func(gotKey string) (string, error) {
++		calls++
++		if gotKey != key {
++			t.Errorf("backend key = %q, want unchanged %q", gotKey, key)
++		}
++		return "account", nil
++	})}
++	value, err := service.Lookup(key)
++	if value != "account" || err != nil {
++		t.Errorf("Lookup = (%q, %v), want (account, nil)", value, err)
++	}
++	if calls != 1 {
++		t.Errorf("backend calls = %d, want 1", calls)
++	}
++}

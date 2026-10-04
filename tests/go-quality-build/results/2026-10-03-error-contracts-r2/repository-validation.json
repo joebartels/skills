@@ -1,0 +1,114 @@
+[
+  {
+    "status": "fulfilled",
+    "value": {
+      "id": "structure",
+      "cmd": "rtk proxy python3 -B scripts/validate.py",
+      "result": {
+        "chunk_id": "d2df31",
+        "wall_time_seconds": 0.000005708,
+        "exit_code": 0,
+        "original_token_count": 30,
+        "output": "PASS: 10 skills; matching grading/report contracts; 120 valid evaluation cases\nPASS: 49 valid build evaluation cases\n"
+      }
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "id": "root-tests",
+      "cmd": "rtk proxy python3 -B -m unittest discover -s tests -p 'test*.py'",
+      "result": {
+        "chunk_id": "10d0eb",
+        "wall_time_seconds": 0.723433625,
+        "exit_code": 0,
+        "original_token_count": 29,
+        "output": "..............\n----------------------------------------------------------------------\nRan 14 tests in 0.799s\n\nOK\n"
+      }
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "id": "build-eval-tests",
+      "cmd": "rtk proxy python3 -B -m unittest discover -s tests/go-quality-build -p 'test_*.py'",
+      "result": {
+        "chunk_id": "443de0",
+        "wall_time_seconds": 0.000006125,
+        "exit_code": 0,
+        "original_token_count": 28,
+        "output": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.018s\n\nOK\n"
+      }
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "id": "review-layout-tests",
+      "cmd": "rtk proxy python3 -B -m unittest discover -s tests/go-quality-review -p 'test_*.py'",
+      "result": {
+        "chunk_id": "534888",
+        "wall_time_seconds": 0.000005333,
+        "exit_code": 0,
+        "original_token_count": 25,
+        "output": ".\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+      }
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "id": "grade-tests",
+      "cmd": "rtk proxy python3 -B -m unittest discover -s tests/go-quality-review/go-quality-report/evals -p 'test*.py'",
+      "result": {
+        "chunk_id": "3f2498",
+        "wall_time_seconds": 0.000006459,
+        "exit_code": 0,
+        "original_token_count": 28,
+        "output": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.000s\n\nOK\n"
+      }
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "id": "claude-build",
+      "cmd": "rtk proxy claude plugin validate ./plugins/go-quality-build",
+      "result": {
+        "chunk_id": "fe617e",
+        "wall_time_seconds": 0.375290333,
+        "exit_code": 0,
+        "original_token_count": 36,
+        "output": "Validating plugin manifest: /Users/jb/.codex/worktrees/b312/skills/plugins/go-quality-build/.claude-plugin/plugin.json\n\n✔ Validation passed\n"
+      }
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "id": "claude-review",
+      "cmd": "rtk proxy claude plugin validate ./plugins/go-quality-review",
+      "result": {
+        "chunk_id": "e89e58",
+        "wall_time_seconds": 0.372632584,
+        "exit_code": 0,
+        "original_token_count": 36,
+        "output": "Validating plugin manifest: /Users/jb/.codex/worktrees/b312/skills/plugins/go-quality-review/.claude-plugin/plugin.json\n\n✔ Validation passed\n"
+      }
+    }
+  },
+  {
+    "status": "fulfilled",
+    "value": {
+      "id": "claude-marketplace",
+      "cmd": "rtk proxy claude plugin validate .",
+      "result": {
+        "chunk_id": "0c8a0e",
+        "wall_time_seconds": 0.369971542,
+        "exit_code": 0,
+        "original_token_count": 32,
+        "output": "Validating marketplace manifest: /Users/jb/.codex/worktrees/b312/skills/.claude-plugin/marketplace.json\n\n✔ Validation passed\n"
+      }
+    }
+  }
+]

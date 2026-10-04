@@ -1,0 +1,20 @@
+{
+  "initial_record": {
+    "issue": "Controller CLI negative-limit expectation",
+    "observed": "s02 returns 2 with usage text before opening either path",
+    "frozen_controller_expectation": 1,
+    "original_requirement": "CLI invalid usage exits 2; library ExportLimit negative argument rejects before I/O and still closes its owned writer",
+    "status": "No author defect attributed pending independent source/contract review",
+    "preservation": "Original s02 verification bytes retain the initial expected-status field; no author source repaired or score changed."
+  },
+  "adjudication": {
+    "status": "controller expectation unsupported; no author defect",
+    "applies_to": [
+      "s02",
+      "s05"
+    ],
+    "reason": "The original CLI contract assigns status 2 to invalid usage. Both candidates reject a negative positional limit before opening input or output, preserving the library requirement independently. No requirement forces CLI argument rejection to be an operation failure.",
+    "independent_review": "blind-review/report.md, m03; original base README remains authoritative",
+    "preservation": "Original controller code and per-sample verification bytes retain expected_status=1. Source, checks and grades were not repaired or silently replaced."
+  }
+}

@@ -1,0 +1,171 @@
+{
+  "scope": [
+    "m06",
+    "m07"
+  ],
+  "supplemental_scope_recorded_after_initial_freeze": true,
+  "initial_outputs_unchanged": true,
+  "source_inputs_unchanged": true,
+  "scope_rule": "Only specified supplemental base/module/task/probe files were assessed; no other candidate, author reports, guidance catalogs, maps or prior external conclusions were read.",
+  "interpretation": "Changeset review against original base README plus task. New documentation and supplied tests are evidence, not replacement requirements.",
+  "modules": [
+    {
+      "module": "m06",
+      "kind": "library",
+      "scope": "Supplied changeset m06/base -> m06/module; authoritative m06/base/README.md plus m06/task.txt; module example.com/entryzip, go 1.22, standard-library only, no build tags.",
+      "topics": {
+        "code_quality_and_idioms": {
+          "grade": "A",
+          "coverage": "Named error result, deferred ZIP completion, safe handling of arbitrary comparable/noncomparable caller errors, private output tracker, exact new API and source-compatible old API.",
+          "rationale": "No introduced actionable issue was substantiated. Relevant safeguards and supported behavior were verified by source inspection and independent checks; ordinary correct setup supports A without claiming A+.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m06/module/archive.go:27: one deferred archive.Close handles every ordinary return; the main loop filters before entry creation and has direct error guards.",
+            "m06/module/archive.go:28 and 57: the private archiveOutput.failed tracker earns its small amount of state. Standard ZIP buffering repeats a single output failure during Close; tracking the underlying failure keeps the original error object/type without comparing arbitrary error values or using reflection.",
+            "m06/module/archive.go:17: WriteArchive keeps its exact signature and delegates to WriteSelected with nil predicate. Entry fields are unchanged and only the required WriteSelected API was added."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "correctness_and_compatibility": {
+          "grade": "A",
+          "coverage": "Nil/non-nil predicate, filter-before-create/read, selected names/order/contents and duplicate names, valid empty archive, central-directory completion, creation/copy/completion failures, lone identity, independent causes, stopped later-body use and borrowed output/body ownership.",
+          "rationale": "No introduced actionable issue was substantiated. Relevant safeguards and supported behavior were verified by source inspection and independent checks; ordinary correct setup supports A without claiming A+.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m06/module/archive.go:43: rejected invalid-name and nil-body entries are skipped before ZIP Create/io.Copy; independent round trips verify selected duplicate names, payloads and original order.",
+            "m06/module/archive.go:31: a previously observed output error is treated as a repeated sticky cause; independent standard ZIP checks reproduce primary == Close error from one underlying Write. Completed-module tests preserve direct noncomparable caller error identity during both creation and body-copy output failure.",
+            "m06/module/archive.go:38: when a body fails before the output has failed, a new completion error is joined and errors.Is/As can inspect the independent body/completion causes. Independent checks cover body-only, completion-only, both, successful central directory, empty completion failure and creation plus completion failure.",
+            "m06/module/archive.go:30: completion is syntactically invoked exactly once in one defer; there is no Close on caller output/body readers. Independent observed resources remain open on success and error paths."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "security": {
+          "grade": "Not applicable",
+          "coverage": "The reviewed ZIP error/filtering change has no supplied untrusted extraction path or backend diagnostic boundary.",
+          "rationale": "No broader exposure inference was requested or needed; no security finding is substantiated within this write-only library scope."
+        }
+      },
+      "testing_observations": "The supplied consumer tests protect function-value compatibility, filter-before-create behavior using an invalid ZIP name, central-directory readability, ownership, independent failures and noncomparable error identity. Large deterministic random input makes output failure happen during copy instead of only at final flush. Independent tests separately verify stdlib sticky-error behavior, lone identity, new completion failure after body failure, exact selected contents/order and creation plus completion. No test result is used to override the original requirements.",
+      "declined_behaviors": [
+        {
+          "behavior": "Always errors.Join(processing, completion), including repeated sticky output failure",
+          "reason": "That would wrap a lone caller failure and break the explicit direct-identity contract. The small output tracker is necessary evidence-based complexity, not gratuitous infrastructure."
+        },
+        {
+          "behavior": "Compare arbitrary errors directly or deduplicate by diagnostic text",
+          "reason": "Backend/body/output errors may be noncomparable and different failures can share text. The implementation records the actual output failure stage instead."
+        },
+        {
+          "behavior": "Close borrowed output or bodies, promise rollback/durability, sort or deduplicate ZIP entries",
+          "reason": "The original contract explicitly keeps resources borrowed, allows incomplete output and preserves selected names/content/order. Those changes would violate or expand the task."
+        },
+        {
+          "behavior": "Add writer factories, compressor registry, global hooks, completion interfaces or public error taxonomies",
+          "reason": "The supplied API requires only WriteSelected; standard ZIP Writer plus the local output-failure bit covers the specified behavior."
+        },
+        {
+          "behavior": "Require extraction path sanitization or arbitrary nil/panicking reader/predicate recovery",
+          "reason": "This is a write-only ZIP library with caller-provided names/readers/predicate. No untrusted extraction or recover-from-caller-panic contract is supplied."
+        },
+        {
+          "behavior": "Demand direct io.ErrShortWrite identity for a writer returning n < len(p) with nil error",
+          "reason": "That intentionally violates io.Writer and supplies no caller error identity. The entryzip contract specifically preserves lone caller-provided failures, not an added policy for errors synthesized from a nonconforming writer. Valid short writes with an actual caller error follow the tracker path."
+        }
+      ]
+    },
+    {
+      "module": "m07",
+      "kind": "library and CLI",
+      "scope": "Supplied changeset m07/base -> m07/module; authoritative m07/base/README.md plus m07/task.txt; module example.com/lineexport, go 1.22, standard-library only, no build tags.",
+      "topics": {
+        "code_quality_and_idioms": {
+          "grade": "A",
+          "coverage": "Small delegated Export/ExportLimit flow, named return with deferred Close, conditional joining, negative-value context, short-write handling, original CLI structure and public API size.",
+          "rationale": "No introduced actionable issue was substantiated. Relevant safeguards and supported behavior were verified by source inspection and independent checks; ordinary correct setup supports A without claiming A+.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m07/module/export.go:23: named-result finalization keeps single failures unchanged and joins only when an operation and Close both fail; nil success is a literal nil error interface.",
+            "m07/module/export.go:12: the original Export function type is unchanged; the exact required ExportLimit signature adds the limit without an options or public sentinel mechanism.",
+            "m07/module/export.go:38: one loop condition expresses unlimited/bounded iteration; failure guards preserve the accepted count and keep the success path clear."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "correctness_and_compatibility": {
+          "grade": "A",
+          "coverage": "Unlimited/zero/positive/negative limits, empty/unterminated records, accepted counts and partial output, bytes delivered with errors, direct single-error identity, joined completion causes/types, Close once, borrowed reader, record-scan order, positional CLI paths, status/streams and validation file effects.",
+          "rationale": "No introduced actionable issue was substantiated. Relevant safeguards and supported behavior were verified by source inspection and independent checks; ordinary correct setup supports A without claiming A+.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m07/module/export.go:24: independent checks verify lone read/write/Close identity and original typed causes, joined operation/Close causes and retained counts; all returns close the owned writer once and leave the reader open.",
+            "m07/module/export.go:34 and 47: negative input rejects before Read/Write, and short writes do not count as accepted records. Independent ownership/limit checks verify these paths and record-aligned read ordering.",
+            "m07/module/cmd/lineexport/main.go:12: paths remain positional, including leading dashes; executed subprocess tests verify success 0 with no streams, operational errors 1 with stderr, invalid-argument status 2 and validation before file changes."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "security": {
+          "grade": "Not applicable",
+          "coverage": "No added protected-data boundary or backend diagnostics are supplied.",
+          "rationale": "No security exposure was inferred from normal locally controlled CLI I/O or retained Scanner behavior."
+        }
+      },
+      "testing_observations": "Function-value checks verify exact API compatibility. Supplied library tests exercise counts, partial writes, read-after-limit behavior, errors with returned bytes, typed completion causes, joined validation/Close failures and reader ownership. Executed real CLI tests cover status, stdout/stderr, dash-prefixed paths and output effects. Independent tests verify typed read error delivered with final unterminated bytes, direct operation identity, completion independence and negative-before-I/O behavior.",
+      "declined_behaviors": [
+        {
+          "behavior": "Call CLI negative LIMIT status 2 a defect because a proposed expectation uses 1",
+          "reason": "The original contract explicitly gives invalid usage status 2 and does not say a negative out-of-domain limit is an operational failure. The implementation rejects it before opening files. A status-by-convention argument or ambiguous probe cannot establish broken compatibility."
+        },
+        {
+          "behavior": "Require exact borrowed-reader byte position, no Scanner buffering or post-limit error reporting",
+          "reason": "The original implementation uses Scanner and its existing raw-byte read-ahead behavior. The implementation writes before advancing to another Scan and stops scanning on a reached limit. The wording about reading the next record does not unambiguously promise raw-byte consumption boundaries; new docs are not used to override the original."
+        },
+        {
+          "behavior": "Require no line cap or CRLF byte preservation",
+          "reason": "Those guarantees are absent from lineexport, and the original Scanner token limit/ScanLines behavior is retained."
+        },
+        {
+          "behavior": "Treat Write returning n > len(p) with nil error as a supported case",
+          "reason": "That violates io.Writer. The < short-write check covers valid counts; defending every invalid return is not a task requirement."
+        },
+        {
+          "behavior": "Add public invalid-limit classification, flag parsing, atomic output or extra abstractions",
+          "reason": "The required APIs and positional CLI are already met. Atomic publication is explicitly not promised, and flags would affect dash-prefixed paths."
+        },
+        {
+          "behavior": "Grade os.Exit skipping borrowed reader defer on failure as an introduced defect",
+          "reason": "This CLI behavior predates the changeset; the owned writer is already closed by ExportLimit. No changed reader-cleanup/failure contract is supplied."
+        }
+      ]
+    }
+  ],
+  "findings": [],
+  "grade_aggregation": "No averaged or overall grade.",
+  "limits": "All supplied supplemental base/module source and tests were inspected. Independent commands ran only in disposable copies with GOWORK=off, GOTOOLCHAIN=local and the requested GOCACHE, using Go 1.26.5 on darwin/arm64. Both base suites, complete author/supplied/independent race suites and vet passed; maintained Go sources have empty gofmt -d output. A native Go 1.22 matrix was not run; standard-library choices are compatible by inspected module/API use. staticcheck was unavailable in the recorded initial environment check and was not installed. No general vulnerability, extraction, dependency or performance audit was performed. The first six conclusions/files and all supplemental candidate inputs remain unchanged.",
+  "probe_evidence_manifest": "evidence/manifest.json",
+  "initial_failed_harness_limit": "The original failing m01/m04 independent harness file was overwritten in the disposable copy before preservation. It is not recoverable as an original file artifact. Initial failing command outputs, defect in test setup and the exact correction are recorded in frozen checks.json; only the executed corrected source is preserved. No reconstructed variant is labeled original.",
+  "completed_at_utc": "2026-10-03T21:33:45.246014+00:00",
+  "checks_sha256": "ddeccafbd01d86cb7725620f9cb71525f937f1b1029136a816447050bd944fce"
+}

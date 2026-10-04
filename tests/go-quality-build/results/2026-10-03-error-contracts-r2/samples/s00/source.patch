@@ -1,0 +1,199 @@
+--- a/README.md
++++ b/README.md
+@@ -1,8 +1,24 @@
+ # accountlookup
+-Go 1.22 library. Backend is an extension protocol; its diagnostics may contain
+-credentials or SQL. Service exposes ErrMissing directly for absent accounts:
+-existing callers use err == ErrMissing. All other backend failures are classified
+-as ErrUnavailable without exposing backend identity, type or sensitive text.
+-A nonempty value is usable only on success. Empty keys currently reach the backend.
+-The task adds ErrInvalidKey for blank keys and adds safe key/operation context to
+-unavailable failures. Preserve existing error contracts and keep the public API.
++
++Go 1.22 account lookup library. `Service.Lookup` rejects empty and Unicode
++whitespace-only keys with `ErrInvalidKey` before calling `Backend`. Nonblank keys
++are passed through unchanged.
++
++Missing accounts return `ErrMissing` directly, preserving `err == ErrMissing`.
++Other backend failures wrap `ErrUnavailable` with the lookup operation and quoted
++key. Backend error identity, types, and diagnostics remain private. Key control
++characters are escaped in the context. Use the returned value only if `err == nil`.
++
++```go
++value, err := service.Lookup(key)
++switch {
++case err == nil:
++    // Use value.
++case err == accountlookup.ErrMissing:
++    // Account does not exist.
++case errors.Is(err, accountlookup.ErrInvalidKey):
++    // Supply a nonblank key.
++case errors.Is(err, accountlookup.ErrUnavailable):
++    // Backend lookup failed; err contains safe operation and key context.
++}
++```
+--- a/lookup.go
++++ b/lookup.go
+@@ -1,21 +1,35 @@
+ package accountlookup
+ 
+-import "errors"
++import (
++	"errors"
++	"fmt"
++	"strings"
++)
+ 
+ var ErrMissing = errors.New("account missing")
+ var ErrUnavailable = errors.New("account unavailable")
+ var BackendMissing = errors.New("backend missing")
+ 
++// ErrInvalidKey indicates an empty or whitespace-only account key.
++var ErrInvalidKey = errors.New("invalid account key")
++
+ type Backend interface{ Find(string) (string, error) }
+ type Service struct{ Backend Backend }
+ 
++// Lookup returns an account for key, passing nonblank keys to Backend unchanged.
++// Blank keys return ErrInvalidKey without calling Backend. Missing accounts return
++// ErrMissing directly; other backend failures wrap ErrUnavailable with safe context.
++// The returned value is usable only when the error is nil.
+ func (s Service) Lookup(key string) (string, error) {
++	if strings.TrimSpace(key) == "" {
++		return "", ErrInvalidKey
++	}
+ 	value, err := s.Backend.Find(key)
+ 	if errors.Is(err, BackendMissing) {
+ 		return "", ErrMissing
+ 	}
+ 	if err != nil {
+-		return "", ErrUnavailable
++		return "", fmt.Errorf("lookup account %q: %w", key, ErrUnavailable)
+ 	}
+ 	return value, nil
+ }
+--- /dev/null
++++ b/lookup_contract_test.go
+@@ -0,0 +1,122 @@
++package accountlookup_test
++
++import (
++	"errors"
++	"fmt"
++	"strings"
++	"testing"
++
++	"example.com/accountlookup"
++)
++
++type backendFunc func(string) (string, error)
++
++func (f backendFunc) Find(key string) (string, error) { return f(key) }
++
++func TestLookupRejectsBlankKey(t *testing.T) {
++	for _, key := range []string{"", " ", "\t\r\n", "\u00a0\u2003"} {
++		t.Run(fmt.Sprintf("%q", key), func(t *testing.T) {
++			called := false
++			s := accountlookup.Service{Backend: backendFunc(func(string) (string, error) {
++				called = true
++				return "account", nil
++			})}
++			value, err := s.Lookup(key)
++			if !errors.Is(err, accountlookup.ErrInvalidKey) {
++				t.Errorf("error = %v, want ErrInvalidKey classification", err)
++			}
++			if value != "" {
++				t.Errorf("value = %q, want empty on failure", value)
++			}
++			if called {
++				t.Error("blank key reached backend")
++			}
++		})
++	}
++}
++
++func TestLookupPreservesNonblankKey(t *testing.T) {
++	for _, key := range []string{"u", " u ", "\u00a0u\u2003"} {
++		t.Run(fmt.Sprintf("%q", key), func(t *testing.T) {
++			calls := 0
++			s := accountlookup.Service{Backend: backendFunc(func(got string) (string, error) {
++				calls++
++				if got != key {
++					t.Errorf("backend key = %q, want %q", got, key)
++				}
++				return "account", nil
++			})}
++			value, err := s.Lookup(key)
++			if value != "account" || err != nil {
++				t.Errorf("Lookup = (%q, %v), want (account, nil)", value, err)
++			}
++			if calls != 1 {
++				t.Errorf("backend calls = %d, want 1", calls)
++			}
++		})
++	}
++}
++
++func TestLookupMissingIdentity(t *testing.T) {
++	for _, backendErr := range []error{
++		accountlookup.BackendMissing,
++		fmt.Errorf("private SQL: %w", accountlookup.BackendMissing),
++		errors.Join(errors.New("private password"), accountlookup.BackendMissing),
++	} {
++		s := accountlookup.Service{Backend: backendFunc(func(string) (string, error) {
++			return "partial account", backendErr
++		})}
++		value, err := s.Lookup("u")
++		if err != accountlookup.ErrMissing {
++			t.Errorf("error = %v, want ErrMissing identity", err)
++		}
++		if value != "" {
++			t.Errorf("value = %q, want empty on failure", value)
++		}
++	}
++}
++
++type backendFailure struct{}
++
++func (*backendFailure) Error() string { return "password=secret; SELECT account" }
++
++type noncomparableFailure []string
++
++func (noncomparableFailure) Error() string { return "password=secret; SELECT account" }
++
++func TestLookupUnavailableContextAndIsolation(t *testing.T) {
++	for _, backendErr := range []error{
++		&backendFailure{},
++		noncomparableFailure{"private"},
++		fmt.Errorf("backend wrapper: %w", &backendFailure{}),
++	} {
++		s := accountlookup.Service{Backend: backendFunc(func(string) (string, error) {
++			return "partial account", backendErr
++		})}
++		key := "u\n\"admin"
++		value, err := s.Lookup(key)
++		if !errors.Is(err, accountlookup.ErrUnavailable) {
++			t.Fatalf("error = %v, want ErrUnavailable classification", err)
++		}
++		if value != "" {
++			t.Errorf("value = %q, want empty on failure", value)
++		}
++		if !strings.Contains(err.Error(), "lookup") || !strings.Contains(err.Error(), `"u\n\"admin"`) {
++			t.Errorf("error = %q, want operation and quoted key context", err)
++		}
++		if strings.Contains(err.Error(), "secret") || strings.Contains(err.Error(), "SELECT") || strings.ContainsAny(err.Error(), "\r\n") {
++			t.Errorf("error exposes sensitive diagnostics or raw line breaks: %q", err)
++		}
++		if errors.Is(err, backendErr) {
++			t.Errorf("error exposes backend identity: %v", err)
++		}
++		var typed *backendFailure
++		if errors.As(err, &typed) {
++			t.Errorf("error exposes backend type: %T", typed)
++		}
++		var noncomparable noncomparableFailure
++		if errors.As(err, &noncomparable) {
++			t.Errorf("error exposes backend type: %T", noncomparable)
++		}
++	}
++}

@@ -1,0 +1,158 @@
+{
+  "selected_skills": [
+    "go-api-contracts",
+    "go-behavior-tests",
+    "go-interfaces-and-composition",
+    "go-names-and-comments",
+    "go-test-isolation",
+    "go-core-style",
+    "superpowers:test-driven-development",
+    "superpowers:verification-before-completion"
+  ],
+  "opened_guidance": [
+    "/Users/jb/.codex/RTK.md",
+    "/Users/jb/.agents/skills/superpowers/using-superpowers/SKILL.md",
+    "/Users/jb/.agents/skills/golang/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/test-driven-development/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/test-driven-development/writing-good-tests.md",
+    "/Users/jb/.agents/skills/superpowers/verification-before-completion/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s12/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s12/guidance/go-behavior-tests/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s12/guidance/go-behavior-tests/references/behavior-observations.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s12/guidance/go-interfaces-and-composition/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s12/guidance/go-names-and-comments/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s12/guidance/go-test-isolation/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/requesting-code-review/SKILL.md"
+  ],
+  "global_process_style_skills_read": [
+    {
+      "name": "superpowers:using-superpowers",
+      "applied": false,
+      "reason": "The skill explicitly stops for a dispatched subagent."
+    },
+    {
+      "name": "go-core-style",
+      "applied": true
+    },
+    {
+      "name": "superpowers:test-driven-development",
+      "applied": true
+    },
+    {
+      "name": "superpowers:verification-before-completion",
+      "applied": true
+    },
+    {
+      "name": "superpowers:requesting-code-review",
+      "applied": false,
+      "reason": "Inspected; this small assigned change does not involve the mandatory major-feature or merge workflow. Review focus was supplied to the parent."
+    }
+  ],
+  "implementation_notes": [
+    "Added WriteSelected(io.Writer, []Entry, func(string) bool) error; nil includes all, rejected entries are filtered before creation or body access, and selected names/contents/order remain intact.",
+    "WriteArchive retains its exact function type and delegates to WriteSelected with nil.",
+    "One deferred ZIP Close runs on every return path. A lone processing or completion error is returned directly; independent causes are joined with errors.Join.",
+    "The private archiveOutput wrapper records output failure before completion. ZIP's sticky buffered output failure is returned directly when Close repeats it, without comparing arbitrary error interface values.",
+    "Borrowed bodies and output are never closed. README and Godoc explain completion, ownership, partial output and lack of rollback/durability.",
+    "Consumer-package tests cover filtering of an invalid name and unreadable/nil skipped bodies, duplicates, ordering, empty archives, nil predicates, signature compatibility, error combinations, early stop, completion after creation failure, borrowed-resource ownership, typed non-comparable errors, and writer failures during creation/copy.",
+    "Verified intended red failures before implementation/filtering and used a temporary mutation to prove the non-comparable lone-body identity assertion. Mutation was restored before the final passing full suite.",
+    "Retained go 1.22 and standard-library-only dependencies."
+  ],
+  "checks": [
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go version",
+      "exit_code": 0,
+      "output": "go version go1.26.5 darwin/arm64\n"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test ./...",
+      "exit_code": 0,
+      "output": "ok  \texample.com/entryzip\t0.202s\n"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test ./...",
+      "exit_code": 1,
+      "output": "--- FAIL: TestWriteArchiveErrors (0.00s)\n    --- FAIL: TestWriteArchiveErrors/completion (0.00s)\n        contract_test.go:46: write = <nil>, want original output error\n    --- FAIL: TestWriteArchiveErrors/both (0.00s)\n        contract_test.go:54: write = body failure, want both causes\n--- FAIL: TestWriteArchiveCreationFailure (0.00s)\n    contract_test.go:92: output writes = 3, want completion attempted once\nFAIL\nFAIL\texample.com/entryzip\t0.208s\nFAIL\n",
+      "context": "Pre-implementation regression run demonstrating ignored completion errors. The first run also exposed an overly strict oversized-name fixture write count, corrected before implementation."
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test ./...",
+      "exit_code": 1,
+      "output": "--- FAIL: TestWriteArchiveErrors (0.00s)\n    --- FAIL: TestWriteArchiveErrors/completion (0.00s)\n        contract_test.go:46: write = <nil>, want original output error\n    --- FAIL: TestWriteArchiveErrors/both (0.00s)\n        contract_test.go:54: write = body failure, want both causes\nFAIL\nFAIL\texample.com/entryzip\t0.162s\nFAIL\n",
+      "context": "Pre-implementation regression run demonstrating ignored completion errors. The first run also exposed an overly strict oversized-name fixture write count, corrected before implementation."
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test ./...",
+      "exit_code": 0,
+      "output": "ok  \texample.com/entryzip\t0.171s\n"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test ./...",
+      "exit_code": 1,
+      "output": "# example.com/entryzip_test [example.com/entryzip.test]\n./contract_test.go:21:19: undefined: entryzip.WriteSelected\n./contract_test.go:35:18: undefined: entryzip.WriteSelected\n./contract_test.go:59:85: undefined: entryzip.WriteSelected\n./contract_test.go:87:21: undefined: entryzip.WriteSelected\n./contract_test.go:103:84: undefined: entryzip.WriteSelected\nFAIL\texample.com/entryzip [build failed]\nFAIL\n",
+      "context": "Expected red run before adding the exported WriteSelected signature."
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -run '^TestWriteSelected$' ./...",
+      "exit_code": 1,
+      "output": "--- FAIL: TestWriteSelected (0.00s)\n    contract_test.go:40: zip: FileHeader.Name too long\nFAIL\nFAIL\texample.com/entryzip\t0.224s\nFAIL\n",
+      "context": "Expected filtering failure with a temporary forwarding-only WriteSelected stub."
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test ./...",
+      "exit_code": 0,
+      "output": "ok  \texample.com/entryzip\t0.175s\n"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -run '^TestNonComparableBodyError$' ./...",
+      "exit_code": 0,
+      "output": "ok  \texample.com/entryzip\t0.179s\n"
+    },
+    {
+      "command": "rtk proxy gofmt -s -w archive.go archive_test.go contract_test.go",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache staticcheck ./...",
+      "exit_code": 127,
+      "output": "env: staticcheck: No such file or directory\n"
+    },
+    {
+      "command": "rtk proxy gofmt -l archive.go archive_test.go contract_test.go",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go vet ./...",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v -race ./...",
+      "output": "=== RUN   TestWriteArchive\n--- PASS: TestWriteArchive (0.00s)\n=== RUN   TestWriteArchiveErrors\n=== RUN   TestWriteArchiveErrors/success\n=== RUN   TestWriteArchiveErrors/body\n=== RUN   TestWriteArchiveErrors/completion\n=== RUN   TestWriteArchiveErrors/both\n--- PASS: TestWriteArchiveErrors (0.00s)\n    --- PASS: TestWriteArchiveErrors/success (0.00s)\n    --- PASS: TestWriteArchiveErrors/body (0.00s)\n    --- PASS: TestWriteArchiveErrors/completion (0.00s)\n    --- PASS: TestWriteArchiveErrors/both (0.00s)\n=== RUN   TestWriteSelectedErrors\n=== RUN   TestWriteSelectedErrors/success\n=== RUN   TestWriteSelectedErrors/body\n=== RUN   TestWriteSelectedErrors/completion\n=== RUN   TestWriteSelectedErrors/both\n--- PASS: TestWriteSelectedErrors (0.00s)\n    --- PASS: TestWriteSelectedErrors/success (0.00s)\n    --- PASS: TestWriteSelectedErrors/body (0.00s)\n    --- PASS: TestWriteSelectedErrors/completion (0.00s)\n    --- PASS: TestWriteSelectedErrors/both (0.00s)\n=== RUN   TestWriteSelected\n--- PASS: TestWriteSelected (0.00s)\n=== RUN   TestArchiveDefaults\n=== RUN   TestArchiveDefaults/legacy\n=== RUN   TestArchiveDefaults/nil_predicate\n--- PASS: TestArchiveDefaults (0.00s)\n    --- PASS: TestArchiveDefaults/legacy (0.00s)\n    --- PASS: TestArchiveDefaults/nil_predicate (0.00s)\n=== RUN   TestWriteSelectedRejectsAll\n--- PASS: TestWriteSelectedRejectsAll (0.00s)\n=== RUN   TestNonComparableBodyError\n=== RUN   TestNonComparableBodyError/body_only\n=== RUN   TestNonComparableBodyError/body_and_completion\n--- PASS: TestNonComparableBodyError (0.00s)\n    --- PASS: TestNonComparableBodyError/body_only (0.00s)\n    --- PASS: TestNonComparableBodyError/body_and_completion (0.00s)\n=== RUN   TestOutputFailureDuringCopy\n=== RUN   TestOutputFailureDuringCopy/legacy\n=== RUN   TestOutputFailureDuringCopy/selected\n--- PASS: TestOutputFailureDuringCopy (0.01s)\n    --- PASS: TestOutputFailureDuringCopy/legacy (0.00s)\n    --- PASS: TestOutputFailureDuringCopy/selected (0.00s)\n=== RUN   TestWriteArchiveCreationFailure\n--- PASS: TestWriteArchiveCreationFailure (0.00s)\n=== RUN   TestWriteArchiveOutputErrorIdentity\n--- PASS: TestWriteArchiveOutputErrorIdentity (0.00s)\nPASS\nok  \texample.com/entryzip\t1.224s\n",
+      "exit_code": 0
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -run '^TestNonComparableBodyError/body_only$' ./...",
+      "exit_code": 1,
+      "output": "--- FAIL: TestNonComparableBodyError (0.00s)\n    --- FAIL: TestNonComparableBodyError/body_only (0.00s)\n        contract_test.go:117: write = *errors.joinError, want direct body error\nFAIL\nFAIL\texample.com/entryzip\t0.233s\nFAIL\n",
+      "context": "Temporary mutation joining a lone body error; production source restored immediately afterward."
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -run '^TestWriteSelectedErrors/(body|both)$' ./...",
+      "exit_code": 0,
+      "output": "ok  \texample.com/entryzip\t0.152s\n"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test ./...",
+      "exit_code": 0,
+      "output": "ok  \texample.com/entryzip\t0.249s\n"
+    }
+  ],
+  "material_limits": [
+    "The installed toolchain is Go 1.26.5; Go 1.22 runtime execution was not available. The module minimum remains Go 1.22 and the code uses APIs available by that version.",
+    "staticcheck was not installed and returned exit 127; no installation was performed.",
+    "I/O behavior was verified with actual archive/zip plus in-memory readers and controlled caller-writer failures. No durability or rollback is promised."
+  ]
+}

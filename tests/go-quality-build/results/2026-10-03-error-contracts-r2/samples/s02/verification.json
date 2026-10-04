@@ -1,0 +1,102 @@
+[
+  {
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": "ok  \texample.com/lineexport\t0.347s\nok  \texample.com/lineexport/cmd/lineexport\t0.524s\n",
+    "scope": "candidate"
+  },
+  {
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": "",
+    "scope": "candidate"
+  },
+  {
+    "command": [
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "exit_code": 0,
+    "output": "",
+    "scope": "candidate"
+  },
+  {
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "-run",
+      "TestContract",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": "ok  \texample.com/lineexport\t0.274s\nok  \texample.com/lineexport/cmd/lineexport\t0.145s [no tests to run]\n",
+    "scope": "held-contract-probes"
+  },
+  {
+    "command": [
+      "go",
+      "build",
+      "-o",
+      "/private/tmp/error-contract-replay-tf7ykma4/lineexport",
+      "./cmd/lineexport"
+    ],
+    "exit_code": 0,
+    "output": "",
+    "scope": "actual-cli-build"
+  },
+  {
+    "command": [
+      "/private/tmp/error-contract-replay-tf7ykma4/lineexport",
+      "-input",
+      "-output"
+    ],
+    "exit_code": 0,
+    "output": "",
+    "scope": "actual-cli",
+    "name": "success",
+    "expected_status": 0,
+    "output_bytes": "a\nb\n",
+    "expected_output": "a\nb\n"
+  },
+  {
+    "command": [
+      "/private/tmp/error-contract-replay-tf7ykma4/lineexport",
+      "-input",
+      "-output",
+      "2"
+    ],
+    "exit_code": 0,
+    "output": "",
+    "scope": "actual-cli",
+    "name": "limited",
+    "expected_status": 0,
+    "output_bytes": "a\nb\n",
+    "expected_output": "a\nb\n"
+  },
+  {
+    "command": [
+      "/private/tmp/error-contract-replay-tf7ykma4/lineexport",
+      "-input",
+      "-output",
+      "-1"
+    ],
+    "exit_code": 2,
+    "output": "usage: lineexport INPUT OUTPUT [LIMIT]\nLIMIT must be a non-negative integer\n",
+    "scope": "actual-cli",
+    "name": "negative",
+    "expected_status": 1,
+    "output_bytes": null,
+    "expected_output": ""
+  }
+]
