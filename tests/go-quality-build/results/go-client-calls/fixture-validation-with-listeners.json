@@ -1,0 +1,236 @@
+[
+  {
+    "case": "breaker-recovery",
+    "cmd": [
+      "gofmt",
+      "-w",
+      "client.go",
+      "client_test.go"
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "breaker-recovery",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/breaker-recovery\t0.176s\n"
+  },
+  {
+    "case": "breaker-recovery",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "breaker-recovery",
+    "cmd": "starter private probes",
+    "exit": 1,
+    "output": "--- FAIL: TestCanceledProbeDoesNotRecover (0.00s)\n    private_test.go:20: three failures did not open breaker\n--- FAIL: TestOldCompletionCannotChangeNewGeneration (0.00s)\n    private_test.go:35: old healthy completion changed current open generation\n--- FAIL: TestExcludedRejectionDoesNotResetFailures (0.00s)\n    private_test.go:40: excluded rejection reset eligible failure history\n--- FAIL: TestDisabledClientStaysMinimal (0.00s)\n    private_test.go:45: unbounded request\n    private_test.go:45: unbounded request\n    private_test.go:45: unbounded request\n    private_test.go:45: unbounded request\nFAIL\nFAIL\texample.invalid/breaker-recovery\t0.216s\nFAIL\n"
+  },
+  {
+    "case": "grpc-policy",
+    "cmd": [
+      "gofmt",
+      "-w",
+      "client.go",
+      "client_test.go"
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "grpc-policy",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/grpc-policy\t0.219s\n"
+  },
+  {
+    "case": "grpc-policy",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "grpc-policy",
+    "cmd": "starter private probes",
+    "exit": 1,
+    "output": "--- FAIL: TestDefaultNativePolicy (0.00s)\n    private_test.go:11: status=rpc error: code = Unavailable desc = lost reply executions=1 want 3\nFAIL\nFAIL\texample.invalid/grpc-policy\t0.248s\nFAIL\n"
+  },
+  {
+    "case": "grpc-transfer",
+    "cmd": [
+      "gofmt",
+      "-w",
+      "client.go",
+      "client_test.go"
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "grpc-transfer",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/grpc-transfer\t0.210s\n"
+  },
+  {
+    "case": "grpc-transfer",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "grpc-transfer",
+    "cmd": "starter private probes",
+    "exit": 1,
+    "output": "--- FAIL: TestTransferNativeReplayIdentity (0.03s)\n    private_test.go:7: identity/payload \"\" \"payload-9\"\n    private_test.go:7: identity/payload \"\" \"payload-9\"\n    private_test.go:7: identity/payload \"\" \"payload-9\"\n    private_test.go:15: executions=3 effects=3\n--- FAIL: TestTransferIdentitySurvivesOuterRetry (0.00s)\n    private_test.go:7: identity/payload \"\" \"payload-9\"\n    private_test.go:7: identity/payload \"\" \"payload-9\"\n    private_test.go:16: executions=2 effects=2\nFAIL\nFAIL\texample.invalid/grpc-transfer\t0.263s\nFAIL\n"
+  },
+  {
+    "case": "http-retry-budget",
+    "cmd": [
+      "gofmt",
+      "-w",
+      "client.go",
+      "client_test.go"
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "http-retry-budget",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/http-retry-budget\t0.183s\n"
+  },
+  {
+    "case": "http-retry-budget",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "http-retry-budget",
+    "cmd": "starter private probes",
+    "exit": 1,
+    "output": "--- FAIL: TestRetriesOnlyEligibleStatus (0.00s)\n    private_test.go:9: result \"\" HTTP 503 calls=1\n--- FAIL: TestBoundedResponseAndClosure (0.00s)\n    private_test.go:32: oversized response accepted: bytes=5000 err=<nil>\nFAIL\nFAIL\texample.invalid/http-retry-budget\t0.210s\nFAIL\n"
+  },
+  {
+    "case": "http-write-replay",
+    "cmd": [
+      "gofmt",
+      "-w",
+      "client.go",
+      "client_test.go"
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "http-write-replay",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/http-write-replay\t0.186s\n"
+  },
+  {
+    "case": "http-write-replay",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "http-write-replay",
+    "cmd": "starter private probes",
+    "exit": 1,
+    "output": "--- FAIL: TestIdentitySurvivesOuterRetry (0.00s)\n    private_test.go:21: identity/body \"\" \"complete-payload\"\n    private_test.go:21: identity/body \"\" \"complete-payload\"\n    private_test.go:29: outer retry result \"\" Post \"http://127.0.0.1:59220\": EOF\nFAIL\nFAIL\texample.invalid/http-write-replay\t0.219s\nFAIL\n"
+  },
+  {
+    "case": "pure-control",
+    "cmd": [
+      "gofmt",
+      "-w",
+      "client.go",
+      "client_test.go"
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "pure-control",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/pure-control\t0.130s\n"
+  },
+  {
+    "case": "pure-control",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "pure-control",
+    "cmd": "starter private probes",
+    "exit": 1,
+    "output": "--- FAIL: TestOnlyPositiveContributes (0.00s)\n    private_test.go:3: got -3 want 6\nFAIL\nFAIL\texample.invalid/pure-control\t0.184s\nFAIL\n"
+  }
+]

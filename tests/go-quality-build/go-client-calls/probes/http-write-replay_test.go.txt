@@ -1,0 +1,43 @@
+package client
+
+import (
+ "context"
+ "io"
+ "net/http"
+ "net/http/httptest"
+ "sync"
+ "sync/atomic"
+ "testing"
+)
+
+func TestIdentitySurvivesOuterRetry(t *testing.T) {
+ var mu sync.Mutex
+ effects, calls := 0, 0
+ seen := map[string]string{}
+ s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request) {
+  body,_:=io.ReadAll(r.Body)
+  mu.Lock(); defer mu.Unlock()
+  calls++
+  key:=r.Header.Get("Idempotency-Key")
+  if key!="op-7" || string(body)!="complete-payload" {t.Errorf("identity/body %q %q",key,body)}
+  if old,ok:=seen[key]; !ok || key=="" {effects++;seen[key]=string(body)} else if old!=string(body) {t.Error("payload changed")}
+  if calls<=3 {conn,_,err:=w.(http.Hijacker).Hijack();if err!=nil{t.Error(err);return};conn.Close();return}
+  w.Write([]byte("accepted"))
+ }))
+ defer s.Close()
+ _,_ = Submit(context.Background(),s.Client(),s.URL,"op-7",[]byte("complete-payload"),true)
+ got,err:=Submit(context.Background(),s.Client(),s.URL,"op-7",[]byte("complete-payload"),true)
+ if err!=nil || string(got)!="accepted" {t.Fatalf("outer retry result %q %v",got,err)}
+ mu.Lock();defer mu.Unlock()
+ if effects!=1 {t.Fatalf("effects=%d, want one logical effect",effects)}
+ if calls!=4 {t.Fatalf("calls=%d, want three then one",calls)}
+}
+
+func TestLostReplyWithoutDedupIsNotRepeated(t *testing.T) {
+ var calls atomic.Int32
+ s:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){calls.Add(1);if r.Header.Get("Idempotency-Key")!=""{t.Error("unsupported replay marker")};conn,_,_:=w.(http.Hijacker).Hijack();conn.Close()}))
+ defer s.Close()
+ _,err:=Submit(context.Background(),s.Client(),s.URL,"op-8",[]byte("x"),false)
+ if err==nil {t.Fatal("lost reply reported success")}
+ if calls.Load()!=1 {t.Fatalf("unsafe calls=%d",calls.Load())}
+}

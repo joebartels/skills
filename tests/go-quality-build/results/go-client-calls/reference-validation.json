@@ -1,0 +1,600 @@
+[
+  {
+    "case": "breaker-recovery",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/breaker-recovery\t0.711s\n"
+  },
+  {
+    "case": "breaker-recovery",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "breaker-recovery",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/breaker-recovery\t1.692s\n"
+  },
+  {
+    "case": "grpc-policy",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/grpc-policy\t0.254s\n"
+  },
+  {
+    "case": "grpc-policy",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "grpc-policy",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/grpc-policy\t1.332s\n"
+  },
+  {
+    "case": "grpc-transfer",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/grpc-transfer\t0.261s\n"
+  },
+  {
+    "case": "grpc-transfer",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "grpc-transfer",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/grpc-transfer\t1.306s\n"
+  },
+  {
+    "case": "http-retry-budget",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/http-retry-budget\t0.244s\n"
+  },
+  {
+    "case": "http-retry-budget",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "http-retry-budget",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/http-retry-budget\t1.270s\n"
+  },
+  {
+    "case": "http-write-replay",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/http-write-replay\t0.286s\n"
+  },
+  {
+    "case": "http-write-replay",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "http-write-replay",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "==================\nWARNING: DATA RACE\nRead at 0x00c0000127f8 by goroutine 38:\n  example.invalid/http-write-replay.TestLostReplyWithoutDedupIsNotRepeated()\n      /private/tmp/go-client-campaign/references/http-write-replay/private_test.go:41 +0x1f0\n  testing.tRunner()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164\n  testing.(*T).Run.gowrap1()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x34\n\nPrevious write at 0x00c0000127f8 by goroutine 41:\n  example.invalid/http-write-replay.TestLostReplyWithoutDedupIsNotRepeated.func1()\n      /private/tmp/go-client-campaign/references/http-write-replay/private_test.go:37 +0x4c\n  net/http.HandlerFunc.ServeHTTP()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/server.go:2286 +0x48\n  net/http.serverHandler.ServeHTTP()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/server.go:3311 +0x268\n  net/http.(*conn).serve()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/server.go:2073 +0x9b4\n  net/http.(*Server).Serve.gowrap3()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/server.go:3464 +0x40\n\nGoroutine 38 (running) created at:\n  testing.(*T).Run()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x7bc\n  testing.runTests.func1()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2585 +0x74\n  testing.tRunner()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0x164\n  testing.runTests()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2583 +0x7a0\n  testing.(*M).Run()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2443 +0xb38\n  main.main()\n      _testmain.go:50 +0x100\n\nGoroutine 41 (finished) created at:\n  net/http.(*Server).Serve()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/server.go:3464 +0x5e8\n  net/http/httptest.(*Server).goServe.func1()\n      /opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:341 +0x98\n==================\n--- FAIL: TestLostReplyWithoutDedupIsNotRepeated (0.00s)\n    testing.go:1712: race detected during execution of test\nFAIL\nFAIL\texample.invalid/http-write-replay\t0.250s\nFAIL\n"
+  },
+  {
+    "case": "pure-control",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/pure-control\t0.178s\n"
+  },
+  {
+    "case": "pure-control",
+    "kind": "reference",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "breaker-recovery",
+    "kind": "reference",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "dyld[88996]: missing LC_UUID load command in /private/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-build1001139273/b001/breaker-recovery.test\ndyld[88996]: missing LC_UUID load command\nsignal: abort trap\nFAIL\texample.invalid/breaker-recovery\t0.172s\nFAIL\n"
+  },
+  {
+    "case": "breaker-recovery",
+    "kind": "reference",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "grpc-policy",
+    "kind": "reference",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "dyld[89458]: missing LC_UUID load command in /private/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-build4168865455/b001/grpc-policy.test\ndyld[89458]: missing LC_UUID load command\nsignal: abort trap\nFAIL\texample.invalid/grpc-policy\t0.217s\nFAIL\n"
+  },
+  {
+    "case": "grpc-policy",
+    "kind": "reference",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "grpc-transfer",
+    "kind": "reference",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "dyld[89673]: missing LC_UUID load command in /private/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-build2088398105/b001/grpc-transfer.test\ndyld[89673]: missing LC_UUID load command\nsignal: abort trap\nFAIL\texample.invalid/grpc-transfer\t0.224s\nFAIL\n"
+  },
+  {
+    "case": "grpc-transfer",
+    "kind": "reference",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "http-retry-budget",
+    "kind": "reference",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "dyld[89762]: missing LC_UUID load command in /private/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-build926200153/b001/http-retry-budget.test\ndyld[89762]: missing LC_UUID load command\nsignal: abort trap\nFAIL\texample.invalid/http-retry-budget\t0.192s\nFAIL\n"
+  },
+  {
+    "case": "http-retry-budget",
+    "kind": "reference",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "http-write-replay",
+    "kind": "reference",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "dyld[89852]: missing LC_UUID load command in /private/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-build696889577/b001/http-write-replay.test\ndyld[89852]: missing LC_UUID load command\nsignal: abort trap\nFAIL\texample.invalid/http-write-replay\t0.209s\nFAIL\n"
+  },
+  {
+    "case": "http-write-replay",
+    "kind": "reference",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "pure-control",
+    "kind": "reference",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "-timeout=15s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/pure-control\t0.176s\n"
+  },
+  {
+    "case": "pure-control",
+    "kind": "reference",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "breaker-recovery",
+    "kind": "starter",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "dyld[90024]: missing LC_UUID load command in /private/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-build3759005553/b001/breaker-recovery.test\ndyld[90024]: missing LC_UUID load command\nsignal: abort trap\nFAIL\texample.invalid/breaker-recovery\t0.204s\nFAIL\n"
+  },
+  {
+    "case": "breaker-recovery",
+    "kind": "starter",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "grpc-policy",
+    "kind": "starter",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "dyld[90118]: missing LC_UUID load command in /private/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-build2102861743/b001/grpc-policy.test\ndyld[90118]: missing LC_UUID load command\nsignal: abort trap\nFAIL\texample.invalid/grpc-policy\t0.223s\nFAIL\n"
+  },
+  {
+    "case": "grpc-policy",
+    "kind": "starter",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "grpc-transfer",
+    "kind": "starter",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "dyld[90198]: missing LC_UUID load command in /private/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-build3508941293/b001/grpc-transfer.test\ndyld[90198]: missing LC_UUID load command\nsignal: abort trap\nFAIL\texample.invalid/grpc-transfer\t0.228s\nFAIL\n"
+  },
+  {
+    "case": "grpc-transfer",
+    "kind": "starter",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "http-retry-budget",
+    "kind": "starter",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "dyld[90284]: missing LC_UUID load command in /private/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-build2871807167/b001/http-retry-budget.test\ndyld[90284]: missing LC_UUID load command\nsignal: abort trap\nFAIL\texample.invalid/http-retry-budget\t0.194s\nFAIL\n"
+  },
+  {
+    "case": "http-retry-budget",
+    "kind": "starter",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "http-write-replay",
+    "kind": "starter",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "dyld[90373]: missing LC_UUID load command in /private/var/folders/jt/s80drf_d19n1z3bdj2fzqyb40000gn/T/go-build3228603463/b001/http-write-replay.test\ndyld[90373]: missing LC_UUID load command\nsignal: abort trap\nFAIL\texample.invalid/http-write-replay\t0.199s\nFAIL\n"
+  },
+  {
+    "case": "http-write-replay",
+    "kind": "starter",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "pure-control",
+    "kind": "starter",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/pure-control\t0.173s\n"
+  },
+  {
+    "case": "pure-control",
+    "kind": "starter",
+    "cmd": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "http-write-replay",
+    "kind": "mutation",
+    "label": "wrong-identity",
+    "before": "req.Header.Set(\"Idempotency-Key\",operationID)",
+    "after": "req.Header.Set(\"Idempotency-Key\",\"regenerated\")",
+    "exit": 1,
+    "output": "--- FAIL: TestIdentitySurvivesOuterRetry (0.03s)\n    private_test.go:21: identity/body \"regenerated\" \"complete-payload\"\n    private_test.go:21: identity/body \"regenerated\" \"complete-payload\"\n    private_test.go:21: identity/body \"regenerated\" \"complete-payload\"\n    private_test.go:21: identity/body \"regenerated\" \"complete-payload\"\nFAIL\nFAIL\texample.invalid/http-write-replay\t0.245s\nFAIL\n"
+  },
+  {
+    "case": "http-write-replay",
+    "kind": "mutation",
+    "label": "unsafe-replay",
+    "before": "attempts:=1;if deduplicates{attempts=3}",
+    "after": "attempts:=3",
+    "exit": 1,
+    "output": "--- FAIL: TestLostReplyWithoutDedupIsNotRepeated (0.03s)\n    private_test.go:41: unsafe calls=3\nFAIL\nFAIL\texample.invalid/http-write-replay\t0.258s\nFAIL\n"
+  },
+  {
+    "case": "http-retry-budget",
+    "kind": "mutation",
+    "label": "overflow-as-zero",
+    "before": "return 0,true",
+    "after": "return 0,false",
+    "exit": 1,
+    "output": "--- FAIL: TestRetryAfterOverflowDoesNotRetryImmediately (0.00s)\n    private_test.go:15: overflow hint result HTTP 503:  calls=3\nFAIL\nFAIL\texample.invalid/http-retry-budget\t0.236s\nFAIL\n"
+  },
+  {
+    "case": "http-retry-budget",
+    "kind": "mutation",
+    "label": "budget-restart",
+    "before": "250*time.Millisecond",
+    "after": "2*time.Second",
+    "exit": 1,
+    "output": "--- FAIL: TestRetryHintCannotRestartBudget (1.00s)\n    private_test.go:21: hint result HTTP 429:  calls=2\nFAIL\nFAIL\texample.invalid/http-retry-budget\t1.233s\nFAIL\n"
+  },
+  {
+    "case": "grpc-policy",
+    "kind": "mutation",
+    "label": "disable-resolver",
+    "before": "base:=[]grpc.DialOption{",
+    "after": "base:=[]grpc.DialOption{grpc.WithDisableServiceConfig(),",
+    "exit": 1,
+    "output": "--- FAIL: TestResolverPolicyPrecedesDefault (0.01s)\n    private_test.go:19: resolver status=check: rpc error: code = Unavailable desc = lost reply executions=3 want 2\nFAIL\nFAIL\texample.invalid/grpc-policy\t0.246s\nFAIL\n"
+  },
+  {
+    "case": "grpc-policy",
+    "kind": "mutation",
+    "label": "committed-outer-replay",
+    "before": "if err!=nil{return fmt.Errorf(\"check: %w\",err)}",
+    "after": "if err!=nil{for i:=0;i<2;i++{_,err=grpc_health_v1.NewHealthClient(conn).Check(ctx,&grpc_health_v1.HealthCheckRequest{Service:service})};return fmt.Errorf(\"check: %w\",err)}",
+    "exit": 1,
+    "output": "--- FAIL: TestDefaultNativePolicy (0.05s)\n    private_test.go:11: status=check: rpc error: code = Unavailable desc = lost reply executions=9 want 3\n--- FAIL: TestCommittedRPCFailureIsNotReplayed (0.00s)\n    private_test.go:12: committed status=check: rpc error: code = Unavailable desc = lost reply executions=3 want 1\n--- FAIL: TestResolverPolicyPrecedesDefault (0.02s)\n    private_test.go:19: resolver status=check: rpc error: code = Unavailable desc = lost reply executions=6 want 2\nFAIL\nFAIL\texample.invalid/grpc-policy\t0.301s\nFAIL\n"
+  },
+  {
+    "case": "breaker-recovery",
+    "kind": "mutation",
+    "label": "business-as-success",
+    "before": "IsExcluded:func(err error)bool{var h healthFailure;return err!=nil&&!errors.As(err,&h)}",
+    "after": "IsSuccessful:func(err error)bool{var h healthFailure;return err==nil||!errors.As(err,&h)}",
+    "exit": 1,
+    "output": "--- FAIL: TestCanceledProbeDoesNotRecover (0.11s)\n    private_test.go:24: excluded probe recovered breaker or allowed concurrent recovery\n--- FAIL: TestOldCompletionCannotChangeNewGeneration (0.10s)\n    private_test.go:35: old healthy completion changed current open generation\n--- FAIL: TestExcludedRejectionDoesNotResetFailures (0.00s)\n    private_test.go:40: excluded rejection reset eligible failure history\nFAIL\nFAIL\texample.invalid/breaker-recovery\t0.420s\nFAIL\n"
+  },
+  {
+    "case": "breaker-recovery",
+    "kind": "mutation",
+    "label": "lost-state",
+    "before": "if !c.enabled{return work()}",
+    "after": "if c.enabled||!c.enabled{return work()}",
+    "exit": 1,
+    "output": "--- FAIL: TestCanceledProbeDoesNotRecover (0.00s)\n    private_test.go:20: three failures did not open breaker\n--- FAIL: TestOldCompletionCannotChangeNewGeneration (0.00s)\n    private_test.go:35: old healthy completion changed current open generation\n--- FAIL: TestExcludedRejectionDoesNotResetFailures (0.00s)\n    private_test.go:40: excluded rejection reset eligible failure history\nFAIL\nFAIL\texample.invalid/breaker-recovery\t0.209s\nFAIL\n"
+  },
+  {
+    "case": "pure-control",
+    "kind": "mutation",
+    "label": "sum-negatives",
+    "before": "if v>0{sum+=v}",
+    "after": "sum+=v",
+    "exit": 1,
+    "output": "--- FAIL: TestOnlyPositiveContributes (0.00s)\n    private_test.go:3: got -3 want 6\nFAIL\nFAIL\texample.invalid/pure-control\t0.169s\nFAIL\n"
+  },
+  {
+    "case": "grpc-transfer",
+    "kind": "mutation",
+    "label": "missing-identity",
+    "before": "md.Set(\"operation-id\",operationID)",
+    "after": "md.Set(\"operation-id\",\"new\")",
+    "exit": 1,
+    "output": "--- FAIL: TestTransferNativeReplayIdentity (0.02s)\n    private_test.go:7: identity/payload \"new\" \"payload-9\"\n    private_test.go:7: identity/payload \"new\" \"payload-9\"\n    private_test.go:7: identity/payload \"new\" \"payload-9\"\n--- FAIL: TestTransferIdentitySurvivesOuterRetry (0.00s)\n    private_test.go:7: identity/payload \"new\" \"payload-9\"\n    private_test.go:7: identity/payload \"new\" \"payload-9\"\nFAIL\nFAIL\texample.invalid/grpc-transfer\t0.258s\nFAIL\n"
+  }
+]

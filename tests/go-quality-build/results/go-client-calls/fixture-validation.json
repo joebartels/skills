@@ -1,0 +1,236 @@
+[
+  {
+    "case": "breaker-recovery",
+    "cmd": [
+      "gofmt",
+      "-w",
+      "client.go",
+      "client_test.go"
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "breaker-recovery",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "--- FAIL: TestExistingSuccess (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 35 [running]:\ntesting.tRunner.func1.2({0x104ba6a60, 0xfca9f614510})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x104ba6a60?, 0xfca9f614510?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x104c2be60, 0x104c28540})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.invalid/breaker-recovery.TestExistingSuccess(0xfca9f660488)\n\t/Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/go-client-calls/evals/files/breaker-recovery/client_test.go:11 +0x3c\ntesting.tRunner(0xfca9f660488, 0x104c284b8)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.invalid/breaker-recovery\t0.246s\nFAIL\n"
+  },
+  {
+    "case": "breaker-recovery",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "breaker-recovery",
+    "cmd": "starter private probes",
+    "exit": 1,
+    "output": "--- FAIL: TestExistingSuccess (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 19 [running]:\ntesting.tRunner.func1.2({0x100806b60, 0x1fc9c0f94510})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x100806b60?, 0x1fc9c0f94510?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x10088c780, 0x100888d40})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.invalid/breaker-recovery.TestExistingSuccess(0x1fc9c0fe0488)\n\t/private/tmp/go-client-campaign/checks/starter-breaker-recovery/client_test.go:11 +0x3c\ntesting.tRunner(0x1fc9c0fe0488, 0x100888cb0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.invalid/breaker-recovery\t0.206s\nFAIL\n"
+  },
+  {
+    "case": "grpc-policy",
+    "cmd": [
+      "gofmt",
+      "-w",
+      "client.go",
+      "client_test.go"
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "grpc-policy",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/grpc-policy\t0.231s\n"
+  },
+  {
+    "case": "grpc-policy",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "grpc-policy",
+    "cmd": "starter private probes",
+    "exit": 1,
+    "output": "--- FAIL: TestDefaultNativePolicy (0.00s)\n    private_test.go:11: status=rpc error: code = Unavailable desc = lost reply executions=1 want 3\nFAIL\nFAIL\texample.invalid/grpc-policy\t0.251s\nFAIL\n"
+  },
+  {
+    "case": "grpc-transfer",
+    "cmd": [
+      "gofmt",
+      "-w",
+      "client.go",
+      "client_test.go"
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "grpc-transfer",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/grpc-transfer\t0.246s\n"
+  },
+  {
+    "case": "grpc-transfer",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "grpc-transfer",
+    "cmd": "starter private probes",
+    "exit": 1,
+    "output": "--- FAIL: TestTransferNativeReplayIdentity (0.02s)\n    private_test.go:7: identity/payload \"\" \"payload-9\"\n    private_test.go:7: identity/payload \"\" \"payload-9\"\n    private_test.go:7: identity/payload \"\" \"payload-9\"\n    private_test.go:15: executions=3 effects=3\n--- FAIL: TestTransferIdentitySurvivesOuterRetry (0.00s)\n    private_test.go:7: identity/payload \"\" \"payload-9\"\n    private_test.go:7: identity/payload \"\" \"payload-9\"\n    private_test.go:16: executions=2 effects=2\nFAIL\nFAIL\texample.invalid/grpc-transfer\t0.254s\nFAIL\n"
+  },
+  {
+    "case": "http-retry-budget",
+    "cmd": [
+      "gofmt",
+      "-w",
+      "client.go",
+      "client_test.go"
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "http-retry-budget",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "--- FAIL: TestExistingSuccess (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 35 [running]:\ntesting.tRunner.func1.2({0x100642a60, 0xa0012894510})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x100642a60?, 0xa0012894510?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x1006c7e60, 0x1006c4540})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.invalid/http-retry-budget.TestExistingSuccess(0xa00128e0488)\n\t/Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/go-client-calls/evals/files/http-retry-budget/client_test.go:11 +0x3c\ntesting.tRunner(0xa00128e0488, 0x1006c44b8)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.invalid/http-retry-budget\t0.218s\nFAIL\n"
+  },
+  {
+    "case": "http-retry-budget",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "http-retry-budget",
+    "cmd": "starter private probes",
+    "exit": 1,
+    "output": "--- FAIL: TestExistingSuccess (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 7 [running]:\ntesting.tRunner.func1.2({0x102cd6ae0, 0x7fd6ea30e550})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x102cd6ae0?, 0x7fd6ea30e550?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x102d5c220, 0x102d58880})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.invalid/http-retry-budget.TestExistingSuccess(0x7fd6ea448488)\n\t/private/tmp/go-client-campaign/checks/starter-http-retry-budget/client_test.go:11 +0x3c\ntesting.tRunner(0x7fd6ea448488, 0x102d587e0)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.invalid/http-retry-budget\t0.203s\nFAIL\n"
+  },
+  {
+    "case": "http-write-replay",
+    "cmd": [
+      "gofmt",
+      "-w",
+      "client.go",
+      "client_test.go"
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "http-write-replay",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "--- FAIL: TestExistingSuccess (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 35 [running]:\ntesting.tRunner.func1.2({0x103296a60, 0x148c54394510})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x103296a60?, 0x148c54394510?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x10331be60, 0x103318540})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.invalid/http-write-replay.TestExistingSuccess(0x148c543e0488)\n\t/Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/go-client-calls/evals/files/http-write-replay/client_test.go:11 +0x3c\ntesting.tRunner(0x148c543e0488, 0x1033184b8)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.invalid/http-write-replay\t0.223s\nFAIL\n"
+  },
+  {
+    "case": "http-write-replay",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "http-write-replay",
+    "cmd": "starter private probes",
+    "exit": 1,
+    "output": "--- FAIL: TestExistingSuccess (0.00s)\npanic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted [recovered, repanicked]\n\ngoroutine 4 [running]:\ntesting.tRunner.func1.2({0x1008aab20, 0x3ea5eb462520})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1974 +0x1a0\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:1977 +0x318\npanic({0x1008aab20?, 0x3ea5eb462520?})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/runtime/panic.go:860 +0x12c\nnet/http/httptest.newLocalListener()\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:72 +0xd4\nnet/http/httptest.NewUnstartedServer(...)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:120\nnet/http/httptest.NewServer({0x100930640, 0x10092ccd0})\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/net/http/httptest/server.go:107 +0x28\nexample.invalid/http-write-replay.TestExistingSuccess(0x3ea5eb59c488)\n\t/private/tmp/go-client-campaign/checks/starter-http-write-replay/client_test.go:11 +0x3c\ntesting.tRunner(0x3ea5eb59c488, 0x10092cc38)\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2036 +0xc4\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.26.5/libexec/src/testing/testing.go:2101 +0x3a8\nFAIL\texample.invalid/http-write-replay\t0.204s\nFAIL\n"
+  },
+  {
+    "case": "pure-control",
+    "cmd": [
+      "gofmt",
+      "-w",
+      "client.go",
+      "client_test.go"
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "pure-control",
+    "cmd": [
+      "go",
+      "test",
+      "-mod=mod",
+      "-count=1",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/pure-control\t0.171s\n"
+  },
+  {
+    "case": "pure-control",
+    "cmd": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "case": "pure-control",
+    "cmd": "starter private probes",
+    "exit": 1,
+    "output": "--- FAIL: TestOnlyPositiveContributes (0.00s)\n    private_test.go:3: got -3 want 6\nFAIL\nFAIL\texample.invalid/pure-control\t0.175s\nFAIL\n"
+  }
+]
