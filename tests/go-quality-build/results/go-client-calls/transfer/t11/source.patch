@@ -1,0 +1,380 @@
+diff --git a/client.go b/client.go
+index bab13421481a79eedff143e8ef156f9ec3f35418..9f440f27a3317ea4ee557f90f2428c12a8f2be91 100644
+--- a/client.go
++++ b/client.go
+@@ -2,11 +2,31 @@ package client
+ 
+ import (
+ 	"context"
++	"time"
++
+ 	"google.golang.org/grpc"
++	"google.golang.org/grpc/codes"
+ 	pb "google.golang.org/grpc/interop/grpc_testing"
++	"google.golang.org/grpc/metadata"
++	"google.golang.org/grpc/status"
+ )
+ 
++// Commit submits payload under a nonempty operationID using the borrowed conn.
++// It has a 500ms total budget, subject to the caller's earlier deadline.
++// A failed acknowledgement may follow an effect; callers can repeat the same
++// identity and payload under the server's deduplication contract.
+ func Commit(ctx context.Context, conn *grpc.ClientConn, operationID string, payload []byte) ([]byte, error) {
++	if operationID == "" {
++		return nil, status.Error(codes.InvalidArgument, "operationID must not be empty")
++	}
++	ctx, cancel := context.WithTimeout(ctx, 500*time.Millisecond)
++	defer cancel()
++	md, _ := metadata.FromOutgoingContext(ctx)
++	if md == nil {
++		md = metadata.MD{}
++	}
++	md.Set("operation-id", operationID)
++	ctx = metadata.NewOutgoingContext(ctx, md)
+ 	r, err := pb.NewTestServiceClient(conn).UnaryCall(ctx, &pb.SimpleRequest{Payload: &pb.Payload{Body: payload}})
+ 	if err != nil {
+ 		return nil, err
+diff --git a/commit_behavior_test.go b/commit_behavior_test.go
+new file mode 100644
+index 0000000000000000000000000000000000000000..d33f6c0559259db71b80d822191cd07a08816aab
+--- /dev/null
++++ b/commit_behavior_test.go
+@@ -0,0 +1,338 @@
++package client_test
++
++import (
++	"bytes"
++	"context"
++	"net"
++	"reflect"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	client "example.invalid/grpc-transfer"
++	"google.golang.org/grpc"
++	"google.golang.org/grpc/codes"
++	"google.golang.org/grpc/credentials/insecure"
++	pb "google.golang.org/grpc/interop/grpc_testing"
++	"google.golang.org/grpc/metadata"
++	"google.golang.org/grpc/status"
++	"google.golang.org/grpc/test/bufconn"
++)
++
++var _ func(context.Context, *grpc.ClientConn, string, []byte) ([]byte, error) = client.Commit
++
++const retryConfig = `{"methodConfig":[{"name":[{"service":"grpc.testing.TestService","method":"UnaryCall"}],"retryPolicy":{"maxAttempts":3,"initialBackoff":"0.001s","maxBackoff":"0.001s","backoffMultiplier":1,"retryableStatusCodes":["UNAVAILABLE"]}}]}`
++
++type unaryServer struct {
++	pb.UnimplementedTestServiceServer
++	call func(context.Context, *pb.SimpleRequest) (*pb.SimpleResponse, error)
++}
++
++func (s unaryServer) UnaryCall(ctx context.Context, req *pb.SimpleRequest) (*pb.SimpleResponse, error) {
++	return s.call(ctx, req)
++}
++
++func newConn(t *testing.T, call func(context.Context, *pb.SimpleRequest) (*pb.SimpleResponse, error), opts ...grpc.DialOption) *grpc.ClientConn {
++	t.Helper()
++	listener := bufconn.Listen(1 << 20)
++	t.Cleanup(func() { listener.Close() })
++	server := grpc.NewServer()
++	pb.RegisterTestServiceServer(server, unaryServer{call: call})
++	served := make(chan error, 1)
++	go func() { served <- server.Serve(listener) }()
++	t.Cleanup(func() {
++		server.Stop()
++		select {
++		case err := <-served:
++			if err != nil && err != grpc.ErrServerStopped {
++				t.Errorf("serve: %v", err)
++			}
++		case <-time.After(3 * time.Second):
++			t.Error("server did not stop")
++		}
++	})
++	opts = append([]grpc.DialOption{
++		grpc.WithTransportCredentials(insecure.NewCredentials()),
++		grpc.WithContextDialer(func(ctx context.Context, _ string) (net.Conn, error) {
++			return listener.DialContext(ctx)
++		}),
++		grpc.WithBlock(),
++	}, opts...)
++	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
++	defer cancel()
++	conn, err := grpc.DialContext(ctx, "passthrough:///local", opts...)
++	if err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(func() { conn.Close() })
++	return conn
++}
++
++type requestObservation struct {
++	md   metadata.MD
++	body []byte
++}
++
++func observeRequest(ctx context.Context, req *pb.SimpleRequest) requestObservation {
++	md, _ := metadata.FromIncomingContext(ctx)
++	return requestObservation{md: md, body: bytes.Clone(req.GetPayload().GetBody())}
++}
++
++func checkRequest(t *testing.T, observed requestObservation, identity string, payload []byte) {
++	t.Helper()
++	if got := observed.md.Get("operation-id"); !reflect.DeepEqual(got, []string{identity}) {
++		t.Errorf("operation-id = %q, want [%q]", got, identity)
++	}
++	if !bytes.Equal(observed.body, payload) {
++		t.Errorf("request body = %v, want %v", observed.body, payload)
++	}
++}
++
++func TestCommitPayloadMetadataAndBorrowedConnection(t *testing.T) {
++	observed := make(chan requestObservation, 2)
++	result := []byte{9, 0, 8}
++	conn := newConn(t, func(ctx context.Context, req *pb.SimpleRequest) (*pb.SimpleResponse, error) {
++		observed <- observeRequest(ctx, req)
++		return &pb.SimpleResponse{Payload: &pb.Payload{Body: result}}, nil
++	})
++	ctx := metadata.NewOutgoingContext(context.Background(), metadata.Pairs("operation-id", "stale", "trace-id", "base"))
++	ctx = metadata.AppendToOutgoingContext(ctx, "trace-id", "appended")
++	before, _ := metadata.FromOutgoingContext(ctx)
++	payload := []byte{0, 1, 255}
++	for _, identity := range []string{"op-1", "op-2"} {
++		got, err := client.Commit(ctx, conn, identity, payload)
++		if err != nil || !bytes.Equal(got, result) {
++			t.Fatalf("Commit = %v, %v; want %v, nil", got, err, result)
++		}
++		request := <-observed
++		checkRequest(t, request, identity, payload)
++		if got := request.md.Get("trace-id"); !reflect.DeepEqual(got, []string{"base", "appended"}) {
++			t.Errorf("trace-id = %q, want [base appended]", got)
++		}
++	}
++	after, _ := metadata.FromOutgoingContext(ctx)
++	if !reflect.DeepEqual(after, before) {
++		t.Errorf("caller metadata changed: got %v, want %v", after, before)
++	}
++}
++
++func TestCommitRejectsEmptyIdentityBeforeCalling(t *testing.T) {
++	got, err := client.Commit(context.Background(), nil, "", []byte("payload"))
++	if got != nil || status.Code(err) != codes.InvalidArgument {
++		t.Fatalf("Commit = %v, %v; want nil, InvalidArgument", got, err)
++	}
++}
++
++func TestCommitConnectionRetryPolicy(t *testing.T) {
++	for _, tc := range []struct {
++		name     string
++		opts     []grpc.DialOption
++		code     codes.Code
++		attempts int32
++		wantCode codes.Code
++	}{
++		{"no configured retry", nil, codes.Unavailable, 1, codes.Unavailable},
++		{"configured retry", []grpc.DialOption{grpc.WithDefaultServiceConfig(retryConfig)}, codes.Unavailable, 2, codes.OK},
++		{"disabled retry", []grpc.DialOption{grpc.WithDefaultServiceConfig(retryConfig), grpc.WithDisableRetry()}, codes.Unavailable, 1, codes.Unavailable},
++		{"nonretryable status", []grpc.DialOption{grpc.WithDefaultServiceConfig(retryConfig)}, codes.PermissionDenied, 1, codes.PermissionDenied},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			var attempts, invocations atomic.Int32
++			observed := make(chan requestObservation, 3)
++			result := []byte("stored result")
++			opts := append(tc.opts, grpc.WithUnaryInterceptor(func(ctx context.Context, method string, req, reply any, cc *grpc.ClientConn, invoke grpc.UnaryInvoker, options ...grpc.CallOption) error {
++				invocations.Add(1)
++				return invoke(ctx, method, req, reply, cc, options...)
++			}))
++			conn := newConn(t, func(ctx context.Context, req *pb.SimpleRequest) (*pb.SimpleResponse, error) {
++				observed <- observeRequest(ctx, req)
++				if attempts.Add(1) == 1 {
++					return nil, status.Error(tc.code, "acknowledgement lost")
++				}
++				return &pb.SimpleResponse{Payload: &pb.Payload{Body: result}}, nil
++			}, opts...)
++			payload := []byte("request")
++			got, err := client.Commit(context.Background(), conn, "stable-id", payload)
++			if status.Code(err) != tc.wantCode {
++				t.Fatalf("code = %v, want %v: %v", status.Code(err), tc.wantCode, err)
++			}
++			if tc.wantCode == codes.OK && !bytes.Equal(got, result) {
++				t.Errorf("result = %q, want %q", got, result)
++			}
++			if tc.wantCode != codes.OK && got != nil {
++				t.Errorf("failed result = %q, want nil", got)
++			}
++			if got := attempts.Load(); got != tc.attempts {
++				t.Errorf("server attempts = %d, want %d", got, tc.attempts)
++			}
++			if got := invocations.Load(); got != 1 {
++				t.Errorf("application invocations = %d, want 1", got)
++			}
++			for range tc.attempts {
++				checkRequest(t, <-observed, "stable-id", payload)
++			}
++		})
++	}
++}
++
++func TestCommitHeadersStopReplayAndCallerCanRepeat(t *testing.T) {
++	var attempts, effects, invocations atomic.Int32
++	observed := make(chan requestObservation, 3)
++	result := []byte("effect result")
++	conn := newConn(t, func(ctx context.Context, req *pb.SimpleRequest) (*pb.SimpleResponse, error) {
++		observed <- observeRequest(ctx, req)
++		if attempts.Add(1) == 1 {
++			effects.Add(1)
++			if err := grpc.SendHeader(ctx, metadata.Pairs("effect", "accepted")); err != nil {
++				return nil, err
++			}
++			return nil, status.Error(codes.Unavailable, "acknowledgement lost after effect")
++		}
++		return &pb.SimpleResponse{Payload: &pb.Payload{Body: result}}, nil
++	}, grpc.WithDefaultServiceConfig(retryConfig), grpc.WithUnaryInterceptor(func(ctx context.Context, method string, req, reply any, cc *grpc.ClientConn, invoke grpc.UnaryInvoker, options ...grpc.CallOption) error {
++		invocations.Add(1)
++		return invoke(ctx, method, req, reply, cc, options...)
++	}))
++	payload := []byte("request")
++	got, err := client.Commit(context.Background(), conn, "repeat-id", payload)
++	if got != nil || status.Code(err) != codes.Unavailable {
++		t.Fatalf("first Commit = %q, %v; want nil, Unavailable", got, err)
++	}
++	if attempts.Load() != 1 || effects.Load() != 1 || invocations.Load() != 1 {
++		t.Fatalf("after failed acknowledgement: attempts=%d effects=%d invocations=%d, want 1 each", attempts.Load(), effects.Load(), invocations.Load())
++	}
++	checkRequest(t, <-observed, "repeat-id", payload)
++	got, err = client.Commit(context.Background(), conn, "repeat-id", payload)
++	if err != nil || !bytes.Equal(got, result) {
++		t.Fatalf("second Commit = %q, %v; want %q, nil", got, err, result)
++	}
++	checkRequest(t, <-observed, "repeat-id", payload)
++	if attempts.Load() != 2 || effects.Load() != 1 || invocations.Load() != 2 {
++		t.Errorf("after caller repeat: attempts=%d effects=%d invocations=%d; want 2, 1, 2", attempts.Load(), effects.Load(), invocations.Load())
++	}
++}
++
++func TestCommitTotalBudgetIncludesNativeRetries(t *testing.T) {
++	var attempts atomic.Int32
++	deadlines := make(chan time.Time, 3)
++	finished := make(chan struct{}, 1)
++	conn := newConn(t, func(ctx context.Context, _ *pb.SimpleRequest) (*pb.SimpleResponse, error) {
++		deadline, _ := ctx.Deadline()
++		deadlines <- deadline
++		if attempts.Add(1) == 1 {
++			grpc.SetTrailer(ctx, metadata.Pairs("grpc-retry-pushback-ms", "150"))
++			return nil, status.Error(codes.Unavailable, "retry before commitment")
++		}
++		<-ctx.Done()
++		finished <- struct{}{}
++		return nil, status.FromContextError(ctx.Err()).Err()
++	}, grpc.WithDefaultServiceConfig(retryConfig))
++	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
++	defer cancel()
++	start := time.Now()
++	got, err := client.Commit(ctx, conn, "budget-id", nil)
++	elapsed := time.Since(start)
++	if got != nil || status.Code(err) != codes.DeadlineExceeded {
++		t.Fatalf("Commit = %q, %v; want nil, DeadlineExceeded", got, err)
++	}
++	if elapsed < 400*time.Millisecond || elapsed > 1200*time.Millisecond {
++		t.Errorf("elapsed = %v, want approximately 500ms", elapsed)
++	}
++	if attempts.Load() != 2 {
++		t.Fatalf("attempts = %d, want 2", attempts.Load())
++	}
++	first, second := <-deadlines, <-deadlines
++	for _, deadline := range []time.Time{first, second} {
++		if budget := deadline.Sub(start); budget < 400*time.Millisecond || budget > 600*time.Millisecond {
++			t.Errorf("server deadline budget = %v, want approximately 500ms", budget)
++		}
++	}
++	if delta := second.Sub(first); delta < -30*time.Millisecond || delta > 30*time.Millisecond {
++		t.Errorf("retry shifted total deadline by %v", delta)
++	}
++	select {
++	case <-finished:
++	case <-time.After(3 * time.Second):
++		t.Fatal("handler did not observe deadline")
++	}
++}
++
++func TestCommitEarlierDeadlineAndCancellation(t *testing.T) {
++	t.Run("earlier deadline", func(t *testing.T) {
++		observed := make(chan time.Time, 1)
++		finished := make(chan struct{}, 1)
++		conn := newConn(t, func(ctx context.Context, _ *pb.SimpleRequest) (*pb.SimpleResponse, error) {
++			deadline, _ := ctx.Deadline()
++			observed <- deadline
++			<-ctx.Done()
++			finished <- struct{}{}
++			return nil, status.FromContextError(ctx.Err()).Err()
++		})
++		deadline := time.Now().Add(100 * time.Millisecond)
++		ctx, cancel := context.WithDeadline(context.Background(), deadline)
++		defer cancel()
++		got, err := client.Commit(ctx, conn, "deadline-id", nil)
++		if got != nil || status.Code(err) != codes.DeadlineExceeded {
++			t.Fatalf("Commit = %q, %v; want nil, DeadlineExceeded", got, err)
++		}
++		select {
++		case actual := <-observed:
++			if delta := actual.Sub(deadline); delta < -30*time.Millisecond || delta > 30*time.Millisecond {
++				t.Errorf("server deadline differs from caller by %v", delta)
++			}
++		case <-time.After(3 * time.Second):
++			t.Fatal("handler did not start")
++		}
++		select {
++		case <-finished:
++		case <-time.After(3 * time.Second):
++			t.Fatal("handler did not observe deadline")
++		}
++	})
++	t.Run("in-flight cancellation", func(t *testing.T) {
++		started, finished := make(chan struct{}), make(chan struct{})
++		conn := newConn(t, func(ctx context.Context, _ *pb.SimpleRequest) (*pb.SimpleResponse, error) {
++			close(started)
++			<-ctx.Done()
++			close(finished)
++			return nil, status.FromContextError(ctx.Err()).Err()
++		})
++		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
++		defer cancel()
++		done := make(chan struct{})
++		var commitErr error
++		go func() {
++			_, commitErr = client.Commit(ctx, conn, "cancel-id", nil)
++			close(done)
++		}()
++		t.Cleanup(func() {
++			cancel()
++			select {
++			case <-done:
++			case <-time.After(3 * time.Second):
++				t.Error("Commit did not finish")
++			}
++		})
++		select {
++		case <-started:
++		case <-done:
++			t.Fatalf("Commit finished before handler started: %v", commitErr)
++		case <-time.After(3 * time.Second):
++			t.Fatal("handler did not start")
++		}
++		cancel()
++		select {
++		case <-done:
++			if status.Code(commitErr) != codes.Canceled {
++				t.Errorf("code = %v, want Canceled: %v", status.Code(commitErr), commitErr)
++			}
++		case <-time.After(3 * time.Second):
++			t.Fatal("Commit did not return after cancellation")
++		}
++		select {
++		case <-finished:
++		case <-time.After(3 * time.Second):
++			t.Fatal("handler did not observe cancellation")
++		}
++	})
++}

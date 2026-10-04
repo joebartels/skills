@@ -1,0 +1,25 @@
+{
+  "label": "B",
+  "cwd": "/private/tmp/grpc-transfer-independent-xs70nkrf/B",
+  "command": [
+    "rtk",
+    "env",
+    "GOWORK=off",
+    "GOTOOLCHAIN=local",
+    "GOPATH=/private/tmp/go-client-campaign/gopath",
+    "GOMODCACHE=/private/tmp/go-client-campaign/modcache",
+    "GOCACHE=/private/tmp/go-client-campaign/cache",
+    "GOPROXY=off",
+    "/private/tmp/go-client-campaign/tools/go/bin/go",
+    "test",
+    "-ldflags=-linkmode=external",
+    "-count=1",
+    "-timeout=20s",
+    "-run",
+    "^TestTransfer",
+    "-v",
+    "./..."
+  ],
+  "exit": 0,
+  "output": "=== RUN   TestTransferNativeReplayIdentity\n--- PASS: TestTransferNativeReplayIdentity (0.01s)\n=== RUN   TestTransferIdentitySurvivesOuterRetry\n--- PASS: TestTransferIdentitySurvivesOuterRetry (0.00s)\nPASS\nok  \texample.invalid/grpc-transfer\t0.198s\n"
+}

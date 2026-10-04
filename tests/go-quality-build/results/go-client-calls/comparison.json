@@ -1,7 +1,7 @@
 {
   "candidate": "candidate-v2-manifest.json",
   "guidance_revisions_used": 1,
-  "disposition": "pending held transfer and final branch review",
+  "disposition": "retain; behavioral gate passed, pending delivery validation and final branch review",
   "first_version": "first-comparison.json",
   "cases": [
     {
@@ -47,6 +47,15 @@
       "review": "reviews/pair-revision-breaker-and-control.md",
       "benefit": "No marginal benefit established: substantive tie",
       "important_preserved_controls": "Identical minimal production loop, one focused regression, no client/resilience machinery; author reports skipping candidate"
+    },
+    {
+      "case": "grpc-transfer",
+      "baseline": "transfer/t11",
+      "guided": "transfer/t12",
+      "review": "reviews/pair-grpc-transfer.md",
+      "benefit": "No marginal benefit established: substantive tie; fresh final-guidance transfer succeeds",
+      "important_preserved_controls": "Stable operation identity/exact payload and one effect across native lost acknowledgements and outer caller retries; unrelated metadata; native effective policy, header commitment, total budget, status and borrowed connection",
+      "limits": "Actual generated service over bufconn with model deduplication; external network and production server retention unverified"
     }
   ],
   "comparison_protocol": "Fresh authors, fixed original tasks/catalog neighbors and inherited settings; neutral reviewers froze raw findings before controller interpreted arm maps; no author repairs",
@@ -60,5 +69,21 @@
     "Post-outcome supplemental discoveries may bias comparison; raw failures and clarifications retained",
     "Go 1.22.12 executes with external linking on this macOS host; default linker compatibility on this OS unproven",
     "Supported dependency pins and local boundaries tested; deployed TLS/DNS/load and future versions unverified"
-  ]
+  ],
+  "promotion_gate": {
+    "independently_confirmed_meaningful_gain": [
+      "http-write-replay",
+      "http-retry-budget",
+      "breaker-recovery"
+    ],
+    "preserved_strong_controls": [
+      "grpc-policy",
+      "pure-control",
+      "grpc-transfer"
+    ],
+    "fresh_final_guidance_transfer": "PASS; substantive tie",
+    "unresolved_material_introduced_regression": false,
+    "candidate": "exact candidate-v2 bytes",
+    "guidance_revision_cap": "one used; no further guidance revision authorized"
+  }
 }
