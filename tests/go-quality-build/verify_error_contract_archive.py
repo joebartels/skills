@@ -22,6 +22,8 @@ def inventory(folder):
 
 
 def verify(run: Path):
+    if not __debug__:
+        raise RuntimeError("archive verification requires Python assertions; disable -O/PYTHONOPTIMIZE")
     seal = json.loads((run / "seal.json").read_text())
     for relative, expected in seal["file_sha256"].items():
         assert digest(run / relative) == expected, relative
@@ -50,7 +52,7 @@ def verify(run: Path):
         with tempfile.TemporaryDirectory(prefix="error-contract-integrity-") as directory:
             module = Path(directory) / "module"
             shutil.copytree(sample / "original", module)
-            result = subprocess.run(["rtk", "proxy", "git", "apply", str(sample / "source.patch")],
+            result = subprocess.run(["git", "apply", str(sample / "source.patch")],
                                     cwd=module, text=True, capture_output=True, timeout=60)
             assert result.returncode == 0, result.stderr
             assert inventory(module) == record["source_sha256"]

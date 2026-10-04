@@ -1,9 +1,9 @@
 # Verify this archive
 
-From the repository root, run:
+Requires Python 3 and Git. From the repository root, run:
 
 ```sh
-rtk proxy python3 -B tests/go-quality-build/verify_error_contract_archive.py
+python3 -B tests/go-quality-build/verify_error_contract_archive.py
 ```
 
 The read-only checker verifies the original seal, archived inputs and guidance,
