@@ -1,0 +1,1 @@
+Fix SumPositive so only strictly positive values contribute. Preserve its public signature and Go 1.22.0 minimum. Keep this deterministic local calculation simple. Add one focused regression test. Select applicable authoring guidance.

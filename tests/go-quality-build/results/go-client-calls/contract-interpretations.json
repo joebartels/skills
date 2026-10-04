@@ -1,0 +1,14 @@
+{
+  "redirect_acceptance": {
+    "interpretation": "Supplied-client final-status acceptance is permitted; initial-status rejection is not universal",
+    "reviewer_clarification": "reviews/pair-http-and-control-clarification.txt",
+    "known_policy_error_status": "Preserve known returned response status with the policy-error cause"
+  },
+  "timeout_body_causes": {
+    "interpretation": "Preserve failures exposed at the supplied-client boundary; recovering already-erased lower-level causes is ambiguous without an explicit requirement and permitted private observation",
+    "reviewer_clarification": "reviews/pair-http-and-control-cause-clarification.txt",
+    "observation": "TestReviewFetchClientTimeoutCauses still demonstrates native lower-level identity loss; all failing receipts retained",
+    "limit": "A stronger consumer contract needs explicit cause requirements and allowed observation; current fixtures cannot establish that stronger guarantee"
+  },
+  "calibration": "No rubric changes or candidate repairs; controller rulings and their costs recorded for final independent review"
+}

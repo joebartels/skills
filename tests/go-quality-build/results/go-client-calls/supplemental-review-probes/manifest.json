@@ -1,0 +1,17 @@
+{
+  "reason": "Independent baseline review discovered contract failures missed by frozen probes. Preserve original reviewer source; adapt its library-specific error identities/exact messages to contract-only error+request-count assertions, applied identically to both arms. No author exposure or original probe edits.",
+  "sha256": "0e04e7702a32167c078904703b03192648a8fe0da7a6cf96fe072c7130c747b3",
+  "command": [
+    "rtk",
+    "proxy",
+    "go",
+    "test",
+    "-run",
+    "TestReview",
+    "-count=1",
+    "-timeout=10s",
+    "./..."
+  ],
+  "exit": 1,
+  "output": "--- FAIL: TestReviewCanceled200PreservesFailureHistory (0.00s)\n    supplemental_review_test.go:57: canceled completion: data=\"ok\" error=<nil> parent=context canceled\n    supplemental_review_test.go:67: after third eligible failure: error=HTTP 503 calls=4->5\n    supplemental_review_test.go:69: canceled 200 reset history; fourth eligible request contacted dependency\n--- FAIL: TestReviewCanceled200DoesNotEstablishRecovery (0.11s)\n    supplemental_review_test.go:100: canceled recovery completion: data=\"ok\" error=<nil> parent=context canceled\n    supplemental_review_test.go:113: after failed replacement probe: error=HTTP 503 calls=6->7\n    supplemental_review_test.go:115: canceled 200 established recovery; failed replacement probe did not reopen\n--- FAIL: TestReviewDiagnosticsAreBounded (0.00s)\n    --- FAIL: TestReviewDiagnosticsAreBounded/parse-disabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8245\n        supplemental_review_test.go:140: diagnostic bytes=8245; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/transport-disabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8233\n        supplemental_review_test.go:140: diagnostic bytes=8233; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/body-disabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8192\n        supplemental_review_test.go:140: diagnostic bytes=8192; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/parse-enabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8245\n        supplemental_review_test.go:140: diagnostic bytes=8245; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/transport-enabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8233\n        supplemental_review_test.go:140: diagnostic bytes=8233; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/body-enabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8192\n        supplemental_review_test.go:140: diagnostic bytes=8192; want <=4096\nFAIL\nFAIL\texample.invalid/breaker-recovery\t0.361s\nFAIL\n"
+}

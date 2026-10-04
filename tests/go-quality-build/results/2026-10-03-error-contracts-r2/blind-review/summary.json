@@ -1,0 +1,458 @@
+{
+  "scope": [
+    "m00",
+    "m01",
+    "m02",
+    "m03",
+    "m04",
+    "m05"
+  ],
+  "scope_rule": "Only specified base/module/task/probe files were read; no repository results, author reports, guidance catalogs, maps, other samples or prior conclusions were consulted.",
+  "interpretation": "Changeset review: grade introduced/worsened behavior against base README plus task. New docs and supplied/author tests are evidence, not authorities capable of overriding the original contract.",
+  "modules": [
+    {
+      "module": "m00",
+      "kind": "library",
+      "scope": "Supplied changeset m00/base -> m00/module; authoritative m00/base/README.md plus m00/task.txt; module example.com/recordload, go 1.22, no build tags or external dependencies.",
+      "topics": {
+        "code_quality_and_idioms": {
+          "grade": "A",
+          "coverage": "Error flow, local readability, exported LineError contract, literal value semantics, Go 1.22 availability and formatting.",
+          "rationale": "No introduced actionable issue was substantiated; ordinary correct setup and relevant strengths were verified. A+ safeguards beyond routine correctness were not claimed.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m00/module/load.go:29: parses io.ReadAll data even when its read error is nonnil, retains the valid prefix and joins only simultaneous parse/read failures.",
+            "m00/module/load.go:13: a small LineError exposes exactly the required Line/Text fields; literal nil success returns avoid typed-nil errors. No extra public mechanism was added."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "correctness_and_compatibility": {
+          "grade": "A",
+          "coverage": "Physical line counting, exact comment prefix, first-equals splitting, empty fields, literal whitespace/CR bytes, unterminated input, long lines, valid prefixes, bytes with read errors, EOF, typed reader causes, nil success errors and borrowed-reader ownership.",
+          "rationale": "No introduced actionable issue was substantiated; ordinary correct setup and relevant strengths were verified. A+ safeguards beyond routine correctness were not claimed.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m00/module/load.go:31: physical split indices include ignored comments/blanks, and strings.Cut keeps empty fields and later equals bytes.",
+            "Independent one-byte chunk readers verify the original typed cause, first-malformed prefix and borrowed reader; 256 KiB unterminated records and bytes accompanying EOF succeed."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "security": {
+          "grade": "Not applicable",
+          "coverage": "Only caller-local error values are added; no untrusted emission sink or protected backend diagnostic boundary is supplied.",
+          "rationale": "No new security decision is substantiated in this scope. Explicitly requested LineError.Text and inspectable reader causes were not reinterpreted as leakage."
+        }
+      },
+      "testing_observations": "Useful supplied tests exercise line boundaries, literal fields, long input, EOF/read failures, structured errors, simultaneous causes and ownership. Independent checks add bytewise chunks, raw CR preservation and original typed cause identity; these support inspected control flow instead of substituting for it.",
+      "declined_behaviors": [
+        {
+          "behavior": "Reject or trim whitespace-only lines and indented comments",
+          "reason": "The base splits literal newline-separated text; only empty lines and first-byte # lines are specified as ignorable. Trimming would change stored data and the specified comment boundary."
+        },
+        {
+          "behavior": "Normalize CRLF values or reject empty keys/values",
+          "reason": "Original bytes are literal and empty fields are expressly accepted; no normalization requirement exists."
+        },
+        {
+          "behavior": "Impose a Scanner line cap or replace whole-input buffering with a streaming framework",
+          "reason": "No line-size cap is promised. io.ReadAll already defines the original implementation shape; no early-return/streaming/resource-budget contract requires expansion."
+        },
+        {
+          "behavior": "Require a nonnil empty slice, nil-receiver LineError behavior, or treating wrapped EOF as normal completion",
+          "reason": "The base uses a nil empty slice; no nil LineError method-use contract exists. io.Reader terminal EOF is the sentinel under the supported protocol; the task does not require swallowing arbitrary errors that wrap EOF."
+        },
+        {
+          "behavior": "Hide reader identity or include malformed text in Error()",
+          "reason": "Reader errors and LineError.Text are explicitly public, while the prior malformed-error text is retained. More diagnostic text is optional and could be less safe."
+        }
+      ]
+    },
+    {
+      "module": "m01",
+      "kind": "library",
+      "scope": "Supplied changeset m01/base -> m01/module; authoritative m01/base/README.md plus m01/task.txt; module example.com/accountlookup, go 1.22, no build tags or external dependencies.",
+      "topics": {
+        "code_quality_and_idioms": {
+          "grade": "A",
+          "coverage": "Guard-clause flow, sentinel versus wrapping choice, value-on-error behavior, documented blank-key contract, minimal exported API and Go 1.22-compatible stdlib idioms.",
+          "rationale": "No introduced actionable issue was substantiated; ordinary correct setup and relevant strengths were verified. A+ safeguards beyond routine correctness were not claimed.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m01/module/lookup.go:24: validates only blankness without trimming the key passed to Backend; the straight-line success path stays small.",
+            "m01/module/lookup.go:29: missing returns the existing ErrMissing directly; unavailable wraps the public classification rather than the backend. Only required ErrInvalidKey was added."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "correctness_and_compatibility": {
+          "grade": "A",
+          "coverage": "Blank-key validation, Unicode whitespace, unchanged nonblank keys, success values, direct missing identity, wrapped/joined BackendMissing, unavailable classification, discarded partial values, backend identity/type/text exclusion and escaped operation/key context.",
+          "rationale": "No introduced actionable issue was substantiated; ordinary correct setup and relevant strengths were verified. A+ safeguards beyond routine correctness were not claimed.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m01/module/lookup.go:29: errors.Is accepts BackendMissing through wrappers/joins yet returns direct ErrMissing, preserving err == ErrMissing.",
+            "m01/module/lookup.go:32: drops an unusable backend value and replaces backend diagnostics with ErrUnavailable plus operation/quoted-key context. Independent checks also preserve empty-success values."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "security": {
+          "grade": "A",
+          "coverage": "The Backend extension boundary into caller-visible error values: diagnostic text, identity/type exposure, escaped key controls and values returned alongside failures.",
+          "rationale": "No introduced actionable issue was substantiated; ordinary correct setup and relevant strengths were verified. A+ safeguards beyond routine correctness were not claimed.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m01/module/lookup.go:32: backend err is neither interpolated nor wrapped, so backend credential/SQL diagnostics and their inspectable identity/types cannot traverse this error path.",
+            "Independent typed diagnostic checks plus the supplied noncomparable-error tests verify that only the public classification is unwrap-visible; a key containing newline, NUL and quotes is rendered with quoted escapes."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        }
+      },
+      "testing_observations": "Useful tests verify public missing equality, hidden typed/noncomparable diagnostics, escaped context, Unicode blank keys, unchanged nonblank keys and empty results on failures. Independent checks observe that Lookup never invokes a supplied diagnostic Error method and preserve an empty successful value. The initial test-harness-side false failure and corrected reruns are retained in checks.json.",
+      "declined_behaviors": [
+        {
+          "behavior": "Wrap or format the backend cause using %w or %v",
+          "reason": "The original extension protocol expressly forbids backend identity, type and sensitive text. %v would still leak text; current translation is correct."
+        },
+        {
+          "behavior": "Wrap ErrMissing with operation/key context",
+          "reason": "The original direct err == ErrMissing compatibility contract forbids this even if errors.Is would still work."
+        },
+        {
+          "behavior": "Preserve direct equality to ErrUnavailable after adding context",
+          "reason": "Only ErrMissing direct equality is explicitly preserved; safe context requires a wrapping classification available to errors.Is. No supported unavailable-equality caller is supplied."
+        },
+        {
+          "behavior": "Add a typed unavailable error, error-code enum, backend logger or dependency",
+          "reason": "ErrInvalidKey is the only needed public classification. fmt.Errorf around ErrUnavailable already supplies the requested safe context."
+        },
+        {
+          "behavior": "Trim nonblank keys, reject empty successful values or handle a nil Backend on nonblank input",
+          "reason": "The key/value contract permits these success values and passes nonblank keys unchanged. A configured backend is an existing Service requirement; changing nil-backend behavior is outside the task."
+        },
+        {
+          "behavior": "Classify the first independent Error-method counter failure as production leakage",
+          "reason": "The fake backend built fmt.Errorf inside Find, which invoked its own diagnostic Error. Moving wrapper construction before the observation window isolates Lookup; reruns pass without changing production."
+        }
+      ]
+    },
+    {
+      "module": "m02",
+      "kind": "private package helper",
+      "scope": "Supplied changeset m02/base -> m02/module; authoritative m02/base/README.md plus m02/task.txt; module example.com/paging, go 1.22, no build tags or external dependencies.",
+      "topics": {
+        "code_quality_and_idioms": {
+          "grade": "A",
+          "coverage": "Arithmetic readability, supported nonnegative/positive domain, private API and version-aware standard Go constructs.",
+          "rationale": "No introduced actionable issue was substantiated; ordinary correct setup and relevant strengths were verified. A+ safeguards beyond routine correctness were not claimed.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m02/module/pages.go:4: quotient and remainder make the partial-page correction explicit without exporting the helper or adding configuration.",
+            "m02/module/pages_test.go:13: regression cases cover zero/exact multiples and maximum-int inputs instead of mirroring an overflow-prone formula."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "correctness_and_compatibility": {
+          "grade": "A",
+          "coverage": "Zero, exact and partial pages; size 1; maximum int; private helper compatibility.",
+          "rationale": "No introduced actionable issue was substantiated; ordinary correct setup and relevant strengths were verified. A+ safeguards beyond routine correctness were not claimed.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m02/module/pages.go:5: avoids items+size-1 overflow; when the remainder is nonzero the quotient is below maxInt, making the increment safe.",
+            "Independent repeated-subtraction oracle checks all 101,101 pairs of items 0..1000 and sizes 1..101, plus maximum-int boundaries."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "security": {
+          "grade": "Not applicable",
+          "coverage": "Pure private arithmetic in a supplied valid-input domain.",
+          "rationale": "No security-relevant input boundary, protected data or sensitive sink is implicated."
+        }
+      },
+      "testing_observations": "The rewritten table keeps partial-page coverage and adds zero, exact multiples and maxInt. Independent checks use a different arithmetic oracle and size-one/maxInt boundaries.",
+      "declined_behaviors": [
+        {
+          "behavior": "Add errors, panics, exported Pages or behavior for negative items/nonpositive sizes",
+          "reason": "The original private helper supports only nonnegative items and positive sizes, and the task explicitly requires keeping it private. Invalid-domain behavior would expand scope."
+        },
+        {
+          "behavior": "Use (items+size-1)/size",
+          "reason": "That concise spelling can overflow on supported maxInt inputs; the implemented quotient/remainder calculation avoids it."
+        }
+      ]
+    },
+    {
+      "module": "m03",
+      "kind": "library and CLI",
+      "scope": "Supplied changeset m03/base -> m03/module; authoritative m03/base/README.md plus m03/task.txt; module example.com/lineexport, go 1.22, no build tags or external dependencies.",
+      "topics": {
+        "code_quality_and_idioms": {
+          "grade": "A",
+          "coverage": "Named-result finalization flow, conditional joining versus direct error identity, short writes, minimal ExportLimit API, private CLI run helper and supported Go version.",
+          "rationale": "No introduced actionable issue was substantiated; ordinary correct setup and relevant strengths were verified. A+ safeguards beyond routine correctness were not claimed.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m03/module/export.go:21: deferred Close mutates the named error only when needed; sole operation/close failures keep their exact error object, while two failures are joined.",
+            "m03/module/export.go:11: original Export signature is unchanged and delegates to unlimited ExportLimit. No extra public limit type, sentinel or option mechanism was introduced."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "correctness_and_compatibility": {
+          "grade": "A",
+          "coverage": "Accepted counts, empty/final unterminated records, read/write/Close identity and types, partial-write prefixes, reader ownership, limit boundaries, ordering between record scans, positional dash paths, stdout/stderr/status and validation before file effects.",
+          "rationale": "No introduced actionable issue was substantiated; ordinary correct setup and relevant strengths were verified. A+ safeguards beyond routine correctness were not claimed.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m03/module/export.go:38: a failed or short write does not increment the accepted count; every ordinary return closes the owned writer once and never closes the borrowed reader.",
+            "m03/module/export.go:45 and cmd/lineexport/main.go:20: a reached positive limit returns before another Scan; zero remains unlimited. Independent checks exercise terminal bytes+read errors, direct single-cause equality, joined completion causes, negative-before-I/O and real CLI status/output."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "security": {
+          "grade": "Not applicable",
+          "coverage": "No new protected-data or untrusted-backend diagnostic boundary is supplied; CLI paths remain positional and are locally controlled.",
+          "rationale": "No threat inference was made from ordinary CLI I/O diagnostics or the existing Scanner size behavior."
+        }
+      },
+      "testing_observations": "The exported function-value checks protect source compatibility. Library tests meaningfully cover ownership, completion independence, errors.Is/As, noncomparable causes, limits, short writes and write-before-next-read with record-aligned input. Real subprocess CLI tests cover streams, status and file effects. Independent checks add final unterminated bytes delivered with typed read failure and separate real CLI cases.",
+      "declined_behaviors": [
+        {
+          "behavior": "Require CLI negative LIMIT to exit 1",
+          "reason": "Observed exit 2 with usage and a nonnegative-integer diagnostic before opening files. The original contract expressly gives invalid usage status 2 but does not classify a syntactically valid negative integer as operational failure rather than invalid usage. Negative LIMIT is outside the accepted limit domain, so the implementation fits the explicit usage exception. Convention alone, or a probe demanding 1, cannot establish a defect; the library negative-limit rejection/Close behavior is separately verified."
+        },
+        {
+          "behavior": "Promise exact borrowed-reader byte position or zero byte read-ahead beyond a positive limit",
+          "reason": "The original Export already uses bufio.Scanner. The code writes each emitted record before requesting the next Scan and passes record-aligned Read-order checks, while Scanner may buffer subsequent records in one underlying Read. The original sentence \"Each record is written before reading the next\" is ambiguous at token versus raw-byte level; no exact reader-position contract is given. The new README does not override the original. A stronger raw-byte consumption requirement would need clarification and a different implementation."
+        },
+        {
+          "behavior": "Require unlimited record size, literal CRLF preservation or atomic publication",
+          "reason": "Unlike recordload, lineexport has no promised unbounded line size; the original Scanner cap and ScanLines CRLF behavior are retained. The original contract explicitly permits a published prefix on failure and gives no atomic-publication promise."
+        },
+        {
+          "behavior": "Require post-limit reader errors, or joining every already-buffered read failure with a primary write failure",
+          "reason": "The task requires completion causes from operation plus Close, not an error fan-in policy for every attempted operation. A limit ending successfully need not perform a later Scan. The supplied contract does not establish a different rule for an error associated with buffered bytes outside the accepted limit."
+        },
+        {
+          "behavior": "Add a public ErrInvalidLimit, flag parsing, writer flush interface or generic option mechanism",
+          "reason": "Only ExportLimit and optional positional CLI limit are requested. Existing writer ownership and Close semantics cover completion; flag parsing would break dash-prefixed paths."
+        },
+        {
+          "behavior": "Grade ignored borrowed-reader Close errors, same input/output aliasing or panic behavior as introduced defects",
+          "reason": "Borrowed-reader finalization is not the library contract, while CLI reader cleanup and input/output alias behavior existed before this task. No new supported contract or safe nil/panic requirement is supplied."
+        }
+      ]
+    },
+    {
+      "module": "m04",
+      "kind": "library",
+      "scope": "Supplied changeset m04/base -> m04/module; authoritative m04/base/README.md plus m04/task.txt; module example.com/accountlookup, go 1.22, no build tags or external dependencies.",
+      "topics": {
+        "code_quality_and_idioms": {
+          "grade": "A",
+          "coverage": "Guard-clause flow, sentinel versus wrapping choice, value-on-error behavior, documented blank-key contract, minimal exported API and Go 1.22-compatible stdlib idioms.",
+          "rationale": "No introduced actionable issue was substantiated; ordinary correct setup and relevant strengths were verified. A+ safeguards beyond routine correctness were not claimed.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m04/module/lookup.go:24: validates only blankness without trimming the key passed to Backend; the straight-line success path stays small.",
+            "m04/module/lookup.go:30: missing returns the existing ErrMissing directly; unavailable wraps the public classification rather than the backend. Only required ErrInvalidKey was added."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "correctness_and_compatibility": {
+          "grade": "A",
+          "coverage": "Blank-key validation, Unicode whitespace, unchanged nonblank keys, success values, direct missing identity, wrapped/joined BackendMissing, unavailable classification, discarded partial values, backend identity/type/text exclusion and escaped operation/key context.",
+          "rationale": "No introduced actionable issue was substantiated; ordinary correct setup and relevant strengths were verified. A+ safeguards beyond routine correctness were not claimed.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m04/module/lookup.go:30: errors.Is accepts BackendMissing through wrappers/joins yet returns direct ErrMissing, preserving err == ErrMissing.",
+            "m04/module/lookup.go:33: drops an unusable backend value and replaces backend diagnostics with ErrUnavailable plus operation/quoted-key context. Independent checks also preserve empty-success values."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "security": {
+          "grade": "A",
+          "coverage": "The Backend extension boundary into caller-visible error values: diagnostic text, identity/type exposure, escaped key controls and values returned alongside failures.",
+          "rationale": "No introduced actionable issue was substantiated; ordinary correct setup and relevant strengths were verified. A+ safeguards beyond routine correctness were not claimed.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m04/module/lookup.go:33: backend err is neither interpolated nor wrapped, so backend credential/SQL diagnostics and their inspectable identity/types cannot traverse this error path.",
+            "Independent typed diagnostic checks plus the supplied noncomparable-error tests verify that only the public classification is unwrap-visible; a key containing newline, NUL and quotes is rendered with quoted escapes."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        }
+      },
+      "testing_observations": "Useful tests verify public missing equality, hidden typed/noncomparable diagnostics, escaped context, Unicode blank keys, unchanged nonblank keys and empty results on failures. Independent checks observe that Lookup never invokes a supplied diagnostic Error method and preserve an empty successful value. The initial test-harness-side false failure and corrected reruns are retained in checks.json.",
+      "declined_behaviors": [
+        {
+          "behavior": "Wrap or format the backend cause using %w or %v",
+          "reason": "The original extension protocol expressly forbids backend identity, type and sensitive text. %v would still leak text; current translation is correct."
+        },
+        {
+          "behavior": "Wrap ErrMissing with operation/key context",
+          "reason": "The original direct err == ErrMissing compatibility contract forbids this even if errors.Is would still work."
+        },
+        {
+          "behavior": "Preserve direct equality to ErrUnavailable after adding context",
+          "reason": "Only ErrMissing direct equality is explicitly preserved; safe context requires a wrapping classification available to errors.Is. No supported unavailable-equality caller is supplied."
+        },
+        {
+          "behavior": "Add a typed unavailable error, error-code enum, backend logger or dependency",
+          "reason": "ErrInvalidKey is the only needed public classification. fmt.Errorf around ErrUnavailable already supplies the requested safe context."
+        },
+        {
+          "behavior": "Trim nonblank keys, reject empty successful values or handle a nil Backend on nonblank input",
+          "reason": "The key/value contract permits these success values and passes nonblank keys unchanged. A configured backend is an existing Service requirement; changing nil-backend behavior is outside the task."
+        },
+        {
+          "behavior": "Classify the first independent Error-method counter failure as production leakage",
+          "reason": "The fake backend built fmt.Errorf inside Find, which invoked its own diagnostic Error. Moving wrapper construction before the observation window isolates Lookup; reruns pass without changing production."
+        }
+      ]
+    },
+    {
+      "module": "m05",
+      "kind": "library",
+      "scope": "Supplied changeset m05/base -> m05/module; authoritative m05/base/README.md plus m05/task.txt; module example.com/recordload, go 1.22, no build tags or external dependencies.",
+      "topics": {
+        "code_quality_and_idioms": {
+          "grade": "A",
+          "coverage": "Error flow, local readability, exported LineError contract, literal value semantics, Go 1.22 availability and formatting.",
+          "rationale": "No introduced actionable issue was substantiated; ordinary correct setup and relevant strengths were verified. A+ safeguards beyond routine correctness were not claimed.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m05/module/load.go:28: parses io.ReadAll data even when its read error is nonnil, retains the valid prefix and joins only simultaneous parse/read failures.",
+            "m05/module/load.go:13: a small LineError exposes exactly the required Line/Text fields; literal nil success returns avoid typed-nil errors. No extra public mechanism was added."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "correctness_and_compatibility": {
+          "grade": "A",
+          "coverage": "Physical line counting, exact comment prefix, first-equals splitting, empty fields, literal whitespace/CR bytes, unterminated input, long lines, valid prefixes, bytes with read errors, EOF, typed reader causes, nil success errors and borrowed-reader ownership.",
+          "rationale": "No introduced actionable issue was substantiated; ordinary correct setup and relevant strengths were verified. A+ safeguards beyond routine correctness were not claimed.",
+          "finding_counts": {
+            "critical": 0,
+            "major": 0,
+            "moderate": 0,
+            "minor": 0
+          },
+          "good": [
+            "m05/module/load.go:30: physical split indices include ignored comments/blanks, and strings.Cut keeps empty fields and later equals bytes.",
+            "Independent one-byte chunk readers verify the original typed cause, first-malformed prefix and borrowed reader; 256 KiB unterminated records and bytes accompanying EOF succeed."
+          ],
+          "bad": [],
+          "suggested_changes": []
+        },
+        "security": {
+          "grade": "Not applicable",
+          "coverage": "Only caller-local error values are added; no untrusted emission sink or protected backend diagnostic boundary is supplied.",
+          "rationale": "No new security decision is substantiated in this scope. Explicitly requested LineError.Text and inspectable reader causes were not reinterpreted as leakage."
+        }
+      },
+      "testing_observations": "Useful supplied tests exercise line boundaries, literal fields, long input, EOF/read failures, structured errors, simultaneous causes and ownership. Independent checks add bytewise chunks, raw CR preservation and original typed cause identity; these support inspected control flow instead of substituting for it.",
+      "declined_behaviors": [
+        {
+          "behavior": "Reject or trim whitespace-only lines and indented comments",
+          "reason": "The base splits literal newline-separated text; only empty lines and first-byte # lines are specified as ignorable. Trimming would change stored data and the specified comment boundary."
+        },
+        {
+          "behavior": "Normalize CRLF values or reject empty keys/values",
+          "reason": "Original bytes are literal and empty fields are expressly accepted; no normalization requirement exists."
+        },
+        {
+          "behavior": "Impose a Scanner line cap or replace whole-input buffering with a streaming framework",
+          "reason": "No line-size cap is promised. io.ReadAll already defines the original implementation shape; no early-return/streaming/resource-budget contract requires expansion."
+        },
+        {
+          "behavior": "Require a nonnil empty slice, nil-receiver LineError behavior, or treating wrapped EOF as normal completion",
+          "reason": "The base uses a nil empty slice; no nil LineError method-use contract exists. io.Reader terminal EOF is the sentinel under the supported protocol; the task does not require swallowing arbitrary errors that wrap EOF."
+        },
+        {
+          "behavior": "Hide reader identity or include malformed text in Error()",
+          "reason": "Reader errors and LineError.Text are explicitly public, while the prior malformed-error text is retained. More diagnostic text is optional and could be less safe."
+        }
+      ]
+    }
+  ],
+  "limits": "All source and tests in the six supplied base/module directories were inspected. Checks ran only in disposable copies under darwin/arm64, Go 1.26.5, GOWORK=off, GOTOOLCHAIN=local and the requested GOCACHE. All final race suites, base suites and vet commands passed; all maintained Go files have empty gofmt -d output. staticcheck was unavailable (which returned 1), so it was not run. A native Go 1.22 build/platform matrix, exhaustive fault space, vulnerability scan and external deployment/caller behavior were not assessed. No dependencies/toolchain inputs changed; no claims are made about those broad audits.",
+  "findings": [],
+  "grade_aggregation": "No averaged or overall grade; topic grades stand independently.",
+  "source_inputs_unchanged": true,
+  "initial_scope_frozen_at_utc": "2026-10-03T21:26:26.590278+00:00",
+  "checks_sha256": "3c80d6c6a1231a382722d3b5e610497fd2744db0ee763836008d7eb22198038c"
+}

@@ -1,0 +1,399 @@
+{
+  "date": "2026-10-03",
+  "repository_commit": "f4cae836b242ebdb703b7bbbc14a26247b5e7116",
+  "scratch": "/private/tmp/go-error-eval-xcj0cu48",
+  "cache": "/private/tmp/go-error-eval-xcj0cu48/cache",
+  "guidance_sha256": {
+    "go-api-contracts/SKILL.md": "c655df596414850f06c66ffcb34b5c5606aa73d3381051942dc45e99cd54a0ba",
+    "go-behavior-tests/SKILL.md": "c37b88cf03cdc9e1844e50f7061cdcbfc01609d6a8576f45fa619bd626407267",
+    "go-behavior-tests/references/behavior-observations.md": "ffba4ee582a014add07d3ab2f622d701f062910cc3ac774bbc9190e0f50ebd2c",
+    "go-concurrency-and-ownership/SKILL.md": "5585688c8985c86916405e15c27106eb30707888c6a8b49754afaff622590760",
+    "go-context-and-deadlines/SKILL.md": "6c56ce76b2fa6e8ed67ec30aef190b40c1b592b15e5c8ef3f3ac7fa19385a47a",
+    "go-interfaces-and-composition/SKILL.md": "41c9cd023682e006b84b37ddadf39bc37f0f01b2bfd8af7609272799906d9621",
+    "go-names-and-comments/SKILL.md": "22e69690b3926b6cc090a2bef5f13ec7a0a7b63b7cc1b939aa2957f68acfac2b",
+    "go-package-boundaries/SKILL.md": "3245b2347309d6238950be43e269c05720dbcf5132548dd661955c9e428d3ca7",
+    "go-package-boundaries/references/package-maps.md": "19c2e6f964486abe11028ba04e443fc76eb39236538ee5d9ef25400cc8ecfc7f",
+    "go-test-isolation/SKILL.md": "7ff805a5e1d59e51817af235c48d086014d5b369f4ff4e9271f0ee016edfa246",
+    "go-test-isolation/references/isolation-patterns.md": "8e4740eb2ae35f7b3e9ebf2eebf52daf6d637692f16203ad9af623b1f0133291"
+  },
+  "prior_draft_sha256": {
+    "SKILL.md": "88cfa5c2091824f73851c44aff61bde641d79e356c9b972ea2629c7d405f4ab0"
+  },
+  "cases": [
+    {
+      "id": "s00",
+      "case": "backend-errors",
+      "arm": "baseline",
+      "repetition": 1,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s00/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s00/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s00/author-report.json",
+      "input_sha256": {
+        "README.md": "b8ba3082f4296d0f560536065d401a4d75b5427ac55dd3b9165a1d7fad081111",
+        "go.mod": "f79d7df8dcdf486c897bd70d3c0a9d4402ac52491be1cfc591f7cf4d38ca8b5c",
+        "lookup.go": "73e470fa5b3d707bf1e0fa1bd1f55b5cc9f10ed85e7734332f01ab3f5ff45f6a",
+        "lookup_test.go": "962f5c6528b3a94e0a58afe0ea63948fdffa214a0202c40dab6179c5b14d067c"
+      },
+      "status": "archived",
+      "source_sha256": {
+        "README.md": "883ec0877f5da8b21eef42323c74ab6b5849d3fe1a8ee60e2b35a28cbf0b4dca",
+        "go.mod": "f79d7df8dcdf486c897bd70d3c0a9d4402ac52491be1cfc591f7cf4d38ca8b5c",
+        "lookup.go": "53caeacfa7ce1f3bb74037c527c0deb69d7a4773e8611b8edf0770a726eeb3da",
+        "lookup_contract_test.go": "8f2e7dfba446582dd9e0aa4c1a823686d268509bae86ccdbee0c84e022402ef2",
+        "lookup_test.go": "962f5c6528b3a94e0a58afe0ea63948fdffa214a0202c40dab6179c5b14d067c"
+      },
+      "patch_sha256": "52e2398f1a2ba65a80beea1b554755ac2443e4863891df90a1ee4fb785b48ed8",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda"
+    },
+    {
+      "id": "s01",
+      "case": "reader-errors",
+      "arm": "baseline",
+      "repetition": 1,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s01/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s01/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s01/author-report.json",
+      "input_sha256": {
+        "README.md": "0892b1bee98fbed60d8d5d1001623e71837df222ed8dc06b6fa1e3c5680b0921",
+        "go.mod": "391500a886b38e7af44ac3ab84dcabf23a5d841454de7bf8b9d5e7eef1fd1d0d",
+        "load.go": "99d02c24dcdc5316d50e2972f4fc72e597912ddf97c1ca49b94543534f70eea7",
+        "load_test.go": "05fa7676e11b42bfefb3e04ac9261e78cfdc08dc90573bce3906db6a4648c908"
+      },
+      "status": "archived",
+      "source_sha256": {
+        "README.md": "3e46c363ecb4bd8a73897a1e8f143490aadfa67cf37784ed0d21526119a44793",
+        "go.mod": "391500a886b38e7af44ac3ab84dcabf23a5d841454de7bf8b9d5e7eef1fd1d0d",
+        "load.go": "990ec6eb446624175494c55d9d7099ac69bf01dc2e74f0abd77a1fbd4a1e3dd5",
+        "load_test.go": "57bdf090cb60bba32a1f543318f3f226cfad354b1e7a3b300a81208d86375f15"
+      },
+      "patch_sha256": "a534dd2bb76f89db7c777afa8d9c66676db7493fb6a690b8cdb54cb7aafe891d",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda"
+    },
+    {
+      "id": "s02",
+      "case": "cli-completion",
+      "arm": "baseline",
+      "repetition": 1,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s02/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s02/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s02/author-report.json",
+      "input_sha256": {
+        "README.md": "fffd288464e0a79afda5c707a3b40883a34f23b2317862f5f0b96921d7b70cf5",
+        "cmd/lineexport/main.go": "eed922addf9251da0ba61592924c86b8875a392b953dd2eb5e19f8d501a0bc3e",
+        "export.go": "48e55794e1b091ec89c0ff2e671fa5764c26e25dbc21976dc052b2ce597482c8",
+        "export_test.go": "e246dfccdc54fb247570f0cca9bda4b56a4675f7e3217fc96d330c159cc927da",
+        "go.mod": "8df1d64599d1ebeccad0f37edfcf0d4d6785c384588f7cad05160320caa94b23"
+      },
+      "status": "archived",
+      "source_sha256": {
+        "README.md": "9c58be6b35751c7f5fab5d30a20bd63206eb6d9d065decb65e7bc192c86c00fe",
+        "cmd/lineexport/main.go": "c3443f21bb3c408d772f587fc7b17bc527f0580b9ffb94204b84eea7461beac9",
+        "cmd/lineexport/main_test.go": "19f8200b66b106aa23c215d1b9c4ada5405e8a6387c8bfc33cac0adc2987ef93",
+        "export.go": "fcbcc8c95b54c659c0e01982ed82e51eab70304686f502623ab4e0ae27539675",
+        "export_test.go": "d2bfb7e35f49baa041c8ecf14e1f15c9935d69a9ec089075c4813d3e14a5955a",
+        "go.mod": "8df1d64599d1ebeccad0f37edfcf0d4d6785c384588f7cad05160320caa94b23"
+      },
+      "patch_sha256": "84588b2712ba892bb217e34d651288a05faa84b1fd8d2b0bd024b6603544b7d0",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda"
+    },
+    {
+      "id": "s03",
+      "case": "backend-errors",
+      "arm": "baseline",
+      "repetition": 2,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s03/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s03/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s03/author-report.json",
+      "input_sha256": {
+        "README.md": "b8ba3082f4296d0f560536065d401a4d75b5427ac55dd3b9165a1d7fad081111",
+        "go.mod": "f79d7df8dcdf486c897bd70d3c0a9d4402ac52491be1cfc591f7cf4d38ca8b5c",
+        "lookup.go": "73e470fa5b3d707bf1e0fa1bd1f55b5cc9f10ed85e7734332f01ab3f5ff45f6a",
+        "lookup_test.go": "962f5c6528b3a94e0a58afe0ea63948fdffa214a0202c40dab6179c5b14d067c"
+      },
+      "status": "archived",
+      "source_sha256": {
+        "README.md": "36c2079c5eb431d22f9fb82d41f1008b9c8e0668b894fa3c7ba3062959ec6c9b",
+        "go.mod": "f79d7df8dcdf486c897bd70d3c0a9d4402ac52491be1cfc591f7cf4d38ca8b5c",
+        "lookup.go": "402f8979f064a6d7b5bfbd68c3e58d816a456a302b8856403aaf5fe1885db5f3",
+        "lookup_test.go": "62cb585a782abf9f69e1fcd5e0fe40770582990f6f58ba150e8f84d423acdaad"
+      },
+      "patch_sha256": "0bb846fbc6f42f9d441c6928ecbf8390df4e09ef543d45bf84f2d4e738d59ad0",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda"
+    },
+    {
+      "id": "s04",
+      "case": "reader-errors",
+      "arm": "baseline",
+      "repetition": 2,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s04/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s04/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s04/author-report.json",
+      "input_sha256": {
+        "README.md": "0892b1bee98fbed60d8d5d1001623e71837df222ed8dc06b6fa1e3c5680b0921",
+        "go.mod": "391500a886b38e7af44ac3ab84dcabf23a5d841454de7bf8b9d5e7eef1fd1d0d",
+        "load.go": "99d02c24dcdc5316d50e2972f4fc72e597912ddf97c1ca49b94543534f70eea7",
+        "load_test.go": "05fa7676e11b42bfefb3e04ac9261e78cfdc08dc90573bce3906db6a4648c908"
+      },
+      "status": "archived",
+      "source_sha256": {
+        "README.md": "0e04581eb68fe5e03ab781cde5654355f9f958d73efc4d4bc5b8b3cb631f1071",
+        "example_test.go": "70e397de1281caebf1f514728cd7268cff2bd8aff39c47afcfb86680fdfb9dae",
+        "go.mod": "391500a886b38e7af44ac3ab84dcabf23a5d841454de7bf8b9d5e7eef1fd1d0d",
+        "load.go": "407806e3ab82a3adfdf95972632c8eef094c61343cc17420e8b8a1a931c0b035",
+        "load_test.go": "85635f4c148802f6aae6141fb270ac18d649e6accc76279b9dc4da2fc180efe0"
+      },
+      "patch_sha256": "11725eecaa506791404adafac49e73b325927389853b09f02668a41257aed0a9",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda"
+    },
+    {
+      "id": "s05",
+      "case": "cli-completion",
+      "arm": "baseline",
+      "repetition": 2,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s05/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s05/author-report.json",
+      "input_sha256": {
+        "README.md": "fffd288464e0a79afda5c707a3b40883a34f23b2317862f5f0b96921d7b70cf5",
+        "cmd/lineexport/main.go": "eed922addf9251da0ba61592924c86b8875a392b953dd2eb5e19f8d501a0bc3e",
+        "export.go": "48e55794e1b091ec89c0ff2e671fa5764c26e25dbc21976dc052b2ce597482c8",
+        "export_test.go": "e246dfccdc54fb247570f0cca9bda4b56a4675f7e3217fc96d330c159cc927da",
+        "go.mod": "8df1d64599d1ebeccad0f37edfcf0d4d6785c384588f7cad05160320caa94b23"
+      },
+      "status": "archived",
+      "source_sha256": {
+        "README.md": "ae7abd5760086325d3d023e5c092236517de23c3d2ddb37876ff0a43f41a19c0",
+        "cmd/lineexport/main.go": "2821c2c30f6b3d6bb2c8faa18952926e34154063a4cd52fc2d6dade381f5c01f",
+        "cmd/lineexport/main_test.go": "825a15365047df1738b7398961fda2705a93d88c10428841fb6ea02fbbe1deee",
+        "export.go": "a6125530e48c77498ee5c9ee2937abce87ab2d0df37ddb7fde718bc1f7b22a7c",
+        "export_test.go": "3d142fc249173d0375f364f699ef6e02610c7e4986864c81bfe778fff3d5f71c",
+        "go.mod": "8df1d64599d1ebeccad0f37edfcf0d4d6785c384588f7cad05160320caa94b23"
+      },
+      "patch_sha256": "ad9da9ae9da7178efbed0cfd7518f1093982599022b00fb6a65006e44f41bded",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda"
+    },
+    {
+      "id": "s06",
+      "case": "backend-errors",
+      "arm": "guided",
+      "repetition": 1,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s06/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s06/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s06/author-report.json",
+      "input_sha256": {
+        "README.md": "b8ba3082f4296d0f560536065d401a4d75b5427ac55dd3b9165a1d7fad081111",
+        "go.mod": "f79d7df8dcdf486c897bd70d3c0a9d4402ac52491be1cfc591f7cf4d38ca8b5c",
+        "lookup.go": "73e470fa5b3d707bf1e0fa1bd1f55b5cc9f10ed85e7734332f01ab3f5ff45f6a",
+        "lookup_test.go": "962f5c6528b3a94e0a58afe0ea63948fdffa214a0202c40dab6179c5b14d067c"
+      },
+      "status": "skipped-no-baseline-failure",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda",
+      "skip_reason": "Not dispatched; early-stop gate before any error-guidance rewrite or exposure."
+    },
+    {
+      "id": "s07",
+      "case": "reader-errors",
+      "arm": "guided",
+      "repetition": 1,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s07/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s07/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s07/author-report.json",
+      "input_sha256": {
+        "README.md": "0892b1bee98fbed60d8d5d1001623e71837df222ed8dc06b6fa1e3c5680b0921",
+        "go.mod": "391500a886b38e7af44ac3ab84dcabf23a5d841454de7bf8b9d5e7eef1fd1d0d",
+        "load.go": "99d02c24dcdc5316d50e2972f4fc72e597912ddf97c1ca49b94543534f70eea7",
+        "load_test.go": "05fa7676e11b42bfefb3e04ac9261e78cfdc08dc90573bce3906db6a4648c908"
+      },
+      "status": "skipped-no-baseline-failure",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda",
+      "skip_reason": "Not dispatched; early-stop gate before any error-guidance rewrite or exposure."
+    },
+    {
+      "id": "s08",
+      "case": "cli-completion",
+      "arm": "guided",
+      "repetition": 1,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s08/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s08/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s08/author-report.json",
+      "input_sha256": {
+        "README.md": "fffd288464e0a79afda5c707a3b40883a34f23b2317862f5f0b96921d7b70cf5",
+        "cmd/lineexport/main.go": "eed922addf9251da0ba61592924c86b8875a392b953dd2eb5e19f8d501a0bc3e",
+        "export.go": "48e55794e1b091ec89c0ff2e671fa5764c26e25dbc21976dc052b2ce597482c8",
+        "export_test.go": "e246dfccdc54fb247570f0cca9bda4b56a4675f7e3217fc96d330c159cc927da",
+        "go.mod": "8df1d64599d1ebeccad0f37edfcf0d4d6785c384588f7cad05160320caa94b23"
+      },
+      "status": "skipped-no-baseline-failure",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda",
+      "skip_reason": "Not dispatched; early-stop gate before any error-guidance rewrite or exposure."
+    },
+    {
+      "id": "s09",
+      "case": "backend-errors",
+      "arm": "guided",
+      "repetition": 2,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s09/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s09/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s09/author-report.json",
+      "input_sha256": {
+        "README.md": "b8ba3082f4296d0f560536065d401a4d75b5427ac55dd3b9165a1d7fad081111",
+        "go.mod": "f79d7df8dcdf486c897bd70d3c0a9d4402ac52491be1cfc591f7cf4d38ca8b5c",
+        "lookup.go": "73e470fa5b3d707bf1e0fa1bd1f55b5cc9f10ed85e7734332f01ab3f5ff45f6a",
+        "lookup_test.go": "962f5c6528b3a94e0a58afe0ea63948fdffa214a0202c40dab6179c5b14d067c"
+      },
+      "status": "skipped-no-baseline-failure",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda",
+      "skip_reason": "Not dispatched; early-stop gate before any error-guidance rewrite or exposure."
+    },
+    {
+      "id": "s10",
+      "case": "reader-errors",
+      "arm": "guided",
+      "repetition": 2,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s10/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s10/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s10/author-report.json",
+      "input_sha256": {
+        "README.md": "0892b1bee98fbed60d8d5d1001623e71837df222ed8dc06b6fa1e3c5680b0921",
+        "go.mod": "391500a886b38e7af44ac3ab84dcabf23a5d841454de7bf8b9d5e7eef1fd1d0d",
+        "load.go": "99d02c24dcdc5316d50e2972f4fc72e597912ddf97c1ca49b94543534f70eea7",
+        "load_test.go": "05fa7676e11b42bfefb3e04ac9261e78cfdc08dc90573bce3906db6a4648c908"
+      },
+      "status": "skipped-no-baseline-failure",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda",
+      "skip_reason": "Not dispatched; early-stop gate before any error-guidance rewrite or exposure."
+    },
+    {
+      "id": "s11",
+      "case": "cli-completion",
+      "arm": "guided",
+      "repetition": 2,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s11/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s11/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s11/author-report.json",
+      "input_sha256": {
+        "README.md": "fffd288464e0a79afda5c707a3b40883a34f23b2317862f5f0b96921d7b70cf5",
+        "cmd/lineexport/main.go": "eed922addf9251da0ba61592924c86b8875a392b953dd2eb5e19f8d501a0bc3e",
+        "export.go": "48e55794e1b091ec89c0ff2e671fa5764c26e25dbc21976dc052b2ce597482c8",
+        "export_test.go": "e246dfccdc54fb247570f0cca9bda4b56a4675f7e3217fc96d330c159cc927da",
+        "go.mod": "8df1d64599d1ebeccad0f37edfcf0d4d6785c384588f7cad05160320caa94b23"
+      },
+      "status": "skipped-no-baseline-failure",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda",
+      "skip_reason": "Not dispatched; early-stop gate before any error-guidance rewrite or exposure."
+    },
+    {
+      "id": "s12",
+      "case": "archive-completion",
+      "arm": "baseline",
+      "repetition": 1,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s12/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s12/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s12/author-report.json",
+      "input_sha256": {
+        "README.md": "d62642bf20f1c65289671a247d689cd27a46f1071bbd0880548f3b2290421c29",
+        "archive.go": "d95a68a38484eccdb029d588b4dd7ee7e3752f22d1a4637e7ef3fa042d8d99b0",
+        "archive_test.go": "567fa52fcd2584d7ffbf04fcff165cc5021a2b078d59589f62a8f088083e6fad",
+        "go.mod": "2abc52d0ca12222342c16bb3991502efbe91da83d2740aaa5a148e7693859fa5"
+      },
+      "status": "archived",
+      "source_sha256": {
+        "README.md": "a0e0d8d674e6dcf994c5fe446821fd3a0a51598f8732d1797824b51fc33de60e",
+        "archive.go": "7c88e8165fcb7baed4617ad716f52a2835088682efe522804576997b1687562b",
+        "archive_test.go": "567fa52fcd2584d7ffbf04fcff165cc5021a2b078d59589f62a8f088083e6fad",
+        "contract_test.go": "e4a710ce2da50b7f1264fba11f21e0b620cf1aec0a772114cb461751a181ab5a",
+        "go.mod": "2abc52d0ca12222342c16bb3991502efbe91da83d2740aaa5a148e7693859fa5"
+      },
+      "patch_sha256": "b5be3dd6fb3e410555d1a6f7dbcea613c07c9d2df4e294414285081bf610d8f0",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda"
+    },
+    {
+      "id": "s13",
+      "case": "archive-completion",
+      "arm": "guided",
+      "repetition": 1,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s13/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s13/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s13/author-report.json",
+      "input_sha256": {
+        "README.md": "d62642bf20f1c65289671a247d689cd27a46f1071bbd0880548f3b2290421c29",
+        "archive.go": "d95a68a38484eccdb029d588b4dd7ee7e3752f22d1a4637e7ef3fa042d8d99b0",
+        "archive_test.go": "567fa52fcd2584d7ffbf04fcff165cc5021a2b078d59589f62a8f088083e6fad",
+        "go.mod": "2abc52d0ca12222342c16bb3991502efbe91da83d2740aaa5a148e7693859fa5"
+      },
+      "status": "skipped-no-baseline-failure",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda",
+      "skip_reason": "Not dispatched; early-stop gate before any error-guidance rewrite or exposure."
+    },
+    {
+      "id": "s14",
+      "case": "not-error-work",
+      "arm": "baseline",
+      "repetition": 1,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s14/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s14/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s14/author-report.json",
+      "input_sha256": {
+        "README.md": "ae29d34efea20947d426512b7edd6c79bf173e49608e60d2eeacc6c7c1465782",
+        "go.mod": "1915baf08cb7e071ccb62efb92160912db5e686da57f7b15aa94d0bbe006a4d4",
+        "pages.go": "4dcf9c4d29867787e6b616c79a29fc615ef6165121619fc5d5dbdd4fd6bd2af5",
+        "pages_test.go": "6a99c8d43131d24cc7c0ab5768d8a0683cdf1e5f5503417da4a06f86cd68f3b0"
+      },
+      "status": "archived",
+      "source_sha256": {
+        "README.md": "c5f1a32596ce05b97f06eeda04b21dd9996b33b40f3bab8304b6074f5f343448",
+        "go.mod": "1915baf08cb7e071ccb62efb92160912db5e686da57f7b15aa94d0bbe006a4d4",
+        "pages.go": "0509c5f0a893ae74e79d9de7cf6f6b3c62a9e0a3bb0b1595ce0a8d2347ce1daa",
+        "pages_test.go": "2117962a6b85f791ac123c8a60820a694f59a64a6cd4955f667344c3667951f9"
+      },
+      "patch_sha256": "0f9aca9d3b511b368192b90b81f1b51dd2876323e2a5fbca8b069e88396d38e3",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda"
+    },
+    {
+      "id": "s15",
+      "case": "not-error-work",
+      "arm": "guided",
+      "repetition": 1,
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s15/module",
+      "catalog_path": "/private/tmp/go-error-eval-xcj0cu48/s15/catalog.json",
+      "report_path": "/private/tmp/go-error-eval-xcj0cu48/s15/author-report.json",
+      "input_sha256": {
+        "README.md": "ae29d34efea20947d426512b7edd6c79bf173e49608e60d2eeacc6c7c1465782",
+        "go.mod": "1915baf08cb7e071ccb62efb92160912db5e686da57f7b15aa94d0bbe006a4d4",
+        "pages.go": "4dcf9c4d29867787e6b616c79a29fc615ef6165121619fc5d5dbdd4fd6bd2af5",
+        "pages_test.go": "6a99c8d43131d24cc7c0ab5768d8a0683cdf1e5f5503417da4a06f86cd68f3b0"
+      },
+      "status": "skipped-no-baseline-failure",
+      "catalog_sha256": "4313f556d883db8081e348a96fe55973e8230cef05ab48fe73c8108242f98dda",
+      "skip_reason": "Not dispatched; early-stop gate before any error-guidance rewrite or exposure."
+    }
+  ],
+  "platform": "go version go1.26.5 darwin/arm64",
+  "limits": [
+    "No exact inherited model/effort metadata",
+    "Go 1.22 declaration; actual executable currently Go 1.26.5",
+    "Selection based on supplied catalog; automatic harness routing not established",
+    "No guided trials: incremental effect and added-skill trigger behavior were not measured.",
+    "Global process/style skills were available and reported; these are baselines without this draft, not guidance-free models.",
+    "Only a bounded five-task sample; no proof that error-contract guidance can never help."
+  ],
+  "probe_sha256": {
+    "archive-completion_test.go.txt": "aaa5ab2998b9c078b3215e827b8d0309246929e7f19cd2e155b4f5c6e41c3e5f",
+    "backend-errors_test.go.txt": "4aa8df12b5f063026a879e8045b2e3df8fd9783d576e4a2cffd23e8668b6abf5",
+    "cli-completion_test.go.txt": "eab967b506f4ff4ada1f4bc4295ca4c728ead9bb78f482bfbd8801cb90350477",
+    "not-error-work_test.go.txt": "1875bcd9f392b635d444899ae2be60d1cf0e1b28d8d9111c5bf4f902946618c6",
+    "reader-errors_test.go.txt": "6f8809c8925db60f0a2fa7db424d33d998cfbbd58342b551fc03a87c2eb29e38"
+  },
+  "reported_external_guidance_sha256": {
+    "/Users/jb/.agents/skills/golang/SKILL.md": "9d2b95a44d278af73a776a010df2e7d6ba80c3d73524b39ecf69abc0e24f28ff",
+    "/Users/jb/.agents/skills/superpowers/brainstorming/SKILL.md": "a32d2255354775aa124855aa7100cf276bea096fff4ebb3a0edf57be216e6c72",
+    "/Users/jb/.agents/skills/superpowers/requesting-code-review/SKILL.md": "cfcee1b06774e7c0517f1e09be1a11f2d5680257072723e709ddbcf7e08b795a",
+    "/Users/jb/.agents/skills/superpowers/systematic-debugging/SKILL.md": "808fc5717aa88ad65efff312b11c186294d3e6ee301afb584e2f86599b137787",
+    "/Users/jb/.agents/skills/superpowers/test-driven-development/SKILL.md": "64b03fce4aee5a97a93160cea8111f3ba13a17b7c001db4bd5836d67fd10705d",
+    "/Users/jb/.agents/skills/superpowers/test-driven-development/writing-good-tests.md": "51471c853306ff92ca8bb41dcaea05f31c0e46b03651f8f3c99754b7172f4ae1",
+    "/Users/jb/.agents/skills/superpowers/using-superpowers/SKILL.md": "82c5c8866ad7f5dd4440ce66bd7806ba48a2f13771beae5cf112e53f08fe36ba",
+    "/Users/jb/.agents/skills/superpowers/verification-before-completion/SKILL.md": "2befe7fc55bcadaa3d97dd9e8efeb633d2561c0ebe74c5a8b17c4d9e7e4520b3",
+    "/Users/jb/.agents/skills/superpowers/writing-plans/SKILL.md": "a6c67c1900064347c2a329990dd3c555657c51c3ec53b259a08aa01a2c26139a",
+    "/Users/jb/.codex/RTK.md": "49c368c302c6f63d089f4c1085b242fc50fe22ce5bc34dada6478083000e7c6f"
+  }
+}

@@ -1,0 +1,494 @@
+package client
+
+import (
+	"bytes"
+	"context"
+	"errors"
+	"fmt"
+	"io"
+	"net/http"
+	"net/http/cookiejar"
+	"net/http/httptest"
+	"net/url"
+	"strings"
+	"sync"
+	"testing"
+	"time"
+)
+
+var _ func(context.Context, *http.Client, string, string, []byte, bool) ([]byte, error) = Submit
+
+type roundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+type observedBody struct {
+	reader io.Reader
+	read   int
+	closes int
+}
+
+func (b *observedBody) Read(p []byte) (int, error) {
+	n, err := b.reader.Read(p)
+	b.read += n
+	return n, err
+}
+
+func (b *observedBody) Close() error { b.closes++; return nil }
+
+func response(status int, body io.ReadCloser) *http.Response {
+	return &http.Response{StatusCode: status, Header: make(http.Header), Body: body}
+}
+
+func TestExistingSuccess(t *testing.T) {
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.Write([]byte("ok")) }))
+	defer s.Close()
+	got, err := Submit(context.Background(), s.Client(), s.URL, "op-1", []byte("x"), true)
+	if err != nil || string(got) != "ok" {
+		t.Fatalf("got %q, %v", got, err)
+	}
+}
+
+func TestSubmitStatusPolicy(t *testing.T) {
+	for _, status := range []int{200, 201, 204, 206, 400, 429, 500, 503} {
+		for _, deduplicates := range []bool{false, true} {
+			t.Run(fmt.Sprintf("%d/deduplicates=%t", status, deduplicates), func(t *testing.T) {
+				var bodies []*observedBody
+				calls := 0
+				client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+					calls++
+					data, err := io.ReadAll(r.Body)
+					r.Body.Close()
+					if err != nil || !bytes.Equal(data, []byte{0, 1, 2, 255}) || r.Method != "POST" {
+						t.Errorf("request = %s %v, %v", r.Method, data, err)
+					}
+					wantKey := ""
+					if deduplicates {
+						wantKey = "op-1"
+					}
+					if r.Header.Get("Idempotency-Key") != wantKey {
+						t.Errorf("identity = %q, want %q", r.Header.Get("Idempotency-Key"), wantKey)
+					}
+					body := &observedBody{reader: strings.NewReader("result")}
+					bodies = append(bodies, body)
+					return response(status, body), nil
+				})}
+				got, err := Submit(context.Background(), client, "http://example.test", "op-1", []byte{0, 1, 2, 255}, deduplicates)
+				wantCalls := 1
+				if status == 503 && deduplicates {
+					wantCalls = 3
+				}
+				if calls != wantCalls {
+					t.Errorf("calls = %d, want %d", calls, wantCalls)
+				}
+				if status == 200 {
+					if string(got) != "result" || err != nil {
+						t.Errorf("Submit = %q, %v", got, err)
+					}
+				} else if got != nil || err == nil || !strings.Contains(err.Error(), fmt.Sprintf("HTTP %d", status)) {
+					t.Errorf("Submit = %q, %v, want HTTP %d", got, err, status)
+				}
+				for i, body := range bodies {
+					if body.closes != 1 {
+						t.Errorf("body %d closes = %d, want 1", i, body.closes)
+					}
+				}
+			})
+		}
+	}
+}
+
+func TestSubmitBodyBounds(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		status int
+		size   int
+		ok     bool
+		read   int
+	}{
+		{"at success limit", 200, 4096, true, 4096},
+		{"oversized success", 200, 4097, false, 4097},
+		{"large success", 200, 1 << 20, false, 4097},
+		{"large diagnostic", 400, 1 << 20, false, 4096},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			body := &observedBody{reader: strings.NewReader(strings.Repeat("x", tc.size))}
+			calls := 0
+			client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+				calls++
+				r.Body.Close()
+				return response(tc.status, body), nil
+			})}
+			got, err := Submit(context.Background(), client, "http://example.test", "op", nil, true)
+			if tc.ok {
+				if err != nil || string(got) != strings.Repeat("x", tc.size) {
+					t.Fatalf("Submit = %d bytes, %v", len(got), err)
+				}
+			} else if err == nil || got != nil {
+				t.Fatalf("Submit = %d bytes, %v, want failure", len(got), err)
+			}
+			if tc.status != 200 && err.Error() != "HTTP 400: "+strings.Repeat("x", 4096) {
+				t.Errorf("diagnostic was not the bounded prefix")
+			}
+			if calls != 1 || body.read != tc.read || body.closes != 1 {
+				t.Errorf("calls/read/closes = %d/%d/%d, want 1/%d/1", calls, body.read, body.closes, tc.read)
+			}
+		})
+	}
+}
+
+type failingReader struct{ err error }
+
+func (r failingReader) Read([]byte) (int, error) { return 0, r.err }
+
+func TestSubmitTransportAndReadFailures(t *testing.T) {
+	cause := errors.New("lost acknowledgement")
+	for _, stage := range []string{"transport", "body"} {
+		for _, deduplicates := range []bool{false, true} {
+			t.Run(fmt.Sprintf("%s/deduplicates=%t", stage, deduplicates), func(t *testing.T) {
+				calls := 0
+				var bodies []*observedBody
+				client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+					calls++
+					if _, err := io.ReadAll(r.Body); err != nil {
+						t.Error(err)
+					}
+					r.Body.Close()
+					if stage == "transport" {
+						return nil, cause
+					}
+					body := &observedBody{reader: failingReader{cause}}
+					bodies = append(bodies, body)
+					return response(200, body), nil
+				})}
+				got, err := Submit(context.Background(), client, "http://example.test", "op", []byte("body"), deduplicates)
+				wantCalls := 1
+				if deduplicates {
+					wantCalls = 3
+				}
+				if got != nil || !errors.Is(err, cause) || calls != wantCalls {
+					t.Errorf("Submit = %q, %v; calls = %d, want %d", got, err, calls, wantCalls)
+				}
+				for _, body := range bodies {
+					if body.closes != 1 {
+						t.Errorf("body closes = %d", body.closes)
+					}
+				}
+			})
+		}
+	}
+}
+
+func TestSubmitValidationAndStopping(t *testing.T) {
+	calls := 0
+	client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		calls++
+		r.Body.Close()
+		return response(200, io.NopCloser(strings.NewReader("ok"))), nil
+	})}
+	if _, err := Submit(context.Background(), client, "http://example.test", "", nil, true); err == nil {
+		t.Fatal("empty identity accepted")
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if _, err := Submit(ctx, client, "http://example.test", "op", nil, true); !errors.Is(err, context.Canceled) {
+		t.Errorf("canceled Submit = %v", err)
+	}
+	if calls != 0 {
+		t.Errorf("validation/stopped entry made %d calls", calls)
+	}
+	if _, err := Submit(context.Background(), client, "http://example.test", "", nil, false); err != nil || calls != 1 {
+		t.Errorf("no-deduplication empty identity: %v, calls %d", err, calls)
+	}
+}
+
+func TestSubmitPreservesIndependentFailureDuringCancellation(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	cause := errors.New("independent transport failure")
+	calls := 0
+	client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		calls++
+		r.Body.Close()
+		cancel()
+		return nil, cause
+	})}
+	_, err := Submit(ctx, client, "http://example.test", "op", nil, true)
+	if !errors.Is(err, cause) || !errors.Is(err, context.Canceled) || calls != 1 {
+		t.Errorf("Submit = %v, calls = %d", err, calls)
+	}
+}
+
+func TestSubmitTotalBudget(t *testing.T) {
+	var deadlines []time.Time
+	client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		r.Body.Close()
+		deadline, ok := r.Context().Deadline()
+		if !ok {
+			t.Error("request has no deadline")
+		}
+		deadlines = append(deadlines, deadline)
+		if len(deadlines) == 1 {
+			timer := time.NewTimer(300 * time.Millisecond)
+			defer timer.Stop()
+			select {
+			case <-timer.C:
+				return response(503, io.NopCloser(strings.NewReader("busy"))), nil
+			case <-r.Context().Done():
+				return nil, r.Context().Err()
+			}
+		}
+		<-r.Context().Done()
+		return nil, r.Context().Err()
+	})}
+	start := time.Now()
+	_, err := Submit(context.Background(), client, "http://example.test", "op", nil, true)
+	if !errors.Is(err, context.DeadlineExceeded) || len(deadlines) != 2 {
+		t.Fatalf("Submit = %v, calls = %d", err, len(deadlines))
+	}
+	if !deadlines[0].Equal(deadlines[1]) || deadlines[0].Sub(start) > 510*time.Millisecond {
+		t.Errorf("attempts did not share the 500ms deadline: %v", deadlines)
+	}
+	if elapsed := time.Since(start); elapsed < 450*time.Millisecond || elapsed > 2*time.Second {
+		t.Errorf("elapsed = %v", elapsed)
+	}
+}
+
+func TestSubmitEarlierCallerDeadline(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 40*time.Millisecond)
+	defer cancel()
+	wantDeadline, _ := ctx.Deadline()
+	calls := 0
+	client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		calls++
+		r.Body.Close()
+		deadline, _ := r.Context().Deadline()
+		if !deadline.Equal(wantDeadline) {
+			t.Errorf("deadline = %v, want %v", deadline, wantDeadline)
+		}
+		<-r.Context().Done()
+		return nil, r.Context().Err()
+	})}
+	_, err := Submit(ctx, client, "http://example.test", "op", nil, true)
+	if !errors.Is(err, context.DeadlineExceeded) || calls != 1 {
+		t.Errorf("Submit = %v, calls = %d", err, calls)
+	}
+}
+
+type contextFailureReader struct {
+	ctx context.Context
+	err error
+}
+
+func (r contextFailureReader) Read([]byte) (int, error) {
+	<-r.ctx.Done()
+	return 0, r.err
+}
+
+func TestSubmitClientTimeoutPreservesBodyFailure(t *testing.T) {
+	cause := errors.New("independent body failure during timeout")
+	var body *observedBody
+	client := &http.Client{Timeout: 20 * time.Millisecond, Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		r.Body.Close()
+		body = &observedBody{reader: contextFailureReader{r.Context(), cause}}
+		return response(200, body), nil
+	})}
+	_, err := Submit(context.Background(), client, "http://example.test", "op", nil, false)
+	if !errors.Is(err, cause) || !errors.Is(err, context.DeadlineExceeded) || body.closes != 1 {
+		t.Errorf("Submit = %v, body closes = %d", err, body.closes)
+	}
+}
+
+func TestSubmitCompletedResultDuringStopping(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		r.Body.Close()
+		cancel()
+		return response(200, io.NopCloser(strings.NewReader("accepted result"))), nil
+	})}
+	got, err := Submit(ctx, client, "http://example.test", "op", nil, true)
+	if string(got) != "accepted result" || err != nil {
+		t.Errorf("completed Submit = %q, %v", got, err)
+	}
+}
+
+func TestSubmitDeduplicatesEffectsAcrossInvocations(t *testing.T) {
+	var mu sync.Mutex
+	calls, effects := 0, 0
+	var bodies, keys []string
+	accepted := make(map[string]string)
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		data, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "read failure", 500)
+			return
+		}
+		mu.Lock()
+		defer mu.Unlock()
+		calls++
+		bodies = append(bodies, string(data))
+		key := r.Header.Get("Idempotency-Key")
+		keys = append(keys, key)
+		if original, exists := accepted[key]; !exists {
+			accepted[key] = string(data)
+			effects++
+		} else if original != string(data) {
+			w.WriteHeader(409)
+			return
+		}
+		if calls == 2 {
+			w.WriteHeader(503)
+			return
+		}
+		io.WriteString(w, "original result")
+	}))
+	t.Cleanup(s.Close)
+	client := s.Client()
+	base := client.Transport
+	attempts := 0
+	cause := errors.New("acknowledgement lost after effect")
+	client.Transport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		attempts++
+		resp, err := base.RoundTrip(r)
+		if err == nil && attempts == 1 {
+			resp.Body.Close()
+			return nil, cause
+		}
+		return resp, err
+	})
+	for i := 0; i < 2; i++ {
+		got, err := Submit(context.Background(), client, s.URL, "logical-op", []byte("exact\x00payload"), true)
+		if err != nil || string(got) != "original result" {
+			t.Fatalf("invocation %d = %q, %v", i, got, err)
+		}
+	}
+	mu.Lock()
+	defer mu.Unlock()
+	if calls != 4 || effects != 1 {
+		t.Errorf("calls/effects = %d/%d, want 4/1", calls, effects)
+	}
+	for i := range bodies {
+		if bodies[i] != "exact\x00payload" || keys[i] != "logical-op" {
+			t.Errorf("request %d = %q, key %q", i, bodies[i], keys[i])
+		}
+	}
+}
+
+func TestSubmitAmbiguousEffectWithoutDeduplication(t *testing.T) {
+	calls := 0
+	cause := errors.New("acknowledgement lost after effect")
+	client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		calls++ // The remote effect is accepted before its acknowledgement fails.
+		r.Body.Close()
+		if _, exists := r.Header["Idempotency-Key"]; exists {
+			t.Error("idempotency header present without a replay contract")
+		}
+		return nil, cause
+	})}
+	got, err := Submit(context.Background(), client, "http://example.test", "op", []byte("effect"), false)
+	if got != nil || !errors.Is(err, cause) || calls != 1 {
+		t.Errorf("Submit = %q, %v, effects = %d", got, err, calls)
+	}
+}
+
+func TestSubmitRedirectIsTerminalAndClientIsRetained(t *testing.T) {
+	for _, policyFailure := range []bool{false, true} {
+		t.Run(fmt.Sprintf("policyFailure=%t", policyFailure), func(t *testing.T) {
+			requests := 0
+			body := &observedBody{reader: strings.NewReader("redirect body")}
+			jar, err := cookiejar.New(nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			u, err := url.Parse("http://example.test")
+			if err != nil {
+				t.Fatal(err)
+			}
+			jar.SetCookies(u, []*http.Cookie{{Name: "session", Value: "supplied"}})
+			cause := errors.New("redirect rejected by caller")
+			policyCalls := 0
+			client := &http.Client{Jar: jar, Timeout: time.Second}
+			client.CheckRedirect = func(*http.Request, []*http.Request) error {
+				policyCalls++
+				if policyFailure {
+					return cause
+				}
+				return nil
+			}
+			client.Transport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
+				requests++
+				r.Body.Close()
+				if cookie, err := r.Cookie("session"); err != nil || cookie.Value != "supplied" {
+					t.Errorf("supplied cookie jar was not used: %v, %v", cookie, err)
+				}
+				resp := response(302, body)
+				resp.Header.Set("Location", "http://elsewhere.test")
+				return resp, nil
+			})
+			got, err := Submit(context.Background(), client, "http://example.test", "op", nil, true)
+			if got != nil || err == nil || !strings.Contains(err.Error(), "HTTP 302") || requests != 1 || policyCalls != 1 || body.closes != 1 {
+				t.Errorf("Submit = %q, %v, requests/policy/closes = %d/%d/%d", got, err, requests, policyCalls, body.closes)
+			}
+			if policyFailure && !errors.Is(err, cause) {
+				t.Errorf("caller redirect error was lost: %v", err)
+			}
+			if client.Jar != jar || client.Timeout != time.Second || client.CheckRedirect == nil {
+				t.Error("borrowed client configuration changed")
+			}
+			if err := client.CheckRedirect(nil, nil); policyFailure != errors.Is(err, cause) {
+				t.Errorf("borrowed redirect policy changed: %v", err)
+			}
+		})
+	}
+}
+
+func TestSubmitMalformedRedirectIsTerminal(t *testing.T) {
+	calls := 0
+	body := &observedBody{reader: strings.NewReader("redirect body")}
+	client := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
+		calls++
+		r.Body.Close()
+		resp := response(302, body)
+		resp.Header.Set("Location", "%")
+		return resp, nil
+	})}
+	_, err := Submit(context.Background(), client, "http://example.test", "op", nil, true)
+	if err == nil || !strings.Contains(err.Error(), "HTTP 302") || calls != 1 || body.closes != 1 {
+		t.Errorf("Submit = %v, calls/closes = %d/%d", err, calls, body.closes)
+	}
+}
+
+func TestSubmitBudgetIncludesRealBodyRead(t *testing.T) {
+	for _, clientTimeout := range []time.Duration{0, 30 * time.Millisecond} {
+		t.Run(fmt.Sprintf("clientTimeout=%s", clientTimeout), func(t *testing.T) {
+			finished := make(chan struct{})
+			stop := make(chan struct{})
+			s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				defer close(finished)
+				w.WriteHeader(200)
+				w.(http.Flusher).Flush()
+				select {
+				case <-r.Context().Done():
+				case <-stop:
+				}
+			}))
+			t.Cleanup(func() { close(stop); s.Close() })
+			client := s.Client()
+			client.Timeout = clientTimeout
+			start := time.Now()
+			_, err := Submit(context.Background(), client, s.URL, "op", nil, false)
+			if !errors.Is(err, context.DeadlineExceeded) {
+				t.Errorf("body read error = %v, want deadline", err)
+			}
+			if clientTimeout > 0 && time.Since(start) > 400*time.Millisecond {
+				t.Error("supplied client timeout did not narrow the operation budget")
+			}
+			select {
+			case <-finished:
+			case <-time.After(2 * time.Second):
+				t.Fatal("handler did not finish after deadline")
+			}
+		})
+	}
+}

@@ -1,0 +1,36 @@
+[
+  {
+    "pair": "revision-breaker-recovery",
+    "label": "A",
+    "command": [
+      "go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-run",
+      "TestIndependent",
+      "-v",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "=== RUN   TestIndependentAllowedRedirectPolicy\n    independent_review_test.go:39: enabled=false result=\"ok\" error=<nil> exchanges=2 policy calls=1\n    independent_review_test.go:39: enabled=true result=\"ok\" error=<nil> exchanges=2 policy calls=1\n--- PASS: TestIndependentAllowedRedirectPolicy (0.00s)\n=== RUN   TestIndependentDeadline200IsNeutral\n    independent_review_test.go:76: recovery=false completed result=\"ok\" error=<nil>\n    independent_review_test.go:80: recovery=false after next eligible failure: error=circuit breaker is open calls=4->4\n    independent_review_test.go:76: recovery=true completed result=\"ok\" error=<nil>\n    independent_review_test.go:80: recovery=true after next eligible failure: error=circuit breaker is open calls=5->5\n--- PASS: TestIndependentDeadline200IsNeutral (0.61s)\n=== RUN   TestIndependentBoundedDiagnosticRetainsCause\n    independent_review_test.go:106: enabled=false body failure=false diagnostic bytes=4096 cause retained=true\n    independent_review_test.go:106: enabled=false body failure=true diagnostic bytes=4096 cause retained=true\n    independent_review_test.go:106: enabled=true body failure=false diagnostic bytes=4096 cause retained=true\n    independent_review_test.go:106: enabled=true body failure=true diagnostic bytes=4096 cause retained=true\n--- PASS: TestIndependentBoundedDiagnosticRetainsCause (0.00s)\nPASS\nok  \texample.invalid/breaker-recovery\t0.870s\n"
+  },
+  {
+    "pair": "revision-breaker-recovery",
+    "label": "B",
+    "command": [
+      "go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-run",
+      "TestIndependent",
+      "-v",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "=== RUN   TestIndependentAllowedRedirectPolicy\n    independent_review_test.go:39: enabled=false result=\"\" error=HTTP 302 exchanges=1 policy calls=0\n    independent_review_test.go:41: Fetch did not honor borrowed redirect policy\n    independent_review_test.go:39: enabled=true result=\"\" error=HTTP 302 exchanges=1 policy calls=0\n    independent_review_test.go:41: Fetch did not honor borrowed redirect policy\n--- FAIL: TestIndependentAllowedRedirectPolicy (0.00s)\n=== RUN   TestIndependentDeadline200IsNeutral\n    independent_review_test.go:76: recovery=false completed result=\"ok\" error=<nil>\n    independent_review_test.go:80: recovery=false after next eligible failure: error=HTTP 503 calls=4->5\n    independent_review_test.go:81: expired 200 changed health state\n    independent_review_test.go:76: recovery=true completed result=\"ok\" error=<nil>\n    independent_review_test.go:80: recovery=true after next eligible failure: error=HTTP 503 calls=5->6\n    independent_review_test.go:81: expired 200 changed health state\n--- FAIL: TestIndependentDeadline200IsNeutral (0.61s)\n=== RUN   TestIndependentBoundedDiagnosticRetainsCause\n    independent_review_test.go:106: enabled=false body failure=false diagnostic bytes=7528 cause retained=true\n    independent_review_test.go:107: diagnostic exceeds bound\n    independent_review_test.go:106: enabled=false body failure=true diagnostic bytes=7500 cause retained=true\n    independent_review_test.go:107: diagnostic exceeds bound\n    independent_review_test.go:106: enabled=true body failure=false diagnostic bytes=7528 cause retained=true\n    independent_review_test.go:107: diagnostic exceeds bound\n    independent_review_test.go:106: enabled=true body failure=true diagnostic bytes=7500 cause retained=true\n    independent_review_test.go:107: diagnostic exceeds bound\n--- FAIL: TestIndependentBoundedDiagnosticRetainsCause (0.00s)\nFAIL\nFAIL\texample.invalid/breaker-recovery\t0.820s\nFAIL\n"
+  }
+]

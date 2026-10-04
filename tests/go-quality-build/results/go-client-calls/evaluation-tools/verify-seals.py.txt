@@ -1,0 +1,17 @@
+import hashlib,importlib.util,json,pathlib,subprocess,tempfile,shutil
+repo=pathlib.Path('/Users/jb/.codex/worktrees/b312/skills');root=repo/'tests/go-quality-build/results/go-client-calls'
+spec=importlib.util.spec_from_file_location('h',repo/'tests/go-quality-build/client_call_trials.py');h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
+global_meta=json.loads((root/'manifest.json').read_text());assert h.hashes(repo/'tests/go-quality-build/go-client-calls/evals')==global_meta['fixture_hashes'];assert h.hashes(repo/'tests/go-quality-build/go-client-calls/probes')==global_meta['probe_hashes']
+rows=[]
+for arm in ['baseline','skill-on','transfer','revision-2']:
+ for p in sorted((root/arm).glob('*/manifest.json')):
+  archive=p.parent;m=json.loads(p.read_text())
+  for name,key in [('input','input_hashes'),('catalog','catalog_hashes'),('output','output_hashes')]:assert h.hashes(archive/name)==m[key],str(p)+name
+  patch=(archive/'source.patch').read_bytes();assert hashlib.sha256(patch).hexdigest()==m['patch_sha256'];assert hashlib.sha256((archive/'prompt.txt').read_bytes()).hexdigest()==m['prompt_sha256']
+  with tempfile.TemporaryDirectory(prefix='seal-audit-',dir='/private/tmp') as tmp:
+   check=pathlib.Path(tmp)/'source';shutil.copytree(archive/'input',check)
+   if patch:h.run(['git','apply',str(archive/'source.patch')],check)
+   assert h.hashes(check)==m['output_hashes']
+  neighbors={k:v for k,v in m['catalog_hashes'].items() if not k.startswith('go-client-calls/')};assert neighbors==global_meta['catalog_hashes']
+  rows.append({'archive':str(archive.relative_to(root)),'case':m['case'],'reconstruction':'PASS','hashes':'PASS','neighbors':'PASS'})
+print(json.dumps({'sealed_trials':len(rows),'checks':rows},indent=2))

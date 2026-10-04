@@ -1,0 +1,107 @@
+[
+  {
+    "case": "backend-errors",
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": "ok  \texample.com/accountlookup\t0.222s\n"
+  },
+  {
+    "case": "backend-errors",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": ""
+  },
+  {
+    "case": "reader-errors",
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": "ok  \texample.com/recordload\t0.188s\n"
+  },
+  {
+    "case": "reader-errors",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": ""
+  },
+  {
+    "case": "cli-completion",
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": "ok  \texample.com/lineexport\t0.177s\n?   \texample.com/lineexport/cmd/lineexport\t[no test files]\n"
+  },
+  {
+    "case": "cli-completion",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": ""
+  },
+  {
+    "case": "archive-completion",
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": "ok  \texample.com/entryzip\t0.171s\n"
+  },
+  {
+    "case": "archive-completion",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": ""
+  },
+  {
+    "case": "not-error-work",
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": "ok  \texample.com/paging\t0.172s\n"
+  },
+  {
+    "case": "not-error-work",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": ""
+  }
+]

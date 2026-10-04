@@ -1,0 +1,100 @@
+{
+  "candidate": "candidate-v2-manifest.json",
+  "guidance_revisions_used": 1,
+  "disposition": "retained; exact accepted v2 promoted in go-quality-build 0.5.0; delivery and independent final branch review passed",
+  "first_version": "first-comparison.json",
+  "cases": [
+    {
+      "case": "http-write-replay",
+      "baseline": "baseline/t01",
+      "guided": "revision-2/r01",
+      "review": "reviews/pair-revision-http.md",
+      "benefit": "Effective legacy caller cancellation and operation budget, including absent/longer client timeout; shorter supplied timeout and causal/replay controls retained",
+      "important_preserved_controls": "Caller identity/exact payload across lost acknowledgements and outer invocations; one no-dedup application attempt; response ownership; no new public API/dependency/breaker",
+      "limits": "Shared initial versus final redirect acceptance ambiguity; no unconditional permissive-redirect compatibility claim"
+    },
+    {
+      "case": "http-retry-budget",
+      "baseline": "baseline/t02",
+      "guided": "revision-2/r02",
+      "review": "reviews/pair-revision-http.md",
+      "benefit": "Known redirect-policy error status and bounded complete diagnostic text with available causes retained",
+      "important_preserved_controls": "429/503 policy, application ceiling, overflow/unfit hints, one budget, supplied native policy/ownership; no client wrapper or breaker",
+      "limits": "Native client-erased lower-level causes remain an explicit shared boundary observation; shared candidate-test gap for known policy status, detected by maintained supplemental probe"
+    },
+    {
+      "case": "breaker-recovery",
+      "baseline": "baseline/t04",
+      "guided": "revision-2/r03",
+      "review": "reviews/pair-revision-breaker-and-control.md",
+      "benefit": "Neutral health after completed success/caller stopping and local expiry; bounded diagnostics; active borrowed redirect policy",
+      "important_preserved_controls": "Per-dependency state, one recovery admission, excluded release, old generations, failed-body neutrality, borrowed client, one bounded disabled request and no retry/framework/dependency",
+      "limits": "Real timers/local HTTP and controlled schedules; no production traffic guarantee"
+    },
+    {
+      "case": "grpc-policy",
+      "baseline": "baseline/t03",
+      "guided": "skill-on/t08",
+      "review": "reviews/pair-grpc-policy.md",
+      "benefit": "No marginal benefit established: substantive tie",
+      "important_preserved_controls": "Effective native policy, resolver precedence, sent-header commitment, one application invocation, deadlines/cancellation, status wrapping and borrowed connection",
+      "limits": "Main and gRPC reference bytes identical between v1/v2; unaffected case not repeated during HTTP-only revision"
+    },
+    {
+      "case": "pure-control",
+      "baseline": "baseline/t05",
+      "guided": "revision-2/r04",
+      "review": "reviews/pair-revision-breaker-and-control.md",
+      "benefit": "No marginal benefit established: substantive tie",
+      "important_preserved_controls": "Identical minimal production loop, one focused regression, no client/resilience machinery; author reports skipping candidate"
+    },
+    {
+      "case": "grpc-transfer",
+      "baseline": "transfer/t11",
+      "guided": "transfer/t12",
+      "review": "reviews/pair-grpc-transfer.md",
+      "benefit": "No marginal benefit established: substantive tie; fresh final-guidance transfer succeeds",
+      "important_preserved_controls": "Stable operation identity/exact payload and one effect across native lost acknowledgements and outer caller retries; unrelated metadata; native effective policy, header commitment, total budget, status and borrowed connection",
+      "limits": "Actual generated service over bufconn with model deduplication; external network and production server retention unverified"
+    }
+  ],
+  "comparison_protocol": "Fresh authors, fixed original tasks/catalog neighbors and inherited settings; neutral reviewers froze raw findings before controller interpreted arm maps; no author repairs",
+  "checks": "Per-trial public/private receipts, symmetric independently discovered supplemental checks, exact patch reconstruction and SHA inventories",
+  "interpretations": "contract-interpretations.json",
+  "limits": [
+    "Bounded one-author-per-arm comparisons do not estimate model variance or universal effectiveness",
+    "Exact inherited model/effort IDs and full author tool transcripts unavailable",
+    "Manual description-catalog selection and self-reported reads do not establish automatic routing",
+    "Blinding is procedural on a shared filesystem; code style can reveal likely treatment",
+    "Post-outcome supplemental discoveries may bias comparison; raw failures and clarifications retained",
+    "Go 1.22.12 executes with external linking on this macOS host; default linker compatibility on this OS unproven",
+    "Supported dependency pins and local boundaries tested; deployed TLS/DNS/load and future versions unverified"
+  ],
+  "promotion_gate": {
+    "independently_confirmed_meaningful_gain": [
+      "http-write-replay",
+      "http-retry-budget",
+      "breaker-recovery"
+    ],
+    "preserved_strong_controls": [
+      "grpc-policy",
+      "pure-control",
+      "grpc-transfer"
+    ],
+    "fresh_final_guidance_transfer": "PASS; substantive tie",
+    "unresolved_material_introduced_regression": false,
+    "candidate": "exact candidate-v2 bytes",
+    "guidance_revision_cap": "one used; no further guidance revision authorized"
+  },
+  "final_review": {
+    "report": "reviews/final-branch-review.md",
+    "reviewer_model": "gpt-6-astra",
+    "findings": {
+      "critical": 0,
+      "important": 0,
+      "minor": 0
+    },
+    "independent_result": "three HTTP gains reproduced; preserved controls and archive/runtime equality confirmed",
+    "limits": "see report Declined to judge and execution ledger rulings"
+  }
+}

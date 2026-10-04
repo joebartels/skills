@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-03",
+  "design": "User-approved bounded refinement, approximately 300\u2013350 words; representation/safe text/partial results/completion.",
+  "authors": {
+    "model": "inherited parent settings",
+    "exact_model_and_effort": "not exposed by collaboration API"
+  },
+  "budget": {
+    "planned_fresh_author_trials": 16,
+    "narrow_revision_limit": 1,
+    "maximum_affected_reruns_if_revision_needed": 6
+  },
+  "decision": {
+    "retain": "Repeated reduction of concrete contract defects, transfer preservation and no material regression or unnecessary API/mechanism growth.",
+    "revise": "One narrow guidance failure justifies the single allowed correction and affected reruns.",
+    "abandon": "No demonstrated incremental benefit within the fixed budget, or unresolved regressions/costs."
+  },
+  "discovery_cases": [
+    "backend-errors",
+    "reader-errors",
+    "cli-completion"
+  ],
+  "repetitions_per_discovery_arm": 2,
+  "transfer": "archive-completion; 1 fresh author per arm",
+  "non_selection": "not-error-work; 1 fresh author per arm",
+  "controls": "Existing build catalog held fixed across arms; error guidance absent/present. Reviewer arm-blinded; task/probes visible. Existing discovery cases are informed by historical failures, not unseen transfer.",
+  "prospective_reader_contract": "Malformed data and read failure arriving together expose both causes; frozen before authors.",
+  "checklist": {
+    "prepare": "complete",
+    "baseline": "complete; 6 discovery authors",
+    "rewrite": "skipped; no baseline failure",
+    "guided": "skipped; early-stop gate",
+    "transfer_and_control": "baseline complete; guided skipped",
+    "blind_review": "complete; 8 sources, initial six frozen before supplemental two",
+    "decision_and_validation": "complete; repository checks passed, integrity/seal recorded separately"
+  },
+  "actual": {
+    "fresh_author_trials": 8,
+    "baseline_discovery": 6,
+    "baseline_transfer": 1,
+    "baseline_control": 1,
+    "guided_trials": 0,
+    "guidance_revisions": 0,
+    "independent_reviewers": 1
+  },
+  "disposition": {
+    "decision": "shelve standalone candidate; do not rewrite or promote",
+    "early_stop": "All eight baseline candidates passed held contract probes; source review found no introduced contract defect. No concrete no-guidance failure to target.",
+    "inference": "The bounded tasks do not establish incremental value for new runtime guidance. They do not prove universal ineffectiveness.",
+    "unchanged": [
+      "prior error draft",
+      "eight runtime build skills",
+      "package version/catalogs"
+    ]
+  }
+}

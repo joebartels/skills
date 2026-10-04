@@ -1,0 +1,5 @@
+Rejecting a followed redirect is **not a definite requirement** here. I interpreted “other statuses are terminal” as covering the initial response, but the README specifies application retries and retains supplied-client settings. Evaluating the final `Client.Do` response is also a reasonable reading; a configured/default redirect ending in 200 can therefore comply. That branch of frozen R1 should be treated as contract ambiguity, not a confirmed defect.
+
+The narrower observation is definite: both implementations discard a returned redirect response’s known status on `Do` error (`A/source/client.go:35-38`, `B/source/client.go:30-33`). They preserve the policy error, but omit HTTP 302. The requirement that status errors contain `HTTP <status>` supports retaining that known status when reporting the rejected redirect. This does not justify forbidding successful redirect following.
+
+The frozen report remains unchanged; its moderate R1 assessment included the ambiguous initial-status interpretation.

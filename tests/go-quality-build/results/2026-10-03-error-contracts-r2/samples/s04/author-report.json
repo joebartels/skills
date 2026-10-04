@@ -1,0 +1,147 @@
+{
+  "selected_skills": [
+    "go-api-contracts",
+    "go-behavior-tests",
+    "go-names-and-comments",
+    "go-test-isolation"
+  ],
+  "opened_guidance": [
+    "/private/tmp/go-error-eval-xcj0cu48/s04/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s04/guidance/go-behavior-tests/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s04/guidance/go-behavior-tests/references/behavior-observations.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s04/guidance/go-names-and-comments/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s04/guidance/go-test-isolation/SKILL.md",
+    "/Users/jb/.codex/RTK.md",
+    "/Users/jb/.agents/skills/superpowers/using-superpowers/SKILL.md",
+    "/Users/jb/.agents/skills/golang/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/test-driven-development/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/test-driven-development/writing-good-tests.md",
+    "/Users/jb/.agents/skills/superpowers/verification-before-completion/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/brainstorming/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/requesting-code-review/SKILL.md"
+  ],
+  "global_process_style_skills_read": [
+    {
+      "name": "superpowers:using-superpowers",
+      "note": "Read; its SUBAGENT-STOP exempts dispatched specific-task subagents from its workflow."
+    },
+    {
+      "name": "go-core-style",
+      "note": "Applied simple standard-library implementation, early error returns, formatting, vet and race checks. Staticcheck was attempted but unavailable."
+    },
+    {
+      "name": "superpowers:test-driven-development",
+      "note": "Applied test-first cycles with observed runtime failures before each behavior change; the missing LineError type first caused compilation failure, then adding the minimal type allowed the intended structured-error assertion failures to run."
+    },
+    {
+      "name": "superpowers:verification-before-completion",
+      "note": "Applied fresh full-suite, formatting and static-analysis checks before completion claims."
+    },
+    {
+      "name": "superpowers:brainstorming",
+      "note": "Read; the task explicitly supplied an approved bounded design and instructed execution without another design or permission round."
+    },
+    {
+      "name": "superpowers:requesting-code-review",
+      "note": "Read; no major feature, merge, or subagent-driven implementation plan was involved, so no additional reviewer was dispatched."
+    }
+  ],
+  "implementation_notes": [
+    "Added exported *LineError with one-based physical Line and exact Text without the newline separator; malformed-only results retain a direct *LineError.",
+    "Skipped only empty lines and lines whose first byte is #. Kept first-= splitting, empty keys/values, duplicate ordering, and whitespace preservation.",
+    "Kept io.ReadAll and parsed bytes even when reading fails. Returned the accepted record prefix and the original reader cause; used errors.Join only when parsing and reading both fail.",
+    "Kept Load's function signature, borrowed-reader ownership, nil success errors, and the Go 1.22 module declaration unchanged. Added no dependencies.",
+    "Added complete-value tests for comment/blank handling, order, empty fields, extra equals signs, unterminated and oversized lines, physical line numbering, unmodified malformed text, and stopping at the first malformed record.",
+    "Added faithful per-case reader fixtures for errors before data, alongside data, and after data; tested normal EOF, both inspectable failures, retained prefixes and borrowed-reader ownership.",
+    "Added an external-package runnable ExampleLoad as a consumer-boundary check and replaced task-oriented README prose with concise usage and contract documentation.",
+    "Observed expected failing behavior tests before implementation, including a separate run proving typed parse errors still lost the reader cause before errors.Join was added.",
+    "Final formatting, go vet, full race-enabled tests and independently selected dual-failure child all passed.",
+    "Verification used local Go 1.26.5 on darwin/arm64 with GOWORK=off and GOTOOLCHAIN=local; an actual Go 1.22 toolchain and real downstream consumers were not exercised.",
+    "Staticcheck was unavailable (exit 127); no installation was attempted. Load intentionally buffers the entire input, so memory grows with input size.",
+    "Changed only this module and author-report.json; no Git commits, installation or external actions."
+  ],
+  "checks": [
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go version",
+      "exit_code": 0,
+      "output": "go version go1.26.5 darwin/arm64\n"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v ./...",
+      "exit_code": 0,
+      "output": "=== RUN   TestLoad\n--- PASS: TestLoad (0.00s)\nPASS\nok  \texample.com/recordload\t0.154s\n"
+    },
+    {
+      "phase": "red: comments and retained reader data",
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v ./...",
+      "exit_code": 1,
+      "output": "=== RUN   TestLoad\n--- PASS: TestLoad (0.00s)\n=== RUN   TestLoadRecords\n=== RUN   TestLoadRecords/comments_blanks_and_order\n    load_test.go:46: Load() error = line 4: malformed record, want nil\n=== RUN   TestLoadRecords/empty\n=== RUN   TestLoadRecords/only_comments_and_blanks\n    load_test.go:46: Load() error = line 1: malformed record, want nil\n=== RUN   TestLoadRecords/unterminated_line\n=== RUN   TestLoadRecords/whitespace_preserved\n=== RUN   TestLoadRecords/long_line\n--- FAIL: TestLoadRecords (0.00s)\n    --- FAIL: TestLoadRecords/comments_blanks_and_order (0.00s)\n    --- PASS: TestLoadRecords/empty (0.00s)\n    --- FAIL: TestLoadRecords/only_comments_and_blanks (0.00s)\n    --- PASS: TestLoadRecords/unterminated_line (0.00s)\n    --- PASS: TestLoadRecords/whitespace_preserved (0.00s)\n    --- PASS: TestLoadRecords/long_line (0.00s)\n=== RUN   TestLoadReadError\n=== RUN   TestLoadReadError/before_data\n=== RUN   TestLoadReadError/with_data\n    load_test.go:91: Load() records = [], want [{a 1} {b 2}]\n=== RUN   TestLoadReadError/after_data\n    load_test.go:91: Load() records = [], want [{a 1} {b 2}]\n=== RUN   TestLoadReadError/EOF_with_data\n=== RUN   TestLoadReadError/empty_EOF\n--- FAIL: TestLoadReadError (0.00s)\n    --- PASS: TestLoadReadError/before_data (0.00s)\n    --- FAIL: TestLoadReadError/with_data (0.00s)\n    --- FAIL: TestLoadReadError/after_data (0.00s)\n    --- PASS: TestLoadReadError/EOF_with_data (0.00s)\n    --- PASS: TestLoadReadError/empty_EOF (0.00s)\nFAIL\nFAIL\texample.com/recordload\t0.168s\nFAIL\n"
+    },
+    {
+      "phase": "green: comments and retained reader data",
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v ./...",
+      "exit_code": 0,
+      "output": "=== RUN   TestLoad\n--- PASS: TestLoad (0.00s)\n=== RUN   TestLoadRecords\n=== RUN   TestLoadRecords/comments_blanks_and_order\n=== RUN   TestLoadRecords/empty\n=== RUN   TestLoadRecords/only_comments_and_blanks\n=== RUN   TestLoadRecords/unterminated_line\n=== RUN   TestLoadRecords/whitespace_preserved\n=== RUN   TestLoadRecords/long_line\n--- PASS: TestLoadRecords (0.00s)\n    --- PASS: TestLoadRecords/comments_blanks_and_order (0.00s)\n    --- PASS: TestLoadRecords/empty (0.00s)\n    --- PASS: TestLoadRecords/only_comments_and_blanks (0.00s)\n    --- PASS: TestLoadRecords/unterminated_line (0.00s)\n    --- PASS: TestLoadRecords/whitespace_preserved (0.00s)\n    --- PASS: TestLoadRecords/long_line (0.00s)\n=== RUN   TestLoadReadError\n=== RUN   TestLoadReadError/before_data\n=== RUN   TestLoadReadError/with_data\n=== RUN   TestLoadReadError/after_data\n=== RUN   TestLoadReadError/EOF_with_data\n=== RUN   TestLoadReadError/empty_EOF\n--- PASS: TestLoadReadError (0.00s)\n    --- PASS: TestLoadReadError/before_data (0.00s)\n    --- PASS: TestLoadReadError/with_data (0.00s)\n    --- PASS: TestLoadReadError/after_data (0.00s)\n    --- PASS: TestLoadReadError/EOF_with_data (0.00s)\n    --- PASS: TestLoadReadError/empty_EOF (0.00s)\nPASS\nok  \texample.com/recordload\t0.159s\n"
+    },
+    {
+      "phase": "new public API compilation before minimal type",
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v ./...",
+      "exit_code": 1,
+      "output": "# example.com/recordload [example.com/recordload.test]\n./load_test.go:141:17: undefined: LineError\nFAIL\texample.com/recordload [build failed]\nFAIL\n"
+    },
+    {
+      "phase": "red: structured parse errors and joined reader cause",
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v ./...",
+      "exit_code": 1,
+      "output": "=== RUN   TestLoad\n--- PASS: TestLoad (0.00s)\n=== RUN   TestLoadRecords\n=== RUN   TestLoadRecords/comments_blanks_and_order\n=== RUN   TestLoadRecords/empty\n=== RUN   TestLoadRecords/only_comments_and_blanks\n=== RUN   TestLoadRecords/unterminated_line\n=== RUN   TestLoadRecords/whitespace_preserved\n=== RUN   TestLoadRecords/long_line\n--- PASS: TestLoadRecords (0.00s)\n    --- PASS: TestLoadRecords/comments_blanks_and_order (0.00s)\n    --- PASS: TestLoadRecords/empty (0.00s)\n    --- PASS: TestLoadRecords/only_comments_and_blanks (0.00s)\n    --- PASS: TestLoadRecords/unterminated_line (0.00s)\n    --- PASS: TestLoadRecords/whitespace_preserved (0.00s)\n    --- PASS: TestLoadRecords/long_line (0.00s)\n=== RUN   TestLoadReadError\n=== RUN   TestLoadReadError/before_data\n=== RUN   TestLoadReadError/with_data\n=== RUN   TestLoadReadError/after_data\n=== RUN   TestLoadReadError/EOF_with_data\n=== RUN   TestLoadReadError/empty_EOF\n--- PASS: TestLoadReadError (0.00s)\n    --- PASS: TestLoadReadError/before_data (0.00s)\n    --- PASS: TestLoadReadError/with_data (0.00s)\n    --- PASS: TestLoadReadError/after_data (0.00s)\n    --- PASS: TestLoadReadError/EOF_with_data (0.00s)\n    --- PASS: TestLoadReadError/empty_EOF (0.00s)\n=== RUN   TestLoadLineError\n=== RUN   TestLoadLineError/first_line\n    load_test.go:143: Load() error = line 1: malformed record, want *LineError\n=== RUN   TestLoadLineError/physical_line_and_raw_text\n    load_test.go:143: Load() error = line 4: malformed record, want *LineError\n=== RUN   TestLoadLineError/indented_hash\n    load_test.go:143: Load() error = line 1: malformed record, want *LineError\n=== RUN   TestLoadLineError/whitespace_line\n    load_test.go:143: Load() error = line 1: malformed record, want *LineError\n=== RUN   TestLoadLineError/EOF_with_malformed_data\n    load_test.go:143: Load() error = line 2: malformed record, want *LineError\n=== RUN   TestLoadLineError/reader_error_with_malformed_data\n    load_test.go:143: Load() error = line 2: malformed record, want *LineError\n=== RUN   TestLoadLineError/reader_error_after_malformed_data\n    load_test.go:143: Load() error = line 2: malformed record, want *LineError\n--- FAIL: TestLoadLineError (0.00s)\n    --- FAIL: TestLoadLineError/first_line (0.00s)\n    --- FAIL: TestLoadLineError/physical_line_and_raw_text (0.00s)\n    --- FAIL: TestLoadLineError/indented_hash (0.00s)\n    --- FAIL: TestLoadLineError/whitespace_line (0.00s)\n    --- FAIL: TestLoadLineError/EOF_with_malformed_data (0.00s)\n    --- FAIL: TestLoadLineError/reader_error_with_malformed_data (0.00s)\n    --- FAIL: TestLoadLineError/reader_error_after_malformed_data (0.00s)\n=== RUN   ExampleLoad\n--- FAIL: ExampleLoad (0.00s)\ngot:\n[{host localhost}]\nwant:\n[{host localhost}]\nline 3: \"broken\"\nFAIL\nFAIL\texample.com/recordload\t0.175s\nFAIL\n"
+    },
+    {
+      "phase": "red: reader cause remains missing beside typed parse error",
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v ./...",
+      "exit_code": 1,
+      "output": "=== RUN   TestLoad\n--- PASS: TestLoad (0.00s)\n=== RUN   TestLoadRecords\n=== RUN   TestLoadRecords/comments_blanks_and_order\n=== RUN   TestLoadRecords/empty\n=== RUN   TestLoadRecords/only_comments_and_blanks\n=== RUN   TestLoadRecords/unterminated_line\n=== RUN   TestLoadRecords/whitespace_preserved\n=== RUN   TestLoadRecords/long_line\n--- PASS: TestLoadRecords (0.00s)\n    --- PASS: TestLoadRecords/comments_blanks_and_order (0.00s)\n    --- PASS: TestLoadRecords/empty (0.00s)\n    --- PASS: TestLoadRecords/only_comments_and_blanks (0.00s)\n    --- PASS: TestLoadRecords/unterminated_line (0.00s)\n    --- PASS: TestLoadRecords/whitespace_preserved (0.00s)\n    --- PASS: TestLoadRecords/long_line (0.00s)\n=== RUN   TestLoadReadError\n=== RUN   TestLoadReadError/before_data\n=== RUN   TestLoadReadError/with_data\n=== RUN   TestLoadReadError/after_data\n=== RUN   TestLoadReadError/EOF_with_data\n=== RUN   TestLoadReadError/empty_EOF\n--- PASS: TestLoadReadError (0.00s)\n    --- PASS: TestLoadReadError/before_data (0.00s)\n    --- PASS: TestLoadReadError/with_data (0.00s)\n    --- PASS: TestLoadReadError/after_data (0.00s)\n    --- PASS: TestLoadReadError/EOF_with_data (0.00s)\n    --- PASS: TestLoadReadError/empty_EOF (0.00s)\n=== RUN   TestLoadLineError\n=== RUN   TestLoadLineError/first_line\n=== RUN   TestLoadLineError/physical_line_and_raw_text\n=== RUN   TestLoadLineError/indented_hash\n=== RUN   TestLoadLineError/whitespace_line\n=== RUN   TestLoadLineError/EOF_with_malformed_data\n=== RUN   TestLoadLineError/reader_error_with_malformed_data\n    load_test.go:149: Load() error = line 2: malformed record, want reader cause reader failed\n=== RUN   TestLoadLineError/reader_error_after_malformed_data\n    load_test.go:149: Load() error = line 2: malformed record, want reader cause reader failed\n--- FAIL: TestLoadLineError (0.00s)\n    --- PASS: TestLoadLineError/first_line (0.00s)\n    --- PASS: TestLoadLineError/physical_line_and_raw_text (0.00s)\n    --- PASS: TestLoadLineError/indented_hash (0.00s)\n    --- PASS: TestLoadLineError/whitespace_line (0.00s)\n    --- PASS: TestLoadLineError/EOF_with_malformed_data (0.00s)\n    --- FAIL: TestLoadLineError/reader_error_with_malformed_data (0.00s)\n    --- FAIL: TestLoadLineError/reader_error_after_malformed_data (0.00s)\n=== RUN   ExampleLoad\n--- PASS: ExampleLoad (0.00s)\nFAIL\nFAIL\texample.com/recordload\t0.177s\nFAIL\n"
+    },
+    {
+      "phase": "green: complete loader contract",
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v ./...",
+      "exit_code": 0,
+      "output": "=== RUN   TestLoad\n--- PASS: TestLoad (0.00s)\n=== RUN   TestLoadRecords\n=== RUN   TestLoadRecords/comments_blanks_and_order\n=== RUN   TestLoadRecords/empty\n=== RUN   TestLoadRecords/only_comments_and_blanks\n=== RUN   TestLoadRecords/unterminated_line\n=== RUN   TestLoadRecords/whitespace_preserved\n=== RUN   TestLoadRecords/long_line\n--- PASS: TestLoadRecords (0.00s)\n    --- PASS: TestLoadRecords/comments_blanks_and_order (0.00s)\n    --- PASS: TestLoadRecords/empty (0.00s)\n    --- PASS: TestLoadRecords/only_comments_and_blanks (0.00s)\n    --- PASS: TestLoadRecords/unterminated_line (0.00s)\n    --- PASS: TestLoadRecords/whitespace_preserved (0.00s)\n    --- PASS: TestLoadRecords/long_line (0.00s)\n=== RUN   TestLoadReadError\n=== RUN   TestLoadReadError/before_data\n=== RUN   TestLoadReadError/with_data\n=== RUN   TestLoadReadError/after_data\n=== RUN   TestLoadReadError/EOF_with_data\n=== RUN   TestLoadReadError/empty_EOF\n--- PASS: TestLoadReadError (0.00s)\n    --- PASS: TestLoadReadError/before_data (0.00s)\n    --- PASS: TestLoadReadError/with_data (0.00s)\n    --- PASS: TestLoadReadError/after_data (0.00s)\n    --- PASS: TestLoadReadError/EOF_with_data (0.00s)\n    --- PASS: TestLoadReadError/empty_EOF (0.00s)\n=== RUN   TestLoadLineError\n=== RUN   TestLoadLineError/first_line\n=== RUN   TestLoadLineError/physical_line_and_raw_text\n=== RUN   TestLoadLineError/indented_hash\n=== RUN   TestLoadLineError/whitespace_line\n=== RUN   TestLoadLineError/EOF_with_malformed_data\n=== RUN   TestLoadLineError/reader_error_with_malformed_data\n=== RUN   TestLoadLineError/reader_error_after_malformed_data\n--- PASS: TestLoadLineError (0.00s)\n    --- PASS: TestLoadLineError/first_line (0.00s)\n    --- PASS: TestLoadLineError/physical_line_and_raw_text (0.00s)\n    --- PASS: TestLoadLineError/indented_hash (0.00s)\n    --- PASS: TestLoadLineError/whitespace_line (0.00s)\n    --- PASS: TestLoadLineError/EOF_with_malformed_data (0.00s)\n    --- PASS: TestLoadLineError/reader_error_with_malformed_data (0.00s)\n    --- PASS: TestLoadLineError/reader_error_after_malformed_data (0.00s)\n=== RUN   ExampleLoad\n--- PASS: ExampleLoad (0.00s)\nPASS\nok  \texample.com/recordload\t0.175s\n"
+    },
+    {
+      "phase": "format",
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache gofmt -s -w load.go load_test.go example_test.go",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "phase": "final verification",
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache gofmt -l load.go load_test.go example_test.go",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "phase": "final verification",
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go vet ./...",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "phase": "final verification",
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache staticcheck ./...",
+      "exit_code": 127,
+      "output": "env: staticcheck: No such file or directory\n"
+    },
+    {
+      "phase": "final verification",
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v -race -count=1 ./...",
+      "exit_code": 0,
+      "output": "=== RUN   TestLoad\n--- PASS: TestLoad (0.00s)\n=== RUN   TestLoadRecords\n=== RUN   TestLoadRecords/comments_blanks_and_order\n=== RUN   TestLoadRecords/empty\n=== RUN   TestLoadRecords/only_comments_and_blanks\n=== RUN   TestLoadRecords/unterminated_line\n=== RUN   TestLoadRecords/whitespace_preserved\n=== RUN   TestLoadRecords/long_line\n--- PASS: TestLoadRecords (0.00s)\n    --- PASS: TestLoadRecords/comments_blanks_and_order (0.00s)\n    --- PASS: TestLoadRecords/empty (0.00s)\n    --- PASS: TestLoadRecords/only_comments_and_blanks (0.00s)\n    --- PASS: TestLoadRecords/unterminated_line (0.00s)\n    --- PASS: TestLoadRecords/whitespace_preserved (0.00s)\n    --- PASS: TestLoadRecords/long_line (0.00s)\n=== RUN   TestLoadReadError\n=== RUN   TestLoadReadError/before_data\n=== RUN   TestLoadReadError/with_data\n=== RUN   TestLoadReadError/after_data\n=== RUN   TestLoadReadError/EOF_with_data\n=== RUN   TestLoadReadError/empty_EOF\n--- PASS: TestLoadReadError (0.00s)\n    --- PASS: TestLoadReadError/before_data (0.00s)\n    --- PASS: TestLoadReadError/with_data (0.00s)\n    --- PASS: TestLoadReadError/after_data (0.00s)\n    --- PASS: TestLoadReadError/EOF_with_data (0.00s)\n    --- PASS: TestLoadReadError/empty_EOF (0.00s)\n=== RUN   TestLoadLineError\n=== RUN   TestLoadLineError/first_line\n=== RUN   TestLoadLineError/physical_line_and_raw_text\n=== RUN   TestLoadLineError/indented_hash\n=== RUN   TestLoadLineError/whitespace_line\n=== RUN   TestLoadLineError/EOF_with_malformed_data\n=== RUN   TestLoadLineError/reader_error_with_malformed_data\n=== RUN   TestLoadLineError/reader_error_after_malformed_data\n--- PASS: TestLoadLineError (0.00s)\n    --- PASS: TestLoadLineError/first_line (0.00s)\n    --- PASS: TestLoadLineError/physical_line_and_raw_text (0.00s)\n    --- PASS: TestLoadLineError/indented_hash (0.00s)\n    --- PASS: TestLoadLineError/whitespace_line (0.00s)\n    --- PASS: TestLoadLineError/EOF_with_malformed_data (0.00s)\n    --- PASS: TestLoadLineError/reader_error_with_malformed_data (0.00s)\n    --- PASS: TestLoadLineError/reader_error_after_malformed_data (0.00s)\n=== RUN   ExampleLoad\n--- PASS: ExampleLoad (0.00s)\nPASS\nok  \texample.com/recordload\t1.218s\n"
+    },
+    {
+      "phase": "final verification",
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v -count=1 -run '^TestLoadLineError/reader_error_with_malformed_data$' ./...",
+      "exit_code": 0,
+      "output": "=== RUN   TestLoadLineError\n=== RUN   TestLoadLineError/reader_error_with_malformed_data\n--- PASS: TestLoadLineError (0.00s)\n    --- PASS: TestLoadLineError/reader_error_with_malformed_data (0.00s)\nPASS\nok  \texample.com/recordload\t0.139s\n"
+    }
+  ]
+}

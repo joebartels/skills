@@ -1,0 +1,37 @@
+{
+  "source_checks": [
+    {
+      "url": "https://github.com/golang/go/blob/go1.22.12/src/net/http/transport.go",
+      "sha256": "e12051ca11438b68dad143f040beb65e5168d29dee44b35040546880e66506db",
+      "decision": "Native replay conditions and reuse"
+    },
+    {
+      "url": "https://github.com/golang/go/blob/go1.22.12/src/net/http/client.go",
+      "sha256": "f3f73aadb13f0a8e1e0293d046bb3a854a106076210ecb9fcc0351dbf13a47f3",
+      "decision": "Do error/body ownership and redirects"
+    },
+    {
+      "url": "https://github.com/grpc/grpc-go/blob/v1.67.3/dialoptions.go",
+      "sha256": "14af2bc01132dd06aed367eba0d5335b5bf0e099abf7a2135f9728e384e9b944",
+      "decision": "Resolver fallback and transparent retries despite WithDisableRetry"
+    },
+    {
+      "url": "https://github.com/grpc/grpc-go/blob/v1.67.3/stream.go",
+      "sha256": "b8ccf44ea870b43c55587d9133fdb39dbe92c8386ef1ed3a0c4a393f1b65d956",
+      "decision": "Commitment and retry counting"
+    },
+    {
+      "url": "https://github.com/sony/gobreaker/blob/v2.4.0/v2/gobreaker.go",
+      "sha256": "7770f5ef974e5d566e7b804c9e195f22468b90328d1d3ff4a6d7768256418074",
+      "decision": "Explicit exclusion and generation protection"
+    }
+  ],
+  "primary_docs": [
+    "https://www.rfc-editor.org/rfc/rfc9110.html#section-10.2.3",
+    "https://grpc.io/docs/guides/retry/",
+    "https://grpc.io/docs/guides/status-codes/",
+    "https://grpc.io/docs/guides/wait-for-ready/"
+  ],
+  "host_limitation": "https://github.com/golang/go/issues/78012",
+  "writing": "Original conditional guidance; no substantial copied source text."
+}

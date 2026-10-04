@@ -1,0 +1,219 @@
+{
+  "selected_skills": [
+    "go-api-contracts",
+    "go-behavior-tests",
+    "go-interfaces-and-composition",
+    "go-names-and-comments",
+    "go-test-isolation"
+  ],
+  "opened_guidance": [
+    "/Users/jb/.codex/RTK.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s05/catalog.json",
+    "/private/tmp/go-error-eval-xcj0cu48/s05/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s05/guidance/go-behavior-tests/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s05/guidance/go-interfaces-and-composition/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s05/guidance/go-names-and-comments/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s05/guidance/go-test-isolation/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s05/guidance/go-behavior-tests/references/behavior-observations.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s05/guidance/go-test-isolation/references/isolation-patterns.md",
+    "/Users/jb/.agents/skills/superpowers/using-superpowers/SKILL.md",
+    "/Users/jb/.agents/skills/golang/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/test-driven-development/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/systematic-debugging/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/verification-before-completion/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/brainstorming/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/requesting-code-review/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/test-driven-development/writing-good-tests.md"
+  ],
+  "global_skills_read": [
+    {
+      "name": "superpowers:using-superpowers",
+      "path": "/Users/jb/.agents/skills/superpowers/using-superpowers/SKILL.md",
+      "use": "Read; its SUBAGENT-STOP instruction says to ignore it for a dispatched specific task."
+    },
+    {
+      "name": "go-core-style",
+      "path": "/Users/jb/.agents/skills/golang/SKILL.md",
+      "use": "Applied for idiomatic Go, formatting, vet, race tests and the staticcheck availability check."
+    },
+    {
+      "name": "superpowers:test-driven-development",
+      "path": "/Users/jb/.agents/skills/superpowers/test-driven-development/SKILL.md",
+      "use": "Applied: finalization, limit, CLI and short-write behavior each had observed failing checks before the corresponding implementation."
+    },
+    {
+      "name": "superpowers:systematic-debugging",
+      "path": "/Users/jb/.agents/skills/superpowers/systematic-debugging/SKILL.md",
+      "use": "Applied to trace the discarded Close error and confirm regression tests; history/repository inspection remained outside the task's permitted scope."
+    },
+    {
+      "name": "superpowers:verification-before-completion",
+      "path": "/Users/jb/.agents/skills/superpowers/verification-before-completion/SKILL.md",
+      "use": "Applied: fresh full race suite, vet, build, formatting and focused-subtest checks were inspected."
+    },
+    {
+      "name": "superpowers:brainstorming",
+      "path": "/Users/jb/.agents/skills/superpowers/brainstorming/SKILL.md",
+      "use": "Read; resumed the explicitly approved bounded design without another permission round."
+    },
+    {
+      "name": "superpowers:requesting-code-review",
+      "path": "/Users/jb/.agents/skills/superpowers/requesting-code-review/SKILL.md",
+      "use": "Read and attempted a scoped reviewer subagent; the collaboration tool rejected it because the agent thread limit was reached. Performed local contract/code inspection instead; no independent reviewer ran."
+    }
+  ],
+  "implementation_notes": [
+    "Modified only the supplied module and this report. No commits, installation or external actions were performed; shell commands were rtk-prefixed and all Go commands used the required local toolchain/workspace/cache settings.",
+    "Export retains func(io.Reader, io.WriteCloser) (int, error) and forwards to ExportLimit with zero. ExportLimit takes an int limit, rejects negatives before input/output I/O, and closes its owned writer exactly once while leaving the borrowed reader open.",
+    "Finalization returns a single operation/Close error unchanged and errors.Join only when both fail, preserving errors.Is/As inspection for both independent causes.",
+    "The loop checks a positive limit before scanning another record and reports success once the limit is reached, including when buffered input carried a later read error. Empty and final unterminated records count and are newline-terminated in output.",
+    "Accepted counts exclude failed or short writes. A nil-error short write produces io.ErrShortWrite and stops further reads/writes; partial bytes already written remain visible.",
+    "The CLI accepts INPUT OUTPUT [LIMIT] without a flag parser, parses a non-negative decimal int before opening files, preserves '-' path names, and routes success/failure/invalid usage through exit statuses 0/1/2 with the promised streams.",
+    "Tests cover independent read/write/Close failures and their combinations, direct error identity and typed Close causes, exactly-once writer closing and borrowed reader lifetime, zero/positive/negative limits, exact and above-count bounds, empty and unterminated records, scanning order, read-error-with-data boundaries, partial-write prefixes and short writes.",
+    "Actual built-CLI tests verify default/zero/positive limits, positional '-' paths, invalid/missing/extra/negative/overflow arguments without truncation, input/open failures, stdout/stderr and status, and accepted prefix retention on a scanner failure. Temporary files and bounded subprocess contexts are independently owned by each test.",
+    "README and Godoc describe API usage, ownership, joined errors, positional CLI usage, exit statuses, short writes, Scanner limitations and partial output, without task-history documentation."
+  ],
+  "checks": [
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v ./...",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 0,
+      "output": "=== RUN   TestExport\n--- PASS: TestExport (0.00s)\nPASS\nok  \texample.com/lineexport\t0.176s\n?   \texample.com/lineexport/cmd/lineexport\t[no test files]\n"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go version",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 0,
+      "output": "go version go1.26.5 darwin/arm64\n"
+    },
+    {
+      "command": "rtk proxy zsh -c 'command -v staticcheck'",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 1,
+      "output": "",
+      "note": "Availability check: staticcheck is absent; no installation was attempted."
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v -run '^TestExportErrors$' .",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 1,
+      "output": "=== RUN   TestExportErrors\n=== RUN   TestExportErrors/success\n=== RUN   TestExportErrors/read_only\n=== RUN   TestExportErrors/close_only\n    export_test.go:114: error = <nil>, want identical finalization failed\n    export_test.go:128: error = <nil>, want typed finalization cause\n=== RUN   TestExportErrors/read_and_close\n    export_test.go:122: error = read failed, want both read failed and finalization failed\n    export_test.go:128: error = read failed, want typed finalization cause\n=== RUN   TestExportErrors/write_only\n=== RUN   TestExportErrors/write_and_close\n    export_test.go:122: error = write failed, want both write failed and finalization failed\n    export_test.go:128: error = write failed, want typed finalization cause\n--- FAIL: TestExportErrors (0.00s)\n    --- PASS: TestExportErrors/success (0.00s)\n    --- PASS: TestExportErrors/read_only (0.00s)\n    --- FAIL: TestExportErrors/close_only (0.00s)\n    --- FAIL: TestExportErrors/read_and_close (0.00s)\n    --- PASS: TestExportErrors/write_only (0.00s)\n    --- FAIL: TestExportErrors/write_and_close (0.00s)\nFAIL\nFAIL\texample.com/lineexport\t0.167s\nFAIL\n",
+      "note": "Expected red-stage result, retained verbatim. The missing ExportLimit symbol was followed by a temporary forwarding stub to observe assertion failures before implementing limits."
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v ./...",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 0,
+      "output": "=== RUN   TestExport\n--- PASS: TestExport (0.00s)\n=== RUN   TestExportErrors\n=== RUN   TestExportErrors/success\n=== RUN   TestExportErrors/read_only\n=== RUN   TestExportErrors/close_only\n=== RUN   TestExportErrors/read_and_close\n=== RUN   TestExportErrors/write_only\n=== RUN   TestExportErrors/write_and_close\n--- PASS: TestExportErrors (0.00s)\n    --- PASS: TestExportErrors/success (0.00s)\n    --- PASS: TestExportErrors/read_only (0.00s)\n    --- PASS: TestExportErrors/close_only (0.00s)\n    --- PASS: TestExportErrors/read_and_close (0.00s)\n    --- PASS: TestExportErrors/write_only (0.00s)\n    --- PASS: TestExportErrors/write_and_close (0.00s)\nPASS\nok  \texample.com/lineexport\t0.179s\n?   \texample.com/lineexport/cmd/lineexport\t[no test files]\n"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v -run '^TestExportLimit' .",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 1,
+      "output": "# example.com/lineexport [example.com/lineexport.test]\n./export_test.go:140:70: undefined: ExportLimit\n./export_test.go:181:13: undefined: ExportLimit\n./export_test.go:195:13: undefined: ExportLimit\nFAIL\texample.com/lineexport [build failed]\nFAIL\n",
+      "note": "Expected red-stage result, retained verbatim. The missing ExportLimit symbol was followed by a temporary forwarding stub to observe assertion failures before implementing limits."
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v -run '^TestExportLimit' .",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 1,
+      "output": "=== RUN   TestExportLimit\n=== RUN   TestExportLimit/empty\n=== RUN   TestExportLimit/unlimited\n=== RUN   TestExportLimit/first\n    export_test.go:160: ExportLimit = 2, <nil>, \"a\\nb\\n\"; want 1, nil, \"a\\n\"\n=== RUN   TestExportLimit/empty_record\n    export_test.go:160: ExportLimit = 2, <nil>, \"\\na\\n\"; want 1, nil, \"\\n\"\n=== RUN   TestExportLimit/final_record\n=== RUN   TestExportLimit/exact\n=== RUN   TestExportLimit/above_count\n--- FAIL: TestExportLimit (0.00s)\n    --- PASS: TestExportLimit/empty (0.00s)\n    --- PASS: TestExportLimit/unlimited (0.00s)\n    --- FAIL: TestExportLimit/first (0.00s)\n    --- FAIL: TestExportLimit/empty_record (0.00s)\n    --- PASS: TestExportLimit/final_record (0.00s)\n    --- PASS: TestExportLimit/exact (0.00s)\n    --- PASS: TestExportLimit/above_count (0.00s)\n=== RUN   TestExportLimitStopsBeforeNextRead\n    export_test.go:183: ExportLimit = 1, reading beyond the limit, \"a\\n\"; want 1, <nil>, \"a\\n\"\n    export_test.go:186: reads = 2, writes = 1, writer closes = 1, reader closes = 0; want 1, 1, 1, 0\n    export_test.go:183: ExportLimit = 1, reading beyond the limit\n        finalization failed, \"a\\n\"; want 1, finalization failed, \"a\\n\"\n    export_test.go:186: reads = 2, writes = 1, writer closes = 1, reader closes = 0; want 1, 1, 1, 0\n--- FAIL: TestExportLimitStopsBeforeNextRead (0.00s)\n=== RUN   TestExportLimitRejectsNegative\n    export_test.go:197: ExportLimit = 1, <nil>, \"a\\n\"; want 0, error, empty output\n    export_test.go:206: reads = 2, writes = 1, writer closes = 1, reader closes = 0; want 0, 0, 1, 0\n    export_test.go:197: ExportLimit = 1, finalization failed, \"a\\n\"; want 0, error, empty output\n    export_test.go:202: error = finalization failed, want validation and finalization causes\n    export_test.go:206: reads = 2, writes = 1, writer closes = 1, reader closes = 0; want 0, 0, 1, 0\n--- FAIL: TestExportLimitRejectsNegative (0.00s)\nFAIL\nFAIL\texample.com/lineexport\t0.173s\nFAIL\n",
+      "note": "Expected red-stage result, retained verbatim. The missing ExportLimit symbol was followed by a temporary forwarding stub to observe assertion failures before implementing limits."
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v ./...",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 0,
+      "output": "=== RUN   TestExport\n--- PASS: TestExport (0.00s)\n=== RUN   TestExportErrors\n=== RUN   TestExportErrors/success\n=== RUN   TestExportErrors/read_only\n=== RUN   TestExportErrors/close_only\n=== RUN   TestExportErrors/read_and_close\n=== RUN   TestExportErrors/write_only\n=== RUN   TestExportErrors/write_and_close\n--- PASS: TestExportErrors (0.00s)\n    --- PASS: TestExportErrors/success (0.00s)\n    --- PASS: TestExportErrors/read_only (0.00s)\n    --- PASS: TestExportErrors/close_only (0.00s)\n    --- PASS: TestExportErrors/read_and_close (0.00s)\n    --- PASS: TestExportErrors/write_only (0.00s)\n    --- PASS: TestExportErrors/write_and_close (0.00s)\n=== RUN   TestExportLimit\n=== RUN   TestExportLimit/empty\n=== RUN   TestExportLimit/unlimited\n=== RUN   TestExportLimit/first\n=== RUN   TestExportLimit/empty_record\n=== RUN   TestExportLimit/final_record\n=== RUN   TestExportLimit/exact\n=== RUN   TestExportLimit/above_count\n--- PASS: TestExportLimit (0.00s)\n    --- PASS: TestExportLimit/empty (0.00s)\n    --- PASS: TestExportLimit/unlimited (0.00s)\n    --- PASS: TestExportLimit/first (0.00s)\n    --- PASS: TestExportLimit/empty_record (0.00s)\n    --- PASS: TestExportLimit/final_record (0.00s)\n    --- PASS: TestExportLimit/exact (0.00s)\n    --- PASS: TestExportLimit/above_count (0.00s)\n=== RUN   TestExportLimitStopsBeforeNextRead\n--- PASS: TestExportLimitStopsBeforeNextRead (0.00s)\n=== RUN   TestExportLimitRejectsNegative\n--- PASS: TestExportLimitRejectsNegative (0.00s)\nPASS\nok  \texample.com/lineexport\t0.178s\n?   \texample.com/lineexport/cmd/lineexport\t[no test files]\n"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v -run '^TestCLI$' ./cmd/lineexport",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 1,
+      "output": "=== RUN   TestCLI\n=== RUN   TestCLI/unlimited\n=== RUN   TestCLI/zero\n    main_test.go:73: exit = 2, want 0; stderr = \"usage: lineexport INPUT OUTPUT\\n\"\n    main_test.go:79: stderr = \"usage: lineexport INPUT OUTPUT\\n\", want empty only on success\n    main_test.go:86: output = \"original\", want \"a\\nb\\n\"\n=== RUN   TestCLI/prefix\n    main_test.go:73: exit = 2, want 0; stderr = \"usage: lineexport INPUT OUTPUT\\n\"\n    main_test.go:79: stderr = \"usage: lineexport INPUT OUTPUT\\n\", want empty only on success\n    main_test.go:86: output = \"original\", want \"a\\n\"\n=== RUN   TestCLI/above_count\n    main_test.go:73: exit = 2, want 0; stderr = \"usage: lineexport INPUT OUTPUT\\n\"\n    main_test.go:79: stderr = \"usage: lineexport INPUT OUTPUT\\n\", want empty only on success\n    main_test.go:86: output = \"original\", want \"a\\nb\\n\"\n=== RUN   TestCLI/missing_arguments\n=== RUN   TestCLI/extra_arguments\n=== RUN   TestCLI/invalid_limit\n=== RUN   TestCLI/negative_limit\n=== RUN   TestCLI/overflow_limit\n=== RUN   TestCLI/missing_input\n=== RUN   TestCLI/cannot_create_output\n=== RUN   TestCLI/read_failure_retains_prefix\n--- FAIL: TestCLI (0.27s)\n    --- PASS: TestCLI/unlimited (0.14s)\n    --- FAIL: TestCLI/zero (0.00s)\n    --- FAIL: TestCLI/prefix (0.00s)\n    --- FAIL: TestCLI/above_count (0.00s)\n    --- PASS: TestCLI/missing_arguments (0.00s)\n    --- PASS: TestCLI/extra_arguments (0.00s)\n    --- PASS: TestCLI/invalid_limit (0.00s)\n    --- PASS: TestCLI/negative_limit (0.00s)\n    --- PASS: TestCLI/overflow_limit (0.00s)\n    --- PASS: TestCLI/missing_input (0.00s)\n    --- PASS: TestCLI/cannot_create_output (0.00s)\n    --- PASS: TestCLI/read_failure_retains_prefix (0.00s)\nFAIL\nFAIL\texample.com/lineexport/cmd/lineexport\t0.459s\nFAIL\n",
+      "note": "Expected red-stage result, retained verbatim. The missing ExportLimit symbol was followed by a temporary forwarding stub to observe assertion failures before implementing limits."
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v ./...",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 0,
+      "output": "=== RUN   TestExport\n--- PASS: TestExport (0.00s)\n=== RUN   TestExportErrors\n=== RUN   TestExportErrors/success\n=== RUN   TestExportErrors/read_only\n=== RUN   TestExportErrors/close_only\n=== RUN   TestExportErrors/read_and_close\n=== RUN   TestExportErrors/write_only\n=== RUN   TestExportErrors/write_and_close\n--- PASS: TestExportErrors (0.00s)\n    --- PASS: TestExportErrors/success (0.00s)\n    --- PASS: TestExportErrors/read_only (0.00s)\n    --- PASS: TestExportErrors/close_only (0.00s)\n    --- PASS: TestExportErrors/read_and_close (0.00s)\n    --- PASS: TestExportErrors/write_only (0.00s)\n    --- PASS: TestExportErrors/write_and_close (0.00s)\n=== RUN   TestExportLimit\n=== RUN   TestExportLimit/empty\n=== RUN   TestExportLimit/unlimited\n=== RUN   TestExportLimit/first\n=== RUN   TestExportLimit/empty_record\n=== RUN   TestExportLimit/final_record\n=== RUN   TestExportLimit/exact\n=== RUN   TestExportLimit/above_count\n--- PASS: TestExportLimit (0.00s)\n    --- PASS: TestExportLimit/empty (0.00s)\n    --- PASS: TestExportLimit/unlimited (0.00s)\n    --- PASS: TestExportLimit/first (0.00s)\n    --- PASS: TestExportLimit/empty_record (0.00s)\n    --- PASS: TestExportLimit/final_record (0.00s)\n    --- PASS: TestExportLimit/exact (0.00s)\n    --- PASS: TestExportLimit/above_count (0.00s)\n=== RUN   TestExportLimitStopsBeforeNextRead\n--- PASS: TestExportLimitStopsBeforeNextRead (0.00s)\n=== RUN   TestExportLimitRejectsNegative\n--- PASS: TestExportLimitRejectsNegative (0.00s)\nPASS\nok  \texample.com/lineexport\t(cached)\n=== RUN   TestCLI\n=== RUN   TestCLI/unlimited\n=== RUN   TestCLI/zero\n=== RUN   TestCLI/prefix\n=== RUN   TestCLI/above_count\n=== RUN   TestCLI/missing_arguments\n=== RUN   TestCLI/extra_arguments\n=== RUN   TestCLI/invalid_limit\n=== RUN   TestCLI/negative_limit\n=== RUN   TestCLI/overflow_limit\n=== RUN   TestCLI/missing_input\n=== RUN   TestCLI/cannot_create_output\n=== RUN   TestCLI/read_failure_retains_prefix\n--- PASS: TestCLI (0.28s)\n    --- PASS: TestCLI/unlimited (0.15s)\n    --- PASS: TestCLI/zero (0.00s)\n    --- PASS: TestCLI/prefix (0.00s)\n    --- PASS: TestCLI/above_count (0.00s)\n    --- PASS: TestCLI/missing_arguments (0.00s)\n    --- PASS: TestCLI/extra_arguments (0.00s)\n    --- PASS: TestCLI/invalid_limit (0.00s)\n    --- PASS: TestCLI/negative_limit (0.00s)\n    --- PASS: TestCLI/overflow_limit (0.00s)\n    --- PASS: TestCLI/missing_input (0.00s)\n    --- PASS: TestCLI/cannot_create_output (0.00s)\n    --- PASS: TestCLI/read_failure_retains_prefix (0.00s)\nPASS\nok  \texample.com/lineexport/cmd/lineexport\t0.458s\n"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v -run '^(TestExportShortWrite|TestExportWritesBeforeReadingNextRecord|TestExportLimitReadError)$' .",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 1,
+      "output": "=== RUN   TestExportShortWrite\n    export_test.go:223: Export = 3, \"a\\nbc\\n\"; want 1, \"a\\nb\"\n    export_test.go:226: error = <nil>, want identical short write\n    export_test.go:232: reads = 4, writes = 3, closes = 1; want 2, 2, 1\n    export_test.go:223: Export = 3, \"a\\nbc\\n\"; want 1, \"a\\nb\"\n    export_test.go:229: error = finalization failed, want short-write and finalization causes\n    export_test.go:232: reads = 4, writes = 3, closes = 1; want 2, 2, 1\n--- FAIL: TestExportShortWrite (0.00s)\n=== RUN   TestExportWritesBeforeReadingNextRecord\n--- PASS: TestExportWritesBeforeReadingNextRecord (0.00s)\n=== RUN   TestExportLimitReadError\n--- PASS: TestExportLimitReadError (0.00s)\nFAIL\nFAIL\texample.com/lineexport\t0.226s\nFAIL\n",
+      "note": "Expected red-stage result, retained verbatim. The missing ExportLimit symbol was followed by a temporary forwarding stub to observe assertion failures before implementing limits."
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v ./...",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 0,
+      "output": "=== RUN   TestExport\n--- PASS: TestExport (0.00s)\n=== RUN   TestExportErrors\n=== RUN   TestExportErrors/success\n=== RUN   TestExportErrors/read_only\n=== RUN   TestExportErrors/close_only\n=== RUN   TestExportErrors/read_and_close\n=== RUN   TestExportErrors/write_only\n=== RUN   TestExportErrors/write_and_close\n--- PASS: TestExportErrors (0.00s)\n    --- PASS: TestExportErrors/success (0.00s)\n    --- PASS: TestExportErrors/read_only (0.00s)\n    --- PASS: TestExportErrors/close_only (0.00s)\n    --- PASS: TestExportErrors/read_and_close (0.00s)\n    --- PASS: TestExportErrors/write_only (0.00s)\n    --- PASS: TestExportErrors/write_and_close (0.00s)\n=== RUN   TestExportLimit\n=== RUN   TestExportLimit/empty\n=== RUN   TestExportLimit/unlimited\n=== RUN   TestExportLimit/first\n=== RUN   TestExportLimit/empty_record\n=== RUN   TestExportLimit/final_record\n=== RUN   TestExportLimit/exact\n=== RUN   TestExportLimit/above_count\n--- PASS: TestExportLimit (0.00s)\n    --- PASS: TestExportLimit/empty (0.00s)\n    --- PASS: TestExportLimit/unlimited (0.00s)\n    --- PASS: TestExportLimit/first (0.00s)\n    --- PASS: TestExportLimit/empty_record (0.00s)\n    --- PASS: TestExportLimit/final_record (0.00s)\n    --- PASS: TestExportLimit/exact (0.00s)\n    --- PASS: TestExportLimit/above_count (0.00s)\n=== RUN   TestExportLimitStopsBeforeNextRead\n--- PASS: TestExportLimitStopsBeforeNextRead (0.00s)\n=== RUN   TestExportLimitRejectsNegative\n--- PASS: TestExportLimitRejectsNegative (0.00s)\n=== RUN   TestExportShortWrite\n--- PASS: TestExportShortWrite (0.00s)\n=== RUN   TestExportWritesBeforeReadingNextRecord\n--- PASS: TestExportWritesBeforeReadingNextRecord (0.00s)\n=== RUN   TestExportLimitReadError\n--- PASS: TestExportLimitReadError (0.00s)\nPASS\nok  \texample.com/lineexport\t0.131s\n=== RUN   TestCLI\n=== RUN   TestCLI/unlimited\n=== RUN   TestCLI/zero\n=== RUN   TestCLI/prefix\n=== RUN   TestCLI/above_count\n=== RUN   TestCLI/missing_arguments\n=== RUN   TestCLI/extra_arguments\n=== RUN   TestCLI/invalid_limit\n=== RUN   TestCLI/negative_limit\n=== RUN   TestCLI/overflow_limit\n=== RUN   TestCLI/missing_input\n=== RUN   TestCLI/cannot_create_output\n=== RUN   TestCLI/read_failure_retains_prefix\n--- PASS: TestCLI (0.28s)\n    --- PASS: TestCLI/unlimited (0.15s)\n    --- PASS: TestCLI/zero (0.00s)\n    --- PASS: TestCLI/prefix (0.00s)\n    --- PASS: TestCLI/above_count (0.00s)\n    --- PASS: TestCLI/missing_arguments (0.00s)\n    --- PASS: TestCLI/extra_arguments (0.00s)\n    --- PASS: TestCLI/invalid_limit (0.00s)\n    --- PASS: TestCLI/negative_limit (0.00s)\n    --- PASS: TestCLI/overflow_limit (0.00s)\n    --- PASS: TestCLI/missing_input (0.00s)\n    --- PASS: TestCLI/cannot_create_output (0.00s)\n    --- PASS: TestCLI/read_failure_retains_prefix (0.00s)\nPASS\nok  \texample.com/lineexport/cmd/lineexport\t(cached)\n"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache gofmt -s -w .",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v -race -count=1 ./...",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 0,
+      "output": "=== RUN   TestExport\n--- PASS: TestExport (0.00s)\n=== RUN   TestExportErrors\n=== RUN   TestExportErrors/success\n=== RUN   TestExportErrors/read_only\n=== RUN   TestExportErrors/close_only\n=== RUN   TestExportErrors/read_and_close\n=== RUN   TestExportErrors/write_only\n=== RUN   TestExportErrors/write_and_close\n--- PASS: TestExportErrors (0.00s)\n    --- PASS: TestExportErrors/success (0.00s)\n    --- PASS: TestExportErrors/read_only (0.00s)\n    --- PASS: TestExportErrors/close_only (0.00s)\n    --- PASS: TestExportErrors/read_and_close (0.00s)\n    --- PASS: TestExportErrors/write_only (0.00s)\n    --- PASS: TestExportErrors/write_and_close (0.00s)\n=== RUN   TestExportLimit\n=== RUN   TestExportLimit/empty\n=== RUN   TestExportLimit/unlimited\n=== RUN   TestExportLimit/first\n=== RUN   TestExportLimit/empty_record\n=== RUN   TestExportLimit/final_record\n=== RUN   TestExportLimit/exact\n=== RUN   TestExportLimit/above_count\n--- PASS: TestExportLimit (0.00s)\n    --- PASS: TestExportLimit/empty (0.00s)\n    --- PASS: TestExportLimit/unlimited (0.00s)\n    --- PASS: TestExportLimit/first (0.00s)\n    --- PASS: TestExportLimit/empty_record (0.00s)\n    --- PASS: TestExportLimit/final_record (0.00s)\n    --- PASS: TestExportLimit/exact (0.00s)\n    --- PASS: TestExportLimit/above_count (0.00s)\n=== RUN   TestExportLimitStopsBeforeNextRead\n--- PASS: TestExportLimitStopsBeforeNextRead (0.00s)\n=== RUN   TestExportLimitRejectsNegative\n--- PASS: TestExportLimitRejectsNegative (0.00s)\n=== RUN   TestExportShortWrite\n--- PASS: TestExportShortWrite (0.00s)\n=== RUN   TestExportWritesBeforeReadingNextRecord\n--- PASS: TestExportWritesBeforeReadingNextRecord (0.00s)\n=== RUN   TestExportLimitReadError\n--- PASS: TestExportLimitReadError (0.00s)\nPASS\nok  \texample.com/lineexport\t1.382s\n=== RUN   TestCLI\n=== RUN   TestCLI/unlimited\n=== RUN   TestCLI/zero\n=== RUN   TestCLI/prefix\n=== RUN   TestCLI/above_count\n=== RUN   TestCLI/missing_arguments\n=== RUN   TestCLI/extra_arguments\n=== RUN   TestCLI/invalid_limit\n=== RUN   TestCLI/negative_limit\n=== RUN   TestCLI/overflow_limit\n=== RUN   TestCLI/missing_input\n=== RUN   TestCLI/cannot_create_output\n=== RUN   TestCLI/read_failure_retains_prefix\n--- PASS: TestCLI (0.29s)\n    --- PASS: TestCLI/unlimited (0.15s)\n    --- PASS: TestCLI/zero (0.01s)\n    --- PASS: TestCLI/prefix (0.00s)\n    --- PASS: TestCLI/above_count (0.00s)\n    --- PASS: TestCLI/missing_arguments (0.00s)\n    --- PASS: TestCLI/extra_arguments (0.00s)\n    --- PASS: TestCLI/invalid_limit (0.00s)\n    --- PASS: TestCLI/negative_limit (0.00s)\n    --- PASS: TestCLI/overflow_limit (0.00s)\n    --- PASS: TestCLI/missing_input (0.00s)\n    --- PASS: TestCLI/cannot_create_output (0.00s)\n    --- PASS: TestCLI/read_failure_retains_prefix (0.00s)\nPASS\nok  \texample.com/lineexport/cmd/lineexport\t1.809s\n"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go vet ./...",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go build ./...",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache gofmt -l .",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v -count=1 -run '^(TestExportErrors/write_and_close|TestCLI/negative_limit)$' ./...",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 0,
+      "output": "testing: warning: no tests to run\nPASS\nok  \texample.com/lineexport\t0.180s [no tests to run]\ntesting: warning: no tests to run\nPASS\nok  \texample.com/lineexport/cmd/lineexport\t0.303s [no tests to run]\n",
+      "note": "The first combined focused-subtest expression selected no tests. It was corrected by the later independent focused checks."
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v -count=1 -run '^TestExportErrors$/^write_and_close$' .",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 0,
+      "output": "=== RUN   TestExportErrors\n=== RUN   TestExportErrors/write_and_close\n--- PASS: TestExportErrors (0.00s)\n    --- PASS: TestExportErrors/write_and_close (0.00s)\nPASS\nok  \texample.com/lineexport\t0.248s\n"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v -count=1 -run '^TestCLI$/^negative_limit$' ./cmd/lineexport",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 0,
+      "output": "=== RUN   TestCLI\n=== RUN   TestCLI/negative_limit\n--- PASS: TestCLI (0.20s)\n    --- PASS: TestCLI/negative_limit (0.11s)\nPASS\nok  \texample.com/lineexport/cmd/lineexport\t0.343s\n"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache gofmt -l .",
+      "workdir": "/private/tmp/go-error-eval-xcj0cu48/s05/module",
+      "exit_code": 0,
+      "output": ""
+    }
+  ],
+  "material_limits": [
+    "Verification used the installed Go 1.26.5 darwin/arm64 toolchain. The module remains go 1.22 and the changes use APIs available by Go 1.22; no separate Go 1.22 toolchain execution was performed.",
+    "staticcheck is unavailable in the environment, so its check could not run; go vet, build and race-enabled tests passed.",
+    "bufio.Scanner's existing default token-size limit and buffered read-ahead remain. A positive limit bounds exported records rather than underlying reader byte consumption.",
+    "Close failures were verified through faithful io.WriteCloser test doubles. CLI operational failure/status/partial-output checks ran against a real binary and filesystem, but no native filesystem Close failure was forced.",
+    "Output publication remains non-atomic, and partial bytes from a failed record may remain.",
+    "No independent code-review subagent ran because the collaboration tool reported the agent thread limit."
+  ]
+}

@@ -1,0 +1,68 @@
+"""Verify an archived client-call trial without modifying its sealed output.
+
+Run with loopback-listener permission. Toolchain binaries and caches are supplied
+by the controller. Probe files are controller-only, outside author inputs.
+"""
+
+import argparse
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+
+import sys
+sys.path.insert(0, "/Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build")
+from client_call_trials import REPO, hashes
+
+
+def check_trial(archive: Path, scratch: Path, minimum_go: Path, cache_root: Path) -> list[dict]:
+    manifest = json.loads((archive / "manifest.json").read_text())
+    for directory, key in (("input", "input_hashes"), ("catalog", "catalog_hashes"),
+                           ("output", "output_hashes")):
+        if hashes(archive / directory) != manifest[key]:
+            raise ValueError(f"sealed {directory} differs from manifest")
+    env = os.environ | {"GOWORK": "off", "GOTOOLCHAIN": "local", "GOPROXY": "off",
+                        "GOPATH": str(cache_root / "gopath"),
+                        "GOCACHE": str(cache_root / "cache"),
+                        "GOMODCACHE": str(cache_root / "modcache")}
+    scratch.mkdir(parents=True, exist_ok=True)
+    checks = []
+    with tempfile.TemporaryDirectory(prefix="check-", dir=scratch) as temporary:
+        source = Path(temporary) / "source"
+        shutil.copytree(archive / "output", source)
+        for private in (False, True):
+            if private:
+                probe = REPO / "tests/go-quality-build/go-client-calls/probes" / f"{manifest['case']}_test.go.txt"
+                shutil.copyfile(probe, source / "controller_probe_test.go")
+            for tool, link in (("go", []), (str(minimum_go), ["-ldflags=-linkmode=external"])):
+                commands = [[tool, "test", *link, "-count=1", "-timeout=20s", "./..."]]
+                if not private:
+                    commands.append([tool, "vet", "./..."])
+                if tool == "go" and manifest["case"] != "pure-control":
+                    commands.append([tool, "test", "-race", "-count=1", "-timeout=20s", "./..."])
+                for command in commands:
+                    result = subprocess.run(["rtk", "proxy", *command], cwd=source, env=env,
+                                            capture_output=True, text=True)
+                    checks.append({"private": private, "command": command, "exit": result.returncode,
+                                   "output": (result.stdout + result.stderr).replace(str(source), "source")})
+    if hashes(archive / "output") != manifest["output_hashes"]:
+        raise ValueError("checks mutated sealed output")
+    return checks
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("archive", type=Path)
+    parser.add_argument("--scratch", type=Path, required=True)
+    parser.add_argument("--minimum-go", type=Path, required=True)
+    parser.add_argument("--cache-root", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    if args.output.exists():
+        raise FileExistsError(args.output)
+    checks = check_trial(args.archive, args.scratch, args.minimum_go, args.cache_root)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(checks, indent=2) + "\n")
+    print(json.dumps({"checks": len(checks), "failed": sum(c["exit"] != 0 for c in checks)}))

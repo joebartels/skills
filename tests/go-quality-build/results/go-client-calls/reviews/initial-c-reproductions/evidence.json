@@ -1,0 +1,28 @@
+{
+  "environment": "GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off",
+  "checks": [
+    {
+      "cwd": "/private/tmp/go-client-campaign/reviews/initial-c/breaker-recovery/source",
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go test -ldflags=-linkmode=external -run 'TestBreaker|TestFetch(ReadFailureOwnsBodyAndContext|StatusAndBodyLimit)' -count=1 -timeout=20s ./...",
+      "exit": 0,
+      "raw_output": "raw-go122-source-tests.txt"
+    },
+    {
+      "cwd": "/private/tmp/go-client-campaign/reviews/initial-c/breaker-recovery/source",
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go test -race -ldflags=-linkmode=external -run 'TestBreaker|TestFetch(ReadFailureOwnsBodyAndContext|StatusAndBodyLimit)' -count=1 -timeout=20s ./...",
+      "exit": 0,
+      "raw_output": "raw-go122-source-race.txt"
+    },
+    {
+      "cwd": "/Users/jb/.codex/worktrees/b312/skills/tests/go-quality-build/results/go-client-calls/reviews/initial-c-reproductions/breaker-recovery",
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOPATH=/private/tmp/go-client-campaign/gopath GOMODCACHE=/private/tmp/go-client-campaign/modcache GOCACHE=/private/tmp/go-client-campaign/cache GOPROXY=off /private/tmp/go-client-campaign/tools/go/bin/go test -ldflags=-linkmode=external -run TestReview -count=1 -timeout=10s -v ./...",
+      "exit": 1,
+      "raw_output": "breaker-recovery/raw-go122-test.txt"
+    }
+  ],
+  "copied_source_sha256": {
+    "client.go": "2e367367d009494f168e56b6a5429465593b193fee491a31fc163f0cc173864d",
+    "go.mod": "57c0c2c7b44e75d9f5e994cfe30665d551e7f9f3d2898df9766d8b83522d92c3",
+    "go.sum": "dbb8615146c55872114147bf262d3ab12bcfe75de5efc3762687c30992299e46"
+  }
+}

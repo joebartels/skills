@@ -1,0 +1,98 @@
+[
+  {
+    "private": false,
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/http-write-replay\t0.888s\n"
+  },
+  {
+    "private": false,
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "private": false,
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/http-write-replay\t1.995s\n"
+  },
+  {
+    "private": false,
+    "command": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/http-write-replay\t0.894s\n"
+  },
+  {
+    "private": false,
+    "command": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "private": true,
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/http-write-replay\t1.006s\n"
+  },
+  {
+    "private": true,
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/http-write-replay\t2.014s\n"
+  },
+  {
+    "private": true,
+    "command": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/http-write-replay\t0.969s\n"
+  }
+]

@@ -1,0 +1,17 @@
+=== RUN   TestResolverServiceConfig
+=== RUN   TestResolverServiceConfig/absent_uses_default
+    policy_test.go:92: executions=3; effective retry policy=&{3 1ms 2ms 1 map[Unavailable:true]}
+=== RUN   TestResolverServiceConfig/valid_empty_supersedes_default
+    policy_test.go:92: executions=1; effective retry policy=<nil>
+=== RUN   TestResolverServiceConfig/invalid_initial_fails_without_default
+    policy_test.go:92: executions=0; effective retry policy=<nil>
+=== RUN   TestResolverServiceConfig/invalid_update_retains_previous_policy
+    policy_test.go:88: executions=3; effective retry policy=&{3 1ms 2ms 1 map[Unavailable:true]}
+    policy_test.go:92: executions=3; effective retry policy=&{3 1ms 2ms 1 map[Unavailable:true]}
+--- PASS: TestResolverServiceConfig (0.01s)
+    --- PASS: TestResolverServiceConfig/absent_uses_default (0.00s)
+    --- PASS: TestResolverServiceConfig/valid_empty_supersedes_default (0.00s)
+    --- PASS: TestResolverServiceConfig/invalid_initial_fails_without_default (0.00s)
+    --- PASS: TestResolverServiceConfig/invalid_update_retains_previous_policy (0.00s)
+PASS
+ok  	example.invalid/review	0.231s

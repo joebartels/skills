@@ -1,0 +1,39 @@
+=== RUN   TestReviewCanceled200PreservesFailureHistory
+    review_reproduction_test.go:58: canceled completion: data="ok" error=<nil> parent=context canceled
+    review_reproduction_test.go:68: after third eligible failure: error=HTTP 503 calls=4->5
+    review_reproduction_test.go:70: canceled 200 reset history; fourth eligible request contacted dependency
+--- FAIL: TestReviewCanceled200PreservesFailureHistory (0.00s)
+=== RUN   TestReviewCanceled200DoesNotEstablishRecovery
+    review_reproduction_test.go:101: canceled recovery completion: data="ok" error=<nil> parent=context canceled
+    review_reproduction_test.go:114: after failed replacement probe: error=HTTP 503 calls=6->7
+    review_reproduction_test.go:116: canceled 200 established recovery; failed replacement probe did not reopen
+--- FAIL: TestReviewCanceled200DoesNotEstablishRecovery (0.11s)
+=== RUN   TestReviewDiagnosticsAreBounded
+=== RUN   TestReviewDiagnosticsAreBounded/parse-disabled
+    review_reproduction_test.go:139: diagnostic bytes=8245
+    review_reproduction_test.go:141: diagnostic bytes=8245; want <=4096
+=== RUN   TestReviewDiagnosticsAreBounded/transport-disabled
+    review_reproduction_test.go:139: diagnostic bytes=8233
+    review_reproduction_test.go:141: diagnostic bytes=8233; want <=4096
+=== RUN   TestReviewDiagnosticsAreBounded/body-disabled
+    review_reproduction_test.go:139: diagnostic bytes=8192
+    review_reproduction_test.go:141: diagnostic bytes=8192; want <=4096
+=== RUN   TestReviewDiagnosticsAreBounded/parse-enabled
+    review_reproduction_test.go:139: diagnostic bytes=8245
+    review_reproduction_test.go:141: diagnostic bytes=8245; want <=4096
+=== RUN   TestReviewDiagnosticsAreBounded/transport-enabled
+    review_reproduction_test.go:139: diagnostic bytes=8233
+    review_reproduction_test.go:141: diagnostic bytes=8233; want <=4096
+=== RUN   TestReviewDiagnosticsAreBounded/body-enabled
+    review_reproduction_test.go:139: diagnostic bytes=8192
+    review_reproduction_test.go:141: diagnostic bytes=8192; want <=4096
+--- FAIL: TestReviewDiagnosticsAreBounded (0.00s)
+    --- FAIL: TestReviewDiagnosticsAreBounded/parse-disabled (0.00s)
+    --- FAIL: TestReviewDiagnosticsAreBounded/transport-disabled (0.00s)
+    --- FAIL: TestReviewDiagnosticsAreBounded/body-disabled (0.00s)
+    --- FAIL: TestReviewDiagnosticsAreBounded/parse-enabled (0.00s)
+    --- FAIL: TestReviewDiagnosticsAreBounded/transport-enabled (0.00s)
+    --- FAIL: TestReviewDiagnosticsAreBounded/body-enabled (0.00s)
+FAIL
+FAIL	example.invalid/breaker-recovery	0.346s
+FAIL

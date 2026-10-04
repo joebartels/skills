@@ -1,0 +1,46 @@
+[
+  {
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": "ok  \texample.com/recordload\t0.179s\n",
+    "scope": "candidate"
+  },
+  {
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": "",
+    "scope": "candidate"
+  },
+  {
+    "command": [
+      "gofmt",
+      "-l",
+      "."
+    ],
+    "exit_code": 0,
+    "output": "",
+    "scope": "candidate"
+  },
+  {
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "-run",
+      "TestContract",
+      "./..."
+    ],
+    "exit_code": 0,
+    "output": "ok  \texample.com/recordload\t0.155s\n",
+    "scope": "held-contract-probes"
+  }
+]

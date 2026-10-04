@@ -1,0 +1,693 @@
+diff --git a/client.go b/client.go
+index 984a9490a967a057ded00d2e1c4bd6ee157e067f..fb00b32d037e5611d6eb7ad6106731cf9323d2f3 100644
+--- a/client.go
++++ b/client.go
+@@ -2,26 +2,134 @@ package client
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
+ 	"io"
+ 	"net/http"
++	"strings"
++	"sync"
++	"time"
++
++	"github.com/sony/gobreaker/v2"
++)
++
++const (
++	fetchBudget   = 250 * time.Millisecond
++	responseLimit = 4096
++)
++
++var (
++	healthExcluded    = errors.New("excluded health outcome")
++	healthUnavailable = errors.New("unavailable health outcome")
+ )
+ 
+-type Client struct{ http *http.Client }
++type dependency struct {
++	scheme    string
++	authority string
++}
++
++type Client struct {
++	http     *http.Client
++	mu       sync.Mutex
++	breakers map[dependency]*gobreaker.TwoStepCircuitBreaker[struct{}]
++}
+ 
+-func New(client *http.Client, enabled bool) *Client { return &Client{http: client} }
++// New borrows client and optionally enables a breaker for each endpoint dependency.
++func New(client *http.Client, enabled bool) *Client {
++	c := &Client{http: client}
++	if enabled {
++		c.breakers = make(map[dependency]*gobreaker.TwoStepCircuitBreaker[struct{}])
++	}
++	return c
++}
++
++// Fetch makes one application request with a 250ms budget and a bounded result.
++// The supplied HTTP client's redirect policy applies to that request.
+ func (c *Client) Fetch(ctx context.Context, endpoint string) ([]byte, error) {
+-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
++	operationCtx, cancel := context.WithTimeout(ctx, fetchBudget)
++	defer cancel()
++	if err := operationCtx.Err(); err != nil {
++		return nil, boundedError(err)
++	}
++	req, err := http.NewRequestWithContext(operationCtx, http.MethodGet, endpoint, nil)
+ 	if err != nil {
+-		return nil, err
++		return nil, boundedError(err)
+ 	}
++	var done func(error)
++	if c.breakers != nil {
++		key := dependency{scheme: strings.ToLower(req.URL.Scheme), authority: strings.ToLower(req.URL.Host)}
++		done, err = c.breaker(key).Allow()
++		if err != nil {
++			return nil, boundedError(err)
++		}
++	}
++	data, status, err := c.fetch(req)
++	if done != nil {
++		// Caller stopping is neutral even when the request returned a completed result.
++		health := healthExcluded
++		if operationCtx.Err() == nil {
++			if status == http.StatusServiceUnavailable {
++				health = healthUnavailable
++			} else if status == http.StatusOK && err == nil {
++				health = nil
++			}
++		}
++		done(health)
++	}
++	return data, boundedError(err)
++}
++
++func (c *Client) breaker(key dependency) *gobreaker.TwoStepCircuitBreaker[struct{}] {
++	c.mu.Lock()
++	defer c.mu.Unlock()
++	if b := c.breakers[key]; b != nil {
++		return b
++	}
++	b := gobreaker.NewTwoStepCircuitBreaker[struct{}](gobreaker.Settings{
++		MaxRequests: 1,
++		Timeout:     100 * time.Millisecond,
++		ReadyToTrip: func(counts gobreaker.Counts) bool { return counts.ConsecutiveFailures >= 3 },
++		IsExcluded:  func(err error) bool { return err == healthExcluded },
++	})
++	c.breakers[key] = b
++	return b
++}
++
++func (c *Client) fetch(req *http.Request) ([]byte, int, error) {
+ 	resp, err := c.http.Do(req)
+ 	if err != nil {
+-		return nil, err
++		// Do's error response, if any, already has a closed body.
++		return nil, 0, err
+ 	}
+ 	defer resp.Body.Close()
+-	if resp.StatusCode != 200 {
+-		return nil, fmt.Errorf("HTTP %d", resp.StatusCode)
++	if resp.StatusCode != http.StatusOK {
++		return nil, resp.StatusCode, fmt.Errorf("HTTP %d", resp.StatusCode)
++	}
++	data, err := io.ReadAll(io.LimitReader(resp.Body, responseLimit+1))
++	if err != nil {
++		return nil, resp.StatusCode, err
++	}
++	if len(data) > responseLimit {
++		return nil, resp.StatusCode, errors.New("response exceeds 4096 bytes")
++	}
++	return data, resp.StatusCode, nil
++}
++
++type diagnosticError struct {
++	message string
++	cause   error
++}
++
++func (e *diagnosticError) Error() string { return e.message }
++func (e *diagnosticError) Unwrap() error { return e.cause }
++
++func boundedError(err error) error {
++	if err == nil {
++		return nil
++	}
++	message := err.Error()
++	if len(message) <= responseLimit {
++		return err
+ 	}
+-	return io.ReadAll(resp.Body)
++	return &diagnosticError{message: message[:responseLimit], cause: err}
+ }
+diff --git a/policy_test.go b/policy_test.go
+new file mode 100644
+index 0000000000000000000000000000000000000000..08180a1baf78c6cf9c1611bdcc7c724d7e765e8c
+--- /dev/null
++++ b/policy_test.go
+@@ -0,0 +1,540 @@
++package client
++
++import (
++	"context"
++	"errors"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	"github.com/sony/gobreaker/v2"
++)
++
++var (
++	_ func(*http.Client, bool) *Client                       = New
++	_ func(*Client, context.Context, string) ([]byte, error) = (*Client).Fetch
++)
++
++type roundTripFunc func(*http.Request) (*http.Response, error)
++
++func (f roundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
++
++type trackedBody struct {
++	io.Reader
++	reads  int
++	closes int
++}
++
++func (b *trackedBody) Read(p []byte) (int, error) {
++	n, err := b.Reader.Read(p)
++	b.reads += n
++	return n, err
++}
++
++func (b *trackedBody) Close() error { b.closes++; return nil }
++
++type failingReader struct{ err error }
++
++func (r failingReader) Read([]byte) (int, error) { return 0, r.err }
++
++func response(status int, body io.ReadCloser) *http.Response {
++	return &http.Response{StatusCode: status, Header: make(http.Header), Body: body}
++}
++
++func TestFetchStatusAndBounds(t *testing.T) {
++	for _, tc := range []struct {
++		name   string
++		status int
++		size   int
++		want   string
++	}{
++		{"success", 200, 2, ""},
++		{"exact limit", 200, 4096, ""},
++		{"oversized", 200, 4097, "response exceeds 4096 bytes"},
++		{"created", 201, 2, "HTTP 201"},
++		{"partial", 206, 2, "HTTP 206"},
++		{"rejection", 400, 8192, "HTTP 400"},
++		{"unavailable", 503, 8192, "HTTP 503"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			body := &trackedBody{Reader: strings.NewReader(strings.Repeat("x", tc.size))}
++			calls := 0
++			h := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
++				calls++
++				return response(tc.status, body), nil
++			})}
++			got, err := New(h, false).Fetch(context.Background(), "https://example.test/data")
++			if tc.want == "" {
++				if err != nil || string(got) != strings.Repeat("x", tc.size) {
++					t.Fatalf("Fetch = %q, %v", got, err)
++				}
++			} else if err == nil || err.Error() != tc.want || got != nil {
++				t.Fatalf("Fetch = %q, %v; want nil, %q", got, err, tc.want)
++			}
++			if calls != 1 || body.closes != 1 || body.reads > 4097 {
++				t.Fatalf("calls=%d closes=%d bytes read=%d", calls, body.closes, body.reads)
++			}
++		})
++	}
++}
++
++func TestFetchBoundsDiagnosticsAndKeepsCause(t *testing.T) {
++	cause := errors.New(strings.Repeat("bad", 3000))
++	h := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) { return nil, cause })}
++	_, err := New(h, false).Fetch(context.Background(), "https://example.test/data")
++	if err == nil {
++		t.Fatal("transport error was lost")
++	}
++	if len(err.Error()) > 4096 || !errors.Is(err, cause) {
++		t.Fatalf("diagnostic length=%d, retains cause=%v", len(err.Error()), errors.Is(err, cause))
++	}
++	_, err = New(h, false).Fetch(context.Background(), ":"+strings.Repeat("x", 9000))
++	if err == nil || len(err.Error()) > 4096 {
++		t.Fatalf("request diagnostic exceeded limit: %v", err)
++	}
++}
++
++func TestFetchReadErrorClosesBody(t *testing.T) {
++	cause := errors.New(strings.Repeat("read failure", 500))
++	body := &trackedBody{Reader: io.MultiReader(strings.NewReader("partial"), failingReader{err: cause})}
++	h := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++		return response(200, body), nil
++	})}
++	got, err := New(h, false).Fetch(context.Background(), "https://example.test")
++	if got != nil || !errors.Is(err, cause) {
++		t.Fatalf("read failure result=%q, error=%v", got, err)
++	}
++	if len(err.Error()) > 4096 || body.closes != 1 {
++		t.Fatalf("diagnostic bytes=%d body closes=%d", len(err.Error()), body.closes)
++	}
++}
++
++func TestFetchRedirectErrorDoesNotCloseBodyTwice(t *testing.T) {
++	cause := errors.New("redirect denied")
++	body := &trackedBody{Reader: strings.NewReader("redirect")}
++	calls := 0
++	h := &http.Client{
++		Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++			calls++
++			r := response(302, body)
++			r.Header.Set("Location", "https://example.test/end")
++			return r, nil
++		}),
++		CheckRedirect: func(*http.Request, []*http.Request) error { return cause },
++	}
++	_, err := New(h, false).Fetch(context.Background(), "https://example.test/start")
++	if !errors.Is(err, cause) || calls != 1 || body.closes != 1 {
++		t.Fatalf("redirect error=%v calls=%d body closes=%d", err, calls, body.closes)
++	}
++}
++
++func TestFetchKeepsBorrowedClientPolicy(t *testing.T) {
++	var calls atomic.Int32
++	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		calls.Add(1)
++		if r.URL.Path == "/start" {
++			http.Redirect(w, r, "/end", http.StatusFound)
++			return
++		}
++		_, _ = w.Write([]byte("ok"))
++	}))
++	t.Cleanup(s.Close)
++	h := s.Client()
++	var redirects atomic.Int32
++	h.CheckRedirect = func(*http.Request, []*http.Request) error { redirects.Add(1); return http.ErrUseLastResponse }
++	h.Timeout = time.Second
++	transport := h.Transport
++	c := New(h, false)
++	_, err := c.Fetch(context.Background(), s.URL+"/start")
++	if err == nil || err.Error() != "HTTP 302" || calls.Load() != 1 || redirects.Load() != 1 {
++		t.Fatalf("redirect result=%v calls=%d checks=%d", err, calls.Load(), redirects.Load())
++	}
++	if c.http != h || h.Transport != transport || h.Timeout != time.Second || h.CheckRedirect == nil {
++		t.Fatal("borrowed client configuration changed")
++	}
++}
++
++func TestFetchTotalBudgetThroughBody(t *testing.T) {
++	for _, tc := range []struct {
++		name   string
++		parent time.Duration
++	}{
++		{"operation budget", 2 * time.Second},
++		{"earlier parent", 40 * time.Millisecond},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				w.WriteHeader(http.StatusOK)
++				w.(http.Flusher).Flush()
++				<-r.Context().Done()
++			}))
++			t.Cleanup(s.Close)
++			ctx, cancel := context.WithTimeout(context.Background(), tc.parent)
++			defer cancel()
++			start := time.Now()
++			_, err := New(s.Client(), false).Fetch(ctx, s.URL)
++			elapsed := time.Since(start)
++			if !errors.Is(err, context.DeadlineExceeded) {
++				t.Fatalf("body read error=%v, want deadline", err)
++			}
++			limit := 250 * time.Millisecond
++			if tc.parent < limit {
++				limit = tc.parent
++			}
++			if elapsed < limit/2 || elapsed > limit+500*time.Millisecond {
++				t.Fatalf("elapsed=%v, expected budget near %v", elapsed, limit)
++			}
++		})
++	}
++}
++
++func TestFetchRequestDeadline(t *testing.T) {
++	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
++	defer cancel()
++	start := time.Now()
++	h := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
++		deadline, ok := r.Context().Deadline()
++		if !ok || deadline.Before(start.Add(200*time.Millisecond)) || deadline.After(start.Add(300*time.Millisecond)) {
++			t.Errorf("request deadline=%v present=%v", deadline, ok)
++		}
++		return response(200, io.NopCloser(strings.NewReader("ok"))), nil
++	})}
++	if _, err := New(h, false).Fetch(ctx, "https://example.test"); err != nil {
++		t.Fatal(err)
++	}
++}
++
++func TestBreakerScopeAndDisabled(t *testing.T) {
++	for _, enabled := range []bool{false, true} {
++		t.Run(map[bool]string{false: "disabled", true: "enabled"}[enabled], func(t *testing.T) {
++			calls := 0
++			h := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++				calls++
++				return response(503, io.NopCloser(strings.NewReader("unavailable"))), nil
++			})}
++			c := New(h, enabled)
++			for i := 0; i < 3; i++ {
++				if _, err := c.Fetch(context.Background(), "https://one.test/path"); err == nil || err.Error() != "HTTP 503" {
++					t.Fatalf("request %d: %v", i, err)
++				}
++			}
++			_, err := c.Fetch(context.Background(), "https://one.test/other?q=1")
++			if enabled {
++				if !errors.Is(err, gobreaker.ErrOpenState) || calls != 3 {
++					t.Fatalf("same dependency error=%v calls=%d", err, calls)
++				}
++				for _, endpoint := range []string{"http://one.test/path", "https://two.test/path", "https://one.test:444/path"} {
++					if _, err := c.Fetch(context.Background(), endpoint); err == nil || err.Error() != "HTTP 503" {
++						t.Fatalf("independent dependency %q: %v", endpoint, err)
++					}
++				}
++				if calls != 6 {
++					t.Fatalf("independent dependency calls=%d", calls)
++				}
++			} else if err == nil || err.Error() != "HTTP 503" || calls != 4 {
++				t.Fatalf("disabled error=%v calls=%d", err, calls)
++			}
++		})
++	}
++}
++
++func TestBreakerExclusionsPreserveFailureHistory(t *testing.T) {
++	for _, neutral := range []string{"400", "500", "transport error", "canceled 200", "canceled 503"} {
++		t.Run(neutral, func(t *testing.T) {
++			calls := 0
++			ctx, cancel := context.WithCancel(context.Background())
++			defer cancel()
++			h := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++				calls++
++				status := 503
++				if calls == 2 {
++					switch neutral {
++					case "400":
++						status = 400
++					case "500":
++						status = 500
++					case "transport error":
++						return nil, errors.New("transport failure")
++					case "canceled 200":
++						cancel()
++						status = 200
++					case "canceled 503":
++						cancel()
++					}
++				}
++				return response(status, io.NopCloser(strings.NewReader("ok"))), nil
++			})}
++			c := New(h, true)
++			_, _ = c.Fetch(context.Background(), "https://example.test")
++			_, err := c.Fetch(ctx, "https://example.test")
++			if neutral == "canceled 200" && err != nil {
++				t.Fatalf("completed success lost to cancellation: %v", err)
++			}
++			for i := 0; i < 2; i++ {
++				if _, err := c.Fetch(context.Background(), "https://example.test"); err == nil || err.Error() != "HTTP 503" {
++					t.Fatalf("eligible failure %d: %v", i, err)
++				}
++			}
++			_, err = c.Fetch(context.Background(), "https://example.test")
++			if !errors.Is(err, gobreaker.ErrOpenState) || calls != 4 {
++				t.Fatalf("after exclusions: error=%v calls=%d", err, calls)
++			}
++		})
++	}
++}
++
++func TestBreakerSuccessResetsFailureHistory(t *testing.T) {
++	calls := 0
++	h := &http.Client{Transport: roundTripFunc(func(*http.Request) (*http.Response, error) {
++		calls++
++		status := 503
++		if calls == 3 {
++			status = 200
++		}
++		return response(status, io.NopCloser(strings.NewReader("ok"))), nil
++	})}
++	c := New(h, true)
++	for i := 0; i < 6; i++ {
++		_, err := c.Fetch(context.Background(), "https://example.test")
++		if errors.Is(err, gobreaker.ErrOpenState) {
++			t.Fatalf("success failed to reset failure history at request %d", i)
++		}
++	}
++	_, err := c.Fetch(context.Background(), "https://example.test")
++	if !errors.Is(err, gobreaker.ErrOpenState) || calls != 6 {
++		t.Fatalf("breaker threshold after success: %v, calls=%d", err, calls)
++	}
++}
++
++func waitResult(t *testing.T, result <-chan error) error {
++	t.Helper()
++	select {
++	case err := <-result:
++		return err
++	case <-time.After(time.Second):
++		t.Fatal("Fetch did not complete")
++		return nil
++	}
++}
++
++func waitStarted(t *testing.T, started <-chan struct{}) {
++	t.Helper()
++	select {
++	case <-started:
++	case <-time.After(time.Second):
++		t.Fatal("request did not start")
++	}
++}
++
++func fetchAsync(t *testing.T, c *Client, ctx context.Context, endpoint string) <-chan error {
++	t.Helper()
++	ctx, cancel := context.WithCancel(ctx)
++	result := make(chan error, 1)
++	finished := make(chan struct{})
++	t.Cleanup(func() {
++		cancel()
++		select {
++		case <-finished:
++		case <-time.After(time.Second):
++			t.Error("request did not stop during cleanup")
++		}
++	})
++	go func() {
++		defer close(finished)
++		_, err := c.Fetch(ctx, endpoint)
++		result <- err
++	}()
++	return result
++}
++
++func openBreaker(t *testing.T, c *Client) {
++	t.Helper()
++	for i := 0; i < 3; i++ {
++		_, err := c.Fetch(context.Background(), "https://example.test/failure")
++		if err == nil || err.Error() != "HTTP 503" {
++			t.Fatalf("trip request %d: %v", i, err)
++		}
++	}
++}
++
++func cooldown() { time.Sleep(110 * time.Millisecond) }
++
++func TestBreakerRecoveryAdmissionAndNeutralCompletion(t *testing.T) {
++	for _, neutral := range []string{"400", "canceled 200", "canceled 503"} {
++		t.Run(neutral, func(t *testing.T) {
++			started := make(chan struct{})
++			release := make(chan struct{})
++			ctx, cancel := context.WithCancel(context.Background())
++			defer cancel()
++			var calls atomic.Int32
++			h := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
++				calls.Add(1)
++				status := 503
++				if r.URL.Path == "/neutral" {
++					close(started)
++					select {
++					case <-release:
++					case <-r.Context().Done():
++						return nil, r.Context().Err()
++					}
++					status = 400
++					if neutral != "400" {
++						cancel()
++						status = 200
++						if neutral == "canceled 503" {
++							status = 503
++						}
++					}
++				} else if r.URL.Path == "/success" {
++					status = 200
++				}
++				return response(status, io.NopCloser(strings.NewReader("ok"))), nil
++			})}
++			c := New(h, true)
++			openBreaker(t, c)
++			if _, err := c.Fetch(context.Background(), "https://example.test/success"); !errors.Is(err, gobreaker.ErrOpenState) {
++				t.Fatalf("open breaker admitted request: %v", err)
++			}
++			cooldown()
++			result := fetchAsync(t, c, ctx, "https://example.test/neutral")
++			waitStarted(t, started)
++			for i := 0; i < 8; i++ {
++				_, err := c.Fetch(context.Background(), "https://example.test/success")
++				if !errors.Is(err, gobreaker.ErrTooManyRequests) {
++					t.Fatalf("concurrent recovery admitted: %v", err)
++				}
++			}
++			close(release)
++			err := waitResult(t, result)
++			if neutral == "canceled 200" {
++				if err != nil {
++					t.Fatalf("completed success=%v", err)
++				}
++			} else if err == nil || err.Error() != "HTTP "+map[string]string{"400": "400", "canceled 503": "503"}[neutral] {
++				t.Fatalf("neutral caller result=%v", err)
++			}
++			if _, err := c.Fetch(context.Background(), "https://example.test/failure"); err == nil || err.Error() != "HTTP 503" {
++				t.Fatalf("neutral completion did not release admission: %v", err)
++			}
++			if _, err := c.Fetch(context.Background(), "https://example.test/success"); !errors.Is(err, gobreaker.ErrOpenState) {
++				t.Fatalf("failed recovery did not reopen: %v", err)
++			}
++			cooldown()
++			if _, err := c.Fetch(context.Background(), "https://example.test/success"); err != nil {
++				t.Fatal(err)
++			}
++			if _, err := c.Fetch(context.Background(), "https://example.test/success"); err != nil {
++				t.Fatalf("success did not establish recovery: %v", err)
++			}
++			if calls.Load() != 7 {
++				t.Fatalf("application calls=%d, want 7", calls.Load())
++			}
++		})
++	}
++}
++
++func TestBreakerIgnoresLateFailureFromOldGeneration(t *testing.T) {
++	started := make(chan struct{})
++	release := make(chan struct{})
++	ctx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++	h := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
++		if r.URL.Path == "/late" {
++			close(started)
++			select {
++			case <-release:
++			case <-r.Context().Done():
++				return nil, r.Context().Err()
++			}
++		}
++		status := 503
++		if r.URL.Path == "/success" {
++			status = 200
++		}
++		return response(status, io.NopCloser(strings.NewReader("ok"))), nil
++	})}
++	c := New(h, true)
++	result := fetchAsync(t, c, ctx, "https://example.test/late")
++	waitStarted(t, started)
++	openBreaker(t, c)
++	cooldown()
++	if _, err := c.Fetch(context.Background(), "https://example.test/success"); err != nil {
++		t.Fatal(err)
++	}
++	close(release)
++	err := waitResult(t, result)
++	if err == nil || err.Error() != "HTTP 503" {
++		t.Fatalf("old request=%v", err)
++	}
++	for i := 0; i < 3; i++ {
++		_, err := c.Fetch(context.Background(), "https://example.test/failure")
++		if err == nil || err.Error() != "HTTP 503" {
++			t.Fatalf("old failure changed current history at %d: %v", i, err)
++		}
++	}
++	if _, err := c.Fetch(context.Background(), "https://example.test/success"); !errors.Is(err, gobreaker.ErrOpenState) {
++		t.Fatalf("current-generation failures did not open: %v", err)
++	}
++}
++
++func TestBreakerIgnoresLateSuccessDuringRecovery(t *testing.T) {
++	lateStarted := make(chan struct{})
++	lateRelease := make(chan struct{})
++	probeStarted := make(chan struct{})
++	probeRelease := make(chan struct{})
++	var calls atomic.Int32
++	h := &http.Client{Transport: roundTripFunc(func(r *http.Request) (*http.Response, error) {
++		calls.Add(1)
++		status := 503
++		switch r.URL.Path {
++		case "/late":
++			close(lateStarted)
++			select {
++			case <-lateRelease:
++			case <-r.Context().Done():
++				return nil, r.Context().Err()
++			}
++			status = 200
++		case "/probe":
++			close(probeStarted)
++			select {
++			case <-probeRelease:
++			case <-r.Context().Done():
++				return nil, r.Context().Err()
++			}
++			status = 400
++		}
++		return response(status, io.NopCloser(strings.NewReader("ok"))), nil
++	})}
++	c := New(h, true)
++	late := fetchAsync(t, c, context.Background(), "https://example.test/late")
++	waitStarted(t, lateStarted)
++	openBreaker(t, c)
++	cooldown()
++	probe := fetchAsync(t, c, context.Background(), "https://example.test/probe")
++	waitStarted(t, probeStarted)
++	close(lateRelease)
++	if err := waitResult(t, late); err != nil {
++		t.Fatalf("old success=%v", err)
++	}
++	if _, err := c.Fetch(context.Background(), "https://example.test/failure"); !errors.Is(err, gobreaker.ErrTooManyRequests) {
++		t.Fatalf("old success changed recovery admission: %v", err)
++	}
++	close(probeRelease)
++	if err := waitResult(t, probe); err == nil || err.Error() != "HTTP 400" {
++		t.Fatalf("probe=%v", err)
++	}
++	if _, err := c.Fetch(context.Background(), "https://example.test/failure"); err == nil || err.Error() != "HTTP 503" {
++		t.Fatalf("neutral probe did not release admission: %v", err)
++	}
++	if _, err := c.Fetch(context.Background(), "https://example.test/failure"); !errors.Is(err, gobreaker.ErrOpenState) {
++		t.Fatalf("probe failure did not reopen: %v", err)
++	}
++	if calls.Load() != 6 {
++		t.Fatalf("requests=%d, want 6", calls.Load())
++	}
++}

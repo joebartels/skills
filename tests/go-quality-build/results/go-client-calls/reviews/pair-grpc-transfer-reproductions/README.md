@@ -1,0 +1,1 @@
+These checks ran the unmodified packet frozen probe in disposable copies of A/source and B/source. No candidate or supplied probe was edited. A-frozen-probe.json and B-frozen-probe.json preserve the exact command and output. There were no verified defects requiring additional reproductions. The copied source-hashes.json identifies the reviewed candidates.

@@ -1,0 +1,87 @@
+{
+  "selected_skills": [
+    "go-api-contracts",
+    "go-behavior-tests",
+    "go-names-and-comments",
+    "go-test-isolation"
+  ],
+  "global_process_style_skills": [
+    "superpowers:using-superpowers (read; its subagent-stop instruction applies)",
+    "go-core-style",
+    "superpowers:test-driven-development",
+    "superpowers:verification-before-completion"
+  ],
+  "opened_guidance": [
+    "/Users/jb/.codex/RTK.md",
+    "/Users/jb/.agents/skills/superpowers/using-superpowers/SKILL.md",
+    "/Users/jb/.agents/skills/golang/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/test-driven-development/SKILL.md",
+    "/Users/jb/.agents/skills/superpowers/test-driven-development/writing-good-tests.md",
+    "/Users/jb/.agents/skills/superpowers/verification-before-completion/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s00/guidance/go-api-contracts/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s00/guidance/go-behavior-tests/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s00/guidance/go-behavior-tests/references/behavior-observations.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s00/guidance/go-names-and-comments/SKILL.md",
+    "/private/tmp/go-error-eval-xcj0cu48/s00/guidance/go-test-isolation/SKILL.md"
+  ],
+  "implementation_notes": [
+    "Added only the requested exported ErrInvalidKey sentinel. Backend, Service and Lookup signatures remain unchanged.",
+    "Lookup rejects empty and Unicode-whitespace-only keys using strings.TrimSpace before invoking Backend. Accepted keys reach Backend unchanged.",
+    "BackendMissing, including wrapped and joined forms, still maps directly to ErrMissing. Every failure returns an empty value.",
+    "Unavailable failures wrap only ErrUnavailable. Context names the lookup operation and formats the key with %q, escaping control characters without incorporating backend diagnostics or causes.",
+    "Added external-package consumer tests for blank rejection without backend calls, unchanged accepted keys, success, direct missing identity, partial-value suppression, unavailable classification, escaped context, sensitive diagnostic isolation, hidden backend identity/types and noncomparable backend errors.",
+    "Observed assertion failures for missing blank rejection and unavailable context before implementing either behavior. The completed full suite passes with race detection.",
+    "README and Lookup Godoc describe classification, blank-key semantics, value usability and safe context without task history."
+  ],
+  "checks": [
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v ./...",
+      "working_directory": "/private/tmp/go-error-eval-xcj0cu48/s00/module",
+      "exit_code": 1,
+      "output": "=== RUN   TestMissing\n--- PASS: TestMissing (0.00s)\n=== RUN   TestLookupRejectsBlankKey\n=== RUN   TestLookupRejectsBlankKey/\"\"\n    lookup_contract_test.go:26: blank key was accepted\n    lookup_contract_test.go:29: value = \"account\", want empty on failure\n    lookup_contract_test.go:32: blank key reached backend\n=== RUN   TestLookupRejectsBlankKey/\"_\"\n    lookup_contract_test.go:26: blank key was accepted\n    lookup_contract_test.go:29: value = \"account\", want empty on failure\n    lookup_contract_test.go:32: blank key reached backend\n=== RUN   TestLookupRejectsBlankKey/\"\\t\\r\\n\"\n    lookup_contract_test.go:26: blank key was accepted\n    lookup_contract_test.go:29: value = \"account\", want empty on failure\n    lookup_contract_test.go:32: blank key reached backend\n=== RUN   TestLookupRejectsBlankKey/\"\\u00a0\\u2003\"\n    lookup_contract_test.go:26: blank key was accepted\n    lookup_contract_test.go:29: value = \"account\", want empty on failure\n    lookup_contract_test.go:32: blank key reached backend\n--- FAIL: TestLookupRejectsBlankKey (0.00s)\n    --- FAIL: TestLookupRejectsBlankKey/\"\" (0.00s)\n    --- FAIL: TestLookupRejectsBlankKey/\"_\" (0.00s)\n    --- FAIL: TestLookupRejectsBlankKey/\"\\t\\r\\n\" (0.00s)\n    --- FAIL: TestLookupRejectsBlankKey/\"\\u00a0\\u2003\" (0.00s)\n=== RUN   TestLookupPreservesNonblankKey\n=== RUN   TestLookupPreservesNonblankKey/\"u\"\n=== RUN   TestLookupPreservesNonblankKey/\"_u_\"\n=== RUN   TestLookupPreservesNonblankKey/\"\\u00a0u\\u2003\"\n--- PASS: TestLookupPreservesNonblankKey (0.00s)\n    --- PASS: TestLookupPreservesNonblankKey/\"u\" (0.00s)\n    --- PASS: TestLookupPreservesNonblankKey/\"_u_\" (0.00s)\n    --- PASS: TestLookupPreservesNonblankKey/\"\\u00a0u\\u2003\" (0.00s)\n=== RUN   TestLookupMissingIdentity\n--- PASS: TestLookupMissingIdentity (0.00s)\n=== RUN   TestLookupUnavailableContextAndIsolation\n    lookup_contract_test.go:105: error = \"account unavailable\", want operation and quoted key context\n    lookup_contract_test.go:105: error = \"account unavailable\", want operation and quoted key context\n    lookup_contract_test.go:105: error = \"account unavailable\", want operation and quoted key context\n--- FAIL: TestLookupUnavailableContextAndIsolation (0.00s)\nFAIL\nFAIL\texample.com/accountlookup\t0.170s\nFAIL\n",
+      "expected_failure": true,
+      "purpose": "Pre-implementation regression signal"
+    },
+    {
+      "command": "rtk proxy gofmt -s -w lookup.go lookup_test.go lookup_contract_test.go",
+      "working_directory": "/private/tmp/go-error-eval-xcj0cu48/s00/module",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go test -v -race ./...",
+      "working_directory": "/private/tmp/go-error-eval-xcj0cu48/s00/module",
+      "exit_code": 0,
+      "output": "=== RUN   TestMissing\n--- PASS: TestMissing (0.00s)\n=== RUN   TestLookupRejectsBlankKey\n=== RUN   TestLookupRejectsBlankKey/\"\"\n=== RUN   TestLookupRejectsBlankKey/\"_\"\n=== RUN   TestLookupRejectsBlankKey/\"\\t\\r\\n\"\n=== RUN   TestLookupRejectsBlankKey/\"\\u00a0\\u2003\"\n--- PASS: TestLookupRejectsBlankKey (0.00s)\n    --- PASS: TestLookupRejectsBlankKey/\"\" (0.00s)\n    --- PASS: TestLookupRejectsBlankKey/\"_\" (0.00s)\n    --- PASS: TestLookupRejectsBlankKey/\"\\t\\r\\n\" (0.00s)\n    --- PASS: TestLookupRejectsBlankKey/\"\\u00a0\\u2003\" (0.00s)\n=== RUN   TestLookupPreservesNonblankKey\n=== RUN   TestLookupPreservesNonblankKey/\"u\"\n=== RUN   TestLookupPreservesNonblankKey/\"_u_\"\n=== RUN   TestLookupPreservesNonblankKey/\"\\u00a0u\\u2003\"\n--- PASS: TestLookupPreservesNonblankKey (0.00s)\n    --- PASS: TestLookupPreservesNonblankKey/\"u\" (0.00s)\n    --- PASS: TestLookupPreservesNonblankKey/\"_u_\" (0.00s)\n    --- PASS: TestLookupPreservesNonblankKey/\"\\u00a0u\\u2003\" (0.00s)\n=== RUN   TestLookupMissingIdentity\n--- PASS: TestLookupMissingIdentity (0.00s)\n=== RUN   TestLookupUnavailableContextAndIsolation\n--- PASS: TestLookupUnavailableContextAndIsolation (0.00s)\nPASS\nok  \texample.com/accountlookup\t1.198s\n"
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go vet ./...",
+      "working_directory": "/private/tmp/go-error-eval-xcj0cu48/s00/module",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache staticcheck ./...",
+      "working_directory": "/private/tmp/go-error-eval-xcj0cu48/s00/module",
+      "exit_code": 127,
+      "output": "env: staticcheck: No such file or directory\n"
+    },
+    {
+      "command": "rtk proxy gofmt -l lookup.go lookup_test.go lookup_contract_test.go",
+      "working_directory": "/private/tmp/go-error-eval-xcj0cu48/s00/module",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": "rtk proxy env GOWORK=off GOTOOLCHAIN=local GOCACHE=/private/tmp/go-error-eval-xcj0cu48/cache go version",
+      "working_directory": "/private/tmp/go-error-eval-xcj0cu48/s00/module",
+      "exit_code": 0,
+      "output": "go version go1.26.5 darwin/arm64\n"
+    }
+  ],
+  "material_limits": [
+    "staticcheck is not installed; the actual invocation exited 127. No tools were installed.",
+    "Checks used the available local Go 1.26.5 toolchain; an exact Go 1.22 toolchain run was not performed. The module minimum remains Go 1.22 and added APIs predate that version.",
+    "No concrete backend implementation was supplied. Tests verify Service at the public extension-protocol boundary with local handwritten backends, not a database integration."
+  ]
+}

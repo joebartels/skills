@@ -1,0 +1,62 @@
+{
+  "reviewed_head": "4e399295d406102c2a8ff6147701575aa98b325d",
+  "review_scope": "Fresh no-context branch review of shipped guidance, tooling, packaging and maintained documentation; author outcomes excluded.",
+  "independent_grades_before_corrections": {
+    "guidance_correctness": "B",
+    "scope_and_decision_ownership": "A",
+    "tooling_correctness_and_reproducibility": "B",
+    "packaging_and_documentation": "A"
+  },
+  "findings": [
+    {
+      "priority": "P2",
+      "file": "tests/go-quality-build/client_call_trials.py",
+      "issue": "Default temporary directory may inherit a parent Git repository.",
+      "correction": "Initialize an isolated temporary repository; exclude its .git directory from the sealed output.",
+      "regression": "Real Git added/deleted-file reconstruction under an in-repository tempfile.tempdir failed with patch reconstruction mismatch before the fix and passed afterward."
+    },
+    {
+      "priority": "P2",
+      "file": "plugins/go-quality-build/skills/go-client-calls/references/grpc-clients.md",
+      "issue": "Absent and invalid resolver service configs were conflated.",
+      "correction": "Distinguish absent fallback, invalid initial failure and retained previous policy; verify selected implementation."
+    }
+  ],
+  "evaluated_candidate_v2_hashes": {
+    "SKILL.md": "95504b0ce3136d3ece9376b492248a0f3867c0dbd3267478f9ddb17306dfda3d",
+    "references/http-clients.md": "d579f9381c93e4edd3d63cbfb89251ed5a04e080b41e5c4cc5d1a35ecd56fa9d",
+    "references/grpc-clients.md": "38d27e688cd9ca0a5c2ce2af52b283f65113ac346c6a2e59bdb65ae4a85ab2a3"
+  },
+  "current_runtime_hashes": {
+    "SKILL.md": "95504b0ce3136d3ece9376b492248a0f3867c0dbd3267478f9ddb17306dfda3d",
+    "references/http-clients.md": "d579f9381c93e4edd3d63cbfb89251ed5a04e080b41e5c4cc5d1a35ecd56fa9d",
+    "references/grpc-clients.md": "7de546c08f1b18419f989b2a6f303b5f8e00891fa001fa4fc4096f3c5aeece06"
+  },
+  "provenance": "Original campaign snapshots and receipts are unchanged. Main and HTTP guidance remain byte-identical to evaluated v2. The gRPC clarification is a post-review factual correction checked independently; no new author comparison or effectiveness gain is claimed.",
+  "grpc_primary_implementation": "https://github.com/grpc/grpc-go/blob/v1.67.3/clientconn.go#L725-L778",
+  "grpc_characterization": {
+    "source": "grpc-service-config/policy_test.go",
+    "absent_executions": 3,
+    "valid_empty_executions": 1,
+    "invalid_initial_executions": 0,
+    "invalid_after_prior_policy_executions": 3,
+    "receipts": [
+      "go122-grpc.json",
+      "go122-grpc.txt",
+      "host-grpc.json",
+      "host-grpc.txt"
+    ]
+  },
+  "checks": {
+    "trial_helper_tests": 9,
+    "root_unit_tests": 14,
+    "build_unit_tests": 23,
+    "review_layout_tests": 1,
+    "reconstructed_immutable_archives": 16,
+    "review_evaluation_cases": 120,
+    "build_evaluation_cases": 55,
+    "plugin_marketplace_and_skill_validation": "PASS",
+    "local_runtime_references": "PASS"
+  },
+  "limits": "Grades apply to reviewed head before fixes; no grade re-review performed. Characterization uses pinned grpc-go v1.67.3 and local bufconn on Go 1.22.12 (external linker) and Go 1.26.5 (race). No production networking, automatic routing or new comparative author evaluation."
+}

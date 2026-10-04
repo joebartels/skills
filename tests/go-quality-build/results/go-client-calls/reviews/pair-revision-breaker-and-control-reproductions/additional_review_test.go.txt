@@ -1,0 +1,110 @@
+package client
+
+import (
+	"context"
+	"errors"
+	"io"
+	"net/http"
+	"net/url"
+	"strings"
+	"testing"
+	"time"
+)
+
+type independentTransport func(*http.Request) (*http.Response, error)
+
+func (f independentTransport) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+func independentReply(status int) *http.Response {
+	return &http.Response{StatusCode: status, Header: make(http.Header), Body: io.NopCloser(strings.NewReader("ok"))}
+}
+
+// One Fetch-level Do call may contain exchanges permitted by the borrowed client.
+func TestIndependentAllowedRedirectPolicy(t *testing.T) {
+	for _, enabled := range []bool{false, true} {
+		calls, policies := 0, 0
+		h := &http.Client{
+			Transport: independentTransport(func(r *http.Request) (*http.Response, error) {
+				calls++
+				if r.URL.Path == "/start" {
+					resp := independentReply(302)
+					resp.Header.Set("Location", "/end")
+					return resp, nil
+				}
+				return independentReply(200), nil
+			}),
+			CheckRedirect: func(*http.Request, []*http.Request) error { policies++; return nil },
+		}
+		data, err := New(h, enabled).Fetch(context.Background(), "http://dep.test/start")
+		t.Logf("enabled=%v result=%q error=%v exchanges=%d policy calls=%d", enabled, data, err, calls, policies)
+		if err != nil || string(data) != "ok" || calls != 2 || policies != 1 {
+			t.Errorf("Fetch did not honor borrowed redirect policy")
+		}
+	}
+}
+
+type deadlineSuccessBody struct {
+	ctx context.Context
+	read bool
+}
+
+func (b *deadlineSuccessBody) Read(p []byte) (int, error) {
+	if b.read { return 0, io.EOF }
+	<-b.ctx.Done()
+	b.read = true
+	return copy(p, "ok"), io.EOF
+}
+func (*deadlineSuccessBody) Close() error { return nil }
+
+func TestIndependentDeadline200IsNeutral(t *testing.T) {
+	for _, recovery := range []bool{false, true} {
+		calls := 0
+		c := New(&http.Client{Transport: independentTransport(func(r *http.Request) (*http.Response, error) {
+			calls++
+			if r.URL.Path == "/deadline" {
+				resp := independentReply(200)
+				resp.Body = &deadlineSuccessBody{ctx: r.Context()}
+				return resp, nil
+			}
+			return independentReply(503), nil
+		})}, true)
+		failures := 2
+		if recovery { failures = 3 }
+		for i := 0; i < failures; i++ { _, _ = c.Fetch(context.Background(), "http://dep.test/fail") }
+		if recovery { time.Sleep(110 * time.Millisecond) }
+		data, err := c.Fetch(context.Background(), "http://dep.test/deadline")
+		t.Logf("recovery=%v completed result=%q error=%v", recovery, data, err)
+		_, _ = c.Fetch(context.Background(), "http://dep.test/fail")
+		before := calls
+		_, err = c.Fetch(context.Background(), "http://dep.test/fail")
+		t.Logf("recovery=%v after next eligible failure: error=%v calls=%d->%d", recovery, err, before, calls)
+		if err == nil || calls != before { t.Errorf("expired 200 changed health state") }
+	}
+}
+
+type independentErrorReader struct { cause error }
+
+func (r independentErrorReader) Read([]byte) (int, error) { return 0, r.cause }
+
+func TestIndependentBoundedDiagnosticRetainsCause(t *testing.T) {
+	for _, enabled := range []bool{false, true} {
+		for _, bodyFailure := range []bool{false, true} {
+			cause := errors.New(strings.Repeat("cause", 1500))
+			h := &http.Client{Transport: independentTransport(func(*http.Request) (*http.Response, error) {
+				if !bodyFailure { return nil, cause }
+				resp := independentReply(200)
+				resp.Body = io.NopCloser(independentErrorReader{cause: cause})
+				return resp, nil
+			})}
+			_, err := New(h, enabled).Fetch(context.Background(), "http://dep.test/data")
+			if err == nil { t.Fatal("missing error") }
+			if !errors.Is(err, cause) { t.Errorf("lost cause") }
+			if !bodyFailure {
+				var urlErr *url.Error
+				if !errors.As(err, &urlErr) { t.Errorf("lost transport error type") }
+			}
+			t.Logf("enabled=%v body failure=%v diagnostic bytes=%d cause retained=%v", enabled, bodyFailure, len(err.Error()), errors.Is(err, cause))
+			if len(err.Error()) > 4096 { t.Errorf("diagnostic exceeds bound") }
+		}
+	}
+}

@@ -1,0 +1,7 @@
+R2’s observed error-identity loss is definite; calling it a candidate contract violation depends on where “underlying failures” is measured.
+
+Preserving causes that Go 1.22’s `Client.Timeout` discards requires observation before that replacement. A private per-call transport/body observer on a copied client can retain timeout settings and expose those causes without introducing a consumer-facing client API or framework. It wraps transport/body behavior, however, so an interpretation forbidding **all** private interposition would exclude that approach.
+
+At the literal supplied-client boundary, preserving errors actually returned by `Client.Do` and its response body is clearly required. Recovering causes that the supplied client has already erased is ambiguous. If “no client wrapper” prohibits private observation too, the stronger interpretation conflicts with that constraint.
+
+Thus R2 should not be treated as an unconditional violation without establishing that the README requires cause preservation below the supplied-client boundary. The frozen findings remain unchanged.

@@ -1,0 +1,72 @@
+[
+  {
+    "private": false,
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/pure-control\t0.214s\n"
+  },
+  {
+    "private": false,
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "private": false,
+    "command": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/pure-control\t0.172s\n"
+  },
+  {
+    "private": false,
+    "command": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "private": true,
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/pure-control\t0.175s\n"
+  },
+  {
+    "private": true,
+    "command": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/pure-control\t0.180s\n"
+  }
+]

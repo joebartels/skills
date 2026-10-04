@@ -1,0 +1,65 @@
+package client
+
+import (
+	"context"
+	"errors"
+	"io"
+	"net/http"
+	"sync"
+	"sync/atomic"
+	"testing"
+	"time"
+)
+
+type neutralLegacy struct {
+	stop chan struct{}
+	once sync.Once
+	cause error
+	body bool
+	closes atomic.Int32
+}
+func (n *neutralLegacy) CancelRequest(*http.Request) { n.once.Do(func(){close(n.stop)}) }
+func (n *neutralLegacy) RoundTrip(r *http.Request) (*http.Response,error) {
+	defer r.Body.Close()
+	if n.body { return &http.Response{StatusCode:200, Header:make(http.Header),Body:&neutralLegacyBody{n}},nil }
+	<-n.stop
+	return nil,n.cause
+}
+type neutralLegacyBody struct { n *neutralLegacy }
+func (b *neutralLegacyBody) Read([]byte)(int,error){ <-b.n.stop; return 0,b.n.cause }
+func (b *neutralLegacyBody) Close()error{b.n.closes.Add(1);return nil}
+var _ io.ReadCloser = (*neutralLegacyBody)(nil)
+
+func TestNeutralLegacyEarlierDeadline(t *testing.T) {
+	for _, timeout := range []time.Duration{0,time.Second} {
+		for _, body := range []bool{false,true} {
+			t.Run(timeout.String()+map[bool]string{false:"/headers",true:"/body"}[body],func(t *testing.T){
+				cause:=errors.New("independent legacy stop")
+				n:=&neutralLegacy{stop:make(chan struct{}),cause:cause,body:body}
+				c:=&http.Client{Transport:n,Timeout:timeout}
+				ctx,cancel:=context.WithTimeout(context.Background(),60*time.Millisecond)
+				defer cancel()
+				release:=time.AfterFunc(250*time.Millisecond,func(){n.CancelRequest(nil)})
+				defer release.Stop()
+				start:=time.Now()
+				_,err:=Submit(ctx,c,"http://example.invalid","",nil,false)
+				elapsed:=time.Since(start)
+				t.Logf("elapsed=%v deadline=%t cause=%t closes=%d timeout=%v",elapsed,errors.Is(err,context.DeadlineExceeded),errors.Is(err,cause),n.closes.Load(),c.Timeout)
+				if elapsed>180*time.Millisecond || !errors.Is(err,context.DeadlineExceeded) || !errors.Is(err,cause) {t.Error("earlier deadline not enforced or cause lost")}
+				if body && n.closes.Load()!=1 {t.Error("body ownership lost")}
+			})
+		}
+	}
+}
+
+func TestNeutralLegacyTotalBudget(t *testing.T) {
+	n:=&neutralLegacy{stop:make(chan struct{}),cause:errors.New("released legacy call")}
+	c:=&http.Client{Transport:n}
+	release:=time.AfterFunc(650*time.Millisecond,func(){n.CancelRequest(nil)})
+	defer release.Stop()
+	start:=time.Now()
+	_,err:=Submit(context.Background(),c,"http://example.invalid","",nil,false)
+	elapsed:=time.Since(start)
+	t.Logf("elapsed=%v deadline=%t",elapsed,errors.Is(err,context.DeadlineExceeded))
+	if elapsed>600*time.Millisecond || !errors.Is(err,context.DeadlineExceeded){t.Error("500ms budget not enforced")}
+}

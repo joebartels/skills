@@ -1,0 +1,37 @@
+{
+  "status": "frozen before any arm disclosure",
+  "pairs": {
+    "revision-breaker-recovery": {
+      "A": {
+        "production_findings": [],
+        "testing_findings": [],
+        "grades": {"correctness": "A", "observability_resilience": "A", "testing": "A"}
+      },
+      "B": {
+        "production_findings": [
+          {"id": "BR-B1", "severity": "major", "root_cause": "Health classification checks the parent only for status errors and never excludes successful canceled or expired completions", "locations": ["B/source/client.go:62", "B/source/client.go:65", "B/source/client.go:82"]},
+          {"id": "BR-B2", "severity": "moderate", "root_cause": "Fetch overwrites borrowed CheckRedirect policy", "locations": ["B/source/client.go:95", "B/source/client.go:97"]},
+          {"id": "BR-B3", "severity": "moderate", "root_cause": "Parse, transport and body errors are returned without bounding diagnostics", "locations": ["B/source/client.go:56", "B/source/client.go:100", "B/source/client.go:106"]}
+        ],
+        "testing_findings": [
+          {"id": "BR-BT1", "severity": "major", "root_cause": "Redirect preservation test asserts suppression of the supplied policy", "locations": ["B/source/contracts_test.go:115", "B/source/contracts_test.go:135"]},
+          {"id": "BR-BT2", "severity": "major", "root_cause": "Candidate suite omits completion-time neutrality for successful canceled outcomes and local operation expiry", "locations": ["B/source/contracts_test.go:153", "B/source/contracts_test.go:230", "B/source/contracts_test.go:296", "B/source/contracts_test.go:332"]},
+          {"id": "BR-BT3", "severity": "moderate", "root_cause": "Candidate bound tests do not check error diagnostic bounds", "locations": ["B/source/contracts_test.go:56", "B/source/contracts_test.go:91"]}
+        ],
+        "grades": {"correctness": "C-", "observability_resilience": "C-", "testing": "C-"}
+      },
+      "comparison": "A substantively better on three verified contract roots. Both retain dependency scope, neutral non-503 errors, recovery exclusivity/release, stale-generation safety, body closure, bounded operation context and no application retry. Oversize result policy differs and is not counted as an improvement or defect."
+    },
+    "revision-pure-control": {
+      "A": {"production_findings": [], "testing_findings": [], "grades": {"correctness": "A", "observability_resilience": "Not applicable", "testing": "A"}},
+      "B": {"production_findings": [], "testing_findings": [], "grades": {"correctness": "A", "observability_resilience": "Not applicable", "testing": "A"}},
+      "comparison": "Substantive tie: production files identical, focused tests equivalent, no dependency or resilience surface added."
+    }
+  },
+  "verification": {
+    "source_hashes": "Every supplied file matches source-hashes.json",
+    "candidate_checks": "All four candidate suites and host vet pass in disposable copies",
+    "frozen_checks": "Breaker A passes host, minimum and race; breaker B fails policy, operation expiry, canceled success and diagnostic bounds on all three; pure A and B pass host and minimum",
+    "additional_checks": "Breaker A passes allowed redirect, expired completed 200 neutrality and bounded errors with cause/type access; B fails those properties while retaining cause access"
+  }
+}

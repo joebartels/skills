@@ -1,0 +1,98 @@
+[
+  {
+    "private": false,
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/breaker-recovery\t1.876s\n"
+  },
+  {
+    "private": false,
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "private": false,
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/breaker-recovery\t2.908s\n"
+  },
+  {
+    "private": false,
+    "command": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 0,
+    "output": "ok  \texample.invalid/breaker-recovery\t1.879s\n"
+  },
+  {
+    "private": false,
+    "command": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "vet",
+      "./..."
+    ],
+    "exit": 0,
+    "output": ""
+  },
+  {
+    "private": true,
+    "command": [
+      "go",
+      "test",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "--- FAIL: TestReviewCanceled200PreservesFailureHistory (0.00s)\n    supplemental_review_test.go:57: canceled completion: data=\"ok\" error=<nil> parent=context canceled\n    supplemental_review_test.go:67: after third eligible failure: error=HTTP 503 calls=4->5\n    supplemental_review_test.go:69: canceled 200 reset history; fourth eligible request contacted dependency\n--- FAIL: TestReviewCanceled200DoesNotEstablishRecovery (0.11s)\n    supplemental_review_test.go:100: canceled recovery completion: data=\"ok\" error=<nil> parent=context canceled\n    supplemental_review_test.go:113: after failed replacement probe: error=HTTP 503 calls=6->7\n    supplemental_review_test.go:115: canceled 200 established recovery; failed replacement probe did not reopen\n--- FAIL: TestReviewDiagnosticsAreBounded (0.00s)\n    --- FAIL: TestReviewDiagnosticsAreBounded/parse-disabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8245\n        supplemental_review_test.go:140: diagnostic bytes=8245; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/transport-disabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8233\n        supplemental_review_test.go:140: diagnostic bytes=8233; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/body-disabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8192\n        supplemental_review_test.go:140: diagnostic bytes=8192; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/parse-enabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8245\n        supplemental_review_test.go:140: diagnostic bytes=8245; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/transport-enabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8233\n        supplemental_review_test.go:140: diagnostic bytes=8233; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/body-enabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8192\n        supplemental_review_test.go:140: diagnostic bytes=8192; want <=4096\nFAIL\nFAIL\texample.invalid/breaker-recovery\t2.448s\nFAIL\n"
+  },
+  {
+    "private": true,
+    "command": [
+      "go",
+      "test",
+      "-race",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "--- FAIL: TestReviewCanceled200PreservesFailureHistory (0.00s)\n    supplemental_review_test.go:57: canceled completion: data=\"ok\" error=<nil> parent=context canceled\n    supplemental_review_test.go:67: after third eligible failure: error=HTTP 503 calls=4->5\n    supplemental_review_test.go:69: canceled 200 reset history; fourth eligible request contacted dependency\n--- FAIL: TestReviewCanceled200DoesNotEstablishRecovery (0.11s)\n    supplemental_review_test.go:100: canceled recovery completion: data=\"ok\" error=<nil> parent=context canceled\n    supplemental_review_test.go:113: after failed replacement probe: error=HTTP 503 calls=6->7\n    supplemental_review_test.go:115: canceled 200 established recovery; failed replacement probe did not reopen\n--- FAIL: TestReviewDiagnosticsAreBounded (0.01s)\n    --- FAIL: TestReviewDiagnosticsAreBounded/parse-disabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8245\n        supplemental_review_test.go:140: diagnostic bytes=8245; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/transport-disabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8233\n        supplemental_review_test.go:140: diagnostic bytes=8233; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/body-disabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8192\n        supplemental_review_test.go:140: diagnostic bytes=8192; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/parse-enabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8245\n        supplemental_review_test.go:140: diagnostic bytes=8245; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/transport-enabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8233\n        supplemental_review_test.go:140: diagnostic bytes=8233; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/body-enabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8192\n        supplemental_review_test.go:140: diagnostic bytes=8192; want <=4096\nFAIL\nFAIL\texample.invalid/breaker-recovery\t2.485s\nFAIL\n"
+  },
+  {
+    "private": true,
+    "command": [
+      "/private/tmp/go-client-campaign/tools/go/bin/go",
+      "test",
+      "-ldflags=-linkmode=external",
+      "-count=1",
+      "-timeout=20s",
+      "./..."
+    ],
+    "exit": 1,
+    "output": "--- FAIL: TestReviewCanceled200PreservesFailureHistory (0.00s)\n    supplemental_review_test.go:57: canceled completion: data=\"ok\" error=<nil> parent=context canceled\n    supplemental_review_test.go:67: after third eligible failure: error=HTTP 503 calls=4->5\n    supplemental_review_test.go:69: canceled 200 reset history; fourth eligible request contacted dependency\n--- FAIL: TestReviewCanceled200DoesNotEstablishRecovery (0.11s)\n    supplemental_review_test.go:100: canceled recovery completion: data=\"ok\" error=<nil> parent=context canceled\n    supplemental_review_test.go:113: after failed replacement probe: error=HTTP 503 calls=6->7\n    supplemental_review_test.go:115: canceled 200 established recovery; failed replacement probe did not reopen\n--- FAIL: TestReviewDiagnosticsAreBounded (0.00s)\n    --- FAIL: TestReviewDiagnosticsAreBounded/parse-disabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8245\n        supplemental_review_test.go:140: diagnostic bytes=8245; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/transport-disabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8233\n        supplemental_review_test.go:140: diagnostic bytes=8233; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/body-disabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8192\n        supplemental_review_test.go:140: diagnostic bytes=8192; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/parse-enabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8245\n        supplemental_review_test.go:140: diagnostic bytes=8245; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/transport-enabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8233\n        supplemental_review_test.go:140: diagnostic bytes=8233; want <=4096\n    --- FAIL: TestReviewDiagnosticsAreBounded/body-enabled (0.00s)\n        supplemental_review_test.go:138: diagnostic bytes=8192\n        supplemental_review_test.go:140: diagnostic bytes=8192; want <=4096\nFAIL\nFAIL\texample.invalid/breaker-recovery\t2.435s\nFAIL\n"
+  }
+]
