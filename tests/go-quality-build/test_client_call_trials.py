@@ -1,7 +1,10 @@
 """Trial isolation and exact patch reconstruction, using real temporary repositories."""
 
 import importlib.util
+from contextlib import chdir, contextmanager
+import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import sys
@@ -118,6 +121,50 @@ class ClientCallTrialsTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "catalog"):
             self.trials.archive_trial(trial, self.archive)
         self.assertFalse((self.archive / "t01").exists())
+
+    def test_prompt_hash_uses_written_newlines(self):
+        write_text = Path.write_text
+
+        def translated_write(path, text, *args, **kwargs):
+            if path.name == "prompt.txt":
+                kwargs["newline"] = "\r\n"
+            return write_text(path, text, *args, **kwargs)
+
+        with patch.object(Path, "write_text", translated_write):
+            trial = self.prepare()
+        self.assertIn(b"\r\n", (trial / "prompt.txt").read_bytes())
+        (trial / "trial-report.md").write_text("Result\n")
+        self.trials.archive_trial(trial, self.archive)
+
+    def test_patch_preserves_crlf_file_bytes(self):
+        trial = self.prepare()
+        (trial / "trial-report.md").write_text("Result\n")
+        self.trials.run(["git", "config", "core.autocrlf", "false"], trial / "source")
+        content = b"first\r\nsecond\r\n"
+        (trial / "source/new.txt").write_bytes(content)
+        result = self.trials.archive_trial(trial, self.archive)
+        self.assertEqual((self.archive / "t01/output/new.txt").read_bytes(), content)
+        patch_bytes = (self.archive / "t01/source.patch").read_bytes()
+        self.assertEqual(result["patch_sha256"], hashlib.sha256(patch_bytes).hexdigest())
+
+    def test_relative_archive_patch_path(self):
+        self.archive = Path("archive")
+        temporary_directory = tempfile.TemporaryDirectory
+
+        @contextmanager
+        def relative_temporary(*args, **kwargs):
+            # Python 3.11 preserves a relative TemporaryDirectory dir argument.
+            with temporary_directory(*args, **kwargs) as directory:
+                yield os.path.relpath(directory) if kwargs.get("dir") else directory
+
+        with chdir(self.root):
+            trial = self.prepare()
+            (trial / "trial-report.md").write_text("Result\n")
+            (trial / "source/client.go").write_text("package client\nvar Value = 7\n")
+            with patch.object(tempfile, "TemporaryDirectory", relative_temporary):
+                self.trials.archive_trial(trial, self.archive)
+        self.assertEqual((self.root / "archive/t01/output/client.go").read_text(),
+                         "package client\nvar Value = 7\n")
 
     def test_patch_reconstructs_added_and_deleted_files(self):
         trial = self.prepare()

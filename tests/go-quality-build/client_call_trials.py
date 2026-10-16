@@ -19,9 +19,9 @@ CATALOG = ("go-package-boundaries", "go-api-contracts", "go-interfaces-and-compo
            "go-context-and-deadlines", "go-concurrency-and-ownership")
 
 
-def run(args, cwd):
+def run(args, cwd, *, text=True):
     result = subprocess.run(args, cwd=cwd,
-                            text=True, capture_output=True)
+                            text=text, capture_output=True)
     if result.returncode:
         raise RuntimeError(f"{args}: {result.stdout}\n{result.stderr}")
     return result.stdout
@@ -103,7 +103,7 @@ def prepare_trial(case: str, arm: str, trial_id: str, scratch: Path, archive: Pa
     metadata = {"case": case, "arm": arm, "trial_id": trial_id,
                 "archive_root": str(archive.resolve()), "input_hashes": source_files,
                 "catalog_hashes": hashes(catalog),
-                "prompt_sha256": hashlib.sha256(prompt.encode()).hexdigest(),
+                "prompt_sha256": hashlib.sha256((trial / "prompt.txt").read_bytes()).hexdigest(),
                 "base_commit": run(["git", "rev-parse", "HEAD"], source).strip(),
                 "model": "inherited; exact runtime ID unavailable", "effort": "inherited; exact value unavailable",
                 "exposure": "description catalog; manual selection reported by author"}
@@ -127,7 +127,8 @@ def archive_trial(trial: Path, archive: Path) -> dict:
     source = trial / "source"
     output_hashes = hashes(source)
     run(["git", "add", "--all"], source)
-    patch_text = run(["git", "diff", "--binary", "--full-index", metadata["base_commit"]], source)
+    patch_bytes = run(["git", "diff", "--binary", "--full-index", metadata["base_commit"]],
+                      source, text=False)
     archive.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="seal-", dir=archive) as temporary:
         staging = Path(temporary)
@@ -135,21 +136,21 @@ def archive_trial(trial: Path, archive: Path) -> dict:
             shutil.copytree(trial / name, staging / name)
         for name in ("prompt.txt", "trial-report.md"):
             shutil.copyfile(trial / name, staging / name)
-        patch_file = staging / "source.patch"
-        patch_file.write_text(patch_text)
+        patch_file = (staging / "source.patch").resolve()
+        patch_file.write_bytes(patch_bytes)
         # Isolate Git discovery even when the temporary directory is inside a
         # parent repository, then seal only the reconstructed plain file tree.
         with tempfile.TemporaryDirectory(prefix="client-reconstruct-") as reconstructed:
             check = Path(reconstructed) / "output"
             shutil.copytree(trial / "input", check)
             run(["git", "init", "-q"], check)
-            if patch_text:
+            if patch_bytes:
                 run(["git", "apply", str(patch_file)], check)
             if hashes(check) != output_hashes:
                 raise ValueError("patch reconstruction mismatch")
             shutil.copytree(check, staging / "output", ignore=shutil.ignore_patterns(".git"))
         metadata.update(output_hashes=output_hashes,
-                        patch_sha256=hashlib.sha256(patch_text.encode()).hexdigest(), reconstruction="PASS")
+                        patch_sha256=hashlib.sha256(patch_bytes).hexdigest(), reconstruction="PASS")
         (staging / "manifest.json").write_text(json.dumps(metadata, indent=2) + "\n")
         staging.rename(destination)
     return metadata
