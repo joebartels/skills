@@ -28,8 +28,10 @@ def main():
         shutil.copytree(args.source, source, ignore=shutil.ignore_patterns(".git"))
         probes = [ROOT / f"probes/{args.case}_test.go.txt"]
         probes += sorted((ROOT / "probes" / args.case).glob("*.go.txt"))
-        for index, probe in enumerate(probes):
-            shutil.copyfile(probe, source / f"zz_contract_{index}_test.go")
+        for probe in probes:
+            with tempfile.NamedTemporaryFile(dir=source, prefix="zz_contract_",
+                                             suffix="_test.go", delete=False) as target:
+                target.write(probe.read_bytes())
         command = [str(Path(go).resolve()), "test", "-mod=readonly", "-count=1", "-timeout=30s"]
         if args.race:
             command.append("-race")

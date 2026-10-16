@@ -233,6 +233,15 @@ class ClientCallTrialsTests(unittest.TestCase):
         fixed = subprocess.run(command, text=True, capture_output=True)
         self.assertEqual(fixed.returncode, 0, fixed.stdout + fixed.stderr)
         self.assertEqual({p.name: p.read_bytes() for p in source.iterdir()}, before)
+        authored_test = source / "zz_contract_0_test.go"
+        authored_test.write_text(
+            'package client\nimport "testing"\n'
+            'func TestAuthorRegression(t *testing.T) { t.Fatal("author test must run") }\n')
+        before[authored_test.name] = authored_test.read_bytes()
+        failed = subprocess.run(command, text=True, capture_output=True)
+        self.assertNotEqual(failed.returncode, 0)
+        self.assertIn("TestAuthorRegression", failed.stdout)
+        self.assertEqual({p.name: p.read_bytes() for p in source.iterdir()}, before)
 
 
 if __name__ == "__main__":
