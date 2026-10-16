@@ -34,7 +34,7 @@ def main():
         if args.race:
             command.append("-race")
         result = subprocess.run(command + ["./..."], cwd=source,
-                                env={**os.environ, "GOWORK": "off"})
+                                env={**os.environ, "GOWORK": "off", "GOTOOLCHAIN": "local"})
     return result.returncode
 
 
