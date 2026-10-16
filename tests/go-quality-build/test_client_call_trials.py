@@ -3,6 +3,8 @@
 import importlib.util
 import json
 from pathlib import Path
+import shutil
+import sys
 import tempfile
 import unittest
 import subprocess
@@ -96,6 +98,19 @@ class ClientCallTrialsTests(unittest.TestCase):
         with self.assertRaises(FileExistsError):
             self.trials.archive_trial(trial, self.archive)
 
+    def test_prepare_and_archive_need_only_git_on_path(self):
+        git = shutil.which("git")
+        binary = self.root / "bin"
+        binary.mkdir()
+        (binary / "git").symlink_to(git)
+        with patch.dict("os.environ", {"PATH": str(binary)}):
+            trial = self.prepare()
+            (trial / "trial-report.md").write_text("Result\n")
+            (trial / "source/client.go").write_text("package client\nvar Value = 7\n")
+            self.trials.archive_trial(trial, self.archive)
+        self.assertEqual((self.archive / "t01/output/client.go").read_text(),
+                         "package client\nvar Value = 7\n")
+
     def test_detects_catalog_mutation(self):
         trial = self.prepare()
         (trial / "trial-report.md").write_text("Result\n")
@@ -135,7 +150,7 @@ class ClientCallTrialsTests(unittest.TestCase):
         trial = self.prepare()
         (trial / "trial-report.md").write_text("Result\n")
         result = subprocess.run(
-            ["rtk", "proxy", "python3", "-B", str(Path(__file__).with_name("client_call_trials.py")),
+            [sys.executable, "-B", str(Path(__file__).with_name("client_call_trials.py")),
              "archive", "--case", "wrong", "--arm", "baseline", "--trial-id", "t01",
              "--scratch", str(self.scratch), "--archive", str(self.archive)],
             capture_output=True, text=True)
@@ -152,6 +167,25 @@ class ClientCallTrialsTests(unittest.TestCase):
         self.trials.archive_trial(trial, self.archive)
         self.assertEqual((self.archive / "t01/output/client.go").read_text(),
                          "package client\nvar Changed = true\n")
+
+    @unittest.skipUnless(shutil.which("go"), "candidate checker requires Go 1.22+")
+    def test_checker_enforces_private_probes_without_mutating_source(self):
+        suite = Path(__file__).parent / "go-client-calls"
+        source = self.root / "candidate"
+        shutil.copytree(suite / "evals/files/pure-control", source)
+        command = [sys.executable, "-B", str(suite / "check.py"), "pure-control", str(source)]
+        before = {p.name: p.read_bytes() for p in source.iterdir()}
+        broken = subprocess.run(command, text=True, capture_output=True)
+        self.assertNotEqual(broken.returncode, 0)
+        self.assertIn("TestOnlyPositiveContributes", broken.stdout)
+        self.assertEqual({p.name: p.read_bytes() for p in source.iterdir()}, before)
+        (source / "client.go").write_text(
+            "package client\nfunc SumPositive(values []int) int {\n"
+            "sum := 0; for _, v := range values { if v > 0 { sum += v } }; return sum\n}\n")
+        before["client.go"] = (source / "client.go").read_bytes()
+        fixed = subprocess.run(command, text=True, capture_output=True)
+        self.assertEqual(fixed.returncode, 0, fixed.stdout + fixed.stderr)
+        self.assertEqual({p.name: p.read_bytes() for p in source.iterdir()}, before)
 
 
 if __name__ == "__main__":

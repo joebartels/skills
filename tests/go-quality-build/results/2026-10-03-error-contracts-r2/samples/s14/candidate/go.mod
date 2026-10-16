@@ -1,3 +1,0 @@
-module example.com/paging
-
-go 1.22

@@ -1,0 +1,42 @@
+package client
+
+import (
+	"context"
+	"errors"
+	"io"
+	"net/http"
+	"strings"
+	"testing"
+)
+
+type reviewRT func(*http.Request) (*http.Response, error)
+
+func (f reviewRT) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+func reviewResponse(status int, body io.ReadCloser) *http.Response {
+	return &http.Response{StatusCode: status, Header: make(http.Header), Body: body}
+}
+
+func TestRegressionFetchPolicyStatus(t *testing.T) {
+	cause := errors.New("caller rejects redirect")
+	c := &http.Client{Transport: reviewRT(func(*http.Request) (*http.Response, error) {
+		resp := reviewResponse(302, io.NopCloser(strings.NewReader("redirect")))
+		resp.Header.Set("Location", "/next")
+		return resp, nil
+	}), CheckRedirect: func(*http.Request, []*http.Request) error { return cause }}
+	_, err := Fetch(context.Background(), c, "http://example.invalid/start")
+	t.Logf("redirect policy: cause=%t error=%v", errors.Is(err, cause), err)
+	if !errors.Is(err, cause) || !strings.Contains(err.Error(), "HTTP 302") {
+		t.Error("status or policy cause lost")
+	}
+}
+
+func TestRegressionFetchLongDiagnostics(t *testing.T) {
+	cause := errors.New(strings.Repeat("e", 10000))
+	c := &http.Client{Transport: reviewRT(func(*http.Request) (*http.Response, error) { return nil, cause })}
+	_, err := Fetch(context.Background(), c, "http://example.invalid")
+	t.Logf("diagnostic bytes=%d cause=%t", len(err.Error()), errors.Is(err, cause))
+	if len(err.Error()) > 4096 || !errors.Is(err, cause) {
+		t.Error("diagnostic not capped independently of error identity")
+	}
+}

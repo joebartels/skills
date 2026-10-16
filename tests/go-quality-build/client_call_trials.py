@@ -20,7 +20,7 @@ CATALOG = ("go-package-boundaries", "go-api-contracts", "go-interfaces-and-compo
 
 
 def run(args, cwd):
-    result = subprocess.run(["rtk", "proxy", *args], cwd=cwd,
+    result = subprocess.run(args, cwd=cwd,
                             text=True, capture_output=True)
     if result.returncode:
         raise RuntimeError(f"{args}: {result.stdout}\n{result.stderr}")
@@ -93,7 +93,7 @@ def prepare_trial(case: str, arm: str, trial_id: str, scratch: Path, archive: Pa
               + "\n\n".join(descriptions)
               + f"\n\nImplement and verify in source only. Do not stage or commit. Keep binaries outside source. "
               f"Write {trial / 'trial-report.md'} with selected/opened skill paths, decisions, checks "
-              "actually run and limits. Prefix shell commands with rtk. No external actions.\n")
+              "actually run and limits. No external actions.\n")
     (trial / "prompt.txt").write_text(prompt)
     source = trial / "source"
     run(["git", "init", "-q"], source)

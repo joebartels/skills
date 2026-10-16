@@ -18,5 +18,6 @@ jobs:
       - run: python3 -m pip install -r requirements-dev.txt
       - run: python3 scripts/validate.py
       - run: python3 -m unittest discover -s tests -p 'test*.py'
+      - run: python3 -m unittest discover -s tests/go-quality-build -p 'test*.py'
       - run: python3 tests/go-quality-review/test_layout.py
       - run: python3 tests/go-quality-review/go-quality-report/evals/test_grade.py
