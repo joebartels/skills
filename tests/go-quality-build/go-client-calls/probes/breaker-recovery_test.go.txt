@@ -1,0 +1,201 @@
+package client
+
+import (
+	"context"
+	"io"
+	"net/http"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"testing"
+	"time"
+)
+
+type breakerRT func(*http.Request) (*http.Response, error)
+
+func (f breakerRT) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+func breakerReply(code int) *http.Response {
+	return &http.Response{StatusCode: code, Header: make(http.Header), Body: io.NopCloser(strings.NewReader("body"))}
+}
+func failThree(t *testing.T, c *Client) {
+	t.Helper()
+	for i := 0; i < 3; i++ {
+		_, err := c.Fetch(context.Background(), "http://dep.invalid/fail")
+		if err == nil {
+			t.Fatal("503 succeeded")
+		}
+	}
+}
+func awaitAdmission(t *testing.T, c *Client, count *atomic.Int32) {
+	t.Helper()
+	before := count.Load()
+	end := time.Now().Add(800 * time.Millisecond)
+	for time.Now().Before(end) {
+		c.Fetch(context.Background(), "http://dep.invalid/bad")
+		if count.Load() > before {
+			return
+		}
+		time.Sleep(5 * time.Millisecond)
+	}
+	t.Fatal("recovery never admitted")
+}
+func waitEvent(t *testing.T, ch <-chan struct{}) {
+	t.Helper()
+	select {
+	case <-ch:
+	case <-time.After(time.Second):
+		t.Fatal("event never arrived")
+	}
+}
+func waitErr(t *testing.T, ch <-chan error) error {
+	t.Helper()
+	select {
+	case err := <-ch:
+		return err
+	case <-time.After(time.Second):
+		t.Fatal("call never completed")
+		return nil
+	}
+}
+func TestCanceledProbeDoesNotRecover(t *testing.T) {
+	var calls atomic.Int32
+	started := make(chan struct{}, 1)
+	held := make(chan struct{}, 1)
+	release := make(chan struct{})
+	defer close(release)
+	h := &http.Client{Transport: breakerRT(func(r *http.Request) (*http.Response, error) {
+		calls.Add(1)
+		switch r.URL.Path {
+		case "/cancel":
+			started <- struct{}{}
+			<-r.Context().Done()
+			return nil, r.Context().Err()
+		case "/held":
+			held <- struct{}{}
+			select {
+			case <-release:
+				return breakerReply(400), nil
+			case <-r.Context().Done():
+				return nil, r.Context().Err()
+			}
+		case "/ok":
+			return breakerReply(200), nil
+		case "/bad":
+			return breakerReply(400), nil
+		default:
+			return breakerReply(503), nil
+		}
+	})}
+	c := New(h, true)
+	failThree(t, c)
+	before := calls.Load()
+	c.Fetch(context.Background(), "http://dep.invalid/fail")
+	if calls.Load() != before {
+		t.Fatal("three failures did not open breaker")
+	}
+	awaitAdmission(t, c, &calls)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	done := make(chan error, 1)
+	go func() { _, err := c.Fetch(ctx, "http://dep.invalid/cancel"); done <- err }()
+	waitEvent(t, started)
+	cancel()
+	if waitErr(t, done) == nil {
+		t.Fatal("canceled probe succeeded")
+	}
+	done2 := make(chan error, 1)
+	go func() { _, err := c.Fetch(context.Background(), "http://dep.invalid/held"); done2 <- err }()
+	waitEvent(t, held)
+	before = calls.Load()
+	_, err := c.Fetch(context.Background(), "http://dep.invalid/ok")
+	if err == nil || calls.Load() != before {
+		t.Fatal("excluded probe recovered breaker or allowed concurrent recovery")
+	}
+	// Request deadline releases the held probe; exclusion must permit a new probe.
+	if waitErr(t, done2) == nil {
+		t.Fatal("held request unexpectedly succeeded")
+	}
+	if _, err := c.Fetch(context.Background(), "http://dep.invalid/ok"); err != nil {
+		t.Fatalf("healthy recovery failed: %v", err)
+	}
+}
+func TestOldCompletionCannotChangeNewGeneration(t *testing.T) {
+	var calls atomic.Int32
+	started := make(chan struct{}, 1)
+	release := make(chan struct{})
+	var once sync.Once
+	unblock := func() { once.Do(func() { close(release) }) }
+	defer unblock()
+	h := &http.Client{Transport: breakerRT(func(r *http.Request) (*http.Response, error) {
+		calls.Add(1)
+		switch r.URL.Path {
+		case "/old":
+			started <- struct{}{}
+			select {
+			case <-release:
+				return breakerReply(200), nil
+			case <-r.Context().Done():
+				return breakerReply(200), nil
+			}
+		case "/bad":
+			return breakerReply(400), nil
+		default:
+			return breakerReply(503), nil
+		}
+	})}
+	c := New(h, true)
+	done := make(chan error, 1)
+	go func() { _, err := c.Fetch(context.Background(), "http://dep.invalid/old"); done <- err }()
+	waitEvent(t, started)
+	failThree(t, c)
+	awaitAdmission(t, c, &calls)
+	c.Fetch(context.Background(), "http://dep.invalid/fail")
+	unblock()
+	_ = waitErr(t, done)
+	before := calls.Load()
+	c.Fetch(context.Background(), "http://dep.invalid/fail")
+	if calls.Load() != before {
+		t.Fatal("old healthy completion changed current open generation")
+	}
+}
+func TestExcludedRejectionDoesNotResetFailures(t *testing.T) {
+	var calls atomic.Int32
+	h := &http.Client{Transport: breakerRT(func(r *http.Request) (*http.Response, error) {
+		calls.Add(1)
+		if r.URL.Path == "/bad" {
+			return breakerReply(400), nil
+		}
+		return breakerReply(503), nil
+	})}
+	c := New(h, true)
+	for _, p := range []string{"/fail", "/bad", "/fail", "/fail"} {
+		c.Fetch(context.Background(), "http://dep.invalid"+p)
+	}
+	before := calls.Load()
+	c.Fetch(context.Background(), "http://dep.invalid/fail")
+	if calls.Load() != before {
+		t.Fatal("excluded rejection reset eligible failure history")
+	}
+	if _, err := c.Fetch(context.Background(), "http://other.invalid/bad"); err == nil || calls.Load() != before+1 {
+		t.Fatal("one dependency blocked another")
+	}
+}
+func TestDisabledClientStaysMinimal(t *testing.T) {
+	var calls atomic.Int32
+	h := &http.Client{Transport: breakerRT(func(r *http.Request) (*http.Response, error) {
+		calls.Add(1)
+		if _, ok := r.Context().Deadline(); !ok {
+			t.Error("unbounded request")
+		}
+		return breakerReply(503), nil
+	})}
+	c := New(h, false)
+	for i := 0; i < 4; i++ {
+		if _, err := c.Fetch(context.Background(), "http://dep.invalid"); err == nil {
+			t.Error("503 success")
+		}
+	}
+	if calls.Load() != 4 {
+		t.Fatalf("disabled mode count=%d", calls.Load())
+	}
+}

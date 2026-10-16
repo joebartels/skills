@@ -1,0 +1,98 @@
+{
+  "skill_name": "go-client-calls",
+  "evals": [
+    {
+      "id": "http-write-replay",
+      "prompt": "Implement the change and focused tests according to README.md; preserve public signatures and supported Go/dependency versions.",
+      "expected_output": "Implement Submit for an outbound POST using the supplied nonnil client. Preserve the signature and Go 1.22.0 minimum. One invocation has a 500ms total budget (or the earlier caller deadline) and at most three application attempts, including the first. Success is exactly HTTP 200. Only 503 and transport failures may be repeated, and only when deduplicates is true. Caller stopping and other statuses are terminal. Use a small cancellable backoff between application attempts.",
+      "assertions": [
+        "Remote or local operation behavior follows the stated task contract.",
+        "Supplied dependencies and supported signatures remain usable without unrequested mechanisms."
+      ],
+      "files": [
+        "files/http-write-replay/README.md",
+        "files/http-write-replay/client.go",
+        "files/http-write-replay/client_test.go",
+        "files/http-write-replay/go.mod"
+      ]
+    },
+    {
+      "id": "http-retry-budget",
+      "prompt": "Implement the change and focused tests according to README.md; preserve public signatures and supported Go/dependency versions.",
+      "expected_output": "Implement Fetch using the supplied nonnil HTTP client. Preserve its API and Go 1.22.0 minimum. Success is exactly HTTP 200. Only HTTP 429 and 503 are eligible for application retry; other statuses and transport failures are terminal. At most three application attempts, including the first, share one 250ms total budget or the earlier parent deadline.",
+      "assertions": [
+        "Remote or local operation behavior follows the stated task contract.",
+        "Supplied dependencies and supported signatures remain usable without unrequested mechanisms."
+      ],
+      "files": [
+        "files/http-retry-budget/README.md",
+        "files/http-retry-budget/client.go",
+        "files/http-retry-budget/client_test.go",
+        "files/http-retry-budget/go.mod"
+      ]
+    },
+    {
+      "id": "grpc-policy",
+      "prompt": "Implement the change and focused tests according to README.md; preserve public signatures and supported Go/dependency versions.",
+      "expected_output": "Implement Dial and Probe, preserving signatures, pinned dependencies and Go 1.22.0. Dial forwards host-supplied dial options (including transport credentials); it supplies a fallback service config for grpc.health.v1.Health/Check: UNAVAILABLE retry eligibility, maxAttempts=3 including first, initial/max backoff 10ms/20ms, multiplier 2. A valid resolver service config takes precedence, including a policy with maxAttempts=2. Do not disable resolver service configs or add an application/interceptor retry layer. Preserve native call commitment behavior.",
+      "assertions": [
+        "Remote or local operation behavior follows the stated task contract.",
+        "Supplied dependencies and supported signatures remain usable without unrequested mechanisms."
+      ],
+      "files": [
+        "files/grpc-policy/README.md",
+        "files/grpc-policy/client.go",
+        "files/grpc-policy/client_test.go",
+        "files/grpc-policy/go.mod",
+        "files/grpc-policy/go.sum"
+      ]
+    },
+    {
+      "id": "breaker-recovery",
+      "prompt": "Implement the change and focused tests according to README.md; preserve public signatures and supported Go/dependency versions.",
+      "expected_output": "Implement New and (*Client).Fetch, preserving their APIs, supplied nonnil HTTP client, pinned dependencies and Go 1.22.0. Every Fetch performs at most one application request under a 250ms total budget (or earlier parent). Exact HTTP 200 succeeds; all other statuses fail with HTTP <status>. Bound result/diagnostics to 4096 bytes and close owned response bodies.",
+      "assertions": [
+        "Remote or local operation behavior follows the stated task contract.",
+        "Supplied dependencies and supported signatures remain usable without unrequested mechanisms."
+      ],
+      "files": [
+        "files/breaker-recovery/README.md",
+        "files/breaker-recovery/client.go",
+        "files/breaker-recovery/client_test.go",
+        "files/breaker-recovery/go.mod",
+        "files/breaker-recovery/go.sum"
+      ]
+    },
+    {
+      "id": "pure-control",
+      "prompt": "Implement the change and focused tests according to README.md; preserve public signatures and supported Go/dependency versions.",
+      "expected_output": "Fix SumPositive so only strictly positive values contribute. Preserve its public signature and Go 1.22.0 minimum. Keep this deterministic local calculation simple. Add one focused regression test. Select applicable authoring guidance.",
+      "assertions": [
+        "Remote or local operation behavior follows the stated task contract.",
+        "Supplied dependencies and supported signatures remain usable without unrequested mechanisms."
+      ],
+      "files": [
+        "files/pure-control/README.md",
+        "files/pure-control/client.go",
+        "files/pure-control/client_test.go",
+        "files/pure-control/go.mod"
+      ]
+    },
+    {
+      "id": "grpc-transfer",
+      "prompt": "Implement the change and focused tests according to README.md; preserve public signatures and supported Go/dependency versions.",
+      "expected_output": "Implement Commit using the borrowed connection and generated grpc.testing.TestService/UnaryCall (grpc_testing.SimpleRequest/SimpleResponse), preserving API, pinned dependencies and Go 1.22.0. Payload bytes go in SimpleRequest.Payload.Body, and successful SimpleResponse.Payload.Body is the result. Send the nonempty caller operationID as outgoing metadata operation-id; preserve other caller metadata. Reject empty identity before calling. The server guarantees identical requests with the same identity have one effect and return that effect's result. The caller may invoke Commit again with the same identity and payload after an ambiguous lost acknowledgement.",
+      "assertions": [
+        "Remote or local operation behavior follows the stated task contract.",
+        "Supplied dependencies and supported signatures remain usable without unrequested mechanisms."
+      ],
+      "files": [
+        "files/grpc-transfer/README.md",
+        "files/grpc-transfer/client.go",
+        "files/grpc-transfer/client_test.go",
+        "files/grpc-transfer/go.mod",
+        "files/grpc-transfer/go.sum"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+package client
+
+import (
+	"context"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"sync/atomic"
+	"testing"
+	"time"
+)
+
+func TestRetriesOnlyEligibleStatus(t *testing.T) {
+	var calls atomic.Int32
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if calls.Add(1) < 3 {
+			w.WriteHeader(503)
+			return
+		}
+		w.Write([]byte("ok"))
+	}))
+	defer s.Close()
+	got, err := Fetch(context.Background(), s.Client(), s.URL)
+	if err != nil || string(got) != "ok" || calls.Load() != 3 {
+		t.Fatalf("result %q %v calls=%d", got, err, calls.Load())
+	}
+}
+func TestRetryAfterOverflowDoesNotRetryImmediately(t *testing.T) {
+	var calls atomic.Int32
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls.Add(1)
+		w.Header().Set("Retry-After", "99999999999999999999999999999999999")
+		w.WriteHeader(503)
+	}))
+	defer s.Close()
+	_, err := Fetch(context.Background(), s.Client(), s.URL)
+	if err == nil || !strings.Contains(err.Error(), "HTTP 503") || calls.Load() != 1 {
+		t.Fatalf("overflow hint result %v calls=%d", err, calls.Load())
+	}
+}
+func TestRetryHintCannotRestartBudget(t *testing.T) {
+	var calls atomic.Int32
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls.Add(1)
+		w.Header().Set("Retry-After", "1")
+		w.WriteHeader(429)
+	}))
+	defer s.Close()
+	start := time.Now()
+	_, err := Fetch(context.Background(), s.Client(), s.URL)
+	if err == nil || !strings.Contains(err.Error(), "HTTP 429") || calls.Load() != 1 {
+		t.Fatalf("hint result %v calls=%d", err, calls.Load())
+	}
+	if time.Since(start) > 600*time.Millisecond {
+		t.Fatal("retry hint exceeded total budget")
+	}
+}
+
+type probeRT func(*http.Request) (*http.Response, error)
+
+func (f probeRT) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+type probeBody struct {
+	io.Reader
+	closed *atomic.Int32
+}
+
+func (b probeBody) Close() error { b.closed.Add(1); return nil }
+func TestBoundedResponseAndClosure(t *testing.T) {
+	var closed atomic.Int32
+	c := &http.Client{Transport: probeRT(func(r *http.Request) (*http.Response, error) {
+		return &http.Response{StatusCode: 200, Body: probeBody{strings.NewReader(strings.Repeat("x", 5000)), &closed}, Header: make(http.Header)}, nil
+	})}
+	got, err := Fetch(context.Background(), c, "http://example.invalid")
+	if err == nil || len(got) > 4096 {
+		t.Fatalf("oversized response accepted: bytes=%d err=%v", len(got), err)
+	}
+	if closed.Load() != 1 {
+		t.Fatalf("body closed %d times", closed.Load())
+	}
+}
