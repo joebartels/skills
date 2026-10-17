@@ -1,0 +1,48 @@
+package streamkit_test
+
+import (
+	"errors"
+	"strings"
+	"testing"
+
+	"example.org/streamkit"
+	"example.org/streamwire"
+)
+
+func TestContractResumeToken(t *testing.T) {
+	var resume func(string, uint64) (string, error) = streamkit.ResumeToken
+	for _, tc := range []struct {
+		topic  string
+		offset uint64
+		want   string
+	}{
+		{"orders.eu", 100, "sc1.b3JkZXJzLmV1.2s"},
+		{"a", 0, "sc1.YQ.0"},
+		{"a", ^uint64(0), "sc1.YQ.3w5e11264sgsf"},
+	} {
+		got, err := resume(tc.topic, tc.offset)
+		if got != tc.want || err != nil {
+			t.Fatalf("ResumeToken(%q, %d) = %q, %v; want %q, nil", tc.topic, tc.offset, got, err, tc.want)
+		}
+	}
+	if _, err := resume(strings.Repeat("a", 128), 1); err != nil {
+		t.Fatalf("maximum-length topic rejected: %v", err)
+	}
+	for _, topic := range []string{"", "Orders", " orders", "orders ", "a..b", ".a", "a.", "a/b", "café", strings.Repeat("a", 129)} {
+		got, err := resume(topic, 1)
+		if got != "" || !errors.Is(err, streamwire.ErrTopic) || err == streamwire.ErrTopic {
+			t.Fatalf("ResumeToken(%q, 1) = %q, %v; want empty token and wrapped ErrTopic", topic, got, err)
+		}
+	}
+}
+
+func TestContractExistingTopicPath(t *testing.T) {
+	var path func(string) (string, error) = streamkit.TopicPath
+	got, err := path("events.v2")
+	if err != nil || got != "/topics/events.v2" {
+		t.Fatalf("TopicPath = %q, %v", got, err)
+	}
+	if got, err := path(" a"); got != "" || !errors.Is(err, streamwire.ErrTopic) || err == streamwire.ErrTopic {
+		t.Fatalf("TopicPath invalid input = %q, %v", got, err)
+	}
+}

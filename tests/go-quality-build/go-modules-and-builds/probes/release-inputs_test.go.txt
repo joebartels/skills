@@ -1,0 +1,95 @@
+package codes
+
+import (
+	"bytes"
+	"encoding/json"
+	"os/exec"
+	"path/filepath"
+	"regexp"
+	"runtime"
+	"strings"
+	"testing"
+)
+
+func checkContractSchema(t *testing.T, data []byte, name, title string) {
+	t.Helper()
+	var doc map[string]any
+	if err := json.Unmarshal(data, &doc); err != nil {
+		t.Fatalf("%s schema is not a JSON object: %v", name, err)
+	}
+	if doc["$schema"] != "https://json-schema.org/draft/2020-12/schema" || doc["title"] != title || doc["type"] != "string" {
+		t.Fatalf("%s schema metadata = %#v", name, doc)
+	}
+	pattern, ok := doc["pattern"].(string)
+	if !ok {
+		t.Fatalf("%s schema has no string pattern", name)
+	}
+	re, err := regexp.Compile(pattern)
+	if err != nil {
+		t.Fatalf("%s schema pattern: %v", name, err)
+	}
+	for _, value := range []string{
+		"", "INV-000001", "INV-999999", "RCT-00000001", "RCT-99999999",
+		"INV-00001", "INV-0000001", "RCT-0000001", "RCT-000000001",
+		"inv-000001", "INV-00000a", "xINV-000001", "INV-000001x",
+		"INV-１２３４５６", "RCT-00000001\n", " INV-000001",
+	} {
+		if got, want := re.MatchString(value), Valid(name, value); got != want {
+			t.Errorf("%s schema matches %q = %v; validator = %v", name, value, got, want)
+		}
+	}
+}
+
+func TestContractSchemas(t *testing.T) {
+	for _, tc := range []struct{ name, title string }{
+		{"invoice", "Invoice number"}, {"receipt", "Receipt number"},
+	} {
+		data, ok := Schema(tc.name)
+		if !ok {
+			t.Fatalf("Schema(%q) was not found", tc.name)
+		}
+		checkContractSchema(t, data, tc.name, tc.title)
+		data[0] = '!'
+		again, ok := Schema(tc.name)
+		if !ok {
+			t.Fatalf("Schema(%q) disappeared after caller modified its result", tc.name)
+		}
+		checkContractSchema(t, again, tc.name, tc.title)
+	}
+	for _, name := range []string{"", "Invoice", "unknown", "../invoice"} {
+		if data, ok := Schema(name); ok || data != nil {
+			t.Errorf("Schema(%q) = (%q, %v); want (nil, false)", name, data, ok)
+		}
+	}
+}
+
+func TestContractSchemaCommand(t *testing.T) {
+	binary := filepath.Join(t.TempDir(), "codes")
+	if runtime.GOOS == "windows" {
+		binary += ".exe"
+	}
+	build := exec.Command(filepath.Join(runtime.GOROOT(), "bin", "go"), "build", "-o", binary, "./cmd/codes")
+	if output, err := build.CombinedOutput(); err != nil {
+		t.Fatalf("build CLI: %v\n%s", err, output)
+	}
+	for _, tc := range []struct{ name, title string }{
+		{"invoice", "Invoice number"}, {"receipt", "Receipt number"},
+	} {
+		cmd := exec.Command(binary, "--schema", tc.name)
+		var stderr bytes.Buffer
+		cmd.Stderr = &stderr
+		output, err := cmd.Output()
+		if err != nil || stderr.Len() != 0 || !bytes.HasSuffix(output, []byte("\n")) {
+			t.Fatalf("--schema %s: err=%v stdout=%q stderr=%q", tc.name, err, output, stderr.String())
+		}
+		checkContractSchema(t, output, tc.name, tc.title)
+	}
+	cmd := exec.Command(binary, "--schema", "unknown")
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout, cmd.Stderr = &stdout, &stderr
+	err := cmd.Run()
+	exit, ok := err.(*exec.ExitError)
+	if !ok || exit.ExitCode() != 2 || stdout.Len() != 0 || strings.TrimSpace(stderr.String()) == "" {
+		t.Fatalf("unknown schema: err=%v stdout=%q stderr=%q", err, stdout.String(), stderr.String())
+	}
+}

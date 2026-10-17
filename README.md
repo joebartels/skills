@@ -7,7 +7,7 @@ Reusable skills for Claude Code, Codex, and OpenCode v2. Each collection lives i
 | Package | Purpose |
 | --- | --- |
 | [go-quality-review](plugins/go-quality-review/README.md) | Graded Go code reviews across focused quality topics. |
-| [go-quality-build](plugins/go-quality-build/README.md) | Go authoring guidance for design, testing, context and concurrency. |
+| [go-quality-build](plugins/go-quality-build/README.md) | Go authoring guidance for design, modules, builds, testing and runtime behavior. |
 
 The [Go review guide](docs/go-quality-review/README.md) covers grading and review contracts. The [Go build authoring guide](docs/go-quality-build/README.md) covers writing and validating focused skills. Installation examples below use `go-quality-review`; substitute `go-quality-build` to load that collection.
 

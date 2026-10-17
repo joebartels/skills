@@ -3,6 +3,7 @@
 import importlib.util
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import tempfile
@@ -31,7 +32,7 @@ def write(root, name, content):
 
 def snapshot(root):
     return {str(path.relative_to(root)): path.read_bytes()
-            for path in root.rglob("*") if path.is_file()}
+            for path in root.rglob("*") if path.is_file() and ".git" not in path.relative_to(root).parts}
 
 
 @unittest.skipUnless(GO, "Go executable required")
@@ -95,6 +96,162 @@ class ModulesBuildsCheckerTests(unittest.TestCase):
         checks = {check["name"]: check for check in report["checks"]}
         self.assertEqual(checks["workspace-tests"]["exit_code"], 0, checks)
         self.assertNotEqual(checks["standalone-tests"]["exit_code"], 0, checks)
+        self.assertEqual(snapshot(source), before)
+
+    def tidy(self, source):
+        prep = self.root / "prepare"
+        prep.mkdir(exist_ok=True)
+        proxy = self.checker.build_proxy(source / "registry", prep / "proxy")
+        with tempfile.TemporaryDirectory(dir=prep) as work:
+            env = self.checker.environment(str(Path(GO).resolve()), Path(work), proxy)
+            result = subprocess.run([GO, "mod", "tidy"], cwd=source / "lib", env=env,
+                                    capture_output=True, text=True, timeout=120)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_workspace_mvs_does_not_credit_missing_release_requirement(self):
+        # A companion module selects the API that the library forgot to require.
+        source, probes = self.workspace(require=True)
+        shutil.rmtree(source / "local")
+        write(source, "go.work", "go 1.22.0\nuse (\n ./lib\n ./tools\n)\n")
+        write(source, "tools/go.mod", "module example.org/tool\ngo 1.22.0\nrequire example.org/Token v1.1.0\n")
+        write(source, "tools/tool.go", "package tool\n")
+        write(source, "Makefile", "test:\n\tgo test ./lib/... ./tools/...\nbuild:\n\tgo build ./tools/...\n")
+        write(source, "registry/token/v1.1.0/go.mod", "module example.org/Token\ngo 1.22.0\n")
+        write(source, "registry/token/v1.1.0/value.go", 'package token\nfunc Cursor() string { return "stable" }\n')
+        write(source, "lib/value.go", 'package library\nimport "example.org/Token"\nfunc Value() string { return token.Cursor() }\n')
+        for suffix in ("_test.go.txt", "_consumer.go.txt"):
+            shutil.copyfile(probes / ("workspace-library" + suffix),
+                            probes / ("workspace-selection" + suffix))
+        self.tidy(source)
+        before = snapshot(source)
+        report = self.checker.check_candidate("workspace-selection", source, GO, probes_dir=probes)
+        self.assertFalse(report["success"])
+        checks = {check["name"]: check for check in report["checks"]}
+        self.assertEqual(checks["workspace-tests"]["exit_code"], 0, checks)
+        self.assertIn("undefined: token.Cursor", checks["standalone-tests"]["stderr"])
+        self.assertEqual(snapshot(source), before)
+        write(source, "lib/go.mod", "module example.org/library\ngo 1.22.0\nrequire example.org/Token v1.1.0\n")
+        self.tidy(source)
+        before = snapshot(source)
+        report = self.checker.check_candidate("workspace-selection", source, GO, probes_dir=probes)
+        self.assertTrue(report["success"], report)
+        self.assertEqual(snapshot(source), before)
+
+    def test_workspace_selection_requires_documented_companion_membership(self):
+        # The SDK alone still passes when the command is omitted from go.work.
+        source, probes = self.workspace(require=True)
+        write(source, "tools/go.mod", "module example.org/toolcli\ngo 1.22.0\n")
+        write(source, "tools/main.go", 'package main\nfunc name() string { return "ready" }\nfunc main() { if name() != "ready" { panic("tool broken") } }\n')
+        write(source, "tools/main_test.go", 'package main\nimport "testing"\nfunc TestCompanion(t *testing.T) { if name() != "ready" { t.Fatal(name()) } }\n')
+        write(source, "Makefile", "test:\n\tgo test ./lib/... ./tools/...\nbuild:\n\tgo build ./tools/...\n")
+        for suffix in ("_test.go.txt", "_consumer.go.txt"):
+            shutil.copyfile(probes / ("workspace-library" + suffix),
+                            probes / ("workspace-selection" + suffix))
+        self.tidy(source)
+        before = snapshot(source)
+        report = self.checker.check_candidate("workspace-selection", source, GO, probes_dir=probes)
+        self.assertFalse(report["success"], "documented companion was omitted but checker passed")
+        checks = {check["name"]: check for check in report["checks"]}
+        self.assertEqual(checks["workspace-tests"]["exit_code"], 0)
+        self.assertEqual(checks["standalone-tests"]["exit_code"], 0)
+        failures = {check["name"] for check in report["checks"] if check["exit_code"] != 0}
+        self.assertEqual(failures, {"workspace-root-tests", "workspace-root-build"})
+        self.assertEqual(snapshot(source), before)
+
+        write(source, "go.work", "go 1.22.0\nuse (\n ./lib\n ./local\n ./tools\n)\n")
+        before = snapshot(source)
+        report = self.checker.check_candidate("workspace-selection", source, GO, probes_dir=probes)
+        self.assertTrue(report["success"], report)
+        self.assertEqual(snapshot(source), before)
+        for check in report["checks"]:
+            if check["name"] in {"workspace-root-tests", "workspace-root-build"}:
+                self.assertEqual(check["env"]["PATH"].split(os.pathsep)[0], str(Path(GO).resolve().parent))
+                self.assertEqual(check["env"]["GOWORK"], str(Path(check["cwd"]) / "go.work"))
+
+    def test_selected_toolchain_tests_its_version_variant(self):
+        # Editing only the modern variant must fail when --go selects Go 1.22.
+        source = self.root / "candidate"
+        write(source, "go.mod", "module example.org/variant\ngo 1.22.0\n")
+        write(source, "modern.go", "//go:build go1.23\n\npackage variant\nfunc Value() int { return 3 }\n")
+        write(source, "compat.go", "//go:build !go1.23\n\npackage variant\nfunc Value() int { return 2 }\n")
+        probes = self.root / "probes"
+        write(probes, "toolchain-variants_test.go.txt", 'package variant\nimport "testing"\nfunc TestProbe(t *testing.T) { if Value() != 3 { t.Fatal("variant missing update") } }\n')
+        before = snapshot(source)
+        report = self.checker.check_candidate("toolchain-variants", source, GO, probes_dir=probes)
+        version = subprocess.run([GO, "version"], capture_output=True, text=True, check=True).stdout
+        minor = int(re.search(r"go1\.(\d+)", version).group(1))
+        self.assertEqual(report["success"], minor >= 23, report)
+        self.assertEqual(snapshot(source), before)
+        if minor < 23:
+            write(source, "compat.go", "//go:build !go1.23\n\npackage variant\nfunc Value() int { return 3 }\n")
+            before = snapshot(source)
+            report = self.checker.check_candidate("toolchain-variants", source, GO, probes_dir=probes)
+            self.assertTrue(report["success"], report)
+            self.assertEqual(snapshot(source), before)
+
+    def release_fixture(self):
+        source = self.root / "candidate"
+        write(source, "go.mod", "module example.org/release\ngo 1.22.0\n")
+        write(source, ".gitignore", "/preview/\n/dist/\n")
+        write(source, "schema.txt", "object\n")
+        write(source, "release.go", 'package release\nimport _ "embed"\n//go:embed preview/schema.json\nvar data string\nfunc Schema() string { return data }\n')
+        write(source, "release_test.go", 'package release\nimport "testing"\nfunc TestAuthored(t *testing.T) { if Schema() == "" { t.Fatal("empty") } }\n')
+        write(source, "cmd/codes/main.go", 'package main\nimport "example.org/release"\nfunc main() { if release.Schema() == "" { panic("empty") } }\n')
+        write(source, "Makefile", 'GO ?= go\npreview:\n\tmkdir -p preview\n\tcp schema.txt preview/schema.json\nsource:\n\tmkdir -p dist\n\tgit ls-files --cached --others --exclude-standard -z | tar --null -T - -czf dist/codes-src.tar.gz\n')
+        probes = self.root / "probes"
+        write(probes, "release-inputs_test.go.txt", 'package release\nimport "testing"\nfunc TestProbe(t *testing.T) { if Schema() != "object\\n" { t.Fatal(Schema()) } }\n')
+        return source, probes
+
+    def git(self, source, *arguments):
+        result = subprocess.run(["git", "-C", str(source), *arguments], capture_output=True,
+                                text=True, timeout=30,
+                                env={"PATH": os.environ["PATH"], "HOME": str(self.root),
+                                     "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return result.stdout
+
+    def test_ignored_warm_asset_is_not_a_source_release_input(self):
+        # Passing warm embed tests must not conceal an absent source archive input.
+        source, probes = self.release_fixture()
+        write(source, ".gitignore", "/dist/\n")
+        write(source, "preview/schema.json", "object\n")
+        self.git(source, "init", "-q")
+        write(source, ".git/info/exclude", "/preview/\n")
+        before = snapshot(source)
+        report = self.checker.check_candidate("release-inputs", source, GO, probes_dir=probes)
+        checks = {check["name"]: check for check in report["checks"]}
+        self.assertEqual(checks["warm-tests"]["exit_code"], 0, checks)
+        self.assertNotEqual(checks["export-tests"]["exit_code"], 0, checks)
+        self.assertFalse(report["success"])
+        self.assertEqual(snapshot(source), before)
+
+    def test_force_added_ignored_asset_is_a_source_release_input(self):
+        # Explicitly staging an ignored input must survive the copied export index.
+        source, probes = self.release_fixture()
+        write(source, "preview/schema.json", "object\n")
+        self.git(source, "init", "-q")
+        self.git(source, "add", ".")
+        self.git(source, "add", "-f", "preview/schema.json")
+        before = snapshot(source)
+        index = (source / ".git/index").read_bytes()
+        report = self.checker.check_candidate("release-inputs", source, GO, probes_dir=probes)
+        self.assertTrue(report["success"], report)
+        self.assertEqual(snapshot(source), before)
+        self.assertEqual((source / ".git/index").read_bytes(), index)
+
+    def test_parent_repository_does_not_supply_the_source_index(self):
+        # An ancestor repository's force-added assets do not define this export's inventory.
+        source, probes = self.release_fixture()
+        write(source, "preview/schema.json", "object\n")
+        self.git(self.root, "init", "-q")
+        self.git(self.root, "add", "candidate")
+        self.git(self.root, "add", "-f", "candidate/preview/schema.json")
+        before = snapshot(source)
+        report = self.checker.check_candidate("release-inputs", source, GO, probes_dir=probes)
+        checks = {check["name"]: check for check in report["checks"]}
+        self.assertEqual(checks["warm-tests"]["exit_code"], 0, checks)
+        self.assertNotEqual(checks["export-tests"]["exit_code"], 0, checks)
+        self.assertFalse(report["success"])
         self.assertEqual(snapshot(source), before)
 
     def test_existing_authored_test_remains_effective_with_probe(self):

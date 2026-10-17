@@ -7,12 +7,14 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import tarfile
 import tempfile
 import zipfile
 
 
 ROOT = Path(__file__).resolve().parent
-CASES = ("workspace-library", "replacement-transfer", "generated-targets", "pure-control")
+CASES = ("workspace-library", "workspace-selection", "replacement-transfer", "generated-targets",
+         "toolchain-variants", "release-inputs", "pure-control")
 
 
 def module_path(directory):
@@ -67,6 +69,8 @@ def environment(go, temporary, proxy):
                GOENV="off", GOTOOLCHAIN="local", GOWORK="off", GOFLAGS="",
                GOPROXY=proxy, GOSUMDB="off", GONOPROXY="none", GONOSUMDB="none",
                GOPRIVATE="", GO111MODULE="on", GOTELEMETRY="off", CGO_ENABLED="0")
+    env.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull,
+               GIT_OPTIONAL_LOCKS="0", GIT_TERMINAL_PROMPT="0")
     Path(env["HOME"]).mkdir()
     return env
 
@@ -98,14 +102,15 @@ def check_candidate(case, source, go, *, probes_dir=None, timeout=120):
         proxy = build_proxy(candidate / "registry", temporary / "proxy")
         env = environment(executable, temporary, proxy)
 
-        def run(name, arguments, directory, scope=None):
-            command = [executable, *arguments]
+        def run_command(name, command, directory, scope=None, *, input=None, required=True):
             scoped_env = {**env, **(scope or {})}
             check = {"name": name, "command": command, "cwd": str(directory),
-                     "env": scoped_env}
+                     "env": scoped_env, "required": required}
+            if input is not None:
+                check["stdin"] = input
             try:
                 result = subprocess.run(command, cwd=directory, env=scoped_env,
-                                        capture_output=True, text=True, timeout=timeout)
+                                        capture_output=True, text=True, timeout=timeout, input=input)
                 check.update(stdout=result.stdout, stderr=result.stderr,
                              exit_code=result.returncode)
             except subprocess.TimeoutExpired as error:
@@ -115,7 +120,10 @@ def check_candidate(case, source, go, *, probes_dir=None, timeout=120):
                              stderr=decoded(error.stderr) + f"\ncommand timed out after {timeout}s",
                              exit_code=124)
             report["checks"].append(check)
-            return check["exit_code"] == 0
+            return check
+
+        def run(name, arguments, directory, scope=None):
+            return run_command(name, [executable, *arguments], directory, scope)["exit_code"] == 0
 
         def tests(name, directory, *, workspace="off", tags=None, pattern=None):
             arguments = ["test", "-count=1", "-timeout=30s"]
@@ -140,9 +148,16 @@ def check_candidate(case, source, go, *, probes_dir=None, timeout=120):
                 install_probe(directory, probe)
 
         run("toolchain", ["version"], candidate)
-        if case in {"workspace-library", "replacement-transfer"}:
+        if case in {"workspace-library", "workspace-selection", "replacement-transfer"}:
             library = candidate / "lib"
             tests("workspace-tests", library, workspace=str(candidate / "go.work"))
+            if case == "workspace-selection":
+                make = shutil.which("make", path=env["PATH"])
+                if not make:
+                    raise ValueError("workspace-selection requires make")
+                workspace = {"GOWORK": str(candidate / "go.work")}
+                run_command("workspace-root-tests", [make, "test"], candidate, workspace)
+                run_command("workspace-root-build", [make, "build"], candidate, workspace)
             add_probe(library)
             tests("standalone-tests", library)
             consumer_probe = probes_dir / f"{case}_consumer.go.txt"
@@ -202,11 +217,76 @@ def check_candidate(case, source, go, *, probes_dir=None, timeout=120):
                 tests("schema-default-tests", candidate, pattern="^TestContractSchemaSource$")
                 tests("schema-compact-tests", candidate, tags="compact",
                       pattern="^TestContractSchemaSource$")
+        elif case == "release-inputs":
+            # Export from a separate pristine copy so warm probes never enter its inventory.
+            export_source = temporary / "export-source"
+            shutil.copytree(source, export_source, ignore=shutil.ignore_patterns(".git"))
+            git = shutil.which("git", path=env["PATH"])
+            make = shutil.which("make", path=env["PATH"])
+            if not git or not make:
+                raise ValueError("release-inputs requires Git and make")
+            root = run_command("inventory-root", [git, "-C", str(source), "rev-parse",
+                                                   "--show-toplevel"], source, required=False)
+            own_index = (root["exit_code"] == 0 and
+                         Path(root["stdout"].rstrip("\n")).resolve() == source)
+            inventory = None
+            if own_index:
+                listed = run_command("source-inventory", [git, "-C", str(source), "ls-files",
+                                      "--cached", "--others", "--exclude-standard", "-z"], source)
+                inventory = [name for name in listed["stdout"].split("\0")
+                             if name and (source / name).is_file()]
+                # Local excludes belong to the original Git metadata. Carry their result,
+                # rather than allowing omitted files to become untracked export inputs.
+                allowed = set(inventory)
+                for path in export_source.rglob("*"):
+                    if path.is_file() and path.relative_to(export_source).as_posix() not in allowed:
+                        path.unlink()
+            condition("source-inventory-mode", True,
+                      "source Git index and unignored files" if own_index else
+                      "standalone unignored source files; ancestor Git indexes are excluded")
+            run_command("export-index-init", [git, "init", "-q"], export_source)
+            if inventory is None:
+                run_command("export-index-add", [git, "add", "--all"], export_source)
+            elif inventory:
+                run_command("export-index-add", [git, "--literal-pathspecs", "add", "-f",
+                            "--pathspec-from-file=-", "--pathspec-file-nul"], export_source,
+                            input="\0".join(inventory) + "\0")
+            run_command("warm-preview", [make, "preview", f"GO={executable}"], candidate)
+            add_probe(candidate)
+            tests("warm-tests", candidate)
+            packed = run_command("source-archive", [make, "source", f"GO={executable}"], export_source)
+            archive_path = export_source / "dist/codes-src.tar.gz"
+            exported = temporary / "exported"
+            exported.mkdir()
+            unpacked = False
+            if packed["exit_code"] == 0 and archive_path.is_file():
+                try:
+                    with tarfile.open(archive_path, "r:gz") as archive:
+                        # Keep extraction inside the disposable tree on Python 3.9 too.
+                        for member in archive.getmembers():
+                            target = (exported / member.name).resolve()
+                            if (target != exported and exported not in target.parents or
+                                    not (member.isfile() or member.isdir())):
+                                raise tarfile.ExtractError(f"unsafe source archive member: {member.name}")
+                        options = {"filter": "data"} if hasattr(tarfile, "data_filter") else {}
+                        archive.extractall(exported, **options)
+                    unpacked = True
+                except (tarfile.TarError, OSError) as error:
+                    condition("export-unpack", False, str(error))
+            else:
+                condition("export-unpack", False, "make source must produce dist/codes-src.tar.gz")
+            if unpacked:
+                condition("export-unpack", True, str(archive_path))
+                add_probe(exported)
+                tests("export-tests", exported)
+                run("export-build", ["build", "-mod=readonly", "-o", str(temporary / "codes"),
+                                     "./cmd/codes"], exported)
         else:
             add_probe(candidate)
             tests("control-tests", candidate)
 
-    report["success"] = all(check["exit_code"] == 0 for check in report["checks"])
+    report["success"] = all(check["exit_code"] == 0 for check in report["checks"]
+                            if check.get("required", True))
     return report
 
 

@@ -83,6 +83,82 @@
         "files/replacement-transfer/registry/celltext/v1.1.0/celltext.go",
         "files/replacement-transfer/registry/celltext/v1.1.0/go.mod"
       ]
+    },
+    {
+      "id": "workspace-selection",
+      "prompt": "Implement the resume-token feature in README.md and add focused tests.",
+      "expected_output": "The SDK and tool remain usable in their supported application contexts.",
+      "assertions": [
+        "Resume cursors preserve topic and full unsigned offset with supported validation/errors.",
+        "Library dependency requirements are sufficient for an application without the repository tooling.",
+        "Both supported toolchains preserve SDK and companion behavior."
+      ],
+      "files": [
+        "files/workspace-selection/Makefile",
+        "files/workspace-selection/README.md",
+        "files/workspace-selection/docs/development.md",
+        "files/workspace-selection/go.work",
+        "files/workspace-selection/lib/README.md",
+        "files/workspace-selection/lib/go.mod",
+        "files/workspace-selection/lib/go.sum",
+        "files/workspace-selection/lib/topics.go",
+        "files/workspace-selection/lib/topics_test.go",
+        "files/workspace-selection/registry/streamwire/v1.0.0/go.mod",
+        "files/workspace-selection/registry/streamwire/v1.0.0/topics.go",
+        "files/workspace-selection/registry/streamwire/v1.1.0/cursor.go",
+        "files/workspace-selection/registry/streamwire/v1.1.0/go.mod",
+        "files/workspace-selection/registry/streamwire/v1.1.0/topics.go",
+        "files/workspace-selection/tools/streamctl/README.md",
+        "files/workspace-selection/tools/streamctl/go.mod",
+        "files/workspace-selection/tools/streamctl/go.sum",
+        "files/workspace-selection/tools/streamctl/main.go",
+        "files/workspace-selection/tools/streamctl/main_test.go"
+      ]
+    },
+    {
+      "id": "release-inputs",
+      "prompt": "Implement the schema API and CLI feature in README.md and add focused tests.",
+      "expected_output": "Schemas and CLI behavior work from development trees and distributed source.",
+      "assertions": [
+        "Returned schemas match validator semantics and cannot be mutated through a previous result.",
+        "The requested CLI observes success and rejection contracts.",
+        "The documented source archive builds and preserves feature behavior without ignored development outputs."
+      ],
+      "files": [
+        "files/release-inputs/.github/workflows/release.yml",
+        "files/release-inputs/.gitignore",
+        "files/release-inputs/Makefile",
+        "files/release-inputs/README.md",
+        "files/release-inputs/catalog_gen.go",
+        "files/release-inputs/cmd/codes/main.go",
+        "files/release-inputs/cmd/codes/main_test.go",
+        "files/release-inputs/docs/distribution.md",
+        "files/release-inputs/format.go",
+        "files/release-inputs/format_test.go",
+        "files/release-inputs/formats.csv",
+        "files/release-inputs/go.mod",
+        "files/release-inputs/internal/cataloggen/main.go"
+      ]
+    },
+    {
+      "id": "toolchain-variants",
+      "prompt": "Add the requested per-tenant summary counts according to README.md and focused tests.",
+      "expected_output": "The summary extension works across the project support matrix.",
+      "assertions": [
+        "All records contribute correctly while old totals, names and input ownership are preserved.",
+        "Both actual supported toolchain series execute the new feature and its existing behavior.",
+        "Empty fields/collections follow the documented result contract."
+      ],
+      "files": [
+        "files/toolchain-variants/.github/workflows/test.yml",
+        "files/toolchain-variants/README.md",
+        "files/toolchain-variants/docs/development.md",
+        "files/toolchain-variants/go.mod",
+        "files/toolchain-variants/summary.go",
+        "files/toolchain-variants/summary_compat.go",
+        "files/toolchain-variants/summary_test.go",
+        "files/toolchain-variants/types.go"
+      ]
     }
   ]
 }

@@ -1,0 +1,20 @@
+name: source-release
+on:
+  push:
+    tags: ['v*']
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.0'
+      - run: make test source
+      - name: Build source distribution
+        run: |
+          mkdir "$RUNNER_TEMP/codes-source"
+          tar -xzf dist/codes-src.tar.gz -C "$RUNNER_TEMP/codes-source"
+          cd "$RUNNER_TEMP/codes-source"
+          go test ./...
+          go build ./cmd/codes
