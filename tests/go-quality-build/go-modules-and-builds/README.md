@@ -21,7 +21,7 @@ The checker uses disposable copies and fresh caches without changing the candida
 | Cases | Checks |
 | --- | --- |
 | `workspace-library`, `replacement-transfer`, `workspace-selection` | Workspace tests, standalone library tests with unchanged metadata, and an external consumer replacing only the candidate library. `workspace-selection` additionally requires make and runs its documented root `make test` and `make build` for the companion tool. Keep the complete tree, including companion modules and registry. Missing library sums can break standalone tests while consumer installation still succeeds. |
-| `generated-targets` | Existing committed tables, clean and repeated regeneration, both tags, a valid schema-source variation, and Linux amd64/arm64 compilation. Only the dedicated schema probe runs after varying its input. Cross-compilation does not execute target binaries. |
+| `generated-targets` | Existing committed tables, clean and repeated regeneration, both tags, a valid schema-source variation, and Linux amd64/arm64 compilation of committed and regenerated tables. Only the dedicated schema probe runs after varying its input. Cross-compilation does not execute target binaries. |
 | `release-inputs` | Warm preview tests and the actual source archive's API/CLI behavior. Export inventory includes tracked and unignored intended source, excludes warm ignored assets, and never inherits an ancestor repository's index. Requires Git and make. |
 | `toolchain-variants` | Feature and preserved behavior in the implementation selected by the supplied toolchain. Run both supported series to exercise both source paths. |
 | `pure-control` | Local calculation and the module skill's non-selection boundary. |

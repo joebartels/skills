@@ -351,6 +351,27 @@ func main() {
                             for check in report["checks"] if check["name"] in failures))
         self.assertEqual(snapshot(source), before)
 
+    def test_committed_build_tags_fail_before_generator_repairs_them(self):
+        host = subprocess.run([GO, "env", "GOHOSTARCH"], capture_output=True,
+                              text=True, check=True).stdout.strip()
+        excluded = "arm64" if host == "amd64" else "amd64"
+        for filename, tag, variant in (("normal_gen.go", "!compact", "default"),
+                                       ("compact_gen.go", "compact", "compact")):
+            with self.subTest(variant=variant):
+                source, probes, _ = self.generated_fixture()
+                table = source / filename
+                table.write_text(table.read_text().replace(
+                    "//go:build " + tag, "//go:build " + tag + " && !" + excluded, 1))
+                before = snapshot(source)
+                report = self.checker.check_candidate("generated-targets", source, GO,
+                                                      probes_dir=probes)
+                self.assertFalse(report["success"], "regeneration concealed a broken committed build tag")
+                failures = {check["name"] for check in report["checks"] if check["exit_code"] != 0}
+                self.assertEqual(failures, {f"compile-only-committed-linux-{excluded}-{variant}"})
+                failure = next(check for check in report["checks"] if check["name"] in failures)
+                self.assertIn("undefined: Name", failure["stderr"])
+                self.assertEqual(snapshot(source), before)
+
     def test_schema_ignoring_generator_fails_changed_schema_in_both_tags(self):
         # Hardcoded regeneration must not earn credit merely for reproducing the initial table.
         source, probes, _ = self.generated_fixture(hardcoded=True)
@@ -373,7 +394,10 @@ func main() {
         self.assertEqual(snapshot(source), before)
         cross_builds = [check for check in report["checks"]
                         if check["name"].startswith("compile-only-")]
-        self.assertEqual(len(cross_builds), 4)
+        self.assertEqual(len(cross_builds), 8)
+        for stage in ("committed", "generated"):
+            self.assertEqual(sum(check["name"].startswith(f"compile-only-{stage}-")
+                                 for check in cross_builds), 4)
         self.assertEqual({check["env"]["GOARCH"] for check in cross_builds}, {"amd64", "arm64"})
         self.assertTrue(all(check["env"]["GOOS"] == "linux" and
                             "-c" in check["command"] for check in cross_builds))

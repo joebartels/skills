@@ -175,9 +175,22 @@ def check_candidate(case, source, go, *, probes_dir=None, timeout=120):
                 if run("consumer-tidy", ["mod", "tidy"], consumer):
                     run("consumer-run", ["run", "."], consumer)
         elif case == "generated-targets":
+            def compile_targets(stage):
+                for architecture in ("amd64", "arm64"):
+                    for tags in (None, "compact"):
+                        label = f"compile-only-{stage}-linux-{architecture}-" + (tags or "default")
+                        output = temporary / label
+                        output.mkdir()
+                        arguments = ["test", "-mod=readonly", "-c", "-o", str(output)]
+                        if tags:
+                            arguments += ["-tags", tags]
+                        run(label, arguments + ["./..."], candidate,
+                            {"GOOS": "linux", "GOARCH": architecture, "CGO_ENABLED": "0"})
+
             add_probe(candidate)
             tests("initial-default-tests", candidate)
             tests("initial-compact-tests", candidate, tags="compact")
+            compile_targets("committed")
             for path in candidate.rglob("*_gen.go"):
                 path.unlink()
             run("generate-clean", ["generate", "./..."], candidate)
@@ -191,16 +204,7 @@ def check_candidate(case, source, go, *, probes_dir=None, timeout=120):
                         for path in candidate.rglob("*_gen.go")}
             condition("generation-byte-identical", generated == repeated,
                       "generated output must be byte-identical on repeated generation")
-            for architecture in ("amd64", "arm64"):
-                for tags in (None, "compact"):
-                    label = f"compile-only-linux-{architecture}-" + (tags or "default")
-                    output = temporary / label
-                    output.mkdir()
-                    arguments = ["test", "-mod=readonly", "-c", "-o", str(output)]
-                    if tags:
-                        arguments += ["-tags", tags]
-                    run(label, arguments + ["./..."], candidate,
-                        {"GOOS": "linux", "GOARCH": architecture, "CGO_ENABLED": "0"})
+            compile_targets("generated")
             # Vary the source only after checks bound to the original schema finish.
             schema = candidate / "schema.txt"
             schema_probe = probes_dir / "generated-targets-schema_test.go.txt"
