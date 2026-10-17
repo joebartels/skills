@@ -1,0 +1,174 @@
+package warehouse_test
+
+import (
+	"context"
+	"database/sql"
+	"database/sql/driver"
+	"errors"
+	"reflect"
+	"strings"
+	"testing"
+	"time"
+
+	warehouse "example.com/warehouse"
+	"github.com/mattn/go-sqlite3"
+)
+
+// This wrapper retains the real file-backed SQLite engine and controls only a
+// driver completion boundary. The independent pool in rig observes persistence;
+// this does not simulate wire cancellation or other drivers' completion rules.
+type probeSQLiteConnector struct {
+	dsn        string
+	commitErr  error
+	entered    chan struct{}
+	release    <-chan struct{}
+	finishLine bool
+}
+
+func (c probeSQLiteConnector) Driver() driver.Driver { return &sqlite3.SQLiteDriver{} }
+func (c probeSQLiteConnector) Connect(ctx context.Context) (driver.Conn, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	conn, err := c.Driver().Open(c.dsn)
+	if err != nil {
+		return nil, err
+	}
+	return &probeSQLiteConn{SQLiteConn: conn.(*sqlite3.SQLiteConn), probeSQLiteConnector: c}, nil
+}
+
+type probeSQLiteConn struct {
+	*sqlite3.SQLiteConn
+	probeSQLiteConnector
+}
+
+func (c *probeSQLiteConn) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, error) {
+	tx, err := c.SQLiteConn.BeginTx(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+	return probeSQLiteCommit{Tx: tx, err: c.commitErr}, nil
+}
+func (c *probeSQLiteConn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
+	q := strings.ToLower(strings.Join(strings.Fields(query), " "))
+	if c.entered == nil || !strings.HasPrefix(q, "insert into reservation_lines") {
+		return c.SQLiteConn.ExecContext(ctx, query, args)
+	}
+	var result driver.Result
+	if c.finishLine {
+		var err error
+		result, err = c.SQLiteConn.ExecContext(ctx, query, args)
+		if err != nil {
+			return nil, err
+		}
+	}
+	select {
+	case c.entered <- struct{}{}:
+	default:
+	}
+	select {
+	case <-ctx.Done():
+		if c.finishLine {
+			return result, nil
+		}
+		return nil, ctx.Err()
+	case <-c.release:
+		return nil, errors.New("driver call released without cancellation")
+	}
+}
+
+type probeSQLiteCommit struct {
+	driver.Tx
+	err error
+}
+
+func (tx probeSQLiteCommit) Commit() error {
+	if err := tx.Tx.Commit(); err != nil {
+		return err
+	}
+	return tx.err
+}
+
+func probeSQLiteStore(t *testing.T, r rig, c probeSQLiteConnector) *warehouse.Store {
+	t.Helper()
+	c.dsn = r.dsn
+	db := sql.OpenDB(c)
+	db.SetMaxOpenConns(1)
+	db.SetMaxIdleConns(1)
+	t.Cleanup(func() { db.Close() })
+	return warehouse.New(db)
+}
+
+func TestContractUncertainCommitHasNoConfirmedReceipt(t *testing.T) {
+	r := openRig(t)
+	cause := errors.New("commit acknowledgement lost")
+	s := probeSQLiteStore(t, r, probeSQLiteConnector{commitErr: cause})
+	got, err := call(t, s, request("uncertain", warehouse.Line{SKU: "tea", Quantity: 2}))
+	if !errors.Is(err, cause) || !reflect.DeepEqual(got, warehouse.Receipt{}) {
+		t.Fatalf("Reserve = %#v, %v; want zero receipt and commit cause", got, err)
+	}
+	// The engine committed before reporting an error; the error cannot justify replay.
+	assertStock(t, r, 6, 2)
+	if n := number(t, r.observer, "SELECT count(*) FROM reservations WHERE id='uncertain' AND units=2"); n != 1 {
+		t.Errorf("persisted uncertain header = %d, want 1", n)
+	}
+	if n := number(t, r.observer, "SELECT count(*) FROM reservation_lines WHERE reservation_id='uncertain' AND sku='tea' AND quantity=2"); n != 1 {
+		t.Errorf("persisted uncertain detail = %d, want 1", n)
+	}
+}
+
+func TestContractCancellationAtFinalInsert(t *testing.T) {
+	for _, finishLine := range []bool{false, true} {
+		name := "statement_reports_cancellation"
+		if finishLine {
+			name = "statement_succeeds_after_cancellation"
+		}
+		t.Run(name, func(t *testing.T) {
+			r := openRig(t)
+			entered := make(chan struct{}, 1)
+			release := make(chan struct{})
+			s := probeSQLiteStore(t, r, probeSQLiteConnector{entered: entered, release: release, finishLine: finishLine})
+			ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+			type outcome struct {
+				receipt warehouse.Receipt
+				err     error
+			}
+			results := make(chan outcome, 1)
+			finished := make(chan struct{})
+			// Cleanup first unblocks the driver, then joins the worker, before pool cleanup.
+			t.Cleanup(func() {
+				cancel()
+				close(release)
+				select {
+				case <-finished:
+				case <-time.After(2 * time.Second):
+					t.Error("Reserve worker did not stop after driver release")
+				}
+			})
+			go func() {
+				defer close(finished)
+				receipt, err := s.Reserve(ctx, request("canceled", warehouse.Line{SKU: "tea", Quantity: 2}))
+				results <- outcome{receipt, err}
+			}()
+			select {
+			case <-entered:
+			case got := <-results:
+				t.Fatalf("Reserve returned before final insert: %#v, %v", got.receipt, got.err)
+			case <-time.After(2 * time.Second):
+				t.Fatal("Reserve did not reach final insert")
+			}
+			cancel()
+			var got outcome
+			select {
+			case got = <-results:
+			case <-time.After(2 * time.Second):
+				t.Fatal("Reserve did not return after cancellation")
+			}
+			if !errors.Is(got.err, context.Canceled) {
+				t.Errorf("cancellation cause lost: %v", got.err)
+			}
+			assertEmpty(t, r, got.receipt)
+			assertStock(t, r, 8, 2)
+		})
+	}
+}

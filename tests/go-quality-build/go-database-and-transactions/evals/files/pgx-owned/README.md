@@ -1,0 +1,7 @@
+Add (*Store).Reconcile(ctx context.Context, batchKey string) (Report, error) to complete the settlement job API.
+
+A reconciliation creates a settlement_runs record, reads that batch's still-pending account adjustments in ordinal order, posts them with the existing Post helper, and attaches those pending_settlements to the new run. All of those changes form one transaction. A batch with no pending entries is a successful empty run. Report contains the new run ID and number applied only after successful commit; every failure returns a zero Report and keeps its underlying error available through errors.Is. A failed commit is a failed reconciliation, including PostgreSQL's aborted-transaction outcome.
+
+The pool supplied to New remains host-owned. Post must keep working inside a caller-managed transaction without taking over that transaction. A reconciliation owns the transaction it starts and must release it on all failed paths, including failures while creating the run and caller cancellation. Our tracing uses context values during rollback as well as normal queries; cancellation must not prevent required rollback, whose cleanup allowance is at most one second. If rollback also fails, callers need both failures through errors.Is; pgx.ErrTxClosed during cleanup is routine.
+
+Use the existing schema and native pgx API, preserve the current exported API and Go 1.22 support, and add focused tests. No database service is available in the task environment.
