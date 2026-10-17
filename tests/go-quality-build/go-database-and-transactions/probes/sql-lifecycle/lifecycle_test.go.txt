@@ -146,9 +146,11 @@ func TestLifecycleContextReachesDriver(t *testing.T) {
 			go func() { r, err := New(db).Materialize(ctx, "acct-7", 2); done <- outcome{r, err} }()
 			var result outcome
 			haveResult := false
+			var releaseOnce sync.Once
+			releaseDriver := func() { releaseOnce.Do(func() { close(d.release) }) }
 			t.Cleanup(func() {
 				cancel()
-				close(d.release)
+				releaseDriver()
 				if !haveResult {
 					select {
 					case <-done:
@@ -170,7 +172,7 @@ func TestLifecycleContextReachesDriver(t *testing.T) {
 			case result = <-done:
 				haveResult = true
 			case <-time.After(200 * time.Millisecond):
-				close(d.release)
+				releaseDriver()
 				// Avoid a timeout as the oracle: release the driver and inspect the real result.
 				select {
 				case result = <-done:
@@ -178,7 +180,6 @@ func TestLifecycleContextReachesDriver(t *testing.T) {
 				case <-time.After(time.Second):
 					t.Fatal("worker failed to finish after driver release")
 				}
-				d.release = make(chan struct{})
 			}
 			requireFailure(t, result.report, result.err, context.Canceled)
 			requirePrior(t, d)
@@ -254,6 +255,9 @@ func (c *localConn) QueryContext(ctx context.Context, q string, args []driver.Na
 	defer c.d.mu.Unlock()
 	if c.active != 0 {
 		return nil, errors.New("connection still has open result rows")
+	}
+	if !c.tx {
+		return nil, errors.New("query outside transaction")
 	}
 	if len(args) != 1 || args[0].Value != "acct-7" {
 		return nil, fmt.Errorf("unexpected account bindings: %v", args)

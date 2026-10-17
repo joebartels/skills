@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"reflect"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"testing"
@@ -62,7 +63,7 @@ var _ Beginner = (*probeStarter)(nil)
 
 func newProbe() (*probeStarter, *probeTx) {
 	tx := &probeTx{key: "october'; DROP TABLE accounts; --"}
-	tx.rows = &probeRows{tx: tx, items: []Item{{11, 125}, {22, -30}}}
+	tx.rows = &probeRows{tx: tx, items: []Item{{11, 125}, {22, -30}}, ordinals: []int{17, 42}}
 	return &probeStarter{tx: tx}, tx
 }
 
@@ -263,7 +264,7 @@ func (tx *probeTx) Exec(ctx context.Context, sql string, args ...any) (pgconn.Co
 		}
 		changed := 0
 		for _, ordinal := range ordinals {
-			if ordinal >= 1 && ordinal <= len(tx.rows.items) && !tx.attachedOrdinals[ordinal] {
+			if slices.Contains(tx.rows.ordinals, ordinal) && !tx.attachedOrdinals[ordinal] {
 				tx.attachedOrdinals[ordinal] = true
 				changed++
 			}
@@ -343,6 +344,7 @@ func (r *probeRow) Scan(dest ...any) error {
 type probeRows struct {
 	tx                   *probeTx
 	items                []Item
+	ordinals             []int
 	columns              []string
 	index                int
 	scanAt               int
@@ -393,9 +395,9 @@ func (r *probeRows) Scan(dest ...any) error {
 		if column == "ordinal" {
 			switch ordinal := dest[i].(type) {
 			case *int:
-				*ordinal = r.index
+				*ordinal = r.ordinals[r.index-1]
 			case *int32:
-				*ordinal = int32(r.index)
+				*ordinal = int32(r.ordinals[r.index-1])
 			default:
 				return errProbeSQL
 			}
@@ -422,7 +424,7 @@ func (r *probeRows) Values() ([]any, error) {
 	for i, column := range r.columns {
 		switch column {
 		case "ordinal":
-			values[i] = int32(r.index)
+			values[i] = int32(r.ordinals[r.index-1])
 		case "account_id":
 			values[i] = item.AccountID
 		case "amount_cents":
@@ -459,6 +461,7 @@ func TestProbeReconcileSuccess(t *testing.T) {
 func TestProbeEmptyBatchStillCommitsRun(t *testing.T) {
 	starter, tx := newProbe()
 	tx.rows.items = nil
+	tx.rows.ordinals = nil
 	got, err := New(starter).Reconcile(context.Background(), tx.key)
 	if err != nil || got != (Report{RunID: 73}) || tx.commitCalls != 1 || !tx.closed || !tx.rows.closed {
 		t.Fatalf("empty reconciliation = %#v, %v; commits=%d acknowledged=%v", got, err, tx.commitCalls, tx.acknowledged)

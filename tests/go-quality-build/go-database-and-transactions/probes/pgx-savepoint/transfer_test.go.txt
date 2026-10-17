@@ -144,10 +144,8 @@ func (t *modelTx) Exec(ctx context.Context, sql string, args ...any) (pgconn.Com
 			}
 		}
 		return zero, errors.New("unknown savepoint")
-	case "rollback":
-		return pgconn.NewCommandTag("ROLLBACK"), t.Rollback(ctx)
-	case "commit", "end":
-		return pgconn.NewCommandTag("COMMIT"), t.Commit(ctx)
+	case "rollback", "commit", "end":
+		return zero, errors.New("raw transaction control is outside this savepoint model")
 	case "update":
 		// Recognize the expression and predicate before modeling their effects.
 		match := regexp.MustCompile(`^update\s+balances\s+set\s+cents\s*=\s*cents\s*\+\s*\$(\d+)\s+where\s+account_id\s*=\s*\$(\d+)$`).FindStringSubmatch(strings.Join(words, " "))
