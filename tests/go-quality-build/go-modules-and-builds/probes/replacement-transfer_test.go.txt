@@ -1,0 +1,14 @@
+package reportcsv
+
+import "testing"
+
+func TestContractRecord(t *testing.T) {
+	for _, tc := range []struct {
+		in   []string
+		want string
+	}{{nil, "\n"}, {[]string{}, "\n"}, {[]string{"a", "b"}, "a,b\n"}, {[]string{"a,b", "c\"d", "two\nlines"}, "\"a,b\",\"c\"\"d\",\"two\nlines\"\n"}} {
+		if got := Record(tc.in); got != tc.want {
+			t.Fatalf("Record(%q)=%q; want %q", tc.in, got, tc.want)
+		}
+	}
+}

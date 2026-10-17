@@ -1,0 +1,9 @@
+package main
+
+import "example.org/reportcsv"
+
+func main() {
+	if got := reportcsv.Record([]string{"one,two", "three"}); got != "\"one,two\",three\n" {
+		panic(got)
+	}
+}

@@ -1,0 +1,25 @@
+package catalog
+
+import (
+	"errors"
+	"testing"
+
+	"example.org/keytext"
+)
+
+func TestContractCanonicalName(t *testing.T) {
+	for _, tc := range []struct{ in, want string }{{" North   Pier 7 ", "north-pier-7"}, {"A", "a"}, {"one\ttwo", "one-two"}} {
+		got, err := CanonicalName(tc.in)
+		if err != nil || got != tc.want {
+			t.Fatalf("CanonicalName(%q)=%q,%v; want %q,nil", tc.in, got, err, tc.want)
+		}
+	}
+	for _, bad := range []string{"", " ", "a/b", "café"} {
+		if _, err := CanonicalName(bad); !errors.Is(err, keytext.ErrName) || err == keytext.ErrName {
+			t.Fatalf("input %q: want wrapped ErrName cause, got %v", bad, err)
+		}
+	}
+	if got := Label(" hi "); got != "hi" {
+		t.Fatal(got)
+	}
+}

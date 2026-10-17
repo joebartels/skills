@@ -1,0 +1,88 @@
+{
+  "skill_name": "go-modules-and-builds",
+  "evals": [
+    {
+      "id": "workspace-library",
+      "prompt": "Implement the requested change and focused tests according to README.md; preserve supported APIs and Go versions. Select applicable authoring guidance.",
+      "expected_output": "Add the canonical-name operation described in README.md, preserving existing public behavior and independent consumption.",
+      "assertions": [
+        "The new operation follows the supplied dependency policy and retains existing Label behavior.",
+        "Workspace and standalone library tests pass without rewriting module files.",
+        "A fresh external consumer resolves the library dependencies without inheriting workspace state."
+      ],
+      "files": [
+        "files/workspace-library/README.md",
+        "files/workspace-library/dev/keytext/go.mod",
+        "files/workspace-library/dev/keytext/keytext.go",
+        "files/workspace-library/go.work",
+        "files/workspace-library/lib/catalog.go",
+        "files/workspace-library/lib/catalog_test.go",
+        "files/workspace-library/lib/go.mod",
+        "files/workspace-library/lib/go.sum",
+        "files/workspace-library/registry/keytext/v1.0.0/go.mod",
+        "files/workspace-library/registry/keytext/v1.0.0/keytext.go",
+        "files/workspace-library/registry/keytext/v1.1.0/go.mod",
+        "files/workspace-library/registry/keytext/v1.1.0/keytext.go"
+      ]
+    },
+    {
+      "id": "generated-targets",
+      "prompt": "Implement the requested change and focused tests according to README.md; preserve supported APIs and Go versions. Select applicable authoring guidance.",
+      "expected_output": "Extend the severity registry according to README.md, keeping supported build variants and regeneration usable.",
+      "assertions": [
+        "Known and unknown codes behave consistently in default and compact builds.",
+        "Deleting generated outputs and regenerating from source succeeds with the supported toolchain.",
+        "Repeated generation produces identical bytes, and linux amd64/arm64 variants compile.",
+        "A valid change to the schema source appears in both regenerated variants; hardcoded output is rejected."
+      ],
+      "files": [
+        "files/generated-targets/README.md",
+        "files/generated-targets/go.mod",
+        "files/generated-targets/internal/gen/main.go",
+        "files/generated-targets/schema.txt",
+        "files/generated-targets/severity.go",
+        "files/generated-targets/severity_test.go",
+        "files/generated-targets/table_compact_gen.go",
+        "files/generated-targets/table_gen.go"
+      ]
+    },
+    {
+      "id": "pure-control",
+      "prompt": "Implement the requested change and focused tests according to README.md; preserve supported APIs and Go versions. Select applicable authoring guidance.",
+      "expected_output": "Fix the strictly-positive sum according to README.md with a focused regression test.",
+      "assertions": [
+        "Only strictly positive counters contribute, with public signature and module minimum preserved.",
+        "No new dependencies, generation setup or module/build changes are needed; the module skill is not selected."
+      ],
+      "files": [
+        "files/pure-control/README.md",
+        "files/pure-control/counters.go",
+        "files/pure-control/counters_test.go",
+        "files/pure-control/go.mod"
+      ]
+    },
+    {
+      "id": "replacement-transfer",
+      "prompt": "Implement the requested change and focused tests according to README.md; preserve supported APIs and Go versions. Select applicable authoring guidance.",
+      "expected_output": "Add the record operation described in README.md, preserving the existing cell operation and dependency contract.",
+      "assertions": [
+        "Record preserves dependency quoting, cell order, empty records and the trailing LF.",
+        "The separately consumed library builds using available dependency releases without transitive local replacement assumptions.",
+        "Existing development configuration and Cell behavior remain usable."
+      ],
+      "files": [
+        "files/replacement-transfer/README.md",
+        "files/replacement-transfer/dev/celltext/celltext.go",
+        "files/replacement-transfer/dev/celltext/go.mod",
+        "files/replacement-transfer/go.work",
+        "files/replacement-transfer/lib/go.mod",
+        "files/replacement-transfer/lib/report.go",
+        "files/replacement-transfer/lib/report_test.go",
+        "files/replacement-transfer/registry/celltext/v1.0.0/celltext.go",
+        "files/replacement-transfer/registry/celltext/v1.0.0/go.mod",
+        "files/replacement-transfer/registry/celltext/v1.1.0/celltext.go",
+        "files/replacement-transfer/registry/celltext/v1.1.0/go.mod"
+      ]
+    }
+  ]
+}

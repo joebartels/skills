@@ -1,0 +1,13 @@
+package main
+
+import (
+	"example.org/catalog"
+	"fmt"
+)
+
+func main() {
+	got, err := catalog.CanonicalName(" North Pier 7 ")
+	if err != nil || got != "north-pier-7" {
+		panic(fmt.Sprintf("%q %v", got, err))
+	}
+}

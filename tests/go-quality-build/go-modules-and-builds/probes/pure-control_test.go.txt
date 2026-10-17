@@ -1,0 +1,9 @@
+package counters
+
+import "testing"
+
+func TestContractPositiveOnly(t *testing.T) {
+	if got := SumPositive([]int{-4, 0, 2, 3}); got != 5 {
+		t.Fatalf("got %d; want 5", got)
+	}
+}
