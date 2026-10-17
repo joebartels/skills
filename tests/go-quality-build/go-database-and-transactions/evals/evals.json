@@ -1,0 +1,88 @@
+{
+  "skill_name": "go-database-and-transactions",
+  "evals": [
+    {
+      "id": "sqlite-basket",
+      "prompt": "Implement Reserve and focused tests as described in README.md. Preserve the public API, schema, pinned dependency and Go 1.22 support.",
+      "expected_output": "Complete baskets participate in one transaction, release resources and preserve results, error causes and persisted invariants.",
+      "assertions": [
+        "Every participating helper uses the active transaction; a one-connection pool remains reusable.",
+        "Late statement and deferred constraint failures roll back only this attempt; concurrent pools cannot oversell.",
+        "Active driver-call cancellation preserves required context causes; uncertain commit returns no usable receipt and does not replay."
+      ],
+      "files": [
+        "files/sqlite-basket/README.md",
+        "files/sqlite-basket/go.mod",
+        "files/sqlite-basket/go.sum",
+        "files/sqlite-basket/schema.sql",
+        "files/sqlite-basket/store.go",
+        "files/sqlite-basket/store_test.go"
+      ]
+    },
+    {
+      "id": "sql-lifecycle",
+      "prompt": "Implement Materialize and focused tests as described in README.md. Preserve the public API, SQL contracts and Go 1.22 support.",
+      "expected_output": "Bounded reads finish before dependent transaction work; result and completion errors remain observable.",
+      "assertions": [
+        "Rows close before another operation needs the same connection; Scan, terminal iteration and early close failures survive.",
+        "All operations use the transaction, preserve context and release owned resources; commit failure cannot publish a confirmed report."
+      ],
+      "files": [
+        "files/sql-lifecycle/README.md",
+        "files/sql-lifecycle/go.mod",
+        "files/sql-lifecycle/store.go",
+        "files/sql-lifecycle/store_test.go"
+      ]
+    },
+    {
+      "id": "pgx-owned",
+      "prompt": "Implement Reconcile and focused tests as described in README.md. Preserve the public API, native pgx stack and Go 1.22 support.",
+      "expected_output": "Owned native pgx transactions finish safely while borrowed Post work and the host pool retain their owners.",
+      "assertions": [
+        "Create, query, post and exact selected-row attachment share one transaction; rows finish before dependent work.",
+        "Only successful commit publishes Report; empty runs succeed and original plus required rollback causes remain inspectable.",
+        "Canceled callers still receive bounded metadata-preserving cleanup; Post never finalizes a borrowed transaction."
+      ],
+      "files": [
+        "files/pgx-owned/README.md",
+        "files/pgx-owned/go.mod",
+        "files/pgx-owned/go.sum",
+        "files/pgx-owned/schema.sql",
+        "files/pgx-owned/settlement.go",
+        "files/pgx-owned/settlement_test.go"
+      ]
+    },
+    {
+      "id": "pgx-savepoint",
+      "prompt": "Implement ApplyAdjustments and focused tests as described in README.md. Preserve the public API, pinned dependencies and Go 1.22 support.",
+      "expected_output": "A child savepoint isolates this sub-operation and leaves parent finalization to its caller.",
+      "assertions": [
+        "Success remains staged; failure undoes this call while preserving earlier parent work when child rollback succeeds.",
+        "Already nested parents work; begin/release/original/rollback errors remain observable.",
+        "Cancellation permits bounded metadata-preserving cleanup without a new connection or goroutine; empty input remains a no-op."
+      ],
+      "files": [
+        "files/pgx-savepoint/README.md",
+        "files/pgx-savepoint/adjustments.go",
+        "files/pgx-savepoint/adjustments_test.go",
+        "files/pgx-savepoint/go.mod",
+        "files/pgx-savepoint/go.sum"
+      ]
+    },
+    {
+      "id": "pure-control",
+      "prompt": "Fix Total as described in README.md, selecting only applicable skills.",
+      "expected_output": "A direct positive sum preserves the API without database or lifecycle machinery.",
+      "assertions": [
+        "The database skill is skipped for a local calculation.",
+        "Only strictly positive values contribute; no dependency, context, transaction or concurrency abstraction is introduced."
+      ],
+      "files": [
+        "files/pure-control/README.md",
+        "files/pure-control/go.mod",
+        "files/pure-control/quota.go",
+        "files/pure-control/quota_test.go"
+      ]
+    }
+  ]
+}

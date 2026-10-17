@@ -1,0 +1,417 @@
+package reportworker
+
+import (
+	"context"
+	"database/sql"
+	"database/sql/driver"
+	"errors"
+	"fmt"
+	"io"
+	"strings"
+	"sync"
+	"testing"
+	"time"
+)
+
+var (
+	errRead     = errors.New("ledger stream interrupted")
+	errAccount  = errors.New("account lookup failed")
+	errInsert   = errors.New("report insert failed")
+	errCommit   = errors.New("commit acknowledgement lost")
+	errReleased = errors.New("test released an uncanceled driver call")
+)
+
+var prior = Report{Account: "acct-7", Currency: "EUR", Entries: 9, Total: 90}
+
+type database struct {
+	mu                                        sync.Mutex
+	amounts                                   []driver.Value
+	readErr, accountErr, insertErr, commitErr error
+	report                                    Report
+	exists                                    bool
+	outside, commits, openRows                int
+	block                                     string
+	entered, release                          chan struct{}
+}
+
+func databaseFor(t *testing.T) (*database, *sql.DB) {
+	t.Helper()
+	d := &database{amounts: []driver.Value{int64(4), int64(7), int64(90)}, report: prior, exists: true,
+		entered: make(chan struct{}, 1), release: make(chan struct{})}
+	db := sql.OpenDB(localConnector{d})
+	db.SetMaxOpenConns(1)
+	t.Cleanup(func() { db.Close() })
+	return d, db
+}
+func budget(t *testing.T) context.Context {
+	t.Helper()
+	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+	t.Cleanup(cancel)
+	return ctx
+}
+func requireFailure(t *testing.T, got Report, err, cause error) {
+	t.Helper()
+	if got != (Report{}) || !errors.Is(err, cause) {
+		t.Fatalf("got %#v, %v; want zero report and cause %v", got, err, cause)
+	}
+}
+func requirePrior(t *testing.T, d *database) {
+	t.Helper()
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	if !d.exists || d.report != prior {
+		t.Fatalf("previous report lost: exists=%v report=%#v", d.exists, d.report)
+	}
+}
+
+func TestLifecycleBoundedSampleSingleConnection(t *testing.T) {
+	d, db := databaseFor(t)
+	got, err := New(db).Materialize(budget(t), "acct-7", 2)
+	want := Report{Account: "acct-7", Currency: "USD", Entries: 2, Total: 11}
+	if err != nil || got != want {
+		t.Fatalf("Materialize = %#v, %v; want %#v", got, err, want)
+	}
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	if !d.exists || d.report != want || d.commits != 1 || d.outside != 0 || d.openRows != 0 {
+		t.Fatalf("replacement lifecycle: exists=%v report=%#v commits=%d writes outside tx=%d rows=%d", d.exists, d.report, d.commits, d.outside, d.openRows)
+	}
+}
+
+func TestLifecycleIterationError(t *testing.T) {
+	d, db := databaseFor(t)
+	d.amounts = []driver.Value{int64(4)}
+	d.readErr = errRead
+	got, err := New(db).Materialize(budget(t), "acct-7", 2)
+	requireFailure(t, got, err, errRead)
+	requirePrior(t, d)
+}
+
+func TestLifecycleQueryRowDeferredError(t *testing.T) {
+	d, db := databaseFor(t)
+	d.accountErr = errAccount
+	got, err := New(db).Materialize(budget(t), "acct-7", 2)
+	requireFailure(t, got, err, errAccount)
+	requirePrior(t, d)
+}
+
+func TestLifecycleEarlyScanFailureReleasesPool(t *testing.T) {
+	d, db := databaseFor(t)
+	d.amounts = []driver.Value{"bad amount", int64(2)}
+	got, err := New(db).Materialize(budget(t), "acct-7", 2)
+	if err == nil || got != (Report{}) {
+		t.Fatalf("invalid amount accepted: %#v, %v", got, err)
+	}
+	requirePrior(t, d)
+	if err := db.PingContext(budget(t)); err != nil {
+		t.Fatalf("pool unusable after failed scan: %v", err)
+	}
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	if d.openRows != 0 {
+		t.Fatalf("failed scan left %d driver rows open", d.openRows)
+	}
+}
+
+func TestLifecycleAtomicReplacement(t *testing.T) {
+	d, db := databaseFor(t)
+	d.insertErr = errInsert
+	got, err := New(db).Materialize(budget(t), "acct-7", 2)
+	requireFailure(t, got, err, errInsert)
+	requirePrior(t, d)
+	if err := db.PingContext(budget(t)); err != nil {
+		t.Fatalf("pool unusable after failed write: %v", err)
+	}
+}
+
+func TestLifecycleCommitFailure(t *testing.T) {
+	d, db := databaseFor(t)
+	d.commitErr = errCommit
+	got, err := New(db).Materialize(budget(t), "acct-7", 2)
+	requireFailure(t, got, err, errCommit)
+	// Commit errors do not establish whether a real database persisted the replacement.
+}
+
+func TestLifecycleContextReachesDriver(t *testing.T) {
+	for _, stage := range []string{"begin", "ledger", "account", "insert"} {
+		t.Run(stage, func(t *testing.T) {
+			d, db := databaseFor(t)
+			d.block = stage
+			ctx, cancel := context.WithCancel(context.Background())
+			type outcome struct {
+				report Report
+				err    error
+			}
+			done := make(chan outcome, 1)
+			go func() { r, err := New(db).Materialize(ctx, "acct-7", 2); done <- outcome{r, err} }()
+			var result outcome
+			haveResult := false
+			t.Cleanup(func() {
+				cancel()
+				close(d.release)
+				if !haveResult {
+					select {
+					case <-done:
+					case <-time.After(time.Second):
+						t.Error("Materialize worker failed to stop after release")
+					}
+				}
+			})
+			select {
+			case <-d.entered:
+			case result = <-done:
+				haveResult = true
+				t.Fatalf("operation completed without reaching %s: %#v, %v", stage, result.report, result.err)
+			case <-time.After(time.Second):
+				t.Fatalf("operation did not reach %s", stage)
+			}
+			cancel()
+			select {
+			case result = <-done:
+				haveResult = true
+			case <-time.After(200 * time.Millisecond):
+				close(d.release)
+				// Avoid a timeout as the oracle: release the driver and inspect the real result.
+				select {
+				case result = <-done:
+					haveResult = true
+				case <-time.After(time.Second):
+					t.Fatal("worker failed to finish after driver release")
+				}
+				d.release = make(chan struct{})
+			}
+			requireFailure(t, result.report, result.err, context.Canceled)
+			requirePrior(t, d)
+		})
+	}
+}
+
+// The driver implements only this worker's established statements. It exercises
+// real database/sql pooling, Rows, Row.Scan, Tx and context-aware driver dispatch;
+// it does not parse general SQL or claim any engine's isolation/durability rules.
+type localConnector struct{ d *database }
+
+func (c localConnector) Connect(context.Context) (driver.Conn, error) { return &localConn{d: c.d}, nil }
+func (c localConnector) Driver() driver.Driver                        { return localDriver{c.d} }
+
+type localDriver struct{ d *database }
+
+func (d localDriver) Open(string) (driver.Conn, error) { return &localConn{d: d.d}, nil }
+
+type localConn struct {
+	d      *database
+	active int
+	tx     bool
+	report Report
+	exists bool
+}
+
+func (c *localConn) Close() error                          { return nil }
+func (c *localConn) Prepare(q string) (driver.Stmt, error) { return localStmt{c, q}, nil }
+func (c *localConn) Begin() (driver.Tx, error) {
+	return c.BeginTx(context.Background(), driver.TxOptions{})
+}
+func (c *localConn) Ping(ctx context.Context) error { return ctx.Err() }
+func (d *database) wait(ctx context.Context, stage string) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if d.block != stage {
+		return nil
+	}
+	select {
+	case d.entered <- struct{}{}:
+	default:
+	}
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-d.release:
+		return errReleased
+	}
+}
+func (c *localConn) BeginTx(ctx context.Context, _ driver.TxOptions) (driver.Tx, error) {
+	if err := c.d.wait(ctx, "begin"); err != nil {
+		return nil, err
+	}
+	c.d.mu.Lock()
+	defer c.d.mu.Unlock()
+	c.tx = true
+	c.report = c.d.report
+	c.exists = c.d.exists
+	return localTx{c}, nil
+}
+func statement(q string) string { return strings.Join(strings.Fields(q), " ") }
+func (c *localConn) QueryContext(ctx context.Context, q string, args []driver.NamedValue) (driver.Rows, error) {
+	stage := "ledger"
+	if statement(q) == "SELECT currency FROM accounts WHERE account = ?" {
+		stage = "account"
+	}
+	if err := c.d.wait(ctx, stage); err != nil {
+		return nil, err
+	}
+	c.d.mu.Lock()
+	defer c.d.mu.Unlock()
+	if c.active != 0 {
+		return nil, errors.New("connection still has open result rows")
+	}
+	if len(args) != 1 || args[0].Value != "acct-7" {
+		return nil, fmt.Errorf("unexpected account bindings: %v", args)
+	}
+	r := &localRows{c: c}
+	switch statement(q) {
+	case "SELECT amount FROM ledger WHERE account = ? ORDER BY sequence":
+		r.column = "amount"
+		r.values = append([]driver.Value(nil), c.d.amounts...)
+		r.terminal = c.d.readErr
+	case "SELECT currency FROM accounts WHERE account = ?":
+		if c.d.accountErr != nil {
+			return nil, c.d.accountErr
+		}
+		r.column = "currency"
+		r.values = []driver.Value{"USD"}
+	default:
+		return nil, fmt.Errorf("unsupported query: %s", q)
+	}
+	c.active++
+	c.d.openRows++
+	return r, nil
+}
+func (c *localConn) ExecContext(ctx context.Context, q string, args []driver.NamedValue) (driver.Result, error) {
+	stage := "delete"
+	if strings.HasPrefix(statement(q), "INSERT ") {
+		stage = "insert"
+	}
+	if err := c.d.wait(ctx, stage); err != nil {
+		return nil, err
+	}
+	c.d.mu.Lock()
+	defer c.d.mu.Unlock()
+	if c.active != 0 {
+		return nil, errors.New("connection still has open result rows")
+	}
+	if len(args) == 0 || args[0].Value != "acct-7" {
+		return nil, fmt.Errorf("unexpected account bindings: %v", args)
+	}
+	if !c.tx {
+		c.d.outside++
+	}
+	switch statement(q) {
+	case "DELETE FROM reports WHERE account = ?":
+		if c.tx {
+			c.exists = false
+		} else {
+			c.d.exists = false
+		}
+	case "INSERT INTO reports (account, currency, entry_count, total) VALUES (?, ?, ?, ?)":
+		if c.d.insertErr != nil {
+			return nil, c.d.insertErr
+		}
+		if len(args) != 4 {
+			return nil, errors.New("insert binding count")
+		}
+		currency, ok := args[1].Value.(string)
+		if !ok {
+			return nil, errors.New("currency binding type")
+		}
+		count, ok := args[2].Value.(int64)
+		if !ok {
+			return nil, errors.New("count binding type")
+		}
+		total, ok := args[3].Value.(int64)
+		if !ok {
+			return nil, errors.New("total binding type")
+		}
+		r := Report{Account: "acct-7", Currency: currency, Entries: int(count), Total: total}
+		if c.tx {
+			c.report = r
+			c.exists = true
+		} else {
+			c.d.report = r
+			c.d.exists = true
+		}
+	default:
+		return nil, fmt.Errorf("unsupported exec: %s", q)
+	}
+	return driver.RowsAffected(1), nil
+}
+
+type localTx struct{ c *localConn }
+
+func (tx localTx) Commit() error {
+	c := tx.c
+	c.d.mu.Lock()
+	defer c.d.mu.Unlock()
+	c.tx = false
+	c.d.commits++
+	if c.d.commitErr != nil {
+		return c.d.commitErr
+	}
+	c.d.report = c.report
+	c.d.exists = c.exists
+	return nil
+}
+func (tx localTx) Rollback() error {
+	tx.c.d.mu.Lock()
+	defer tx.c.d.mu.Unlock()
+	tx.c.tx = false
+	return nil
+}
+
+type localRows struct {
+	c        *localConn
+	column   string
+	values   []driver.Value
+	terminal error
+	closed   bool
+}
+
+func (r *localRows) Columns() []string { return []string{r.column} }
+func (r *localRows) Close() error {
+	r.c.d.mu.Lock()
+	defer r.c.d.mu.Unlock()
+	if !r.closed {
+		r.closed = true
+		r.c.active--
+		r.c.d.openRows--
+	}
+	return nil
+}
+func (r *localRows) Next(dest []driver.Value) error {
+	if len(r.values) == 0 {
+		if r.terminal != nil {
+			return r.terminal
+		}
+		return io.EOF
+	}
+	dest[0] = r.values[0]
+	r.values = r.values[1:]
+	return nil
+}
+
+type localStmt struct {
+	c *localConn
+	q string
+}
+
+func (localStmt) Close() error  { return nil }
+func (localStmt) NumInput() int { return -1 }
+func named(v []driver.Value) []driver.NamedValue {
+	n := make([]driver.NamedValue, len(v))
+	for i, x := range v {
+		n[i] = driver.NamedValue{Ordinal: i + 1, Value: x}
+	}
+	return n
+}
+func (s localStmt) Exec(v []driver.Value) (driver.Result, error) {
+	return s.c.ExecContext(context.Background(), s.q, named(v))
+}
+func (s localStmt) Query(v []driver.Value) (driver.Rows, error) {
+	return s.c.QueryContext(context.Background(), s.q, named(v))
+}
+func (s localStmt) ExecContext(ctx context.Context, v []driver.NamedValue) (driver.Result, error) {
+	return s.c.ExecContext(ctx, s.q, v)
+}
+func (s localStmt) QueryContext(ctx context.Context, v []driver.NamedValue) (driver.Rows, error) {
+	return s.c.QueryContext(ctx, s.q, v)
+}

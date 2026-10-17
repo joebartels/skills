@@ -1,0 +1,575 @@
+package settlement
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"reflect"
+	"regexp"
+	"strconv"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+)
+
+// These doubles cover native pgx call ordering, bindings and cleanup. Only the
+// explicit INSERT, SELECT and UPDATE forms below are modeled; other equivalent
+// SQL needs manual adjudication. This does not prove PostgreSQL SQL semantics,
+// isolation, constraints or wire cancellation.
+var errProbeBusy = errors.New("pgx connection is busy")
+var errProbeSQL = errors.New("unexpected database operation")
+
+type probeTraceKey struct{}
+
+type probeStarter struct {
+	tx             *probeTx
+	beginErr       error
+	begins, closes int
+}
+
+func (p *probeStarter) Begin(ctx context.Context) (pgx.Tx, error) {
+	p.begins++
+	if p.beginErr != nil {
+		return nil, p.beginErr
+	}
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	return p.tx, nil
+}
+func (p *probeStarter) Close() { p.closes++ }
+
+type probeTx struct {
+	key                                                           string
+	rows                                                          *probeRows
+	insertErr, queryErr, writeErr, ackErr, commitErr, rollbackErr error
+	writeFailAt                                                   int
+	missingAt                                                     int
+	busy, closed, acknowledged                                    bool
+	queries, insertScans, commitCalls, rollbackCalls, execCalls   int
+	posted                                                        []Item
+	rollbackLive, rollbackBounded                                 bool
+	rollbackValue                                                 any
+	rollbackContext                                               context.Context
+	attachedOrdinals                                              map[int]bool
+}
+
+var _ pgx.Tx = (*probeTx)(nil)
+var _ Beginner = (*probeStarter)(nil)
+
+func newProbe() (*probeStarter, *probeTx) {
+	tx := &probeTx{key: "october'; DROP TABLE accounts; --"}
+	tx.rows = &probeRows{tx: tx, items: []Item{{11, 125}, {22, -30}}}
+	return &probeStarter{tx: tx}, tx
+}
+
+func probeSQL(sql string) string { return strings.ToLower(strings.Join(strings.Fields(sql), " ")) }
+
+func (tx *probeTx) ready(ctx context.Context) error {
+	if tx.closed {
+		return pgx.ErrTxClosed
+	}
+	if tx.busy {
+		return errProbeBusy
+	}
+	return ctx.Err()
+}
+func (tx *probeTx) QueryRow(ctx context.Context, sql string, args ...any) pgx.Row {
+	err := tx.ready(ctx)
+	q := probeSQL(sql)
+	if err == nil && (!regexp.MustCompile(`^insert into settlement_runs\s*\(\s*batch_key\s*\)\s+values\s*\(\s*\$1\s*\)\s+returning id$`).MatchString(q) || len(args) != 1 || args[0] != tx.key) {
+		err = fmt.Errorf("insert: %w", errProbeSQL)
+	}
+	if err == nil {
+		err = tx.insertErr
+		tx.busy = true
+	}
+	return &probeRow{tx: tx, err: err}
+}
+func (tx *probeTx) Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error) {
+	tx.queries++
+	if err := tx.ready(ctx); err != nil {
+		return nil, err
+	}
+	q := probeSQL(sql)
+	match := regexp.MustCompile(`^select (.+) from pending_settlements where (.+) order by ordinal(?: asc)?(?: for update)?$`).FindStringSubmatch(q)
+	if len(match) != 3 || len(args) != 1 || args[0] != tx.key {
+		return nil, fmt.Errorf("select: %w", errProbeSQL)
+	}
+	filter, ok := probePendingWhere(match[2], false)
+	if !ok || filter.batchArg != 1 {
+		return nil, fmt.Errorf("select predicate: %w", errProbeSQL)
+	}
+	if tx.queryErr != nil {
+		return nil, tx.queryErr
+	}
+	columns, ok := probeProjection(q)
+	if !ok {
+		return nil, fmt.Errorf("projection: %w", errProbeSQL)
+	}
+	tx.rows.columns = columns
+	tx.busy = true
+	return tx.rows, nil
+}
+
+// Only simple named projections used by this fixture are accepted. This is not
+// a SQL parser; unsupported equivalents require source review.
+func probeProjection(q string) ([]string, bool) {
+	if !strings.HasPrefix(q, "select ") {
+		return nil, false
+	}
+	end := strings.Index(q, " from ")
+	if end < 0 {
+		return nil, false
+	}
+	columns := strings.Split(q[len("select "):end], ",")
+	if len(columns) != 2 && len(columns) != 3 {
+		return nil, false
+	}
+	seen := make(map[string]bool)
+	for i, column := range columns {
+		column = strings.TrimSpace(column)
+		if (column != "ordinal" && column != "account_id" && column != "amount_cents") || seen[column] {
+			return nil, false
+		}
+		columns[i], seen[column] = column, true
+	}
+	return columns, seen["account_id"] && seen["amount_cents"]
+}
+
+// Recognize the whole conjunction for this fixture, including its null guard.
+// Unknown, duplicate and OR predicates need source review rather than modeled effects.
+type probePendingFilter struct {
+	batchArg, ordinalArg int
+	array                bool
+}
+
+func probeBindIndex(term, pattern string) (int, bool) {
+	match := regexp.MustCompile(pattern).FindStringSubmatch(term)
+	if len(match) != 2 {
+		return 0, false
+	}
+	index, err := strconv.Atoi(match[1])
+	return index, err == nil && index > 0
+}
+
+func probePendingWhere(where string, wantOrdinal bool) (probePendingFilter, bool) {
+	var filter probePendingFilter
+	nullGuard := false
+	terms := strings.Split(where, " and ")
+	want := 2
+	if wantOrdinal {
+		want = 3
+	}
+	if len(terms) != want {
+		return filter, false
+	}
+	for _, term := range terms {
+		if term == "run_id is null" && !nullGuard {
+			nullGuard = true
+			continue
+		}
+		if index, ok := probeBindIndex(term, `^batch_key\s*=\s*\$(\d+)$`); ok && filter.batchArg == 0 {
+			filter.batchArg = index
+			continue
+		}
+		if wantOrdinal && filter.ordinalArg == 0 {
+			if index, ok := probeBindIndex(term, `^ordinal\s*=\s*\$(\d+)$`); ok {
+				filter.ordinalArg = index
+				continue
+			}
+			if index, ok := probeBindIndex(term, `^ordinal\s*=\s*any\s*\(\s*\$(\d+)\s*\)$`); ok {
+				filter.ordinalArg, filter.array = index, true
+				continue
+			}
+		}
+		return filter, false
+	}
+	return filter, nullGuard && filter.batchArg != 0 && (!wantOrdinal || filter.ordinalArg != 0)
+}
+func (tx *probeTx) Exec(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error) {
+	tx.execCalls++
+	if err := tx.ready(ctx); err != nil {
+		return pgconn.CommandTag{}, err
+	}
+	q := probeSQL(sql)
+	switch {
+	case strings.HasPrefix(q, "update accounts "):
+		match := regexp.MustCompile(`^update\s+accounts\s+set\s+balance_cents\s*=\s*balance_cents\s*\+\s*\$(\d+)\s+where\s+id\s*=\s*\$(\d+)$`).FindStringSubmatch(q)
+		if len(match) != 3 || len(args) != 2 {
+			return pgconn.CommandTag{}, errProbeSQL
+		}
+		amountArg, _ := strconv.Atoi(match[1])
+		idArg, _ := strconv.Atoi(match[2])
+		if amountArg < 1 || amountArg > len(args) || idArg < 1 || idArg > len(args) || amountArg == idArg {
+			return pgconn.CommandTag{}, errProbeSQL
+		}
+		amount, ok1 := args[amountArg-1].(int64)
+		id, ok2 := args[idArg-1].(int64)
+		if !ok1 || !ok2 {
+			return pgconn.CommandTag{}, errProbeSQL
+		}
+		n := len(tx.posted) + 1
+		if n == tx.writeFailAt {
+			return pgconn.CommandTag{}, tx.writeErr
+		}
+		if n == tx.missingAt {
+			return pgconn.NewCommandTag("UPDATE 0"), nil
+		}
+		tx.posted = append(tx.posted, Item{AccountID: id, AmountCents: amount})
+		return pgconn.NewCommandTag("UPDATE 1"), nil
+	case strings.HasPrefix(q, "update pending_settlements "):
+		match := regexp.MustCompile(`^update pending_settlements set run_id\s*=\s*\$(\d+) where (.+)$`).FindStringSubmatch(q)
+		if len(match) != 3 || len(args) != 3 {
+			return pgconn.CommandTag{}, errProbeSQL
+		}
+		runArg, _ := strconv.Atoi(match[1])
+		filter, ok := probePendingWhere(match[2], true)
+		if !ok || runArg < 1 || runArg > len(args) || filter.batchArg > len(args) || filter.ordinalArg > len(args) || runArg == filter.batchArg || runArg == filter.ordinalArg || filter.batchArg == filter.ordinalArg {
+			return pgconn.CommandTag{}, errProbeSQL
+		}
+		if args[runArg-1] != int64(73) || args[filter.batchArg-1] != tx.key {
+			return pgconn.CommandTag{}, errProbeSQL
+		}
+		var ordinals []int
+		if filter.array {
+			switch values := args[filter.ordinalArg-1].(type) {
+			case []int32:
+				for _, value := range values {
+					ordinals = append(ordinals, int(value))
+				}
+			case []int:
+				ordinals = values
+			default:
+				return pgconn.CommandTag{}, errProbeSQL
+			}
+		} else {
+			switch value := args[filter.ordinalArg-1].(type) {
+			case int:
+				ordinals = []int{value}
+			case int32:
+				ordinals = []int{int(value)}
+			default:
+				return pgconn.CommandTag{}, errProbeSQL
+			}
+		}
+		if tx.ackErr != nil {
+			return pgconn.CommandTag{}, tx.ackErr
+		}
+
+		if tx.attachedOrdinals == nil {
+			tx.attachedOrdinals = make(map[int]bool)
+		}
+		changed := 0
+		for _, ordinal := range ordinals {
+			if ordinal >= 1 && ordinal <= len(tx.rows.items) && !tx.attachedOrdinals[ordinal] {
+				tx.attachedOrdinals[ordinal] = true
+				changed++
+			}
+		}
+		tx.acknowledged = len(tx.attachedOrdinals) == len(tx.rows.items)
+		return pgconn.NewCommandTag(fmt.Sprintf("UPDATE %d", changed)), nil
+	default:
+		return pgconn.CommandTag{}, errProbeSQL
+	}
+}
+func (tx *probeTx) Commit(ctx context.Context) error {
+	tx.commitCalls++
+	if err := tx.ready(ctx); err != nil {
+		return err
+	}
+	// pgx closes its transaction handle after attempting COMMIT, including
+	// ErrTxCommitRollback and network failures. Rollback then reports closed.
+	tx.closed = true
+	return tx.commitErr
+}
+func (tx *probeTx) Rollback(ctx context.Context) error {
+	tx.rollbackCalls++
+	tx.rollbackContext = ctx
+	tx.rollbackLive = ctx.Err() == nil
+	deadline, ok := ctx.Deadline()
+	remaining := time.Until(deadline)
+	tx.rollbackBounded = ok && remaining > 0 && remaining <= time.Second
+	tx.rollbackValue = ctx.Value(probeTraceKey{})
+	if tx.closed {
+		return pgx.ErrTxClosed
+	}
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if tx.busy {
+		return errProbeBusy
+	}
+	tx.closed = true
+	return tx.rollbackErr
+}
+func (*probeTx) Begin(context.Context) (pgx.Tx, error) { return nil, errProbeSQL }
+func (*probeTx) CopyFrom(context.Context, pgx.Identifier, []string, pgx.CopyFromSource) (int64, error) {
+	return 0, errProbeSQL
+}
+func (*probeTx) SendBatch(context.Context, *pgx.Batch) pgx.BatchResults {
+	panic("unexpected SendBatch")
+}
+func (*probeTx) LargeObjects() pgx.LargeObjects { return pgx.LargeObjects{} }
+func (*probeTx) Prepare(context.Context, string, string) (*pgconn.StatementDescription, error) {
+	return nil, errProbeSQL
+}
+func (*probeTx) Conn() *pgx.Conn { return nil }
+
+type probeRow struct {
+	tx  *probeTx
+	err error
+}
+
+var _ pgx.Row = (*probeRow)(nil)
+
+func (r *probeRow) Scan(dest ...any) error {
+	r.tx.insertScans++
+	r.tx.busy = false
+	if r.err != nil {
+		return r.err
+	}
+	if len(dest) != 1 {
+		return errProbeSQL
+	}
+	id, ok := dest[0].(*int64)
+	if !ok {
+		return errProbeSQL
+	}
+	*id = 73
+	return nil
+}
+
+type probeRows struct {
+	tx                   *probeTx
+	items                []Item
+	columns              []string
+	index                int
+	scanAt               int
+	scanErr, terminalErr error
+	onTerminal           func()
+	closed               bool
+}
+
+var _ pgx.Rows = (*probeRows)(nil)
+
+func (r *probeRows) Close() { r.closed = true; r.tx.busy = false }
+func (r *probeRows) Err() error {
+	if !r.closed {
+		return nil
+	} // Native pgx can defer errors until closure.
+	if r.scanErr != nil && r.index == r.scanAt {
+		return r.scanErr
+	}
+	return r.terminalErr
+}
+func (r *probeRows) Next() bool {
+	if r.closed {
+		return false
+	}
+	if r.index < len(r.items) {
+		r.index++
+		return true
+	}
+	r.Close()
+	if r.onTerminal != nil {
+		r.onTerminal()
+	}
+	return false
+}
+func (r *probeRows) Scan(dest ...any) error {
+	if r.closed || r.index < 1 || r.index > len(r.items) {
+		return errProbeSQL
+	}
+	if r.scanAt == r.index {
+		r.Close()
+		return r.scanErr
+	}
+	if len(dest) != len(r.columns) {
+		return errProbeSQL
+	}
+	item := r.items[r.index-1]
+	for i, column := range r.columns {
+		if column == "ordinal" {
+			switch ordinal := dest[i].(type) {
+			case *int:
+				*ordinal = r.index
+			case *int32:
+				*ordinal = int32(r.index)
+			default:
+				return errProbeSQL
+			}
+			continue
+		}
+		value, ok := dest[i].(*int64)
+		if !ok {
+			return errProbeSQL
+		}
+		if column == "account_id" {
+			*value = item.AccountID
+		} else {
+			*value = item.AmountCents
+		}
+	}
+	return nil
+}
+func (r *probeRows) Values() ([]any, error) {
+	if r.closed || r.index < 1 || r.index > len(r.items) {
+		return nil, errProbeSQL
+	}
+	item := r.items[r.index-1]
+	values := make([]any, len(r.columns))
+	for i, column := range r.columns {
+		switch column {
+		case "ordinal":
+			values[i] = int32(r.index)
+		case "account_id":
+			values[i] = item.AccountID
+		case "amount_cents":
+			values[i] = item.AmountCents
+		}
+	}
+	return values, nil
+}
+func (*probeRows) CommandTag() pgconn.CommandTag { return pgconn.NewCommandTag("SELECT 2") }
+func (r *probeRows) FieldDescriptions() []pgconn.FieldDescription {
+	fields := make([]pgconn.FieldDescription, len(r.columns))
+	for i, column := range r.columns {
+		fields[i].Name = column
+	}
+	return fields
+}
+func (*probeRows) RawValues() [][]byte { return nil }
+func (*probeRows) Conn() *pgx.Conn     { return nil }
+
+func TestProbeReconcileSuccess(t *testing.T) {
+	starter, tx := newProbe()
+	got, err := New(starter).Reconcile(context.Background(), tx.key)
+	if err != nil || got != (Report{RunID: 73, Applied: 2}) {
+		t.Fatalf("Reconcile = %#v, %v", got, err)
+	}
+	if !reflect.DeepEqual(tx.posted, tx.rows.items) || !tx.acknowledged || tx.commitCalls != 1 || !tx.closed || !tx.rows.closed {
+		t.Fatalf("incomplete settlement: posted=%v acknowledged=%v commits=%d closed=%v rowsClosed=%v", tx.posted, tx.acknowledged, tx.commitCalls, tx.closed, tx.rows.closed)
+	}
+	if starter.begins != 1 || starter.closes != 0 {
+		t.Fatalf("host lifecycle: begins=%d closes=%d", starter.begins, starter.closes)
+	}
+}
+
+func TestProbeEmptyBatchStillCommitsRun(t *testing.T) {
+	starter, tx := newProbe()
+	tx.rows.items = nil
+	got, err := New(starter).Reconcile(context.Background(), tx.key)
+	if err != nil || got != (Report{RunID: 73}) || tx.commitCalls != 1 || !tx.closed || !tx.rows.closed {
+		t.Fatalf("empty reconciliation = %#v, %v; commits=%d acknowledged=%v", got, err, tx.commitCalls, tx.acknowledged)
+	}
+}
+
+func TestProbeFailureReleasesOwnedTransaction(t *testing.T) {
+	cases := []struct {
+		name               string
+		configure          func(*probeStarter, *probeTx, error)
+		commits, rollbacks int
+	}{
+		{"begin", func(s *probeStarter, _ *probeTx, e error) { s.beginErr = e }, 0, 0},
+		{"deferred_insert_scan", func(_ *probeStarter, tx *probeTx, e error) { tx.insertErr = e }, 0, 1},
+		{"query", func(_ *probeStarter, tx *probeTx, e error) { tx.queryErr = e }, 0, 1},
+		{"scan", func(_ *probeStarter, tx *probeTx, e error) { tx.rows.scanAt = 2; tx.rows.scanErr = e }, 0, 1},
+		{"terminal_iteration", func(_ *probeStarter, tx *probeTx, e error) { tx.rows.terminalErr = e }, 0, 1},
+		{"post", func(_ *probeStarter, tx *probeTx, e error) { tx.writeFailAt = 2; tx.writeErr = e }, 0, 1},
+		{"attach", func(_ *probeStarter, tx *probeTx, e error) { tx.ackErr = e }, 0, 1},
+		{"commit", func(_ *probeStarter, tx *probeTx, e error) { tx.commitErr = e }, 1, -1},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			starter, tx := newProbe()
+			want := errors.New(tc.name)
+			tc.configure(starter, tx, want)
+			got, err := New(starter).Reconcile(context.Background(), tx.key)
+			if got != (Report{}) || !errors.Is(err, want) {
+				t.Fatalf("Reconcile = %#v, %v; want zero and %v", got, err, want)
+			}
+			if tx.commitCalls != tc.commits || tc.rollbacks >= 0 && tx.rollbackCalls != tc.rollbacks {
+				t.Fatalf("commit=%d rollback=%d", tx.commitCalls, tx.rollbackCalls)
+			}
+			if starter.closes != 0 {
+				t.Fatal("closed borrowed pool")
+			}
+			if tc.name != "begin" && !tx.closed {
+				t.Fatal("owned transaction remains open")
+			}
+			if (tc.name == "scan" || tc.name == "terminal_iteration") && !tx.rows.closed {
+				t.Fatal("rows remain open")
+			}
+			if tc.name == "terminal_iteration" && tx.acknowledged {
+				t.Fatal("acknowledged incomplete read")
+			}
+		})
+	}
+}
+
+func TestProbeAbortedCommitIsFailure(t *testing.T) {
+	starter, tx := newProbe()
+	tx.commitErr = pgx.ErrTxCommitRollback
+	got, err := New(starter).Reconcile(context.Background(), tx.key)
+	if got != (Report{}) || !errors.Is(err, pgx.ErrTxCommitRollback) {
+		t.Fatalf("Reconcile = %#v, %v", got, err)
+	}
+}
+
+func TestProbeCancellationCleanupRetainsTraceAndLiveBound(t *testing.T) {
+	starter, tx := newProbe()
+	ctx, cancel := context.WithCancel(context.WithValue(context.Background(), probeTraceKey{}, "trace-17"))
+	defer cancel()
+	tx.rows.onTerminal = cancel
+	tx.rows.terminalErr = context.Canceled
+	got, err := New(starter).Reconcile(ctx, tx.key)
+	if got != (Report{}) || !errors.Is(err, context.Canceled) {
+		t.Fatalf("Reconcile = %#v, %v", got, err)
+	}
+	if tx.commitCalls != 0 || tx.rollbackCalls != 1 || !tx.closed {
+		t.Fatalf("commit=%d rollback=%d closed=%v", tx.commitCalls, tx.rollbackCalls, tx.closed)
+	}
+	if !tx.rollbackLive || !tx.rollbackBounded || tx.rollbackValue != "trace-17" {
+		t.Fatalf("rollback context: live=%v bounded=%v value=%v", tx.rollbackLive, tx.rollbackBounded, tx.rollbackValue)
+	}
+	select {
+	case <-tx.rollbackContext.Done():
+	default:
+		t.Fatal("cleanup context not released")
+	}
+}
+
+func TestProbeRollbackFailureDoesNotReplaceOriginal(t *testing.T) {
+	starter, tx := newProbe()
+	readErr := errors.New("stream interrupted")
+	cleanupErr := errors.New("rollback I/O")
+	tx.rows.terminalErr = readErr
+	tx.rollbackErr = cleanupErr
+	got, err := New(starter).Reconcile(context.Background(), tx.key)
+	if got != (Report{}) || !errors.Is(err, readErr) || !errors.Is(err, cleanupErr) {
+		t.Fatalf("Reconcile = %#v, %v", got, err)
+	}
+}
+
+func TestProbePostDoesNotFinalizeBorrowedTransaction(t *testing.T) {
+	_, tx := newProbe()
+	tx.writeFailAt = 2
+	tx.writeErr = errors.New("second write")
+	n, err := Post(context.Background(), tx, []Item{{11, 125}, {22, -30}})
+	if n != 1 || !errors.Is(err, tx.writeErr) || tx.commitCalls != 0 || tx.rollbackCalls != 0 || tx.closed {
+		t.Fatalf("Post=%d,%v commit=%d rollback=%d closed=%v", n, err, tx.commitCalls, tx.rollbackCalls, tx.closed)
+	}
+}
+
+func TestProbeMissingAccountRollsBack(t *testing.T) {
+	starter, tx := newProbe()
+	tx.missingAt = 2
+	got, err := New(starter).Reconcile(context.Background(), tx.key)
+	if got != (Report{}) || !errors.Is(err, ErrAccountMissing) || tx.commitCalls != 0 || !tx.closed {
+		t.Fatalf("Reconcile=%#v,%v commit=%d closed=%v", got, err, tx.commitCalls, tx.closed)
+	}
+}

@@ -1,0 +1,293 @@
+package warehouse_test
+
+import (
+	"context"
+	"database/sql"
+	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
+	"reflect"
+	"sync"
+	"testing"
+	"time"
+
+	warehouse "example.com/warehouse"
+	"github.com/mattn/go-sqlite3"
+)
+
+type rig struct {
+	db       *sql.DB
+	observer *sql.DB
+	store    *warehouse.Store
+	dsn      string
+}
+
+func openRig(t *testing.T) rig {
+	t.Helper()
+	dsn := filepath.Join(t.TempDir(), "warehouse.db") + "?_foreign_keys=on&_busy_timeout=1000&_txlock=immediate"
+	db, err := sql.Open("sqlite3", dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	db.SetMaxOpenConns(1)
+	db.SetMaxIdleConns(1)
+	t.Cleanup(func() { db.Close() })
+	schema, err := os.ReadFile("schema.sql")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(string(schema)); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec("INSERT INTO customers VALUES ('shop'); INSERT INTO stock VALUES ('tea', 8), ('rice', 2)"); err != nil {
+		t.Fatal(err)
+	}
+	observer, err := sql.Open("sqlite3", dsn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { observer.Close() })
+	return rig{db: db, observer: observer, store: warehouse.New(db), dsn: dsn}
+}
+
+func request(id string, lines ...warehouse.Line) warehouse.Request {
+	return warehouse.Request{ID: id, CustomerID: "shop", Lines: lines}
+}
+
+func call(t *testing.T, s *warehouse.Store, req warehouse.Request) (warehouse.Receipt, error) {
+	t.Helper()
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	return s.Reserve(ctx, req)
+}
+
+func number(t *testing.T, db *sql.DB, query string, args ...any) int {
+	t.Helper()
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	var n int
+	if err := db.QueryRowContext(ctx, query, args...).Scan(&n); err != nil {
+		t.Fatal(err)
+	}
+	return n
+}
+
+func assertStock(t *testing.T, r rig, tea, rice int) {
+	t.Helper()
+	if got := number(t, r.observer, "SELECT available FROM stock WHERE sku='tea'"); got != tea {
+		t.Errorf("persisted tea = %d, want %d", got, tea)
+	}
+	if got := number(t, r.observer, "SELECT available FROM stock WHERE sku='rice'"); got != rice {
+		t.Errorf("persisted rice = %d, want %d", got, rice)
+	}
+}
+
+func assertEmpty(t *testing.T, r rig, got warehouse.Receipt) {
+	t.Helper()
+	if !reflect.DeepEqual(got, warehouse.Receipt{}) {
+		t.Errorf("failure returned usable receipt: %#v", got)
+	}
+	for _, table := range []string{"reservations", "reservation_lines"} {
+		if got := number(t, r.observer, "SELECT count(*) FROM "+table); got != 0 {
+			t.Errorf("persisted %s rows = %d, want 0", table, got)
+		}
+	}
+}
+
+func TestContractOneConnectionSuccessAndReuse(t *testing.T) {
+	r := openRig(t)
+	got, err := call(t, r.store, request("r1", warehouse.Line{SKU: "tea", Quantity: 3}, warehouse.Line{SKU: "rice", Quantity: 1}))
+	if err != nil {
+		t.Fatalf("bounded one-connection reservation failed: %v", err)
+	}
+	want := warehouse.Receipt{ID: "r1", Units: 4, Remaining: map[string]int{"tea": 5, "rice": 1}}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("receipt = %#v, want %#v", got, want)
+	}
+	assertStock(t, r, 5, 1)
+	if got := number(t, r.observer, "SELECT count(*) FROM reservations WHERE id='r1' AND customer_id='shop' AND units=4"); got != 1 {
+		t.Errorf("persisted header count = %d", got)
+	}
+	if got := number(t, r.observer, "SELECT count(*) FROM reservation_lines WHERE reservation_id='r1' AND ((sku='tea' AND quantity=3) OR (sku='rice' AND quantity=1))"); got != 2 {
+		t.Errorf("persisted detail count = %d", got)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	if got, err := r.store.Available(ctx, "tea"); got != 5 || err != nil {
+		t.Errorf("standalone helper after Reserve = %d, %v", got, err)
+	}
+	if _, err := r.store.Available(ctx, "absent"); !errors.Is(err, sql.ErrNoRows) {
+		t.Errorf("unknown SKU lost sql.ErrNoRows: %v", err)
+	}
+	if got := r.db.Stats().InUse; got != 0 {
+		t.Errorf("connections still held after return: %d", got)
+	}
+}
+
+func TestContractLaterShortageRollsBack(t *testing.T) {
+	r := openRig(t)
+	got, err := call(t, r.store, request("r1", warehouse.Line{SKU: "tea", Quantity: 3}, warehouse.Line{SKU: "rice", Quantity: 3}))
+	if !errors.Is(err, warehouse.ErrInsufficient) {
+		t.Fatalf("error = %v, want ErrInsufficient", err)
+	}
+	assertEmpty(t, r, got)
+	assertStock(t, r, 8, 2)
+	if _, err := call(t, r.store, request("r1", warehouse.Line{SKU: "tea", Quantity: 1})); err != nil {
+		t.Fatalf("rejected ID or pool unusable after failure: %v", err)
+	}
+}
+
+func TestContractExistingReservationSurvivesRejectedAttempt(t *testing.T) {
+	r := openRig(t)
+	if _, err := call(t, r.store, request("old", warehouse.Line{SKU: "tea", Quantity: 2})); err != nil {
+		t.Fatal(err)
+	}
+	got, err := call(t, r.store, request("new", warehouse.Line{SKU: "tea", Quantity: 1}, warehouse.Line{SKU: "rice", Quantity: 3}))
+	if !errors.Is(err, warehouse.ErrInsufficient) {
+		t.Fatalf("error = %v", err)
+	}
+	if !reflect.DeepEqual(got, warehouse.Receipt{}) {
+		t.Errorf("failure receipt = %#v", got)
+	}
+	assertStock(t, r, 6, 2)
+	if got := number(t, r.observer, "SELECT count(*) FROM reservations WHERE id='old' AND units=2"); got != 1 {
+		t.Errorf("existing reservation lost: %d", got)
+	}
+	if got := number(t, r.observer, "SELECT count(*) FROM reservations"); got != 1 {
+		t.Errorf("header count = %d, want 1", got)
+	}
+	if got := number(t, r.observer, "SELECT count(*) FROM reservation_lines WHERE reservation_id='old' AND quantity=2"); got != 1 {
+		t.Errorf("existing detail lost: %d", got)
+	}
+	if got := number(t, r.observer, "SELECT count(*) FROM reservation_lines"); got != 1 {
+		t.Errorf("detail count = %d, want 1", got)
+	}
+}
+
+func TestContractLaterDatabaseErrorRollsBack(t *testing.T) {
+	r := openRig(t)
+	// A warehouse policy added by operations rejects the second detail write.
+	if _, err := r.db.Exec("CREATE TRIGGER reject_rice BEFORE INSERT ON reservation_lines WHEN NEW.sku='rice' BEGIN SELECT RAISE(ABORT, 'rice audit offline'); END"); err != nil {
+		t.Fatal(err)
+	}
+	got, err := call(t, r.store, request("r1", warehouse.Line{SKU: "tea", Quantity: 3}, warehouse.Line{SKU: "rice", Quantity: 1}))
+	if err == nil {
+		t.Fatal("late database rejection was reported as success")
+	}
+	assertEmpty(t, r, got)
+	assertStock(t, r, 8, 2)
+}
+
+func TestContractCommitFailureDoesNotPublish(t *testing.T) {
+	r := openRig(t)
+	req := request("r1", warehouse.Line{SKU: "tea", Quantity: 3})
+	req.CustomerID = "deleted-customer"
+	got, err := call(t, r.store, req)
+	if err == nil {
+		t.Fatal("deferred foreign-key rejection was reported as success")
+	}
+	var sqliteErr sqlite3.Error
+	if !errors.As(err, &sqliteErr) || sqliteErr.ExtendedCode != sqlite3.ErrConstraintForeignKey {
+		t.Errorf("database cause lost: %v", err)
+	}
+	assertEmpty(t, r, got)
+	assertStock(t, r, 8, 2)
+	if _, err := call(t, r.store, request("r2", warehouse.Line{SKU: "tea", Quantity: 1})); err != nil {
+		t.Fatalf("pool unusable after commit failure: %v", err)
+	}
+}
+
+func TestContractCancelledContextMakesNoChanges(t *testing.T) {
+	r := openRig(t)
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	got, err := r.store.Reserve(ctx, request("r1", warehouse.Line{SKU: "tea", Quantity: 1}))
+	if !errors.Is(err, context.Canceled) {
+		t.Errorf("cancelled call error = %v", err)
+	}
+	assertEmpty(t, r, got)
+	assertStock(t, r, 8, 2)
+}
+
+func TestEngineDeferredConstraintActuallyFailsAtCommit(t *testing.T) {
+	r := openRig(t)
+	tx, err := r.db.BeginTx(context.Background(), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer tx.Rollback()
+	if _, err := tx.Exec("INSERT INTO reservations VALUES ('raw', 'missing', 1)"); err != nil {
+		t.Fatalf("engine did not defer FK: %v", err)
+	}
+	if err := tx.Commit(); err == nil {
+		t.Fatal("engine unexpectedly accepted invalid FK")
+	}
+	if got := number(t, r.observer, "SELECT count(*) FROM reservations"); got != 0 {
+		t.Fatalf("engine retained failed commit: %d rows", got)
+	}
+}
+
+func TestContractConcurrentReservationsDoNotOversell(t *testing.T) {
+	r := openRig(t)
+	if _, err := r.db.Exec("UPDATE stock SET available=1 WHERE sku='tea'"); err != nil {
+		t.Fatal(err)
+	}
+	// Separate stores and pools model two worker processes. SQLite's configured
+	// busy timeout permits the losing writer to observe committed stock.
+	const workers = 12
+	stores := make([]*warehouse.Store, workers)
+	for i := range stores {
+		db, err := sql.Open("sqlite3", r.dsn)
+		if err != nil {
+			t.Fatal(err)
+		}
+		db.SetMaxOpenConns(1)
+		t.Cleanup(func() { db.Close() })
+		stores[i] = warehouse.New(db)
+	}
+	start := make(chan struct{})
+	errs := make(chan error, workers)
+	var wg sync.WaitGroup
+	for i, store := range stores {
+		wg.Add(1)
+		go func(i int, store *warehouse.Store) {
+			defer wg.Done()
+			<-start
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			_, err := store.Reserve(ctx, request(fmt.Sprintf("r%d", i), warehouse.Line{SKU: "tea", Quantity: 1}))
+			errs <- err
+		}(i, store)
+	}
+	close(start)
+	wg.Wait()
+	close(errs)
+	success := 0
+	for err := range errs {
+		if err == nil {
+			success++
+			continue
+		}
+		if errors.Is(err, warehouse.ErrInsufficient) {
+			continue
+		}
+		var sqliteErr sqlite3.Error
+		if errors.As(err, &sqliteErr) && (sqliteErr.Code == sqlite3.ErrBusy || sqliteErr.Code == sqlite3.ErrLocked) {
+			continue
+		}
+		t.Errorf("unexpected contention error: %v", err)
+	}
+	if success != 1 {
+		t.Errorf("successful reservations = %d, want 1", success)
+	}
+	if got := number(t, r.observer, "SELECT available FROM stock WHERE sku='tea'"); got != 0 {
+		t.Errorf("persisted stock = %d, want 0", got)
+	}
+	if got := number(t, r.observer, "SELECT count(*) FROM reservations"); got != 1 {
+		t.Errorf("persisted reservation count = %d, want 1", got)
+	}
+	if got := number(t, r.observer, "SELECT coalesce(sum(quantity),0) FROM reservation_lines WHERE sku='tea'"); got != 1 {
+		t.Errorf("persisted reserved units = %d, want 1", got)
+	}
+}

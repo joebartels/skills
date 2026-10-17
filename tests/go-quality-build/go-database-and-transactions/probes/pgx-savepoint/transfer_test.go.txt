@@ -1,0 +1,340 @@
+package ledger
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"maps"
+	"reflect"
+	"regexp"
+	"strconv"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+)
+
+// This protocol model recognizes the additive UPDATE below and pgx savepoint
+// lifecycles. Other equivalent SQL needs manual adjudication. It does not prove
+// PostgreSQL SQL semantics, isolation, constraints or wire cancellation.
+type traceKey struct{}
+type checkpoint struct {
+	name   string
+	before map[string]int64
+}
+type cleanupObservation struct {
+	err       error
+	trace     any
+	remaining time.Duration
+	bounded   bool
+}
+type transactionState struct {
+	staged, durable                   map[string]int64
+	points                            []checkpoint
+	aborted, terminal                 bool
+	serial, writes, cancelAt          int
+	cancel                            context.CancelFunc
+	beginErr, releaseErr, rollbackErr error
+	failure                           *pgconn.PgError
+	cleanups                          []cleanupObservation
+}
+type modelTx struct {
+	pgx.Tx
+	s      *transactionState
+	name   string
+	closed bool
+}
+
+var _ pgx.Tx = (*modelTx)(nil)
+
+func (t *modelTx) Begin(ctx context.Context) (pgx.Tx, error) {
+	t.s.serial++
+	name := fmt.Sprintf("model_%d", t.s.serial)
+	if _, err := t.Exec(ctx, "savepoint "+name); err != nil {
+		return nil, err
+	}
+	return &modelTx{s: t.s, name: name}, nil
+}
+func (t *modelTx) Commit(ctx context.Context) error {
+	if t.closed || t.s.terminal {
+		return pgx.ErrTxClosed
+	}
+	if t.name != "" {
+		_, err := t.Exec(ctx, "release savepoint "+t.name)
+		t.closed = true // pgx v5.7.2 closes the child even when RELEASE fails.
+		return err
+	}
+	t.closed, t.s.terminal = true, true
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if t.s.aborted {
+		return pgx.ErrTxCommitRollback
+	}
+	t.s.durable = maps.Clone(t.s.staged)
+	return nil
+}
+func (t *modelTx) Rollback(ctx context.Context) error {
+	if t.closed || t.s.terminal {
+		return pgx.ErrTxClosed
+	}
+	if t.name != "" {
+		_, err := t.Exec(ctx, "rollback to savepoint "+t.name)
+		t.closed = true // pgx also closes the child on rollback failure.
+		return err
+	}
+	t.closed, t.s.terminal = true, true
+	t.s.staged = maps.Clone(t.s.durable)
+	return ctx.Err()
+}
+func (t *modelTx) Exec(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error) {
+	zero := pgconn.CommandTag{}
+	if t.closed || t.s.terminal {
+		return zero, pgx.ErrTxClosed
+	}
+	words := strings.Fields(strings.ToLower(strings.TrimSuffix(strings.TrimSpace(sql), ";")))
+	if len(words) == 0 {
+		return zero, errors.New("empty SQL")
+	}
+	rollbackTo := words[0] == "rollback" && len(words) > 2 && words[1] == "to"
+	if rollbackTo {
+		deadline, ok := ctx.Deadline()
+		t.s.cleanups = append(t.s.cleanups, cleanupObservation{ctx.Err(), ctx.Value(traceKey{}), time.Until(deadline), ok})
+	}
+	if err := ctx.Err(); err != nil {
+		return zero, err
+	}
+	if rollbackTo {
+		if t.s.rollbackErr != nil {
+			return zero, t.s.rollbackErr
+		}
+		name := strings.Trim(words[len(words)-1], `"`)
+		for i := len(t.s.points) - 1; i >= 0; i-- {
+			if t.s.points[i].name == name {
+				t.s.staged = maps.Clone(t.s.points[i].before)
+				t.s.points = t.s.points[:i+1]
+				t.s.aborted = false
+				return pgconn.NewCommandTag("ROLLBACK"), nil
+			}
+		}
+		return zero, errors.New("unknown savepoint")
+	}
+	if t.s.aborted {
+		return zero, &pgconn.PgError{Code: "25P02", Message: "transaction aborted"}
+	}
+	switch words[0] {
+	case "savepoint":
+		if t.s.beginErr != nil {
+			return zero, t.s.beginErr
+		}
+		name := strings.Trim(words[len(words)-1], `"`)
+		t.s.points = append(t.s.points, checkpoint{name, maps.Clone(t.s.staged)})
+		return pgconn.NewCommandTag("SAVEPOINT"), nil
+	case "release":
+		if t.s.releaseErr != nil {
+			return zero, t.s.releaseErr
+		}
+		name := strings.Trim(words[len(words)-1], `"`)
+		for i := len(t.s.points) - 1; i >= 0; i-- {
+			if t.s.points[i].name == name {
+				t.s.points = t.s.points[:i]
+				return pgconn.NewCommandTag("RELEASE"), nil
+			}
+		}
+		return zero, errors.New("unknown savepoint")
+	case "rollback":
+		return pgconn.NewCommandTag("ROLLBACK"), t.Rollback(ctx)
+	case "commit", "end":
+		return pgconn.NewCommandTag("COMMIT"), t.Commit(ctx)
+	case "update":
+		// Recognize the expression and predicate before modeling their effects.
+		match := regexp.MustCompile(`^update\s+balances\s+set\s+cents\s*=\s*cents\s*\+\s*\$(\d+)\s+where\s+account_id\s*=\s*\$(\d+)$`).FindStringSubmatch(strings.Join(words, " "))
+		if len(match) != 3 || len(args) != 2 {
+			return zero, fmt.Errorf("unsupported update: %s", sql)
+		}
+		deltaArg, _ := strconv.Atoi(match[1])
+		idArg, _ := strconv.Atoi(match[2])
+		if deltaArg < 1 || deltaArg > len(args) || idArg < 1 || idArg > len(args) || deltaArg == idArg {
+			return zero, errors.New("unsupported update bindings")
+		}
+		id, ok := args[idArg-1].(string)
+		if !ok {
+			return zero, errors.New("unsupported account binding")
+		}
+		var delta int64
+		switch value := args[deltaArg-1].(type) {
+		case int64:
+			delta = value
+		case int:
+			delta = int64(value)
+		default:
+			return zero, fmt.Errorf("unsupported delta binding %T", value)
+		}
+		t.s.writes++
+		if t.s.cancelAt == t.s.writes {
+			t.s.cancel()
+			return zero, context.Canceled
+		}
+		balance, exists := t.s.staged[id]
+		if !exists {
+			return pgconn.NewCommandTag("UPDATE 0"), nil
+		}
+		if balance+delta < 0 {
+			t.s.aborted = true
+			t.s.failure = &pgconn.PgError{Code: "23514", Message: "balance check violation"}
+			return zero, t.s.failure
+		}
+		t.s.staged[id] = balance + delta
+		return pgconn.NewCommandTag("UPDATE 1"), nil
+	default:
+		return zero, fmt.Errorf("unsupported statement: %s", sql)
+	}
+}
+
+func newScenario(t *testing.T, nested bool) (context.Context, *modelTx, *modelTx) {
+	t.Helper()
+	ctx := context.WithValue(context.Background(), traceKey{}, "checkout-42")
+	initial := map[string]int64{"audit": 100, "alice": 100, "bob": 50}
+	root := &modelTx{s: &transactionState{staged: maps.Clone(initial), durable: maps.Clone(initial)}}
+	parent := root
+	if nested {
+		child, err := root.Begin(ctx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		parent = child.(*modelTx)
+	}
+	if _, err := parent.Exec(ctx, "update balances set cents=cents+$1 where account_id=$2", int64(7), "audit"); err != nil {
+		t.Fatal(err)
+	}
+	return ctx, parent, root
+}
+func checkRecoverable(t *testing.T, parent *modelTx, before map[string]int64) {
+	t.Helper()
+	if parent.closed || parent.s.terminal {
+		t.Fatal("function finalized the caller-owned transaction")
+	}
+	if !reflect.DeepEqual(parent.s.staged, before) {
+		t.Fatalf("caller state = %v; want %v", parent.s.staged, before)
+	}
+	if _, err := parent.Exec(context.Background(), "update balances set cents=cents+$1 where account_id=$2", int64(1), "audit"); err != nil {
+		t.Fatalf("parent no longer usable: %v", err)
+	}
+}
+
+func TestTransferItemFailuresPreserveCaller(t *testing.T) {
+	for _, nested := range []bool{false, true} {
+		for _, kind := range []string{"invalid", "missing", "postgres"} {
+			t.Run(fmt.Sprintf("nested=%t/%s", nested, kind), func(t *testing.T) {
+				ctx, parent, _ := newScenario(t, nested)
+				before := maps.Clone(parent.s.staged)
+				items := []Adjustment{{"alice", 20}}
+				var want error
+				switch kind {
+				case "invalid":
+					items = append(items, Adjustment{"", 1})
+					want = ErrInvalidAdjustment
+				case "missing":
+					items = append(items, Adjustment{"nobody", 1})
+					want = ErrAccountMissing
+				case "postgres":
+					items = append(items, Adjustment{"bob", -80})
+				}
+				err := ApplyAdjustments(ctx, parent, items)
+				if kind == "postgres" {
+					var pgErr *pgconn.PgError
+					if !errors.As(err, &pgErr) || pgErr != parent.s.failure {
+						t.Fatalf("lost original pgx error: %v", err)
+					}
+				} else if !errors.Is(err, want) {
+					t.Fatalf("lost operation error: %v", err)
+				}
+				checkRecoverable(t, parent, before)
+			})
+		}
+	}
+}
+func TestTransferSuccessStaysStaged(t *testing.T) {
+	for _, nested := range []bool{false, true} {
+		t.Run(fmt.Sprint(nested), func(t *testing.T) {
+			ctx, parent, root := newScenario(t, nested)
+			beforeDurable := maps.Clone(root.s.durable)
+			if err := ApplyAdjustments(ctx, parent, []Adjustment{{"alice", 20}, {"bob", -10}}); err != nil {
+				t.Fatal(err)
+			}
+			want := map[string]int64{"audit": 107, "alice": 120, "bob": 40}
+			if parent.closed || parent.s.terminal || !reflect.DeepEqual(root.s.staged, want) {
+				t.Fatalf("success changed ownership/state: %+v", root.s)
+			}
+			if !reflect.DeepEqual(root.s.durable, beforeDurable) {
+				t.Fatal("callee committed durable changes")
+			}
+			if err := parent.Commit(ctx); err != nil {
+				t.Fatalf("caller commit: %v", err)
+			}
+			if nested {
+				if err := root.Commit(ctx); err != nil {
+					t.Fatal(err)
+				}
+			}
+			if !reflect.DeepEqual(root.s.durable, want) {
+				t.Fatalf("caller commit = %v", root.s.durable)
+			}
+		})
+	}
+}
+func TestTransferCancellationCleanup(t *testing.T) {
+	ctx, parent, _ := newScenario(t, false)
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+	parent.s.cancel = cancel
+	parent.s.cancelAt = parent.s.writes + 2
+	before := maps.Clone(parent.s.staged)
+	err := ApplyAdjustments(ctx, parent, []Adjustment{{"alice", 20}, {"bob", 1}})
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("lost cancellation: %v", err)
+	}
+	checkRecoverable(t, parent, before)
+	if len(parent.s.cleanups) == 0 {
+		t.Fatal("no sub-operation rollback observed")
+	}
+	for _, c := range parent.s.cleanups {
+		if c.err != nil || c.trace != "checkout-42" || !c.bounded || c.remaining <= 0 || c.remaining > time.Second+20*time.Millisecond {
+			t.Fatalf("cleanup context = %+v", c)
+		}
+	}
+}
+func TestTransferCleanupErrorIsNotLost(t *testing.T) {
+	ctx, parent, _ := newScenario(t, false)
+	cleanupErr := errors.New("rollback transport failure")
+	parent.s.rollbackErr = cleanupErr
+	err := ApplyAdjustments(ctx, parent, []Adjustment{{"alice", 20}, {"bob", -80}})
+	if !errors.Is(err, cleanupErr) || !errors.Is(err, parent.s.failure) {
+		t.Fatalf("both errors must survive: %v", err)
+	}
+	if parent.closed || parent.s.terminal {
+		t.Fatal("callee finalized parent after child cleanup failure")
+	}
+}
+func TestTransferLifecycleErrors(t *testing.T) {
+	for _, stage := range []string{"begin", "release"} {
+		t.Run(stage, func(t *testing.T) {
+			ctx, parent, _ := newScenario(t, false)
+			want := errors.New(stage + " failed")
+			if stage == "begin" {
+				parent.s.beginErr = want
+			} else {
+				parent.s.releaseErr = want
+			}
+			err := ApplyAdjustments(ctx, parent, []Adjustment{{"alice", 1}})
+			if !errors.Is(err, want) {
+				t.Fatalf("lost %s error: %v", stage, err)
+			}
+			if parent.closed || parent.s.terminal {
+				t.Fatal("callee finalized parent on lifecycle error")
+			}
+		})
+	}
+}
