@@ -31,13 +31,14 @@ type database struct {
 	exists                                    bool
 	outside, commits, openRows                int
 	block                                     string
-	entered, release                          chan struct{}
+	entered                                   chan context.Context
+	release                                   chan struct{}
 }
 
 func databaseFor(t *testing.T) (*database, *sql.DB) {
 	t.Helper()
 	d := &database{amounts: []driver.Value{int64(4), int64(7), int64(90)}, report: prior, exists: true,
-		entered: make(chan struct{}, 1), release: make(chan struct{})}
+		entered: make(chan context.Context, 1), release: make(chan struct{})}
 	db := sql.OpenDB(localConnector{d})
 	db.SetMaxOpenConns(1)
 	t.Cleanup(func() { db.Close() })
@@ -145,6 +146,7 @@ func TestLifecycleContextReachesDriver(t *testing.T) {
 			done := make(chan outcome, 1)
 			go func() { r, err := New(db).Materialize(ctx, "acct-7", 2); done <- outcome{r, err} }()
 			var result outcome
+			var driverContext context.Context
 			haveResult := false
 			var releaseOnce sync.Once
 			releaseDriver := func() { releaseOnce.Do(func() { close(d.release) }) }
@@ -160,7 +162,7 @@ func TestLifecycleContextReachesDriver(t *testing.T) {
 				}
 			})
 			select {
-			case <-d.entered:
+			case driverContext = <-d.entered:
 			case result = <-done:
 				haveResult = true
 				t.Fatalf("operation completed without reaching %s: %#v, %v", stage, result.report, result.err)
@@ -168,10 +170,13 @@ func TestLifecycleContextReachesDriver(t *testing.T) {
 				t.Fatalf("operation did not reach %s", stage)
 			}
 			cancel()
+			var driverErr error
 			select {
 			case result = <-done:
 				haveResult = true
+				driverErr = driverContext.Err()
 			case <-time.After(200 * time.Millisecond):
+				driverErr = driverContext.Err()
 				releaseDriver()
 				// Avoid a timeout as the oracle: release the driver and inspect the real result.
 				select {
@@ -180,6 +185,9 @@ func TestLifecycleContextReachesDriver(t *testing.T) {
 				case <-time.After(time.Second):
 					t.Fatal("worker failed to finish after driver release")
 				}
+			}
+			if !errors.Is(driverErr, context.Canceled) {
+				t.Errorf("caller cancellation did not reach driver context: %v", driverErr)
 			}
 			requireFailure(t, result.report, result.err, context.Canceled)
 			requirePrior(t, d)
@@ -221,7 +229,7 @@ func (d *database) wait(ctx context.Context, stage string) error {
 		return nil
 	}
 	select {
-	case d.entered <- struct{}{}:
+	case d.entered <- ctx:
 	default:
 	}
 	select {
