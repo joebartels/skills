@@ -1,6 +1,6 @@
 # Authoring Go quality build skills
 
-The [package guide](../../plugins/go-quality-build/README.md) lists skills and their decision owners. Runtime instructions live in `plugins/go-quality-build/skills/`; evaluation fixtures belong in `tests/go-quality-build/`.
+The [package guide](../../plugins/go-quality-build/README.md) lists skills and their decision owners. Runtime instructions live in `plugins/go-quality-build/skills/`; evaluation fixtures for retained skills belong in `tests/go-quality-build/`.
 
 ## Write useful guidance
 
@@ -15,6 +15,8 @@ The [package guide](../../plugins/go-quality-build/README.md) lists skills and t
 Use realistic Go tasks, including a case that should skip the skill. Compare equivalent tasks and settings with and without the guidance. Revise concrete failures, then check a fresh task for transfer and regressions.
 
 Verify behavior on supported Go toolchains; use race checks for concurrent work. Assess preserved contracts and complexity, not just passing tests or grades. Packaging validation checks structure, not effectiveness.
+
+Screen candidates in temporary workspaces. Follow the [repository content rule](../../AGENTS.md#repository-content): if a skill is not retained, its candidate-only evaluations, tests, tooling and documentation must not land either. Future reuse alone does not justify keeping them.
 
 ## Maintain documentation
 
