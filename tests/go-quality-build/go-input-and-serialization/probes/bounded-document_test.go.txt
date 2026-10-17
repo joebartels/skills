@@ -1,0 +1,202 @@
+package bundlecfg_test
+
+import (
+	"bytes"
+	"errors"
+	"io"
+	"reflect"
+	"strings"
+	"testing"
+
+	"example.com/bundlecfg"
+)
+
+type observedReader struct {
+	r     io.Reader
+	bytes int
+	eof   bool
+}
+
+func (r *observedReader) Read(p []byte) (int, error) {
+	n, err := r.r.Read(p)
+	r.bytes += n
+	if err == io.EOF {
+		r.eof = true
+	}
+	return n, err
+}
+
+func TestContractCompleteBundle(t *testing.T) {
+	for _, input := range []string{
+		`{"services":[{"name":"a","port":1},{"name":"b","port":65535},{"name":"c","port":80}]}`,
+		` {"serv\u0069ces":[{"na\u006de":"a","port":1},{"name":"b","port":65535},{"name":"c","port":80}]} `,
+	} {
+		r := &observedReader{r: strings.NewReader(input)}
+		calls := 0
+		err := bundlecfg.Load(r, func(got bundlecfg.Bundle) error {
+			calls++
+			if !r.eof {
+				t.Error("replacement happened before reader EOF")
+			}
+			want := []bundlecfg.Service{{Name: "a", Port: 1}, {Name: "b", Port: 65535}, {Name: "c", Port: 80}}
+			if !reflect.DeepEqual(got.Services, want) {
+				t.Errorf("services = %#v, want %#v", got.Services, want)
+			}
+			return nil
+		})
+		if err != nil || calls != 1 {
+			t.Errorf("valid bundle: calls=%d err=%v", calls, err)
+		}
+	}
+}
+
+func TestContractRejectedBundlesDoNotReplace(t *testing.T) {
+	cases := map[string]string{
+		"missing services":       `{}`,
+		"null root":              `null`,
+		"array root":             `[]`,
+		"null services":          `{"services":null}`,
+		"object services":        `{"services":{}}`,
+		"too many services":      `{"services":[{"name":"a","port":1},{"name":"b","port":2},{"name":"c","port":3},{"name":"d","port":4}]}`,
+		"unknown root":           `{"services":[],"extra":1}`,
+		"root case":              `{"Services":[]}`,
+		"duplicate root":         `{"services":[],"services":[]}`,
+		"escaped duplicate root": `{"services":[],"serv\u0069ces":[]}`,
+		"null service":           `{"services":[null]}`,
+		"missing name":           `{"services":[{"port":1}]}`,
+		"missing port":           `{"services":[{"name":"a"}]}`,
+		"empty name":             `{"services":[{"name":"","port":1}]}`,
+		"null name":              `{"services":[{"name":null,"port":1}]}`,
+		"wrong name type":        `{"services":[{"name":4,"port":1}]}`,
+		"null port":              `{"services":[{"name":"a","port":null}]}`,
+		"string port":            `{"services":[{"name":"a","port":"1"}]}`,
+		"fraction port":          `{"services":[{"name":"a","port":1.5}]}`,
+		"zero port":              `{"services":[{"name":"a","port":0}]}`,
+		"large port":             `{"services":[{"name":"a","port":65536}]}`,
+		"unknown service":        `{"services":[{"name":"a","port":1,"extra":true}]}`,
+		"service case":           `{"services":[{"Name":"a","port":1}]}`,
+		"duplicate name":         `{"services":[{"name":"a","name":"b","port":1}]}`,
+		"escaped duplicate port": `{"services":[{"name":"a","port":1,"po\u0072t":2}]}`,
+		"later invalid service":  `{"services":[{"name":"a","port":1},{"name":"bad","port":-1}]}`,
+		"broken syntax":          `{"services":[{"name":"a","port":1}]`,
+		"second document":        `{"services":[]} {"services":[]}`,
+		"trailer garbage":        `{"services":[]} x`,
+	}
+	for name, input := range cases {
+		t.Run(name, func(t *testing.T) {
+			calls := 0
+			err := bundlecfg.Load(strings.NewReader(input), func(bundlecfg.Bundle) error { calls++; return nil })
+			if err == nil || calls != 0 {
+				t.Fatalf("rejected input: calls=%d err=%v", calls, err)
+			}
+		})
+	}
+}
+
+func TestContractByteLimit(t *testing.T) {
+	for _, tc := range []struct {
+		name, input string
+		accept      bool
+	}{
+		{"exact limit", `{"services":[]}` + strings.Repeat(" ", 497), true},
+		{"one extra whitespace", `{"services":[]}` + strings.Repeat(" ", 498), false},
+		{"large leading whitespace", strings.Repeat(" ", 4096) + `{"services":[]}`, false},
+		{"large payload", `{"services":[{"name":"` + strings.Repeat("x", 4096) + `","port":1}]}`, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			r := &observedReader{r: strings.NewReader(tc.input)}
+			calls := 0
+			err := bundlecfg.Load(r, func(b bundlecfg.Bundle) error {
+				calls++
+				if !r.eof {
+					t.Error("replacement before real EOF")
+				}
+				if len(b.Services) != 0 {
+					t.Errorf("service count = %d, want 0", len(b.Services))
+				}
+				return nil
+			})
+			wantCalls := 0
+			if tc.accept {
+				wantCalls = 1
+			}
+			if (err == nil) != tc.accept || calls != wantCalls {
+				t.Errorf("calls=%d err=%v, accept=%v", calls, err, tc.accept)
+			}
+			if r.bytes > 513 {
+				t.Errorf("read %d bytes, maximum is 513", r.bytes)
+			}
+		})
+	}
+}
+
+type failedReader struct {
+	data []byte
+	err  error
+}
+
+func (r *failedReader) Read(p []byte) (int, error) {
+	if len(r.data) == 0 {
+		return 0, r.err
+	}
+	n := copy(p, r.data)
+	r.data = r.data[n:]
+	return n, r.err
+}
+
+func TestContractReaderAndCallbackErrors(t *testing.T) {
+	for _, r := range []io.Reader{
+		&failedReader{err: io.ErrUnexpectedEOF},
+		&failedReader{data: []byte(`{"services":[]}`), err: io.ErrUnexpectedEOF},
+		io.MultiReader(bytes.NewBufferString(`{"services":[]}`), &failedReader{err: io.ErrUnexpectedEOF}),
+	} {
+		calls := 0
+		err := bundlecfg.Load(r, func(bundlecfg.Bundle) error { calls++; return nil })
+		if err == nil || calls != 0 {
+			t.Errorf("reader failure: calls=%d err=%v", calls, err)
+		}
+	}
+	want := errors.New("replacement unavailable")
+	calls := 0
+	err := bundlecfg.Load(strings.NewReader(`{"services":[]}`), func(bundlecfg.Bundle) error { calls++; return want })
+	if !errors.Is(err, want) || calls != 1 {
+		t.Fatalf("callback failure: calls=%d err=%v", calls, err)
+	}
+}
+
+type contractByteReader struct {
+	data        []byte
+	eofWithData bool
+}
+
+func (r *contractByteReader) Read(p []byte) (int, error) {
+	if len(p) == 0 {
+		return 0, nil
+	}
+	if len(r.data) == 0 {
+		return 0, io.EOF
+	}
+	p[0] = r.data[0]
+	r.data = r.data[1:]
+	if len(r.data) == 0 && r.eofWithData {
+		return 1, io.EOF
+	}
+	return 1, nil
+}
+
+func TestContractShortReadsAndFinalDataWithEOF(t *testing.T) {
+	for _, eofWithData := range []bool{false, true} {
+		r := &observedReader{r: &contractByteReader{data: []byte(`{"services":[]}`), eofWithData: eofWithData}}
+		calls := 0
+		err := bundlecfg.Load(r, func(got bundlecfg.Bundle) error {
+			calls++
+			if !r.eof || len(got.Services) != 0 {
+				t.Errorf("replacement before EOF or wrong services: eof=%v bundle=%#v", r.eof, got)
+			}
+			return nil
+		})
+		if err != nil || calls != 1 {
+			t.Errorf("eofWithData=%v: calls=%d err=%v", eofWithData, calls, err)
+		}
+	}
+}

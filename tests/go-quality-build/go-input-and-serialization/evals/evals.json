@@ -1,0 +1,95 @@
+{
+  "skill_name": "go-input-and-serialization",
+  "evals": [
+    {
+      "id": "bounded-document",
+      "prompt": "Implement the bounded service-bundle loading contract in README.md. Preserve the API and add focused regression tests.",
+      "expected_output": "A complete bounded unambiguous document is validated before replacement.",
+      "assertions": [
+        "Reject trailing input, excess bytes, decoded duplicate/unknown names and incomplete or invalid schema without callbacks.",
+        "Accept exact limits, empty service lists and valid escaped names; finish real input before replacing once."
+      ],
+      "files": [
+        "files/bounded-document/README.md",
+        "files/bounded-document/bundle.go",
+        "files/bounded-document/bundle_test.go",
+        "files/bounded-document/go.mod"
+      ]
+    },
+    {
+      "id": "patch-presence",
+      "prompt": "Implement the partial configuration update contract in README.md. Preserve the API and add focused regression tests.",
+      "expected_output": "Presence-aware updates preserve old aliases and leave state untouched on any rejection.",
+      "assertions": [
+        "Distinguish absent, null, false, zero and empty values according to each field contract.",
+        "Reject duplicates/types/unknown members atomically, preserving old map and pointer aliases."
+      ],
+      "files": [
+        "files/patch-presence/README.md",
+        "files/patch-presence/go.mod",
+        "files/patch-presence/patch.go",
+        "files/patch-presence/patch_test.go"
+      ]
+    },
+    {
+      "id": "exact-relay",
+      "prompt": "Implement the event relaying contract in README.md. Preserve the API and add focused regression tests.",
+      "expected_output": "Routing and nested extension numbers retain exact values under the permissive format contract.",
+      "assertions": [
+        "Keep uint64 identifiers and nested decimal precision without float64 rounding.",
+        "Preserve presence/null/empty distinctions, accepted duplicates and unknown-member policy; publish only after complete bounded input."
+      ],
+      "files": [
+        "files/exact-relay/README.md",
+        "files/exact-relay/go.mod",
+        "files/exact-relay/relay.go",
+        "files/exact-relay/relay_test.go"
+      ]
+    },
+    {
+      "id": "compatibility-control",
+      "prompt": "Make the configuration normalization change in README.md. Preserve the existing supported format and add a focused regression test.",
+      "expected_output": "Requested trimming works while JSONv1 compatibility and nil/empty output remain intact.",
+      "assertions": [
+        "Continue accepting unknown fields, case-insensitive struct members and last duplicate scalar values.",
+        "Preserve null versus empty-array serialization and introduce no unrelated strictness."
+      ],
+      "files": [
+        "files/compatibility-control/README.md",
+        "files/compatibility-control/config.go",
+        "files/compatibility-control/config_test.go",
+        "files/compatibility-control/go.mod"
+      ]
+    },
+    {
+      "id": "pure-control",
+      "prompt": "Fix the private calculation described in README.md. Keep the exported signature and add a deterministic regression test.",
+      "expected_output": "Negative odd values contribute without adding decoding behavior or unrelated changes.",
+      "assertions": [
+        "Negative and mixed odd inputs produce the correct sum.",
+        "Decline input/serialization skill selection."
+      ],
+      "files": [
+        "files/pure-control/README.md",
+        "files/pure-control/go.mod",
+        "files/pure-control/tally.go",
+        "files/pure-control/tally_test.go"
+      ]
+    },
+    {
+      "id": "csv-transfer",
+      "prompt": "Implement the catalogue import contract in README.md. Preserve the API and add focused regression tests.",
+      "expected_output": "A bounded complete CSV import validates all rows before one replacement.",
+      "assertions": [
+        "Respect CSV records, exact numeric values, limits and explicit empty-field semantics.",
+        "Late parse/read/validation failures cause no replacement; valid limits and multiline values work."
+      ],
+      "files": [
+        "files/csv-transfer/README.md",
+        "files/csv-transfer/go.mod",
+        "files/csv-transfer/import.go",
+        "files/csv-transfer/import_test.go"
+      ]
+    }
+  ]
+}

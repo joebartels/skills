@@ -1,0 +1,216 @@
+package relay_test
+
+import (
+	"bytes"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
+	"math/big"
+	"strings"
+	"testing"
+
+	relay "example.com/exactrelay"
+)
+
+func forwarded(t *testing.T, input string) (uint64, map[string]any) {
+	t.Helper()
+	var route uint64
+	var wire []byte
+	calls := 0
+	err := relay.Relay(strings.NewReader(input), func(id uint64, body []byte) error {
+		calls++
+		route = id
+		wire = append([]byte(nil), body...)
+		return nil
+	})
+	if err != nil || calls != 1 {
+		t.Fatalf("Relay error %v, calls %d; want success and one publish", err, calls)
+	}
+	decoder := json.NewDecoder(bytes.NewReader(wire))
+	decoder.UseNumber()
+	var got map[string]any
+	if err := decoder.Decode(&got); err != nil {
+		t.Fatalf("published body is invalid: %v", err)
+	}
+	if err := decoder.Decode(new(any)); err != io.EOF {
+		t.Fatalf("published body has trailing data: %v", err)
+	}
+	return route, got
+}
+
+func requireExactNumber(t *testing.T, got any, literal string) {
+	t.Helper()
+	number, ok := got.(json.Number)
+	if !ok {
+		t.Fatalf("got %T (%v), want JSON number %s", got, got, literal)
+	}
+	actual, ok := new(big.Rat).SetString(number.String())
+	if !ok {
+		t.Fatalf("invalid published number %q", number)
+	}
+	want, ok := new(big.Rat).SetString(literal)
+	if !ok {
+		t.Fatalf("invalid test literal %q", literal)
+	}
+	if actual.Cmp(want) != 0 {
+		t.Errorf("published number %s, want exact value %s", number, literal)
+	}
+}
+
+func TestRoutingIDAndNestedNumbersRemainExact(t *testing.T) {
+	for _, tc := range []struct {
+		literal string
+		id      uint64
+	}{
+		{"9007199254740993", 9007199254740993},
+		{"18446744073709551615", 18446744073709551615},
+	} {
+		t.Run(tc.literal, func(t *testing.T) {
+			input := fmt.Sprintf(`{"id":%s,"kind":" Updated ","extensions":{"items":[{"above":184467440737095516170,"below":-9007199254740993,"fraction":0.12345678901234567890123456789,"scientific":-6.022140760000000001e+23}]}}`, tc.literal)
+			id, got := forwarded(t, input)
+			if id != tc.id {
+				t.Errorf("routing id %d, want %d", id, tc.id)
+			}
+			requireExactNumber(t, got["id"], tc.literal)
+			if got["kind"] != "updated" {
+				t.Errorf("kind %v, want updated", got["kind"])
+			}
+			extensions, ok := got["extensions"].(map[string]any)
+			if !ok {
+				t.Fatalf("extensions %T, want object", got["extensions"])
+			}
+			items, ok := extensions["items"].([]any)
+			if !ok || len(items) != 1 {
+				t.Fatalf("items %v, want one entry", extensions["items"])
+			}
+			item, ok := items[0].(map[string]any)
+			if !ok {
+				t.Fatalf("item %T, want object", items[0])
+			}
+			for key, literal := range map[string]string{
+				"above":      "184467440737095516170",
+				"below":      "-9007199254740993",
+				"fraction":   "0.12345678901234567890123456789",
+				"scientific": "-6.022140760000000001e+23",
+			} {
+				t.Run(key, func(t *testing.T) { requireExactNumber(t, item[key], literal) })
+			}
+		})
+	}
+}
+
+func TestOptionalExtensionStatesRemainDistinct(t *testing.T) {
+	for _, literal := range []string{"", "null", "{}", "[]", `""`, "false", "0"} {
+		t.Run("extension="+literal, func(t *testing.T) {
+			input := `{"id":7,"kind":"created"`
+			if literal != "" {
+				input += `,"extensions":` + literal
+			}
+			_, got := forwarded(t, input+"}")
+			value, present := got["extensions"]
+			if literal == "" {
+				if present {
+					t.Fatal("absent extensions became present")
+				}
+				return
+			}
+			if !present {
+				t.Fatal("present extensions was omitted")
+			}
+			wire, err := json.Marshal(value)
+			if err != nil || string(wire) != literal {
+				t.Fatalf("extensions %s, %v; want %s", wire, err, literal)
+			}
+		})
+	}
+}
+
+func TestRejectedDocumentNeverPublishes(t *testing.T) {
+	valid := `{"id":7,"kind":"ready"}`
+	for name, input := range map[string]string{
+		"second document":      valid + ` {"id":8,"kind":"later"}`,
+		"trailing junk":        valid + " broken",
+		"oversized whitespace": valid + strings.Repeat(" ", relay.MaxDocumentBytes-len(valid)+1),
+		"blank kind":           `{"id":7,"kind":"  "}`,
+		"zero id":              `{"id":0,"kind":"ready"}`,
+		"negative id":          `{"id":-1,"kind":"ready"}`,
+		"fractional id":        `{"id":1.5,"kind":"ready"}`,
+		"overflow id":          `{"id":18446744073709551616,"kind":"ready"}`,
+		"quoted id":            `{"id":"7","kind":"ready"}`,
+		"late type error":      `{"id":7,"kind":false}`,
+		"case-sensitive id":    `{"ID":7,"kind":"ready"}`,
+		"case-sensitive kind":  `{"id":7,"KIND":"ready"}`,
+		"null root":            `null`,
+		"array root":           `[]`,
+		"missing id":           `{"kind":"ready"}`,
+		"null id":              `{"id":null,"kind":"ready"}`,
+		"missing kind":         `{"id":7}`,
+		"null kind":            `{"id":7,"kind":null}`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			calls := 0
+			err := relay.Relay(strings.NewReader(input), func(uint64, []byte) error { calls++; return nil })
+			if err == nil || calls != 0 {
+				t.Fatalf("error %v, calls %d; want rejection before publication", err, calls)
+			}
+		})
+	}
+}
+
+type lateFailureReader struct{ remaining string }
+
+func (r *lateFailureReader) Read(p []byte) (int, error) {
+	if r.remaining == "" {
+		return 0, io.ErrUnexpectedEOF
+	}
+	n := copy(p, r.remaining)
+	r.remaining = r.remaining[n:]
+	return n, nil
+}
+
+func TestReaderFailureAfterDocumentPreventsPublication(t *testing.T) {
+	calls := 0
+	r := &lateFailureReader{remaining: `{"id":7,"kind":"ready"}`}
+	err := relay.Relay(r, func(uint64, []byte) error { calls++; return nil })
+	if err == nil || calls != 0 {
+		t.Fatalf("error %v, calls %d; want read failure before publication", err, calls)
+	}
+}
+
+func TestAcceptedCompatibilitySizeBoundaryAndCallbackError(t *testing.T) {
+	input := `{"id":1,"id":7,"kind":" Ready ","future":{"enabled":true},"extensions":{"x":1,"x":2}}`
+	input += strings.Repeat(" ", relay.MaxDocumentBytes-len(input))
+	id, got := forwarded(t, input)
+	if id != 7 || got["kind"] != "ready" {
+		t.Fatalf("id %d, event %v", id, got)
+	}
+	if _, present := got["future"]; present {
+		t.Fatal("unknown envelope member was forwarded")
+	}
+	extensions, ok := got["extensions"].(map[string]any)
+	if !ok {
+		t.Fatalf("extensions %T", got["extensions"])
+	}
+	requireExactNumber(t, extensions["x"], "2")
+	failure := errors.New("downstream unavailable")
+	calls := 0
+	err := relay.Relay(strings.NewReader(`{"id":7,"kind":"ready"}`), func(uint64, []byte) error { calls++; return failure })
+	if !errors.Is(err, failure) || calls != 1 {
+		t.Fatalf("callback error %v, calls %d", err, calls)
+	}
+}
+
+func TestLastMemberWinsBeforeTypedValidation(t *testing.T) {
+	for _, input := range []string{
+		`{"id":"superseded","id":7,"kind":"ready"}`,
+		`{"id":null,"i\u0064":7,"kind":"ready"}`,
+		`{"id":7,"ID":8,"kind":"ready"}`,
+		`{"id":7,"kind":false,"kind":"ready"}`,
+	} {
+		id, got := forwarded(t, input)
+		if id != 7 || got["kind"] != "ready" {
+			t.Fatalf("Relay(%s): id=%d body=%v", input, id, got)
+		}
+	}
+}

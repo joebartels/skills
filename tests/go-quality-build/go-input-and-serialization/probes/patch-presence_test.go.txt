@@ -1,0 +1,114 @@
+package configpatch_test
+
+import (
+	"reflect"
+	"testing"
+
+	"example.com/configpatch"
+)
+
+func originalConfig() (configpatch.Config, *string, map[string]string) {
+	label := "old"
+	labels := map[string]string{"keep": "old"}
+	return configpatch.Config{Enabled: true, Retries: 7, Label: &label, Labels: labels}, &label, labels
+}
+
+func TestContractPresenceAndZeroValues(t *testing.T) {
+	cfg, oldLabel, oldLabels := originalConfig()
+	if err := configpatch.Apply(&cfg, []byte(` {"enabled":false,"retries":0} `)); err != nil {
+		t.Fatal(err)
+	}
+	if cfg.Enabled || cfg.Retries != 0 || cfg.Label == nil || *cfg.Label != "old" || !reflect.DeepEqual(cfg.Labels, map[string]string{"keep": "old"}) {
+		t.Fatalf("explicit zero or absent fields: %#v", cfg)
+	}
+	if err := configpatch.Apply(&cfg, []byte(`{}`)); err != nil {
+		t.Fatal(err)
+	}
+	if cfg.Enabled || cfg.Retries != 0 || *oldLabel != "old" || !reflect.DeepEqual(oldLabels, map[string]string{"keep": "old"}) {
+		t.Fatal("empty patch changed retained state")
+	}
+	if err := configpatch.Apply(&cfg, []byte(`{"lab\u0065l":"","retr\u0069es":10}`)); err != nil {
+		t.Fatal(err)
+	}
+	if cfg.Label == nil || *cfg.Label != "" || cfg.Retries != 10 || *oldLabel != "old" {
+		t.Fatalf("empty label/boundary update corrupted old pointer: %#v old=%q", cfg, *oldLabel)
+	}
+}
+
+func TestContractLabelsReplaceAndNullClear(t *testing.T) {
+	for _, tc := range []struct {
+		input string
+		want  map[string]string
+	}{
+		{`{"labels":{"new":"v"}}`, map[string]string{"new": "v"}},
+		{`{"labels":{"new":""}}`, map[string]string{"new": ""}},
+		{`{"labels":{"\u006eew":"v"}}`, map[string]string{"new": "v"}},
+		{`{"labels":{"Key":"a","key":"b"}}`, map[string]string{"Key": "a", "key": "b"}},
+		{`{"labels":{}}`, map[string]string{}},
+		{`{"labels":null}`, nil},
+	} {
+		cfg, oldLabel, oldLabels := originalConfig()
+		if err := configpatch.Apply(&cfg, []byte(tc.input)); err != nil {
+			t.Fatal(err)
+		}
+		if !reflect.DeepEqual(cfg.Labels, tc.want) {
+			t.Errorf("%s: labels=%#v want=%#v", tc.input, cfg.Labels, tc.want)
+		}
+		if !reflect.DeepEqual(oldLabels, map[string]string{"keep": "old"}) || *oldLabel != "old" {
+			t.Errorf("%s: changed old aliases", tc.input)
+		}
+	}
+	cfg, oldLabel, oldLabels := originalConfig()
+	if err := configpatch.Apply(&cfg, []byte(`{"label":null}`)); err != nil {
+		t.Fatal(err)
+	}
+	if cfg.Label != nil || !cfg.Enabled || cfg.Retries != 7 || *oldLabel != "old" || !reflect.DeepEqual(oldLabels, map[string]string{"keep": "old"}) {
+		t.Fatalf("null clear: %#v", cfg)
+	}
+}
+
+func TestContractInvalidPatchIsAtomic(t *testing.T) {
+	cases := map[string]string{
+		"null root":                 `null`,
+		"array root":                `[]`,
+		"extra document":            `{"enabled":false} {}`,
+		"trailing junk":             `{"enabled":false} x`,
+		"broken syntax":             `{"enabled":false`,
+		"unknown":                   `{"enabled":false,"extra":1}`,
+		"field case":                `{"Enabled":false}`,
+		"label case":                `{"Label":"new"}`,
+		"duplicate":                 `{"enabled":false,"enabled":true}`,
+		"escaped duplicate":         `{"retries":1,"retr\u0069es":2}`,
+		"duplicate label":           `{"label":"new","lab\u0065l":"later"}`,
+		"duplicate map key":         `{"labels":{"keep":"new","keep":"later"}}`,
+		"escaped duplicate map key": `{"labels":{"keep":"new","ke\u0065p":"later"}}`,
+		"enabled null":              `{"enabled":null}`,
+		"enabled number":            `{"enabled":0}`,
+		"enabled string":            `{"enabled":"false"}`,
+		"retries null":              `{"retries":null}`,
+		"retries string":            `{"retries":"2"}`,
+		"retries fraction":          `{"retries":2.5}`,
+		"negative retries":          `{"enabled":false,"retries":-1}`,
+		"excess retries":            `{"label":"new","labels":{"keep":"new"},"retries":11}`,
+		"label number":              `{"enabled":false,"label":3}`,
+		"labels array":              `{"labels":[]}`,
+		"null map value":            `{"labels":{"keep":null}}`,
+		"wrong map value":           `{"label":"new","labels":{"keep":"new","bad":3}}`,
+	}
+	for name, input := range cases {
+		t.Run(name, func(t *testing.T) {
+			cfg, oldLabel, oldLabels := originalConfig()
+			err := configpatch.Apply(&cfg, []byte(input))
+			if err == nil {
+				t.Error("accepted invalid patch")
+			}
+			if !cfg.Enabled || cfg.Retries != 7 || cfg.Label != oldLabel || *oldLabel != "old" || !reflect.DeepEqual(cfg.Labels, map[string]string{"keep": "old"}) || !reflect.DeepEqual(oldLabels, map[string]string{"keep": "old"}) {
+				t.Fatalf("failed patch changed state: config=%#v label=%q labels=%#v", cfg, *oldLabel, oldLabels)
+			}
+			oldLabels["after"] = "still shared"
+			if cfg.Labels["after"] != "still shared" {
+				t.Error("failed patch replaced the original map")
+			}
+		})
+	}
+}

@@ -1,0 +1,5 @@
+Extend Relay to safely forward event documents while keeping its API and Go 1.22 minimum. Normalize kind by trimming space and lowercasing; require a nonblank string kind and a positive uint64 JSON integer id. The callback receives that exact id and the normalized document.
+
+Read exactly one JSON object of at most MaxDocumentBytes bytes, including surrounding whitespace. Finish reading, decoding and validation before publishing once; rejected input must never publish. Trailing whitespace is allowed; trailing documents, junk, reader failures and oversized bodies are errors. Return callback errors.
+
+Keep the optional extensions member and arbitrary nested JSON values lossless: absent, null, empty objects/arrays/strings, false and zero stay distinct, and numbers retain their exact decimal value and precision through forwarding. Whitespace and object-key order are not promised. Ignore other unknown envelope members. Keep encoding/json v1's case-sensitive map keys and last duplicate member wins behavior; do not introduce duplicate or unknown-member rejection. Add focused tests.
