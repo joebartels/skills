@@ -1,0 +1,9 @@
+package severity
+
+import "testing"
+
+func TestContractSchemaSource(t *testing.T) {
+	if got := Name(50); got != "fatal" {
+		t.Fatalf("Name(50) = %q after schema adds fatal; want fatal", got)
+	}
+}

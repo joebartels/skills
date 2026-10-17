@@ -1,0 +1,14 @@
+package severity
+
+import "testing"
+
+func TestContractAllLevels(t *testing.T) {
+	for _, tc := range []struct {
+		code int
+		name string
+	}{{10, "debug"}, {20, "info"}, {30, "warn"}, {40, "error"}, {0, ""}, {-1, ""}, {41, ""}} {
+		if got := Name(tc.code); got != tc.name {
+			t.Errorf("Name(%d) = %q; want %q", tc.code, got, tc.name)
+		}
+	}
+}

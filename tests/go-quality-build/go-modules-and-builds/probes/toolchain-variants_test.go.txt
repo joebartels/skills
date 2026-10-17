@@ -1,0 +1,22 @@
+package roster
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestContractTenantCounts(t *testing.T) {
+	entries := []Entry{{Tenant: "a", Name: "Zed"}, {Tenant: "b", Name: "Ada"}, {Tenant: "a", Name: "Zed"}, {Tenant: "b", Name: ""}, {Tenant: "", Name: "Ada"}}
+	original := append([]Entry(nil), entries...)
+	got := Summarize(entries)
+	if got.Total != 5 || !reflect.DeepEqual(got.Names, []string{"Ada", "Zed"}) || !reflect.DeepEqual(got.TenantCounts, map[string]int{"a": 2, "b": 2, "": 1}) {
+		t.Fatalf("report %#v", got)
+	}
+	if !reflect.DeepEqual(entries, original) {
+		t.Fatal("input was mutated")
+	}
+	empty := Summarize(nil)
+	if empty.Total != 0 || empty.Names == nil || len(empty.Names) != 0 || empty.TenantCounts == nil || len(empty.TenantCounts) != 0 {
+		t.Fatalf("empty report %#v", empty)
+	}
+}

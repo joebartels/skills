@@ -1,0 +1,164 @@
+{
+  "skill_name": "go-modules-and-builds",
+  "evals": [
+    {
+      "id": "workspace-library",
+      "prompt": "Implement the requested change and focused tests according to README.md; preserve supported APIs and Go versions. Select applicable authoring guidance.",
+      "expected_output": "Add the canonical-name operation described in README.md, preserving existing public behavior and independent consumption.",
+      "assertions": [
+        "The new operation follows the supplied dependency policy and retains existing Label behavior.",
+        "Workspace and standalone library tests pass without rewriting module files.",
+        "A fresh external consumer resolves the library dependencies without inheriting workspace state."
+      ],
+      "files": [
+        "files/workspace-library/README.md",
+        "files/workspace-library/dev/keytext/go.mod",
+        "files/workspace-library/dev/keytext/keytext.go",
+        "files/workspace-library/go.work",
+        "files/workspace-library/lib/catalog.go",
+        "files/workspace-library/lib/catalog_test.go",
+        "files/workspace-library/lib/go.mod",
+        "files/workspace-library/lib/go.sum",
+        "files/workspace-library/registry/keytext/v1.0.0/go.mod",
+        "files/workspace-library/registry/keytext/v1.0.0/keytext.go",
+        "files/workspace-library/registry/keytext/v1.1.0/go.mod",
+        "files/workspace-library/registry/keytext/v1.1.0/keytext.go"
+      ]
+    },
+    {
+      "id": "generated-targets",
+      "prompt": "Implement the requested change and focused tests according to README.md; preserve supported APIs and Go versions. Select applicable authoring guidance.",
+      "expected_output": "Extend the severity registry according to README.md, keeping supported build variants and regeneration usable.",
+      "assertions": [
+        "Known and unknown codes behave consistently in default and compact builds.",
+        "Deleting generated outputs and regenerating from source succeeds with the supported toolchain.",
+        "Repeated generation produces identical bytes, and linux amd64/arm64 variants compile.",
+        "A valid change to the schema source appears in both regenerated variants; hardcoded output is rejected."
+      ],
+      "files": [
+        "files/generated-targets/README.md",
+        "files/generated-targets/go.mod",
+        "files/generated-targets/internal/gen/main.go",
+        "files/generated-targets/schema.txt",
+        "files/generated-targets/severity.go",
+        "files/generated-targets/severity_test.go",
+        "files/generated-targets/table_compact_gen.go",
+        "files/generated-targets/table_gen.go"
+      ]
+    },
+    {
+      "id": "pure-control",
+      "prompt": "Implement the requested change and focused tests according to README.md; preserve supported APIs and Go versions. Select applicable authoring guidance.",
+      "expected_output": "Fix the strictly-positive sum according to README.md with a focused regression test.",
+      "assertions": [
+        "Only strictly positive counters contribute, with public signature and module minimum preserved.",
+        "No new dependencies, generation setup or module/build changes are needed; the module skill is not selected."
+      ],
+      "files": [
+        "files/pure-control/README.md",
+        "files/pure-control/counters.go",
+        "files/pure-control/counters_test.go",
+        "files/pure-control/go.mod"
+      ]
+    },
+    {
+      "id": "replacement-transfer",
+      "prompt": "Implement the requested change and focused tests according to README.md; preserve supported APIs and Go versions. Select applicable authoring guidance.",
+      "expected_output": "Add the record operation described in README.md, preserving the existing cell operation and dependency contract.",
+      "assertions": [
+        "Record preserves dependency quoting, cell order, empty records and the trailing LF.",
+        "The separately consumed library builds using available dependency releases without transitive local replacement assumptions.",
+        "Existing development configuration and Cell behavior remain usable."
+      ],
+      "files": [
+        "files/replacement-transfer/README.md",
+        "files/replacement-transfer/dev/celltext/celltext.go",
+        "files/replacement-transfer/dev/celltext/go.mod",
+        "files/replacement-transfer/go.work",
+        "files/replacement-transfer/lib/go.mod",
+        "files/replacement-transfer/lib/report.go",
+        "files/replacement-transfer/lib/report_test.go",
+        "files/replacement-transfer/registry/celltext/v1.0.0/celltext.go",
+        "files/replacement-transfer/registry/celltext/v1.0.0/go.mod",
+        "files/replacement-transfer/registry/celltext/v1.1.0/celltext.go",
+        "files/replacement-transfer/registry/celltext/v1.1.0/go.mod"
+      ]
+    },
+    {
+      "id": "workspace-selection",
+      "prompt": "Implement the resume-token feature in README.md and add focused tests.",
+      "expected_output": "The SDK and tool remain usable in their supported application contexts.",
+      "assertions": [
+        "Resume cursors preserve topic and full unsigned offset with supported validation/errors.",
+        "Library dependency requirements are sufficient for an application without the repository tooling.",
+        "Both supported toolchains preserve SDK and companion behavior."
+      ],
+      "files": [
+        "files/workspace-selection/Makefile",
+        "files/workspace-selection/README.md",
+        "files/workspace-selection/docs/development.md",
+        "files/workspace-selection/go.work",
+        "files/workspace-selection/lib/README.md",
+        "files/workspace-selection/lib/go.mod",
+        "files/workspace-selection/lib/go.sum",
+        "files/workspace-selection/lib/topics.go",
+        "files/workspace-selection/lib/topics_test.go",
+        "files/workspace-selection/registry/streamwire/v1.0.0/go.mod",
+        "files/workspace-selection/registry/streamwire/v1.0.0/topics.go",
+        "files/workspace-selection/registry/streamwire/v1.1.0/cursor.go",
+        "files/workspace-selection/registry/streamwire/v1.1.0/go.mod",
+        "files/workspace-selection/registry/streamwire/v1.1.0/topics.go",
+        "files/workspace-selection/tools/streamctl/README.md",
+        "files/workspace-selection/tools/streamctl/go.mod",
+        "files/workspace-selection/tools/streamctl/go.sum",
+        "files/workspace-selection/tools/streamctl/main.go",
+        "files/workspace-selection/tools/streamctl/main_test.go"
+      ]
+    },
+    {
+      "id": "release-inputs",
+      "prompt": "Implement the schema API and CLI feature in README.md and add focused tests.",
+      "expected_output": "Schemas and CLI behavior work from development trees and distributed source.",
+      "assertions": [
+        "Returned schemas match validator semantics and cannot be mutated through a previous result.",
+        "The requested CLI observes success and rejection contracts.",
+        "The documented source archive builds and preserves feature behavior without ignored development outputs."
+      ],
+      "files": [
+        "files/release-inputs/.github/workflows/release.yml",
+        "files/release-inputs/.gitignore",
+        "files/release-inputs/Makefile",
+        "files/release-inputs/README.md",
+        "files/release-inputs/catalog_gen.go",
+        "files/release-inputs/cmd/codes/main.go",
+        "files/release-inputs/cmd/codes/main_test.go",
+        "files/release-inputs/docs/distribution.md",
+        "files/release-inputs/format.go",
+        "files/release-inputs/format_test.go",
+        "files/release-inputs/formats.csv",
+        "files/release-inputs/go.mod",
+        "files/release-inputs/internal/cataloggen/main.go"
+      ]
+    },
+    {
+      "id": "toolchain-variants",
+      "prompt": "Add the requested per-tenant summary counts according to README.md and focused tests.",
+      "expected_output": "The summary extension works across the project support matrix.",
+      "assertions": [
+        "All records contribute correctly while old totals, names and input ownership are preserved.",
+        "Both actual supported toolchain series execute the new feature and its existing behavior.",
+        "Empty fields/collections follow the documented result contract."
+      ],
+      "files": [
+        "files/toolchain-variants/.github/workflows/test.yml",
+        "files/toolchain-variants/README.md",
+        "files/toolchain-variants/docs/development.md",
+        "files/toolchain-variants/go.mod",
+        "files/toolchain-variants/summary.go",
+        "files/toolchain-variants/summary_compat.go",
+        "files/toolchain-variants/summary_test.go",
+        "files/toolchain-variants/types.go"
+      ]
+    }
+  ]
+}

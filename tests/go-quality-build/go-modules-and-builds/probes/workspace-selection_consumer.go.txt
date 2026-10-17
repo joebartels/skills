@@ -1,0 +1,24 @@
+package main
+
+import (
+	"errors"
+	"fmt"
+
+	"example.org/streamkit"
+	"example.org/streamwire"
+)
+
+func main() {
+	var resume func(string, uint64) (string, error) = streamkit.ResumeToken
+	got, err := resume("orders.eu", ^uint64(0))
+	if err != nil || got != "sc1.b3JkZXJzLmV1.3w5e11264sgsf" {
+		panic(fmt.Sprintf("ResumeToken = %q, %v", got, err))
+	}
+	if token, err := resume("a..b", 0); token != "" || !errors.Is(err, streamwire.ErrTopic) || err == streamwire.ErrTopic {
+		panic(fmt.Sprintf("invalid topic = %q, %v", token, err))
+	}
+	var path func(string) (string, error) = streamkit.TopicPath
+	if got, err := path("orders.eu"); got != "/topics/orders.eu" || err != nil {
+		panic(fmt.Sprintf("TopicPath = %q, %v", got, err))
+	}
+}
