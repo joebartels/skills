@@ -11,6 +11,7 @@ Keep:
 - `findings`: canonical causes, source ID mapping, evidence, topic/overall severities, primary remediation owner, linked correction/verification and reconciliation notes. Keep rejected/uncertain claims separate.
 - `ledger.json`: final confirmed grading inputs described in grading.md.
 - `report.md`: final synthesis linked to the cards and evidence.
+- `maintainability.md`: the separate seven-dimension profile, scenario traces/experiments, measurements, confidence and coverage limits. See [profile contract](maintainability.md).
 
 Filenames are an example layout, not a runtime dependency. With no filesystem, use available artifact storage or compact structured records and disclose any auditability limit.
 
@@ -35,6 +36,10 @@ Unique finding counts: critical=[n], major=[n], moderate=[n], minor=[n]
 | --- | --- | --- | --- |
 | [all nine topics] | [rollup or Not applicable/Insufficient evidence] | [reason and extent] | [links] |
 
+## Maintainability profile
+
+[Separate seven-dimension table with rating, confidence, evidence and scope limits; link scenarios/metrics. Summarize cleanliness, structure and extensibility without averaging them into the defect grade.]
+
 ## Good
 
 - [G1] [verified strength and evidence] — [why it matters]
@@ -57,3 +62,5 @@ Details: [manifest, deduplicated index and underlying cards]
 For an incomplete review, name the overall state first. If useful, add `Assessed-scope defect grade: C (reviewed areas only)` with the confirmed counts; this is not the requested full-scope grade. For Not applicable or no assessable evidence, omit counts and unsupported sections, explain the state and what would enable review. For a complete letter grade, retain all sections and use None verified/found/needed when appropriate.
 
 The topic table must distinguish justified irrelevance from unavailable or unreviewed work. A topic rollup has the same coverage and deduplication rules within that topic's applicable scope. Link chunk cards rather than pasting them into the synthesis. Prioritize fixes by supported impact/dependency order, retaining the rationale; optional improvements are explicitly ungraded. With many findings, summarize the most consequential ones and link the complete index so every counted finding and correction is accessible. Do not turn a review grade into an unrequested merge/deploy action.
+
+For maintainability-only requests, use the profile output contract without fabricating nine topic grades. Prior defect reports may be linked with their exact snapshot and execution date, clearly labeled historical.

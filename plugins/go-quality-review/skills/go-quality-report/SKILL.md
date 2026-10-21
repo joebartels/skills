@@ -1,17 +1,19 @@
 ---
 name: go-quality-report
-description: Orchestrate a comprehensive graded Go quality review of a changeset, codebase, package, or supplied code. Use when the user wants an overall report across relevant Go quality topics, delegated report cards, or a pre-merge quality assessment; use a single topic skill for a specifically limited topic review.
+description: Orchestrate a comprehensive graded Go quality review of a changeset, codebase, package, or supplied code. Use when the user wants an overall report across relevant Go quality topics, delegated report cards, a maintainability comparison, or a pre-merge quality assessment; use a single topic skill for a specifically limited topic review.
 metadata:
   review-contract: "1"
 ---
 
 # Go Quality Report
 
-Coordinate the nine Go review skills and synthesize one evidence-backed overall result. Review only; fixes, installation, publication and merge actions require their own user request. This skill needs the applicable topic skills, discovered by name through the host or a local skill catalog. It does not contain substitutes for them.
+Coordinate the nine Go review skills and synthesize one evidence-backed overall result plus a separate maintainability profile. Review only; fixes, installation, publication and merge actions require their own user request. This skill needs the applicable topic skills, discovered by name through the host or a local skill catalog. It does not contain substitutes for them.
 
 ## 1. Fix the target
 
 Use the user's explicit target. For a changeset, record exact base/head or the supplied patch; for staged, unstaged or untracked work, record the actual snapshot and included paths. For a codebase/code-area review, record the revision/snapshot and named area. Ask a focused question only if plausible interpretations materially change what gets reviewed. Offer observed choices; do not guess a default branch or silently substitute the current checkout for a requested revision.
+
+For maintainability-only requests, read [maintainability](references/maintainability.md), assess that profile, and do not invent or rerun unrelated risk grades. Full codebase/code-area reports include the profile; changeset reports assess affected dimensions and explain the remainder.
 
 Inspect metadata and file inventory first: relevant instructions, changed paths/statistics, modules, project type, support versions and tests/build configuration. Delegate deeper discovery for a large tree. Track later source changes and invalidate affected cards. Non-Go files such as migrations, CI, schemas and manifests can affect Go quality. If nothing implicates the Go topics, return Not applicable with scope and reason.
 
@@ -42,3 +44,5 @@ Grade unique confirmed root causes using the shared rubric, never averages of ca
 When Python is available, resolve [grade.py](scripts/grade.py) relative to this skill's `SKILL.md` and invoke its absolute path: `python3 /absolute/path/to/go-quality-report/scripts/grade.py /path/to/reconciled-ledger.json`. The ledger format is in the grading reference. Otherwise apply the same table manually. The calculator checks arithmetic, not evidence truth or omitted coverage.
 
 Produce the report in [reporting](references/reporting.md): overall result, scope and coverage, topic breakdown, good/bad with why, prioritized linked changes with why and verification, and limits. Full-scope material coverage gaps mean overall Insufficient evidence; preserve confirmed findings and, when useful, show a separately labeled assessed-scope defect grade. Do not award A/A+ from incomplete material coverage. All topics genuinely irrelevant means Not applicable. Link the underlying cards so detail remains reviewable.
+
+Apply [maintainability](references/maintainability.md) alongside the defect report: seven evidence-backed ratings with confidence, representative change scenarios, and separate conclusions on cleanliness, structure and extensibility. Keep profile judgments separate from grade.py arithmetic.

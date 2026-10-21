@@ -1,6 +1,6 @@
 # Go quality review
 
-This plugin contains one overall Go review skill and nine topic skills. Use [go-quality-report](skills/go-quality-report/SKILL.md) for a full changeset or code-area review. It delegates the relevant topic skills, reconciles shared findings, and produces one evidence-backed grade. Use a topic skill directly for a narrower review.
+This plugin contains one overall Go review skill and nine topic skills. Use [go-quality-report](skills/go-quality-report/SKILL.md) for a full changeset or code-area review. It delegates the relevant topic skills, reconciles shared findings, and produces one evidence-backed defect grade plus a separate [maintainability profile](skills/go-quality-report/references/maintainability.md). The profile assesses clarity, change locality, cohesion, abstraction cost, rule ownership, testability and complexity hotspots, with evidence and confidence; it can also be requested on its own. Use a topic skill directly for a narrower review.
 
 | Topic | Skill |
 | --- | --- |

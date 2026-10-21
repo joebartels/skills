@@ -216,6 +216,19 @@
         "Considers all nine topics and does not invent service requirements or concurrent races.",
         "Final counts and grade follow reconciled causes, with links to cards, suggested fixes and verification."
       ]
+    },
+    {
+      "id": "maintainability-profile-not-a-grade",
+      "prompt": "Compare maintainability and risk from supplied facts only. A has 900 functions, 18 packages, size p95 65, complexity p95 14, zero lint diagnostics, no confirmed defects, and two verified SQL replay/tenant safeguards. B has 220 functions, 7 packages, size p95 35, complexity p95 8, three cosmetic diagnostics, no confirmed defects, and one tested startup safeguard. A supports 20 providers plus passwords/MFA; B is OIDC-only. One source-traced A provider addition needs an adapter, factory case and config; one B OIDC addition only config. Neither was implemented. No test bodies, rule inventory, error paths or history are supplied. Apply the profile without inventing evidence.",
+      "expected_output": "Seven dimension rows with confidence and evidence limits; no global cleanliness winner, no numeric average or A+ extrapolation. Change locality can be at most Adequate for the narrow traced scenario; missing obligations remain Not demonstrated. Risk review remains Insufficient evidence.",
+      "assertions": [
+        "Returns all seven profile dimensions with evidence labels and confidence.",
+        "Does not rank clarity/cohesion from raw size or package/lint counts.",
+        "Treats supplied edit sets as reported, unexecuted source-trace estimates, not measured effort or freshly inspected paths.",
+        "Does not award Strong change locality without two exercised/historical changes.",
+        "Does not compare generic OIDC and arbitrary provider coverage as equivalent.",
+        "Separates missing evidence from Weak and profile ratings from risk arithmetic."
+      ]
     }
   ]
 }
