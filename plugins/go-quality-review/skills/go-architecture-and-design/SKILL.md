@@ -22,7 +22,7 @@ Review the specified code as a design that other code and people must use and ch
 1. Identify the exact changeset or code area. Read affected callers, implementations, tests, module version, and repository conventions as needed to understand it. If the target is unclear, state the interpretation used. Do not treat unrelated existing debt as introduced by the change.
 2. Identify whether the code is a library, CLI, service, or a mix; distinguish public contracts from internal implementation. Judge the cost of a design choice against its actual users and expected evolution, not an assumed application template.
 3. Check the applicable design questions below. Follow a value across boundaries when necessary: who owns it, which package depends on which, how errors and cancellation travel, and who shuts down acquired resources or work.
-4. Report only findings with a concrete consequence and supporting code evidence. Group symptoms of one cause into one finding. Mark a suspected issue as a question or limitation when behavior cannot be established; do not lower the grade for a guess. In particular, do not invent HTTP status, durability, or transaction requirements absent a stated contract.
+4. Trace suspected coupling or ownership problems through actual consumers and ordinary changes. Compare the proposed boundary with the existing design's responsibilities and tradeoffs; a different package or type layout is not itself an improvement. Do not invent HTTP status, durability, or transaction requirements.
 
 For nuanced examples and handbook corrections, read [Design decisions](references/design-decisions.md) when the review encounters layering, interfaces, context, error translation, or background work. Do not load it for an unrelated, straightforward change.
 
@@ -37,23 +37,27 @@ For nuanced examples and handbook corrections, read [Design decisions](reference
 | Cross-boundary behavior | Can callers observe meaningful errors and cancellation without depending on accidental implementation details? Check whether raw infrastructure errors cross a public protocol boundary. Is the success contract truthful when work continues asynchronously? |
 | Simplicity and fit | Does each package, layer, DTO, option, and background task solve a present problem? Could fewer boundaries express the same design more clearly? |
 
-Architecture's primary remit is package/API boundaries, abstraction, and ownership contracts. Module resolution belongs primarily to Dependencies & Reproducibility; actual behavior and consumer breakage to Correctness & Compatibility; local expression and naming to Code Quality & Go Idioms. Apply the shared overlap rule when a boundary defect also has one of those consequences. Do not require another skill to assess a demonstrated architectural problem.
+Architecture grades package/API boundaries, dependencies and ownership. Unnecessary API inputs belong here when their redundancy is established. Repeated local implementation under one owner belongs to Code Quality & Go Idioms; calling the same edit cost a duplicated responsibility does not make it architectural. Grade an additional architectural consequence only when a consumer or ownership boundary imposes a distinct cost. Module resolution belongs primarily to Dependencies & Reproducibility; observable breakage to Correctness & Compatibility. Assess demonstrated boundary defects in standalone use too.
 
 ## Grade the architecture
 
-Classify each **distinct, substantiated** issue by its effect in this codebase. A minor issue causes localized avoidable complexity; a moderate issue creates a plausible failure or substantial maintenance cost under normal use; a major issue breaks an important contract or makes a likely failure hard to prevent without redesign; a critical issue defeats the stated purpose or creates severe systemic failure. A merge recommendation, if requested, is separate from the grade. Count root causes, not repeated occurrences.
+Classify by the supported design consequence: minor for localized avoidable complexity; moderate for a concrete failure mechanism or substantial ordinary maintenance cost at a dependency or ownership boundary; major for an important supported API, ownership or lifecycle contract failure; critical for severe systemic failure. A merge recommendation, if requested, is separate from the grade.
 
 Apply the first matching row from the top. These are grade anchors, not points awarded for following a checklist. Context can raise or lower a finding's severity, but explain the evidence for that choice.
 
 ### Apply the anchors consistently
 
-Count independently actionable root causes after grouping repeated symptoms. Two symptoms are one issue when the same causal correction resolves both; unrelated corrections remain separate even in one function. State the counted severities in the report. Verified strengths do not cancel defects, and optional preferences or unconfirmed concerns do not enter the counts.
+Admit a finding only when evidence connects an in-scope cause to a concrete consequence under supported use or ordinary maintenance. Trace relevant callers, guards and rule owners. Source tracing can suffice without an executed reproduction. If the consequence depends on an unverified assumption, keep it ungraded and name the missing evidence; uncertainty is not minor severity.
 
-A contained failure of one important function, target, or contract is normally major. Use systemic major only when one shared cause demonstrably affects multiple distinct important boundaries or workflows; repetition across files alone is insufficient. Critical requires supported severe, broad, or irreversible impact in the topic being reviewed, not merely the words race, unsafe, missing test, or build failure. Explain any systemic or critical classification. These reach rules refine the topic-specific severity definitions above.
+Grade maintenance costs through a specific reading/change task and a correction that removes the cost while preserving required responsibilities. Trace a suspected redundant input/wrapper's purpose or the decision requiring synchronized edits in repeated code; similar calls, values or construction patterns alone are insufficient. Without that evidence, the simplification remains ungraded. Established local friction or a small repeated edit is minor; moderate requires a concrete failure mechanism or substantial coordination/reimplementation cost beyond site counts. Different representations and hypothetical capabilities alone are ungraded.
 
-For A+, identify two independent safeguards, the distinct meaningful risks they control, and evidence that each works. Ordinary correct setup supports A. Complexity, tool count, or splitting one safeguard into two descriptions does not earn A+; simple designs can qualify when their risk control is demonstrated. If no issue is found but the evidence cannot support even one relevant strength, use Insufficient evidence.
+Count independently actionable causes: merge symptoms resolved by one causal correction; retain unrelated corrections. Strengths do not cancel defects. Judge each topic's consequence independently; another topic's severity or a second label for the same maintenance cost does not establish an additional topic consequence.
 
-Use Not applicable only when no relevant decision is implicated. Use Insufficient evidence when the topic applies but essential evidence prevents a judgment. A confirmed defect can still receive a letter grade for the inspected scope, with the unassessed parts in Coverage and Limits; do not imply those parts passed. Do not award A or A+ for an incompletely assessed material risk.
+An important supported-contract failure is normally major even if the fix is small. Systemic major requires demonstrated reach across distinct important workflows; critical requires supported severe, broad or irreversible impact. Severity reflects consequence, not confidence, remediation size, or words such as race or unsafe.
+
+For A+, establish two independent, verified nonroutine safeguards controlling distinct meaningful risks. Routine correct setup supports A; complexity/tool counts or repeated descriptions do not support A+.
+
+Use Not applicable only for irrelevant topics; Insufficient evidence for essential missing evidence. Confirmed findings may receive an inspected-scope grade with explicit coverage limits. Do not award A/A+ with unassessed material risk or without a verified relevant strength.
 
 | Grade | Anchor |
 | --- | --- |

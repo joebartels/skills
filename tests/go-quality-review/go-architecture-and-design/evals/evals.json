@@ -50,6 +50,60 @@
         "It identifies the library-owned signal/exit path as one root cause rather than multiple independent defects.",
         "The suggested change restores host ownership without demanding a DI framework or package hierarchy."
       ]
+    },
+    {
+      "id": "representation-is-not-consequence",
+      "prompt": "Review Architecture & Design for this complete supplied Go service area. Browser login uses an empty ClientID; native login uses a configured nonempty ID. Begin-login checks enabled status plus redirect URI, refresh checks enabled status, and revoke permits registered disabled clients so existing credentials remain revocable. A confidential client is a possible future project with no accepted requirements. Tenant routing, API services, encryption and rate limiting use separate maps initialized from one validated configuration before serving. All unknown IDs are rejected upstream; existing calls use the resolved tenant. An API method requires interface, implementation, forwarder and logging decorator edits. A reviewer proposes moderate findings for missing Client and TenantRuntime types because a third client would require changes in several places and a new method needs four edits. Assess those claims from the supplied evidence only; do not assume missing guards or undisclosed maintenance history.",
+      "expected_output": "No moderate deduction from missing types, hypothetical capability, map counts or forwarding edits alone. Recognize distinct current client policies and existing construction/lookup guarantees. Keep redesign options ungraded unless a concrete current cost can be established.",
+      "assertions": [
+        "Does not count missing Client or TenantRuntime abstractions as defects on representation or edit counts alone.",
+        "Recognizes that login, refresh and revoke checks have distinct responsibilities, including revocation for disabled clients.",
+        "Does not invent a reachable unknown-tenant failure or unsupported third-client requirement.",
+        "Any proposed consolidation explains a present benefit and preserves existing responsibilities."
+      ]
+    },
+    {
+      "id": "maintenance-without-incident",
+      "prompt": "Review Architecture & Design for this complete supplied code area. display.go:40, export.go:22 and audit.go:60 separately implement the same documented redaction classification policy with field-name switches. Adding a private profile field is an ordinary supported maintenance task. Source tracing shows it requires reimplementing the same classification under three independent component owners, with no shared classification metadata or consistency check. The current switches agree; no disclosure has occurred. Each renderer has a legitimate distinct output format. Other contracts are sound. A reviewer wants to dismiss the issue because tests pass and no runtime bug has been reproduced. Assess only the supplied evidence.",
+      "expected_output": "B for one moderate maintenance cause: independently maintained implementations of one policy impose substantial ordinary coordination. A shared classification owner is justified without merging renderers or inventing an observed security incident.",
+      "assertions": [
+        "Admits one moderate maintenance finding despite correct current output and no reproduced incident.",
+        "Explains the independent policy reimplementation and ownership coordination, not just three files.",
+        "Keeps the distinct rendering responsibilities while centralizing the common classification rule.",
+        "Does not claim an observed disclosure or escalate speculative security impact."
+      ]
+    },
+    {
+      "id": "tenant-construction-does-not-prove-redundancy",
+      "prompt": "Review Architecture & Design from supplied facts only. Reader is constructed separately per tenant and exposes Read(ctx, tenantID, key); callers pass the resolved ID. The receiver fields, constructor body, method body and interface obligations are unavailable. A new operation requires interface, implementation, forwarding and logging edits. A reviewer calls the ID and forwarder minor redundant plumbing. Contrast this with a second fully described Reader: it captures credentials and a storage client but not tenantID; Read uses the supplied ID to scope the database query. Removing that argument would require moving identity into construction. Neither area has a supplied incorrect caller or other defect. Return a compact admission decision for each area, explaining the evidence still needed; do not invent a whole-area grade.",
+      "expected_output": "No counted redundancy finding in either area. The first remains unconfirmed until actual responsibilities are traced; the second supplies the necessary role and refutes the redundancy claim. Construction per tenant and edit counts alone do not establish removable work.",
+      "assertions": [
+        "Does not infer stored tenant identity or unnecessary forwarding from per-tenant construction or method-edit counts.",
+        "Keeps the first proposal ungraded and names missing implementation or contract evidence.",
+        "Recognizes that the second argument supplies required query context and removing it relocates a responsibility.",
+        "Does not equate uncertain redundancy with a confirmed minor finding."
+      ]
+    },
+    {
+      "id": "proven-private-api-redundancy",
+      "prompt": "Review Architecture & Design for this complete supplied private API area. Reader stores tenantID at construction. Its concrete method Read(ctx context.Context, ignoredTenantID int64, key string) has the complete body return r.store.Get(ctx, r.tenantID, key); ignoredTenantID is never read. All callers retrieve and pass the reader's stored ID. No interface, callback signature, public compatibility or validation obligation requires the argument. Other ownership and data flow are clear. Assess the cost of retrieving/passing an unused argument and a correction preserving storage selection. No tests were run.",
+      "expected_output": "A- for one minor unnecessary private API input. Supplied body and obligations establish a behavior-preserving removal; no observed runtime bug is required.",
+      "assertions": [
+        "Counts one minor API-complexity finding with the demonstrated unused argument and caller burden.",
+        "Proposes removing the private argument and updating callers while retaining receiver-based storage selection.",
+        "Does not invent a tenant isolation failure or promote the issue to moderate.",
+        "Does not demand a runtime reproduction for the supported maintenance consequence."
+      ]
+    },
+    {
+      "id": "local-duplication-not-boundary-cost",
+      "prompt": "Review only Architecture & Design for this complete supplied API implementation area. Three private functions under one owner repeat a short access/refresh token construction rule using session expiry and JTI. A routine rule change requires three small identical edits; a private helper preserves current behavior and caller boundaries. Browser cookie creation is a distinct later step. All consumers use a stable owned result; ownership and dependencies are unchanged by the proposed helper. A Code Quality review correctly counts the small repeated edit as minor. Should Architecture also count it as minor under the label duplicated responsibility? Use supplied facts only.",
+      "expected_output": "A for the architecture with the existing Code Quality minor preserved as an ungraded related observation. Renaming the same local edit cost does not establish another topic consequence.",
+      "assertions": [
+        "Does not count local repetition as an architectural defect without a distinct consumer or ownership consequence.",
+        "Preserves the Code Quality finding rather than rejecting the real repeated edit cost.",
+        "Recognizes the stable consumer and ownership boundaries as supplied positive evidence."
+      ]
     }
   ]
 }

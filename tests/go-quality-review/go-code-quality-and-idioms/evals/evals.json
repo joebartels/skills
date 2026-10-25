@@ -85,6 +85,58 @@
         "The report does not claim source inspection or executed checks.",
         "Literal pipes do not introduce extra table columns."
       ]
+    },
+    {
+      "id": "small-repeated-edit",
+      "prompt": "Review Code Quality & Go Idioms for a complete supplied area. login.go:20, refresh.go:30 and exchange.go:40 repeat the same short access/refresh token construction sequence, taking expiry and JTI directly from the session. The maintained contract requires that pair to use the same session values; a source trace shows changing this shared issuance rule requires repeating the small edit in each function. All three are maintained by the same API owner and currently agree; no hidden interactions, different classifications, caller failures or independently evolving policy owners are established. Browser cookie creation is a separate step only where needed. retry.go:10 has a local stopRetry boolean that is true when retrying; its eight-line helper has an explanatory comment, correct branches and tests. A reviewer calls both moderate because future edits might introduce a bug. Assess only this evidence.",
+      "expected_output": "B+ for two minor causes: a small synchronized policy edit and local naming inversion. The hypothetical future bug does not establish moderate impact. Retain genuine maintenance findings and propose proportionate changes.",
+      "assertions": [
+        "Counts two minor causes rather than promoting either to moderate from hypothetical future mistakes.",
+        "Explains the bounded repeated edit and local semantic inversion as current maintenance/reading costs.",
+        "Keeps browser-specific cookie handling separate from any shared token-pair helper.",
+        "Does not require a general Client hierarchy or broad issuance redesign."
+      ]
+    },
+    {
+      "id": "uncertainty-is-not-minor",
+      "prompt": "Review only Code Quality & Go Idioms for cache.go:45, which dereferences lookup(id). The lookup implementation, return contract and all callers are unavailable. It is unknown whether lookup can return nil or the input is validated upstream. No other code or strength is supplied. A reviewer proposes a minor finding as a conservative precaution and recommends adding a guard. The repository cannot be inspected. Assess the evidence without inventing preconditions.",
+      "expected_output": "Insufficient evidence; an unconfirmed nil dereference is a question, not a minor deduction. Name the missing lookup contract and caller guards.",
+      "assertions": [
+        "Does not count the unconfirmed nil dereference at any severity.",
+        "Returns Insufficient evidence and identifies missing lookup/caller evidence.",
+        "Does not treat a precautionary patch as proof that the existing code is defective."
+      ]
+    },
+    {
+      "id": "topic-severity-is-not-evidence",
+      "prompt": "Review Code Quality & Go Idioms for the supplied complete api.go area. A vendor Result type crosses the public API. Architecture has established one moderate cause: routine vendor upgrades impose coordinated migration of unrelated consumers because vendor-specific fields are exposed. The local functions have clear names, checked errors, direct field accesses and no supplied local clarity or value-semantics issue; these are verified source traces. A reviewer wants the Code Quality grade to inherit the Architecture moderate finding because both cite api.go:20. Assess this topic only from the supplied facts.",
+      "expected_output": "A for the assessed local code quality, with the confirmed Architecture concern preserved as an ungraded related observation; do not inherit severity without an in-topic consequence.",
+      "assertions": [
+        "Does not transfer the Architecture moderate finding into Code Quality counts without a supported local consequence.",
+        "Retains the architectural issue as an explicitly ungraded related observation.",
+        "Recognizes the supplied local strengths without claiming a fresh source inspection."
+      ]
+    },
+    {
+      "id": "api-plumbing-not-second-local-cost",
+      "prompt": "Review only Code Quality & Go Idioms for a complete supplied private API area. Reader stores tenantID and Read(ctx, ignoredTenantID, key) never reads ignoredTenantID; its body directly returns r.store.Get(ctx, r.tenantID, key). All callers retrieve/pass the stored ID; no interface or compatibility requirement mandates the argument. Architecture has confirmed a minor unnecessary-API-input cause and proposes removing the argument. All local names, expressions and data flow are otherwise straightforward. A reviewer wants a second Code Quality deduction because the same extra argument also makes readers reconcile identity. Assess only the supplied local consequences.",
+      "expected_output": "A for local code quality, preserving the confirmed Architecture minor as ungraded related context. Restating the same API burden as reader friction does not supply an additional local effect.",
+      "assertions": [
+        "Does not transfer the API-input cost into Code Quality solely by calling it reader friction.",
+        "Keeps the supported Architecture minor visible as ungraded related context.",
+        "Does not claim all API issues are exempt from Code Quality when distinct local effects are established."
+      ]
+    },
+    {
+      "id": "similar-calls-not-duplicate-policy",
+      "prompt": "Review Code Quality & Go Idioms from supplied facts only. Three login/refresh/exchange workflows call the same token constructors with session.Expiry and session.JTI. The supplied trace establishes these call names and inputs; it does not include their full bodies, error paths, surrounding transaction responsibilities, or a policy change requiring synchronized edits. Session owns the decisions calculating expiry and JTI. One workflow also writes a browser cookie. A reviewer counts minor duplicate issuance policy because the calls look alike and proposes a shared Issue helper. Decide whether this particular minor finding is established, and what evidence would settle it; do not invent a whole-service grade.",
+      "expected_output": "Keep the duplicate-policy claim ungraded: shared calls and centrally supplied values do not establish a repeated decision or a behavior-preserving common operation. Request a traced maintenance task and the relevant responsibilities. Do not reject all local duplication findings.",
+      "assertions": [
+        "Does not count a duplicate-policy minor from shared constructors and input values alone.",
+        "Distinguishes passing authoritative session values from independently implementing the policy that chooses them.",
+        "Names the missing repeated decision/change task and relevant flow responsibilities before prescribing extraction.",
+        "Does not require a runtime incident or actual refactor to substantiate a future source-backed maintenance finding."
+      ]
     }
   ]
 }
