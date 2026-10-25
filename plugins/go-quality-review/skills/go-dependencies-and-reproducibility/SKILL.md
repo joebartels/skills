@@ -2,7 +2,7 @@
 name: go-dependencies-and-reproducibility
 description: Review and grade dependency selection, Go module integrity, toolchain and generation inputs, and repeatable builds for a defined Go changeset or code area. Use across libraries, CLIs, and services when modules, imports, workspaces, build tools, or build inputs change; not for a general vulnerability, runtime deployment, or test-quality audit.
 metadata:
-  review-contract: "1"
+  review-contract: "2"
 ---
 
 # Go Dependencies and Reproducibility Review
@@ -72,28 +72,45 @@ If the target changes no dependency or build input and presents no dependency or
 
 ## Report
 
-Use the template below. For a letter grade retain every field and section; write `None verified`, `None found`, or `None needed` when appropriate. For Not applicable or Insufficient evidence, retain Scope, Coverage, Rationale, and Limits; omit counts and unsupported Good/Bad/changes. Reference each Bad finding by ID in Suggested changes. Put optional follow-ups or ungraded related findings after the required sections and label them explicitly.
+Use the fixed report structure below in both the saved report and the final user-facing response, unless the user explicitly requests another format. Keep the section names and order; do not replace the findings table with prose or only a link to an artifact. Include every counted finding in the table, ordered by severity (critical to minor), then numeric finding ID. Use the same IDs, severities and topics in the table and details. Use the topic display names from the skills; separate multiple topics with `; ` in overall reports. A standalone topic report lists only its own topic. Keep table cells concise, escape literal pipes as `\|` (including inside code), and put multiline evidence in the details.
+
+Every finding has one detail entry with the fields shown, including a correction and proposed verification. Distinguish proposed verification from executed checks. For zero findings retain the empty table header and separator, followed by `None found.`; do not invent an F0 row. Use `None found.` for empty details and `None verified.` for unsupported strengths. For Not applicable or Insufficient evidence retain the same sections and explain the state; omit counts when no findings are confirmed. Preserve any confirmed findings under Insufficient evidence without implying the remaining scope passed. Counts, when present, describe confirmed findings only. Keep optional suggestions and ungraded related observations outside the counted table, after the required sections, labeled explicitly.
+
+A topic title identifies that topic's grade; it does not imply an overall review. Full reviews use `Go Quality Report` as the title and append the report-card table and maintainability profile in that order. Grade/state cells contain only a letter grade, `Not applicable`, or `Insufficient evidence`; put qualifications in the coverage column. Apply the existing coverage, severity and grading rules unchanged.
 
 ```markdown
-## Dependencies & Reproducibility — [grade | Not applicable | Insufficient evidence]
-Scope: [base/head, supplied diff, or code area; library/CLI/service and relevant version/runtime context]
-Coverage: [applicable areas assessed; material areas not assessed and why]
-Rationale: [why the evidence and counted severities select this grade; explain systemic/critical reach or both A+ safeguards]
+# Dependencies & Reproducibility — [grade | Not applicable | Insufficient evidence]
+Scope: [mode, exact revisions/snapshot, target area, exclusions, relevant version/runtime context]
+Coverage: [assessed areas and boundaries; material unassessed areas and why]
+Rationale: [why the evidence, coverage and counted severities select this result]
 Finding counts: critical=[n], major=[n], moderate=[n], minor=[n]
 
-Good
+## Findings summary
 
-- [G1] [specific choice and evidence/location] — [why it benefits the relevant contract or risk]
+| ID | Severity | Topic | Finding / consequence | Evidence | Correction |
+| --- | --- | --- | --- | --- | --- |
+| F1 | [severity] | [topic name(s)] | [cause and present consequence] | [source reference] | [targeted correction] |
 
-Bad
+## Finding details
 
-- [F1][severity][introduced | worsened | existing-in-scope] [issue and evidence/location] — [trigger and supported consequence]
+### F1 — [short title]
 
-Suggested changes
+Severity: [critical | major | moderate | minor]
+Topic: [same topic name(s) as the summary row]
+Status: [introduced | worsened | existing-in-scope]
+Trigger: [conditions or maintenance scenario exposing the issue]
+Evidence: [source locations and supported facts; distinguish inspected, supplied and executed evidence]
+Consequence: [supported effect and why this severity applies]
+Correction: [specific change and primary owner; why it addresses the cause]
+Verification: [how to verify the correction; label proposed checks]
 
-- [F1] [targeted correction] — [why it resolves the consequence; how to verify it]
+## Strengths
 
-Limits: [material missing evidence; exact checks and outcomes, or checks not run]
+- [G1] [specific verified choice and evidence/location] — [why it matters]
+
+## Checks and limits
+
+[Executed checks with exact commands and outcomes; supplied results labeled separately; checks not run, coverage gaps and unresolved assumptions.]
 ```
 
-Prefer `path:line` references when files are available. Give each bad finding a corresponding change and rationale. The grade assesses Dependencies & Reproducibility in the requested scope, not overall Go quality.
+Prefer `path:line` references when files are available. Give each finding a corresponding change and rationale. The grade assesses Dependencies & Reproducibility in the requested scope, not overall Go quality.

@@ -73,6 +73,18 @@
         "The proposed change returns nil on success and verifies the valid-input test.",
         "Any executed check is reported accurately without claiming unrun verification."
       ]
+    },
+    {
+      "id": "report-presentation",
+      "prompt": "Produce the final Code Quality & Go Idioms report from supplied reconciled facts only. Complete code-area scope: lookup.go and callers.go at abc123, Go 1.26. One existing minor finding: lookup.go:20 logs the same failure callers.go:40 already logs, causing duplicate diagnostics. A verified ordinary strength is the clear early-return flow in lookup.go:10. No other findings. Do not inspect additional source or execute checks. The diagnostic example includes the literal text `read|write`. Keep the report easy to scan and give a concrete proposed verification.",
+      "expected_output": "A- with the shared report structure, one complete summary row and matching F1 detail, evidence-backed strength, escaped literal table pipes where used, and supplied evidence clearly distinguished from executed checks.",
+      "assertions": [
+        "The final response includes the complete findings summary table and all required core sections in order.",
+        "The single minor finding has the same ID, severity and topic in the table and detail entry.",
+        "The detail provides trigger, evidence, consequence, correction and proposed verification.",
+        "The report does not claim source inspection or executed checks.",
+        "Literal pipes do not introduce extra table columns."
+      ]
     }
   ]
 }

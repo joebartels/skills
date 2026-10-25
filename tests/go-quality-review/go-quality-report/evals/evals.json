@@ -229,6 +229,18 @@
         "Does not compare generic OIDC and arbitrary provider coverage as equivalent.",
         "Separates missing evidence from Weak and profile ratings from risk arithmetic."
       ]
+    },
+    {
+      "id": "report-presentation-incomplete",
+      "prompt": "Produce a final overall report from supplied reconciled review facts only. Scope is complete service at abc123, but persistence source is unavailable and its important contracts remain unassessed. Code Quality has one confirmed existing minor duplicate-log defect at lookup.go:20 and callers.go:40, with clear early returns at lookup.go:10 as an ordinary verified strength. All other applicable topics remain unassessed; no additional findings or maintainability evidence are supplied. No checks were executed. Preserve the confirmed finding while presenting the incomplete coverage honestly. Do not perform further review.",
+      "expected_output": "Insufficient evidence headline with the same complete findings table/detail core as standalone reports; all nine report-card rows distinguish unavailable or unreviewed topics, and the profile reflects missing evidence without invented positive ratings.",
+      "assertions": [
+        "The overall headline is Insufficient evidence, not A- or A.",
+        "The final response retains the confirmed minor in the findings summary and matching detail with correction and proposed verification.",
+        "Core sections appear in the same order as topic reports, followed by Report cards and Maintainability profile.",
+        "All nine topics are accounted for without treating unavailable evidence as Not applicable.",
+        "No execution results, extra findings or positive maintainability ratings are invented."
+      ]
     }
   ]
 }
