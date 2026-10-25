@@ -50,6 +50,28 @@
         "It identifies the library-owned signal/exit path as one root cause rather than multiple independent defects.",
         "The suggested change restores host ownership without demanding a DI framework or package hierarchy."
       ]
+    },
+    {
+      "id": "representation-is-not-consequence",
+      "prompt": "Review Architecture & Design for this complete supplied Go service area. Browser login uses an empty ClientID; native login uses a configured nonempty ID. Begin-login checks enabled status plus redirect URI, refresh checks enabled status, and revoke permits registered disabled clients so existing credentials remain revocable. A confidential client is a possible future project with no accepted requirements. Tenant routing, API services, encryption and rate limiting use separate maps initialized from one validated configuration before serving. All unknown IDs are rejected upstream; existing calls use the resolved tenant. An API method requires interface, implementation, forwarder and logging decorator edits. A reviewer proposes moderate findings for missing Client and TenantRuntime types because a third client would require changes in several places and a new method needs four edits. Assess those claims from the supplied evidence only; do not assume missing guards or undisclosed maintenance history.",
+      "expected_output": "No moderate deduction from missing types, hypothetical capability, map counts or forwarding edits alone. Recognize distinct current client policies and existing construction/lookup guarantees. Keep redesign options ungraded unless a concrete current cost can be established.",
+      "assertions": [
+        "Does not count missing Client or TenantRuntime abstractions as defects on representation or edit counts alone.",
+        "Recognizes that login, refresh and revoke checks have distinct responsibilities, including revocation for disabled clients.",
+        "Does not invent a reachable unknown-tenant failure or unsupported third-client requirement.",
+        "Any proposed consolidation explains a present benefit and preserves existing responsibilities."
+      ]
+    },
+    {
+      "id": "maintenance-without-incident",
+      "prompt": "Review Architecture & Design for this complete supplied code area. display.go:40, export.go:22 and audit.go:60 separately implement the same documented redaction classification policy with field-name switches. Adding a private profile field is an ordinary supported maintenance task. Source tracing shows it requires reimplementing the same classification under three independent component owners, with no shared classification metadata or consistency check. The current switches agree; no disclosure has occurred. Each renderer has a legitimate distinct output format. Other contracts are sound. A reviewer wants to dismiss the issue because tests pass and no runtime bug has been reproduced. Assess only the supplied evidence.",
+      "expected_output": "B for one moderate maintenance cause: independently maintained implementations of one policy impose substantial ordinary coordination. A shared classification owner is justified without merging renderers or inventing an observed security incident.",
+      "assertions": [
+        "Admits one moderate maintenance finding despite correct current output and no reproduced incident.",
+        "Explains the independent policy reimplementation and ownership coordination, not just three files.",
+        "Keeps the distinct rendering responsibilities while centralizing the common classification rule.",
+        "Does not claim an observed disclosure or escalate speculative security impact."
+      ]
     }
   ]
 }

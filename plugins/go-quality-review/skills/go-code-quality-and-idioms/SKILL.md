@@ -22,7 +22,7 @@ Review the specified Go code for clarity, appropriate local idioms, and ease of 
 1. Identify the exact diff or code area and inspect enough callers, types, tests, and nearby conventions to understand it. Distinguish newly introduced issues from existing constraints. Do not grade unrelated debt.
 2. Check `go.mod`, relevant `go.work` context, and file build constraints before judging a language feature or old idiom. The installed toolchain does not by itself determine a file's effective language version. If version-sensitive advice matters and that context is unavailable, qualify the finding rather than assume the newest semantics.
 3. Determine whether code is generated. Review its generator or source of truth when available; do not request hand edits to generated output. Apply the same quality standard to libraries, CLIs, and services, scaled to their actual users and contracts.
-4. Report only distinct findings with a code location and a concrete consequence. Group repeated symptoms with one root cause. For each finding, explain why the existing code is problematic and why the proposed change helps. Identify verified strengths as specifically as defects; do not invent either.
+4. Trace suspected clarity or idiom problems at their use sites. Explain the existing reading or change burden and how the correction reduces it while preserving behavior. Identify verified strengths as specifically as defects.
 
 Read [Idiom decisions](references/idiom-decisions.md) when a finding depends on error exposure, nil versus empty values, receivers, comments, testing idioms, concurrency, or newer Go features. It supplies context-sensitive distinctions and links to primary Go guidance.
 
@@ -41,19 +41,23 @@ Code Quality's primary remit is local clarity, error handling, value semantics, 
 
 ## Grade code quality
 
-Classify each **distinct, substantiated** issue by its effect in this codebase. A minor issue causes localized readability friction or avoidable inconsistency; a moderate issue creates a plausible local bug or substantial maintenance cost under normal use; a major issue breaks important behavior or makes likely mistakes difficult to prevent without rework; a critical issue defeats the stated purpose or causes severe systemic failure. Purely optional stylistic preferences are not findings. A merge recommendation, if requested, is separate from the grade. Count root causes, not occurrences.
+Classify by the supported local consequence: minor for localized readability friction or avoidable inconsistency; moderate for a concrete bug mechanism in the data/control flow or substantial ordinary maintenance cost; major for broken important behavior; critical for severe systemic failure. Optional style preferences are ungraded. A merge recommendation, if requested, is separate from the grade.
 
 Apply the first matching row from the top. These anchors match the other Go review skills; explain any severity judgment that depends on context.
 
 ### Apply the anchors consistently
 
-Count independently actionable root causes after grouping repeated symptoms. Two symptoms are one issue when the same causal correction resolves both; unrelated corrections remain separate even in one function. State the counted severities in the report. Verified strengths do not cancel defects, and optional preferences or unconfirmed concerns do not enter the counts.
+Admit a finding only when evidence connects an in-scope cause to a concrete consequence under supported use or ordinary maintenance. Trace relevant callers, guards and rule owners. Source tracing can suffice without an executed reproduction. If the consequence depends on an unverified assumption, keep it ungraded and name the missing evidence; uncertainty is not minor severity.
 
-A contained failure of one important function, target, or contract is normally major. Use systemic major only when one shared cause demonstrably affects multiple distinct important boundaries or workflows; repetition across files alone is insufficient. Critical requires supported severe, broad, or irreversible impact in the topic being reviewed, not merely the words race, unsafe, missing test, or build failure. Explain any systemic or critical classification. These reach rules refine the topic-specific severity definitions above.
+For maintenance findings, name the ordinary change and the avoidable work or mistake mechanism imposed by the current design. File/line counts, missing abstractions and hypothetical new capabilities do not establish that cost. Local reading friction or a small repeated edit is minor. Moderate needs a concrete failure mechanism or substantial coordination/reimplementation cost; explain what makes it substantial beyond the number of sites. Check whether apparent duplication implements the same rule or distinct responsibilities.
 
-For A+, identify two independent safeguards, the distinct meaningful risks they control, and evidence that each works. Ordinary correct setup supports A. Complexity, tool count, or splitting one safeguard into two descriptions does not earn A+; simple designs can qualify when their risk control is demonstrated. If no issue is found but the evidence cannot support even one relevant strength, use Insufficient evidence.
+Count independently actionable causes: merge symptoms resolved by one causal correction; retain unrelated corrections. Strengths do not cancel defects. Judge each topic's consequence independently; another topic's severity is not evidence.
 
-Use Not applicable only when no relevant decision is implicated. Use Insufficient evidence when the topic applies but essential evidence prevents a judgment. A confirmed defect can still receive a letter grade for the inspected scope, with the unassessed parts in Coverage and Limits; do not imply those parts passed. Do not award A or A+ for an incompletely assessed material risk.
+An important supported-contract failure is normally major even if the fix is small. Systemic major requires demonstrated reach across distinct important workflows; critical requires supported severe, broad or irreversible impact. Severity reflects consequence, not confidence, remediation size, or words such as race or unsafe.
+
+For A+, establish two independent, verified nonroutine safeguards controlling distinct meaningful risks. Routine correct setup supports A; complexity/tool counts or repeated descriptions do not support A+.
+
+Use Not applicable only for irrelevant topics; Insufficient evidence for essential missing evidence. Confirmed findings may receive an inspected-scope grade with explicit coverage limits. Do not award A/A+ with unassessed material risk or without a verified relevant strength.
 
 | Grade | Anchor |
 | --- | --- |

@@ -85,6 +85,37 @@
         "The report does not claim source inspection or executed checks.",
         "Literal pipes do not introduce extra table columns."
       ]
+    },
+    {
+      "id": "small-repeated-edit",
+      "prompt": "Review Code Quality & Go Idioms for a complete supplied area. login.go:20, refresh.go:30 and exchange.go:40 repeat the same short access/refresh token construction sequence, taking expiry and JTI directly from the session. The maintained contract requires that pair to use the same session values; a source trace shows changing this shared issuance rule requires repeating the small edit in each function. All three are maintained by the same API owner and currently agree; no hidden interactions, different classifications, caller failures or independently evolving policy owners are established. Browser cookie creation is a separate step only where needed. retry.go:10 has a local stopRetry boolean that is true when retrying; its eight-line helper has an explanatory comment, correct branches and tests. A reviewer calls both moderate because future edits might introduce a bug. Assess only this evidence.",
+      "expected_output": "B+ for two minor causes: a small synchronized policy edit and local naming inversion. The hypothetical future bug does not establish moderate impact. Retain genuine maintenance findings and propose proportionate changes.",
+      "assertions": [
+        "Counts two minor causes rather than promoting either to moderate from hypothetical future mistakes.",
+        "Explains the bounded repeated edit and local semantic inversion as current maintenance/reading costs.",
+        "Keeps browser-specific cookie handling separate from any shared token-pair helper.",
+        "Does not require a general Client hierarchy or broad issuance redesign."
+      ]
+    },
+    {
+      "id": "uncertainty-is-not-minor",
+      "prompt": "Review only Code Quality & Go Idioms for cache.go:45, which dereferences lookup(id). The lookup implementation, return contract and all callers are unavailable. It is unknown whether lookup can return nil or the input is validated upstream. No other code or strength is supplied. A reviewer proposes a minor finding as a conservative precaution and recommends adding a guard. The repository cannot be inspected. Assess the evidence without inventing preconditions.",
+      "expected_output": "Insufficient evidence; an unconfirmed nil dereference is a question, not a minor deduction. Name the missing lookup contract and caller guards.",
+      "assertions": [
+        "Does not count the unconfirmed nil dereference at any severity.",
+        "Returns Insufficient evidence and identifies missing lookup/caller evidence.",
+        "Does not treat a precautionary patch as proof that the existing code is defective."
+      ]
+    },
+    {
+      "id": "topic-severity-is-not-evidence",
+      "prompt": "Review Code Quality & Go Idioms for the supplied complete api.go area. A vendor Result type crosses the public API. Architecture has established one moderate cause: routine vendor upgrades impose coordinated migration of unrelated consumers because vendor-specific fields are exposed. The local functions have clear names, checked errors, direct field accesses and no supplied local clarity or value-semantics issue; these are verified source traces. A reviewer wants the Code Quality grade to inherit the Architecture moderate finding because both cite api.go:20. Assess this topic only from the supplied facts.",
+      "expected_output": "A for the assessed local code quality, with the confirmed Architecture concern preserved as an ungraded related observation; do not inherit severity without an in-topic consequence.",
+      "assertions": [
+        "Does not transfer the Architecture moderate finding into Code Quality counts without a supported local consequence.",
+        "Retains the architectural issue as an explicitly ungraded related observation.",
+        "Recognizes the supplied local strengths without claiming a fresh source inspection."
+      ]
     }
   ]
 }
