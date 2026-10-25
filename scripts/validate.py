@@ -182,6 +182,13 @@ def validate(root):
                 errors.append("go-quality-report: topic routing inventory incomplete")
             if not (folder / "scripts/grade.py").is_file():
                 errors.append("go-quality-report: grade calculator missing")
+            reporting = folder / "references/reporting.md"
+            report_text = reporting.read_text() if reporting.exists() else ""
+            template = contract["report_template"].replace("{topic}", "Go Quality Report")
+            if report_text.count(template + contract["umbrella_suffix"]) != 1:
+                errors.append("go-quality-report: report template mismatch")
+            if report_text.count(contract["report_instructions"]) != 1:
+                errors.append("go-quality-report: report instructions mismatch")
         else:
             for name, block in contract["blocks"].items():
                 if text.count(block) != 1:
@@ -189,6 +196,8 @@ def validate(root):
             topic = contract["topics"].get(folder.name)
             if topic is None or contract["report_template"].replace("{topic}", topic) not in text:
                 errors.append(f"{folder.name}: report template mismatch")
+            if text.count(contract["report_instructions"]) != 1:
+                errors.append(f"{folder.name}: report instructions mismatch")
 
         for document in [entry, *folder.glob("references/**/*.md")]:
             for target in re.findall(r"\]\(([^)]+)\)", document.read_text()):
@@ -294,8 +303,198 @@ def validate_build_evals(root: Path) -> tuple[list[str], int]:
     return errors, case_count
 
 
+REPORT_GRADES = {"F", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"}
+REPORT_STATES = {"Not applicable", "Insufficient evidence"}
+REPORT_SEVERITIES = ("critical", "major", "moderate", "minor")
+REPORT_SECTIONS = ("Findings summary", "Finding details", "Strengths", "Checks and limits")
+SUMMARY_COLUMNS = ("ID", "Severity", "Topic", "Finding / consequence", "Evidence", "Correction")
+
+
+def report_table(body, columns, errors, label):
+    """Read one pipe table; escaped pipes remain part of their cell."""
+    lines = [line.strip() for line in body.splitlines() if line.strip().startswith("|")]
+    rows = []
+    for line in lines:
+        if not line.endswith("|"):
+            errors.append(f"{label}: table rows must end with a pipe")
+            continue
+        cells = [cell.strip() for cell in re.split(r"(?<!\\)\|", line[1:-1])]
+        if len(cells) != len(columns):
+            errors.append(f"{label}: expected {len(columns)} cells; escape literal pipes")
+            continue
+        rows.append(cells)
+    if len(rows) < 2 or tuple(rows[0]) != tuple(columns):
+        errors.append(f"{label}: missing or invalid table header")
+        return []
+    if any(not re.fullmatch(r":?-{3,}:?", cell) for cell in rows[1]):
+        errors.append(f"{label}: invalid table separator")
+    for row in rows[2:]:
+        if not all(row):
+            errors.append(f"{label}: empty table cell")
+    return rows[2:]
+
+
+def report_field(body, field, errors, label):
+    values = re.findall(r"^" + re.escape(field) + r":[ \t]*(.*)$", body, re.M)
+    if len(values) != 1 or not values[0].strip():
+        errors.append(f"{label}: missing, empty or repeated {field}")
+        return ""
+    return values[0].strip()
+
+
+def possible_report_grades(counts):
+    critical, major, moderate, minor = (counts[s] for s in REPORT_SEVERITIES)
+    if critical:
+        return {"F"}
+    if major >= 2 or (major == 1 and moderate >= 2):
+        return {"C-"}
+    if major == 1:
+        # A systemic-major explanation still needs semantic review.
+        return {"C", "C-"}
+    if moderate >= 2:
+        return {"C+"}
+    if moderate == 1:
+        return {"B-" if minor >= 2 else "B"}
+    if minor >= 2:
+        return {"B+"}
+    if minor == 1:
+        return {"A-"}
+    # Independent, verified safeguards still need semantic review.
+    return {"A", "A+"}
+
+
+def check_report(text, contract, expected_topic=None):
+    """Check presentation and internal consistency, never factual evidence truth."""
+    errors = []
+    known_topics = set(contract["topics"].values())
+    header = re.match(r"\A\s*# ([^\n]+) — ([^\n]+)\n", text)
+    title, grade = (header[1].strip(), header[2].strip()) if header else ("", "")
+    umbrella = title == "Go Quality Report"
+    if title not in known_topics | {"Go Quality Report"} or grade not in REPORT_GRADES | REPORT_STATES:
+        errors.append("invalid topic or grade heading")
+    if expected_topic is not None and title != expected_topic:
+        errors.append(f"expected topic heading {expected_topic}")
+
+    headings = list(re.finditer(r"^## ([^\n]+)\s*$", text, re.M))
+    preamble = text[:headings[0].start()] if headings else text
+    for field in ("Scope", "Coverage", "Rationale"):
+        report_field(preamble, field, errors, "report")
+    sections = {}
+    positions = {}
+    for index, heading in enumerate(headings):
+        name = heading[1].strip()
+        if name in sections:
+            errors.append(f"repeated section {name}")
+        end = headings[index + 1].start() if index + 1 < len(headings) else len(text)
+        sections[name] = text[heading.end():end].strip()
+        positions[name] = index
+    required = REPORT_SECTIONS + (("Report cards", "Maintainability profile") if umbrella else ())
+    for name in required:
+        if not sections.get(name):
+            errors.append(f"missing or empty {name}")
+    ordered = [positions[name] for name in required if name in positions]
+    if ordered != sorted(ordered):
+        errors.append("invalid section order")
+
+    summary = report_table(sections.get("Findings summary", ""), SUMMARY_COLUMNS, errors, "Findings summary")
+    if not summary and not re.search(r"^None found\.[ \t]*$", sections.get("Findings summary", ""), re.M):
+        errors.append("empty Findings summary must say None found.")
+    summary_by_id = {}
+    for row in summary:
+        fid, severity, topic = row[:3]
+        if not re.fullmatch(r"F[1-9]\d*", fid):
+            errors.append(f"invalid summary ID {fid}")
+        if fid in summary_by_id:
+            errors.append(f"duplicate summary ID {fid}")
+        if severity not in REPORT_SEVERITIES:
+            errors.append(f"{fid}: invalid severity {severity}")
+        topics = {part.strip() for part in topic.split(";")}
+        if not topics or not topics <= known_topics:
+            errors.append(f"{fid}: unknown topic")
+        if not umbrella and title in known_topics and topics != {title}:
+            errors.append(f"{fid}: standalone finding must use its assessed topic")
+        summary_by_id[fid] = (severity, topic)
+    if all(re.fullmatch(r"F[1-9]\d*", row[0]) and row[1] in REPORT_SEVERITIES for row in summary):
+        order = [(REPORT_SEVERITIES.index(row[1]), int(row[0][1:])) for row in summary]
+        if order != sorted(order):
+            errors.append("invalid finding order: use severity, then numeric ID")
+
+    detail_body = sections.get("Finding details", "")
+    details = list(re.finditer(r"^### (F[1-9]\d*) — ([^\n]+)$", detail_body, re.M))
+    all_detail_headings = re.findall(r"^### .+$", detail_body, re.M)
+    if len(details) != len(all_detail_headings):
+        errors.append("invalid finding detail heading")
+    detail_ids = set()
+    for index, detail in enumerate(details):
+        fid = detail[1]
+        if fid in detail_ids:
+            errors.append(f"duplicate detail ID {fid}")
+        detail_ids.add(fid)
+        end = details[index + 1].start() if index + 1 < len(details) else len(detail_body)
+        body = detail_body[detail.end():end]
+        fields = {field: report_field(body, field, errors, fid) for field in
+                  ("Severity", "Topic", "Status", "Trigger", "Evidence", "Consequence", "Correction", "Verification")}
+        if fields["Status"] not in {"introduced", "worsened", "existing-in-scope"}:
+            errors.append(f"{fid}: invalid Status")
+        if fid in summary_by_id:
+            severity, topic = summary_by_id[fid]
+            if fields["Severity"] != severity:
+                errors.append(f"{fid}: severity differs between summary and detail")
+            if fields["Topic"] != topic:
+                errors.append(f"{fid}: topic differs between summary and detail")
+    if set(summary_by_id) != detail_ids:
+        errors.append("summary/detail IDs differ")
+    if not details and detail_body != "None found.":
+        errors.append("empty Finding details must say None found.")
+
+    tally_lines = re.findall(r"^Finding counts:.*$", preamble, re.M)
+    tally = re.search(r"^Finding counts: critical=(\d+), major=(\d+), moderate=(\d+), minor=(\d+)[ \t]*$", preamble, re.M)
+    if grade in REPORT_GRADES and not tally:
+        errors.append("missing or invalid severity counts")
+    if len(tally_lines) > 1 or (tally_lines and not tally):
+        errors.append("invalid or repeated severity counts")
+    observed = Counter(row[1] for row in summary)
+    if tally:
+        counts = Counter(dict(zip(REPORT_SEVERITIES, map(int, tally.groups()))))
+        if observed != counts:
+            errors.append("finding severities do not match counts")
+        if grade in REPORT_GRADES and grade not in possible_report_grades(counts):
+            errors.append(f"grade {grade} conflicts with counts")
+        if grade == "Insufficient evidence" and not sum(counts.values()):
+            errors.append("Insufficient evidence must not imply a clean assessment with zero counts")
+    if grade == "Not applicable" and (tally_lines or summary or details):
+        errors.append("Not applicable must not contain findings or counts")
+    assessed_lines = re.findall(r"^Assessed-scope defect grade:[ \t]*(.*)$", preamble, re.M)
+    if assessed_lines:
+        assessed = re.match(r"([^\s(]+)", assessed_lines[0].strip())
+        assessed_grade = assessed[1] if assessed else ""
+        if len(assessed_lines) != 1 or assessed_grade not in REPORT_GRADES:
+            errors.append("invalid, empty or repeated assessed-scope grade")
+        if grade != "Insufficient evidence":
+            errors.append("assessed-scope grade requires an Insufficient evidence result")
+        elif assessed_grade in {"A", "A+"}:
+            errors.append("incomplete coverage cannot support an assessed-scope A or A+")
+        elif assessed_grade in REPORT_GRADES and assessed_grade not in possible_report_grades(observed):
+            errors.append("assessed-scope grade conflicts with confirmed finding counts")
+
+    if umbrella:
+        cards = sections.get("Report cards", "")
+        card_header = next((line for line in cards.splitlines() if line.strip().startswith("|")), "")
+        columns = tuple(cell.strip() for cell in card_header.strip().strip("|").split("|"))
+        if len(columns) != 4 or columns[:2] != ("Topic", "Grade/state"):
+            errors.append("Report cards: invalid table header")
+        else:
+            rows = report_table(cards, columns, errors, "Report cards")
+            topics = [row[0] for row in rows]
+            if len(topics) != len(known_topics) or set(topics) != known_topics:
+                errors.append("Report cards must contain every topic exactly once")
+            if any(row[1] not in REPORT_GRADES | REPORT_STATES for row in rows):
+                errors.append("Report cards: invalid topic grade/state")
+    return errors
+
+
 def check_reports(root, reports):
-    """Check report shape and grade arithmetic; semantic assertions need a reviewer."""
+    """Check each current topic evaluation report against the shared structure."""
     errors = []
     contract = json.loads((root / "tests/go-quality-review/shared/review-contract.json").read_text())
     count = 0
@@ -308,66 +507,15 @@ def check_reports(root, reports):
                 errors.append(f"{label}: missing report")
                 continue
             count += 1
-            text = path.read_text()
-            header = re.search(r"^## " + re.escape(topic) + r" — (.+)$", text, re.M)
-            grade = header[1].strip() if header else ""
-            allowed = {"F", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"}
-            if grade not in allowed | {"Not applicable", "Insufficient evidence"}:
-                errors.append(f"{label}: invalid topic or grade heading")
-            for field in ("Scope", "Coverage", "Rationale", "Limits"):
-                if not re.search(r"^" + field + r":\s*\S", text, re.M):
-                    errors.append(f"{label}: missing {field}")
-            if grade not in allowed:
-                if "Finding counts:" in text:
-                    errors.append(f"{label}: ungraded state should not imply assessed counts")
-                continue
-            for section in ("Good", "Bad", "Suggested changes"):
-                if not re.search(r"^" + section + r"\s*$", text, re.M):
-                    errors.append(f"{label}: missing {section}")
-            tally = re.search(r"^Finding counts: critical=(\d+), major=(\d+), moderate=(\d+), minor=(\d+)\s*$", text, re.M)
-            if not tally:
-                errors.append(f"{label}: missing or invalid severity counts")
-                continue
-            critical, major, moderate, minor = map(int, tally.groups())
-            if critical:
-                possible = {"F"}
-            elif major >= 2 or (major == 1 and moderate >= 2):
-                possible = {"C-"}
-            elif major == 1:
-                # C- additionally needs a substantiated systemic-major explanation.
-                possible = {"C", "C-"}
-            elif moderate >= 2:
-                possible = {"C+"}
-            elif moderate == 1:
-                possible = {"B-" if minor >= 2 else "B"}
-            elif minor >= 2:
-                possible = {"B+"}
-            elif minor == 1:
-                possible = {"A-"}
-            else:
-                # A+ additionally needs two verified, independent safeguards.
-                possible = {"A", "A+"}
-            if grade not in possible:
-                errors.append(f"{label}: grade {grade} conflicts with counts {tally[0]}")
-            bad = re.search(r"^Bad\s*\n(.*?)^Suggested changes\s*$", text, re.M | re.S)
-            if bad:
-                findings = re.findall(r"^- \[(F\d+)\]\s*\[(critical|major|moderate|minor)\]", bad[1], re.M | re.I)
-                observed = Counter(severity.lower() for _, severity in findings)
-                if observed != Counter(dict(zip(("critical", "major", "moderate", "minor"), (critical, major, moderate, minor)))):
-                    errors.append(f"{label}: Bad finding severities do not match counts")
-                if len({fid for fid, _ in findings}) != len(findings):
-                    errors.append(f"{label}: repeated finding ID within topic")
-                changes = text.split("Suggested changes", 1)[1].split("\nLimits:", 1)[0]
-                for fid, _ in findings:
-                    if not re.search(r"^- \[" + re.escape(fid) + r"\]", changes, re.M):
-                        errors.append(f"{label}: no linked correction for {fid}")
+            errors.extend(f"{label}: {error}" for error in check_report(path.read_text(), contract, topic))
     return errors, count
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
-    parser.add_argument("--reports", type=Path, help="Check nine topic skills at <skill>/<case-id>.md; umbrella outputs and factual quality need separate review")
+    parser.add_argument("--reports", type=Path, help="Check current topic evaluation reports at <skill>/<case-id>.md")
+    parser.add_argument("--report-file", type=Path, action="append", default=[], help="Check one topic or full report; repeat for multiple files")
     args = parser.parse_args()
     try:
         errors, skill_count, case_count = validate(args.root)
@@ -378,6 +526,11 @@ def main():
         if args.reports:
             report_errors, report_count = check_reports(args.root, args.reports)
             errors.extend(report_errors)
+        if args.report_file:
+            contract = json.loads((args.root / "tests/go-quality-review/shared/review-contract.json").read_text())
+            report_count = (report_count or 0) + len(args.report_file)
+            for path in args.report_file:
+                errors.extend(f"{path}: {error}" for error in check_report(path.read_text(), contract))
     except (OSError, ValueError, TypeError) as exc:
         parser.exit(1, f"Validation could not complete: {exc}\n")
     for error in errors:
@@ -387,7 +540,7 @@ def main():
     print(f"PASS: {skill_count} skills; matching grading/report contracts; {case_count} valid evaluation cases")
     print(f"PASS: {build_case_count} valid build evaluation cases")
     if report_count is not None:
-        print(f"PASS: {report_count} report structures, severity tallies, grade arithmetic, and finding-to-change links")
+        print(f"PASS: {report_count} report structures, summary/detail consistency, severity tallies, and grade arithmetic")
         print("Factual findings, severity judgments, systemic-major explanations, and A+ evidence still require semantic review.")
 
 

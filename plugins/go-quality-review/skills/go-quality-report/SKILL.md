@@ -2,7 +2,7 @@
 name: go-quality-report
 description: Orchestrate a comprehensive graded Go quality review of a changeset, codebase, package, or supplied code. Use when the user wants an overall report across relevant Go quality topics, delegated report cards, a maintainability comparison, or a pre-merge quality assessment; use a single topic skill for a specifically limited topic review.
 metadata:
-  review-contract: "1"
+  review-contract: "2"
 ---
 
 # Go Quality Report
@@ -43,6 +43,6 @@ Grade unique confirmed root causes using the shared rubric, never averages of ca
 
 When Python is available, resolve [grade.py](scripts/grade.py) relative to this skill's `SKILL.md` and invoke its absolute path: `python3 /absolute/path/to/go-quality-report/scripts/grade.py /path/to/reconciled-ledger.json`. The ledger format is in the grading reference. Otherwise apply the same table manually. The calculator checks arithmetic, not evidence truth or omitted coverage.
 
-Produce the report in [reporting](references/reporting.md): overall result, scope and coverage, topic breakdown, good/bad with why, prioritized linked changes with why and verification, and limits. Full-scope material coverage gaps mean overall Insufficient evidence; preserve confirmed findings and, when useful, show a separately labeled assessed-scope defect grade. Do not award A/A+ from incomplete material coverage. All topics genuinely irrelevant means Not applicable. Link the underlying cards so detail remains reviewable.
+Produce the report in [reporting](references/reporting.md): overall result, scope and coverage, complete findings table, finding details with corrections and verification, strengths, checks and limits, topic breakdown, and maintainability profile. Full-scope material coverage gaps mean overall Insufficient evidence; preserve confirmed findings and, when useful, show a separately labeled assessed-scope defect grade. Do not award A/A+ from incomplete material coverage. All topics genuinely irrelevant means Not applicable. Link the underlying cards so detail remains reviewable.
 
 Apply [maintainability](references/maintainability.md) alongside the defect report: seven evidence-backed ratings with confidence, representative change scenarios, and separate conclusions on cleanliness, structure and extensibility. Keep profile judgments separate from grade.py arithmetic.

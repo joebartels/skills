@@ -6,7 +6,7 @@ Nine standalone review skills assess a defined changeset or code area across Go 
 
 ## Shared reporting and grading
 
-Every skill uses the same F, C-, C, C+, B-, B, B+, A-, A, A+ anchors. A letter-grade report records scope, assessed coverage, grade rationale, severity counts, verified strengths, substantiated findings, corrections linked by finding ID, and verification limits. Not applicable and Insufficient evidence retain scope, coverage, rationale, and limits without implying a clean bill of health.
+Every skill uses the same F, C-, C, C+, B-, B, B+, A-, A, A+ anchors. Topic and overall reports share one structure: scope, coverage, rationale and confirmed counts; a complete findings summary table; finding details with evidence, consequence, correction and verification; strengths; checks and limits. Overall reports append topic report cards and the maintainability profile. The saved report and final response use the same structure. Not applicable and Insufficient evidence retain the sections without fabricating findings or implying a clean bill of health.
 
 Grade introduced or worsened issues in a changeset; grade existing issues when the user requests a code-area review. Count root causes rather than symptoms. Strengths do not offset defects. A+ requires two independent, verified safeguards addressing distinct meaningful risks; ordinary correct setup supports A.
 
@@ -21,9 +21,11 @@ From the repository root, with Python 3.10+ and PyYAML available:
 ```sh
 python3 scripts/validate.py
 python3 scripts/validate.py --reports /path/to/run
+python3 scripts/validate.py --report-file /path/to/report.md
+python3 -m unittest discover -s tests/go-quality-review -p 'test*.py'
 ```
 
-Validation checks harness manifests and catalogs, frontmatter, matching grade/report contracts, local-reference portability, evaluation inputs, and fixture paths. The optional report check expects `/path/to/run/<skill-name>/<case-id>.md`; it checks required fields, grade arithmetic, severity tallies, and linked corrections for the nine topic skills. Umbrella evaluation outputs include plans and synthesis scenarios and are judged separately; this option does not validate them. It cannot establish that a finding, severity, systemic-major classification, or A+ safeguard is correct.
+Validation checks harness manifests and catalogs, frontmatter, matching grade/report contracts, local-reference portability, evaluation inputs, and fixture paths. `--report-file` checks a standalone topic or overall report. `--reports` checks the nine topic evaluation suites at `/path/to/run/<skill-name>/<case-id>.md`; umbrella planning scenarios remain separate from complete reports. Report checks cover section order, table/detail correspondence, severity counts, grade arithmetic, and correction/verification fields. They cannot establish that evidence, severity, systemic reach, or A+ safeguards are correct. Contract version 2 applies to newly produced reports; historical evaluation outputs retain their original format.
 
 Each skill's `tests/go-quality-review/<skill>/evals/evals.json` contains behavioral tasks and expected outcomes, not Python tests. For a behavioral run:
 
