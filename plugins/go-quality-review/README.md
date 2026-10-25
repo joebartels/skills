@@ -14,4 +14,4 @@ This plugin contains one overall Go review skill and nine topic skills. Use [go-
 | Security | [go-security](skills/go-security/SKILL.md) |
 | Testing | [go-testing](skills/go-testing/SKILL.md) |
 
-Each skill keeps its references in its own directory, so individual topic directories remain portable. The umbrella skill needs the applicable topic skills available. Evaluation cases and historical results live in the source repository's `tests/go-quality-review/` tree and are not bundled with this plugin.
+Install the package together: topic skills share the record contract and standard-library Python renderer in `go-quality-report`. Each topic still reviews independently; an overall review uses the applicable topic skills. Evaluation inputs live under the source repository's `tests/go-quality-review/` tree and are not bundled. Generated evaluation outputs belong outside the checkout.
