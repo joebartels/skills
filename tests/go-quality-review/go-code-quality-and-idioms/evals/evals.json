@@ -116,6 +116,27 @@
         "Retains the architectural issue as an explicitly ungraded related observation.",
         "Recognizes the supplied local strengths without claiming a fresh source inspection."
       ]
+    },
+    {
+      "id": "api-plumbing-not-second-local-cost",
+      "prompt": "Review only Code Quality & Go Idioms for a complete supplied private API area. Reader stores tenantID and Read(ctx, ignoredTenantID, key) never reads ignoredTenantID; its body directly returns r.store.Get(ctx, r.tenantID, key). All callers retrieve/pass the stored ID; no interface or compatibility requirement mandates the argument. Architecture has confirmed a minor unnecessary-API-input cause and proposes removing the argument. All local names, expressions and data flow are otherwise straightforward. A reviewer wants a second Code Quality deduction because the same extra argument also makes readers reconcile identity. Assess only the supplied local consequences.",
+      "expected_output": "A for local code quality, preserving the confirmed Architecture minor as ungraded related context. Restating the same API burden as reader friction does not supply an additional local effect.",
+      "assertions": [
+        "Does not transfer the API-input cost into Code Quality solely by calling it reader friction.",
+        "Keeps the supported Architecture minor visible as ungraded related context.",
+        "Does not claim all API issues are exempt from Code Quality when distinct local effects are established."
+      ]
+    },
+    {
+      "id": "similar-calls-not-duplicate-policy",
+      "prompt": "Review Code Quality & Go Idioms from supplied facts only. Three login/refresh/exchange workflows call the same token constructors with session.Expiry and session.JTI. The supplied trace establishes these call names and inputs; it does not include their full bodies, error paths, surrounding transaction responsibilities, or a policy change requiring synchronized edits. Session owns the decisions calculating expiry and JTI. One workflow also writes a browser cookie. A reviewer counts minor duplicate issuance policy because the calls look alike and proposes a shared Issue helper. Decide whether this particular minor finding is established, and what evidence would settle it; do not invent a whole-service grade.",
+      "expected_output": "Keep the duplicate-policy claim ungraded: shared calls and centrally supplied values do not establish a repeated decision or a behavior-preserving common operation. Request a traced maintenance task and the relevant responsibilities. Do not reject all local duplication findings.",
+      "assertions": [
+        "Does not count a duplicate-policy minor from shared constructors and input values alone.",
+        "Distinguishes passing authoritative session values from independently implementing the policy that chooses them.",
+        "Names the missing repeated decision/change task and relevant flow responsibilities before prescribing extraction.",
+        "Does not require a runtime incident or actual refactor to substantiate a future source-backed maintenance finding."
+      ]
     }
   ]
 }
