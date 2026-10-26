@@ -119,6 +119,39 @@
         "Assigns the surface finding to Architecture rather than a second Code Quality reader-friction deduction.",
         "Preserves format-separation tests when suggesting helper removal and reports unexecuted checks as such."
       ]
+    },
+    {
+      "id": "operation-fit-coordination",
+      "prompt": "Review Architecture & Design for this complete supplied Go code area using the supplied skill. Use only these facts; no repository source is available. A service processes reservations from Checkout, Renew and AdminReplace. Each component owner correctly implements the same documented replacement policy: reject a released reservation; retain the original absolute deadline; replace the current holder only if its revision matches; increment that revision; and return the resulting reservation. The private Store offers Read and CompareAndSwap; all three callers correctly retry on CAS conflict and no failure is alleged. Each owner separately translates stored phase/deadline/revision fields into policy decisions. Supported changes to replacement policy require reimplementing those decisions and the conflict response in all three independently owned components; there is no common policy owner or shared conformance check. The operations have distinct request authentication and response formats which must remain separate. Other boundary and lifecycle obligations are assessed and sound. Assess current abstraction fit and any severity; give the minimal correction and counterevidence. Do not infer races, security failures or unsupported future workflows. Output a compact admission decision rather than a full report; no source execution.",
+      "expected_output": "One moderate Architecture maintenance finding for independently reconstructed replacement policy, despite correct current behavior. A shared replacement operation/policy owner retains caller authentication/presentation and CAS correctness; no generic framework or incident claim.",
+      "assertions": [
+        "Admits one moderate Architecture finding for current cross-owner policy reconstruction, rather than number of calls or missing named types.",
+        "Preserves caller-specific authentication/presentation, absolute deadline, revision comparison, retry semantics and stored results in the correction.",
+        "Does not invent runtime races, data loss, security failures or future client requirements.",
+        "Explains how an owned operation reduces caller knowledge and synchronization costs rather than only renaming the sequence."
+      ]
+    },
+    {
+      "id": "operation-fit-procedural",
+      "prompt": "Review Architecture & Design for this complete supplied Go code area using the supplied skill. Use only these facts. A small file conversion CLI has no domain objects, repository interfaces or plugin system. Its import and resume commands call Plan(input, savedProgress, policy) to return explicit Skip/Convert/Reject decisions. Plan owns the supported conflict and resume rules. Apply(ctx, plan, writer) owns ordered writes and progress advancement, checking write failures before advancing. Each command supplies its distinct input selection and output presentation. Existing conformance assertions exercise both commands against the same resume/conflict contract. Two inspected supported policy changes changed Plan and its behavior tests without altering either command or writer. All relevant paths, lifecycle and callers are supplied as assessed and sound. A proposed framework would require each command to configure a sequence of validation, retry, write and checkpoint callbacks to obtain the same behavior; no current capability requires that customization. Assess current abstraction fit, relevant positive evidence and whether that proposal earns a deduction against current code. Also assess the existing Abstraction cost maintainability row (rating/confidence/evidence) from these supplied facts; do not claim fresh measurements. No execution or full nine-topic report.",
+      "expected_output": "Positive architecture assessment with no missing-model/interface deduction. Explicit evidence of fit from Plan/Apply responsibilities, current command composition and localized supported changes; the Abstraction cost profile recognizes that benefit without claiming executed measurement.",
+      "assertions": [
+        "Finds no architectural defect solely from procedural functions, lack of domain objects or missing plugin interfaces.",
+        "Connects positive abstraction fit to Plan policy ownership, Apply failure/progress responsibility, both command consumers and the supplied supported change evidence.",
+        "Does not prescribe caller-configured callbacks that would return owned sequencing obligations to each command.",
+        "Reports a supported Abstraction cost rating/confidence grounded in supplied evidence; does not claim fresh source inspection or test execution."
+      ]
+    },
+    {
+      "id": "operation-fit-unknown",
+      "prompt": "Review a proposed Architecture & Design finding from supplied Go source facts only. Three handlers call Read, Check and Write using status strings and two bool fields. Their bodies, callees, type contracts, tests and transaction boundaries are unavailable. A reviewer says the core needs an Entity with Transition methods, labels the current design moderate for missing primitives, and offers a generic StateMachine interface as the fix. The supported states and intended relationship between the handlers have not been provided. Decide whether to admit that finding, what evidence could establish a current cost, and whether the proposed interface is justified. Do not infer invalid states, repeated policy, missing atomicity or unused safeguards. No whole-area grade or execution.",
+      "expected_output": "Ungraded/unresolved proposed finding. Inspect actual state contracts, callers, rule ownership, guards and required sequencing before asserting a missing operation. No forced Entity/StateMachine recommendation or whole-area grade.",
+      "assertions": [
+        "Does not assign moderate or minor simply from raw status/boolean representations or a read/check/write sequence.",
+        "Identifies missing consumer/implementation/invariant evidence and a concrete ordinary task needed to establish burden.",
+        "Does not assume unsafe intermediate state, non-atomicity, duplicated policy or absent guards.",
+        "Keeps the generic state-machine proposal unproven and does not invent a whole-area grade."
+      ]
     }
   ]
 }

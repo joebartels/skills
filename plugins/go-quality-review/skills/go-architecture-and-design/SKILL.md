@@ -22,9 +22,9 @@ Review the specified code as a design that other code and people must use and ch
 1. Identify the exact changeset or code area. Read affected callers, implementations, tests, module version, and repository conventions as needed to understand it. If the target is unclear, state the interpretation used. Do not treat unrelated existing debt as introduced by the change.
 2. Identify whether the code is a library, CLI, service, or a mix; distinguish public contracts from internal implementation. Judge the cost of a design choice against its actual users and expected evolution, not an assumed application template.
 3. Check the applicable design questions below. Follow a value across boundaries when necessary: who owns it, which package depends on which, how errors and cancellation travel, and who shuts down acquired resources or work.
-4. Trace suspected coupling or ownership problems through actual consumers and ordinary changes. Compare the proposed boundary with the existing design's responsibilities and tradeoffs; a different package or type layout is not itself an improvement. Do not invent HTTP status, durability, or transaction requirements.
+4. Trace representative supported features through their operations, state and invariant owners. Identify rules or sequencing callers must reconstruct, then compare ordinary changes and a simpler alternative preserving required responsibilities. Assess positive fit as well as costs; do not invent HTTP status, durability, or transaction requirements.
 
-For nuanced examples and handbook corrections, read [Design decisions](references/design-decisions.md) when the review encounters layering, interfaces, context, error translation, or background work. Do not load it for an unrelated, straightforward change.
+For nuanced examples and handbook corrections, read [Design decisions](references/design-decisions.md) when judging operation/state fit, layering, interfaces, context, error translation, or background work. Do not load it for an unrelated, straightforward change.
 
 ## Design questions
 
@@ -32,7 +32,7 @@ For nuanced examples and handbook corrections, read [Design decisions](reference
 | --- | --- |
 | Package and API boundaries | Do packages have coherent responsibilities and dependencies? Are exported types, names, and behaviors usable without importing unrelated implementation details? Does the API shape fit its intended consumers? |
 | Data and protocol boundaries | When persistence or transport models differ from business concepts, is translation owned at a clear boundary? Is there demonstrated coupling or duplicated mapping, rather than merely a struct tag or direct handler call? |
-| Interfaces and abstraction | Does an interface represent a real protocol or consumer need? Is its method set no larger than users need? Would a concrete type, function, or existing standard interface be clearer? Producer-owned interfaces are valid when the protocol itself is the product. |
+| Operations, state and abstraction | Can supported features use the available operations and state representations without reconstructing shared rules or internal sequencing? Do interfaces, functions and types serve actual consumers or protocols? Assess total caller and implementation cost, not conformity to a pattern. |
 | Dependencies and composition | Are important runtime dependencies visible and replaceable where needed? Is construction as simple as the invariants allow? Can users tell who configures, starts, and closes a dependency? |
 | Cross-boundary behavior | Can callers observe meaningful errors and cancellation without depending on accidental implementation details? Check whether raw infrastructure errors cross a public protocol boundary. Is the success contract truthful when work continues asynchronously? |
 | Simplicity and fit | Does each package, layer, DTO, option, and background task solve a present problem? Could fewer boundaries express the same design more clearly? |

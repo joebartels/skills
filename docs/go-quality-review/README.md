@@ -44,7 +44,7 @@ python3 tests/go-quality-review/go-quality-report/evals/test_grade.py
 
 The renderer validates the record and derives both topic and overall ledgers for the existing calculator. It does not discover findings, verify source evidence or decide semantic duplication. `test_render.py` exercises projections, malformed records, coverage states, deterministic presentation and installed-package operation; `test_reports.py` independently checks rendered Markdown. Keep runtime validation in `review_record.py`, the complete field reference in `references/review-record.md`, and the rendering implementation in `render.py`; do not restore copied templates to topic skills.
 
-The fixed inventories in [grade-calibration.json](../../tests/go-quality-review/shared/grade-calibration.json) test arithmetic separately from discovery and classification. Withhold expected grades when using them with an evaluator. The shared [source review sequence](../../plugins/go-quality-review/skills/go-quality-report/references/source-review.md) traces behavior before maintenance assessment and evidence reconciliation. Exercise it with the `file-backed-body-consumption` and `file-backed-test-consumers` cases; compare discovery, admission, topic routing and severity separately. Stable letter grades alone do not establish finding agreement.
+The fixed inventories in [grade-calibration.json](../../tests/go-quality-review/shared/grade-calibration.json) test arithmetic separately from discovery and classification. Withhold expected grades when using them with an evaluator. The shared [source review sequence](../../plugins/go-quality-review/skills/go-quality-report/references/source-review.md) traces behavior before maintenance assessment and evidence reconciliation. Exercise it with the `file-backed-body-consumption` and `file-backed-test-consumers` cases; compare discovery, admission, topic routing and severity separately. Stable letter grades alone do not establish finding agreement. The architecture `operation-fit-*` cases check shared-operation needs, positive procedural fit and missing evidence; retain the representation and local-duplication controls when changing these judgments.
 
 ## Grading topics
 
@@ -52,8 +52,8 @@ The fixed inventories in [grade-calibration.json](../../tests/go-quality-review/
 
 - Package and API Boundaries: Do packages, public contracts, and dependencies have clear responsibilities that fit
   their actual callers? Add layers or mappings when they solve demonstrated coupling, not as a required template.
-- Interfaces and Abstraction: Does each interface represent a real consumer need or exported protocol, with a coherent
-  method set? Would a concrete type or function be simpler where no abstraction is needed?
+- Operations and Abstraction: Do available operations and state fit supported features, with owned invariants and limited
+  caller reconstruction? Compare total caller/implementation cost; functions, types, SQL and protocols can all be suitable.
 - Composition and Ownership: Are significant dependencies and resource lifetimes visible? Can callers tell who starts,
   cancels, and closes work without unnecessary constructors or global state?
 - Cross-Boundary Behavior: Do errors, cancellation, and asynchronous success claims preserve the intended contract?
