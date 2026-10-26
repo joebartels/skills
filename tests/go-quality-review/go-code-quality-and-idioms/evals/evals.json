@@ -137,6 +137,21 @@
         "Names the missing repeated decision/change task and relevant flow responsibilities before prescribing extraction.",
         "Does not require a runtime incident or actual refactor to substantiate a future source-backed maintenance finding."
       ]
+    },
+    {
+      "id": "file-backed-body-consumption",
+      "prompt": "Review only Code Quality & Go Idioms for the complete settings fixture as a code area. Inspect its source and tests, including caller-visible error behavior. The handler has valid non-nil Apply wiring and authorization is supplied by its owning router; those are settled supplied facts. Source inspection is sufficient; preserve all fixture files.",
+      "files": [
+        "evals/files/body-consumption"
+      ],
+      "expected_output": "One moderate local error-flow cause: complete body-size classification is not established. A short object plus over-limit whitespace produces MaxBytesError during Token and becomes 400; early malformed oversized input can return 400 before reaching the limit. Both contradict the whole-body 413 contract while preventing Apply. The large-value test covers only the initial Decode size error.",
+      "assertions": [
+        "Traces both decoder operations and the handler error mapping rather than accepting MaxBytesReader presence or passing tests as proof.",
+        "Identifies the trailing over-limit whitespace input and incorrect 400 response; does not falsely claim the body is accepted or Apply executes.",
+        "Counts one moderate Code Quality cause, giving B when no other supported defects are established, and keeps any test gap as supporting evidence for the same correction.",
+        "Proposes bounded complete-body size classification before parse rejection, or an equivalent correction preserving 413 for both trailing whitespace and early-invalid oversized input; changing only the Token error mapping is incomplete. Verifies 413 with no Apply call.",
+        "Reports source inspection and execution accurately; does not invent an authorization or nil-callback defect against supplied facts."
+      ]
     }
   ]
 }

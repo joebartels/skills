@@ -104,6 +104,21 @@
         "Preserves the Code Quality finding rather than rejecting the real repeated edit cost.",
         "Recognizes the stable consumer and ownership boundaries as supplied positive evidence."
       ]
+    },
+    {
+      "id": "file-backed-test-consumers",
+      "prompt": "Review only Architecture & Design for the complete measure fixture as an internal CLI code area. Inspect every provided source and test file and determine which proposed simplifications have a concrete present cost. There are no other consumers, reflection or generated code. Integer overflow is outside this review: supported inputs are bounded so the total fits int. Source inspection is sufficient; preserve the fixture.",
+      "files": [
+        "evals/files/test-consumers"
+      ],
+      "expected_output": "Admit the small unused WithValue API surface as Architecture minor (A- with verified strengths). Retain strict Validate: TestTotal uses it to check a separate production contract, current-format output from Total. TestFormatSeparation establishes the strict/legacy distinction. These consumers differ from a test exercising only WithValue itself.",
+      "assertions": [
+        "Finds function-value uses of Validate and explains how TestTotal checks the production output format, rather than declaring Validate consumerless.",
+        "Does not grade strict validation as redundant solely because production Total only calls ValidateLegacy; preserves the independent output-contract assertion.",
+        "Admits WithValue as a localized unused API-surface cost; its own helper test alone does not establish a required consumer.",
+        "Assigns the surface finding to Architecture rather than a second Code Quality reader-friction deduction.",
+        "Preserves format-separation tests when suggesting helper removal and reports unexecuted checks as such."
+      ]
     }
   ]
 }

@@ -25,7 +25,7 @@ Start with coherent domains or behavior boundaries; combine a small change into 
 
 ## 3. Dispatch and collect
 
-Use the host's available delegation API. Give each worker the precise target, bounded paths/contracts, resolved topic-skill locations, relevant context, read-only constraints and artifact destination. Workers must read/invoke each assigned skill and its relevant references, returning a structured record and rendered card for each topic, plus inspected coverage and a short handoff. Do not send expected findings or preselect grades.
+Use the host's available delegation API. Give each worker the precise target, bounded paths/contracts, resolved topic-skill locations, relevant context, read-only constraints and artifact destination. Workers follow each assigned skill and the shared [source review sequence](references/source-review.md): behavior traces, consumer-backed maintenance assessment, then evidence reconciliation. Collect a structured record and rendered card per topic, inspected coverage and a short handoff. Do not send expected findings or preselect grades.
 
 Choose permitted model capabilities and reasoning effort for the task; respect user pins and actual host support. Use bounded queues within concurrency limits. If delegation is unavailable, review bounded packets sequentially with the same skills and disclose that limitation. Missing applicable skills stay explicitly unassessed.
 
