@@ -10,6 +10,17 @@ Read the relevant sections when a judgment is contested or context-sensitive. Th
 
 See the Go team's [Organizing Go code](https://go.dev/blog/organizing-go-code), [Package names](https://go.dev/blog/package-names), and [module layout](https://go.dev/doc/modules/layout).
 
+## Fit to supported behavior
+
+A useful primitive may be a function, method, state representation, SQL operation or package contract. Trace a supported feature: what intent does the caller express, which owner enforces the invariant, and what representation or sequencing must the caller understand? Inspect guards and consumers before treating low-level operations, strings or booleans as a missing abstraction.
+
+Compare the existing design with the smallest correction that removes demonstrated caller knowledge or coordinated reimplementation. Include the new abstraction's configuration, mapping, lifecycle and navigation costs; merely moving code or adding a named type is insufficient. Preserve distinct caller policies, persistence/atomicity obligations and meaningful test consumers. Unsupported future features remain extension observations.
+
+- **Missing operation:** independent feature owners correctly reconstruct one expiration policy from raw timestamps and state flags. An ordinary policy change requires substantial coordinated reimplementation. An owned expiration operation can merit a moderate Architecture finding without a runtime incident; retain caller-specific authorization/presentation and storage guarantees. Small repeated edits alone remain minor under the applicable topic.
+- **Good fit:** procedural commands compose a shared decision function with a write/progress operation; rules have owners and supported changes stay local. This is positive evidence even without domain objects or interfaces. A callback framework that makes each command assemble those rules again adds caller burden.
+
+Use the existing severity anchors for demonstrated costs or failures. Record positive fit as a strength and, when requested, evidence for abstraction cost, rule ownership and change locality in the maintainability profile; it is not another grade or a deduction per dimension.
+
 ## Interfaces and construction
 
 - Prefer the smallest interface needed by a real consumer, and consider concrete types before inventing an interface only for mocks. A producer-owned interface is appropriate when the package offers a protocol for multiple implementations, as with `io.Reader` or `hash.Hash`. Returning an interface can also be appropriate when the implementation is deliberately hidden or compatibility requires it; `New() *T` is not a universal constructor rule.

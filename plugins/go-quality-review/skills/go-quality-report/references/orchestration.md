@@ -41,7 +41,7 @@ Assigned topic skill names and resolved locations:
 Relevant instructions, module/support versions and known contract facts:
 Context paths you may inspect; cross-boundary obligations you own:
 Review-only; checks must preserve user files; use disposable copies for mutating diagnostics:
-Output path(s) and handoff format from reporting.md:
+Record/card output paths and handoff format from reporting.md:
 Report unresolved evidence or oversized work before silently narrowing scope.
 ```
 

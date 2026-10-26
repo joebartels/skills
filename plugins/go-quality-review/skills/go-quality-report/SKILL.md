@@ -2,7 +2,7 @@
 name: go-quality-report
 description: Orchestrate a comprehensive graded Go quality review of a changeset, codebase, package, or supplied code. Use when the user wants an overall report across relevant Go quality topics, delegated report cards, a maintainability comparison, or a pre-merge quality assessment; use a single topic skill for a specifically limited topic review.
 metadata:
-  review-contract: "2"
+  review-contract: "3"
 ---
 
 # Go Quality Report
@@ -25,7 +25,7 @@ Start with coherent domains or behavior boundaries; combine a small change into 
 
 ## 3. Dispatch and collect
 
-Use the host's available delegation API. Give each worker the precise target, bounded paths/contracts, resolved topic-skill locations, relevant context, read-only constraints and artifact destination. Workers must read/invoke each assigned skill and its relevant references, returning its standard report card for each topic, plus inspected coverage and a short handoff. Do not send expected findings or preselect grades.
+Use the host's available delegation API. Give each worker the precise target, bounded paths/contracts, resolved topic-skill locations, relevant context, read-only constraints and artifact destination. Workers follow each assigned skill and the shared [source review sequence](references/source-review.md): behavior traces, consumer-backed maintenance assessment, then evidence reconciliation. Collect a structured record and rendered card per topic, inspected coverage and a short handoff. Do not send expected findings or preselect grades.
 
 Choose permitted model capabilities and reasoning effort for the task; respect user pins and actual host support. Use bounded queues within concurrency limits. If delegation is unavailable, review bounded packets sequentially with the same skills and disclose that limitation. Missing applicable skills stay explicitly unassessed.
 
@@ -33,7 +33,7 @@ Keep the orchestrator context to the manifest, compact card summaries, finding i
 
 ## 4. Reconcile and close coverage
 
-Read [grading and reconciliation](references/grading.md). Check card scope, skill invocation, evidence, counts and limits. Namespaced local finding IDs prevent collisions. Deduplicate the same causal defect across chunks/topics, retaining separate independently actionable defects. Resolve contradictions against evidence, not votes or the most alarming label. Return focused questions to workers or inspect the necessary code. Keep original cards and record accepted corrections.
+Read [grading and reconciliation](references/grading.md). Check record scope, skill invocation, evidence and limits before considering grades. Namespaced local finding IDs prevent collisions. Deduplicate the same causal defect across chunks/topics, retaining separate independently actionable defects. Resolve contradictions against evidence, not votes or the most alarming label. Return focused questions to workers or inspect the necessary code. Keep original records and cards; reconcile into one canonical record with source IDs and accepted corrections.
 
 Perform targeted boundary reviews and close remaining material obligations. Retry/reassign an incomplete packet only with a concrete recovery plan; repeated identical blocked attempts add no evidence. Respect user time/cost constraints and report residual gaps. Sampling or a completed subset must not become a full-codebase claim.
 
@@ -41,8 +41,7 @@ Perform targeted boundary reviews and close remaining material obligations. Retr
 
 Grade unique confirmed root causes using the shared rubric, never averages of card grades, clean-chunk dilution or automatic worst-card selection. Recompute topic rollups from unique in-topic causes when useful. A+ safeguards must also be independent and verified. Changing packet boundaries alone must not change the result.
 
-When Python is available, resolve [grade.py](scripts/grade.py) relative to this skill's `SKILL.md` and invoke its absolute path: `python3 /absolute/path/to/go-quality-report/scripts/grade.py /path/to/reconciled-ledger.json`. The ledger format is in the grading reference. Otherwise apply the same table manually. The calculator checks arithmetic, not evidence truth or omitted coverage.
+Use the [review record](references/review-record.md) for canonical findings, topic assessments, coverage and ungraded decisions. Run `python3 /absolute/path/to/go-quality-report/scripts/render.py /output/review.json --output /output/report.md`, resolving the script relative to this skill. It validates the record and calls the existing calculator for unique overall and per-topic grades; do not author counts or duplicate tables manually. Python 3.10+ needs no additional packages. If unavailable, disclose that limit and follow the [report structure](references/reporting.md) manually.
 
-Produce the report in [reporting](references/reporting.md): overall result, scope and coverage, complete findings table, finding details with corrections and verification, strengths, checks and limits, topic breakdown, and maintainability profile. Full-scope material coverage gaps mean overall Insufficient evidence; preserve confirmed findings and, when useful, show a separately labeled assessed-scope defect grade. Do not award A/A+ from incomplete material coverage. All topics genuinely irrelevant means Not applicable. Link the underlying cards so detail remains reviewable.
-
+Deliver the rendered report with its full findings table and details unless the user requests another format. Material coverage gaps or unresolved evidence yield Insufficient evidence while retaining confirmed defects. Topic cards and provenance remain linked for inspection.
 Apply [maintainability](references/maintainability.md) alongside the defect report: seven evidence-backed ratings with confidence, representative change scenarios, and separate conclusions on cleanliness, structure and extensibility. Keep profile judgments separate from grade.py arithmetic.

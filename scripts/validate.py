@@ -88,7 +88,7 @@ def validate_harnesses(root):
                     if re.match(r"[a-zA-Z][a-zA-Z0-9+.-]*:", target) or target.startswith("#"):
                         continue
                     destination = (document.parent / target.split("#", 1)[0]).resolve()
-                    if not destination.is_relative_to(entry.parent.resolve()) or not destination.exists():
+                    if not destination.is_relative_to(skills_dir.resolve()) or not destination.exists():
                         errors.append(f"{name}/{skill_id}: missing skill reference {target} in {document}")
 
     expected_paths = {name: f"./plugins/{name}" for name in names}
@@ -180,22 +180,17 @@ def validate(root):
                 errors.append("go-quality-report: shared grading rubric mismatch")
             if not routing.exists() or any(name not in routing.read_text() for name in contract["topics"]):
                 errors.append("go-quality-report: topic routing inventory incomplete")
-            if not (folder / "scripts/grade.py").is_file():
-                errors.append("go-quality-report: grade calculator missing")
-            reporting = folder / "references/reporting.md"
-            report_text = reporting.read_text() if reporting.exists() else ""
-            template = contract["report_template"].replace("{topic}", "Go Quality Report")
-            if report_text.count(template + contract["umbrella_suffix"]) != 1:
-                errors.append("go-quality-report: report template mismatch")
-            if report_text.count(contract["report_instructions"]) != 1:
-                errors.append("go-quality-report: report instructions mismatch")
+            for runtime_file in ("scripts/grade.py", "scripts/review_record.py", "scripts/render.py",
+                                 "references/reporting.md", "references/review-record.md"):
+                if not (folder / runtime_file).is_file():
+                    errors.append(f"go-quality-report: missing {runtime_file}")
         else:
             for name, block in contract["blocks"].items():
                 if text.count(block) != 1:
                     errors.append(f"{folder.name}: shared {name} block missing, duplicated, or changed")
             topic = contract["topics"].get(folder.name)
-            if topic is None or contract["report_template"].replace("{topic}", topic) not in text:
-                errors.append(f"{folder.name}: report template mismatch")
+            if topic is None:
+                errors.append(f"{folder.name}: unknown topic")
             if text.count(contract["report_instructions"]) != 1:
                 errors.append(f"{folder.name}: report instructions mismatch")
 
@@ -205,7 +200,9 @@ def validate(root):
                     continue
                 local = target.split("#", 1)[0]
                 destination = (document.parent / local).resolve()
-                if not destination.is_relative_to(folder.resolve()) or not destination.exists():
+                # Shared runtime helpers ship with the ten-skill package. References
+                # may cross sibling skills, but cannot depend on the source checkout.
+                if not destination.is_relative_to(folder.parent.resolve()) or not destination.exists():
                     errors.append(f"{document}: missing or non-portable reference {target}")
         try:
             suite = json.loads((evaluation / "evals.json").read_text())

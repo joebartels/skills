@@ -112,6 +112,22 @@ class HarnessLayoutTests(unittest.TestCase):
         skill.write_text(skill.read_text() + "\n[missing](references/missing.md)\n")
         self.assertTrue(any("missing skill reference" in error for error in self.errors()))
 
+    def test_shared_reference_inside_installed_package_is_accepted(self):
+        skills = self.root / "plugins/go-quality-review/skills"
+        shared = skills / "shared/references/record.md"
+        shared.parent.mkdir(parents=True)
+        shared.write_text("Runtime record contract")
+        skill = skills / "one/SKILL.md"
+        skill.write_text(skill.read_text() + "\n[record](../shared/references/record.md)\n")
+        self.assertEqual([], self.errors())
+
+    def test_reference_outside_installed_skills_is_rejected(self):
+        folder = self.root / "plugins/go-quality-review"
+        (folder / "source-only.md").write_text("Not installed as a skill resource")
+        skill = folder / "skills/one/SKILL.md"
+        skill.write_text(skill.read_text() + "\n[source](../../source-only.md)\n")
+        self.assertTrue(any("missing skill reference" in error for error in self.errors()))
+
     def test_go_validator_requires_umbrella_skill(self):
         shutil.copytree(
             REPOSITORY / "plugins/go-quality-review/skills",

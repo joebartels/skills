@@ -2,7 +2,7 @@
 
 ## Establish the evidence before counting
 
-1. Validate each card's target snapshot, scope, topic skill use and causal evidence. Check its trigger, relevant callers/guards and supported consequence, not just its label. Source tracing can suffice without reproduction. Unsupported concerns remain ungraded, not discounted to minor; missing material evidence remains a coverage gap. Preserve the topic's report structure.
+1. Validate each card's target snapshot, scope, topic skill use and causal evidence. Trace its trigger and actual callers, guards, existing rule owners and meaningful test consumers. Record counterevidence and the work removed by the correction after preserving necessary responsibilities; a label or site count is not this analysis. Source tracing can suffice without reproduction. Unsupported concerns remain ungraded, not discounted to minor; missing material evidence remains a coverage gap. Admit supported causes into `findings`; retain consequential rejected, merged and unresolved candidates in `decisions`.
 2. Namespace each local ID as `chunk/topic/local-id`; local F1 is not globally unique. Build one canonical finding per independently actionable cause, retaining all source-card IDs and evidence. Merge repeated symptoms when the same causal correction resolves them; shared wording, location or severity alone is insufficient. A production fix and a test change remain distinct only when independently necessary.
 3. For each unique cause, use its greatest **supported** consequence across topics for the overall severity. A critical label requires supported severe/broad/irreversible reach. A systemic major requires demonstrated multiple distinct important boundaries/workflows, not repeated filenames or many agent mentions. Ask the responsible worker to substantiate a disputed classification; do not average disagreement or blindly accept the largest label. If an unresolved dispute could change the grade, keep that material uncertainty in coverage/limits rather than presenting a settled overall grade.
 4. Preserve original cards and record accepted corrections, canonical IDs, owners and topic-specific consequences. Reconcile maintenance overlap by consequence: local repeated implementation belongs to Code Quality; unnecessary API/dependency plumbing belongs to Architecture. A second label for the same cost does not justify another topic deduction. Distinct supported effects can still affect both topics with different severities. Recompute rollups from unique in-topic causes, not the mean or worst chunk grade.
@@ -31,32 +31,11 @@ Strengths do not cancel defects. Independent causes accumulate across the reques
 
 A requires a relevant verified strength and assessment of all material risks. The two A+ safeguards can occur anywhere relevant within that completed scope; every topic need not itself earn A+. A grade is a quality assessment, not an automatic merge authorization.
 
-## Reconciled ledger and calculator
+## Record and calculator
 
-Resolve [grade.py](../scripts/grade.py) relative to this skill's `SKILL.md` and invoke the script through its absolute path from any working directory: `python3 /absolute/path/to/go-quality-report/scripts/grade.py /path/to/ledger.json`. Python 3.10+; no extra packages. Its input is the orchestrator's **already reconciled** ledger. The calculator does not merge raw cards, discover missing obligations, verify evidence or assess whether two risk descriptions are semantically independent.
+The [review record](review-record.md) is the maintained authoring format. `render.py` projects its canonical causes, per-topic consequences, coverage, strengths and safeguards into ledgers and calls `grade.calculate`. Unresolved decisions create coverage gaps in every affected topic. The renderer derives overall severity from the greatest supported topic consequence and counts each canonical cause once; it cannot prove the semantic reconciliation.
 
-```json
-{
-  "scope": "base abc123 to head def456; complete requested diff",
-  "coverage": [
-    {"id": "accounts/authorization", "status": "complete", "reason": "handler and domain cards plus boundary trace"},
-    {"id": "deployment", "status": "not_applicable", "reason": "no release/runtime decision implicated"}
-  ],
-  "findings": [
-    {"id": "F1", "severity": "major", "systemic": false,
-     "cause": "update occurs before tenant authorization",
-     "evidence": "handler.go:42; denied caller reaches Store.Update",
-     "correction": "authorize before persistence",
-     "sources": ["accounts/security/F1", "accounts/correctness/F2"]}
-  ],
-  "strengths": [{"id": "G1", "evidence": "request deadline forwarded to storage; cancellation test passes as recorded"}],
-  "safeguards": []
-}
-```
-
-Coverage status is `complete`, `not_applicable`, `pending`, `partial` or `unavailable`; each needs a reason. IDs must be unique within each collection. Findings require cause, evidence, correction and severity; `systemic` is boolean and only applies to major. A critical or systemic-major finding additionally needs a `reach` explanation. Calculator evidence fields are nonempty strings: summarize evidence arrays from the detailed finding index into a string when preparing this ledger. Strengths require evidence. Each safeguard requires `id`, canonical `risk`, `evidence` and boolean `nonroutine`; only verified controls belong in this ledger. Normalize equivalent risks before calculation. Zero findings is not itself positive evidence.
-
-Maintain card source links, locations, verification plans and ownership in the working finding index; extra ledger fields are allowed and preserved by the artifact, though the calculator only reads the grading fields. Rejected/unconfirmed concerns live separately and do not enter counts. Calculator output names the overall state, optional assessed-scope defect grade, unique counts and coverage gaps. Explain its result in prose and audit the source-to-canonical mapping.
+The existing `grade.py /path/to/ledger.json` CLI remains available for arithmetic-only consumers. A ledger has `scope`, `coverage` (id/status/reason), `findings` (id/severity/cause/evidence/correction; optional systemic and required reach for critical/systemic major), `strengths` (id/evidence), and `safeguards` (id/risk/evidence/nonroutine). Evidence here is text, unlike record evidence arrays. Coverage statuses and severity anchors are unchanged. New reviews should author the richer record and let the renderer build these projections rather than maintain a second ledger by hand.
 
 ## Separate maintainability assessment
 

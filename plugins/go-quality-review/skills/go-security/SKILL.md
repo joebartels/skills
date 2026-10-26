@@ -2,7 +2,7 @@
 name: go-security
 description: Review and grade security in a defined Go changeset or code area across libraries, CLIs, and services. Use for trust boundaries, authorization, injection, unsafe file or network access, cryptography, secrets, sensitive data, abuse resistance, or known vulnerabilities; not for a general Go style, testing, or deployment audit.
 metadata:
-  review-contract: "2"
+  review-contract: "3"
 ---
 
 # Go Security Review
@@ -13,7 +13,7 @@ Review whether the specified Go code preserves its security boundaries against t
 
 - Use this skill independently; other topic names identify related expertise, not prerequisites. Grade consequences within this skill's review questions even when another topic also applies. Mention confirmed issues wholly outside this topic separately as ungraded related findings; do not silently discard them or perform an unrelated audit.
 - For a changeset, record the base/head revisions or supplied diff and grade introduced or worsened issues. Unchanged code is context unless the change newly exposes its defect. For a code-area review, grade existing issues in that named area. State the interpretation when the target is ambiguous.
-- Assess the relevant questions and record coverage and limits. An omitted file in a partial excerpt is not a missing implementation. Distinguish supplied facts, inspected code, executed checks, and assumptions; never invent paths, line numbers, measurements, or command results. Use symbols or quoted snippets when files are unavailable.
+- Follow the shared [source review sequence](../go-quality-report/references/source-review.md) within this topic; record coverage and limits. An omitted file in a partial excerpt is not a missing implementation. Distinguish supplied facts, inspected code, executed checks, and assumptions; never invent paths, line numbers, measurements, or command results. Use symbols or quoted snippets when files are unavailable.
 - In a combined review, give a shared root cause one finding ID and a primary remediation owner; other topics cross-reference it. Keep each topic's grade faithful to its own assessed consequences, as in solo use. Do not add topic counts into a total: deduplicate shared IDs first. A production defect and a test gap are separate only when they need independent corrections.
 - Review checks must preserve source and configuration. Run reproductions or commands that may alter module files, generated files, or build outputs in a disposable copy when needed. Respect the project's build mode and side-effect constraints; report blocked checks as limits.
 
@@ -77,45 +77,4 @@ If the target has no security-relevant input, privilege, sensitive data, depende
 
 ## Report
 
-Use the fixed report structure below in both the saved report and the final user-facing response, unless the user explicitly requests another format. Keep the section names and order; do not replace the findings table with prose or only a link to an artifact. Include every counted finding in the table, ordered by severity (critical to minor), then numeric finding ID. Use the same IDs, severities and topics in the table and details. Use the topic display names from the skills; separate multiple topics with `; ` in overall reports. A standalone topic report lists only its own topic. Keep table cells concise, escape literal pipes as `\|` (including inside code), and put multiline evidence in the details.
-
-Every finding has one detail entry with the fields shown, including a correction and proposed verification. Distinguish proposed verification from executed checks. For zero findings retain the empty table header and separator, followed by `None found.`; do not invent an F0 row. Use `None found.` for empty details and `None verified.` for unsupported strengths. For Not applicable or Insufficient evidence retain the same sections and explain the state; omit counts when no findings are confirmed. Preserve any confirmed findings under Insufficient evidence without implying the remaining scope passed. Counts, when present, describe confirmed findings only. Keep optional suggestions and ungraded related observations outside the counted table, after the required sections, labeled explicitly.
-
-A topic title identifies that topic's grade; it does not imply an overall review. Full reviews use `Go Quality Report` as the title and append the report-card table and maintainability profile in that order. Grade/state cells contain only a letter grade, `Not applicable`, or `Insufficient evidence`; put qualifications in the coverage column. Apply the existing coverage, severity and grading rules unchanged.
-
-```markdown
-# Security — [grade | Not applicable | Insufficient evidence]
-Scope: [mode, exact revisions/snapshot, target area, exclusions, relevant version/runtime context]
-Coverage: [assessed areas and boundaries; material unassessed areas and why]
-Rationale: [why the evidence, coverage and counted severities select this result]
-Finding counts: critical=[n], major=[n], moderate=[n], minor=[n]
-
-## Findings summary
-
-| ID | Severity | Topic | Finding / consequence | Evidence | Correction |
-| --- | --- | --- | --- | --- | --- |
-| F1 | [severity] | [topic name(s)] | [cause and present consequence] | [source reference] | [targeted correction] |
-
-## Finding details
-
-### F1 — [short title]
-
-Severity: [critical | major | moderate | minor]
-Topic: [same topic name(s) as the summary row]
-Status: [introduced | worsened | existing-in-scope]
-Trigger: [conditions or maintenance scenario exposing the issue]
-Evidence: [source locations and supported facts; distinguish inspected, supplied and executed evidence]
-Consequence: [supported effect and why this severity applies]
-Correction: [specific change and primary owner; why it addresses the cause]
-Verification: [how to verify the correction; label proposed checks]
-
-## Strengths
-
-- [G1] [specific verified choice and evidence/location] — [why it matters]
-
-## Checks and limits
-
-[Executed checks with exact commands and outcomes; supplied results labeled separately; checks not run, coverage gaps and unresolved assumptions.]
-```
-
-Prefer `path:line` references when files are available. Give each finding a corresponding change and rationale. Do not include exploit instructions or live secret values in the report. The grade assesses Security in the requested scope, not overall Go quality.
+Create a review record using the shared [record contract](../go-quality-report/references/review-record.md), then run its renderer. Reconcile candidate evidence and causes before assigning topic severity; record missing material evidence as unresolved. Use the rendered report for the saved artifact and final response unless the user requests another format. The shared helper is bundled with this plugin; other topic audits are not prerequisites.

@@ -2,7 +2,7 @@
 
 Use **[go-quality-report](../../plugins/go-quality-review/skills/go-quality-report/SKILL.md)** for an overall review of a Go changeset, codebase or code area. It scopes and chunks the target, delegates relevant combinations of the nine topic skills, reconciles shared findings, and grades unique causes using the same rubric. The ten runtime skills live under `plugins/go-quality-review/skills/` and install as one package.
 
-Nine standalone review skills assess a defined changeset or code area across Go libraries, CLIs, and services. Each skill contains its own grading rules, report template, and relevant decision references. Other topic names are navigation and ownership guidance. The handbooks in [resources](resources/) are authoring background and are not required at review time. Evaluation suites and historical results live under `tests/go-quality-review/`, outside the installable package.
+Nine standalone review skills assess a defined changeset or code area across Go libraries, CLIs, and services. Each skill contains its grading rules and decision references; all use the shared structured record and renderer. Other topic names are navigation and ownership guidance. The handbooks in [resources](resources/) are authoring background and are not required at review time. Maintained evaluation inputs and tests live under `tests/go-quality-review/`, outside the installable package. Generate run artifacts outside the checkout.
 
 ## Shared reporting and grading
 
@@ -12,7 +12,7 @@ Grade introduced or worsened issues in a changeset; grade existing issues when t
 
 In a combined report, shared causes use one finding ID and a primary remediation owner. Each topic retains its own supported assessment, including when used alone. Do not sum topic counts or average letter grades to construct an overall result; the umbrella report deduplicates causes and uses their greatest supported consequences with the same rubric. Incomplete material coverage produces an overall Insufficient evidence state, while confirmed findings remain visible.
 
-The authoring contract is maintained in [review-contract.json](../../tests/go-quality-review/shared/review-contract.json) and embedded in each skill. It is not a runtime dependency. Update the contract and the embedded copies together when changing shared behavior; topic-specific severity definitions and decision references remain local.
+The shared instruction contract is maintained in [review-contract.json](../../tests/go-quality-review/shared/review-contract.json) and embedded in each skill. It is not a runtime dependency. Update the contract and the embedded copies together when changing shared behavior; topic-specific severity definitions and decision references remain local.
 
 ## Validation and behavioral evaluations
 
@@ -25,7 +25,7 @@ python3 scripts/validate.py --report-file /path/to/report.md
 python3 -m unittest discover -s tests/go-quality-review -p 'test*.py'
 ```
 
-Validation checks harness manifests and catalogs, frontmatter, matching grade/report contracts, local-reference portability, evaluation inputs, and fixture paths. `--report-file` checks a standalone topic or overall report. `--reports` checks the nine topic evaluation suites at `/path/to/run/<skill-name>/<case-id>.md`; umbrella planning scenarios remain separate from complete reports. Report checks cover section order, table/detail correspondence, severity counts, grade arithmetic, and correction/verification fields. They cannot establish that evidence, severity, systemic reach, or A+ safeguards are correct. Contract version 2 applies to newly produced reports; historical evaluation outputs retain their original format.
+Validation checks harness manifests and catalogs, frontmatter, matching grade/report contracts, local-reference portability, evaluation inputs, and fixture paths. `--report-file` checks a standalone topic or overall report. `--reports` checks the nine topic evaluation suites at `/path/to/run/<skill-name>/<case-id>.md`; umbrella planning scenarios remain separate from complete reports. Report checks cover section order, table/detail correspondence, severity counts, grade arithmetic, and correction/verification fields. They cannot establish that evidence, severity, systemic reach, or A+ safeguards are correct. Instruction contract version 3 routes all skills through review record version 1; the rendered Markdown retains the established report structure.
 
 Each skill's `tests/go-quality-review/<skill>/evals/evals.json` contains behavioral tasks and expected outcomes, not Python tests. For a behavioral run:
 
@@ -34,18 +34,17 @@ Each skill's `tests/go-quality-review/<skill>/evals/evals.json` contains behavio
 3. Have a separate reviewer check the saved response against the assertions and the underlying evidence. Record unsupported expectations separately from agent errors; do not equate exact wording with quality.
 4. Compare to the previous skill version and rerun affected cases after changes. Include false-positive controls, missing context, non-applicability, and all grade boundaries across the suite. Repeat ambiguous cases to examine grade stability; a single run is not proof of reliability.
 
-For the umbrella calculator, run:
+For deterministic reports, use the installed [record contract](../../plugins/go-quality-review/skills/go-quality-report/references/review-record.md):
 
 ```sh
+python3 plugins/go-quality-review/skills/go-quality-report/scripts/render.py /path/to/review.json --output /path/to/report.md
+python3 plugins/go-quality-review/skills/go-quality-report/scripts/render.py /path/to/review.json --topic go-security
 python3 tests/go-quality-review/go-quality-report/evals/test_grade.py
-python3 plugins/go-quality-review/skills/go-quality-report/scripts/grade.py /path/to/reconciled-ledger.json
 ```
 
-Its standard-library calculator grades an already reconciled ledger; it does not verify evidence or automatically merge report cards. The input contract is in [umbrella grading](../../plugins/go-quality-review/skills/go-quality-report/references/grading.md). Umbrella behavioral prompts are in its evaluation suite; withhold expected outputs and assertions from evaluators, as for the topic skills. The delegated fixture case exercises real workers and cards, while other cases isolate scope, routing, coverage and aggregation decisions. Saved results and limitations are in the [umbrella evaluation report](../../tests/go-quality-review/go-quality-report/evals/results/evaluation.md).
+The renderer validates the record and derives both topic and overall ledgers for the existing calculator. It does not discover findings, verify source evidence or decide semantic duplication. `test_render.py` exercises projections, malformed records, coverage states, deterministic presentation and installed-package operation; `test_reports.py` independently checks rendered Markdown. Keep runtime validation in `review_record.py`, the complete field reference in `references/review-record.md`, and the rendering implementation in `render.py`; do not restore copied templates to topic skills.
 
-The fixed severity inventories in [grade-calibration.json](../../tests/go-quality-review/shared/grade-calibration.json) test grade arithmetic separately from discovering and classifying defects. Withhold `expected_grade` when using them with an evaluator.
-
-See the [2026-09-27 audit](../../tests/go-quality-review/shared/results/2026-09-27/review.md) for changes, actual evaluation outputs, follow-up results, stability checks and known limitations.
+The fixed inventories in [grade-calibration.json](../../tests/go-quality-review/shared/grade-calibration.json) test arithmetic separately from discovery and classification. Withhold expected grades when using them with an evaluator. The shared [source review sequence](../../plugins/go-quality-review/skills/go-quality-report/references/source-review.md) traces behavior before maintenance assessment and evidence reconciliation. Exercise it with the `file-backed-body-consumption` and `file-backed-test-consumers` cases; compare discovery, admission, topic routing and severity separately. Stable letter grades alone do not establish finding agreement. The architecture `operation-fit-*` cases check shared-operation needs, positive procedural fit and missing evidence; retain the representation and local-duplication controls when changing these judgments.
 
 ## Grading topics
 
@@ -53,8 +52,8 @@ See the [2026-09-27 audit](../../tests/go-quality-review/shared/results/2026-09-
 
 - Package and API Boundaries: Do packages, public contracts, and dependencies have clear responsibilities that fit
   their actual callers? Add layers or mappings when they solve demonstrated coupling, not as a required template.
-- Interfaces and Abstraction: Does each interface represent a real consumer need or exported protocol, with a coherent
-  method set? Would a concrete type or function be simpler where no abstraction is needed?
+- Operations and Abstraction: Do available operations and state fit supported features, with owned invariants and limited
+  caller reconstruction? Compare total caller/implementation cost; functions, types, SQL and protocols can all be suitable.
 - Composition and Ownership: Are significant dependencies and resource lifetimes visible? Can callers tell who starts,
   cancels, and closes work without unnecessary constructors or global state?
 - Cross-Boundary Behavior: Do errors, cancellation, and asynchronous success claims preserve the intended contract?
